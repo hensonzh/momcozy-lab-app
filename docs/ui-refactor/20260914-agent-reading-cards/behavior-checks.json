@@ -1,0 +1,8 @@
+{
+  "All Agent Hub code outside Markdown rendering class unchanged": true,
+  "Markdown media route dispatch unchanged": true,
+  "Markdown parsing detection unchanged": true,
+  "Consult identity reset and consent action route unchanged": true,
+  "Card selection and form submission wiring unchanged": true,
+  "Form presentation lifecycle and full dialog implementation unchanged": true
+}

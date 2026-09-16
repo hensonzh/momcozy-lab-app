@@ -1,0 +1,595 @@
+{
+  "gap": "G06",
+  "completion": "CLOSED_FOR_RECORDED_SOURCE",
+  "scope": "Current existing design-state images and measured long image archive, not revalidation of every historical route or shared state",
+  "images": [
+    {
+      "id": "08-expert-service/renew-disabled",
+      "image": "../raw/test/goldens/design_system/renew-disabled-390.long.png",
+      "sha256": "e2e84c20054f1b3216c33ca2b8916fa7f3f66f45c2a3740743fbd87e73c5fde9",
+      "metadata": "raw/test/goldens/design_system/renew-disabled-390.png.json",
+      "long_capture": {
+        "status": "complete-measured-scroll-stitch",
+        "file": "/Users/lute/project/momcozy-lab/app/docs/app-ui-inventory/raw/test/goldens/design_system/renew-disabled-390.long.png",
+        "offsets": [
+          0.0,
+          358.0,
+          540.0
+        ],
+        "scroll_bounds": [
+          0.0,
+          64.0,
+          390.0,
+          780.0
+        ],
+        "frame_scroll_bounds": [
+          [
+            0.0,
+            64.0,
+            390.0,
+            780.0
+          ],
+          [
+            0.0,
+            64.0,
+            390.0,
+            780.0
+          ],
+          [
+            0.0,
+            64.0,
+            390.0,
+            780.0
+          ]
+        ],
+        "content_height": 1320.0,
+        "interior_strip_edge_guard": 64.0,
+        "fixed_bottom_overlay_bounds": [],
+        "original_scroll_offset": 0.0,
+        "tooltip_preserved_from_matched_viewport": false
+      },
+      "test": "disabled purchase, empty catalog, offline retry are explicit",
+      "normal_route": false
+    },
+    {
+      "id": "08-expert-service/renew-eligibility",
+      "image": "../raw/test/goldens/design_system/renew-eligibility-390.png",
+      "sha256": "96435e0b4e46bb3c836b41e17a3023c50395dbae0857e8f4332e58a3588982cc",
+      "metadata": "raw/test/goldens/design_system/renew-eligibility-390.png.json",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "test": "renew selection opens existing eligibility flow 390.0/1.0",
+      "normal_route": false
+    },
+    {
+      "id": "08-expert-service/renew-empty",
+      "image": "../raw/test/goldens/design_system/renew-empty-390.png",
+      "sha256": "292794c2fc6912b020d829ea0db209c3cb9dc2e76282c41d38c4d1c0270907c9",
+      "metadata": "raw/test/goldens/design_system/renew-empty-390.png.json",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "test": "disabled purchase, empty catalog, offline retry are explicit",
+      "normal_route": false
+    },
+    {
+      "id": "08-expert-service/renew-list",
+      "image": "../raw/test/goldens/design_system/renew-list-390.long.png",
+      "sha256": "872e018d05cc38bce3157cb01683c49a71ec5412124a5446cf280aff058df0e6",
+      "metadata": "raw/test/goldens/design_system/renew-list-390.png.json",
+      "long_capture": {
+        "status": "complete-measured-scroll-stitch",
+        "file": "/Users/lute/project/momcozy-lab/app/docs/app-ui-inventory/raw/test/goldens/design_system/renew-list-390.long.png",
+        "offsets": [
+          0.0,
+          358.0,
+          540.0
+        ],
+        "scroll_bounds": [
+          0.0,
+          64.0,
+          390.0,
+          780.0
+        ],
+        "frame_scroll_bounds": [
+          [
+            0.0,
+            64.0,
+            390.0,
+            780.0
+          ],
+          [
+            0.0,
+            64.0,
+            390.0,
+            780.0
+          ],
+          [
+            0.0,
+            64.0,
+            390.0,
+            780.0
+          ]
+        ],
+        "content_height": 1320.0,
+        "interior_strip_edge_guard": 64.0,
+        "fixed_bottom_overlay_bounds": [],
+        "original_scroll_offset": 0.0,
+        "tooltip_preserved_from_matched_viewport": false
+      },
+      "test": "renew selection opens existing eligibility flow 390.0/1.0",
+      "normal_route": false
+    },
+    {
+      "id": "08-expert-service/renew-offline",
+      "image": "../raw/test/goldens/design_system/renew-offline-390.png",
+      "sha256": "f2dab9206c57397f6a1b6de47a8c0b220a7f0d031c735393a9e4e59bc795dcfa",
+      "metadata": "raw/test/goldens/design_system/renew-offline-390.png.json",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "test": "disabled purchase, empty catalog, offline retry are explicit",
+      "normal_route": false
+    },
+    {
+      "id": "08-expert-service/renew-ongoing",
+      "image": "../raw/test/goldens/design_system/renew-ongoing-390.long.png",
+      "sha256": "b26a8bd04c99290e68ce4632589495c75167c724ae85a9a90a570e69ed840dfc",
+      "metadata": "raw/test/goldens/design_system/renew-ongoing-390.png.json",
+      "long_capture": {
+        "status": "complete-measured-scroll-stitch",
+        "file": "/Users/lute/project/momcozy-lab/app/docs/app-ui-inventory/raw/test/goldens/design_system/renew-ongoing-390.long.png",
+        "offsets": [
+          0.0,
+          358.0,
+          600.0
+        ],
+        "scroll_bounds": [
+          0.0,
+          64.0,
+          390.0,
+          780.0
+        ],
+        "frame_scroll_bounds": [
+          [
+            0.0,
+            64.0,
+            390.0,
+            780.0
+          ],
+          [
+            0.0,
+            64.0,
+            390.0,
+            780.0
+          ],
+          [
+            0.0,
+            64.0,
+            390.0,
+            780.0
+          ]
+        ],
+        "content_height": 1380.0,
+        "interior_strip_edge_guard": 64.0,
+        "fixed_bottom_overlay_bounds": [],
+        "original_scroll_offset": 0.0,
+        "tooltip_preserved_from_matched_viewport": false
+      },
+      "test": "ongoing service navigates without making a new order",
+      "normal_route": false
+    },
+    {
+      "id": "08-expert-service/renew-order-error",
+      "image": "../raw/test/goldens/design_system/renew-order-error-390.long.png",
+      "sha256": "853b3fa04c83fc2d56e72e633b72ec486775b3fd611f88c48c5ef2c1f9c32afc",
+      "metadata": "raw/test/goldens/design_system/renew-order-error-390.png.json",
+      "long_capture": {
+        "status": "complete-measured-scroll-stitch",
+        "file": "/Users/lute/project/momcozy-lab/app/docs/app-ui-inventory/raw/test/goldens/design_system/renew-order-error-390.long.png",
+        "offsets": [
+          0.0,
+          358.0,
+          642.0
+        ],
+        "scroll_bounds": [
+          0.0,
+          64.0,
+          390.0,
+          780.0
+        ],
+        "frame_scroll_bounds": [
+          [
+            0.0,
+            64.0,
+            390.0,
+            780.0
+          ],
+          [
+            0.0,
+            64.0,
+            390.0,
+            780.0
+          ],
+          [
+            0.0,
+            64.0,
+            390.0,
+            780.0
+          ]
+        ],
+        "content_height": 1422.0,
+        "interior_strip_edge_guard": 64.0,
+        "fixed_bottom_overlay_bounds": [],
+        "original_scroll_offset": 334.0,
+        "tooltip_preserved_from_matched_viewport": false
+      },
+      "test": "pending order reopens without new purchase; retry locks duplicate taps",
+      "normal_route": false
+    },
+    {
+      "id": "08-expert-service/renew-selected",
+      "image": "../raw/test/goldens/design_system/renew-selected-390.long.png",
+      "sha256": "a87c013b91d597ee0b39d9379d74146c259d8889f2baa0670fdbf3171b4b5250",
+      "metadata": "raw/test/goldens/design_system/renew-selected-390.png.json",
+      "long_capture": {
+        "status": "complete-measured-scroll-stitch",
+        "file": "/Users/lute/project/momcozy-lab/app/docs/app-ui-inventory/raw/test/goldens/design_system/renew-selected-390.long.png",
+        "offsets": [
+          0.0,
+          358.0,
+          540.0
+        ],
+        "scroll_bounds": [
+          0.0,
+          64.0,
+          390.0,
+          780.0
+        ],
+        "frame_scroll_bounds": [
+          [
+            0.0,
+            64.0,
+            390.0,
+            780.0
+          ],
+          [
+            0.0,
+            64.0,
+            390.0,
+            780.0
+          ],
+          [
+            0.0,
+            64.0,
+            390.0,
+            780.0
+          ]
+        ],
+        "content_height": 1320.0,
+        "interior_strip_edge_guard": 64.0,
+        "fixed_bottom_overlay_bounds": [],
+        "original_scroll_offset": 508.0,
+        "tooltip_preserved_from_matched_viewport": false
+      },
+      "test": "renew selection opens existing eligibility flow 390.0/1.0",
+      "normal_route": false
+    },
+    {
+      "id": "08-expert-service/renew-short-last-package",
+      "image": "../raw/test/goldens/design_system/renew-short-last-package-320-2x.long.png",
+      "sha256": "bfaf75c66514cbed17d3e1de753c6b0b9c845ba7964dc7bfdcaa3c1d409c2c81",
+      "metadata": "raw/test/goldens/design_system/renew-short-last-package-320-2x.png.json",
+      "long_capture": {
+        "status": "complete-measured-scroll-stitch",
+        "file": "/Users/lute/project/momcozy-lab/app/docs/app-ui-inventory/raw/test/goldens/design_system/renew-short-last-package-320-2x.long.png",
+        "offsets": [
+          0.0,
+          216.0,
+          432.0,
+          648.0,
+          864.0,
+          1080.0,
+          1296.0,
+          1512.0,
+          1728.0,
+          1842.0
+        ],
+        "scroll_bounds": [
+          0.0,
+          72.0,
+          320.0,
+          496.0
+        ],
+        "frame_scroll_bounds": [
+          [
+            0.0,
+            72.0,
+            320.0,
+            496.0
+          ],
+          [
+            0.0,
+            72.0,
+            320.0,
+            496.0
+          ],
+          [
+            0.0,
+            72.0,
+            320.0,
+            496.0
+          ],
+          [
+            0.0,
+            72.0,
+            320.0,
+            496.0
+          ],
+          [
+            0.0,
+            72.0,
+            320.0,
+            496.0
+          ],
+          [
+            0.0,
+            72.0,
+            320.0,
+            496.0
+          ],
+          [
+            0.0,
+            72.0,
+            320.0,
+            496.0
+          ],
+          [
+            0.0,
+            72.0,
+            320.0,
+            496.0
+          ],
+          [
+            0.0,
+            72.0,
+            320.0,
+            496.0
+          ],
+          [
+            0.0,
+            72.0,
+            320.0,
+            496.0
+          ]
+        ],
+        "content_height": 2338.0,
+        "interior_strip_edge_guard": 64.0,
+        "fixed_bottom_overlay_bounds": [],
+        "original_scroll_offset": 1755.0,
+        "tooltip_preserved_from_matched_viewport": false
+      },
+      "test": "short large catalog loads, scrolls and returns without ordering",
+      "normal_route": false
+    },
+    {
+      "id": "08-expert-service/renew-short-loading",
+      "image": "../raw/test/goldens/design_system/renew-short-loading-320-2x.png",
+      "sha256": "6ccda839ceb12db932fd823eec6ee52f4f11529c53aef81502d7636d2fb91fb5",
+      "metadata": "raw/test/goldens/design_system/renew-short-loading-320-2x.png.json",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "test": "short large catalog loads, scrolls and returns without ordering",
+      "normal_route": false
+    },
+    {
+      "id": "08-expert-service/renew-short-owned-paused",
+      "image": "../raw/test/goldens/design_system/renew-short-owned-paused-320-2x.long.png",
+      "sha256": "3a8f0776ef75c1aaffa7ee9e9101052945fbea1b80e17f7d72a2f48636b127ef",
+      "metadata": "raw/test/goldens/design_system/renew-short-owned-paused-320-2x.png.json",
+      "long_capture": {
+        "status": "complete-measured-scroll-stitch",
+        "file": "/Users/lute/project/momcozy-lab/app/docs/app-ui-inventory/raw/test/goldens/design_system/renew-short-owned-paused-320-2x.long.png",
+        "offsets": [
+          0.0,
+          216.0,
+          432.0,
+          648.0,
+          864.0,
+          1080.0,
+          1296.0,
+          1512.0,
+          1728.0,
+          1935.0
+        ],
+        "scroll_bounds": [
+          0.0,
+          72.0,
+          320.0,
+          496.0
+        ],
+        "frame_scroll_bounds": [
+          [
+            0.0,
+            72.0,
+            320.0,
+            496.0
+          ],
+          [
+            0.0,
+            72.0,
+            320.0,
+            496.0
+          ],
+          [
+            0.0,
+            72.0,
+            320.0,
+            496.0
+          ],
+          [
+            0.0,
+            72.0,
+            320.0,
+            496.0
+          ],
+          [
+            0.0,
+            72.0,
+            320.0,
+            496.0
+          ],
+          [
+            0.0,
+            72.0,
+            320.0,
+            496.0
+          ],
+          [
+            0.0,
+            72.0,
+            320.0,
+            496.0
+          ],
+          [
+            0.0,
+            72.0,
+            320.0,
+            496.0
+          ],
+          [
+            0.0,
+            72.0,
+            320.0,
+            496.0
+          ],
+          [
+            0.0,
+            72.0,
+            320.0,
+            496.0
+          ]
+        ],
+        "content_height": 2431.0,
+        "interior_strip_edge_guard": 64.0,
+        "fixed_bottom_overlay_bounds": [],
+        "original_scroll_offset": 688.0,
+        "tooltip_preserved_from_matched_viewport": false
+      },
+      "test": "owned service remains reachable with purchase disabled CareEpisodeStatus.paused",
+      "normal_route": false
+    },
+    {
+      "id": "08-expert-service/renew-short-owned-provisioningPending",
+      "image": "../raw/test/goldens/design_system/renew-short-owned-provisioningPending-320-2x.long.png",
+      "sha256": "ad9aab4b2f73668d705b8889789494b191a935b4e4c0293a9f9c619471b81268",
+      "metadata": "raw/test/goldens/design_system/renew-short-owned-provisioningPending-320-2x.png.json",
+      "long_capture": {
+        "status": "complete-measured-scroll-stitch",
+        "file": "/Users/lute/project/momcozy-lab/app/docs/app-ui-inventory/raw/test/goldens/design_system/renew-short-owned-provisioningPending-320-2x.long.png",
+        "offsets": [
+          0.0,
+          216.0,
+          432.0,
+          648.0,
+          864.0,
+          1080.0,
+          1296.0,
+          1512.0,
+          1728.0,
+          1935.0
+        ],
+        "scroll_bounds": [
+          0.0,
+          72.0,
+          320.0,
+          496.0
+        ],
+        "frame_scroll_bounds": [
+          [
+            0.0,
+            72.0,
+            320.0,
+            496.0
+          ],
+          [
+            0.0,
+            72.0,
+            320.0,
+            496.0
+          ],
+          [
+            0.0,
+            72.0,
+            320.0,
+            496.0
+          ],
+          [
+            0.0,
+            72.0,
+            320.0,
+            496.0
+          ],
+          [
+            0.0,
+            72.0,
+            320.0,
+            496.0
+          ],
+          [
+            0.0,
+            72.0,
+            320.0,
+            496.0
+          ],
+          [
+            0.0,
+            72.0,
+            320.0,
+            496.0
+          ],
+          [
+            0.0,
+            72.0,
+            320.0,
+            496.0
+          ],
+          [
+            0.0,
+            72.0,
+            320.0,
+            496.0
+          ],
+          [
+            0.0,
+            72.0,
+            320.0,
+            496.0
+          ]
+        ],
+        "content_height": 2431.0,
+        "interior_strip_edge_guard": 64.0,
+        "fixed_bottom_overlay_bounds": [],
+        "original_scroll_offset": 688.0,
+        "tooltip_preserved_from_matched_viewport": false
+      },
+      "test": "owned service remains reachable with purchase disabled CareEpisodeStatus.provisioningPending",
+      "normal_route": false
+    }
+  ],
+  "source_hashes": {
+    "lib/modules/services/presentation/service_purchase_dialog.dart": "ab1280bcecd27eda6240d107d365fc561ddbd068a24fad30b2f879d38de5fdfe",
+    "lib/shared/widgets/mom_settings_widgets.dart": "271b022cb619641d956e92a5600e5f5585d2a5b469446132d53d402987403025",
+    "lib/shared/widgets/mom_companion_widgets.dart": "93c5cc4e022ac56ee5ca31dc5208f6c3a8df03d08e39ace0d761b101e04571ab",
+    "lib/modules/services/presentation/mom_service_widgets.dart": "43e53d98f9ddbdb13d8c294af4c53d7cd867e12be1b2eebd380947a77a6a3ea1",
+    "lib/shared/widgets/product_feedback.dart": "f0e9384b049cfc0e3c0db31f4f751723d3b7faa587a136caee1d0db75b004af1",
+    "lib/shared/widgets/momcozy_line_icon.dart": "5d4442b930359144e47316073efd7b99e8779abdadf1df6c965fe061d9de6eb6",
+    "lib/modules/services/presentation/service_renew_page.dart": "f01adf5d24ec28ef69b9c37fc4020acfac26aece466f4395ae0cd829e1fcea47",
+    "test/modules/services/service_renew_test.dart": "4e3ce1e1b90674b949fda73776be16864b039fc045c8babc649f773da3233901"
+  },
+  "source_drift": [],
+  "implementation_handoff": "docs/ui-refactor/20260914-service-renew/implementation-hashes.json",
+  "visual_review": "All full images reviewed in nine sheets; 100-entry document checked from header through 0–99 and final add control. No new test cases, viewports or baseline updates."
+}

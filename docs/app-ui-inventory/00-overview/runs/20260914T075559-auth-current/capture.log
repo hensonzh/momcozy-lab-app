@@ -1,0 +1,13 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_inventory_journey_test.dart: (setUpAll)
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_inventory_journey_test.dart: inventory registration verification resend and real sign out
+00:00 +1: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_inventory_journey_test.dart: inventory registration verification resend and real sign out
+00:00 +2: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_inventory_journey_test.dart: inventory registration verification resend and real sign out
+00:01 +3: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_inventory_journey_test.dart: inventory registration verification resend and real sign out
+00:01 +4: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_followup_inventory_test.dart: auth normal password recovery chain 393.0/1.0
+00:01 +5: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_followup_inventory_test.dart: auth normal password recovery chain 393.0/1.0
+00:01 +6: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_followup_inventory_test.dart: auth normal password recovery chain 393.0/1.0
+00:01 +7: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_redesign_states_test.dart: short large Google pending and failure leaves email recovery available
+00:01 +8: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_redesign_states_test.dart: session persistence failure revokes issued token and keeps retry form
+00:01 +9: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_redesign_states_test.dart: (tearDownAll)
+00:01 +9: All tests passed!

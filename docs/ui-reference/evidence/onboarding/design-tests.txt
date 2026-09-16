@@ -1,0 +1,52 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: onboarding profile forms at 320.0 / 1.0
+00:00 +1: onboarding load failure retries at 320.0 / 1.0
+00:00 +2: avatar task banners at 320.0 / 1.0
+00:00 +3: avatar photo failure and default confirmation at 320.0 / 1.0
+00:01 +4: onboarding avatar required at 320.0 / 1.0
+00:01 +5: onboarding avatar generating at 320.0 / 1.0
+00:01 +6: onboarding avatar review at 320.0 / 1.0
+00:01 +7: onboarding avatar failed at 320.0 / 1.0
+00:01 +8: onboarding profile forms at 320.0 / 2.0
+00:01 +9: onboarding load failure retries at 320.0 / 2.0
+00:01 +10: avatar task banners at 320.0 / 2.0
+00:01 +11: avatar photo failure and default confirmation at 320.0 / 2.0
+00:01 +12: onboarding avatar required at 320.0 / 2.0
+00:01 +13: onboarding avatar generating at 320.0 / 2.0
+00:01 +14: onboarding avatar review at 320.0 / 2.0
+00:01 +15: onboarding avatar failed at 320.0 / 2.0
+00:01 +16: onboarding profile forms at 390.0 / 1.0
+00:01 +17: onboarding load failure retries at 390.0 / 1.0
+00:01 +18: avatar task banners at 390.0 / 1.0
+00:02 +19: avatar photo failure and default confirmation at 390.0 / 1.0
+00:02 +20: onboarding avatar required at 390.0 / 1.0
+00:02 +21: onboarding avatar generating at 390.0 / 1.0
+00:02 +22: onboarding avatar review at 390.0 / 1.0
+00:02 +23: onboarding avatar failed at 390.0 / 1.0
+00:02 +24: onboarding profile forms at 390.0 / 2.0
+00:02 +25: onboarding load failure retries at 390.0 / 2.0
+00:02 +26: avatar task banners at 390.0 / 2.0
+00:02 +27: avatar photo failure and default confirmation at 390.0 / 2.0
+00:02 +28: onboarding avatar required at 390.0 / 2.0
+00:02 +29: onboarding avatar generating at 390.0 / 2.0
+00:02 +30: onboarding avatar review at 390.0 / 2.0
+00:02 +31: onboarding avatar failed at 390.0 / 2.0
+00:02 +32: onboarding profile forms at 430.0 / 1.0
+00:02 +33: onboarding load failure retries at 430.0 / 1.0
+00:02 +34: avatar task banners at 430.0 / 1.0
+00:02 +35: avatar photo failure and default confirmation at 430.0 / 1.0
+00:02 +36: onboarding avatar required at 430.0 / 1.0
+00:02 +37: onboarding avatar generating at 430.0 / 1.0
+00:03 +38: onboarding avatar review at 430.0 / 1.0
+00:03 +39: onboarding avatar failed at 430.0 / 1.0
+00:03 +40: onboarding profile forms at 430.0 / 2.0
+00:03 +41: onboarding load failure retries at 430.0 / 2.0
+00:03 +42: avatar task banners at 430.0 / 2.0
+00:03 +43: avatar photo failure and default confirmation at 430.0 / 2.0
+00:03 +44: onboarding avatar required at 430.0 / 2.0
+00:03 +45: onboarding avatar generating at 430.0 / 2.0
+00:03 +46: onboarding avatar review at 430.0 / 2.0
+00:03 +47: onboarding avatar failed at 430.0 / 2.0
+00:03 +48: (tearDownAll)
+00:03 +48: All tests passed!

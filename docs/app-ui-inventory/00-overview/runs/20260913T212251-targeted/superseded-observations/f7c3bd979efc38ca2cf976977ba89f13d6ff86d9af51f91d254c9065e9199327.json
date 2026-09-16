@@ -1,0 +1,489 @@
+{
+  "source": "test/goldens/ui_inventory/baby-knowledge-source-sleep-detail-320-2x.png",
+  "evidence": "current-widget-test-render; golden comparison passed",
+  "test_description": "inventory Baby knowledge sources 320/2x",
+  "sequence": 14,
+  "sha256": "800682b7d9f9990a08474a720378aacd27185d26b36b4fc4c89d25e6f4cab536",
+  "width": 320,
+  "height": 844,
+  "captured_at": "2026-09-13T21:22:57.655444Z",
+  "widget_types": [
+    "AbsorbPointer",
+    "Actions",
+    "Align",
+    "AnimatedBuilder",
+    "AnimatedDefaultTextStyle",
+    "AnimatedModalBarrier",
+    "AnimatedPadding",
+    "AnimatedPhysicalModel",
+    "AnimatedTheme",
+    "AutomaticKeepAlive",
+    "BabyHomePage",
+    "BabyStatusCard",
+    "BackdropFilter",
+    "BlockSemantics",
+    "Builder",
+    "Center",
+    "ClipOval",
+    "ClipPath",
+    "ClipRect",
+    "ColoredBox",
+    "Column",
+    "ConstrainedBox",
+    "Container",
+    "CupertinoTheme",
+    "CustomMultiChildLayout",
+    "CustomPaint",
+    "DecoratedBox",
+    "DefaultSelectionStyle",
+    "DefaultTextEditingShortcuts",
+    "DefaultTextStyle",
+    "Dialog",
+    "Directionality",
+    "DisplayFeatureSubScreen",
+    "Divider",
+    "DualTransitionBuilder",
+    "ExcludeSemantics",
+    "Expanded",
+    "FadeTransition",
+    "FilledButton",
+    "FittedBox",
+    "Flexible",
+    "Focus",
+    "FocusTraversalGroup",
+    "FractionalTranslation",
+    "FractionallySizedBox",
+    "GestureDetector",
+    "GoRouterStateRegistryScope",
+    "HeroControllerScope",
+    "Icon",
+    "IconTheme",
+    "IgnorePointer",
+    "Image",
+    "IndexedSemantics",
+    "InheritedCupertinoTheme",
+    "InheritedGoRouter",
+    "Ink",
+    "InkWell",
+    "KeepAlive",
+    "KeyedSubtree",
+    "KnowledgeBanner",
+    "LayoutBuilder",
+    "LayoutId",
+    "LimitedBox",
+    "ListView",
+    "ListenableBuilder",
+    "Listener",
+    "Localizations",
+    "Material",
+    "MaterialApp",
+    "MediaQuery",
+    "ModalBarrier",
+    "MomCozyBottomNavigation",
+    "MomCozyFlutterApp",
+    "MomCozyLineIcon",
+    "MomCozyPageBody",
+    "MomCozyRoutePage",
+    "MomCozyRouteShell",
+    "MomCozyRouteTelemetry",
+    "MomCozyRuntimeScope",
+    "MomCozySectionHeading",
+    "MouseRegion",
+    "Navigator",
+    "NotificationListener<KeepAliveNotification>",
+    "NotificationListener<LayoutChangedNotification>",
+    "NotificationListener<NavigationNotification>",
+    "NotificationListener<OverscrollIndicatorNotification>",
+    "NotificationListener<ScrollMetricsNotification>",
+    "NotificationListener<ScrollNotification>",
+    "Offstage",
+    "Overlay",
+    "Padding",
+    "PageStorage",
+    "PhysicalModel",
+    "PhysicalShape",
+    "PopScope<dynamic>",
+    "Positioned",
+    "PrimaryScrollController",
+    "RawGestureDetector",
+    "RawImage",
+    "RawView",
+    "RefreshIndicator",
+    "RepaintBoundary",
+    "RestorationScope",
+    "RichText",
+    "RootRestorationScope",
+    "RotationTransition",
+    "Router<Object>",
+    "Row",
+    "SafeArea",
+    "Scaffold",
+    "ScaffoldMessenger",
+    "ScaleTransition",
+    "ScrollConfiguration",
+    "ScrollNotificationObserver",
+    "Scrollable",
+    "Semantics",
+    "SharedAppData",
+    "ShortcutRegistrar",
+    "Shortcuts",
+    "SingleChildScrollView",
+    "SizedBox",
+    "SlideTransition",
+    "SliverList",
+    "SliverPadding",
+    "Stack",
+    "StretchEffect",
+    "StretchingOverscrollIndicator",
+    "SvgPicture",
+    "TapRegionSurface",
+    "Text",
+    "TextButton",
+    "Theme",
+    "TickerMode",
+    "Title",
+    "Transform",
+    "UnmanagedRestorationScope",
+    "ValueListenableBuilder<bool>",
+    "VectorGraphic",
+    "View",
+    "Viewport",
+    "WidgetsApp",
+    "Wrap",
+    "_ActionsScope",
+    "_BodyBuilder",
+    "_CaptureAll",
+    "_CustomNavigator",
+    "_EffectiveTickerMode",
+    "_FadeForwardsPageTransition",
+    "_FloatingActionButtonTransition",
+    "_FocusInheritedScope",
+    "_FocusScopeWithExternalFocusNode",
+    "_GestureSemantics",
+    "_InheritedTheme",
+    "_InkFeatures",
+    "_InkResponseStateWidget",
+    "_InputPadding",
+    "_LocalizationsScope",
+    "_MaterialInterior",
+    "_MediaQueryFromView",
+    "_ModalBarrierGestureDetector",
+    "_ModalScope<void>",
+    "_ModalScopeStatus",
+    "_OverlayEntryWidget",
+    "_PageTransitionsThemeTransitions<void>",
+    "_ParentInkResponseProvider",
+    "_PipelineOwnerScope",
+    "_PredictiveBackGestureDetector",
+    "_RawPictureVectorGraphicWidget",
+    "_RawViewInternal",
+    "_RenderTheaterMarker",
+    "_RouterScope",
+    "_ScaffoldMessengerScope",
+    "_ScaffoldScope",
+    "_ScrollNotificationObserverScope",
+    "_ScrollSemantics",
+    "_ScrollableScope",
+    "_SelectionKeepAlive",
+    "_ShapeBorderPaint",
+    "_SharedAppModel",
+    "_ShortcutRegistrarScope",
+    "_SingleChildViewport",
+    "_TextButtonWithIconChild",
+    "_Theater",
+    "_ViewScope"
+  ],
+  "texts": [
+    "更好地了解 Luna",
+    "记录睡眠，也要把安全睡眠放在第一位",
+    "睡眠段数和时长帮助你看见节奏；睡眠姿势与环境则需要每一次都重新确认。",
+    "今日状态",
+    "记录",
+    "睡眠",
+    "累计",
+    "1 小时",
+    "尿湿",
+    "未记录",
+    "便便",
+    "未记录",
+    "Me",
+    "Baby",
+    "Cozymate",
+    "Schedule",
+    "More",
+    "更好地了解 Luna",
+    "关闭",
+    "记录睡眠，也要把安全睡眠放在第一位",
+    "睡眠段数和时长帮助你看见节奏；睡眠姿势与环境则需要每一次都重新确认。",
+    "1",
+    "每次睡眠都让宝宝仰卧，并使用坚实、平坦的睡眠表面。",
+    "2",
+    "睡眠区域只保留合身床单，不放枕头、松软被褥、防撞垫或毛绒玩具。",
+    "3",
+    "起止时间适合用来统计总时长和最长连续睡眠，但不能代替对睡眠环境的检查。",
+    "CDC · 婴儿安全睡眠",
+    "内容用于帮助理解记录，不是对宝宝健康或发育状态的判断。",
+    "问问 Cozymate"
+  ],
+  "scrolls": [
+    {
+      "foreground": false,
+      "axis": "vertical",
+      "direction": "down",
+      "pixels": 159.0,
+      "min": 0.0,
+      "max": 3679.666666666667,
+      "viewport": 726.0
+    },
+    {
+      "foreground": true,
+      "axis": "vertical",
+      "direction": "down",
+      "pixels": 0.0,
+      "min": 0.0,
+      "max": 922.0,
+      "viewport": 446.0
+    }
+  ],
+  "controls": [
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [
+        "更好地了解 Luna",
+        "记录睡眠，也要把安全睡眠放在第一位",
+        "睡眠段数和时长帮助你看见节奏；睡眠姿势与环境则需要每一次都重新确认。"
+      ],
+      "enabled": true,
+      "bounds": [
+        8.0,
+        0.0,
+        304.0,
+        492.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "TextButton",
+      "key": null,
+      "labels": [
+        "记录"
+      ],
+      "enabled": true,
+      "bounds": [
+        236.0,
+        557.0,
+        72.0,
+        48.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [
+        "记录"
+      ],
+      "enabled": true,
+      "bounds": [
+        236.0,
+        559.0,
+        72.0,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [
+        "睡眠",
+        "累计",
+        "1 小时"
+      ],
+      "enabled": true,
+      "bounds": [
+        105.42074584960938,
+        619.0,
+        109.15850830078125,
+        201.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [
+        "尿湿",
+        "未记录"
+      ],
+      "enabled": true,
+      "bounds": [
+        98.625,
+        826.0,
+        122.75,
+        167.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [
+        "便便",
+        "未记录"
+      ],
+      "enabled": true,
+      "bounds": [
+        98.625,
+        999.0,
+        122.75,
+        167.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "TextButton",
+      "key": null,
+      "labels": [
+        "关闭"
+      ],
+      "enabled": true,
+      "bounds": [
+        232.0,
+        118.0,
+        68.0,
+        48.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [
+        "关闭"
+      ],
+      "enabled": true,
+      "bounds": [
+        232.0,
+        120.0,
+        68.0,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "TextButton",
+      "key": null,
+      "labels": [
+        "CDC · 婴儿安全睡眠"
+      ],
+      "enabled": true,
+      "bounds": [
+        29.0,
+        1390.0,
+        262.0,
+        48.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [
+        "CDC · 婴儿安全睡眠"
+      ],
+      "enabled": true,
+      "bounds": [
+        29.0,
+        1392.0,
+        262.0,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "FilledButton",
+      "key": null,
+      "labels": [
+        "问问 Cozymate"
+      ],
+      "enabled": true,
+      "bounds": [
+        29.0,
+        666.0,
+        262.0,
+        89.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [
+        "问问 Cozymate"
+      ],
+      "enabled": true,
+      "bounds": [
+        29.0,
+        666.0,
+        262.0,
+        89.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    }
+  ],
+  "needs_long_capture": true,
+  "interactions_since_previous_capture": [
+    {
+      "action": "tap",
+      "labels_at_start": [
+        "记录睡眠，也要把安全睡眠放在第一位"
+      ],
+      "from": [
+        160.0,
+        246.0
+      ],
+      "to": [
+        160.0,
+        246.0
+      ]
+    }
+  ],
+  "call_stack": "#0      _InventoryComparator._record (file:///Users/lute/project/momcozy-lab/app/test/support/ui_inventory_capture.dart:169:32)\n<asynchronous suspension>\n#1      _InventoryComparator.compare (file:///Users/lute/project/momcozy-lab/app/test/support/ui_inventory_capture.dart:96:17)\n<asynchronous suspension>\n#2      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)\n<asynchronous suspension>\n#3      _AsyncCompleter.complete (dart:async/future_impl.dart:96:3)\n<asynchronous suspension>\n#4      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)\n<asynchronous suspension>\n#5      StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)\n<asynchronous suspension>\n#6      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)\n<asynchronous suspension>\n#7      main.capture (file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_knowledge_source_inventory_test.dart:163:5)\n<asynchronous suspension>\n#8      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_knowledge_source_inventory_test.dart:286:9)\n<asynchronous suspension>\n#9      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)\n<asynchronous suspension>\n#10     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)\n<asynchronous suspension>\n#11     StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)\n<asynchronous suspension>\n",
+  "long_capture": {
+    "status": "complete-measured-scroll-stitch",
+    "file": "/Users/lute/project/momcozy-lab/app/docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-knowledge-source-sleep-detail-320-2x.long.png",
+    "offsets": [
+      0.0,
+      191.0,
+      382.0,
+      573.0,
+      764.0,
+      922.0
+    ],
+    "scroll_bounds": [
+      12.0,
+      212.0,
+      296.0,
+      446.0
+    ],
+    "content_height": 1368.0,
+    "interior_strip_edge_guard": 64.0,
+    "fixed_bottom_overlay_bounds": [],
+    "original_scroll_offset": 0.0,
+    "tooltip_preserved_from_matched_viewport": false
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/schedule-journey-large-picker-editor-320-2x.png",
+  "previous_source": null,
+  "route": "/schedule",
+  "trigger": "Add event → responsive editor",
+  "root_entry": "Authenticated More → tap Schedule bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/schedule/schedule_inventory_journey_test.dart"
+}

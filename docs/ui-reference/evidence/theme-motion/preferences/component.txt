@@ -1,0 +1,11 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/shared/momcozy_motion_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: reduced motion flows 320.0 / 1.0
+00:00 +1: reduced motion flows 320.0 / 2.0
+00:00 +2: reduced motion flows 390.0 / 1.0
+00:00 +3: reduced motion flows 390.0 / 2.0
+00:00 +4: reduced motion flows 430.0 / 1.0
+00:00 +5: reduced motion flows 430.0 / 2.0
+00:00 +6: ordinary scrolling retains its movement and destination
+00:00 +7: (tearDownAll)
+00:00 +7: All tests passed!

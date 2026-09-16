@@ -1,0 +1,2290 @@
+{
+  "method": "full-width continuous 650px strips; byte-identical decoded pixels reference previously reviewed Rest/Body/Mood or one new lactation tile",
+  "sources": [
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-birth-cancelled-320-2x.long.png",
+      "sha256": "0e9e99b30a52241ebe2101e2cef91d923a4803fd6086e47a0757c61356ccb3b1",
+      "width": 320,
+      "height": 1163,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "4328626ffe2093e33a3d94efe6a873f8b9276ee8b9b3e3841669dc156c7a5f04",
+          "review": "sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1163,
+          "pixel_sha256": "36b568a9c82a33b8fcc1f11a28a6560c8f91f36d86b73b12a6e67ae0a3d90bf4",
+          "review": "sheet-01.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-birth-cancelled-320-2x.png",
+      "sha256": "cca35a9832074e0157f19ac8ed4f8ad43e2605b6c5d13c7f0887fdf87351e991",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b9b2f5008475943070b9a76dc1d79059df928466277b0128b52c234363ee4492",
+          "review": "sheet-01.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3b0f6d35ea8f6f6174ab452e4fb919f61f478fc7003ca6e1619612fb7102d299",
+          "review": "sheet-01.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-birth-cancelled-393-1x.png",
+      "sha256": "113a4c3538a0486168414950ece51ad263b976cbf3455cb74fca76c94f9448de",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "43fac18cf135b485a393ad4ff36755a2a298dc734ecbd3a1f4a5de9887f9b538",
+          "review": "sheet-01.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "c61c855ea0f2f3a1ec3a0bf4ecf57a211d6a3afec5acdf627761c0bac4356f91",
+          "review": "sheet-01.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-birth-changed-320-2x.long.png",
+      "sha256": "3256ba8d681770afc8019e4b6ff0e87f59d5ddc2047f21fad324e52afcdb7b26",
+      "width": 320,
+      "height": 1211,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ddca839dd3a715b9c90c0d4f945cd9af3c37d4e588dd4da229bf06ca1303935d",
+          "review": "sheet-02.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1211,
+          "pixel_sha256": "64e83c1c38a7ff9828545d30d893ce24e19a24c392c39f4fb536f8d4f9c94030",
+          "review": "sheet-02.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-birth-changed-320-2x.png",
+      "sha256": "421b4ba1eee4091239a86f276e296e1af4670b794154ba58694e3bbfc3f30528",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a06ab242402fbe735338686c80bb3919a016c79e9c41993ef92a38ecbef45b6e",
+          "review": "sheet-02.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2ad0256c8be83991a1bb81b8a73a7fa0e55d0d3152a134f1592e99b724021114",
+          "review": "sheet-02.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-birth-changed-393-1x.png",
+      "sha256": "e3b1e842b178b01b68ae15db42abcc0f3f81291b16869997cfb3bc6180efb10d",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "eff3fa6c28b0bde3269a70b5bdcbe62ddf0447b6171ab91fe373b7f924b100a2",
+          "review": "sheet-02.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a19e15a753d77086d495d5299718bcd56dd74b981911554a3266279040aafe5c",
+          "review": "sheet-02.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-birth-cleared-320-2x.long.png",
+      "sha256": "0e9e99b30a52241ebe2101e2cef91d923a4803fd6086e47a0757c61356ccb3b1",
+      "width": 320,
+      "height": 1163,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "4328626ffe2093e33a3d94efe6a873f8b9276ee8b9b3e3841669dc156c7a5f04",
+          "review": "sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1163,
+          "pixel_sha256": "36b568a9c82a33b8fcc1f11a28a6560c8f91f36d86b73b12a6e67ae0a3d90bf4",
+          "review": "sheet-01.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-birth-cleared-320-2x.png",
+      "sha256": "03a7316f1a8af620762b25566c69015938d8097f53346ac16544af6abe8d60cd",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "0b6fa75974ebdbeda05d757c3fbce258d9dd603c7cf76e131e751e9a2eb71d50",
+          "review": "sheet-03.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "d12ff4bafa84e4db8c02eea5ee8584647a33a7d2dfcdb9c658e4eef027d57938",
+          "review": "sheet-03.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-birth-cleared-393-1x.png",
+      "sha256": "73ae246c0c2329aafcbf02047007a88a7cdf1c84598d8baadc8dca87eed734ce",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "80b86db8b7cb7b72824cb31edb64f6f64490635e27e0d1d779f3d13cf83f6b02",
+          "review": "sheet-03.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "c61c855ea0f2f3a1ec3a0bf4ecf57a211d6a3afec5acdf627761c0bac4356f91",
+          "review": "sheet-01.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-birth-future-rejected-320-2x.png",
+      "sha256": "b0259c6827dc22b7258557c7119c5f758afa01670838843958df002473ced9f2",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c03d5a911182471e0243f41b762f6cb06e0ee6c85b436ea639fb36a4c78c3360",
+          "review": "sheet-03.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1d61df43b86865e0c19fc7f1c4e844a495e1180a9f3db2f1bfb8965c1c9809fd",
+          "review": "sheet-03.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-birth-future-rejected-393-1x.png",
+      "sha256": "fd44a2144283a8f2b9408ad842681293fc53297f50de57537da81e8d24ccd1af",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "dc463063a41804cdccf984df53acea68571d5020aa7df5937817d0b179794c83",
+          "review": "sheet-03.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "fa826a66d542dbc34b8a018ee2bf5ce88d7effd8f142f46832f68f34afdfa5a5",
+          "review": "sheet-04.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-birth-input-393-1x.png",
+      "sha256": "9b39d9c5b570e4c05d45978e23667c4743faa927c81f7f99002b3b95ce0784d2",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "e055a2585dfe52dcc9343c6f3bb23b0e4460c786e800de0b37786d15857254da",
+          "review": "sheet-04.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "fa826a66d542dbc34b8a018ee2bf5ce88d7effd8f142f46832f68f34afdfa5a5",
+          "review": "sheet-04.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-birth-open-320-2x.png",
+      "sha256": "5e6fbf5ef17d4eaf127b5e6585fb3d132386e78fa291e23308d79faad35fbab1",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "737a347db143c3bc9508a8c5a7105647a8ceb25c9cc1d0d11b6f08bd24e7014d",
+          "review": "sheet-04.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1d61df43b86865e0c19fc7f1c4e844a495e1180a9f3db2f1bfb8965c1c9809fd",
+          "review": "sheet-03.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-birth-open-393-1x.png",
+      "sha256": "f1ed0653b8b13421004f370fb5acde08f9e73a0684ca508cebce94cc66d213a2",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "fe4095fdeb4302db23e46fb51070953c5d0695550a035673a6b45be9671af365",
+          "review": "sheet-04.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "8c6d3217a0d4246bab07f3df18f64e4d6df9aaddad8419276fe4c12cdced032c",
+          "review": "sheet-04.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-birth-restored-320-2x.long.png",
+      "sha256": "c594a05ccde747c5459b63bba6a8a82f389600c8fd24a48f3869dfa2257cf703",
+      "width": 320,
+      "height": 1211,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "5bbd909d27f33c7a352401c8fe87ef86035081fbcf6227f8199dcbba618358eb",
+          "review": "sheet-04.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1211,
+          "pixel_sha256": "64e83c1c38a7ff9828545d30d893ce24e19a24c392c39f4fb536f8d4f9c94030",
+          "review": "sheet-02.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-birth-restored-320-2x.png",
+      "sha256": "37d58a801a36a19dc79b763fcb62b846b69b4e680856ef00c9712b409120a768",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ae2368ac364877e311de510b3a3fb1fd1578e6730fa14b1ae74673b9c94146fa",
+          "review": "sheet-05.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2ad0256c8be83991a1bb81b8a73a7fa0e55d0d3152a134f1592e99b724021114",
+          "review": "sheet-02.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-birth-restored-393-1x.png",
+      "sha256": "b33a2c93a5094d9e4aff36d63ae9650d6e15bf0fba83e3838602e66381b35a82",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "bf56f9999593c88d22b77baa4f6ec3d108c2ad473bff24838cf61d5091af326f",
+          "review": "sheet-05.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a19e15a753d77086d495d5299718bcd56dd74b981911554a3266279040aafe5c",
+          "review": "sheet-02.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-editor-320-2x.long.png",
+      "sha256": "c594a05ccde747c5459b63bba6a8a82f389600c8fd24a48f3869dfa2257cf703",
+      "width": 320,
+      "height": 1211,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "5bbd909d27f33c7a352401c8fe87ef86035081fbcf6227f8199dcbba618358eb",
+          "review": "sheet-04.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1211,
+          "pixel_sha256": "64e83c1c38a7ff9828545d30d893ce24e19a24c392c39f4fb536f8d4f9c94030",
+          "review": "sheet-02.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-editor-320-2x.png",
+      "sha256": "65884c2dfaccab4c64b1a8a47d389694322e53a323dff6db43aa89ff338463f4",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "db463eaf766904283357d72165df582745c65116fe0037ccea201a2512db2ca8",
+          "review": "sheet-05.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "490f393640533246ea7a999600ce13e3e00a4ee93fb8d882e920fb30e7d8a293",
+          "review": "sheet-05.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-editor-393-1x.png",
+      "sha256": "40001d51af84665046f1fd8fa0363ed7104dcde2ed4e880ccb0bd0679cf20d81",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c1a10afec3e722277995bb640d4d8d36f4077a9d5b94ee08f033a122fdfadc63",
+          "review": "sheet-05.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a19e15a753d77086d495d5299718bcd56dd74b981911554a3266279040aafe5c",
+          "review": "sheet-02.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-feeding-breastfeeding-320-2x.long.png",
+      "sha256": "dc5ad713f474751ba648d90d6d91dbc74701935548de451cff95298d166cd439",
+      "width": 320,
+      "height": 1211,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "5bbd909d27f33c7a352401c8fe87ef86035081fbcf6227f8199dcbba618358eb",
+          "review": "sheet-04.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1211,
+          "pixel_sha256": "55cad656bc0ddc962d2c9a617210f9b8b204d0522a3805ff6360b48d373246ff",
+          "review": "sheet-05.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-feeding-breastfeeding-320-2x.png",
+      "sha256": "25f02c52cc966b21763fc1139df6b0e0c6c0fa30138519b191f7d28e040d1e92",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "f4283d14c19cfd426f6129bae70a06b527bb555947044782900aaefc8b086d03",
+          "review": "sheet-06.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "b6827e40629923a176c56621155699d25b715f283defb24cdbd972deb364a7d4",
+          "review": "sheet-06.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-feeding-breastfeeding-393-1x.png",
+      "sha256": "61761670e75bbc6004d1c5aecf73e11c4e0b4b5ecce83dd70b8789e335447a10",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "dde6f7131d4b4cc66e8fe531c57a484fc07798ba30628232128dc1baf4ef435e",
+          "review": "sheet-06.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a19e15a753d77086d495d5299718bcd56dd74b981911554a3266279040aafe5c",
+          "review": "sheet-02.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-feeding-expressedMilk-320-2x.long.png",
+      "sha256": "42ac30662584c073c2e057cae36712ed4c13cd11c39c1676939d07620b7eaa61",
+      "width": 320,
+      "height": 1211,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "5bbd909d27f33c7a352401c8fe87ef86035081fbcf6227f8199dcbba618358eb",
+          "review": "sheet-04.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1211,
+          "pixel_sha256": "77e253f873da3e4ad2537af41facb04d6ce782427270d21521e00f1a536d0999",
+          "review": "sheet-06.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-feeding-expressedMilk-320-2x.png",
+      "sha256": "995efcf720bd180c742920f5d3a06da8cb14c93ab5221612b3fdb3f2edf01a5a",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a88124ddc209e0f165324f1a905226f253c083ae5ef2b35d3b3026cbbbd0a997",
+          "review": "sheet-06.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "b6827e40629923a176c56621155699d25b715f283defb24cdbd972deb364a7d4",
+          "review": "sheet-06.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-feeding-expressedMilk-393-1x.png",
+      "sha256": "26656abc13e4a0ffdeb9887c2f05342269a579cb4c28f966f1d07ec1139676ee",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "3c46cb7b711e9352b13aaa0990483d156f20e963a68408f1bd96325c6d0f6123",
+          "review": "sheet-06.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a19e15a753d77086d495d5299718bcd56dd74b981911554a3266279040aafe5c",
+          "review": "sheet-02.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-feeding-formula-320-2x.long.png",
+      "sha256": "de1ccc0a187e516bc25ab1b44c50a37586855d77f1cfa7f2af6e9349db5d0b6c",
+      "width": 320,
+      "height": 1211,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "5bbd909d27f33c7a352401c8fe87ef86035081fbcf6227f8199dcbba618358eb",
+          "review": "sheet-04.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1211,
+          "pixel_sha256": "2f4f87da8a4a74b8a2edc5e48a593be6e969063316c5dedef8c0902649ae127d",
+          "review": "sheet-07.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-feeding-formula-320-2x.png",
+      "sha256": "390d716997c7f4dc091150b3a60193eaa396851232d3184980292d62fb6ae9f3",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "d39a28181f2c3c840d351c8a0427de16fe480b0cb7a0c7741d60720dffc9b3d2",
+          "review": "sheet-07.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "b6827e40629923a176c56621155699d25b715f283defb24cdbd972deb364a7d4",
+          "review": "sheet-06.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-feeding-formula-393-1x.png",
+      "sha256": "b311dc2ff6bc0dd80f632dc7e9b8b7b40fa0e33971c8e899e5ea9d99ac0c1d8b",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2798454b2d78219dcbf6b17801cbdff5cb1cca85724e48b29f9199e92ce361c4",
+          "review": "sheet-07.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a19e15a753d77086d495d5299718bcd56dd74b981911554a3266279040aafe5c",
+          "review": "sheet-02.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-feeding-menu-breastfeeding-320-2x.png",
+      "sha256": "96b5bebb3b6266c820dfda468aae52c5e4b4d95ce2be6d5cb489934c4f83dec4",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "477ad96de87a32c34692b89e0a6b233d0b04b9006ea55d38fccd59957b50b350",
+          "review": "sheet-07.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "b6827e40629923a176c56621155699d25b715f283defb24cdbd972deb364a7d4",
+          "review": "sheet-06.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-feeding-menu-breastfeeding-393-1x.png",
+      "sha256": "1f035aa32878c354d50ee015aec96f47225e2a4de7e62b3f990c6c54f9b624d5",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "99f84b24c9c2d10a78394b6a381742b871dbdfd525a9cf9965c397cb00e1c07e",
+          "review": "sheet-07.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a19e15a753d77086d495d5299718bcd56dd74b981911554a3266279040aafe5c",
+          "review": "sheet-02.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-feeding-menu-expressedMilk-320-2x.png",
+      "sha256": "21c683e7b9062e91bb8ebe1a4cd08bc813448ac872ffe20d21a43d8bc0d59331",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c236b4d63085b0dbdc645dfb29d57d185cbc911906f37cd6fb9bfcc5f7c3eb1b",
+          "review": "sheet-07.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "50afaeaebe5c0bdae4baf400be92ccee903eec300709fd276f1d6856691b6322",
+          "review": "sheet-08.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-feeding-menu-expressedMilk-393-1x.png",
+      "sha256": "c7566387b0c0841fb101e14b077c2975c8c629c2fa8b65dee531d9074713c498",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "637e0fbf3f277dd65e2647ab86959484eef3ae30f69bf0202154106e2433439e",
+          "review": "sheet-08.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "eba4e578930516da8269948b43218430c974cde3198ab04b895da1aa05514d92",
+          "review": "sheet-08.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-feeding-menu-formula-320-2x.png",
+      "sha256": "780cfc51165aad3e51dbe1ed5c0bad288b7640232dc0d99e4379e91c82c21cc8",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "f9d1943b7bec7ce525f79a6790fabfc5d967482ae157abecf9002b60e9889ddf",
+          "review": "sheet-08.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "aa9391a724fea112fe9db289134bb8da3e4435a0722b889721e20a6d7481e27c",
+          "review": "sheet-08.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-feeding-menu-formula-393-1x.png",
+      "sha256": "7ee4d79229e6cb372cc334e623c5a3b6d16012b94c93a37febbddf4bc2632ef8",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "07af242a7aefed306b7fdd3e07a56a37881baa2eba8b126ce0a0407f1ba1dbaa",
+          "review": "sheet-08.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "7a95d7c0aecd683d7fb6d1b488f536cf5e1027c9a08ad1f535ffd5142d8fe86d",
+          "review": "sheet-09.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-feeding-menu-mixed-320-2x.png",
+      "sha256": "d193b12338fa9e461a36eca6e0d0e8d18593a26c54cda54fa274d11d702b7224",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9be4ce8f707607e8849be3113ad5400046ccf13694d98c6ae731c670dbc928a5",
+          "review": "sheet-09.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "0f08bcf64e159f9f5d9e88003516e65b3152f3d5c7452dc5ca4711d269735451",
+          "review": "sheet-09.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-feeding-menu-mixed-393-1x.png",
+      "sha256": "bae21a0c97d440268edb6f5e9b484cd676f4d2601d3919c6d42660ff56b6c4c2",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "d86d4a3e65e9e50395a0343b81f0dfc8cbe4aa39939213ead424493826f51554",
+          "review": "sheet-09.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "e124e8fc8baacbed059086bf603319eb7b043d0120d6486048188ced549004b8",
+          "review": "sheet-09.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-feeding-menu-unknown-320-2x.png",
+      "sha256": "dd69c12f2bd6e2cd914c1839c34c2ab37f396c8d13b025f9669a0f36df222bc7",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "607db8d908e37948b8bb1551de18006af26c0fe3bcaefd4146d89b3c2e66b5ee",
+          "review": "sheet-09.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "b6827e40629923a176c56621155699d25b715f283defb24cdbd972deb364a7d4",
+          "review": "sheet-06.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-feeding-menu-unknown-393-1x.png",
+      "sha256": "20e4dc4c7a2291c3448036173c2a780386aa6491d7c0a0eab04981bae63eb3b3",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "5b091d4c419c776a3b1ff67575977d1b688cde42fecd774db7195fd700c5508b",
+          "review": "sheet-10.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "48710423c7228179ebe9056d3e1afbbe902ebd6275505898a62a50529e223912",
+          "review": "sheet-10.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-feeding-mixed-320-2x.long.png",
+      "sha256": "1e17e44b3297b6aba088ff52bc856bef9a1ea48dabcd875cfed1280f1aa2a410",
+      "width": 320,
+      "height": 1211,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "5bbd909d27f33c7a352401c8fe87ef86035081fbcf6227f8199dcbba618358eb",
+          "review": "sheet-04.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1211,
+          "pixel_sha256": "8a7c599e683925b48bf2474f45cfc3f3e70db097d168c62bfa83e9d5e05eba90",
+          "review": "sheet-10.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-feeding-mixed-320-2x.png",
+      "sha256": "b59e310eb4ed031ad0e29c687207cbcf498818c8bb241f9db08bd34977893c63",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ab7ce88286b5a841eeeb025495d6e66935c515f0d6501ffde7b08135a4eef2ea",
+          "review": "sheet-10.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "b6827e40629923a176c56621155699d25b715f283defb24cdbd972deb364a7d4",
+          "review": "sheet-06.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-feeding-mixed-393-1x.png",
+      "sha256": "573ed763dc4959cb38d5a6cdf582e46d105bb96a6a86f329b66a7cc510aca70e",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c8964322bef0d510e7ef93d68813269eed6c812982635009a268f3819ca67729",
+          "review": "sheet-10.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a19e15a753d77086d495d5299718bcd56dd74b981911554a3266279040aafe5c",
+          "review": "sheet-02.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-feeding-unknown-320-2x.long.png",
+      "sha256": "c594a05ccde747c5459b63bba6a8a82f389600c8fd24a48f3869dfa2257cf703",
+      "width": 320,
+      "height": 1211,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "5bbd909d27f33c7a352401c8fe87ef86035081fbcf6227f8199dcbba618358eb",
+          "review": "sheet-04.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1211,
+          "pixel_sha256": "64e83c1c38a7ff9828545d30d893ce24e19a24c392c39f4fb536f8d4f9c94030",
+          "review": "sheet-02.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-feeding-unknown-320-2x.png",
+      "sha256": "eb10a53c982fd9c185fe99662c31f8b454f8abc9835ddf28104ef147c0a05c7a",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9886222088235b4f9972fc6f111c98a1939780db8b2ff05706b5fce865375b25",
+          "review": "sheet-10.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "b6827e40629923a176c56621155699d25b715f283defb24cdbd972deb364a7d4",
+          "review": "sheet-06.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-feeding-unknown-393-1x.png",
+      "sha256": "40001d51af84665046f1fd8fa0363ed7104dcde2ed4e880ccb0bd0679cf20d81",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c1a10afec3e722277995bb640d4d8d36f4077a9d5b94ee08f033a122fdfadc63",
+          "review": "sheet-05.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a19e15a753d77086d495d5299718bcd56dd74b981911554a3266279040aafe5c",
+          "review": "sheet-02.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-home-entry-320-2x.long.png",
+      "sha256": "2a7eed3eaa881740523730a74f99487a3935cee5f5e500fdea7e513a60082fc7",
+      "width": 320,
+      "height": 3460,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "58578630282c08ed070b330c5092b2346554d47e291ecce03bfa1790d2ebdd62",
+          "review": "sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "034c398b12fe2df5aaef1e8fd2e151d4092f4bc550a8179f7524acfdf8572a5d",
+          "review": "sheet-11.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "fa27bf1b8f7135cf78bb1380036cbe25b805799678f9c6338d1b09862168215b",
+          "review": "sheet-11.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "cf7b9827ee12ea5f4ce473b5b04736e9eca7e63163a06350e8ad0569b0e9a58a",
+          "review": "sheet-11.png#tile-3"
+        },
+        {
+          "y0": 2600,
+          "y1": 3250,
+          "pixel_sha256": "830120be56be43c6e4e4a7527c94577138b4175b12f8b7b606a89d5ff059987b",
+          "review": "sheet-11.png#tile-4"
+        },
+        {
+          "y0": 3250,
+          "y1": 3460,
+          "pixel_sha256": "347ac7ec17d5bdaf8c362c53e6be84275398444203824d119dff6d55c72c68e4",
+          "review": "sheet-11.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-home-entry-320-2x.png",
+      "sha256": "32e02297eb960cf9da693d3ed9a4e380131ba98e63d64680e1c452112635af75",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "58578630282c08ed070b330c5092b2346554d47e291ecce03bfa1790d2ebdd62",
+          "review": "sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "98ef9a2ad09f8a3c8229ac286c7eb3cb28273ffd01708531c25ae3c0ce531fd2",
+          "review": "sheet-12.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-home-entry-393-1x.long.png",
+      "sha256": "f0cba396e8a9efa775fb9fbb71adccd863e4ce8dace888759be74db253f099a6",
+      "width": 393,
+      "height": 1752,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2541e10f43029eb71329290bf405fa83fabe418cf9eb6676ed4e3eb8498f6856",
+          "review": "sheet-12.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "462243825730002d5a7b26fe7e1bbdb2f381ea57afabfc7a0cad762ed9541c1e",
+          "review": "sheet-12.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1752,
+          "pixel_sha256": "5d1142fe86ef6e5a8664871afce9928bf15cf58f7b773ac5f1080f1b7fead23c",
+          "review": "sheet-12.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-home-entry-393-1x.png",
+      "sha256": "f7c02c89b1acb7e0cd4ab4adc0593819b05f05ed599398d49ea569c924ea6a82",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2541e10f43029eb71329290bf405fa83fabe418cf9eb6676ed4e3eb8498f6856",
+          "review": "sheet-12.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a1f9a5a5f828e0a335129ce0d0a8a7cf54c1ab1e6b87423f882a64c1946d8f9e",
+          "review": "sheet-12.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-knowledge-agent-prefill-320-2x.long.png",
+      "sha256": "6baff5d2c2c9e22d069baa4ea1c1bdde83c9c24fdd988473719a681800855d60",
+      "width": 320,
+      "height": 1191,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "7066c47e9a7cf9c316a46eec59ef20b8fcce98dc03615ba06b718d1c7fbe452b",
+          "review": "sheet-12.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1191,
+          "pixel_sha256": "df421a6c12c812cdd0d9a910d7c7b3093c4bde7372d654eee59c7305f4ccfd88",
+          "review": "sheet-13.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-knowledge-agent-prefill-320-2x.png",
+      "sha256": "44629955e735856935ab23470c33fbb29652fd2cd79eda18306f2c6fab4dd289",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "40abb7c04226159722f2ed524689c300dce2dfbe337350c342b2d42c5496611f",
+          "review": "sheet-13.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "6c7cf4ffba1361cf3df46dfbcd4b3abf8e120138e1a4152331543518576f7085",
+          "review": "sheet-13.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-knowledge-agent-prefill-393-1x.png",
+      "sha256": "7cac3b4bd02a09a0487903a234526b619e7c24f849854c264162d02abef04a2d",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "061c56bac6c7f5e5495e142d3f1b3e365c3c562aa59f82be41afc0dee4810f3a",
+          "review": "sheet-13.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "d2c83cb4042040ac03a19721f8b37f1a24a1dc4760e44fb21725c6e5f1febffb",
+          "review": "sheet-13.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-knowledge-baby-return-320-2x.long.png",
+      "sha256": "e031d72d13a7b655aefe25d1638c1fdda541be47c3efe63b1538920c45feb1e0",
+      "width": 320,
+      "height": 3587,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "10cad33f9990ea3b95da4de7c17a8dadb2048395dfe6207763897385d85436e9",
+          "review": "sheet-13.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "590bb59568a981747acbef6f4d44cbb0293770355d588566b23904de29143fc4",
+          "review": "sheet-14.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "3b2450d5097ebaf3b41df404f58990ca7b5de99bb7f251d7789ed9479548168c",
+          "review": "sheet-14.png#tile-1"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "3d2d8634b6b8b6c92f1c928cd482c17f3bd2e6837f1c97fb9a6161f14964fc64",
+          "review": "sheet-14.png#tile-2"
+        },
+        {
+          "y0": 2600,
+          "y1": 3250,
+          "pixel_sha256": "239b7cd18fed534883fe96663829eba26572c1557fb611e14e72d44cfd510b45",
+          "review": "sheet-14.png#tile-3"
+        },
+        {
+          "y0": 3250,
+          "y1": 3587,
+          "pixel_sha256": "6dbe9b72c561a26315d31380e6cc9c656f024aa7cc06e0b1c94dd20505b691a9",
+          "review": "sheet-14.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-knowledge-baby-return-320-2x.png",
+      "sha256": "1b68b03595e529ae3caf3d5ee4ac212c41c8abb3ec7a9dd3cac68722cf148dff",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "10cad33f9990ea3b95da4de7c17a8dadb2048395dfe6207763897385d85436e9",
+          "review": "sheet-13.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "983262d9a1458bdb880c79547c3978d88c8928205733a33030fa2104aa744c9c",
+          "review": "sheet-14.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-knowledge-baby-return-393-1x.long.png",
+      "sha256": "9cfb484611aff2bc88e0a67d88b380fc51ef20e1cf60ff4bc6e571006bd87c28",
+      "width": 393,
+      "height": 1752,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b6722a4402f2f6f616b5a13dd0a4bbc2e2f16ab5a7bb4368656a0aa303e8cd70",
+          "review": "sheet-15.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "ef248692f57a122b23ddbd430f59ff358e2a86522ef6f7e8eb772c5d655a5ecc",
+          "review": "sheet-15.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1752,
+          "pixel_sha256": "5d1142fe86ef6e5a8664871afce9928bf15cf58f7b773ac5f1080f1b7fead23c",
+          "review": "sheet-12.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-knowledge-baby-return-393-1x.png",
+      "sha256": "34009b2001ec79ba8c4c01d5f5c274feb17466c4182db855fc7e4f7b771ab4ea",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b6722a4402f2f6f616b5a13dd0a4bbc2e2f16ab5a7bb4368656a0aa303e8cd70",
+          "review": "sheet-15.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a1f9a5a5f828e0a335129ce0d0a8a7cf54c1ab1e6b87423f882a64c1946d8f9e",
+          "review": "sheet-12.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-knowledge-detail-320-2x.long.png",
+      "sha256": "146f65efcf91ca07b7ba4ddef66e1ee022daba2862a8bd58b90949b896b9c390",
+      "width": 320,
+      "height": 1821,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "eabbe0a118f581a24bbcf5a39bafb272b3428b138366f2ffaf8c43c9b370cc73",
+          "review": "sheet-15.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "50ea682bdc70dda75ce470f31ff6ff09f894a6b30c6dfd999d2e3b0ccb988825",
+          "review": "sheet-15.png#tile-3"
+        },
+        {
+          "y0": 1300,
+          "y1": 1821,
+          "pixel_sha256": "4843ab8135ae4cca3bc87d2b28aa7dacb4365dd8a6d31a7d1d856fb3daef5ecb",
+          "review": "sheet-15.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-knowledge-detail-320-2x.png",
+      "sha256": "bec9446ceefe75747941965ee8cddce9a7aac327bcd6bfa71996491ec21c67cb",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2e2b1d69ab31a4f859c35d16cd1a0e554424a1d79f10fdd13e12ed77ee78aef9",
+          "review": "sheet-15.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "313b943dad4e6c4f3ac76dba95dced31da14f0724114384fd97be929e17e10cf",
+          "review": "sheet-16.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-knowledge-detail-393-1x.png",
+      "sha256": "3daeffc4eb404facaded455cd120cc02491048eef78cc58613cc09d053271946",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "4c670d430688d48339975d2d6d3e5db53c75fa11dde0042e7b838a9c2c42213b",
+          "review": "sheet-16.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "68ccabaef9183a4ec98b30161e9b537ea28d37ae4096f223eae2c6f96b137d6a",
+          "review": "sheet-16.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-missing-birth-picker-320-2x.png",
+      "sha256": "9d60a16c2cc0be8c85fc6129e18d564ddc1ff6875b66813dc2ea26e3810cdd27",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "94027b90ff500332581f317e19e4893dca6f2a215234d76ff522cb476ef8ce5f",
+          "review": "sheet-16.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "0207ca8ed9aa256235f1f9daea91db4d1724855b4755174de98c65c6a6c21ae9",
+          "review": "sheet-16.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-missing-birth-picker-393-1x.png",
+      "sha256": "36eb58eee239ae98acfc1cae4a0a0f989ccecc871c0d160faa9dddffffdf253c",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "bbf50d15e6d9288d6567c153b88a897b13ddfe0a544efae9226617be246ed8a0",
+          "review": "sheet-16.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "9b89dbc420f804ab4ace977653c291673c326bcf4fddeb2dae12a1ab6fd9b3ff",
+          "review": "sheet-17.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-missing-birth-reopened-320-2x.long.png",
+      "sha256": "0e9e99b30a52241ebe2101e2cef91d923a4803fd6086e47a0757c61356ccb3b1",
+      "width": 320,
+      "height": 1163,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "4328626ffe2093e33a3d94efe6a873f8b9276ee8b9b3e3841669dc156c7a5f04",
+          "review": "sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1163,
+          "pixel_sha256": "36b568a9c82a33b8fcc1f11a28a6560c8f91f36d86b73b12a6e67ae0a3d90bf4",
+          "review": "sheet-01.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-missing-birth-reopened-320-2x.png",
+      "sha256": "5be6028ed7e70650a51a36c7734ea7d4fc4ec45664870e94c6ffd2b9aee6951d",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "cad69d28335a481306ccc9a605c1529234cd46bbda984ef059d6437d77a741df",
+          "review": "sheet-17.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "7b6d5f6954b64dccafe0f7dac70bcce090e89bc13b2cae89eaa4d1bc8af3d171",
+          "review": "sheet-17.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-missing-birth-reopened-393-1x.png",
+      "sha256": "113a4c3538a0486168414950ece51ad263b976cbf3455cb74fca76c94f9448de",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "43fac18cf135b485a393ad4ff36755a2a298dc734ecbd3a1f4a5de9887f9b538",
+          "review": "sheet-01.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "c61c855ea0f2f3a1ec3a0bf4ecf57a211d6a3afec5acdf627761c0bac4356f91",
+          "review": "sheet-01.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-missing-birth-saved-320-2x.long.png",
+      "sha256": "c149077d243639d428fe4b2729288db3a4b49109e79b1a11f79d707af2d83166",
+      "width": 320,
+      "height": 3153,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6831ff757ee72a60fb1b6f948fcc146c11f7129f0d2aca69709329b46555ea49",
+          "review": "sheet-17.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "034c398b12fe2df5aaef1e8fd2e151d4092f4bc550a8179f7524acfdf8572a5d",
+          "review": "sheet-11.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "fa27bf1b8f7135cf78bb1380036cbe25b805799678f9c6338d1b09862168215b",
+          "review": "sheet-11.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "a32f7ba6781d25391eb637317ab409c5fed06964045dbfcbc4c573cfa06dccd3",
+          "review": "sheet-17.png#tile-4"
+        },
+        {
+          "y0": 2600,
+          "y1": 3153,
+          "pixel_sha256": "09a0b2def479e155792c991c1263904973266de8d60406d0e7d3e11824f95dd0",
+          "review": "sheet-17.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-missing-birth-saved-320-2x.png",
+      "sha256": "5207e6a278bb23993b2c05c3d753e6561ee7504346f728fc1a636afaec9d0eb5",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "460cf70aba02781f615d89ecadbb64f18f3cc4f8010d3631518207556bbe3228",
+          "review": "sheet-18.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "e19cd0df32287c1f89f9c99c7ba781a548f86ead97402b2541ef79e2170df2fb",
+          "review": "sheet-18.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-missing-birth-saved-393-1x.long.png",
+      "sha256": "cc2db515985244cd4e9695b6bec680cde61afe5a7186c9009ab9b737ccf751b4",
+      "width": 393,
+      "height": 1647,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "0288f7cb303a993777f757252f4d50e3be457b332dec32d72c2db9a87f6fba2f",
+          "review": "sheet-18.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "21cb368fa28a374bec1718e6c7a9acfe2e540cb7efc396082091777c405fb7ed",
+          "review": "sheet-18.png#tile-3"
+        },
+        {
+          "y0": 1300,
+          "y1": 1647,
+          "pixel_sha256": "08cee1eacf6bcb7a3fc6c6d82942471536c8d63c861df009c860f8a8454f8ca0",
+          "review": "sheet-18.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-missing-birth-saved-393-1x.png",
+      "sha256": "fa13eb54ec66c718f6ee753edec62e79dfe3cf1b67d69958183140de59a644b6",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "34eb2779043f4a344d9294a0037071cd48fabf9fd37a69e84166e4c7488eaa79",
+          "review": "sheet-18.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "d9caabe75f93d41f3dc6e27cf23b56267bc9eb8660d89ffb64886347c45dbb5f",
+          "review": "sheet-19.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-more-return-320-2x.png",
+      "sha256": "90ff3249f64fc7750a5da2a6bac0e2e90a64014893d9e85c3df4c76dbe8dea38",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "7925ed8e5939f589376b72745969839e14c7fb166cfb48866eed469fa66c4d02",
+          "review": "sheet-19.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "f95aac7cc67095efb73a4ae0b9ee5dc9518b86f20195158e860fce9621ec483a",
+          "review": "../mom-rest-control-visual-review/sheet-19.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-more-return-393-1x.png",
+      "sha256": "1905827f337ce2fe60b46266600cce9aa8dea3b9aac6828fb6a1d3f67f020b35",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c8e12900bddbe318fd8d03ad9b384466fc1af1f6c371f72f999f20bc96cac1d6",
+          "review": "sheet-19.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "ae62a60cadfc8bfb09e3e94acb0dc8f7d481c4c260eae5960e33ebdc5f0799db",
+          "review": "../mom-rest-control-visual-review/sheet-20.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-name-corrected-320-2x.long.png",
+      "sha256": "cd4d205ccae68056e56918c478882a84ff01d15c787eb9f1d808224a417962ef",
+      "width": 320,
+      "height": 1211,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "656540fe2233bd90a5054de8baf2b719d15780d09fb5213f293315af0be95ecf",
+          "review": "sheet-19.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1211,
+          "pixel_sha256": "64e83c1c38a7ff9828545d30d893ce24e19a24c392c39f4fb536f8d4f9c94030",
+          "review": "sheet-02.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-name-corrected-320-2x.png",
+      "sha256": "d6beb8c669a54e3ff20bd30e0464bede38bc3cc674ea069324a9c032d22d0457",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "48b68aee77f973cac56a790491807cc8d638631419ec189fedcde530d08fb09a",
+          "review": "sheet-19.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3fadbfc6521738e0c2b1a72eacb242b8a0fcc7d9218adfea171d996db64707ea",
+          "review": "sheet-19.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-name-corrected-393-1x.png",
+      "sha256": "50c11a03c712a358c3a060258ce618f326c4b7fe6b514012558360fcc67e1f4a",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "f48e57ca09d093774949d5f11c4557d290dc78296b02696e3e19f7c5a5426b77",
+          "review": "sheet-20.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a19e15a753d77086d495d5299718bcd56dd74b981911554a3266279040aafe5c",
+          "review": "sheet-02.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-name-empty-validation-320-2x.long.png",
+      "sha256": "41f3a38981d16be9f7115666603151fe12aded4a3d6aaf16210af9b8edf2bde9",
+      "width": 320,
+      "height": 1263,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "f6513e73ebde2cbf8a83fc1e57744dac45faa90863429c153cc97c0ea85bbd65",
+          "review": "sheet-20.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1263,
+          "pixel_sha256": "8b8f43c3d83164a0b5379305288a5f8436ec092a200be71487e55d67294ef827",
+          "review": "sheet-20.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-name-empty-validation-320-2x.png",
+      "sha256": "30f175663bce62320a2b5e3a8778e103a41244ef2ef989ca5df6396c23481fba",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "0e2de5d6ecb79668715049ba0f0a1f67b71a7acfb03600fd760c864a86522221",
+          "review": "sheet-20.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a4f833e2a7d27f833a0eeb0d899a6ba8cf97f18696015f7cd5f237f061a1f033",
+          "review": "sheet-20.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-name-empty-validation-393-1x.png",
+      "sha256": "2ddc0fa9f940c1012448984d0173cd440530a33bc089ea68f948cc06e58ad13c",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "1ac6b531a3755662aabdedced1d60a240610f931eff8b19deaa025dc3c5d29ba",
+          "review": "sheet-20.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "5b015ef81b76278c1a16535f0e98dd14ea7cb38904f88b5cece28e2d87d958c8",
+          "review": "sheet-21.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-retry-saved-320-2x.long.png",
+      "sha256": "e031d72d13a7b655aefe25d1638c1fdda541be47c3efe63b1538920c45feb1e0",
+      "width": 320,
+      "height": 3587,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "10cad33f9990ea3b95da4de7c17a8dadb2048395dfe6207763897385d85436e9",
+          "review": "sheet-13.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "590bb59568a981747acbef6f4d44cbb0293770355d588566b23904de29143fc4",
+          "review": "sheet-14.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "3b2450d5097ebaf3b41df404f58990ca7b5de99bb7f251d7789ed9479548168c",
+          "review": "sheet-14.png#tile-1"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "3d2d8634b6b8b6c92f1c928cd482c17f3bd2e6837f1c97fb9a6161f14964fc64",
+          "review": "sheet-14.png#tile-2"
+        },
+        {
+          "y0": 2600,
+          "y1": 3250,
+          "pixel_sha256": "239b7cd18fed534883fe96663829eba26572c1557fb611e14e72d44cfd510b45",
+          "review": "sheet-14.png#tile-3"
+        },
+        {
+          "y0": 3250,
+          "y1": 3587,
+          "pixel_sha256": "6dbe9b72c561a26315d31380e6cc9c656f024aa7cc06e0b1c94dd20505b691a9",
+          "review": "sheet-14.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-retry-saved-320-2x.png",
+      "sha256": "fe532bf85176932057218380eed3f1966b6b3adb6fc230c9556a1449c20032ce",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "7310bb5fceedea947a883f8b86b4f06cd89dc9d847a0930ab70eceb8c656978a",
+          "review": "sheet-21.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2a1d7922b8f5ef7631387079d1deaa275a77483bba49513ff048de40f447569b",
+          "review": "sheet-21.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-retry-saved-393-1x.long.png",
+      "sha256": "9cfb484611aff2bc88e0a67d88b380fc51ef20e1cf60ff4bc6e571006bd87c28",
+      "width": 393,
+      "height": 1752,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b6722a4402f2f6f616b5a13dd0a4bbc2e2f16ab5a7bb4368656a0aa303e8cd70",
+          "review": "sheet-15.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "ef248692f57a122b23ddbd430f59ff358e2a86522ef6f7e8eb772c5d655a5ecc",
+          "review": "sheet-15.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1752,
+          "pixel_sha256": "5d1142fe86ef6e5a8664871afce9928bf15cf58f7b773ac5f1080f1b7fead23c",
+          "review": "sheet-12.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-retry-saved-393-1x.png",
+      "sha256": "d5ff57fd6ea78986be3b0ff1824b4a77f21c3ab15ca9fd82c014fa606460ec92",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "f9ae0e16b316e18557c2095bce7d00936815233419ecdc882dad09bee48d6921",
+          "review": "sheet-21.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "d9caabe75f93d41f3dc6e27cf23b56267bc9eb8660d89ffb64886347c45dbb5f",
+          "review": "sheet-19.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-save-unconfirmed-320-2x.long.png",
+      "sha256": "c0bf607e8116bc1fbe78888033d08d47b73d19076b5788c12d6df4ec3346bc21",
+      "width": 320,
+      "height": 1547,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ee234dbab5728242030b7d052c60e73c3314bb5ab6e14f830e443f3f0b6a88ce",
+          "review": "sheet-21.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "4e81e50e5c1ded8e0f4b00b28823a6060a6ab0343c2c4f5e3b78fdb1df2638f6",
+          "review": "sheet-21.png#tile-5"
+        },
+        {
+          "y0": 1300,
+          "y1": 1547,
+          "pixel_sha256": "dd6125cd6efea4ac199fd5966360b7fdb66e1f0415b6ef3499bc998d12eb763f",
+          "review": "sheet-22.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-save-unconfirmed-320-2x.png",
+      "sha256": "e738dfe0bfe1f85f756ae6f9b338229d5ffde97c0f1dff649f5844661532c6ba",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "12f7ec846ab35e9ea4c4919d5fe1600ae5fb9a526fef880ecb3bcc15f5106bf2",
+          "review": "sheet-22.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a0e8c62e0fef6736c98ef283943f0169c7f2b0ff97ba6107369fce93f7ec756d",
+          "review": "sheet-22.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-save-unconfirmed-393-1x.long.png",
+      "sha256": "23487ade6564ded1c33f4361f371faf3e2b6951ac80c579b181346cd60b7448c",
+      "width": 393,
+      "height": 893,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9a3611704b912165653754202f5570e8d34638a370465ef978f0617f01bd2e50",
+          "review": "sheet-22.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 893,
+          "pixel_sha256": "47212b58f32155ddbbfba5271ab5946a62d90db9e7a097c05e0d8a2fb64299e3",
+          "review": "sheet-22.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-save-unconfirmed-393-1x.png",
+      "sha256": "50621e3fe38fcaffc9ab1a4af78eff4d989c18c9618e8c3499d6ca8943b1aaf4",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "d290208981c33aabe84fc08f074da7f484635682cc116d9067c6e1fa7138767d",
+          "review": "sheet-22.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "006a8abdfa70fb65046945be4b6f4ac55ad6c96f58876a002ad29823c6004895",
+          "review": "sheet-23.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-saved-reopened-320-2x.long.png",
+      "sha256": "4e444ed16cdbd54ef03e5bb966f84abc5c13ac2a21bd27c7457aadd3d1fcc7ca",
+      "width": 320,
+      "height": 1269,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "72d76efa54fbac4c6cfd7e281386c07b6e908013be9a6d81225f95128c98a45f",
+          "review": "sheet-23.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1269,
+          "pixel_sha256": "e2ebc3193de462ad94f56af3b38b065223eade1e3102105ecc74b7be39573e61",
+          "review": "sheet-23.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-saved-reopened-320-2x.png",
+      "sha256": "cc26d7475aedec81cecc8e1a442a32829deabe9046aa8406c53b601fdcfad663",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "77b37bd7a8195fcd8700a2c34fd4bd4497742c3c48b285a6d49c2b832213f385",
+          "review": "sheet-23.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "ddaa31e85c88d82e52e0d878ff86ee8f175246acd01d6d2211eb43e2d5758cd5",
+          "review": "sheet-23.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-saved-reopened-393-1x.png",
+      "sha256": "ddb5d5ad69ee3b3a976c712e6fcab0b1a72983fef1e1d558a94b200a0c58afdf",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "04f4d3c6e6b29e95500009c769e892e65c8d81766ae4be702b7150ef6c9d22de",
+          "review": "sheet-23.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a19e15a753d77086d495d5299718bcd56dd74b981911554a3266279040aafe5c",
+          "review": "sheet-02.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-sex-female-320-2x.long.png",
+      "sha256": "c594a05ccde747c5459b63bba6a8a82f389600c8fd24a48f3869dfa2257cf703",
+      "width": 320,
+      "height": 1211,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "5bbd909d27f33c7a352401c8fe87ef86035081fbcf6227f8199dcbba618358eb",
+          "review": "sheet-04.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1211,
+          "pixel_sha256": "64e83c1c38a7ff9828545d30d893ce24e19a24c392c39f4fb536f8d4f9c94030",
+          "review": "sheet-02.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-sex-female-320-2x.png",
+      "sha256": "eb10a53c982fd9c185fe99662c31f8b454f8abc9835ddf28104ef147c0a05c7a",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9886222088235b4f9972fc6f111c98a1939780db8b2ff05706b5fce865375b25",
+          "review": "sheet-10.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "b6827e40629923a176c56621155699d25b715f283defb24cdbd972deb364a7d4",
+          "review": "sheet-06.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-sex-female-393-1x.png",
+      "sha256": "40001d51af84665046f1fd8fa0363ed7104dcde2ed4e880ccb0bd0679cf20d81",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c1a10afec3e722277995bb640d4d8d36f4077a9d5b94ee08f033a122fdfadc63",
+          "review": "sheet-05.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a19e15a753d77086d495d5299718bcd56dd74b981911554a3266279040aafe5c",
+          "review": "sheet-02.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-sex-male-320-2x.long.png",
+      "sha256": "1b35354978adc113fa8b3dc3b76c22436289a66ef063b282a2110d25ed7031b0",
+      "width": 320,
+      "height": 1211,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "5bbd909d27f33c7a352401c8fe87ef86035081fbcf6227f8199dcbba618358eb",
+          "review": "sheet-04.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1211,
+          "pixel_sha256": "0e52e6066201d21567dc40d4ba9bc8d776dce7c6a3bdd331fe4f38d68c1b82a3",
+          "review": "sheet-24.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-sex-male-320-2x.png",
+      "sha256": "e1a2dbb9190a7ccef8d33cd0e680909c7f36955fdbca279a02100f5b828541ff",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "57e43e212903958cfca653e97f146d070883c7ec17df4b75f2f2df4f57e4f636",
+          "review": "sheet-24.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "b6827e40629923a176c56621155699d25b715f283defb24cdbd972deb364a7d4",
+          "review": "sheet-06.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-sex-male-393-1x.png",
+      "sha256": "8afc2b314ccbbc5acccf874242ef7211a9ec1a775df73d61d35ace3bc259801f",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "7220d3743a130821e084834d3fe0673ea9616211863551c9ea1a16b153b9f8b7",
+          "review": "sheet-24.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a19e15a753d77086d495d5299718bcd56dd74b981911554a3266279040aafe5c",
+          "review": "sheet-02.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-sex-unspecified-320-2x.long.png",
+      "sha256": "c7d213cdda99887758ab980c768be90175007b2b45f7e4311967e7675d85dc7e",
+      "width": 320,
+      "height": 1211,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "5bbd909d27f33c7a352401c8fe87ef86035081fbcf6227f8199dcbba618358eb",
+          "review": "sheet-04.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1211,
+          "pixel_sha256": "d790c249f0d0ea953e25f634c39314c24c7ea976c6be073c5272350fb2d5aa2e",
+          "review": "sheet-24.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-sex-unspecified-320-2x.png",
+      "sha256": "3cd67886c4ce356f543da276a7aac07123a281e72623719c4f24e7f50181133b",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "423245199925ee1d6681ec14337ffe20a18eb8254ba1470e27279771467d9f5a",
+          "review": "sheet-24.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "b6827e40629923a176c56621155699d25b715f283defb24cdbd972deb364a7d4",
+          "review": "sheet-06.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-sex-unspecified-393-1x.png",
+      "sha256": "1bc6291def95d78a3bf6f1ec7bce5ad8d46f57a234a33f155e5ae9332c0123f1",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "bbdd743fa1a36a5d24b21c9ebc30dfc4e0eee65a89c6de3dd6bdb6c5b16077de",
+          "review": "sheet-24.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a19e15a753d77086d495d5299718bcd56dd74b981911554a3266279040aafe5c",
+          "review": "sheet-02.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-uncertain-leave-confirm-320-2x.png",
+      "sha256": "9b352aabfc3bce04b5000f43751db89aa87f5f29ceb5496873aee5aa7cea90f2",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "bd7a29d231d670cbd17867daa085ce09292a4913388df763cb98045e1ba9d72d",
+          "review": "sheet-25.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "7212e07cd164368b50f9736d829af4b872ef0b102e607c7e8e5b015336c5b3a7",
+          "review": "sheet-25.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-uncertain-leave-confirm-393-1x.png",
+      "sha256": "ca955d891ab8f4f756038aaa46c8fc070927fd46454813229337795fc41ee89f",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "81f39f54f4d57ba8f5059fe45f657508280050a51029e1334c259dcf9fdc8ad1",
+          "review": "sheet-25.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "e0d49c7fcafcdf9e6091c5af481e36c981b021dd6e40ad536c9461962cffff06",
+          "review": "sheet-25.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-uncertain-stay-320-2x.long.png",
+      "sha256": "c0bf607e8116bc1fbe78888033d08d47b73d19076b5788c12d6df4ec3346bc21",
+      "width": 320,
+      "height": 1547,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ee234dbab5728242030b7d052c60e73c3314bb5ab6e14f830e443f3f0b6a88ce",
+          "review": "sheet-21.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "4e81e50e5c1ded8e0f4b00b28823a6060a6ab0343c2c4f5e3b78fdb1df2638f6",
+          "review": "sheet-21.png#tile-5"
+        },
+        {
+          "y0": 1300,
+          "y1": 1547,
+          "pixel_sha256": "dd6125cd6efea4ac199fd5966360b7fdb66e1f0415b6ef3499bc998d12eb763f",
+          "review": "sheet-22.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-uncertain-stay-320-2x.png",
+      "sha256": "e738dfe0bfe1f85f756ae6f9b338229d5ffde97c0f1dff649f5844661532c6ba",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "12f7ec846ab35e9ea4c4919d5fe1600ae5fb9a526fef880ecb3bcc15f5106bf2",
+          "review": "sheet-22.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a0e8c62e0fef6736c98ef283943f0169c7f2b0ff97ba6107369fce93f7ec756d",
+          "review": "sheet-22.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-uncertain-stay-393-1x.long.png",
+      "sha256": "23487ade6564ded1c33f4361f371faf3e2b6951ac80c579b181346cd60b7448c",
+      "width": 393,
+      "height": 893,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9a3611704b912165653754202f5570e8d34638a370465ef978f0617f01bd2e50",
+          "review": "sheet-22.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 893,
+          "pixel_sha256": "47212b58f32155ddbbfba5271ab5946a62d90db9e7a097c05e0d8a2fb64299e3",
+          "review": "sheet-22.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-uncertain-stay-393-1x.png",
+      "sha256": "50621e3fe38fcaffc9ab1a4af78eff4d989c18c9618e8c3499d6ca8943b1aaf4",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "d290208981c33aabe84fc08f074da7f484635682cc116d9067c6e1fa7138767d",
+          "review": "sheet-22.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "006a8abdfa70fb65046945be4b6f4ac55ad6c96f58876a002ad29823c6004895",
+          "review": "sheet-23.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-unchanged-close-320-2x.long.png",
+      "sha256": "e031d72d13a7b655aefe25d1638c1fdda541be47c3efe63b1538920c45feb1e0",
+      "width": 320,
+      "height": 3587,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "10cad33f9990ea3b95da4de7c17a8dadb2048395dfe6207763897385d85436e9",
+          "review": "sheet-13.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "590bb59568a981747acbef6f4d44cbb0293770355d588566b23904de29143fc4",
+          "review": "sheet-14.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "3b2450d5097ebaf3b41df404f58990ca7b5de99bb7f251d7789ed9479548168c",
+          "review": "sheet-14.png#tile-1"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "3d2d8634b6b8b6c92f1c928cd482c17f3bd2e6837f1c97fb9a6161f14964fc64",
+          "review": "sheet-14.png#tile-2"
+        },
+        {
+          "y0": 2600,
+          "y1": 3250,
+          "pixel_sha256": "239b7cd18fed534883fe96663829eba26572c1557fb611e14e72d44cfd510b45",
+          "review": "sheet-14.png#tile-3"
+        },
+        {
+          "y0": 3250,
+          "y1": 3587,
+          "pixel_sha256": "6dbe9b72c561a26315d31380e6cc9c656f024aa7cc06e0b1c94dd20505b691a9",
+          "review": "sheet-14.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-unchanged-close-320-2x.png",
+      "sha256": "fe532bf85176932057218380eed3f1966b6b3adb6fc230c9556a1449c20032ce",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "7310bb5fceedea947a883f8b86b4f06cd89dc9d847a0930ab70eceb8c656978a",
+          "review": "sheet-21.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2a1d7922b8f5ef7631387079d1deaa275a77483bba49513ff048de40f447569b",
+          "review": "sheet-21.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-unchanged-close-393-1x.long.png",
+      "sha256": "9cfb484611aff2bc88e0a67d88b380fc51ef20e1cf60ff4bc6e571006bd87c28",
+      "width": 393,
+      "height": 1752,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b6722a4402f2f6f616b5a13dd0a4bbc2e2f16ab5a7bb4368656a0aa303e8cd70",
+          "review": "sheet-15.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "ef248692f57a122b23ddbd430f59ff358e2a86522ef6f7e8eb772c5d655a5ecc",
+          "review": "sheet-15.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1752,
+          "pixel_sha256": "5d1142fe86ef6e5a8664871afce9928bf15cf58f7b773ac5f1080f1b7fead23c",
+          "review": "sheet-12.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-profile-controls-unchanged-close-393-1x.png",
+      "sha256": "d5ff57fd6ea78986be3b0ff1824b4a77f21c3ab15ca9fd82c014fa606460ec92",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "f9ae0e16b316e18557c2095bce7d00936815233419ecdc882dad09bee48d6921",
+          "review": "sheet-21.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "d9caabe75f93d41f3dc6e27cf23b56267bc9eb8660d89ffb64886347c45dbb5f",
+          "review": "sheet-19.png#tile-0"
+        }
+      ]
+    }
+  ],
+  "unique_segments": 150,
+  "new_segments": 148,
+  "new_sheets": 25
+}

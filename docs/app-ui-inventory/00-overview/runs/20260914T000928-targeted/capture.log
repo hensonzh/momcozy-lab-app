@@ -1,0 +1,14 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/features/notifications/notification_current_inventory_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: inventory notification inbox empty loading paging and archive
+00:01 +1: inventory notification opening errors unavailable target and appointment route
+00:02 +2: inventory notification pagination mutation waits and error retries
+00:03 +3: inventory current notification settings switches and errors
+00:04 +4: inventory current notification tooltips and empty after archive
+00:04 +5: inventory notification inbox empty loading paging and archive
+00:05 +6: inventory notification opening errors unavailable target and appointment route
+00:06 +7: inventory notification pagination mutation waits and error retries
+00:06 +8: inventory current notification settings switches and errors
+00:08 +9: inventory current notification tooltips and empty after archive
+00:08 +10: (tearDownAll)
+00:08 +10: All tests passed!

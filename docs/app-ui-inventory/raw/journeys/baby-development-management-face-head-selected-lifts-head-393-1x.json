@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/baby-development-management-face-head-selected-lifts-head-393-1x.png",
+  "previous_source": "test/goldens/ui_inventory/baby-development-management-face-head-selected-looks-at-face-393-1x.png",
+  "route": "/baby",
+  "trigger": "Choose 不确定 for 俯卧时短暂抬起头; retain previous choices",
+  "root_entry": "Authenticated More → tap Baby bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/baby/baby_development_management_inventory_test.dart"
+}

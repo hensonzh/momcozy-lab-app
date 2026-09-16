@@ -1,0 +1,508 @@
+{
+  "source": "test/goldens/design_system/summary-metadata-430.png",
+  "evidence": "current-widget-test-render; golden comparison passed",
+  "test_description": "summary content task and destinations 430.0 / 1.0",
+  "sequence": 2,
+  "sha256": "5bfc2a1bc45fee768f4978c8ef8bea8f23c6b1648965bd7cf0cb0253cd150849",
+  "width": 430,
+  "height": 844,
+  "captured_at": "2026-09-13T13:38:13.008331Z",
+  "widget_types": [
+    "AbsorbPointer",
+    "Actions",
+    "Align",
+    "AnimatedBuilder",
+    "AnimatedContainer",
+    "AnimatedDefaultTextStyle",
+    "AnimatedPhysicalModel",
+    "AnimatedTheme",
+    "AnnotatedRegion<SystemUiOverlayStyle>",
+    "AppBar",
+    "AutomaticKeepAlive",
+    "BlockSemantics",
+    "Builder",
+    "Center",
+    "CircleAvatar",
+    "ClipRect",
+    "ColoredBox",
+    "Column",
+    "ConstrainedBox",
+    "ConsultationSummaryContent",
+    "ConsultationSummaryPage",
+    "Container",
+    "CupertinoTheme",
+    "CustomMultiChildLayout",
+    "CustomPaint",
+    "CustomSingleChildLayout",
+    "DecoratedBox",
+    "DefaultSelectionStyle",
+    "DefaultTextEditingShortcuts",
+    "DefaultTextStyle",
+    "Directionality",
+    "Divider",
+    "DualTransitionBuilder",
+    "ExcludeSemantics",
+    "Expanded",
+    "Expansible",
+    "ExpansionTile",
+    "FadeTransition",
+    "FilledButton",
+    "Flexible",
+    "FlexibleSpaceBarSettings",
+    "Focus",
+    "FocusScope",
+    "FocusTraversalGroup",
+    "FractionalTranslation",
+    "GestureDetector",
+    "HeroControllerScope",
+    "Icon",
+    "IconButtonTheme",
+    "IconTheme",
+    "IgnorePointer",
+    "IndexedSemantics",
+    "InheritedCupertinoTheme",
+    "Ink",
+    "InkWell",
+    "KeepAlive",
+    "KeyedSubtree",
+    "LayoutBuilder",
+    "LayoutId",
+    "LimitedBox",
+    "ListTile",
+    "ListTileTheme",
+    "ListView",
+    "ListenableBuilder",
+    "Listener",
+    "Localizations",
+    "Material",
+    "MaterialApp",
+    "MediaQuery",
+    "ModalBarrier",
+    "MomCozyPageBody",
+    "MouseRegion",
+    "NavigationToolbar",
+    "Navigator",
+    "NotificationListener<KeepAliveNotification>",
+    "NotificationListener<LayoutChangedNotification>",
+    "NotificationListener<NavigationNotification>",
+    "NotificationListener<OverscrollIndicatorNotification>",
+    "NotificationListener<ScrollMetricsNotification>",
+    "NotificationListener<ScrollNotification>",
+    "Offstage",
+    "Overlay",
+    "Padding",
+    "PageStorage",
+    "PhysicalModel",
+    "PhysicalShape",
+    "PreferredSize",
+    "PrimaryScrollController",
+    "RawGestureDetector",
+    "RawView",
+    "RefreshIndicator",
+    "RepaintBoundary",
+    "RestorationScope",
+    "RichText",
+    "RootRestorationScope",
+    "RotationTransition",
+    "Row",
+    "SafeArea",
+    "Scaffold",
+    "ScaffoldMessenger",
+    "ScaleTransition",
+    "ScrollConfiguration",
+    "ScrollNotificationObserver",
+    "Scrollable",
+    "Semantics",
+    "ServiceFlowTheme",
+    "SharedAppData",
+    "ShortcutRegistrar",
+    "Shortcuts",
+    "SizedBox",
+    "SlideTransition",
+    "SliverList",
+    "SliverPadding",
+    "Stack",
+    "StretchEffect",
+    "StretchingOverscrollIndicator",
+    "TapRegionSurface",
+    "Text",
+    "TextButton",
+    "Theme",
+    "TickerMode",
+    "Title",
+    "Transform",
+    "UnmanagedRestorationScope",
+    "ValueListenableBuilder<bool>",
+    "View",
+    "Viewport",
+    "WidgetsApp",
+    "Wrap",
+    "_ActionsScope",
+    "_AppBarTitleBox",
+    "_BodyBuilder",
+    "_EffectiveTickerMode",
+    "_FadeForwardsPageTransition",
+    "_FloatingActionButtonTransition",
+    "_FocusInheritedScope",
+    "_FocusScopeWithExternalFocusNode",
+    "_GestureSemantics",
+    "_InheritedTheme",
+    "_InkFeatures",
+    "_InkResponseStateWidget",
+    "_InputPadding",
+    "_ListTile",
+    "_LocalizationsScope",
+    "_MaterialInterior",
+    "_MediaQueryFromView",
+    "_ModalBarrierGestureDetector",
+    "_ModalScope<dynamic>",
+    "_ModalScopeStatus",
+    "_OverlayEntryWidget",
+    "_PageTransitionsThemeTransitions<dynamic>",
+    "_ParentInkResponseProvider",
+    "_PipelineOwnerScope",
+    "_PredictiveBackGestureDetector",
+    "_RawViewInternal",
+    "_RenderTheaterMarker",
+    "_ScaffoldMessengerScope",
+    "_ScaffoldScope",
+    "_ScrollNotificationObserverScope",
+    "_ScrollSemantics",
+    "_ScrollableScope",
+    "_SelectionKeepAlive",
+    "_ShapeBorderPaint",
+    "_SharedAppModel",
+    "_ShortcutRegistrarScope",
+    "_Theater",
+    "_ViewScope"
+  ],
+  "texts": [
+    "Test IBCLC 给你的总结",
+    "“接下来，一起记录和观察”",
+    "先从今天的小记录开始。把我们共同确认的变化记下来，下次跟进时一起回顾。",
+    "TI",
+    "Test IBCLC",
+    "9月10日 周四 已确认",
+    "今天先做这一件事",
+    "记下今天的一次观察",
+    "记录今天与你的目标相关的一次观察，下次跟进时一起讨论。",
+    "查看怎么做",
+    "接下来几天",
+    "一次只做一小步",
+    "2",
+    "接下来几天",
+    "一起回顾记录",
+    "整理这几天的变化，在下次跟进时讨论。",
+    "留意这些变化",
+    "不用记得很完整",
+    "留意下一次喂养时的真实感受，看看是否更接近我们共同确认的目标。",
+    "记录真实感受",
+    "共同回顾这段时间的变化",
+    "查看完整行动计划 →",
+    "需要更多帮助时",
+    "如果执行后仍不舒服或有新的担心，先记录下变化，下次跟进时告诉 Test IBCLC。紧急情况请联系当地急救服务。",
+    "咨询与服务信息",
+    "9月10日 周四 · Test IBCLC",
+    "本次咨询",
+    "09:00 – 10:00 PDT",
+    "服务周期",
+    "至 9月17日 周四",
+    "剩余咨询",
+    "1 次",
+    "发布确认",
+    "9月10日 周四",
+    "查看服务进度",
+    "返回",
+    "本次咨询总结"
+  ],
+  "scrolls": [
+    {
+      "foreground": true,
+      "axis": "vertical",
+      "direction": "down",
+      "pixels": 409.0,
+      "min": 0.0,
+      "max": 409.0,
+      "viewport": 791.0
+    }
+  ],
+  "controls": [
+    {
+      "widget": "FilledButton",
+      "key": null,
+      "labels": [
+        "查看怎么做"
+      ],
+      "enabled": true,
+      "bounds": [
+        35.0,
+        34.0,
+        360.0,
+        48.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [
+        "查看怎么做"
+      ],
+      "enabled": true,
+      "bounds": [
+        35.0,
+        34.0,
+        360.0,
+        48.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [
+        "2",
+        "接下来几天",
+        "一起回顾记录",
+        "整理这几天的变化，在下次跟进时讨论。"
+      ],
+      "enabled": true,
+      "bounds": [
+        16.0,
+        156.0,
+        398.0,
+        90.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "TextButton",
+      "key": null,
+      "labels": [
+        "查看完整行动计划 →"
+      ],
+      "enabled": true,
+      "bounds": [
+        16.0,
+        407.0,
+        136.07727813720703,
+        48.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [
+        "查看完整行动计划 →"
+      ],
+      "enabled": true,
+      "bounds": [
+        16.0,
+        409.0,
+        136.07727813720703,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "ListTile",
+      "key": null,
+      "labels": [
+        "咨询与服务信息",
+        "9月10日 周四 · Test IBCLC"
+      ],
+      "enabled": true,
+      "bounds": [
+        16.0,
+        587.0,
+        398.0,
+        72.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [
+        "咨询与服务信息",
+        "9月10日 周四 · Test IBCLC"
+      ],
+      "enabled": true,
+      "bounds": [
+        16.0,
+        587.0,
+        398.0,
+        72.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "TextButton",
+      "key": null,
+      "labels": [
+        "查看服务进度"
+      ],
+      "enabled": true,
+      "bounds": [
+        166.70000076293945,
+        758.0,
+        96.5999984741211,
+        48.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [
+        "查看服务进度"
+      ],
+      "enabled": true,
+      "bounds": [
+        166.70000076293945,
+        760.0,
+        96.5999984741211,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "TextButton",
+      "key": null,
+      "labels": [
+        "返回"
+      ],
+      "enabled": true,
+      "bounds": [
+        0.0,
+        0.0,
+        64.0,
+        52.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [
+        "返回"
+      ],
+      "enabled": true,
+      "bounds": [
+        0.0,
+        0.0,
+        64.0,
+        52.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    }
+  ],
+  "needs_long_capture": true,
+  "interactions_since_previous_capture": [
+    {
+      "action": "tap",
+      "labels_at_start": [
+        "共同回顾这段时间的变化",
+        "关闭"
+      ],
+      "from": [
+        375.8999996185303,
+        543.0
+      ],
+      "to": [
+        375.8999996185303,
+        543.0
+      ]
+    },
+    {
+      "action": "tap",
+      "labels_at_start": [
+        "一起回顾记录"
+      ],
+      "from": [
+        98.75,
+        360.0
+      ],
+      "to": [
+        98.75,
+        360.0
+      ]
+    },
+    {
+      "action": "tap",
+      "labels_at_start": [
+        "共同回顾这段时间的变化",
+        "关闭"
+      ],
+      "from": [
+        375.8999996185303,
+        565.0
+      ],
+      "to": [
+        375.8999996185303,
+        565.0
+      ]
+    },
+    {
+      "action": "tap",
+      "labels_at_start": [
+        "查看完整行动计划 →"
+      ],
+      "from": [
+        84.03863906860352,
+        592.0
+      ],
+      "to": [
+        84.03863906860352,
+        592.0
+      ]
+    },
+    {
+      "action": "tap",
+      "labels_at_start": [
+        "咨询与服务信息"
+      ],
+      "from": [
+        195.0,
+        774.2569885253906
+      ],
+      "to": [
+        195.0,
+        774.2569885253906
+      ]
+    }
+  ],
+  "call_stack": "#0      _InventoryComparator._record (file:///Users/lute/project/momcozy-lab/app/test/support/ui_inventory_capture.dart:169:32)\n<asynchronous suspension>\n#1      _InventoryComparator.compare (file:///Users/lute/project/momcozy-lab/app/test/support/ui_inventory_capture.dart:96:17)\n<asynchronous suspension>\n#2      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)\n<asynchronous suspension>\n#3      _AsyncCompleter.complete (dart:async/future_impl.dart:96:3)\n<asynchronous suspension>\n#4      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)\n<asynchronous suspension>\n#5      StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)\n<asynchronous suspension>\n#6      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)\n<asynchronous suspension>\n#7      shot (file:///Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart:96:5)\n<asynchronous suspension>\n#8      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart:139:9)\n<asynchronous suspension>\n#9      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)\n<asynchronous suspension>\n#10     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)\n<asynchronous suspension>\n#11     StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)\n<asynchronous suspension>\n",
+  "long_capture": {
+    "status": "complete-measured-scroll-stitch",
+    "file": "/Users/lute/project/momcozy-lab/app/docs/app-ui-inventory/raw/test/goldens/design_system/summary-metadata-430.long.png",
+    "offsets": [
+      0.0,
+      363.0,
+      409.0
+    ],
+    "scroll_bounds": [
+      0.0,
+      53.0,
+      430.0,
+      791.0
+    ],
+    "content_height": 1200.0,
+    "interior_strip_edge_guard": 64.0,
+    "fixed_bottom_overlay_bounds": [],
+    "original_scroll_offset": 409.0,
+    "tooltip_preserved_from_matched_viewport": false
+  }
+}

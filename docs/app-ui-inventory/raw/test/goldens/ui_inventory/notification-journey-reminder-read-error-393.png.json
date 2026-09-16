@@ -1,0 +1,584 @@
+{
+  "source": "test/goldens/ui_inventory/notification-journey-reminder-read-error-393.png",
+  "evidence": "current-widget-test-render; golden comparison passed",
+  "test_description": "inventory notification reminder failures and unavailable push",
+  "sequence": 0,
+  "sha256": "1e5e4c5010fe140605caf2c01098d76797d4c62701797d22c3c4db8e8ba0c59c",
+  "width": 393,
+  "height": 844,
+  "captured_at": "2026-09-13T13:37:41.503297Z",
+  "widget_types": [
+    "AbsorbPointer",
+    "Actions",
+    "Align",
+    "AnimatedBuilder",
+    "AnimatedContainer",
+    "AnimatedDefaultTextStyle",
+    "AnimatedPhysicalModel",
+    "AnimatedTheme",
+    "AnnotatedRegion<SystemUiOverlayStyle>",
+    "AppBar",
+    "AppointmentDetailCard",
+    "AppointmentReminderTile",
+    "AutomaticKeepAlive",
+    "BlockSemantics",
+    "BookingPage",
+    "Builder",
+    "Card",
+    "Center",
+    "CircleAvatar",
+    "ClipRect",
+    "ColoredBox",
+    "Column",
+    "ConstrainedBox",
+    "Container",
+    "CupertinoTheme",
+    "CustomMultiChildLayout",
+    "CustomPaint",
+    "CustomSingleChildLayout",
+    "DecoratedBox",
+    "DefaultSelectionStyle",
+    "DefaultTextEditingShortcuts",
+    "DefaultTextStyle",
+    "Directionality",
+    "Divider",
+    "DualTransitionBuilder",
+    "ExcludeFocus",
+    "ExcludeSemantics",
+    "Expanded",
+    "FadeTransition",
+    "FilledButton",
+    "Flexible",
+    "FlexibleSpaceBarSettings",
+    "Focus",
+    "FocusTraversalGroup",
+    "FocusableActionDetector",
+    "FractionalTranslation",
+    "GestureDetector",
+    "GoRouterStateRegistryScope",
+    "HeroControllerScope",
+    "Icon",
+    "IconButton",
+    "IconButtonTheme",
+    "IconTheme",
+    "IgnorePointer",
+    "IndexedSemantics",
+    "InheritedCupertinoTheme",
+    "InheritedGoRouter",
+    "Ink",
+    "InkWell",
+    "KeepAlive",
+    "KeyedSubtree",
+    "LayoutId",
+    "LimitedBox",
+    "ListTile",
+    "ListView",
+    "ListenableBuilder",
+    "Listener",
+    "Localizations",
+    "Material",
+    "MaterialApp",
+    "MediaQuery",
+    "MergeSemantics",
+    "ModalBarrier",
+    "MomCozyFlutterApp",
+    "MomCozyPageBody",
+    "MomCozyRuntimeScope",
+    "MomCozySurface",
+    "MouseRegion",
+    "NavigationToolbar",
+    "Navigator",
+    "NotificationListener<KeepAliveNotification>",
+    "NotificationListener<LayoutChangedNotification>",
+    "NotificationListener<NavigationNotification>",
+    "NotificationListener<OverscrollIndicatorNotification>",
+    "NotificationListener<ScrollMetricsNotification>",
+    "NotificationListener<ScrollNotification>",
+    "NotificationScope",
+    "Offstage",
+    "Opacity",
+    "OutlinedButton",
+    "Overlay",
+    "OverlayPortal",
+    "Padding",
+    "PageStorage",
+    "PhysicalModel",
+    "PhysicalShape",
+    "PreferredSize",
+    "PrimaryScrollController",
+    "RawGestureDetector",
+    "RawTooltip",
+    "RawView",
+    "RefreshIndicator",
+    "RepaintBoundary",
+    "RestorationScope",
+    "RichText",
+    "RootRestorationScope",
+    "RotationTransition",
+    "Router<Object>",
+    "Row",
+    "SafeArea",
+    "Scaffold",
+    "ScaffoldMessenger",
+    "ScaleTransition",
+    "ScrollConfiguration",
+    "ScrollNotificationObserver",
+    "Scrollable",
+    "Semantics",
+    "ServiceExpertIdentity",
+    "ServiceFlowTheme",
+    "SharedAppData",
+    "ShortcutRegistrar",
+    "Shortcuts",
+    "SizedBox",
+    "SlideTransition",
+    "SliverList",
+    "SliverPadding",
+    "Stack",
+    "StretchEffect",
+    "StretchingOverscrollIndicator",
+    "Switch",
+    "SwitchListTile",
+    "TapRegionSurface",
+    "Text",
+    "TextButton",
+    "Theme",
+    "TickerMode",
+    "Title",
+    "Tooltip",
+    "Transform",
+    "UnmanagedRestorationScope",
+    "ValueListenableBuilder<bool>",
+    "View",
+    "Viewport",
+    "WidgetsApp",
+    "_ActionsScope",
+    "_AppBarTitleBox",
+    "_BodyBuilder",
+    "_CustomNavigator",
+    "_EffectiveTickerMode",
+    "_ExclusiveMouseRegion",
+    "_FadeForwardsPageTransition",
+    "_FloatingActionButtonTransition",
+    "_FocusInheritedScope",
+    "_FocusScopeWithExternalFocusNode",
+    "_GestureSemantics",
+    "_IconButtonM3",
+    "_InheritedTheme",
+    "_InkFeatures",
+    "_InkResponseStateWidget",
+    "_InputPadding",
+    "_ListTile",
+    "_LocalizationsScope",
+    "_MaterialInterior",
+    "_MaterialSwitch",
+    "_MediaQueryFromView",
+    "_ModalBarrierGestureDetector",
+    "_ModalScope<void>",
+    "_ModalScopeStatus",
+    "_OutlinedButtonWithIconChild",
+    "_OverlayEntryWidget",
+    "_OverlayPortal",
+    "_PageTransitionsThemeTransitions<void>",
+    "_ParentInkResponseProvider",
+    "_PipelineOwnerScope",
+    "_PredictiveBackGestureDetector",
+    "_RawViewInternal",
+    "_RenderTheaterMarker",
+    "_RouterScope",
+    "_ScaffoldMessengerScope",
+    "_ScaffoldScope",
+    "_ScrollNotificationObserverScope",
+    "_ScrollSemantics",
+    "_ScrollableScope",
+    "_SelectableIconButton",
+    "_SelectionKeepAlive",
+    "_ShapeBorderPaint",
+    "_SharedAppModel",
+    "_ShortcutRegistrarScope",
+    "_Theater",
+    "_ViewScope"
+  ],
+  "texts": [
+    "已确认 · IBCLC 咨询",
+    "9月13日 周日 · 01:45 – 02:45 PDT",
+    "60 分钟 · America/Los_Angeles",
+    "TI",
+    "本次咨询专家",
+    "Test IBCLC",
+    "IBCLC · 哺乳顾问",
+    "取消预约",
+    "预约提醒",
+    "暂时无法读取提醒状态",
+    "重试",
+    "通知设置",
+    "咨询前请完成信息采集表，让专家了解这次最想解决的问题。",
+    "查看信息采集表",
+    "咨询前准备",
+    "返回",
+    "预约详情"
+  ],
+  "scrolls": [
+    {
+      "foreground": true,
+      "axis": "vertical",
+      "direction": "down",
+      "pixels": 0.0,
+      "min": 0.0,
+      "max": 0.0,
+      "viewport": 791.0
+    }
+  ],
+  "controls": [
+    {
+      "widget": "OutlinedButton",
+      "key": null,
+      "labels": [
+        "取消预约"
+      ],
+      "enabled": true,
+      "bounds": [
+        33.0,
+        237.0,
+        327.0,
+        48.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [
+        "取消预约"
+      ],
+      "enabled": true,
+      "bounds": [
+        33.0,
+        237.0,
+        327.0,
+        48.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "ListTile",
+      "key": null,
+      "labels": [
+        "预约提醒",
+        "暂时无法读取提醒状态"
+      ],
+      "enabled": true,
+      "bounds": [
+        16.0,
+        322.0,
+        361.0,
+        72.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [
+        "预约提醒",
+        "暂时无法读取提醒状态"
+      ],
+      "enabled": true,
+      "bounds": [
+        16.0,
+        322.0,
+        361.0,
+        72.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "Switch",
+      "key": null,
+      "labels": [],
+      "enabled": true,
+      "bounds": [
+        317.0,
+        338.0,
+        60.0,
+        40.0
+      ],
+      "selected": false,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "TextButton",
+      "key": null,
+      "labels": [
+        "重试"
+      ],
+      "enabled": true,
+      "bounds": [
+        16.0,
+        394.0,
+        48.20000076293945,
+        48.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [
+        "重试"
+      ],
+      "enabled": true,
+      "bounds": [
+        16.0,
+        396.0,
+        48.20000076293945,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "TextButton",
+      "key": null,
+      "labels": [
+        "通知设置"
+      ],
+      "enabled": true,
+      "bounds": [
+        16.0,
+        442.0,
+        72.4000015258789,
+        48.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [
+        "通知设置"
+      ],
+      "enabled": true,
+      "bounds": [
+        16.0,
+        444.0,
+        72.4000015258789,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "FilledButton",
+      "key": null,
+      "labels": [
+        "查看信息采集表"
+      ],
+      "enabled": true,
+      "bounds": [
+        16.0,
+        550.0,
+        361.0,
+        48.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [
+        "查看信息采集表"
+      ],
+      "enabled": true,
+      "bounds": [
+        16.0,
+        550.0,
+        361.0,
+        48.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "OutlinedButton",
+      "key": null,
+      "labels": [
+        "咨询前准备"
+      ],
+      "enabled": true,
+      "bounds": [
+        16.0,
+        610.0,
+        361.0,
+        48.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [
+        "咨询前准备"
+      ],
+      "enabled": true,
+      "bounds": [
+        16.0,
+        612.0,
+        361.0,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "TextButton",
+      "key": null,
+      "labels": [
+        "返回"
+      ],
+      "enabled": true,
+      "bounds": [
+        0.0,
+        0.0,
+        64.0,
+        52.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [
+        "返回"
+      ],
+      "enabled": true,
+      "bounds": [
+        0.0,
+        0.0,
+        64.0,
+        52.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "IconButton",
+      "key": null,
+      "labels": [
+        "刷新预约"
+      ],
+      "enabled": true,
+      "bounds": [
+        345.0,
+        2.0,
+        48.0,
+        48.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "_IconButtonM3",
+      "key": null,
+      "labels": [
+        "刷新预约"
+      ],
+      "enabled": true,
+      "bounds": [
+        345.0,
+        2.0,
+        48.0,
+        48.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [],
+      "enabled": true,
+      "bounds": [
+        347.0,
+        4.0,
+        44.0,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    }
+  ],
+  "needs_long_capture": false,
+  "interactions_since_previous_capture": [
+    {
+      "action": "tap",
+      "labels_at_start": [
+        "Me"
+      ],
+      "from": [
+        45.7,
+        829.0
+      ],
+      "to": [
+        45.7,
+        829.0
+      ]
+    },
+    {
+      "action": "tap",
+      "labels_at_start": [
+        "让专业的人，陪你把问题解决",
+        "专家 + AI 持续服务，从分析问题到跟进改善，全程有人陪"
+      ],
+      "from": [
+        196.5,
+        345.0
+      ],
+      "to": [
+        196.5,
+        345.0
+      ]
+    },
+    {
+      "action": "tap",
+      "labels_at_start": [
+        "查看我的服务"
+      ],
+      "from": [
+        305.0,
+        162.0
+      ],
+      "to": [
+        305.0,
+        162.0
+      ]
+    },
+    {
+      "action": "tap",
+      "labels_at_start": [
+        "开始预约"
+      ],
+      "from": [
+        235.21808624267578,
+        794.0
+      ],
+      "to": [
+        235.21808624267578,
+        794.0
+      ]
+    }
+  ],
+  "call_stack": "#0      _InventoryComparator._record (file:///Users/lute/project/momcozy-lab/app/test/support/ui_inventory_capture.dart:169:32)\n<asynchronous suspension>\n#1      _InventoryComparator.compare (file:///Users/lute/project/momcozy-lab/app/test/support/ui_inventory_capture.dart:96:17)\n<asynchronous suspension>\n#2      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)\n<asynchronous suspension>\n#3      _AsyncCompleter.complete (dart:async/future_impl.dart:96:3)\n<asynchronous suspension>\n#4      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)\n<asynchronous suspension>\n#5      StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)\n<asynchronous suspension>\n#6      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)\n<asynchronous suspension>\n#7      main.capture (file:///Users/lute/project/momcozy-lab/app/test/features/notifications/notification_inventory_journey_test.dart:178:5)\n<asynchronous suspension>\n#8      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/notifications/notification_inventory_journey_test.dart:532:5)\n<asynchronous suspension>\n#9      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)\n<asynchronous suspension>\n#10     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)\n<asynchronous suspension>\n#11     StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)\n<asynchronous suspension>\n",
+  "long_capture": {
+    "status": "no-active-vertical-overflow"
+  }
+}

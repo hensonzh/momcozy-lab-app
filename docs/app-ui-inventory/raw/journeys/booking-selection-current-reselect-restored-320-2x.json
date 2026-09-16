@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/booking-selection-current-reselect-restored-320-2x.png",
+  "previous_source": "test/goldens/ui_inventory/booking-selection-current-reselect-error-320-2x.png",
+  "route": "/services/episodes/service-episode/booking",
+  "trigger": "Retry cancel → review closes and time selection restored",
+  "root_entry": "Authenticated More → tap Me bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/services/booking_selection_current_inventory_test.dart"
+}

@@ -1,0 +1,97 @@
+[
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-booking-confirm-recovered-393.long.png",
+    "sha256": "4e9c78deec167cfd179e5b36f2d0e91c29cf86d78d7e911ef48f0f3b22f47238",
+    "sheet": "long-1.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-booking-intake-entry-393.long.png",
+    "sha256": "4e9c78deec167cfd179e5b36f2d0e91c29cf86d78d7e911ef48f0f3b22f47238",
+    "sheet": "long-1.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-catalog-393.long.png",
+    "sha256": "fc7321c32a701efa64984d9beeefcf8664de9e390b87fd0bbe94ceb6d087cb0f",
+    "sheet": "long-1.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-catalog-pull-refreshed-393.long.png",
+    "sha256": "fc7321c32a701efa64984d9beeefcf8664de9e390b87fd0bbe94ceb6d087cb0f",
+    "sheet": "long-1.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-catalog-return-393.long.png",
+    "sha256": "fc7321c32a701efa64984d9beeefcf8664de9e390b87fd0bbe94ceb6d087cb0f",
+    "sheet": "long-1.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-catalog-return-home-393.long.png",
+    "sha256": "0a4e3294f0ff67f0d7ed84ee3eacb393b50571fb4db300a7d15899ba9359a330",
+    "sheet": "long-1.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-intake-consent-withdrawn-draft-393.long.png",
+    "sha256": "fec2d5c872e4c308270d6b98a5f2e1dccdac0e802a812e42711cf161e99968f5",
+    "sheet": "long-2.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-intake-load-recovered-393.long.png",
+    "sha256": "4e9c78deec167cfd179e5b36f2d0e91c29cf86d78d7e911ef48f0f3b22f47238",
+    "sheet": "long-2.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-intake-optional-filled-393.long.png",
+    "sha256": "9f913387384c5ac9a4b22569fc18dfc34ee7ded191132b102c234d28385a05e7",
+    "sheet": "long-2.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-intake-ready-393.long.png",
+    "sha256": "bbefaa4e7db7dabb402c241beae8f2aecd6baa2103743e837605d97a3989cdb4",
+    "sheet": "long-2.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-intake-save-uncertain-393.long.png",
+    "sha256": "5ac315b2730f863ae522f2eecb47dd9a918b1c08dbededa16d14d22e23eec0b5",
+    "sheet": "long-2.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-intake-saving-393.long.png",
+    "sha256": "0ca57f8128140cfc754f1a3b60e5dffc1b1ea05765e5d37b64f546f850fc139e",
+    "sheet": "long-2.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-intake-unfilled-393.long.png",
+    "sha256": "4e9c78deec167cfd179e5b36f2d0e91c29cf86d78d7e911ef48f0f3b22f47238",
+    "sheet": "long-3.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-purchase-declined-393.long.png",
+    "sha256": "c36486f7901c19d58863603dfb0ac402b5405869835685c527453273644a6f3c",
+    "sheet": "long-3.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-purchase-owned-catalog-393.long.png",
+    "sha256": "fc7321c32a701efa64984d9beeefcf8664de9e390b87fd0bbe94ceb6d087cb0f",
+    "sheet": "long-3.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-purchase-owned-catalog-refreshed-393.long.png",
+    "sha256": "e2f5e2118f1783e2fe4dc137f4482b68b66f77b28deabd47926bb5cee877b009",
+    "sheet": "long-3.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-purchase-payment-uncertain-393.long.png",
+    "sha256": "c4052bbf5bb39b337e221cf5e93e1c22a7b0d813d522efd2f88ffa13b9a0dab4",
+    "sheet": "long-3.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-purchase-pending-catalog-393.long.png",
+    "sha256": "fc7321c32a701efa64984d9beeefcf8664de9e390b87fd0bbe94ceb6d087cb0f",
+    "sheet": "long-3.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-purchase-pending-catalog-refreshed-393.long.png",
+    "sha256": "ea9faa49d35eedce25305fd3c0f00821ba6368d351fa08fac3a0b5b380b6f2ef",
+    "sheet": "long-4.png"
+  }
+]

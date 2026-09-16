@@ -1,0 +1,24 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart
+00:00 +0: wire contract keeps methods exclusive and carries the deletion version
+00:00 +1: uncertain save retries the same payload and key, blocks duplicate taps, and undo uses receipt
+00:00 +2: changing method clears the old measurement and rejects invalid typed input
+00:00 +3: single record editor saves a real observation, then delete and undo change the list
+00:00 +4: lactation modal switches to nursing and saves at 320.0 / 1.0
+00:00 +5: lactation modal switches to nursing and saves at 320.0 / 2.0
+00:00 +6: lactation list renders at 320.0 / 1.0
+00:00 +7: lactation list renders at 320.0 / 2.0
+00:00 +8: lactation entry renders at 320.0 / 1.0
+00:00 +9: lactation entry renders at 320.0 / 2.0
+00:01 +10: lactation modal switches to nursing and saves at 390.0 / 1.0
+00:01 +11: lactation modal switches to nursing and saves at 390.0 / 2.0
+00:01 +12: lactation list renders at 390.0 / 1.0
+00:01 +13: lactation list renders at 390.0 / 2.0
+00:01 +14: lactation entry renders at 390.0 / 1.0
+00:01 +15: lactation entry renders at 390.0 / 2.0
+00:01 +16: lactation modal switches to nursing and saves at 430.0 / 1.0
+00:01 +17: lactation modal switches to nursing and saves at 430.0 / 2.0
+00:01 +18: lactation list renders at 430.0 / 1.0
+00:01 +19: lactation list renders at 430.0 / 2.0
+00:01 +20: lactation entry renders at 430.0 / 1.0
+00:01 +21: lactation entry renders at 430.0 / 2.0
+00:01 +22: All tests passed!

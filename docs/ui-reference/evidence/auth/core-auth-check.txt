@@ -1,0 +1,30 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/core/auth/flutter_secure_momcozy_session_store_test.dart
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/core/auth/account_session_lifecycle_test.dart: restart restores and persists rotated tokens; revoked refresh expires session
+00:00 +1: /Users/lute/project/momcozy-lab/app/test/core/auth/account_session_lifecycle_test.dart: restart restores and persists rotated tokens; revoked refresh expires session
+00:00 +2: /Users/lute/project/momcozy-lab/app/test/core/auth/momcozy_session_test.dart: MomCozySession environment bootstrap is authenticated with access token
+00:00 +3: /Users/lute/project/momcozy-lab/app/test/core/auth/account_session_lifecycle_test.dart: logout prevents an in-flight refresh write from restoring credentials
+00:00 +4: /Users/lute/project/momcozy-lab/app/test/core/auth/account_session_lifecycle_test.dart: logout prevents an in-flight refresh write from restoring credentials
+00:00 +5: /Users/lute/project/momcozy-lab/app/test/core/auth/account_session_lifecycle_test.dart: logout prevents an in-flight refresh write from restoring credentials
+00:00 +6: /Users/lute/project/momcozy-lab/app/test/core/auth/account_session_lifecycle_test.dart: logout prevents an in-flight refresh write from restoring credentials
+00:00 +7: /Users/lute/project/momcozy-lab/app/test/core/auth/account_session_lifecycle_test.dart: logout prevents an in-flight refresh write from restoring credentials
+00:00 +8: /Users/lute/project/momcozy-lab/app/test/core/auth/account_session_lifecycle_test.dart: late login persistence cannot revive a session after logout
+00:00 +9: /Users/lute/project/momcozy-lab/app/test/core/auth/flutter_secure_momcozy_session_store_test.dart: writes one atomic payload and verifies the stored session
+00:00 +10: /Users/lute/project/momcozy-lab/app/test/core/auth/momcozy_auth_api_test.dart: MomCozyAuthApiRepository login posts production auth body and maps token response
+00:00 +11: /Users/lute/project/momcozy-lab/app/test/core/auth/momcozy_auth_api_test.dart: MomCozyAuthApiRepository login posts production auth body and maps token response
+00:00 +12: /Users/lute/project/momcozy-lab/app/test/core/auth/momcozy_auth_api_test.dart: MomCozyAuthApiRepository login posts production auth body and maps token response
+00:00 +13: /Users/lute/project/momcozy-lab/app/test/core/auth/momcozy_auth_api_test.dart: MomCozyAuthApiRepository register sends mailbox verification request without profile fields
+00:00 +14: /Users/lute/project/momcozy-lab/app/test/core/auth/momcozy_auth_api_test.dart: MomCozyAuthApiRepository invite login posts invite code and device id
+00:00 +15: /Users/lute/project/momcozy-lab/app/test/core/auth/momcozy_auth_api_test.dart: MomCozyAuthApiRepository accepts empty or missing display name as non-auth metadata
+00:00 +16: /Users/lute/project/momcozy-lab/app/test/core/auth/momcozy_auth_api_test.dart: MomCozyAuthApiRepository refresh sends refresh token in the body only
+00:00 +17: /Users/lute/project/momcozy-lab/app/test/core/auth/momcozy_auth_api_test.dart: MomCozyAuthApiRepository logout uses the production logout endpoint
+00:00 +18: /Users/lute/project/momcozy-lab/app/test/core/auth/momcozy_auth_api_test.dart: MomCozyAuthApiRepository rejects malformed token responses
+00:00 +19: /Users/lute/project/momcozy-lab/app/test/core/auth/momcozy_auth_api_test.dart: MomCozySessionRefreshCoordinator concurrent refresh calls share one backend request
+00:00 +20: /Users/lute/project/momcozy-lab/app/test/core/auth/momcozy_auth_api_test.dart: MomCozySessionRefreshCoordinator missing refresh token expires the stored session
+00:00 +21: /Users/lute/project/momcozy-lab/app/test/core/auth/momcozy_auth_api_test.dart: MomCozySessionRefreshCoordinator keeps session publication inside the shared refresh operation
+00:00 +22: /Users/lute/project/momcozy-lab/app/test/core/auth/momcozy_auth_api_test.dart: AuthenticatedApiJsonTransport refreshes on 401 and retries the original request once
+00:00 +23: /Users/lute/project/momcozy-lab/app/test/core/auth/momcozy_auth_api_test.dart: AuthenticatedApiJsonTransport shares one refresh request across concurrent 401 responses
+00:00 +24: /Users/lute/project/momcozy-lab/app/test/core/auth/momcozy_auth_api_test.dart: AuthenticatedApiJsonTransport retries a stale 401 with the latest access token without refreshing
+00:00 +25: /Users/lute/project/momcozy-lab/app/test/core/auth/momcozy_auth_api_test.dart: AuthenticatedApiJsonTransport does not refresh non-auth HTTP failures
+00:00 +26: /Users/lute/project/momcozy-lab/app/test/core/auth/momcozy_auth_api_test.dart: AuthenticatedApiJsonTransport refreshes authenticated PUT, PATCH, and DELETE mutations once
+00:00 +27: /Users/lute/project/momcozy-lab/app/test/core/auth/momcozy_auth_api_test.dart: AuthenticatedApiJsonTransport refreshes multipart uploads and retries with the new token
+00:00 +28: All tests passed!

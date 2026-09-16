@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/baby-knowledge-source-growth-return-393-1x.png",
+  "previous_source": "test/goldens/ui_inventory/baby-knowledge-source-growth-source-dispatched-393-1x.png",
+  "route": "/baby",
+  "trigger": "Close growth article → Baby home",
+  "root_entry": "Authenticated More → tap Baby bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/baby/baby_knowledge_source_inventory_test.dart"
+}

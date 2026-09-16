@@ -1,0 +1,193 @@
+{
+  "status": "design_and_final_exports_visually_reviewed",
+  "nodes": [
+    {
+      "id": "329:1086",
+      "state": "list",
+      "scale": 1,
+      "type": "history"
+    },
+    {
+      "id": "329:1141",
+      "state": "list",
+      "scale": 2,
+      "type": "history"
+    },
+    {
+      "id": "329:1199",
+      "state": "feeding",
+      "scale": 1,
+      "type": "editor",
+      "scrollHeight": 483
+    },
+    {
+      "id": "329:1232",
+      "state": "stool",
+      "scale": 2,
+      "type": "editor",
+      "scrollHeight": 2282
+    },
+    {
+      "id": "330:1086",
+      "state": "empty",
+      "scale": 1,
+      "type": "history"
+    },
+    {
+      "id": "330:1117",
+      "state": "month",
+      "scale": 1,
+      "type": "history"
+    },
+    {
+      "id": "330:1148",
+      "state": "loading",
+      "scale": 1,
+      "type": "history"
+    },
+    {
+      "id": "330:1203",
+      "state": "error",
+      "scale": 1,
+      "type": "history"
+    },
+    {
+      "id": "330:1262",
+      "state": "deleted",
+      "scale": 1,
+      "type": "history"
+    },
+    {
+      "id": "330:1297",
+      "state": "source",
+      "scale": 1,
+      "type": "history"
+    },
+    {
+      "id": "330:1355",
+      "state": "nursing",
+      "scale": 1,
+      "type": "editor",
+      "scrollHeight": 575
+    },
+    {
+      "id": "330:1396",
+      "state": "sleep",
+      "scale": 1,
+      "type": "editor",
+      "scrollHeight": 538
+    },
+    {
+      "id": "330:1430",
+      "state": "sleep-active",
+      "scale": 1,
+      "type": "editor",
+      "scrollHeight": 294
+    },
+    {
+      "id": "330:1454",
+      "state": "wet",
+      "scale": 1,
+      "type": "editor",
+      "scrollHeight": 395
+    },
+    {
+      "id": "330:1488",
+      "state": "stool",
+      "scale": 1,
+      "type": "editor",
+      "scrollHeight": 857
+    },
+    {
+      "id": "330:1563",
+      "state": "growth",
+      "scale": 1,
+      "type": "editor",
+      "scrollHeight": 450
+    },
+    {
+      "id": "330:1595",
+      "state": "development",
+      "scale": 1,
+      "type": "editor",
+      "scrollHeight": 541
+    },
+    {
+      "id": "330:1638",
+      "state": "edit",
+      "scale": 1,
+      "type": "editor",
+      "scrollHeight": 483
+    },
+    {
+      "id": "330:1671",
+      "state": "validation",
+      "scale": 1,
+      "type": "editor",
+      "scrollHeight": 445
+    },
+    {
+      "id": "330:1701",
+      "state": "saving",
+      "scale": 1,
+      "type": "editor",
+      "scrollHeight": 483
+    },
+    {
+      "id": "330:1734",
+      "state": "uncertain",
+      "scale": 1,
+      "type": "editor",
+      "scrollHeight": 561
+    },
+    {
+      "id": "330:1769",
+      "state": "error",
+      "scale": 1,
+      "type": "editor",
+      "scrollHeight": 543
+    },
+    {
+      "id": "330:1804",
+      "state": "feeding",
+      "scale": 2,
+      "type": "editor",
+      "scrollHeight": 971
+    },
+    {
+      "id": "330:1839",
+      "state": "development",
+      "scale": 2,
+      "type": "editor",
+      "scrollHeight": 1342
+    },
+    {
+      "id": "331:1231",
+      "source": "330:1488",
+      "state": "stool-full",
+      "scale": 1,
+      "type": "editor-scroll-reference"
+    },
+    {
+      "id": "331:1306",
+      "source": "329:1232",
+      "state": "stool-full",
+      "scale": 2,
+      "type": "editor-scroll-reference"
+    },
+    {
+      "id": "331:1395",
+      "source": "330:1804",
+      "state": "feeding-full",
+      "scale": 2,
+      "type": "editor-scroll-reference"
+    },
+    {
+      "id": "331:1430",
+      "source": "330:1839",
+      "state": "development-full",
+      "scale": 2,
+      "type": "editor-scroll-reference"
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "at": "2026-09-12T12:07:02.052787",
+  "apk": "build/app/outputs/flutter-apk/app-local-debug.apk",
+  "sha256": "0c5a7cf3ce89e79b8fd872b5b6f21ec93f4ecddf4fd0cd1274b069050abbe6b6",
+  "mode": "local debug",
+  "installation": "emulator-5554",
+  "login_restored": "dev@example.test / Mia; existing local records retained"
+}

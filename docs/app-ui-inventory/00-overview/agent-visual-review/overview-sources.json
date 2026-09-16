@@ -1,0 +1,242 @@
+[
+  {
+    "state": "agent-journey-after-early-stop",
+    "source": "05-agent/agent-journey-after-early-stop/viewport.png",
+    "sha256": "8ad244d20ab11380299bc69c728a2ba38fb74878c8403ea62ee5b029d7fbbd7d",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "agent-journey-assistant-copied",
+    "source": "05-agent/agent-journey-assistant-copied/viewport.png",
+    "sha256": "376d9be026c2e5f062f9f333c663a87fa0bb2bf95615cfead5c9bfe77f0e04d9",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "agent-journey-assistant-menu",
+    "source": "05-agent/agent-journey-assistant-menu/viewport.png",
+    "sha256": "838a0004240ea0e07835989e7a039088cffd1ef746348941887278366404c8e0",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "agent-journey-attachment-menu",
+    "source": "05-agent/agent-journey-attachment-menu/viewport.png",
+    "sha256": "7c0f9c8113c2b3c085f561914e9880f7c401bab933474ba719aa2d56900b9018",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "agent-journey-cancel-finished",
+    "source": "05-agent/agent-journey-cancel-finished/viewport.png",
+    "sha256": "704c959a42452d5445888830cfe473d5cc3c0653e3c2ff7521c1737b2e95d147",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "agent-journey-cancel-new",
+    "source": "05-agent/agent-journey-cancel-new/viewport.png",
+    "sha256": "c6ea52c42a7d3b8cc151cb5ae038b22ff3b23712f2d9793bb8239756d72c5bb3",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "agent-journey-cancel-pending",
+    "source": "05-agent/agent-journey-cancel-pending/viewport.png",
+    "sha256": "03006dc47913a4c35730fb517fe08c4c3f2b77ce2e53bbcda56da187088803b1",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "agent-journey-cancel-unconfirmed-finished",
+    "source": "05-agent/agent-journey-cancel-unconfirmed-finished/viewport.png",
+    "sha256": "e20e3a72e3c38f59d12af12ac09ba319a65e86eb7b86dee529d08dcc327768b3",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "agent-journey-cancel-unconfirmed-new",
+    "source": "05-agent/agent-journey-cancel-unconfirmed-new/viewport.png",
+    "sha256": "c6ea52c42a7d3b8cc151cb5ae038b22ff3b23712f2d9793bb8239756d72c5bb3",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "agent-journey-cancel-unconfirmed-pending",
+    "source": "05-agent/agent-journey-cancel-unconfirmed-pending/viewport.png",
+    "sha256": "03006dc47913a4c35730fb517fe08c4c3f2b77ce2e53bbcda56da187088803b1",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "agent-journey-copy-failed",
+    "source": "05-agent/agent-journey-copy-failed/viewport.png",
+    "sha256": "4e385a2a50995b9ea5942b734022e4e767de3c9a61d0c8394cc400071069d6e6",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "agent-journey-copy-recovered",
+    "source": "05-agent/agent-journey-copy-recovered/viewport.png",
+    "sha256": "cd20838a4b861944e448124b75353dc5fa75b8bdf0f17442a23dd8605e8ca11d",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "agent-journey-disconnected-empty",
+    "source": "05-agent/agent-journey-disconnected-empty/viewport.png",
+    "sha256": "c8d7d4bc7e0f1c887bea842752e7869c4b692f1bd7687c133889845141faa50e",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "agent-journey-disconnected-partial",
+    "source": "05-agent/agent-journey-disconnected-partial/viewport.png",
+    "sha256": "15a88f07160ea30c02cf5d71ba1170ec13a00674c0aae4b37ea000ee7debce36",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "agent-journey-draft",
+    "source": "05-agent/agent-journey-draft/viewport.png",
+    "sha256": "7751026a916b230f54659ef119efa5367796ca2a2d9632dc7fc1dfc54af3f99e",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "agent-journey-draft-reset",
+    "source": "05-agent/agent-journey-draft-reset/viewport.png",
+    "sha256": "75b201112597f3a5631cba8c863d10a6bb61379c6a880d45b69123eeca861088",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "agent-journey-home",
+    "source": "05-agent/agent-journey-home/viewport.png",
+    "sha256": "c6ea52c42a7d3b8cc151cb5ae038b22ff3b23712f2d9793bb8239756d72c5bb3",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "agent-journey-long-followup-completed",
+    "source": "05-agent/agent-journey-long-followup-completed/viewport.png",
+    "sha256": "8516265ea50991faf2f2b3845361095d4880fd9eefe618ceed66f519a8af0a45",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "agent-journey-long-followup-sent",
+    "source": "05-agent/agent-journey-long-followup-sent/viewport.png",
+    "sha256": "cee07ea33c998ddad0fefb00d3b736d41c53f79583b4e2cef4c7d050f1de2ea1",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "agent-journey-long-reply",
+    "source": "05-agent/agent-journey-long-reply/viewport.png",
+    "sha256": "33387ec88cf5834dd6369cff0de0fd45cde48cd80f25d128372e340d19be784c",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "agent-journey-long-reset",
+    "source": "05-agent/agent-journey-long-reset/viewport.png",
+    "sha256": "c6ea52c42a7d3b8cc151cb5ae038b22ff3b23712f2d9793bb8239756d72c5bb3",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "agent-journey-manual-retry",
+    "source": "05-agent/agent-journey-manual-retry/viewport.png",
+    "sha256": "8dfd435930a456034d472172809851694146d0d428dc8b66663eed52bf130596",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "agent-journey-menu-dismissed",
+    "source": "05-agent/agent-journey-menu-dismissed/viewport.png",
+    "sha256": "11d5af6606b46d67bb060bad56c97cb53eb9dd52705f6a31581dbb87ae1d242a",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "agent-journey-menu-system-back-failed",
+    "source": "05-agent/agent-journey-menu-system-back-failed/viewport.png",
+    "sha256": "7865cd5e3cd81e0149ba0d6993826f85f8494406855532286fde3e04b6e1b268",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "agent-journey-new-conversation",
+    "source": "05-agent/agent-journey-new-conversation/viewport.png",
+    "sha256": "c6ea52c42a7d3b8cc151cb5ae038b22ff3b23712f2d9793bb8239756d72c5bb3",
+    "sheet": "overview-3.jpg"
+  },
+  {
+    "state": "agent-journey-new-tooltip",
+    "source": "05-agent/agent-journey-new-tooltip/viewport.png",
+    "sha256": "94d924e6df2a27f2c009dc170f02badc0ae51fd2f0e0901c20f72e0ab519d3c7",
+    "sheet": "overview-3.jpg"
+  },
+  {
+    "state": "agent-journey-partial-menu",
+    "source": "05-agent/agent-journey-partial-menu/viewport.png",
+    "sha256": "a7652a9bddc48aed20fac62c48006d2e2e47e92699366c837daac931472b06b4",
+    "sheet": "overview-3.jpg"
+  },
+  {
+    "state": "agent-journey-profile-fallback",
+    "source": "05-agent/agent-journey-profile-fallback/viewport.png",
+    "sha256": "b90213ee576f01260323e704f188e8b27fa9d6ad47b4837851a7406b976d5264",
+    "sheet": "overview-3.jpg"
+  },
+  {
+    "state": "agent-journey-reply",
+    "source": "05-agent/agent-journey-reply/viewport.png",
+    "sha256": "f474e559edd268eb0e1837e697c148e4ca347627a49fe94116cdc71e466194f9",
+    "sheet": "overview-3.jpg"
+  },
+  {
+    "state": "agent-journey-resumed",
+    "source": "05-agent/agent-journey-resumed/viewport.png",
+    "sha256": "a99cf843afef1bf1864d928e9af331943c4f56f44ebd1302ae8bc318dce5675b",
+    "sheet": "overview-3.jpg"
+  },
+  {
+    "state": "agent-journey-sent-waiting",
+    "source": "05-agent/agent-journey-sent-waiting/viewport.png",
+    "sha256": "a8e20fec7f8471485dbc91c0fa11e0c272ed90be01536e165ec786c97ab72214",
+    "sheet": "overview-3.jpg"
+  },
+  {
+    "state": "agent-journey-stop-before-run-id",
+    "source": "05-agent/agent-journey-stop-before-run-id/viewport.png",
+    "sha256": "9cc149b1991ea97cf7bce1eab2df395f334c6d1b2d667de595b950c93d449078",
+    "sheet": "overview-3.jpg"
+  },
+  {
+    "state": "agent-journey-streaming",
+    "source": "05-agent/agent-journey-streaming/viewport.png",
+    "sha256": "088a8c5b13c210a6dbe25465d33f2dd5d43977346764a69c51ecb3fe9d84e840",
+    "sheet": "overview-3.jpg"
+  },
+  {
+    "state": "agent-journey-tab-more",
+    "source": "05-agent/agent-journey-tab-more/viewport.png",
+    "sha256": "6ac33e6dd952b54bfe0bbfa4209df0bf816602f324b0120ff7730cb4d19cfda7",
+    "sheet": "overview-3.jpg"
+  },
+  {
+    "state": "agent-journey-tab-return",
+    "source": "05-agent/agent-journey-tab-return/viewport.png",
+    "sha256": "f474e559edd268eb0e1837e697c148e4ca347627a49fe94116cdc71e466194f9",
+    "sheet": "overview-3.jpg"
+  },
+  {
+    "state": "agent-journey-terminal-error",
+    "source": "05-agent/agent-journey-terminal-error/viewport.png",
+    "sha256": "b3bcae2c6a899f1a51bba35d2b9d7b928be3840dc64af366376707b5649f3203",
+    "sheet": "overview-3.jpg"
+  },
+  {
+    "state": "agent-journey-user-copied",
+    "source": "05-agent/agent-journey-user-copied/viewport.png",
+    "sha256": "376d9be026c2e5f062f9f333c663a87fa0bb2bf95615cfead5c9bfe77f0e04d9",
+    "sheet": "overview-4.jpg"
+  },
+  {
+    "state": "agent-journey-user-menu",
+    "source": "05-agent/agent-journey-user-menu/viewport.png",
+    "sha256": "10b3670adccda2b7988f1c660fb79a9efd2859348c4b7feb2af58d988ca2a911",
+    "sheet": "overview-4.jpg"
+  },
+  {
+    "state": "agent-journey-voice-off",
+    "source": "05-agent/agent-journey-voice-off/viewport.png",
+    "sha256": "11bd84ddc0f375729da91eee433fd89cb745e72bb5c3ced5180be0a766235544",
+    "sheet": "overview-4.jpg"
+  },
+  {
+    "state": "agent-journey-voice-on",
+    "source": "05-agent/agent-journey-voice-on/viewport.png",
+    "sha256": "c6ea52c42a7d3b8cc151cb5ae038b22ff3b23712f2d9793bb8239756d72c5bb3",
+    "sheet": "overview-4.jpg"
+  }
+]

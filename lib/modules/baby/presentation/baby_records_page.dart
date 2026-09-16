@@ -1,12 +1,18 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:momcozy_flutter_app/shared/widgets/date_time_picker.dart';
+import 'package:momcozy_flutter_app/shared/design_system/momcozy_motion.dart';
 import '../../../domain/baby/baby_profile.dart';
 import '../../../domain/baby/baby_record.dart';
 import '../../../domain/shared/local_date.dart';
 import '../../../domain/shared/product_failure.dart';
 import '../../../shared/design_system/momcozy_design_system.dart';
+import '../../../shared/design_system/mom_home_tokens.dart';
+import '../../../shared/design_system/mom_settings_theme.dart';
+import '../../../shared/widgets/mom_settings_widgets.dart';
 import '../../../shared/widgets/product_feedback.dart';
 import '../../../shared/widgets/momcozy_components.dart';
+import '../../../shared/widgets/momcozy_line_icon.dart';
 import '../../../shared/zoned_time.dart';
 import '../application/baby_records_controller.dart';
 import 'baby_labels.dart';
@@ -22,6 +28,7 @@ class BabyRecordsPage extends StatefulWidget {
     required this.now,
     required this.onBack,
     this.initialKind = BabyRecordKind.feeding,
+    this.onPrivacy,
   });
   final String babyId;
   final BabyProfileRepository profiles;
@@ -30,6 +37,7 @@ class BabyRecordsPage extends StatefulWidget {
   final DateTime Function() now;
   final VoidCallback onBack;
   final BabyRecordKind initialKind;
+  final VoidCallback? onPrivacy;
   @override
   State<BabyRecordsPage> createState() => _BabyRecordsPageState();
 }
@@ -115,22 +123,26 @@ class _BabyRecordsPageState extends State<BabyRecordsPage> {
     final c = _controller!;
     final confirmed = await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
-        scrollable: true,
-        title: const Text('删除这条记录？'),
-        content: Text(
-          '${c.baby.name} · ${babyRecordFacts(record)}\n删除后可以在当前页面撤销。',
+      animationStyle: MomCozyMotion.animationStyle(context),
+      builder: (context) => Theme(
+        data: momSettingsTheme(Theme.of(context)),
+        child: AlertDialog(
+          scrollable: true,
+          title: const Text('删除这条记录？'),
+          content: Text(
+            '${c.baby.name} · ${babyRecordFacts(record)}\n删除后可以在当前页面撤销。',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('保留'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text('删除'),
+            ),
+          ],
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('保留'),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text('删除'),
-          ),
-        ],
       ),
     );
     if (confirmed == true && mounted) await c.delete(record);
@@ -139,12 +151,13 @@ class _BabyRecordsPageState extends State<BabyRecordsPage> {
   Future<void> _month() async {
     final c = _controller!,
         today = dateInTimezone(widget.now(), _controller!.timezone);
-    final value = await showDatePicker(
+    final value = await showMomCozyDatePicker(
       context: context,
       initialDate: DateTime(c.month.year, c.month.month),
       firstDate: DateTime(1900),
       lastDate: DateTime(today.year, today.month, today.day),
       helpText: '选择要查看的记录月份',
+      theme: momSettingsTheme(Theme.of(context)),
     );
     if (value != null && mounted) {
       await c.select(month: LocalDate.fromDateTime(value));
@@ -159,182 +172,333 @@ class _BabyRecordsPageState extends State<BabyRecordsPage> {
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-    backgroundColor: MomCozyColors.background,
-    appBar: AppBar(
-      backgroundColor: MomCozyColors.background,
-      leading: IconButton(
-        tooltip: '返回宝宝页',
-        onPressed: widget.onBack,
-        icon: const Icon(Icons.arrow_back),
-      ),
-      title: Text(
-        _controller == null ? '宝宝记录' : '${_controller!.baby.name} 的记录',
-        maxLines: 2,
-        style: const TextStyle(
-          fontSize: MomCozyTypography.sectionSize,
-          fontWeight: FontWeight.w700,
+  Widget build(BuildContext context) => Theme(
+    data: momSettingsTheme(Theme.of(context)),
+    child: Builder(
+      builder: (context) => Scaffold(
+        backgroundColor: MomHomeTokens.background,
+        appBar: AppBar(
+          backgroundColor: MomHomeTokens.background,
+          toolbarHeight: 44,
+          leadingWidth: 80,
+          leading: TextButton(
+            onPressed: widget.onBack,
+            child: const Text(
+              '返回',
+              style: TextStyle(fontSize: 12, color: MomHomeTokens.secondary),
+            ),
+          ),
         ),
-      ),
-    ),
-    body: MomCozyPageBody(
-      child: _failure != null
-          ? SingleChildScrollView(
-              child: ProductErrorView(failure: _failure!, onRetry: _load),
-            )
-          : _controller == null
-          ? const ProductLoadingView()
-          : AnimatedBuilder(
-              animation: _controller!,
-              builder: (context, _) {
-                final c = _controller!, values = _controller!.records.value;
-                final today = dateInTimezone(c.now(), c.timezone);
-                return RefreshIndicator(
-                  onRefresh: c.load,
-                  child: ListView(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    padding: MomCozyInsets.page,
-                    children: [
-                      Wrap(
-                        spacing: MomCozySpacing.compact,
-                        runSpacing: MomCozySpacing.xs,
+        body: MomCozyPageBody(
+          child: _failure != null
+              ? SingleChildScrollView(
+                  child: ProductErrorView(
+                    useMomStyle: true,
+                    failure: _failure!,
+                    onRetry: _load,
+                  ),
+                )
+              : _controller == null
+              ? const ProductLoadingView()
+              : AnimatedBuilder(
+                  animation: _controller!,
+                  builder: (context, _) {
+                    final c = _controller!, values = _controller!.records.value;
+                    final today = dateInTimezone(c.now(), c.timezone);
+                    return RefreshIndicator(
+                      onRefresh: c.load,
+                      child: ListView(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
                         children: [
-                          for (final kind in BabyRecordKind.values)
-                            ChoiceChip(
-                              label: Text(babyRecordLabels[kind]!),
-                              selected: c.kind == kind,
-                              onSelected: c.canChange
-                                  ? (_) => c.select(kind: kind)
-                                  : null,
-                            ),
-                        ],
-                      ),
-                      const SizedBox(height: MomCozySpacing.content),
-                      Row(
-                        children: [
-                          IconButton(
-                            tooltip: '上个月',
-                            onPressed: c.canChange && c.month.year > 1900
-                                ? () => c.select(month: c.month.addMonths(-1))
-                                : null,
-                            icon: const Icon(Icons.chevron_left),
-                          ),
-                          Expanded(
-                            child: TextButton(
-                              onPressed: c.canChange ? _month : null,
-                              child: Text(
-                                '${c.month.year}年${c.month.month}月',
-                                textAlign: TextAlign.center,
-                              ),
+                          Text(
+                            '${c.baby.name} 的记录',
+                            style: MomHomeTokens.text(
+                              24,
+                              weight: FontWeight.w700,
                             ),
                           ),
-                          IconButton(
-                            tooltip: '下个月',
-                            onPressed:
-                                c.canChange &&
-                                    c.month.addMonths(1).compareTo(today) <= 0
-                                ? () => c.select(month: c.month.addMonths(1))
-                                : null,
-                            icon: const Icon(Icons.chevron_right),
-                          ),
-                        ],
-                      ),
-                      if (c.mutationFailure != null)
-                        ProductErrorView(
-                          failure: c.mutationFailure!,
-                          onRetry: c.uncertainMutation
-                              ? c.retryMutation
-                              : c.load,
-                        ),
-                      if (c.uncertainMutation)
-                        const Text('操作结果还未确认，请重试确认后再修改其他记录。'),
-                      if (c.deletion != null)
-                        Container(
-                          padding: const EdgeInsets.all(MomCozySpacing.content),
-                          margin: const EdgeInsets.symmetric(vertical: 8),
-                          decoration: BoxDecoration(
-                            color: MomCozyColors.careSoft,
-                            borderRadius: BorderRadius.circular(
-                              MomCozyRadii.control,
-                            ),
-                          ),
-                          child: Wrap(
-                            alignment: WrapAlignment.spaceBetween,
-                            crossAxisAlignment: WrapCrossAlignment.center,
+                          const SizedBox(height: 16),
+                          MomSettingsCard(
                             children: [
-                              const Text('记录已删除'),
-                              TextButton(
-                                onPressed: c.busy ? null : c.undo,
-                                child: const Text('撤销删除'),
+                              _RecordFilters(
+                                selected: c.kind,
+                                onChanged: c.canChange
+                                    ? (kind) => c.select(kind: kind)
+                                    : null,
+                              ),
+                              Row(
+                                children: [
+                                  IconButton(
+                                    tooltip: '上个月',
+                                    onPressed:
+                                        c.canChange && c.month.year > 1900
+                                        ? () => c.select(
+                                            month: c.month.addMonths(-1),
+                                          )
+                                        : null,
+                                    icon: const Icon(Icons.chevron_left),
+                                  ),
+                                  Expanded(
+                                    child: TextButton(
+                                      onPressed: c.canChange ? _month : null,
+                                      child: Text(
+                                        '${c.month.year}年${c.month.month}月',
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                  ),
+                                  IconButton(
+                                    tooltip: '下个月',
+                                    onPressed:
+                                        c.canChange &&
+                                            c.month
+                                                    .addMonths(1)
+                                                    .compareTo(today) <=
+                                                0
+                                        ? () => c.select(
+                                            month: c.month.addMonths(1),
+                                          )
+                                        : null,
+                                    icon: const Icon(Icons.chevron_right),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
-                        ),
-                      if (c.records.failure != null)
-                        ProductErrorView(
-                          failure: c.records.failure!,
-                          onRetry: c.load,
-                        ),
-                      if (c.records.loading) const ProductLoadingView(),
-                      if (values != null && values.isEmpty)
-                        ProductEmptyView(
-                          title: '本月还没有${babyRecordLabels[c.kind]}记录',
-                          description: '没有记录不会计为 0，也可以切换月份查看。',
-                          action: FilledButton(
-                            onPressed: c.canChange ? _edit : null,
-                            child: const Text('去记录'),
-                          ),
-                        ),
-                      if (values != null && values.isNotEmpty) ...[
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          child: Text(
-                            '本月共 ${c.total} 条 · 手动记录',
-                            style: const TextStyle(
-                              fontSize: MomCozyTypography.captionSize,
-                              color: MomCozyColors.mutedForeground,
+                          const SizedBox(height: 14),
+                          if (c.mutationFailure != null)
+                            ProductErrorView(
+                              useMomStyle: true,
+                              failure: c.mutationFailure!,
+                              onRetry: c.uncertainMutation
+                                  ? c.retryMutation
+                                  : c.load,
+                            ),
+                          if (c.uncertainMutation)
+                            const Text('操作结果还未确认，请重试确认后再修改其他记录。'),
+                          if (c.deletion != null)
+                            Container(
+                              padding: const EdgeInsets.all(
+                                MomCozySpacing.content,
+                              ),
+                              margin: const EdgeInsets.symmetric(vertical: 8),
+                              decoration: BoxDecoration(
+                                color: MomHomeTokens.mint,
+                                borderRadius: BorderRadius.circular(
+                                  MomCozyRadii.control,
+                                ),
+                              ),
+                              child: Wrap(
+                                alignment: WrapAlignment.spaceBetween,
+                                crossAxisAlignment: WrapCrossAlignment.center,
+                                children: [
+                                  const Text('记录已删除'),
+                                  TextButton(
+                                    onPressed: c.busy ? null : c.undo,
+                                    child: const Text('撤销删除'),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          if (c.records.failure != null)
+                            ProductErrorView(
+                              useMomStyle: true,
+                              failure: c.records.failure!,
+                              onRetry: c.load,
+                            ),
+                          if (c.records.loading) const ProductLoadingView(),
+                          if (values != null && values.isEmpty)
+                            MomSettingsCard(
+                              children: [
+                                Text(
+                                  '本月还没有${babyRecordLabels[c.kind]}记录',
+                                  style: MomHomeTokens.text(
+                                    18,
+                                    weight: FontWeight.w700,
+                                  ),
+                                ),
+                                Text(
+                                  '没有记录不会计为 0，也可以切换月份查看。',
+                                  style: MomHomeTokens.text(
+                                    14,
+                                    color: MomHomeTokens.secondary,
+                                  ),
+                                ),
+                                FilledButton(
+                                  onPressed: c.canChange ? _edit : null,
+                                  child: const Text('去记录'),
+                                ),
+                              ],
+                            ),
+                          if (values != null && values.isNotEmpty) ...[
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              child: Text(
+                                '本月共 ${c.total} 条 · 手动记录',
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  height: 1.6,
+                                  color: MomHomeTokens.secondary,
+                                ),
+                              ),
+                            ),
+                            for (final record in values)
+                              _RecordCard(
+                                record: record,
+                                timezone: c.timezone,
+                                onEdit: c.canChange
+                                    ? () => _edit(record)
+                                    : null,
+                                onDelete: c.canChange
+                                    ? () => _delete(record)
+                                    : null,
+                              ),
+                            if (c.pageFailure != null)
+                              ProductErrorView(
+                                useMomStyle: true,
+                                failure: c.pageFailure!,
+                                onRetry:
+                                    c.pageFailure!.kind ==
+                                        ProductFailureKind.conflict
+                                    ? c.load
+                                    : c.more,
+                              ),
+                            if (c.hasMore)
+                              TextButton(
+                                onPressed: c.loadingMore || !c.canChange
+                                    ? null
+                                    : c.more,
+                                child: Text(c.loadingMore ? '正在载入…' : '加载更多'),
+                              ),
+                            const SizedBox(height: MomCozySpacing.content),
+                            FilledButton.icon(
+                              onPressed: c.canChange ? _edit : null,
+                              icon: const Icon(Icons.add),
+                              label: const Text('添加记录'),
+                            ),
+                          ],
+                          const SizedBox(height: 16),
+                          Container(
+                            decoration: BoxDecoration(
+                              color: MomHomeTokens.surface,
+                              border: Border.all(color: MomHomeTokens.border),
+                              borderRadius: BorderRadius.circular(22),
+                            ),
+                            child: Material(
+                              color: Colors.transparent,
+                              child: ExpansionTile(
+                                shape: const Border(),
+                                collapsedShape: const Border(),
+                                leading: const MomCozyLineIcon(
+                                  MomCozyLineGlyph.shield,
+                                  size: 20,
+                                  color: MomHomeTokens.teal,
+                                ),
+                                title: const Text(
+                                  '数据来源',
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                subtitle: const Text(
+                                  '手动记录 · 查看隐私',
+                                  style: TextStyle(fontSize: 11),
+                                ),
+                                childrenPadding: const EdgeInsets.fromLTRB(
+                                  14,
+                                  0,
+                                  14,
+                                  12,
+                                ),
+                                children: [
+                                  const Text(
+                                    '此列表显示当前宝宝主动填写并保存的记录。没有记录不会计为 0。',
+                                    style: TextStyle(fontSize: 12, height: 1.6),
+                                  ),
+                                  TextButton(
+                                    onPressed: widget.onPrivacy,
+                                    child: const Text('隐私与授权'),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                        for (final record in values)
-                          _RecordCard(
-                            record: record,
-                            timezone: c.timezone,
-                            onEdit: c.canChange ? () => _edit(record) : null,
-                            onDelete: c.canChange
-                                ? () => _delete(record)
-                                : null,
-                          ),
-                        if (c.pageFailure != null)
-                          ProductErrorView(
-                            failure: c.pageFailure!,
-                            onRetry:
-                                c.pageFailure!.kind ==
-                                    ProductFailureKind.conflict
-                                ? c.load
-                                : c.more,
-                          ),
-                        if (c.hasMore)
-                          TextButton(
-                            onPressed: c.loadingMore || !c.canChange
-                                ? null
-                                : c.more,
-                            child: Text(c.loadingMore ? '正在载入…' : '加载更多'),
-                          ),
-                        const SizedBox(height: MomCozySpacing.content),
-                        OutlinedButton.icon(
-                          onPressed: c.canChange ? _edit : null,
-                          icon: const Icon(Icons.add),
-                          label: const Text('添加记录'),
-                        ),
-                      ],
-                    ],
-                  ),
-                );
-              },
-            ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+        ),
+      ),
     ),
   );
+}
+
+class _RecordFilters extends StatelessWidget {
+  const _RecordFilters({required this.selected, required this.onChanged});
+  final BabyRecordKind selected;
+  final ValueChanged<BabyRecordKind>? onChanged;
+  @override
+  Widget build(BuildContext context) {
+    final count = MediaQuery.textScalerOf(context).scale(1) > 1.4 ? 2 : 3;
+    final kinds = BabyRecordKind.values;
+    return Column(
+      spacing: 8,
+      children: [
+        for (var start = 0; start < kinds.length; start += count)
+          IntrinsicHeight(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              spacing: 8,
+              children: [
+                for (final kind in kinds.skip(start).take(count))
+                  Expanded(
+                    child: Semantics(
+                      selected: selected == kind,
+                      child: OutlinedButton(
+                        onPressed: onChanged == null
+                            ? null
+                            : () => onChanged!(kind),
+                        style: OutlinedButton.styleFrom(
+                          minimumSize: const Size(0, 44),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 6,
+                            vertical: 10,
+                          ),
+                          backgroundColor: selected == kind
+                              ? MomHomeTokens.mint
+                              : MomHomeTokens.surface,
+                          foregroundColor: selected == kind
+                              ? MomHomeTokens.teal
+                              : MomHomeTokens.secondary,
+                          side: BorderSide(
+                            color: selected == kind
+                                ? MomHomeTokens.teal
+                                : MomHomeTokens.border,
+                            width: selected == kind ? 2 : 1,
+                          ),
+                          textStyle: MomHomeTokens.text(
+                            13,
+                            weight: selected == kind
+                                ? FontWeight.w700
+                                : FontWeight.w400,
+                          ),
+                        ),
+                        child: Text(
+                          babyRecordLabels[kind]!,
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+      ],
+    );
+  }
 }
 
 class _RecordCard extends StatelessWidget {
@@ -351,45 +515,67 @@ class _RecordCard extends StatelessWidget {
       '${dateInTimezone(value, timezone)} ${zonedClock(value, timezone)} ${inTimezone(value, timezone).timeZoneName}';
   @override
   Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.only(bottom: MomCozySpacing.statusGap),
-    child: MomCozySurface(
-      padding: MomCozyInsets.compactCard,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Text(
-            babyRecordFacts(record),
-            style: const TextStyle(fontWeight: FontWeight.w600),
-          ),
-          const SizedBox(height: MomCozySpacing.compact),
-          Text(
-            switch (record) {
-              DatedBabyRecord(:final recordedOn) => recordedOn.toString(),
-              BabySleepRecord(:final occurredAt, :final endedAt) =>
-                '${_instant(occurredAt)}${endedAt == null ? '' : '\n至 ${_instant(endedAt)}'}',
-              TimedBabyRecord(:final occurredAt) => _instant(occurredAt),
-            },
-            style: const TextStyle(
-              fontSize: MomCozyTypography.captionSize,
-              color: MomCozyColors.mutedForeground,
+    padding: const EdgeInsets.only(bottom: 14),
+    child: MomSettingsCard(
+      children: [
+        Row(
+          children: [
+            MomCozyLineIcon(
+              switch (record.recordKind) {
+                BabyRecordKind.feeding => MomCozyLineGlyph.drop,
+                BabyRecordKind.sleep => MomCozyLineGlyph.moon,
+                BabyRecordKind.diaper => MomCozyLineGlyph.drop,
+                BabyRecordKind.growth => MomCozyLineGlyph.plan,
+                BabyRecordKind.development => MomCozyLineGlyph.spark,
+              },
+              size: 28,
+              color: MomHomeTokens.teal,
             ),
-          ),
-          if (record case TimedBabyRecord(:final note))
-            if (note.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.only(top: MomCozySpacing.compact),
-                child: Text('备注：$note'),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                record is BabySleepRecord &&
+                        (record as BabySleepRecord).endedAt == null
+                    ? '记录中'
+                    : '已保存',
+                style: MomHomeTokens.text(12, color: MomHomeTokens.teal),
               ),
-          Wrap(
-            alignment: WrapAlignment.end,
-            spacing: MomCozySpacing.compact,
-            children: [
-              TextButton(onPressed: onEdit, child: const Text('编辑')),
-              TextButton(onPressed: onDelete, child: const Text('删除')),
-            ],
-          ),
-        ],
-      ),
+            ),
+          ],
+        ),
+        Text(
+          babyRecordFacts(record),
+          style: MomHomeTokens.text(16, weight: FontWeight.w700),
+        ),
+        Text(switch (record) {
+          DatedBabyRecord(:final recordedOn) => recordedOn.toString(),
+          BabySleepRecord(:final occurredAt, :final endedAt) =>
+            '${_instant(occurredAt)}${endedAt == null ? '' : '\n至 ${_instant(endedAt)}'}',
+          TimedBabyRecord(:final occurredAt) => _instant(occurredAt),
+        }, style: MomHomeTokens.text(12, color: MomHomeTokens.secondary)),
+        if (record case TimedBabyRecord(:final note))
+          if (note.isNotEmpty)
+            Text(
+              '备注：$note',
+              style: MomHomeTokens.text(13, color: MomHomeTokens.secondary),
+            ),
+        Row(
+          children: [
+            Expanded(
+              child: TextButton(onPressed: onEdit, child: const Text('编辑')),
+            ),
+            Expanded(
+              child: TextButton(
+                onPressed: onDelete,
+                style: TextButton.styleFrom(
+                  foregroundColor: MomCozyColors.danger,
+                ),
+                child: const Text('删除'),
+              ),
+            ),
+          ],
+        ),
+      ],
     ),
   );
 }

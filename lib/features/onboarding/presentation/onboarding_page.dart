@@ -1,12 +1,18 @@
 import 'dart:async';
 import 'dart:typed_data';
+import '../../../shared/design_system/mom_home_tokens.dart';
+import '../../../shared/widgets/mom_settings_widgets.dart';
+import '../../auth/presentation/auth_login_chrome.dart';
 
 import 'package:flutter/material.dart';
+import 'package:momcozy_flutter_app/shared/widgets/date_time_picker.dart';
+import 'package:momcozy_flutter_app/shared/design_system/momcozy_motion.dart';
 import '../../../shared/widgets/momcozy_components.dart';
 import '../../../shared/widgets/product_feedback.dart';
 import 'package:go_router/go_router.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/shared/design_system/momcozy_design_system.dart';
+import 'package:momcozy_flutter_app/shared/design_system/momcozy_text_roles.dart';
 import 'package:momcozy_flutter_app/features/onboarding/data/platform_portrait_picker.dart';
 import 'package:momcozy_flutter_app/features/onboarding/domain/onboarding.dart';
 import 'package:momcozy_flutter_app/features/onboarding/presentation/onboarding_controller.dart';
@@ -42,6 +48,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
       widget.pickPortrait ?? OnboardingPlatformPortraitPicker().pick;
   final _nameController = TextEditingController();
   final _ageController = TextEditingController();
+  final _profileScroll = ScrollController();
   int _profileStep = 0;
   final OnboardingProfileDraft _draft = OnboardingProfileDraft();
   bool _editingConfirmedProfile = false;
@@ -51,6 +58,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
 
   @override
   void dispose() {
+    _profileScroll.dispose();
     _nameController.dispose();
     _ageController.dispose();
     super.dispose();
@@ -58,34 +66,70 @@ class _OnboardingPageState extends State<OnboardingPage> {
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: widget.controller,
-      builder: (context, _) {
-        final controller = widget.controller;
-        return Scaffold(
-          backgroundColor: MomCozyColors.background,
-          body: MomCozyPageBody(
-            child: switch (controller.phase) {
-              OnboardingGatePhase.idle ||
-              OnboardingGatePhase.loading => const ProductLoadingView(),
-              OnboardingGatePhase.failure => SingleChildScrollView(
-                child: ProductEmptyView(
-                  title: 'We couldn’t load your setup',
-                  description: controller.errorMessage,
-                  icon: Icons.cloud_off_rounded,
-                  action: MomCozyPrimaryButton(
-                    onPressed: controller.load,
-                    child: const Text('Try again'),
-                  ),
+    final theme = authLoginTheme(Theme.of(context));
+    return Theme(
+      data: theme,
+      child: AnimatedBuilder(
+        animation: widget.controller,
+        builder: (context, _) {
+          final controller = widget.controller;
+          return Scaffold(
+            backgroundColor: authBackground,
+            body: MomCozyPageBody(
+              child: switch (controller.phase) {
+                OnboardingGatePhase.idle ||
+                OnboardingGatePhase.loading => _setupLoadState(context),
+                OnboardingGatePhase.failure => _setupLoadState(
+                  context,
+                  failed: true,
                 ),
-              ),
-              OnboardingGatePhase.ready => _buildReady(context),
-            },
-          ),
-        );
-      },
+                OnboardingGatePhase.ready => _buildReady(context),
+              },
+            ),
+          );
+        },
+      ),
     );
   }
+
+  Widget _setupLoadState(BuildContext context, {bool failed = false}) => Theme(
+    data: authLoginTheme(Theme.of(context)),
+    child: SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: MomSettingsCard(
+        children: [
+          Text(
+            failed ? 'We couldn’t load your setup' : 'Preparing your setup',
+            style: MomHomeTokens.text(20, weight: FontWeight.w700),
+          ),
+          if (failed) ...[
+            Text(
+              widget.controller.errorMessage,
+              style: MomHomeTokens.text(
+                13,
+                color: MomHomeTokens.secondary,
+                height: 1.55,
+              ),
+            ),
+            FilledButton(
+              onPressed: widget.controller.load,
+              child: const Text('Try again'),
+            ),
+          ] else
+            const Align(
+              alignment: Alignment.centerLeft,
+              child: SizedBox.square(
+                dimension: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  semanticsLabel: 'Loading setup',
+                ),
+              ),
+            ),
+        ],
+      ),
+    ),
+  );
 
   Widget _buildReady(BuildContext context) {
     final state = widget.controller.state;
@@ -96,22 +140,32 @@ class _OnboardingPageState extends State<OnboardingPage> {
     return _buildAvatarFlow(context, state);
   }
 
-  Widget _buildProfileFlow(BuildContext context) {
-    return Column(
+  void _goToProfileStep(int step) {
+    FocusScope.of(context).unfocus();
+    setState(() {
+      _profileStep = step;
+      _validationMessage = '';
+    });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted && _profileScroll.hasClients) _profileScroll.jumpTo(0);
+    });
+  }
+
+  Widget _buildProfileFlow(BuildContext context) => Theme(
+    data: authLoginTheme(Theme.of(context)),
+    child: Column(
       children: [
-        _OnboardingHeader(
+        _SetupProgressHeader(
           step: _profileStep + 1,
-          totalSteps: 4,
-          onBack: _profileStep == 0
+          onBack: _profileStep == 0 || widget.controller.busy
               ? null
-              : () => setState(() {
-                  _profileStep -= 1;
-                  _validationMessage = '';
-                }),
+              : () => _goToProfileStep(_profileStep - 1),
         ),
         Expanded(
           child: SingleChildScrollView(
-            padding: MomCozyInsets.page,
+            controller: _profileScroll,
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 28),
             child: switch (_profileStep) {
               0 => _basicsStep(),
               1 => _postpartumDeliveryStep(context),
@@ -121,41 +175,39 @@ class _OnboardingPageState extends State<OnboardingPage> {
           ),
         ),
       ],
-    );
-  }
+    ),
+  );
 
   Widget _basicsStep() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+    return _ProfileStep(
+      title: 'A few basics first',
+      reason:
+          'Your name personalizes the app, and your age helps us tailor guidance safely.',
       children: [
-        const _StepPrompt(
-          title: 'A few basics first',
-          reason:
-              'Your name personalizes the app, and your age helps us tailor guidance safely.',
-        ),
-        const SizedBox(height: MomCozySpacing.section),
-        TextField(
-          key: const ValueKey('onboarding-display-name'),
-          controller: _nameController,
-          textCapitalization: TextCapitalization.words,
-          textInputAction: TextInputAction.next,
-          decoration: const InputDecoration(
-            labelText: 'Name',
-            hintText: 'What should we call you?',
+        _ProfileField(
+          label: 'Name',
+          child: TextField(
+            key: const ValueKey('onboarding-display-name'),
+            controller: _nameController,
+            textCapitalization: TextCapitalization.words,
+            textInputAction: TextInputAction.next,
+            decoration: const InputDecoration(
+              hintText: 'What should we call you?',
+            ),
           ),
         ),
-        const SizedBox(height: MomCozySpacing.page),
-        TextField(
-          key: const ValueKey('onboarding-age'),
-          controller: _ageController,
-          keyboardType: TextInputType.number,
-          decoration: const InputDecoration(
-            labelText: 'Age',
-            hintText: 'e.g. 32',
+        _ProfileField(
+          label: 'Age',
+          child: TextField(
+            key: const ValueKey('onboarding-age'),
+            controller: _ageController,
+            keyboardType: TextInputType.number,
+            decoration: const InputDecoration(hintText: 'e.g. 32'),
           ),
         ),
-        const SizedBox(height: MomCozySpacing.section),
-        _errorText(controllerError: true),
+        if (_validationMessage.isNotEmpty ||
+            widget.controller.errorMessage.isNotEmpty)
+          _errorText(controllerError: true, motherStyle: true),
         MomCozyPrimaryButton(
           loading: widget.controller.busy,
           onPressed: widget.controller.busy ? null : _continueFromBasics,
@@ -180,30 +232,24 @@ class _OnboardingPageState extends State<OnboardingPage> {
     _draft
       ..displayName = _nameController.text.trim()
       ..age = age;
-    setState(() {
-      _profileStep = 1;
-      _validationMessage = '';
-    });
+    _goToProfileStep(1);
   }
 
   Widget _postpartumDeliveryStep(BuildContext context) {
     final draft = _draft;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+    return _ProfileStep(
+      title: 'Tell us about your delivery',
+      reason:
+          'Your delivery date helps personalize postpartum recovery and your baby’s age-based guidance.',
       children: [
-        const _StepPrompt(
-          title: 'Tell us about your delivery',
-          reason:
-              'Your delivery date helps personalize postpartum recovery and your baby’s age-based guidance.',
-        ),
-        const SizedBox(height: MomCozySpacing.section),
         _DateField(
           label: 'Delivery date',
           value: draft.deliveryDate,
           onTap: () async {
             final today = DateUtils.dateOnly(DateTime.now());
-            final selected = await showDatePicker(
+            final selected = await showMomCozyDatePicker(
               context: context,
+              theme: authLoginTheme(Theme.of(context)),
               initialDate: draft.deliveryDate ?? today,
               firstDate: DateTime(today.year - 2),
               lastDate: today,
@@ -211,8 +257,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
             if (selected != null) setState(() => draft.deliveryDate = selected);
           },
         ),
-        const SizedBox(height: MomCozySpacing.section),
-        _errorText(controllerError: true),
+        if (_validationMessage.isNotEmpty ||
+            widget.controller.errorMessage.isNotEmpty)
+          _errorText(controllerError: true, motherStyle: true),
         MomCozyPrimaryButton(
           key: const ValueKey('onboarding-postpartum-delivery-continue'),
           onPressed: _continueFromPostpartumDelivery,
@@ -227,47 +274,52 @@ class _OnboardingPageState extends State<OnboardingPage> {
       setState(() => _validationMessage = 'Choose your delivery date.');
       return;
     }
-    setState(() {
-      _profileStep = 2;
-      _validationMessage = '';
-    });
+    _goToProfileStep(2);
   }
 
   Widget _postpartumBirthStep() {
     final draft = _draft;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+    return _ProfileStep(
+      title: 'How was your delivery?',
+      reason:
+          'Delivery method and baby count help personalize recovery and create the right baby profiles.',
       children: [
-        const _StepPrompt(
-          title: 'How was your delivery?',
-          reason:
-              'Delivery method and baby count help personalize recovery and create the right baby profiles.',
-        ),
-        const SizedBox(height: MomCozySpacing.section),
-        DropdownButtonFormField<String?>(
-          initialValue: draft.deliveryType,
-          isExpanded: true,
-          itemHeight: null,
-          decoration: const InputDecoration(
-            labelText: 'Delivery method (optional)',
+        _ProfileField(
+          label: 'Delivery method (optional)',
+          child: DropdownButtonFormField<String?>(
+            initialValue: draft.deliveryType,
+            style: MomHomeTokens.text(14),
+            isExpanded: true,
+            isDense: MediaQuery.textScalerOf(context).scale(14) <= 14 * 1.4,
+            itemHeight: null,
+            decoration: const InputDecoration(),
+            items: const [
+              DropdownMenuItem(
+                value: null,
+                child: Text('Prefer not to say yet'),
+              ),
+              DropdownMenuItem(value: 'vaginal', child: Text('Vaginal birth')),
+              DropdownMenuItem(
+                value: 'cesarean',
+                child: Text('Cesarean birth'),
+              ),
+              DropdownMenuItem(
+                value: 'assisted',
+                child: Text('Assisted birth'),
+              ),
+              DropdownMenuItem(value: 'other', child: Text('Other')),
+            ],
+            onChanged: (value) => draft.deliveryType = value,
           ),
-          items: const [
-            DropdownMenuItem(value: null, child: Text('Prefer not to say yet')),
-            DropdownMenuItem(value: 'vaginal', child: Text('Vaginal birth')),
-            DropdownMenuItem(value: 'cesarean', child: Text('Cesarean birth')),
-            DropdownMenuItem(value: 'assisted', child: Text('Assisted birth')),
-            DropdownMenuItem(value: 'other', child: Text('Other')),
-          ],
-          onChanged: (value) => draft.deliveryType = value,
         ),
-        const SizedBox(height: MomCozySpacing.page),
         _CountField(
           label: 'How many babies did you welcome?',
           value: draft.infantCount,
           onChanged: (value) => setState(() => draft.setInfantCount(value)),
         ),
-        const SizedBox(height: MomCozySpacing.section),
-        _errorText(),
+        if (_validationMessage.isNotEmpty ||
+            widget.controller.errorMessage.isNotEmpty)
+          _errorText(controllerError: true, motherStyle: true),
         MomCozyPrimaryButton(
           key: const ValueKey('onboarding-postpartum-save'),
           loading: widget.controller.busy,
@@ -284,6 +336,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
       setState(() => _validationMessage = 'Choose your delivery date.');
       return;
     }
+    FocusScope.of(context).unfocus();
     setState(() => _validationMessage = '');
     await _confirmProfile(draft);
   }
@@ -319,15 +372,14 @@ class _OnboardingPageState extends State<OnboardingPage> {
                 : _leaveAvatarTaskPage,
           )
         else
-          _OnboardingHeader(
+          _SetupProgressHeader(
             step: totalSteps,
-            totalSteps: totalSteps,
             backKey: const ValueKey('onboarding-avatar-back'),
             onBack: canReturnToProfile ? _returnToProfileFlow : null,
           ),
         Expanded(
           child: SingleChildScrollView(
-            padding: MomCozyInsets.page,
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 28),
             child: switch (flowStatus) {
               OnboardingStatus.avatarGenerating => _generatingView(state),
               OnboardingStatus.avatarReview => _reviewView(context, state),
@@ -360,6 +412,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         _StepPrompt(
+          companionPreview: true,
           title: failed
               ? 'Let’s try another photo'
               : replacing
@@ -371,56 +424,60 @@ class _OnboardingPageState extends State<OnboardingPage> {
               ? 'Your current companion stays active until you choose and confirm a new one.'
               : 'A portrait helps us make your companion feel more like you.',
         ),
-        const SizedBox(height: MomCozySpacing.card),
-        const _ReferenceAvatar(compact: true),
-        const SizedBox(height: MomCozySpacing.card),
-        _errorText(controllerError: true),
-        MomCozyPrimaryButton(
-          icon: Icons.add_a_photo_outlined,
-          loading: widget.controller.busy,
-          onPressed: widget.controller.busy ? null : _showPortraitSourceSheet,
-          child: const Text('Upload a photo'),
-        ),
-        const SizedBox(height: MomCozySpacing.statusGap),
-        const Padding(
-          key: ValueKey('onboarding-photo-privacy-note'),
-          padding: EdgeInsets.symmetric(horizontal: 8),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: EdgeInsets.only(top: 1),
-                child: Icon(
-                  Icons.lock_outline_rounded,
-                  size: 16,
-                  color: MomCozyColors.mutedForeground,
-                ),
-              ),
-              SizedBox(width: MomCozySpacing.compact),
-              Expanded(
-                child: Text(
-                  'Your photo is used only to create your avatar. It is deleted after a successful generation, or automatically within 24 hours.',
-                  style: TextStyle(
-                    color: MomCozyColors.mutedForeground,
-                    fontSize: MomCozyTypography.secondarySize,
-                    height: 1.4,
+        const SizedBox(height: 14),
+        MomSettingsCard(
+          children: [
+            if (widget.controller.errorMessage.isNotEmpty ||
+                _validationMessage.isNotEmpty)
+              _errorText(controllerError: true, motherStyle: true),
+            MomCozyPrimaryButton(
+              icon: Icons.add_a_photo_outlined,
+              loading: widget.controller.busy,
+              onPressed: widget.controller.busy
+                  ? null
+                  : _showPortraitSourceSheet,
+              child: const Text('Upload a photo'),
+            ),
+            Padding(
+              key: ValueKey('onboarding-photo-privacy-note'),
+              padding: EdgeInsets.symmetric(horizontal: 8),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(top: 1),
+                    child: Icon(
+                      Icons.lock_outline_rounded,
+                      size: 16,
+                      color: MomHomeTokens.secondary,
+                    ),
                   ),
-                ),
+                  SizedBox(width: MomCozySpacing.compact),
+                  Expanded(
+                    child: Text(
+                      'Your photo is used only to create your avatar. It is deleted after a successful generation, or automatically within 24 hours.',
+                      style: MomCozyTextRoles.paragraphOf(
+                        context,
+                      ).copyWith(color: MomHomeTokens.secondary, fontSize: 13),
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+            if (state.canContinueWithDefault)
+              TextButton(
+                onPressed: widget.controller.busy
+                    ? null
+                    : _confirmDefaultAvatar,
+                child: const Text('Use the MomCozy character for now'),
+              )
+            else if (failed && state.pendingAvatar != null)
+              TextButton(
+                onPressed: widget.controller.busy ? null : _keepCurrentAvatar,
+                child: const Text('Keep my current companion'),
+              ),
+          ],
         ),
-        const SizedBox(height: MomCozySpacing.xs),
-        if (state.canContinueWithDefault)
-          TextButton(
-            onPressed: widget.controller.busy ? null : _confirmDefaultAvatar,
-            child: const Text('Use the MomCozy character for now'),
-          )
-        else if (failed && state.pendingAvatar != null)
-          TextButton(
-            onPressed: widget.controller.busy ? null : _keepCurrentAvatar,
-            child: const Text('Keep my current companion'),
-          ),
       ],
     );
   }
@@ -428,39 +485,49 @@ class _OnboardingPageState extends State<OnboardingPage> {
   Future<void> _showPortraitSourceSheet() async {
     final source = await showModalBottomSheet<OnboardingPortraitSource>(
       context: context,
+      sheetAnimationStyle: MomCozyMotion.animationStyle(context),
       showDragHandle: true,
-      builder: (context) => SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 0, 16, 18),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const Padding(
-                padding: EdgeInsets.fromLTRB(8, 0, 8, 8),
-                child: Text(
-                  'Choose a photo',
-                  style: TextStyle(
-                    fontSize: MomCozyTypography.headingSize,
-                    fontWeight: FontWeight.w700,
+      backgroundColor: MomHomeTokens.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (context) => Theme(
+        data: authLoginTheme(Theme.of(context)),
+        child: SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Padding(
+                  padding: EdgeInsets.fromLTRB(8, 0, 8, 8),
+                  child: Text(
+                    'Choose a photo',
+                    style: MomHomeTokens.text(20, weight: FontWeight.w700),
                   ),
                 ),
-              ),
-              ListTile(
-                key: const ValueKey('onboarding-camera-source'),
-                leading: const Icon(Icons.camera_alt_outlined),
-                title: const Text('Take a photo'),
-                onTap: () =>
-                    Navigator.of(context).pop(OnboardingPortraitSource.camera),
-              ),
-              ListTile(
-                key: const ValueKey('onboarding-library-source'),
-                leading: const Icon(Icons.photo_library_outlined),
-                title: const Text('Choose from library'),
-                onTap: () =>
-                    Navigator.of(context).pop(OnboardingPortraitSource.gallery),
-              ),
-            ],
+                ListTile(
+                  key: const ValueKey('onboarding-camera-source'),
+                  leading: const Icon(Icons.camera_alt_outlined),
+                  title: Text('Take a photo', style: MomHomeTokens.text(14)),
+                  onTap: () => Navigator.of(
+                    context,
+                  ).pop(OnboardingPortraitSource.camera),
+                ),
+                ListTile(
+                  key: const ValueKey('onboarding-library-source'),
+                  leading: const Icon(Icons.photo_library_outlined),
+                  title: Text(
+                    'Choose from library',
+                    style: MomHomeTokens.text(14),
+                  ),
+                  onTap: () => Navigator.of(
+                    context,
+                  ).pop(OnboardingPortraitSource.gallery),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -471,21 +538,38 @@ class _OnboardingPageState extends State<OnboardingPage> {
   Future<void> _confirmDefaultAvatar() async {
     final confirmed = await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Continue with MomCozy character?'),
-        content: const Text(
-          'You can use the MomCozy postpartum companion instead of creating a personalized one.',
+      animationStyle: MomCozyMotion.animationStyle(context),
+      builder: (context) => Theme(
+        data: authLoginTheme(Theme.of(context)),
+        child: MomSettingsFlowDialog(
+          title: 'Continue with MomCozy character?',
+          closeLabel: 'Close',
+          onClose: null,
+          showClose: false,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                'You can use the MomCozy postpartum companion instead of creating a personalized one.',
+                style: MomHomeTokens.text(
+                  13,
+                  color: MomHomeTokens.secondary,
+                  height: 1.55,
+                ),
+              ),
+              const SizedBox(height: 14),
+              OutlinedButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: const Text('Go back'),
+              ),
+              const SizedBox(height: 8),
+              FilledButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: const Text('Continue'),
+              ),
+            ],
+          ),
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Go back'),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Continue'),
-          ),
-        ],
       ),
     );
     if (confirmed == true && mounted) {
@@ -522,38 +606,41 @@ class _OnboardingPageState extends State<OnboardingPage> {
   Future<void> _showGenerationHandoff() async {
     final enterApp = await showDialog<bool>(
       context: context,
+      animationStyle: MomCozyMotion.animationStyle(context),
       barrierDismissible: false,
       builder: (dialogContext) => PopScope(
         canPop: false,
-        child: AlertDialog(
-          icon: const CircleAvatar(
-            radius: 28,
-            backgroundColor: MomCozyColors.roseSoft,
-            child: Icon(
-              Icons.auto_awesome_rounded,
-              color: MomCozyColors.primaryDark,
-              size: 28,
+        child: Theme(
+          data: authLoginTheme(Theme.of(dialogContext)),
+          child: MomSettingsFlowDialog(
+            title: 'Your digital companion is being created',
+            closeLabel: 'Close',
+            onClose: null,
+            showClose: false,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  'Creating four options can take a few minutes. We’ll keep working in the cloud, so you can start using the app now. We’ll let you know when they’re ready.',
+                  style: MomHomeTokens.text(
+                    13,
+                    color: MomHomeTokens.secondary,
+                    height: 1.55,
+                  ),
+                ),
+                const SizedBox(height: 14),
+                TextButton(
+                  onPressed: () => Navigator.of(dialogContext).pop(false),
+                  child: const Text('Wait here'),
+                ),
+                const SizedBox(height: 8),
+                FilledButton(
+                  onPressed: () => Navigator.of(dialogContext).pop(true),
+                  child: const Text('Enter the app'),
+                ),
+              ],
             ),
           ),
-          title: const Text(
-            'Your digital companion is being created',
-            textAlign: TextAlign.center,
-          ),
-          content: const Text(
-            'Creating four options can take a few minutes. We’ll keep working in the cloud, so you can start using the app now. We’ll let you know when they’re ready.',
-            textAlign: TextAlign.center,
-          ),
-          actionsAlignment: MainAxisAlignment.center,
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(dialogContext).pop(false),
-              child: const Text('Wait here'),
-            ),
-            FilledButton(
-              onPressed: () => Navigator.of(dialogContext).pop(true),
-              child: const Text('Enter the app'),
-            ),
-          ],
         ),
       ),
     );
@@ -611,8 +698,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
           itemCount: candidates.length,
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
-            mainAxisSpacing: 12,
-            crossAxisSpacing: 12,
+            mainAxisSpacing: 14,
+            crossAxisSpacing: 14,
             childAspectRatio: 0.78,
           ),
           itemBuilder: (context, index) {
@@ -641,7 +728,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                 : widget.controller.selectDefaultAvatar,
           ),
         const SizedBox(height: MomCozySpacing.card),
-        _errorText(controllerError: true),
+        _errorText(controllerError: true, motherStyle: true),
         MomCozyPrimaryButton(
           loading: widget.controller.busy || _activatingAvatar,
           onPressed:
@@ -693,11 +780,12 @@ class _OnboardingPageState extends State<OnboardingPage> {
     setState(() => _activatingAvatar = false);
   }
 
-  Widget _errorText({bool controllerError = false}) {
+  Widget _errorText({bool controllerError = false, bool motherStyle = false}) {
     final message = controllerError && widget.controller.errorMessage.isNotEmpty
         ? widget.controller.errorMessage
         : _validationMessage;
     if (message.isEmpty) return const SizedBox.shrink();
+    if (motherStyle) return AuthNotice(message, error: true);
     return Padding(
       padding: const EdgeInsets.only(bottom: 14),
       child: Container(
@@ -721,59 +809,112 @@ class _OnboardingPageState extends State<OnboardingPage> {
   }
 }
 
-class _OnboardingHeader extends StatelessWidget {
-  const _OnboardingHeader({
-    required this.step,
-    this.totalSteps,
-    this.backKey,
-    this.onBack,
-  });
-
-  final int step;
-  final int? totalSteps;
-  final Key? backKey;
-  final VoidCallback? onBack;
-
+class _ProfileField extends StatelessWidget {
+  const _ProfileField({required this.label, required this.child});
+  final String label;
+  final Widget child;
   @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 14, 20, 8),
-      child: Row(
+  Widget build(BuildContext context) => Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: [
+      ExcludeSemantics(
+        child: Text(
+          label,
+          style: MomHomeTokens.text(12, weight: FontWeight.w700),
+        ),
+      ),
+      const SizedBox(height: 8),
+      Semantics(label: label, child: child),
+    ],
+  );
+}
+
+class _ProfileStep extends StatelessWidget {
+  const _ProfileStep({
+    required this.title,
+    required this.reason,
+    required this.children,
+  });
+  final String title, reason;
+  final List<Widget> children;
+  @override
+  Widget build(BuildContext context) => Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: [
+      MomSettingsCard(
+        gradient: MomHomeTokens.plan,
         children: [
-          SizedBox.square(
-            dimension: MomCozyTapTargets.minimum,
-            child: onBack == null
-                ? null
-                : IconButton(
-                    key: backKey,
-                    tooltip: 'Back',
-                    onPressed: onBack,
-                    icon: const Icon(Icons.arrow_back_rounded),
-                  ),
-          ),
-          const SizedBox(width: MomCozySpacing.compact),
-          Expanded(
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(MomCozyRadii.pill),
-              child: LinearProgressIndicator(
-                value: totalSteps == null ? 0.2 : step / totalSteps!,
-                minHeight: 6,
-                backgroundColor: MomCozyColors.border,
-              ),
-            ),
-          ),
-          const SizedBox(width: MomCozySpacing.content),
+          Text(title, style: MomHomeTokens.text(24, weight: FontWeight.w700)),
           Text(
-            totalSteps == null ? 'Step $step' : '$step/$totalSteps',
-            style: const TextStyle(
-              color: MomCozyColors.mutedForeground,
-              fontWeight: FontWeight.w700,
+            reason,
+            style: MomHomeTokens.text(
+              13,
+              color: MomHomeTokens.secondary,
+              height: 1.55,
             ),
           ),
         ],
       ),
-    );
-  }
+      const SizedBox(height: 14),
+      MomSettingsCard(children: children),
+    ],
+  );
+}
+
+class _SetupProgressHeader extends StatelessWidget {
+  const _SetupProgressHeader({required this.step, this.onBack, this.backKey});
+  final int step;
+  final Key? backKey;
+  final VoidCallback? onBack;
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+    child: Column(
+      children: [
+        Row(
+          children: [
+            SizedBox.square(
+              dimension: 44,
+              child: onBack == null
+                  ? null
+                  : IconButton(
+                      key: backKey,
+                      tooltip: 'Back',
+                      onPressed: onBack,
+                      icon: const Icon(Icons.arrow_back_rounded, size: 20),
+                    ),
+            ),
+            Expanded(
+              child: Text(
+                'Your setup',
+                style: MomHomeTokens.text(
+                  12,
+                  weight: FontWeight.w700,
+                  color: MomHomeTokens.secondary,
+                ),
+              ),
+            ),
+            Text(
+              '$step/4',
+              style: MomHomeTokens.text(
+                12,
+                weight: FontWeight.w700,
+                color: MomHomeTokens.rose,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        LinearProgressIndicator(
+          value: step / 4,
+          minHeight: 6,
+          borderRadius: BorderRadius.circular(3),
+          backgroundColor: MomHomeTokens.mint,
+          semanticsLabel: 'Setup step $step of 4',
+        ),
+      ],
+    ),
+  );
 }
 
 class _AvatarTaskHeader extends StatelessWidget {
@@ -801,8 +942,8 @@ class _AvatarTaskHeader extends StatelessWidget {
             child: Text(
               'Digital companion',
               style: TextStyle(
-                color: MomCozyColors.foreground,
-                fontSize: MomCozyTypography.sectionSize,
+                color: MomHomeTokens.ink,
+                fontSize: 18,
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -820,16 +961,19 @@ class _AvatarActivationSuccessView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       key: const ValueKey('avatar-activation-success'),
-      padding: const EdgeInsets.only(top: 72),
-      child: Column(
+      padding: const EdgeInsets.only(top: 16),
+      child: MomSettingsCard(
+        gradient: MomHomeTokens.plan,
         children: [
-          const CircleAvatar(
-            radius: 38,
-            backgroundColor: MomCozyColors.careSoft,
-            child: Icon(
-              Icons.check_rounded,
-              color: MomCozyColors.care,
-              size: 42,
+          const Center(
+            child: CircleAvatar(
+              radius: 38,
+              backgroundColor: MomHomeTokens.mint,
+              child: Icon(
+                Icons.check_rounded,
+                color: MomHomeTokens.teal,
+                size: 42,
+              ),
             ),
           ),
           const SizedBox(height: MomCozySpacing.section),
@@ -837,7 +981,7 @@ class _AvatarActivationSuccessView extends StatelessWidget {
             'Your digital companion is ready',
             textAlign: TextAlign.center,
             style: TextStyle(
-              color: MomCozyColors.foreground,
+              color: MomHomeTokens.ink,
               fontSize: MomCozyTypography.pageTitleSize,
               height: 1.43,
               fontWeight: FontWeight.w700,
@@ -847,10 +991,9 @@ class _AvatarActivationSuccessView extends StatelessWidget {
           Text(
             'Applying your choice and returning you to the app…',
             textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: MomCozyColors.mutedForeground,
-              height: 1.4,
-            ),
+            style: Theme.of(context).textTheme.bodyMedium
+                ?.merge(MomCozyTextRoles.paragraphOf(context))
+                .copyWith(color: MomHomeTokens.secondary),
           ),
         ],
       ),
@@ -859,63 +1002,44 @@ class _AvatarActivationSuccessView extends StatelessWidget {
 }
 
 class _StepPrompt extends StatelessWidget {
-  const _StepPrompt({required this.title, required this.reason});
-
-  final String title;
-  final String reason;
-
+  const _StepPrompt({
+    required this.title,
+    required this.reason,
+    this.companionPreview = false,
+  });
+  final String title, reason;
+  final bool companionPreview;
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    final large = MediaQuery.textScalerOf(context).scale(14) > 14 * 1.4;
+    final copy = Text(
+      reason,
+      style: MomHomeTokens.text(
+        13,
+        color: MomHomeTokens.secondary,
+        height: 1.55,
+      ),
+    );
+    return MomSettingsCard(
+      gradient: MomHomeTokens.ai,
       children: [
-        Text(
-          title,
-          style: const TextStyle(
-            color: MomCozyColors.foreground,
-            fontSize: MomCozyTypography.pageTitleSize,
-            height: 1.43,
-            fontWeight: FontWeight.w700,
+        Text(title, style: MomHomeTokens.text(24, weight: FontWeight.w700)),
+        if (!companionPreview)
+          copy
+        else if (large) ...[
+          copy,
+          const Align(
+            alignment: Alignment.centerRight,
+            child: SizedBox(width: 64, height: 96, child: _ReferenceAvatar()),
           ),
-        ),
-        const SizedBox(height: MomCozySpacing.headingGap),
-        Container(
-          padding: const EdgeInsets.all(MomCozySpacing.content),
-          decoration: BoxDecoration(
-            color: MomCozyColors.secondary,
-            borderRadius: BorderRadius.circular(MomCozyRadii.control),
-          ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+        ] else
+          Row(
             children: [
-              const Icon(
-                Icons.auto_awesome_outlined,
-                size: 18,
-                color: MomCozyColors.primaryDark,
-              ),
-              const SizedBox(width: MomCozySpacing.compact),
-              Expanded(
-                child: Text.rich(
-                  TextSpan(
-                    children: [
-                      const TextSpan(
-                        text: 'Why we ask: ',
-                        style: TextStyle(fontWeight: FontWeight.w700),
-                      ),
-                      TextSpan(text: reason),
-                    ],
-                  ),
-                  style: const TextStyle(
-                    color: MomCozyColors.mutedForeground,
-                    fontSize: MomCozyTypography.bodySize,
-                    height: 1.4,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
+              Expanded(child: copy),
+              const SizedBox(width: 14),
+              const SizedBox(width: 72, height: 108, child: _ReferenceAvatar()),
             ],
           ),
-        ),
       ],
     );
   }
@@ -947,33 +1071,19 @@ class _AvatarGenerationWaitingView extends StatelessWidget {
       key: const ValueKey('onboarding-avatar-generation-waiting'),
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const Text(
-          'Your four options are on the way',
-          style: TextStyle(
-            color: MomCozyColors.foreground,
-            fontSize: MomCozyTypography.pageTitleSize,
-            height: 1.43,
-            fontWeight: FontWeight.w700,
-          ),
+        const _StepPrompt(
+          title: 'Your four options are on the way',
+          reason:
+              'Your photo has been received. When all four MomCozy-style companions are ready, this page will update so you can choose your favorite.',
         ),
-        const SizedBox(height: MomCozySpacing.content),
-        const Text(
-          'Your photo has been received. When all four MomCozy-style companions are ready, this page will update so you can choose your favorite.',
-          style: TextStyle(
-            color: MomCozyColors.mutedForeground,
-            fontSize: MomCozyTypography.bodySize,
-            height: 1.45,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        const SizedBox(height: MomCozySpacing.section),
-        const _AvatarGenerationRecipe(),
-        const SizedBox(height: MomCozySpacing.page),
+        const SizedBox(height: 14),
         _AvatarGenerationTimeline(
           statusTitle: statusTitle,
           statusDescription: statusDescription,
         ),
-        const SizedBox(height: MomCozySpacing.headingGap),
+        const SizedBox(height: 14),
+        const _AvatarGenerationRecipe(),
+        const SizedBox(height: 14),
         const _AvatarGenerationWaitNote(),
       ],
     );
@@ -990,81 +1100,93 @@ class _AvatarGenerationRecipe extends StatelessWidget {
       label:
           'Your uploaded photo and the MomCozy illustration style are being used to create four avatar options.',
       child: ExcludeSemantics(
-        child: MomCozySurface(
+        child: MomSettingsCard(
           key: const ValueKey('onboarding-avatar-generation-recipe'),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'What’s happening',
-                style: TextStyle(
-                  color: MomCozyColors.foreground,
-                  fontSize: MomCozyTypography.bodySize,
-                  fontWeight: FontWeight.w700,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'What’s happening',
+                  style: TextStyle(
+                    color: MomHomeTokens.ink,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
-              ),
-              const SizedBox(height: MomCozySpacing.headingGap),
-              LayoutBuilder(
-                builder: (context, constraints) {
-                  final textScale = MediaQuery.textScalerOf(context).scale(1);
-                  final stacked = constraints.maxWidth < 268 || textScale > 1.3;
-                  final photo = const _AvatarGenerationRecipeNode(
-                    label: 'Your photo',
-                    visual: _AvatarPhotoReceivedVisual(),
-                  );
-                  const style = _AvatarGenerationRecipeNode(
-                    label: 'MomCozy style',
-                    visual: _AvatarReferenceStyleVisual(),
-                  );
-                  const options = _AvatarGenerationRecipeNode(
-                    width: 84,
-                    label: '4 options',
-                    visual: _AvatarOptionsVisual(),
-                  );
+                const SizedBox(height: MomCozySpacing.headingGap),
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    final textScale = MediaQuery.textScalerOf(context).scale(1);
+                    final stacked =
+                        constraints.maxWidth < 268 || textScale > 1.3;
+                    final photo = const _AvatarGenerationRecipeNode(
+                      label: 'Your photo',
+                      visual: _AvatarPhotoReceivedVisual(),
+                    );
+                    const style = _AvatarGenerationRecipeNode(
+                      label: 'MomCozy style',
+                      visual: _AvatarReferenceStyleVisual(),
+                    );
+                    const options = _AvatarGenerationRecipeNode(
+                      width: 84,
+                      label: '4 options',
+                      visual: _AvatarOptionsVisual(),
+                    );
 
-                  if (stacked) {
-                    return Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            photo,
-                            const _AvatarGenerationOperator(
-                              icon: Icons.add_rounded,
+                    if (stacked) {
+                      Widget line(String label, Widget visual) => Row(
+                        children: [
+                          SizedBox(width: 84, height: 64, child: visual),
+                          const SizedBox(width: 14),
+                          Expanded(
+                            child: Text(
+                              label,
+                              style: MomHomeTokens.text(
+                                13,
+                                weight: FontWeight.w700,
+                              ),
                             ),
-                            style,
-                          ],
+                          ),
+                        ],
+                      );
+                      return Column(
+                        children: [
+                          line(
+                            'Your photo',
+                            const _AvatarPhotoReceivedVisual(),
+                          ),
+                          const SizedBox(height: 14),
+                          line(
+                            'MomCozy style',
+                            const _AvatarReferenceStyleVisual(),
+                          ),
+                          const SizedBox(height: 14),
+                          line('4 options', const _AvatarOptionsVisual()),
+                        ],
+                      );
+                    }
+
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        photo,
+                        const _AvatarGenerationOperator(
+                          icon: Icons.add_rounded,
                         ),
-                        const SizedBox(height: MomCozySpacing.compact),
-                        const Icon(
-                          Icons.arrow_downward_rounded,
-                          color: MomCozyColors.primaryDark,
-                          size: 22,
+                        style,
+                        const _AvatarGenerationOperator(
+                          icon: Icons.arrow_forward_rounded,
                         ),
-                        const SizedBox(height: MomCozySpacing.compact),
                         options,
                       ],
                     );
-                  }
-
-                  return Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      photo,
-                      const _AvatarGenerationOperator(icon: Icons.add_rounded),
-                      style,
-                      const _AvatarGenerationOperator(
-                        icon: Icons.arrow_forward_rounded,
-                      ),
-                      options,
-                    ],
-                  );
-                },
-              ),
-            ],
-          ),
+                  },
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );
@@ -1095,7 +1217,7 @@ class _AvatarGenerationRecipeNode extends StatelessWidget {
             label,
             textAlign: TextAlign.center,
             style: const TextStyle(
-              color: MomCozyColors.mutedForeground,
+              color: MomHomeTokens.secondary,
               fontSize: MomCozyTypography.captionSize,
               height: 1.2,
               fontWeight: FontWeight.w700,
@@ -1116,7 +1238,7 @@ class _AvatarGenerationOperator extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(2, 18, 2, 0),
-      child: Icon(icon, color: MomCozyColors.primaryDark, size: 20),
+      child: Icon(icon, color: MomHomeTokens.rose, size: 20),
     );
   }
 }
@@ -1133,12 +1255,12 @@ class _AvatarPhotoReceivedVisual extends StatelessWidget {
           const Positioned.fill(
             child: DecoratedBox(
               decoration: BoxDecoration(
-                color: MomCozyColors.secondary,
+                color: MomHomeTokens.neutralSurface,
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 Icons.add_a_photo_outlined,
-                color: MomCozyColors.primaryDark,
+                color: MomHomeTokens.rose,
                 size: 25,
               ),
             ),
@@ -1150,7 +1272,7 @@ class _AvatarPhotoReceivedVisual extends StatelessWidget {
               width: 20,
               height: 20,
               decoration: BoxDecoration(
-                color: MomCozyColors.care,
+                color: MomHomeTokens.teal,
                 shape: BoxShape.circle,
                 border: Border.all(color: MomCozyColors.raised, width: 2),
               ),
@@ -1179,12 +1301,12 @@ class _AvatarReferenceStyleVisual extends StatelessWidget {
           color: MomCozyColors.roseSoft,
           shape: BoxShape.circle,
           border: Border.fromBorderSide(
-            BorderSide(color: MomCozyColors.border),
+            BorderSide(color: MomHomeTokens.border),
           ),
         ),
         child: Icon(
           Icons.auto_awesome_rounded,
-          color: MomCozyColors.primaryDark,
+          color: MomHomeTokens.rose,
           size: 27,
         ),
       ),
@@ -1239,7 +1361,7 @@ class _AvatarOptionPlaceholder extends StatelessWidget {
         ),
         child: Icon(
           Icons.person_outline_rounded,
-          color: MomCozyColors.primaryDark,
+          color: MomHomeTokens.rose,
           size: 16,
         ),
       ),
@@ -1258,38 +1380,42 @@ class _AvatarGenerationTimeline extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MomCozySurface(
+    return MomSettingsCard(
       key: const ValueKey('onboarding-avatar-generation-timeline'),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Where we are',
-            style: TextStyle(
-              color: MomCozyColors.foreground,
-              fontSize: MomCozyTypography.bodySize,
-              fontWeight: FontWeight.w700,
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Where we are',
+              style: TextStyle(
+                color: MomHomeTokens.ink,
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+              ),
             ),
-          ),
-          const SizedBox(height: MomCozySpacing.headingGap),
-          const _AvatarGenerationStep(
-            state: _AvatarGenerationStepState.complete,
-            title: 'Photo uploaded',
-          ),
-          const _AvatarGenerationConnector(active: true),
-          _AvatarGenerationStep(
-            key: const ValueKey('onboarding-avatar-generation-current-status'),
-            state: _AvatarGenerationStepState.active,
-            title: statusTitle,
-            description: statusDescription,
-          ),
-          const _AvatarGenerationConnector(active: false),
-          const _AvatarGenerationStep(
-            state: _AvatarGenerationStepState.upcoming,
-            title: 'Choose your favorite',
-          ),
-        ],
-      ),
+            const SizedBox(height: MomCozySpacing.headingGap),
+            const _AvatarGenerationStep(
+              state: _AvatarGenerationStepState.complete,
+              title: 'Photo uploaded',
+            ),
+            const _AvatarGenerationConnector(active: true),
+            _AvatarGenerationStep(
+              key: const ValueKey(
+                'onboarding-avatar-generation-current-status',
+              ),
+              state: _AvatarGenerationStepState.active,
+              title: statusTitle,
+              description: statusDescription,
+            ),
+            const _AvatarGenerationConnector(active: false),
+            const _AvatarGenerationStep(
+              state: _AvatarGenerationStepState.upcoming,
+              title: 'Choose your favorite',
+            ),
+          ],
+        ),
+      ],
     );
   }
 }
@@ -1319,14 +1445,13 @@ class _AvatarGenerationStep extends StatelessWidget {
           height: 28,
           decoration: BoxDecoration(
             color: switch (state) {
-              _AvatarGenerationStepState.complete => MomCozyColors.primaryDark,
+              _AvatarGenerationStepState.complete => MomHomeTokens.rose,
               _AvatarGenerationStepState.active => MomCozyColors.roseSoft,
-              _AvatarGenerationStepState.upcoming => MomCozyColors.secondary,
+              _AvatarGenerationStepState.upcoming =>
+                MomHomeTokens.neutralSurface,
             },
             shape: BoxShape.circle,
-            border: active
-                ? Border.all(color: MomCozyColors.primaryDark)
-                : null,
+            border: active ? Border.all(color: MomHomeTokens.rose) : null,
           ),
           alignment: Alignment.center,
           child: switch (state) {
@@ -1341,7 +1466,7 @@ class _AvatarGenerationStep extends StatelessWidget {
             ),
             _AvatarGenerationStepState.upcoming => const Icon(
               Icons.favorite_outline_rounded,
-              color: MomCozyColors.mutedForeground,
+              color: MomHomeTokens.secondary,
               size: 16,
             ),
           },
@@ -1357,11 +1482,11 @@ class _AvatarGenerationStep extends StatelessWidget {
                   title,
                   style: TextStyle(
                     color: active
-                        ? MomCozyColors.foreground
+                        ? MomHomeTokens.ink
                         : state == _AvatarGenerationStepState.upcoming
-                        ? MomCozyColors.mutedForeground
-                        : MomCozyColors.foreground,
-                    fontSize: MomCozyTypography.bodySize,
+                        ? MomHomeTokens.secondary
+                        : MomHomeTokens.ink,
+                    fontSize: 14,
                     fontWeight: active ? FontWeight.w800 : FontWeight.w700,
                   ),
                 ),
@@ -1369,11 +1494,9 @@ class _AvatarGenerationStep extends StatelessWidget {
                   const SizedBox(height: 5),
                   Text(
                     description!,
-                    style: const TextStyle(
-                      color: MomCozyColors.mutedForeground,
-                      fontSize: MomCozyTypography.secondarySize,
-                      height: 1.35,
-                    ),
+                    style: MomCozyTextRoles.paragraphOf(
+                      context,
+                    ).copyWith(color: MomHomeTokens.secondary, fontSize: 13),
                   ),
                   const SizedBox(height: MomCozySpacing.statusGap),
                   const LinearProgressIndicator(
@@ -1381,7 +1504,7 @@ class _AvatarGenerationStep extends StatelessWidget {
                     borderRadius: BorderRadius.all(
                       Radius.circular(MomCozyRadii.pill),
                     ),
-                    backgroundColor: MomCozyColors.border,
+                    backgroundColor: MomHomeTokens.border,
                     semanticsLabel: 'Avatar generation in progress',
                   ),
                 ],
@@ -1414,7 +1537,7 @@ class _AvatarGenerationConnector extends StatelessWidget {
         width: 2,
         height: 13,
         child: ColoredBox(
-          color: active ? MomCozyColors.primaryDark : MomCozyColors.border,
+          color: active ? MomHomeTokens.rose : MomHomeTokens.border,
         ),
       ),
     );
@@ -1430,17 +1553,17 @@ class _AvatarGenerationWaitNote extends StatelessWidget {
       key: const ValueKey('onboarding-avatar-generation-wait-note'),
       padding: const EdgeInsets.all(13),
       decoration: BoxDecoration(
-        color: MomCozyColors.secondary,
-        borderRadius: BorderRadius.circular(MomCozyRadii.card),
+        color: MomHomeTokens.mint,
+        borderRadius: BorderRadius.circular(MomHomeTokens.cardRadius),
       ),
-      child: const Row(
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
             padding: EdgeInsets.only(top: 1),
             child: Icon(
               Icons.schedule_rounded,
-              color: MomCozyColors.primaryDark,
+              color: MomHomeTokens.rose,
               size: 19,
             ),
           ),
@@ -1448,10 +1571,9 @@ class _AvatarGenerationWaitNote extends StatelessWidget {
           Expanded(
             child: Text(
               'Image generation can take a few minutes. There’s nothing else you need to do—generation continues in the cloud if you briefly leave the app.',
-              style: TextStyle(
-                color: MomCozyColors.mutedForeground,
-                fontSize: MomCozyTypography.secondarySize,
-                height: 1.4,
+              style: MomCozyTextRoles.paragraphOf(context).copyWith(
+                color: MomHomeTokens.secondary,
+                fontSize: 13,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -1478,16 +1600,19 @@ class _DateField extends StatelessWidget {
     final display = value == null
         ? 'Choose date'
         : '${value!.year}-${value!.month.toString().padLeft(2, '0')}-${value!.day.toString().padLeft(2, '0')}';
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(MomCozyRadii.control),
-      child: InputDecorator(
-        decoration: InputDecoration(labelText: label),
-        child: Row(
-          children: [
-            Expanded(child: Text(display)),
-            const Icon(Icons.calendar_today_outlined, size: 20),
-          ],
+    return _ProfileField(
+      label: label,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(16),
+        child: InputDecorator(
+          decoration: const InputDecoration(),
+          child: Row(
+            children: [
+              Expanded(child: Text(display)),
+              const Icon(Icons.calendar_today_outlined, size: 20),
+            ],
+          ),
         ),
       ),
     );
@@ -1507,46 +1632,34 @@ class _CountField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DropdownButtonFormField<int>(
-      initialValue: value,
-      decoration: InputDecoration(labelText: label),
-      items: [
-        for (var count = 1; count <= 6; count++)
-          DropdownMenuItem(value: count, child: Text('$count')),
-      ],
-      onChanged: (next) {
-        if (next != null) onChanged(next);
-      },
+    return _ProfileField(
+      label: label,
+      child: DropdownButtonFormField<int>(
+        initialValue: value,
+        style: MomHomeTokens.text(14),
+        decoration: const InputDecoration(),
+        items: [
+          for (var count = 1; count <= 6; count++)
+            DropdownMenuItem(value: count, child: Text('$count')),
+        ],
+        onChanged: (next) {
+          if (next != null) onChanged(next);
+        },
+      ),
     );
   }
 }
 
 class _ReferenceAvatar extends StatelessWidget {
-  const _ReferenceAvatar({this.compact = false});
-
-  final bool compact;
-
+  const _ReferenceAvatar();
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: compact ? 270 : 330,
-      decoration: BoxDecoration(
-        color: MomCozyColors.roseSoft,
-        borderRadius: BorderRadius.circular(MomCozyRadii.featured),
-      ),
-      padding: const EdgeInsets.fromLTRB(18, 14, 18, 0),
-      child: Image.asset(
-        _referenceAvatarAsset,
-        fit: BoxFit.contain,
-        alignment: Alignment.bottomCenter,
-        errorBuilder: (context, error, stackTrace) => const Icon(
-          Icons.person_rounded,
-          size: 120,
-          color: MomCozyColors.primaryDark,
-        ),
-      ),
-    );
-  }
+  Widget build(BuildContext context) => Image.asset(
+    _referenceAvatarAsset,
+    fit: BoxFit.contain,
+    alignment: Alignment.bottomCenter,
+    errorBuilder: (context, error, stackTrace) =>
+        const Icon(Icons.person_rounded, size: 48, color: MomHomeTokens.rose),
+  );
 }
 
 class _AvatarCandidateCard extends StatefulWidget {
@@ -1595,16 +1708,19 @@ class _AvatarCandidateCardState extends State<_AvatarCandidateCard> {
         color: Colors.transparent,
         child: InkWell(
           onTap: enabled ? widget.onTap : null,
-          borderRadius: BorderRadius.circular(MomCozyRadii.card),
+          borderRadius: BorderRadius.circular(MomHomeTokens.cardRadius),
           child: AnimatedContainer(
-            duration: const Duration(milliseconds: 160),
+            duration: MomCozyMotion.duration(
+              context,
+              const Duration(milliseconds: 160),
+            ),
             decoration: BoxDecoration(
               color: MomCozyColors.roseSoft,
-              borderRadius: BorderRadius.circular(MomCozyRadii.card),
+              borderRadius: BorderRadius.circular(MomHomeTokens.cardRadius),
               border: Border.all(
                 color: widget.selected
-                    ? MomCozyColors.primaryDark
-                    : MomCozyColors.border,
+                    ? MomHomeTokens.rose
+                    : MomHomeTokens.border,
                 width: widget.selected ? 2.5 : 1,
               ),
             ),
@@ -1613,7 +1729,12 @@ class _AvatarCandidateCardState extends State<_AvatarCandidateCard> {
               children: [
                 Positioned.fill(
                   child: Padding(
-                    padding: const EdgeInsets.fromLTRB(8, 10, 8, 30),
+                    padding: EdgeInsets.fromLTRB(
+                      8,
+                      10,
+                      8,
+                      MediaQuery.textScalerOf(context).scale(13) * 1.4 + 20,
+                    ),
                     child: _GeneratedAvatar(
                       fileId: widget.candidate.fileId,
                       loadThumbnail: widget.loadThumbnail,
@@ -1623,11 +1744,12 @@ class _AvatarCandidateCardState extends State<_AvatarCandidateCard> {
                 ),
                 Positioned(
                   left: 12,
+                  right: 12,
                   bottom: 9,
                   child: Text(
                     'Option ${widget.candidate.position}',
                     style: const TextStyle(
-                      fontSize: MomCozyTypography.secondarySize,
+                      fontSize: 13,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
@@ -1667,64 +1789,55 @@ class _DefaultAvatarChoiceCard extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           onTap: onTap,
-          borderRadius: BorderRadius.circular(MomCozyRadii.card),
+          borderRadius: BorderRadius.circular(MomHomeTokens.cardRadius),
           child: AnimatedContainer(
-            duration: const Duration(milliseconds: 160),
+            duration: MomCozyMotion.duration(
+              context,
+              const Duration(milliseconds: 160),
+            ),
             constraints: const BoxConstraints(minHeight: 112),
             padding: const EdgeInsets.fromLTRB(10, 8, 14, 8),
             decoration: BoxDecoration(
               color: MomCozyColors.raised,
-              borderRadius: BorderRadius.circular(MomCozyRadii.card),
+              borderRadius: BorderRadius.circular(MomHomeTokens.cardRadius),
               border: Border.all(
-                color: selected
-                    ? MomCozyColors.primaryDark
-                    : MomCozyColors.border,
+                color: selected ? MomHomeTokens.rose : MomHomeTokens.border,
                 width: selected ? 2.5 : 1,
               ),
             ),
-            child: Row(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                SizedBox(
-                  width: 82,
-                  height: 96,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(MomCozyRadii.control),
-                    child: ColoredBox(
-                      color: MomCozyColors.roseSoft,
+                Row(
+                  children: [
+                    SizedBox(
+                      width: 48,
+                      height: 64,
                       child: Image.asset(
                         _referenceAvatarAsset,
                         fit: BoxFit.contain,
                         alignment: Alignment.bottomCenter,
                       ),
                     ),
-                  ),
-                ),
-                const SizedBox(width: 13),
-                const Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Text(
                         'MomCozy original',
-                        style: TextStyle(
-                          fontSize: MomCozyTypography.titleSize,
-                          fontWeight: FontWeight.w700,
-                        ),
+                        style: MomHomeTokens.text(14, weight: FontWeight.w700),
                       ),
-                      SizedBox(height: MomCozySpacing.xs),
-                      Text(
-                        'Continue with the MomCozy postpartum companion',
-                        style: TextStyle(
-                          color: MomCozyColors.mutedForeground,
-                          fontSize: MomCozyTypography.secondarySize,
-                          height: 1.25,
-                        ),
-                      ),
-                    ],
+                    ),
+                    if (selected) const _AvatarSelectedMark(),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Continue with the MomCozy postpartum companion',
+                  style: MomHomeTokens.text(
+                    13,
+                    color: MomHomeTokens.secondary,
+                    height: 1.55,
                   ),
                 ),
-                if (selected) const _AvatarSelectedMark(),
               ],
             ),
           ),
@@ -1741,7 +1854,7 @@ class _AvatarSelectedMark extends StatelessWidget {
   Widget build(BuildContext context) {
     return const DecoratedBox(
       decoration: BoxDecoration(
-        color: MomCozyColors.primaryDark,
+        color: MomHomeTokens.rose,
         shape: BoxShape.circle,
       ),
       child: Padding(

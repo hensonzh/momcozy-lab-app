@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/notification-followup-registration-waiting-393.png",
+  "previous_source": "test/goldens/ui_inventory/notification-followup-reminder-ready-393.png",
+  "route": "/services/episodes/service-episode/booking",
+  "trigger": "Enable reminder → device registration request pending",
+  "root_entry": "Authenticated More page",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production notification coordinator/repository/controller; isolated HTTP, push gateway and permission platform; real router.go and ScaffoldMessenger callbacks, no native OS dialog or remote push",
+  "test": "test/features/notifications/notification_followup_inventory_test.dart"
+}

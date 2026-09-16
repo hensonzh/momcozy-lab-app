@@ -1,0 +1,310 @@
+{
+  "result": "PASS",
+  "scope": "rest controls evidence integrity and completed visual review; not all App coverage",
+  "states": 51,
+  "viewport_variants": 72,
+  "long_variants": 53,
+  "original_pngs": 125,
+  "continuous_segments": 321,
+  "reviewed_unique_segments": 167,
+  "reviewed_sheets": 28,
+  "option_observations": [
+    {
+      "group": "昨夜大约睡了多久",
+      "field": "sleepTotalLabels",
+      "option": "underThreeHours",
+      "label": "<3 小时",
+      "state": "03-mom/mom-rest-control-duration-underThreeHours",
+      "action": "actual tap then selected-value assertion",
+      "exhaustive_variant": "393/1x"
+    },
+    {
+      "group": "昨夜大约睡了多久",
+      "field": "sleepTotalLabels",
+      "option": "threeToFourHours",
+      "label": "3–4 小时",
+      "state": "03-mom/mom-rest-control-duration-threeToFourHours",
+      "action": "actual tap then selected-value assertion",
+      "exhaustive_variant": "393/1x"
+    },
+    {
+      "group": "昨夜大约睡了多久",
+      "field": "sleepTotalLabels",
+      "option": "fourToFiveHours",
+      "label": "4–5 小时",
+      "state": "03-mom/mom-rest-control-duration-fourToFiveHours",
+      "action": "actual tap then selected-value assertion",
+      "exhaustive_variant": "393/1x"
+    },
+    {
+      "group": "昨夜大约睡了多久",
+      "field": "sleepTotalLabels",
+      "option": "fiveToSixHours",
+      "label": "5–6 小时",
+      "state": "03-mom/mom-rest-control-duration-fiveToSixHours",
+      "action": "actual tap then selected-value assertion",
+      "exhaustive_variant": "393/1x"
+    },
+    {
+      "group": "昨夜大约睡了多久",
+      "field": "sleepTotalLabels",
+      "option": "sixHoursPlus",
+      "label": "≥6 小时",
+      "state": "03-mom/mom-rest-control-duration-sixHoursPlus",
+      "action": "actual tap then selected-value assertion",
+      "exhaustive_variant": "393/1x"
+    },
+    {
+      "group": "昨夜大约睡了多久",
+      "field": "sleepTotalLabels",
+      "option": "unknown",
+      "label": "记不清",
+      "state": "03-mom/mom-rest-control-duration-unknown",
+      "action": "actual tap then selected-value assertion",
+      "exhaustive_variant": "393/1x"
+    },
+    {
+      "group": "夜里大约被打断几次",
+      "field": "interruptionsLabels",
+      "option": "none",
+      "label": "没有",
+      "state": "03-mom/mom-rest-control-interruptions-none",
+      "action": "actual tap then selected-value assertion",
+      "exhaustive_variant": "393/1x"
+    },
+    {
+      "group": "夜里大约被打断几次",
+      "field": "interruptionsLabels",
+      "option": "oneToTwo",
+      "label": "1–2 次",
+      "state": "03-mom/mom-rest-control-interruptions-oneToTwo",
+      "action": "actual tap then selected-value assertion",
+      "exhaustive_variant": "393/1x"
+    },
+    {
+      "group": "夜里大约被打断几次",
+      "field": "interruptionsLabels",
+      "option": "threeToFour",
+      "label": "3–4 次",
+      "state": "03-mom/mom-rest-control-interruptions-threeToFour",
+      "action": "actual tap then selected-value assertion",
+      "exhaustive_variant": "393/1x"
+    },
+    {
+      "group": "夜里大约被打断几次",
+      "field": "interruptionsLabels",
+      "option": "fivePlus",
+      "label": "5 次以上",
+      "state": "03-mom/mom-rest-control-interruptions-fivePlus",
+      "action": "actual tap then selected-value assertion",
+      "exhaustive_variant": "393/1x"
+    },
+    {
+      "group": "夜里大约被打断几次",
+      "field": "interruptionsLabels",
+      "option": "unknown",
+      "label": "记不清",
+      "state": "03-mom/mom-rest-control-interruptions-unknown",
+      "action": "actual tap then selected-value assertion",
+      "exhaustive_variant": "393/1x"
+    },
+    {
+      "group": "今天醒来时感觉怎样",
+      "field": "recoveryLabels",
+      "option": "restored",
+      "label": "有恢复",
+      "state": "03-mom/mom-rest-control-recovery-restored",
+      "action": "actual tap then selected-value assertion",
+      "exhaustive_variant": "393/1x"
+    },
+    {
+      "group": "今天醒来时感觉怎样",
+      "field": "recoveryLabels",
+      "option": "managing",
+      "label": "勉强能撑",
+      "state": "03-mom/mom-rest-control-recovery-managing",
+      "action": "actual tap then selected-value assertion",
+      "exhaustive_variant": "393/1x"
+    },
+    {
+      "group": "今天醒来时感觉怎样",
+      "field": "recoveryLabels",
+      "option": "exhausted",
+      "label": "很疲惫",
+      "state": "03-mom/mom-rest-control-recovery-exhausted",
+      "action": "actual tap then selected-value assertion",
+      "exhaustive_variant": "393/1x"
+    },
+    {
+      "group": "最长一段完整休息",
+      "field": "stretchLabels",
+      "option": "underOneHour",
+      "label": "<1 小时",
+      "state": "03-mom/mom-rest-control-stretch-underOneHour",
+      "action": "actual tap then selected-value assertion",
+      "exhaustive_variant": "393/1x"
+    },
+    {
+      "group": "最长一段完整休息",
+      "field": "stretchLabels",
+      "option": "oneToTwoHours",
+      "label": "1–2 小时",
+      "state": "03-mom/mom-rest-control-stretch-oneToTwoHours",
+      "action": "actual tap then selected-value assertion",
+      "exhaustive_variant": "393/1x"
+    },
+    {
+      "group": "最长一段完整休息",
+      "field": "stretchLabels",
+      "option": "twoToThreeHours",
+      "label": "2–3 小时",
+      "state": "03-mom/mom-rest-control-stretch-twoToThreeHours",
+      "action": "actual tap then selected-value assertion",
+      "exhaustive_variant": "393/1x"
+    },
+    {
+      "group": "最长一段完整休息",
+      "field": "stretchLabels",
+      "option": "threeHoursPlus",
+      "label": "≥3 小时",
+      "state": "03-mom/mom-rest-control-stretch-threeHoursPlus",
+      "action": "actual tap then selected-value assertion",
+      "exhaustive_variant": "393/1x"
+    },
+    {
+      "group": "最长一段完整休息",
+      "field": "stretchLabels",
+      "option": "unknown",
+      "label": "记不清",
+      "state": "03-mom/mom-rest-control-stretch-unknown",
+      "action": "actual tap then selected-value assertion",
+      "exhaustive_variant": "393/1x"
+    },
+    {
+      "group": "今天有没有一段不被打扰的休息",
+      "field": "dayRestLabels",
+      "option": "none",
+      "label": "没有",
+      "state": "03-mom/mom-rest-control-day-rest-none",
+      "action": "actual tap then selected-value assertion",
+      "exhaustive_variant": "393/1x"
+    },
+    {
+      "group": "今天有没有一段不被打扰的休息",
+      "field": "dayRestLabels",
+      "option": "underThirtyMinutes",
+      "label": "<30 分钟",
+      "state": "03-mom/mom-rest-control-day-rest-underThirtyMinutes",
+      "action": "actual tap then selected-value assertion",
+      "exhaustive_variant": "393/1x"
+    },
+    {
+      "group": "今天有没有一段不被打扰的休息",
+      "field": "dayRestLabels",
+      "option": "thirtyToSixtyMinutes",
+      "label": "30–60 分钟",
+      "state": "03-mom/mom-rest-control-day-rest-thirtyToSixtyMinutes",
+      "action": "actual tap then selected-value assertion",
+      "exhaustive_variant": "393/1x"
+    },
+    {
+      "group": "今天有没有一段不被打扰的休息",
+      "field": "dayRestLabels",
+      "option": "sixtyMinutesPlus",
+      "label": "≥1 小时",
+      "state": "03-mom/mom-rest-control-day-rest-sixtyMinutesPlus",
+      "action": "actual tap then selected-value assertion",
+      "exhaustive_variant": "393/1x"
+    },
+    {
+      "group": "醒来后容易再睡着吗",
+      "field": "resleepLabels",
+      "option": "easy",
+      "label": "容易",
+      "state": "03-mom/mom-rest-control-resleep-easy",
+      "action": "actual tap then selected-value assertion",
+      "exhaustive_variant": "393/1x"
+    },
+    {
+      "group": "醒来后容易再睡着吗",
+      "field": "resleepLabels",
+      "option": "somewhatHard",
+      "label": "有点难",
+      "state": "03-mom/mom-rest-control-resleep-somewhatHard",
+      "action": "actual tap then selected-value assertion",
+      "exhaustive_variant": "393/1x"
+    },
+    {
+      "group": "醒来后容易再睡着吗",
+      "field": "resleepLabels",
+      "option": "hard",
+      "label": "很难",
+      "state": "03-mom/mom-rest-control-resleep-hard",
+      "action": "actual tap then selected-value assertion",
+      "exhaustive_variant": "393/1x"
+    },
+    {
+      "group": "影响休息的原因",
+      "field": "disruptionLabels",
+      "option": "feeding",
+      "label": "喂奶",
+      "state": "03-mom/mom-rest-control-disruption-feeding",
+      "action": "actual tap then selected-value assertion",
+      "exhaustive_variant": "393/1x"
+    },
+    {
+      "group": "影响休息的原因",
+      "field": "disruptionLabels",
+      "option": "baby",
+      "label": "宝宝醒了",
+      "state": "03-mom/mom-rest-control-disruption-baby",
+      "action": "actual tap then selected-value assertion",
+      "exhaustive_variant": "393/1x"
+    },
+    {
+      "group": "影响休息的原因",
+      "field": "disruptionLabels",
+      "option": "discomfort",
+      "label": "身体不适",
+      "state": "03-mom/mom-rest-control-disruption-discomfort",
+      "action": "actual tap then selected-value assertion",
+      "exhaustive_variant": "393/1x"
+    },
+    {
+      "group": "影响休息的原因",
+      "field": "disruptionLabels",
+      "option": "cannotSleep",
+      "label": "睡不回去",
+      "state": "03-mom/mom-rest-control-disruption-cannotSleep",
+      "action": "actual tap then selected-value assertion",
+      "exhaustive_variant": "393/1x"
+    },
+    {
+      "group": "影响休息的原因",
+      "field": "disruptionLabels",
+      "option": "environment",
+      "label": "环境影响",
+      "state": "03-mom/mom-rest-control-disruption-environment",
+      "action": "actual tap then selected-value assertion",
+      "exhaustive_variant": "393/1x"
+    },
+    {
+      "group": "影响休息的原因",
+      "field": "disruptionLabels",
+      "option": "other",
+      "label": "其他",
+      "state": "03-mom/mom-rest-control-disruption-other",
+      "action": "actual tap then selected-value assertion",
+      "exhaustive_variant": "393/1x"
+    }
+  ],
+  "route_journey_variants": 72,
+  "report_links_checked": 67,
+  "source_hashes": {
+    "test/modules/mom/mom_rest_control_inventory_test.dart": "abda5481528274f93bfb0b56bc56da35477a57f1d257bcbb9ac51991e44596a2",
+    "lib/modules/mom/presentation/diary_fields.dart": "f89a12bf4e975c1f5323dfce6c9fb142c0b11d35c8802685a63d63c355fbdf30",
+    "lib/modules/mom/presentation/diary_labels.dart": "575a2c9b92e2517abb2c6c04c19f0eba78e7b528274b986688c376ced7833c79",
+    "lib/shared/widgets/choice_field.dart": "417db3d0d30d86537467474efbdbb7d8fba585a5ce75c536a76339495f290990",
+    "lib/modules/mom/presentation/mother_diary_editor.dart": "b27713314588f40ef41dcf304e1abac0d9b9d162b201a4c35cb7d7a2dbe491f4"
+  }
+}

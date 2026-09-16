@@ -1,0 +1,3972 @@
+{
+  "method": "full-width continuous 650px strips; byte-identical decoded pixels reference previously reviewed Rest/Body or one new Mood tile",
+  "sources": [
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-empty-320-2x.long.png",
+      "sha256": "604206194e39f63339b6b063c99db5219da2397b2d9291ad2ad96c8294f3ab51",
+      "width": 320,
+      "height": 2164,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "5c470217ef703806e21a319a8d93ffd905194f613c2bf678d1135d2505d961fa",
+          "review": "sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "83c8b687d947bc12da2a4ff1f4bb3a9a9e21569fb1ebe0941369b2ec0620cc97",
+          "review": "sheet-01.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "7fa382ccb080b6eac448f3e1365a0235ad9dd11a856da94acaba27d30ac3c45f",
+          "review": "sheet-01.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2164,
+          "pixel_sha256": "0dbe3f6d870148766aa3faced9389fd9241d3835fbc6a627c3260a6836c29e38",
+          "review": "sheet-01.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-empty-320-2x.png",
+      "sha256": "94fd524d69306646a48fce6c6bde9b23db88f310a569e2ff7cc2b1b6879ac616",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "5c470217ef703806e21a319a8d93ffd905194f613c2bf678d1135d2505d961fa",
+          "review": "sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "ab4af69fc7550c439c26b04766a27057f3c1b379606b1a9dc9f4f83547f415bd",
+          "review": "sheet-01.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-empty-393-1x.long.png",
+      "sha256": "49dcdf0db3437b4d405f57871c595b298525cf10ac15fbce672db90c1fe0563d",
+      "width": 393,
+      "height": 1034,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ece6df388de2c62d3c923268d3631e5a3fbb6a0db298bd14759820240659705a",
+          "review": "sheet-01.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1034,
+          "pixel_sha256": "1daaf07939306ae34d2250d37fb49b249f52cd073f08ae19653bfcb2278608ff",
+          "review": "sheet-02.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-empty-393-1x.png",
+      "sha256": "846cec8c9a4aeeda7d7d15d6e226bbb0cb2cdcbe936bf7f1ac4850b41af87026",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ece6df388de2c62d3c923268d3631e5a3fbb6a0db298bd14759820240659705a",
+          "review": "sheet-01.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "254d4a68cc1c576226da9103ec505cd31f472e1d29f110942056eafe5bb50ffd",
+          "review": "sheet-02.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-empty-replacement-discard-confirm-320-2x.png",
+      "sha256": "8c90a2dfb7a76793f750c7ff1b29e6959fb1571951db94a504f617b1aab3d3d1",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a807883f0c5d3174d66b91a192f6918b34c94cd723b853e94a8d7192b37d489c",
+          "review": "sheet-02.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "b1110eb6d78627194cd6654373e487360cc121e57dbca1ab62fda1229fc1c137",
+          "review": "sheet-02.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-empty-replacement-discard-confirm-393-1x.png",
+      "sha256": "b3cf666f8288c461c1f2585d6dd8aa90687a53f7be1cbd604b5ca0af31369ca4",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2a81d0c7e82724b0187daf0fdbaa7549fedb21d8883d288900ec230cc0d3a8f1",
+          "review": "sheet-02.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "02c3b6976c0d19a33a7d7d390c8619a0da19f6832eb0dafcb30b35d316b96781",
+          "review": "sheet-02.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-empty-replacement-validation-320-2x.long.png",
+      "sha256": "870b2358403dc6eca18cb7206fc74c1540c66f698ce24ed7bf11f3dee5f9803c",
+      "width": 320,
+      "height": 2288,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "5c470217ef703806e21a319a8d93ffd905194f613c2bf678d1135d2505d961fa",
+          "review": "sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "83c8b687d947bc12da2a4ff1f4bb3a9a9e21569fb1ebe0941369b2ec0620cc97",
+          "review": "sheet-01.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "7fa382ccb080b6eac448f3e1365a0235ad9dd11a856da94acaba27d30ac3c45f",
+          "review": "sheet-01.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2288,
+          "pixel_sha256": "d5af8ddfb39956052ae951f52e73cb0e83df713f0b3a7ef423009b181a5a27ba",
+          "review": "sheet-03.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-empty-replacement-validation-320-2x.png",
+      "sha256": "8a515fdd43647212e9f83147679b0ff3f9e807e77a977bea7600df59b33bb6a2",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "f9764af920fbe2007727ba11342f1a830f5fa5787bcef081f25ebb4d69196f4a",
+          "review": "sheet-03.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "b42ae432476647326aa62fa4db915ff2aaf8d5c6cfa682b544a73eceaae36756",
+          "review": "sheet-03.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-empty-replacement-validation-393-1x.long.png",
+      "sha256": "b9263b58e4b8c45d8a5b6a18579ecefaae35dd174e1f2caf96600fb02f31bc95",
+      "width": 393,
+      "height": 1098,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "3db411705f5e6f4646fdcf27f913b3dff50febcb3b5352afe369f2dbea367593",
+          "review": "sheet-03.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1098,
+          "pixel_sha256": "2be7741e044aa6fec9f495692b048e89cca071b7d9e2727f7ed3c908dcf36dc7",
+          "review": "sheet-03.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-empty-replacement-validation-393-1x.png",
+      "sha256": "21ef01a99fdee2d0414ff904b28e132a79266fe99dc0b9cf703728da6ce054b3",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "57d0c8292b8b5747432da3667993eab24ff57eb9cfd2696cba4ece64c1e03544",
+          "review": "sheet-03.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "38b83c011edb4f4ec4b316cefe3e24712e62815b3571f6024dbcaeff5f986bfc",
+          "review": "sheet-04.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-home-entry-320-2x.long.png",
+      "sha256": "b29f1f9dc909ca023dcd2865b0d4424a7485a4fb1dd4d05f54d8ee61e6cf46ef",
+      "width": 320,
+      "height": 1939,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a6aa9ef781460e5016527f099324419f84c6e4f14cdb26c410651cd7359b41ef",
+          "review": "../mom-rest-control-visual-review/sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "0edf1d289b2e804b112ca91367c51524ae8a6a6a4684a4fdcad651b0ae8de7ad",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1939,
+          "pixel_sha256": "8824f3d60a1ba788460adc4d5731a39ee81dafb5cb1f7d7112dd43123bbe2812",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-home-entry-320-2x.png",
+      "sha256": "6b61a480f7a3fd5ddb29685624aed748a99b94ad55016153855b11225ef09868",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a6aa9ef781460e5016527f099324419f84c6e4f14cdb26c410651cd7359b41ef",
+          "review": "../mom-rest-control-visual-review/sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1462d46c4861c29041d879736402097e4fd061fcb6e577142cd6e832cb70fae0",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-home-entry-393-1x.long.png",
+      "sha256": "0a4e3294f0ff67f0d7ed84ee3eacb393b50571fb4db300a7d15899ba9359a330",
+      "width": 393,
+      "height": 917,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa661999d6307948942c23dc2e7dad221367a614b3ae09dd12dec24bc67fec6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 917,
+          "pixel_sha256": "134109b5afc9a0d972ecc00b197fb963d8131bfc37dbfad2a4c51a0a091a86ad",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-home-entry-393-1x.png",
+      "sha256": "be291808401e7f353b8f14552b0df4a698f3edd191e5e2d770c66c2e129fc145",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa661999d6307948942c23dc2e7dad221367a614b3ae09dd12dec24bc67fec6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3208ac8b3b1d4a7464bc46ef7618c8e19bd85dee870d86c1847457571b6198a6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-home-refreshed-320-2x.long.png",
+      "sha256": "10d76b1d4de20985e03c8088027a740968ccdee6ae30dbf5f45cb5016c8066c1",
+      "width": 320,
+      "height": 2062,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b1f7a808bfb15121c031df895f5bfbb79ca22d2e2ae5c3402c20aa884c7e9db9",
+          "review": "../mom-rest-control-visual-review/sheet-16.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "9963aa27646ba8d36e43e9e763e2d06960a8921b4593d6cec714342113cbf09f",
+          "review": "../mom-rest-control-visual-review/sheet-16.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "12687e3b9dad08239caa8809058feb1c7debd319e8f15ade87d0672edd91969b",
+          "review": "sheet-04.png#tile-1"
+        },
+        {
+          "y0": 1950,
+          "y1": 2062,
+          "pixel_sha256": "873efc1ad07d70326d429bef832fe740960d9621eb065f9273fa719013a4966b",
+          "review": "../mom-rest-control-visual-review/sheet-16.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-home-refreshed-320-2x.png",
+      "sha256": "0a2a1bc2ca3d6b50c02c4d10ca77fcfe8d4acd4b6873606bc9bd7655eaae829c",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "7b31b96ce64a9befd6cf3650132352ebed28d7bc654ab2e157f1571ccab5ba76",
+          "review": "sheet-04.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "729aa1fbc0da784b00d498edbbe1cde7b8b46da97cafd908d1e788c7d1266b90",
+          "review": "sheet-04.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-home-refreshed-393-1x.long.png",
+      "sha256": "4f36c4568ce668a19612da4847451ef5827566a98eac9878da12e194f6ed5a65",
+      "width": 393,
+      "height": 920,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "03638e86b0d39a457bdb18addb1899dfd5c2475410780074c00f67003c606ac6",
+          "review": "sheet-04.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 920,
+          "pixel_sha256": "5114e61c90da9079afee7e92bb8d1e1588f7d4ff461871c84ba4a415660ed95d",
+          "review": "../mom-rest-control-visual-review/sheet-17.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-home-refreshed-393-1x.png",
+      "sha256": "a24249bb56284125ec10d69e28e9bcd328b22930266fe036e47a345a1740db51",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "f817e90946e98be29523d8ca80608de341a768b0d7f938acd22dd6a7cbe2e1c6",
+          "review": "sheet-04.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "01ad37a83090b22440e753afe9b5efb12045ec1509aa7b52fb6caa7377abd650",
+          "review": "../mom-rest-control-visual-review/sheet-17.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-home-retained-320-2x.long.png",
+      "sha256": "10d76b1d4de20985e03c8088027a740968ccdee6ae30dbf5f45cb5016c8066c1",
+      "width": 320,
+      "height": 2062,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b1f7a808bfb15121c031df895f5bfbb79ca22d2e2ae5c3402c20aa884c7e9db9",
+          "review": "../mom-rest-control-visual-review/sheet-16.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "9963aa27646ba8d36e43e9e763e2d06960a8921b4593d6cec714342113cbf09f",
+          "review": "../mom-rest-control-visual-review/sheet-16.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "12687e3b9dad08239caa8809058feb1c7debd319e8f15ade87d0672edd91969b",
+          "review": "sheet-04.png#tile-1"
+        },
+        {
+          "y0": 1950,
+          "y1": 2062,
+          "pixel_sha256": "873efc1ad07d70326d429bef832fe740960d9621eb065f9273fa719013a4966b",
+          "review": "../mom-rest-control-visual-review/sheet-16.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-home-retained-320-2x.png",
+      "sha256": "5373c87ff81b1800811b596f8566b9829b70fec48766a8dfac4696f536dd5346",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "e470f844ab7822e16169c1a485c511fe627abf4fa4789e708707b8518cb3ffb5",
+          "review": "sheet-05.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "fdbace980e5231a9faf13c74ac03be293bd11965eadd63ded12cd64a6612aaea",
+          "review": "../mom-rest-control-visual-review/sheet-17.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-home-retained-393-1x.long.png",
+      "sha256": "4f36c4568ce668a19612da4847451ef5827566a98eac9878da12e194f6ed5a65",
+      "width": 393,
+      "height": 920,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "03638e86b0d39a457bdb18addb1899dfd5c2475410780074c00f67003c606ac6",
+          "review": "sheet-04.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 920,
+          "pixel_sha256": "5114e61c90da9079afee7e92bb8d1e1588f7d4ff461871c84ba4a415660ed95d",
+          "review": "../mom-rest-control-visual-review/sheet-17.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-home-retained-393-1x.png",
+      "sha256": "7fec21807a6db49dae4ee2c4aefff758f985dc97ffcc0a8b26d7d6814741e76a",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b421a78621dc71b773955f1996f47e380e2a505f61b0cbd973f7cd31f39327e1",
+          "review": "sheet-05.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "efc9e43c0d337ad0fa1ec8e551ca550e3e316e56440b8cb080e2948ce5988291",
+          "review": "../mom-rest-control-visual-review/sheet-18.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-impact-cleared-320-2x.long.png",
+      "sha256": "f76fb273712121f65a014c2a38c3c034e02f8d58fdcd20d7e239226e9565e77f",
+      "width": 320,
+      "height": 2164,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "50796a1b18dbf1e62ef38c881771c0d4c8fd18272b2d8271e4e7ba6acb0a8896",
+          "review": "sheet-05.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "26e9acfc0746ad5f40f442688a12260cbeab00887f6e8dfb9aaebe0d3ec5b905",
+          "review": "sheet-05.png#tile-3"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "7fa382ccb080b6eac448f3e1365a0235ad9dd11a856da94acaba27d30ac3c45f",
+          "review": "sheet-01.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2164,
+          "pixel_sha256": "0dbe3f6d870148766aa3faced9389fd9241d3835fbc6a627c3260a6836c29e38",
+          "review": "sheet-01.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-impact-cleared-320-2x.png",
+      "sha256": "80510b10941bdc0083b65e7871e793f139b10330366c646b42b48a435e7caf0a",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "0f0adddfdd4cf7ddd0bf05ed1cafa59c5e58ca88c4b1076b7f103dc574386c35",
+          "review": "sheet-05.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "594b0d3adce30d36b1a088eab2498b6368bb83e11ea607f51d1bcce3bd3d57e6",
+          "review": "sheet-05.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-impact-cleared-393-1x.long.png",
+      "sha256": "66a68420fee5e05a4a88fdc1cd6729b1ea8622f6dfc7b3ea0dde28c285d007ef",
+      "width": 393,
+      "height": 1034,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a5540987b95e6b03e5ce9db10b362e26affab8210b43e7c9fc251f46544df4f5",
+          "review": "sheet-06.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1034,
+          "pixel_sha256": "1daaf07939306ae34d2250d37fb49b249f52cd073f08ae19653bfcb2278608ff",
+          "review": "sheet-02.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-impact-cleared-393-1x.png",
+      "sha256": "dca1bfab5f9b077a16d97d24c2a8756cd2747f2640f6d2408442c01306fc7507",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "4413757be2f9e4813633ac853090fd680dccae53e76dfac664c54a5e8ab99df7",
+          "review": "sheet-06.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2934f45873467775d228d5d2ff662d44cf05e78a8903e431c88460c158c59650",
+          "review": "sheet-06.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-impact-hard-320-2x.long.png",
+      "sha256": "dcee74e7985945a0c3ae2e78f9619a92dd7284e598941034298b3ab4652cfafb",
+      "width": 320,
+      "height": 2164,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "50796a1b18dbf1e62ef38c881771c0d4c8fd18272b2d8271e4e7ba6acb0a8896",
+          "review": "sheet-05.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "26e9acfc0746ad5f40f442688a12260cbeab00887f6e8dfb9aaebe0d3ec5b905",
+          "review": "sheet-05.png#tile-3"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "7143cb50ef31a92d085bb4ae7d3f2d0b800ed7442df835f2d174d03a35d94730",
+          "review": "sheet-06.png#tile-3"
+        },
+        {
+          "y0": 1950,
+          "y1": 2164,
+          "pixel_sha256": "0dbe3f6d870148766aa3faced9389fd9241d3835fbc6a627c3260a6836c29e38",
+          "review": "sheet-01.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-impact-hard-320-2x.png",
+      "sha256": "72e037ecd577188af082658d781d751dbb957d04e89f10f2ad2d714d7e2102ca",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "037d8e35bd5f8d2ac582fdfd1b39cfbb663813a775eb2615702173481094fef8",
+          "review": "sheet-06.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "594b0d3adce30d36b1a088eab2498b6368bb83e11ea607f51d1bcce3bd3d57e6",
+          "review": "sheet-05.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-impact-hard-393-1x.long.png",
+      "sha256": "535674888bbce21a50efba8d71ff6bb54b09f99dde03992a0cbc03cf0a0bdc80",
+      "width": 393,
+      "height": 1034,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a5540987b95e6b03e5ce9db10b362e26affab8210b43e7c9fc251f46544df4f5",
+          "review": "sheet-06.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1034,
+          "pixel_sha256": "44575dc0267f28417bc465c55136132e54a735735ed7f722ad62bbfb7b4413c9",
+          "review": "sheet-06.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-impact-hard-393-1x.png",
+      "sha256": "628545dc505a45dc60480ecc7083af55354aebedd75aaca2b93b67adb48ffffe",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c7ec2a883102c2a7e5f7f712fa25bc5c3e70bf55306c388005e81a82cc5ef7cd",
+          "review": "sheet-07.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2934f45873467775d228d5d2ff662d44cf05e78a8903e431c88460c158c59650",
+          "review": "sheet-06.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-impact-none-393-1x.long.png",
+      "sha256": "989dd190a5ce76427fca0aa418a0ee01a901d2bf8d3e12ce044970dc22452b9f",
+      "width": 393,
+      "height": 1034,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a5540987b95e6b03e5ce9db10b362e26affab8210b43e7c9fc251f46544df4f5",
+          "review": "sheet-06.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1034,
+          "pixel_sha256": "db10656ca6d176a4503e7ffa5c90701764076e96dffa90bec49328cf3faadfcb",
+          "review": "sheet-07.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-impact-none-393-1x.png",
+      "sha256": "18d3d86c0f3b75d051238702fb9a790728dbc0f271227c352cd9868597cfe78c",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "12654208de233933d90b24f9308d6cb7bafce23fe3c98f0c271a4cb9033432df",
+          "review": "sheet-07.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2934f45873467775d228d5d2ff662d44cf05e78a8903e431c88460c158c59650",
+          "review": "sheet-06.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-impact-restored-320-2x.long.png",
+      "sha256": "144474a934758d375a3444692a96e287a204f2f35f2d3407734e867b9651b613",
+      "width": 320,
+      "height": 2164,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "50796a1b18dbf1e62ef38c881771c0d4c8fd18272b2d8271e4e7ba6acb0a8896",
+          "review": "sheet-05.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "26e9acfc0746ad5f40f442688a12260cbeab00887f6e8dfb9aaebe0d3ec5b905",
+          "review": "sheet-05.png#tile-3"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "e98aa0acf35148cb91ad5fb73761611a668b7e874f3ecf576dd32b6e5aed4826",
+          "review": "sheet-07.png#tile-3"
+        },
+        {
+          "y0": 1950,
+          "y1": 2164,
+          "pixel_sha256": "0dbe3f6d870148766aa3faced9389fd9241d3835fbc6a627c3260a6836c29e38",
+          "review": "sheet-01.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-impact-restored-320-2x.png",
+      "sha256": "0b0f9934afa0c23969e46a23f8ea5b70445375d3355a19924c6070accbc19233",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "dadf3e299a1e6fad4a5e10fd9c4079a8aca5e82f93dd13dc88c230da8ab68155",
+          "review": "sheet-07.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "bb5a782ed0ff3e0f6f04555b4dc327fda43d54540610fd6d57783fe6e407c69c",
+          "review": "sheet-07.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-impact-restored-393-1x.long.png",
+      "sha256": "989dd190a5ce76427fca0aa418a0ee01a901d2bf8d3e12ce044970dc22452b9f",
+      "width": 393,
+      "height": 1034,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a5540987b95e6b03e5ce9db10b362e26affab8210b43e7c9fc251f46544df4f5",
+          "review": "sheet-06.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1034,
+          "pixel_sha256": "db10656ca6d176a4503e7ffa5c90701764076e96dffa90bec49328cf3faadfcb",
+          "review": "sheet-07.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-impact-restored-393-1x.png",
+      "sha256": "18d3d86c0f3b75d051238702fb9a790728dbc0f271227c352cd9868597cfe78c",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "12654208de233933d90b24f9308d6cb7bafce23fe3c98f0c271a4cb9033432df",
+          "review": "sheet-07.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2934f45873467775d228d5d2ff662d44cf05e78a8903e431c88460c158c59650",
+          "review": "sheet-06.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-impact-some-393-1x.long.png",
+      "sha256": "45519b5d77624bc24af0c1bca5615078d140eb590481b70199e28bd8b076eb3e",
+      "width": 393,
+      "height": 1034,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a5540987b95e6b03e5ce9db10b362e26affab8210b43e7c9fc251f46544df4f5",
+          "review": "sheet-06.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1034,
+          "pixel_sha256": "278e1b5f64e8c265c2c3276517c9b1c28c3321a8138a391000c10aebf75459f3",
+          "review": "sheet-08.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-impact-some-393-1x.png",
+      "sha256": "5cdb36fa13bf2c0d4b2f6362c5b460f98cd4e4dfa95f3a7b13a4ee3935e0f25a",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6c76c13756005661051f7aa5b98501af6efcbd0c075b6b4d6cd98dd079818b79",
+          "review": "sheet-08.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2934f45873467775d228d5d2ff662d44cf05e78a8903e431c88460c158c59650",
+          "review": "sheet-06.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-more-return-320-2x.png",
+      "sha256": "feee4d506ac1bef973428daf2906121e24ef6412509098c203c180d745777dd0",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9898cc0e7a927b935b24203d50b69997722111759f8dae9af1e9464c52ed64a7",
+          "review": "../mom-rest-control-visual-review/sheet-19.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "f95aac7cc67095efb73a4ae0b9ee5dc9518b86f20195158e860fce9621ec483a",
+          "review": "../mom-rest-control-visual-review/sheet-19.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-more-return-393-1x.png",
+      "sha256": "6ac33e6dd952b54bfe0bbfa4209df0bf816602f324b0120ff7730cb4d19cfda7",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "f3c49068f287b436aca5535634e7bf245847c3c294038c70cc0fc5537f4560a7",
+          "review": "../mom-rest-control-visual-review/sheet-19.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "ae62a60cadfc8bfb09e3e94acb0dc8f7d481c4c260eae5960e33ebdc5f0799db",
+          "review": "../mom-rest-control-visual-review/sheet-20.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-pressure-babyWorry-393-1x.long.png",
+      "sha256": "66a68420fee5e05a4a88fdc1cd6729b1ea8622f6dfc7b3ea0dde28c285d007ef",
+      "width": 393,
+      "height": 1034,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a5540987b95e6b03e5ce9db10b362e26affab8210b43e7c9fc251f46544df4f5",
+          "review": "sheet-06.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1034,
+          "pixel_sha256": "1daaf07939306ae34d2250d37fb49b249f52cd073f08ae19653bfcb2278608ff",
+          "review": "sheet-02.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-pressure-babyWorry-393-1x.png",
+      "sha256": "dca1bfab5f9b077a16d97d24c2a8756cd2747f2640f6d2408442c01306fc7507",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "4413757be2f9e4813633ac853090fd680dccae53e76dfac664c54a5e8ab99df7",
+          "review": "sheet-06.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2934f45873467775d228d5d2ff662d44cf05e78a8903e431c88460c158c59650",
+          "review": "sheet-06.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-pressure-bodyRecovery-393-1x.long.png",
+      "sha256": "3a662ca1fba400c489a6a50b7eb406af008fb24b5edf9ee3a30f7118200a2d16",
+      "width": 393,
+      "height": 1034,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9d5fd9d529dce2cb1fbb3633a44f7f0879f8ab049f27f3d52e77b2d934143fac",
+          "review": "sheet-08.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1034,
+          "pixel_sha256": "1daaf07939306ae34d2250d37fb49b249f52cd073f08ae19653bfcb2278608ff",
+          "review": "sheet-02.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-pressure-bodyRecovery-393-1x.png",
+      "sha256": "9edf38abc984631a75f3f3fc348cdf06629ae9a55b636a8688e9375f376e47f6",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "0835a425c91c147d806512bc0a159dba60f4351da674be25a7609bdaaca9da87",
+          "review": "sheet-08.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2934f45873467775d228d5d2ff662d44cf05e78a8903e431c88460c158c59650",
+          "review": "sheet-06.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-pressure-clear-babyWorry-320-2x.long.png",
+      "sha256": "54faf2b37e86c0e41a28f793faf97048bbb76a935bcc69810bbfc6830a014187",
+      "width": 320,
+      "height": 2164,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "50796a1b18dbf1e62ef38c881771c0d4c8fd18272b2d8271e4e7ba6acb0a8896",
+          "review": "sheet-05.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "1593b41d726b02696b0f7a402d5f91a4922d9643f20c3c2b64e15a0ed4f44811",
+          "review": "sheet-08.png#tile-4"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "7fa382ccb080b6eac448f3e1365a0235ad9dd11a856da94acaba27d30ac3c45f",
+          "review": "sheet-01.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2164,
+          "pixel_sha256": "0dbe3f6d870148766aa3faced9389fd9241d3835fbc6a627c3260a6836c29e38",
+          "review": "sheet-01.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-pressure-clear-babyWorry-320-2x.png",
+      "sha256": "a551ae06690f962beb0bd7c65b885d8a79d86b33028e71c678bfdab6218c6bcd",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6163de671d0b92eab043658c1973c9a83658ee3c4984e96e1da9973b0ec3c95f",
+          "review": "sheet-08.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1210f48731d0a758eeb3c286c41ac0b150ca540bc5faeb68536f11be0990ce39",
+          "review": "sheet-09.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-pressure-clear-babyWorry-393-1x.long.png",
+      "sha256": "3b11913c0c4f22ba301c02f40af96f1402ae135eb7e43a17368345b01eae4afd",
+      "width": 393,
+      "height": 1034,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "bfe8a9a17f7bb9510f625807caaec9ce2f4f42723b0006733a0df64eca04100c",
+          "review": "sheet-09.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1034,
+          "pixel_sha256": "1daaf07939306ae34d2250d37fb49b249f52cd073f08ae19653bfcb2278608ff",
+          "review": "sheet-02.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-pressure-clear-babyWorry-393-1x.png",
+      "sha256": "dd0ce96ab3ffbd98c0df04d44e58a413cdbf5755aead64dd1fe9295376493080",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2eba389116deee901d3aa9f061d3378b5bfc84f16eea958efe727baafa31fd92",
+          "review": "sheet-09.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2934f45873467775d228d5d2ff662d44cf05e78a8903e431c88460c158c59650",
+          "review": "sheet-06.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-pressure-clear-bodyRecovery-393-1x.long.png",
+      "sha256": "f6f6b5138a168ba8fd6d59e4081d5053dfa3e7532a52325135eea82c9f495b1d",
+      "width": 393,
+      "height": 1034,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "e37c4dfdd9213edba1c22fdf19999c2ff294b66f5530eeb580f12f6bee336004",
+          "review": "sheet-09.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1034,
+          "pixel_sha256": "1daaf07939306ae34d2250d37fb49b249f52cd073f08ae19653bfcb2278608ff",
+          "review": "sheet-02.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-pressure-clear-bodyRecovery-393-1x.png",
+      "sha256": "6f53ff4bfb0392832bbc695e51e35752786acf2a376ced39d245c08f4d1e5072",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "1efe53680f622f4bd3c9dd9215568f2a884108a46904a04ca728cf3b380e8037",
+          "review": "sheet-09.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2934f45873467775d228d5d2ff662d44cf05e78a8903e431c88460c158c59650",
+          "review": "sheet-06.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-pressure-clear-familyFriction-393-1x.long.png",
+      "sha256": "5045c96769144e42bdfb1de7fd81101e83c306f03ec2be6f41aa868283106519",
+      "width": 393,
+      "height": 1034,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ce2cdea454ef825fc320d754bb2dada62b81817d1305bc657e909edfcaa957f7",
+          "review": "sheet-09.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1034,
+          "pixel_sha256": "1daaf07939306ae34d2250d37fb49b249f52cd073f08ae19653bfcb2278608ff",
+          "review": "sheet-02.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-pressure-clear-familyFriction-393-1x.png",
+      "sha256": "2db35609add070ee846510d5336bdece82e275c5e8e717cf7d4e34f017602c49",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "db69719b747c095d0a426943a13af5ef8c61e6ff02411f7ad6a287b75cc3e4d4",
+          "review": "sheet-10.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2934f45873467775d228d5d2ff662d44cf05e78a8903e431c88460c158c59650",
+          "review": "sheet-06.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-pressure-clear-feedingPressure-393-1x.long.png",
+      "sha256": "247d5923a1e318d3e1904312a93325ab980b8699d0f3c0d2bc63f21bc5e0750a",
+      "width": 393,
+      "height": 1034,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ef88b853dc80798573aad3ea7ce088ab4e738a37346b900c88e2377e13ef5d17",
+          "review": "sheet-10.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1034,
+          "pixel_sha256": "1daaf07939306ae34d2250d37fb49b249f52cd073f08ae19653bfcb2278608ff",
+          "review": "sheet-02.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-pressure-clear-feedingPressure-393-1x.png",
+      "sha256": "320c3ab535d87f2b14b86b69faf81555fc1c991381a16ebb20e1ea88fa750873",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "f5bce0c398b51db85c283136945bc6cfb5d2aa54395509980c80c6a97c7d67bb",
+          "review": "sheet-10.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2934f45873467775d228d5d2ff662d44cf05e78a8903e431c88460c158c59650",
+          "review": "sheet-06.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-pressure-clear-noTime-393-1x.long.png",
+      "sha256": "221740252fc3cc3d7dd874e77aabd4462713ef198743ac4367176b220c0fc3dd",
+      "width": 393,
+      "height": 1034,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "21483581cc473345d2e59888759bae1ef9cab4c25d79cd0a8eac07afff823da3",
+          "review": "sheet-10.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1034,
+          "pixel_sha256": "1daaf07939306ae34d2250d37fb49b249f52cd073f08ae19653bfcb2278608ff",
+          "review": "sheet-02.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-pressure-clear-noTime-393-1x.png",
+      "sha256": "d5ad6b113e0f1bef8b456f8d4bf90fed0533e0b41011623741c3365a68bc8865",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9095415fa428247bc8dd6a2f330b494ad6c16dccab71f7492fc5867181c8294d",
+          "review": "sheet-10.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2934f45873467775d228d5d2ff662d44cf05e78a8903e431c88460c158c59650",
+          "review": "sheet-06.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-pressure-clear-selfDoubt-393-1x.long.png",
+      "sha256": "7ca204dbabdea1061e55b872a328d171354734b6420109915b205a4596e4d335",
+      "width": 393,
+      "height": 1034,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ea76f5415bb8565b4356ca859fa79d364c9092090ba8b5a2ceee7980a7892781",
+          "review": "sheet-10.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1034,
+          "pixel_sha256": "1daaf07939306ae34d2250d37fb49b249f52cd073f08ae19653bfcb2278608ff",
+          "review": "sheet-02.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-pressure-clear-selfDoubt-393-1x.png",
+      "sha256": "458a7f88ced3fdec250aaaf9f880095a7e6558cb3abc51194470082404eeaaa5",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b22e0ed1c723c3a0d837771b65a5b3acf21bf77ee06886857cb25d36bb06683a",
+          "review": "sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2934f45873467775d228d5d2ff662d44cf05e78a8903e431c88460c158c59650",
+          "review": "sheet-06.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-pressure-clear-sleepLoss-393-1x.long.png",
+      "sha256": "4b0f606c294a6c24dc4190a6a10250975c7787fba079bf375945f87df37d725b",
+      "width": 393,
+      "height": 1034,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "06cf4b74521e62df43a1964b1d25ef6566ffc1efa31a3130d11dccaf085090ed",
+          "review": "sheet-11.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1034,
+          "pixel_sha256": "1daaf07939306ae34d2250d37fb49b249f52cd073f08ae19653bfcb2278608ff",
+          "review": "sheet-02.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-pressure-clear-sleepLoss-393-1x.png",
+      "sha256": "003df2ee6494daf1f267b26bdc42cafa81e3cb3d8e672b887d052a27c2ca496a",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "1766018e7978e902d5da73c2b729a9a7ca27880bc01803e45c1f0e6ce6d07423",
+          "review": "sheet-11.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2934f45873467775d228d5d2ff662d44cf05e78a8903e431c88460c158c59650",
+          "review": "sheet-06.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-pressure-exclusive-cleared-320-2x.long.png",
+      "sha256": "54faf2b37e86c0e41a28f793faf97048bbb76a935bcc69810bbfc6830a014187",
+      "width": 320,
+      "height": 2164,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "50796a1b18dbf1e62ef38c881771c0d4c8fd18272b2d8271e4e7ba6acb0a8896",
+          "review": "sheet-05.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "1593b41d726b02696b0f7a402d5f91a4922d9643f20c3c2b64e15a0ed4f44811",
+          "review": "sheet-08.png#tile-4"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "7fa382ccb080b6eac448f3e1365a0235ad9dd11a856da94acaba27d30ac3c45f",
+          "review": "sheet-01.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2164,
+          "pixel_sha256": "0dbe3f6d870148766aa3faced9389fd9241d3835fbc6a627c3260a6836c29e38",
+          "review": "sheet-01.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-pressure-exclusive-cleared-320-2x.png",
+      "sha256": "0ab8dca9cb2bb32598def7e3d7a9decb60933760670a9eeb93d4a00f6d34adfc",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "f0b3550295572c6de4b030950aaf4162393bb24e5e8c6ddf3c4f2f3e4893acb6",
+          "review": "sheet-11.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "d0c61274947da1774a4c0c3c16a0a3ef213dc20f8feea3e9c2d77e62c52b3ca6",
+          "review": "sheet-11.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-pressure-exclusive-cleared-393-1x.long.png",
+      "sha256": "221740252fc3cc3d7dd874e77aabd4462713ef198743ac4367176b220c0fc3dd",
+      "width": 393,
+      "height": 1034,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "21483581cc473345d2e59888759bae1ef9cab4c25d79cd0a8eac07afff823da3",
+          "review": "sheet-10.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1034,
+          "pixel_sha256": "1daaf07939306ae34d2250d37fb49b249f52cd073f08ae19653bfcb2278608ff",
+          "review": "sheet-02.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-pressure-exclusive-cleared-393-1x.png",
+      "sha256": "d5ad6b113e0f1bef8b456f8d4bf90fed0533e0b41011623741c3365a68bc8865",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9095415fa428247bc8dd6a2f330b494ad6c16dccab71f7492fc5867181c8294d",
+          "review": "sheet-10.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2934f45873467775d228d5d2ff662d44cf05e78a8903e431c88460c158c59650",
+          "review": "sheet-06.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-pressure-exclusive-restored-320-2x.long.png",
+      "sha256": "a31f4a8505c389af10c8084e0672bbc5b5ee342ce9d37bc143ec76ef26a449b6",
+      "width": 320,
+      "height": 2164,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "50796a1b18dbf1e62ef38c881771c0d4c8fd18272b2d8271e4e7ba6acb0a8896",
+          "review": "sheet-05.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "1593b41d726b02696b0f7a402d5f91a4922d9643f20c3c2b64e15a0ed4f44811",
+          "review": "sheet-08.png#tile-4"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "095023a98b89e501f6f96ef55bcf761c564b6463c882f00cedc9862aaf890f99",
+          "review": "sheet-11.png#tile-5"
+        },
+        {
+          "y0": 1950,
+          "y1": 2164,
+          "pixel_sha256": "0dbe3f6d870148766aa3faced9389fd9241d3835fbc6a627c3260a6836c29e38",
+          "review": "sheet-01.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-pressure-exclusive-restored-320-2x.png",
+      "sha256": "e60829aa0e1208c9429b95c76184b297b797d032ab58ac1785e0d515540fc9bf",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "e2e2bc58ea1ba708c30637bb4ae3d5b3b643e94b6e039091702f1bbd95ec1ff0",
+          "review": "sheet-12.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "d0c61274947da1774a4c0c3c16a0a3ef213dc20f8feea3e9c2d77e62c52b3ca6",
+          "review": "sheet-11.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-pressure-exclusive-restored-393-1x.long.png",
+      "sha256": "cbcc1d16619e47e2db4ac285a48e76a86462bdb7b5279f6adb1214241c58fe99",
+      "width": 393,
+      "height": 1034,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "e5662d685edadcc748fe68abc080bce04fb571c5a39094e7a3247a0280ac632e",
+          "review": "sheet-12.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1034,
+          "pixel_sha256": "1daaf07939306ae34d2250d37fb49b249f52cd073f08ae19653bfcb2278608ff",
+          "review": "sheet-02.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-pressure-exclusive-restored-393-1x.png",
+      "sha256": "c0be39aeaffdd59e557de193c2daff9e359ab989fd2d6b6d0d487f7c8d2f0b54",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "d8c87f965ffff9a3a09b510431224b59c7af8305091164ae03232740f720cbc3",
+          "review": "sheet-12.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2934f45873467775d228d5d2ff662d44cf05e78a8903e431c88460c158c59650",
+          "review": "sheet-06.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-pressure-exclusive-to-ordinary-320-2x.long.png",
+      "sha256": "f76fb273712121f65a014c2a38c3c034e02f8d58fdcd20d7e239226e9565e77f",
+      "width": 320,
+      "height": 2164,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "50796a1b18dbf1e62ef38c881771c0d4c8fd18272b2d8271e4e7ba6acb0a8896",
+          "review": "sheet-05.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "26e9acfc0746ad5f40f442688a12260cbeab00887f6e8dfb9aaebe0d3ec5b905",
+          "review": "sheet-05.png#tile-3"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "7fa382ccb080b6eac448f3e1365a0235ad9dd11a856da94acaba27d30ac3c45f",
+          "review": "sheet-01.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2164,
+          "pixel_sha256": "0dbe3f6d870148766aa3faced9389fd9241d3835fbc6a627c3260a6836c29e38",
+          "review": "sheet-01.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-pressure-exclusive-to-ordinary-320-2x.png",
+      "sha256": "6f3b7470849bf48fe429ac64427ba5f1957c33888b8fa89936f232dcfe60d1b1",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b4f92cb9611f553392e5415c1fa272546cfe551f88f24d607d8a7b9b8defd191",
+          "review": "sheet-12.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1210f48731d0a758eeb3c286c41ac0b150ca540bc5faeb68536f11be0990ce39",
+          "review": "sheet-09.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-pressure-exclusive-to-ordinary-393-1x.long.png",
+      "sha256": "66a68420fee5e05a4a88fdc1cd6729b1ea8622f6dfc7b3ea0dde28c285d007ef",
+      "width": 393,
+      "height": 1034,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a5540987b95e6b03e5ce9db10b362e26affab8210b43e7c9fc251f46544df4f5",
+          "review": "sheet-06.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1034,
+          "pixel_sha256": "1daaf07939306ae34d2250d37fb49b249f52cd073f08ae19653bfcb2278608ff",
+          "review": "sheet-02.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-pressure-exclusive-to-ordinary-393-1x.png",
+      "sha256": "dca1bfab5f9b077a16d97d24c2a8756cd2747f2640f6d2408442c01306fc7507",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "4413757be2f9e4813633ac853090fd680dccae53e76dfac664c54a5e8ab99df7",
+          "review": "sheet-06.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2934f45873467775d228d5d2ff662d44cf05e78a8903e431c88460c158c59650",
+          "review": "sheet-06.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-pressure-familyFriction-393-1x.long.png",
+      "sha256": "43f6b23fb90063d95ded07a53a3e057c1eb0cc3d7c85aaff892f7879c83077ab",
+      "width": 393,
+      "height": 1034,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "f224ae409f11e93908c580f24a4794e3a7628805377a3a9691a4db06f81a707d",
+          "review": "sheet-12.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1034,
+          "pixel_sha256": "1daaf07939306ae34d2250d37fb49b249f52cd073f08ae19653bfcb2278608ff",
+          "review": "sheet-02.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-pressure-familyFriction-393-1x.png",
+      "sha256": "471393fc1d39f6f4b45a7e8ea0bcb521c3c4c621e5edef72c060313b4f6886a7",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "331013ea2764a8963439df1fbc9f01337057bc60e38e483d03b56e1520c38fe6",
+          "review": "sheet-12.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2934f45873467775d228d5d2ff662d44cf05e78a8903e431c88460c158c59650",
+          "review": "sheet-06.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-pressure-feedingPressure-393-1x.long.png",
+      "sha256": "23eb328ff1772d4c19d9f0752e52a10df808da831209275d52b1379214177173",
+      "width": 393,
+      "height": 1034,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "1d10c038014ee006f957c682299017a6fdc9f237fa11c1c66f60ecd79689c362",
+          "review": "sheet-13.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1034,
+          "pixel_sha256": "1daaf07939306ae34d2250d37fb49b249f52cd073f08ae19653bfcb2278608ff",
+          "review": "sheet-02.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-pressure-feedingPressure-393-1x.png",
+      "sha256": "713daafe377dd1fda455485362c9bf0da7501842a92dfaae02d03743eccb6018",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "5610cbfafcbc68abe3797a42b85e291832b94c84cd81f5b666a0dea45e34fed8",
+          "review": "sheet-13.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2934f45873467775d228d5d2ff662d44cf05e78a8903e431c88460c158c59650",
+          "review": "sheet-06.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-pressure-noTime-393-1x.long.png",
+      "sha256": "db293c3159f45a38acab70698b2cb0400c8b1c2e4f73b516639f3d357ebff4ad",
+      "width": 393,
+      "height": 1034,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "d453597502d5fdac3917b32c14c636bf3f0efb5ff723e3e79b7d25071d9475c5",
+          "review": "sheet-13.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1034,
+          "pixel_sha256": "1daaf07939306ae34d2250d37fb49b249f52cd073f08ae19653bfcb2278608ff",
+          "review": "sheet-02.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-pressure-noTime-393-1x.png",
+      "sha256": "85e739dc0cd620e1426a8510ab78fdef2a8c0e6a241ffa51f330d85031e213bb",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "d14038d63f04979fa0999f489edc53438ffceacc6ab0373e71211df02592d5f8",
+          "review": "sheet-13.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2934f45873467775d228d5d2ff662d44cf05e78a8903e431c88460c158c59650",
+          "review": "sheet-06.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-pressure-refill-bodyRecovery-393-1x.long.png",
+      "sha256": "3a662ca1fba400c489a6a50b7eb406af008fb24b5edf9ee3a30f7118200a2d16",
+      "width": 393,
+      "height": 1034,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9d5fd9d529dce2cb1fbb3633a44f7f0879f8ab049f27f3d52e77b2d934143fac",
+          "review": "sheet-08.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1034,
+          "pixel_sha256": "1daaf07939306ae34d2250d37fb49b249f52cd073f08ae19653bfcb2278608ff",
+          "review": "sheet-02.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-pressure-refill-bodyRecovery-393-1x.png",
+      "sha256": "9edf38abc984631a75f3f3fc348cdf06629ae9a55b636a8688e9375f376e47f6",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "0835a425c91c147d806512bc0a159dba60f4351da674be25a7609bdaaca9da87",
+          "review": "sheet-08.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2934f45873467775d228d5d2ff662d44cf05e78a8903e431c88460c158c59650",
+          "review": "sheet-06.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-pressure-refill-familyFriction-393-1x.long.png",
+      "sha256": "43f6b23fb90063d95ded07a53a3e057c1eb0cc3d7c85aaff892f7879c83077ab",
+      "width": 393,
+      "height": 1034,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "f224ae409f11e93908c580f24a4794e3a7628805377a3a9691a4db06f81a707d",
+          "review": "sheet-12.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1034,
+          "pixel_sha256": "1daaf07939306ae34d2250d37fb49b249f52cd073f08ae19653bfcb2278608ff",
+          "review": "sheet-02.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-pressure-refill-familyFriction-393-1x.png",
+      "sha256": "471393fc1d39f6f4b45a7e8ea0bcb521c3c4c621e5edef72c060313b4f6886a7",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "331013ea2764a8963439df1fbc9f01337057bc60e38e483d03b56e1520c38fe6",
+          "review": "sheet-12.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2934f45873467775d228d5d2ff662d44cf05e78a8903e431c88460c158c59650",
+          "review": "sheet-06.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-pressure-refill-feedingPressure-393-1x.long.png",
+      "sha256": "23eb328ff1772d4c19d9f0752e52a10df808da831209275d52b1379214177173",
+      "width": 393,
+      "height": 1034,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "1d10c038014ee006f957c682299017a6fdc9f237fa11c1c66f60ecd79689c362",
+          "review": "sheet-13.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1034,
+          "pixel_sha256": "1daaf07939306ae34d2250d37fb49b249f52cd073f08ae19653bfcb2278608ff",
+          "review": "sheet-02.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-pressure-refill-feedingPressure-393-1x.png",
+      "sha256": "713daafe377dd1fda455485362c9bf0da7501842a92dfaae02d03743eccb6018",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "5610cbfafcbc68abe3797a42b85e291832b94c84cd81f5b666a0dea45e34fed8",
+          "review": "sheet-13.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2934f45873467775d228d5d2ff662d44cf05e78a8903e431c88460c158c59650",
+          "review": "sheet-06.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-pressure-refill-noTime-393-1x.long.png",
+      "sha256": "db293c3159f45a38acab70698b2cb0400c8b1c2e4f73b516639f3d357ebff4ad",
+      "width": 393,
+      "height": 1034,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "d453597502d5fdac3917b32c14c636bf3f0efb5ff723e3e79b7d25071d9475c5",
+          "review": "sheet-13.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1034,
+          "pixel_sha256": "1daaf07939306ae34d2250d37fb49b249f52cd073f08ae19653bfcb2278608ff",
+          "review": "sheet-02.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-pressure-refill-noTime-393-1x.png",
+      "sha256": "85e739dc0cd620e1426a8510ab78fdef2a8c0e6a241ffa51f330d85031e213bb",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "d14038d63f04979fa0999f489edc53438ffceacc6ab0373e71211df02592d5f8",
+          "review": "sheet-13.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2934f45873467775d228d5d2ff662d44cf05e78a8903e431c88460c158c59650",
+          "review": "sheet-06.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-pressure-refill-selfDoubt-393-1x.long.png",
+      "sha256": "823d5187319412fe4f8f432e8e538028f6ea5096410bf137af849c25c4a9bb69",
+      "width": 393,
+      "height": 1034,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "83c477a093a8b90821687604eff54f8dc25fcb5253393576fe9beceec5ca013a",
+          "review": "sheet-13.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1034,
+          "pixel_sha256": "1daaf07939306ae34d2250d37fb49b249f52cd073f08ae19653bfcb2278608ff",
+          "review": "sheet-02.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-pressure-refill-selfDoubt-393-1x.png",
+      "sha256": "c81e2d2807a31464053ca191d5c954841c8484a56fc987d24fe34bdda76394ee",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6fe83f4b426e0bb5a1e47e91907fc4267082e05ac566cb2ced43055a5f04073b",
+          "review": "sheet-13.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2934f45873467775d228d5d2ff662d44cf05e78a8903e431c88460c158c59650",
+          "review": "sheet-06.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-pressure-refill-sleepLoss-393-1x.long.png",
+      "sha256": "39c9ea3c73f306253171149b2ca3d8a3cf5c5d4f9069476176a5b94c1a2bf776",
+      "width": 393,
+      "height": 1034,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c68a1ccdedca90b1d50aff6c24ea74898cc1faabba84b06dd069ee3656fb48fa",
+          "review": "sheet-14.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1034,
+          "pixel_sha256": "1daaf07939306ae34d2250d37fb49b249f52cd073f08ae19653bfcb2278608ff",
+          "review": "sheet-02.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-pressure-refill-sleepLoss-393-1x.png",
+      "sha256": "5dc046f15f5c15016ec7f409fb0b30411476df7330a7b495c546bd171a217b1b",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "058d3111850602fe12954984815c2ce4ff8b24dfbd1fcc9536cee9586fa5bd15",
+          "review": "sheet-14.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2934f45873467775d228d5d2ff662d44cf05e78a8903e431c88460c158c59650",
+          "review": "sheet-06.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-pressure-restored-320-2x.long.png",
+      "sha256": "f76fb273712121f65a014c2a38c3c034e02f8d58fdcd20d7e239226e9565e77f",
+      "width": 320,
+      "height": 2164,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "50796a1b18dbf1e62ef38c881771c0d4c8fd18272b2d8271e4e7ba6acb0a8896",
+          "review": "sheet-05.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "26e9acfc0746ad5f40f442688a12260cbeab00887f6e8dfb9aaebe0d3ec5b905",
+          "review": "sheet-05.png#tile-3"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "7fa382ccb080b6eac448f3e1365a0235ad9dd11a856da94acaba27d30ac3c45f",
+          "review": "sheet-01.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2164,
+          "pixel_sha256": "0dbe3f6d870148766aa3faced9389fd9241d3835fbc6a627c3260a6836c29e38",
+          "review": "sheet-01.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-pressure-restored-320-2x.png",
+      "sha256": "6f3b7470849bf48fe429ac64427ba5f1957c33888b8fa89936f232dcfe60d1b1",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b4f92cb9611f553392e5415c1fa272546cfe551f88f24d607d8a7b9b8defd191",
+          "review": "sheet-12.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1210f48731d0a758eeb3c286c41ac0b150ca540bc5faeb68536f11be0990ce39",
+          "review": "sheet-09.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-pressure-restored-393-1x.long.png",
+      "sha256": "66a68420fee5e05a4a88fdc1cd6729b1ea8622f6dfc7b3ea0dde28c285d007ef",
+      "width": 393,
+      "height": 1034,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a5540987b95e6b03e5ce9db10b362e26affab8210b43e7c9fc251f46544df4f5",
+          "review": "sheet-06.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1034,
+          "pixel_sha256": "1daaf07939306ae34d2250d37fb49b249f52cd073f08ae19653bfcb2278608ff",
+          "review": "sheet-02.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-pressure-restored-393-1x.png",
+      "sha256": "dca1bfab5f9b077a16d97d24c2a8756cd2747f2640f6d2408442c01306fc7507",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "4413757be2f9e4813633ac853090fd680dccae53e76dfac664c54a5e8ab99df7",
+          "review": "sheet-06.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2934f45873467775d228d5d2ff662d44cf05e78a8903e431c88460c158c59650",
+          "review": "sheet-06.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-pressure-selfDoubt-393-1x.long.png",
+      "sha256": "823d5187319412fe4f8f432e8e538028f6ea5096410bf137af849c25c4a9bb69",
+      "width": 393,
+      "height": 1034,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "83c477a093a8b90821687604eff54f8dc25fcb5253393576fe9beceec5ca013a",
+          "review": "sheet-13.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1034,
+          "pixel_sha256": "1daaf07939306ae34d2250d37fb49b249f52cd073f08ae19653bfcb2278608ff",
+          "review": "sheet-02.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-pressure-selfDoubt-393-1x.png",
+      "sha256": "c81e2d2807a31464053ca191d5c954841c8484a56fc987d24fe34bdda76394ee",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6fe83f4b426e0bb5a1e47e91907fc4267082e05ac566cb2ced43055a5f04073b",
+          "review": "sheet-13.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2934f45873467775d228d5d2ff662d44cf05e78a8903e431c88460c158c59650",
+          "review": "sheet-06.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-pressure-sleepLoss-393-1x.long.png",
+      "sha256": "39c9ea3c73f306253171149b2ca3d8a3cf5c5d4f9069476176a5b94c1a2bf776",
+      "width": 393,
+      "height": 1034,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c68a1ccdedca90b1d50aff6c24ea74898cc1faabba84b06dd069ee3656fb48fa",
+          "review": "sheet-14.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1034,
+          "pixel_sha256": "1daaf07939306ae34d2250d37fb49b249f52cd073f08ae19653bfcb2278608ff",
+          "review": "sheet-02.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-pressure-sleepLoss-393-1x.png",
+      "sha256": "5dc046f15f5c15016ec7f409fb0b30411476df7330a7b495c546bd171a217b1b",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "058d3111850602fe12954984815c2ce4ff8b24dfbd1fcc9536cee9586fa5bd15",
+          "review": "sheet-14.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2934f45873467775d228d5d2ff662d44cf05e78a8903e431c88460c158c59650",
+          "review": "sheet-06.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-pressure-unclear-320-2x.long.png",
+      "sha256": "a31f4a8505c389af10c8084e0672bbc5b5ee342ce9d37bc143ec76ef26a449b6",
+      "width": 320,
+      "height": 2164,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "50796a1b18dbf1e62ef38c881771c0d4c8fd18272b2d8271e4e7ba6acb0a8896",
+          "review": "sheet-05.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "1593b41d726b02696b0f7a402d5f91a4922d9643f20c3c2b64e15a0ed4f44811",
+          "review": "sheet-08.png#tile-4"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "095023a98b89e501f6f96ef55bcf761c564b6463c882f00cedc9862aaf890f99",
+          "review": "sheet-11.png#tile-5"
+        },
+        {
+          "y0": 1950,
+          "y1": 2164,
+          "pixel_sha256": "0dbe3f6d870148766aa3faced9389fd9241d3835fbc6a627c3260a6836c29e38",
+          "review": "sheet-01.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-pressure-unclear-320-2x.png",
+      "sha256": "e60829aa0e1208c9429b95c76184b297b797d032ab58ac1785e0d515540fc9bf",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "e2e2bc58ea1ba708c30637bb4ae3d5b3b643e94b6e039091702f1bbd95ec1ff0",
+          "review": "sheet-12.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "d0c61274947da1774a4c0c3c16a0a3ef213dc20f8feea3e9c2d77e62c52b3ca6",
+          "review": "sheet-11.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-pressure-unclear-393-1x.long.png",
+      "sha256": "cbcc1d16619e47e2db4ac285a48e76a86462bdb7b5279f6adb1214241c58fe99",
+      "width": 393,
+      "height": 1034,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "e5662d685edadcc748fe68abc080bce04fb571c5a39094e7a3247a0280ac632e",
+          "review": "sheet-12.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1034,
+          "pixel_sha256": "1daaf07939306ae34d2250d37fb49b249f52cd073f08ae19653bfcb2278608ff",
+          "review": "sheet-02.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-pressure-unclear-393-1x.png",
+      "sha256": "c0be39aeaffdd59e557de193c2daff9e359ab989fd2d6b6d0d487f7c8d2f0b54",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "d8c87f965ffff9a3a09b510431224b59c7af8305091164ae03232740f720cbc3",
+          "review": "sheet-12.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2934f45873467775d228d5d2ff662d44cf05e78a8903e431c88460c158c59650",
+          "review": "sheet-06.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-quick-low-393-1x.long.png",
+      "sha256": "eb877d0fac430ee02fe71393eaef64cc82ca27cb372ae3a4a2c5bb283d65ee0c",
+      "width": 393,
+      "height": 1034,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "63acf74e6ecc815e3872ac085f756a66cf3fb03ab6d2f5e99c979e7a89ff89db",
+          "review": "sheet-14.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1034,
+          "pixel_sha256": "1daaf07939306ae34d2250d37fb49b249f52cd073f08ae19653bfcb2278608ff",
+          "review": "sheet-02.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-quick-low-393-1x.png",
+      "sha256": "5ec0617b8b364ae8fcbf5230e72d967455f916bd591818613d84348f28974db3",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "63acf74e6ecc815e3872ac085f756a66cf3fb03ab6d2f5e99c979e7a89ff89db",
+          "review": "sheet-14.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "254d4a68cc1c576226da9103ec505cd31f472e1d29f110942056eafe5bb50ffd",
+          "review": "sheet-02.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-quick-low-discard-confirm-393-1x.png",
+      "sha256": "ed43c92a259fb101241de1b2150ecc6ad67b29d19d85a85cc3e72bffe0c538ce",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "595cb087ce02221074986b0919d50e9c41709e12f24e703b838fd35ef7e2ed22",
+          "review": "sheet-14.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3e995f9d7ba65be0eef82605d36d29fc29e706fb26a0d5f6e99c963e2cb98863",
+          "review": "sheet-14.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-quick-low-discarded-393-1x.long.png",
+      "sha256": "0a4e3294f0ff67f0d7ed84ee3eacb393b50571fb4db300a7d15899ba9359a330",
+      "width": 393,
+      "height": 917,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa661999d6307948942c23dc2e7dad221367a614b3ae09dd12dec24bc67fec6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 917,
+          "pixel_sha256": "134109b5afc9a0d972ecc00b197fb963d8131bfc37dbfad2a4c51a0a091a86ad",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-quick-low-discarded-393-1x.png",
+      "sha256": "32785da9dbd7820cb89380d16be927a03c8c72ff4820b7fefeb674edc6c4eb13",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9a14a7ecfc072685782db6649a863f67482489e3041f5457cb7f0ac73a5b9f35",
+          "review": "sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "efc9e43c0d337ad0fa1ec8e551ca550e3e316e56440b8cb080e2948ce5988291",
+          "review": "../mom-rest-control-visual-review/sheet-18.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-quick-steady-320-2x.long.png",
+      "sha256": "07049b490ef5ae316edbd3524304805acc2358aa0039f611f0b00bd436d015b5",
+      "width": 320,
+      "height": 2164,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "4c84d3370d1dca7bf66ca5b9b037d988750fd6d38aed4ebfacefd33b1dc8c4d6",
+          "review": "sheet-15.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "1593b41d726b02696b0f7a402d5f91a4922d9643f20c3c2b64e15a0ed4f44811",
+          "review": "sheet-08.png#tile-4"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "7fa382ccb080b6eac448f3e1365a0235ad9dd11a856da94acaba27d30ac3c45f",
+          "review": "sheet-01.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2164,
+          "pixel_sha256": "0dbe3f6d870148766aa3faced9389fd9241d3835fbc6a627c3260a6836c29e38",
+          "review": "sheet-01.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-quick-steady-320-2x.png",
+      "sha256": "aca58c0b1e06bf87e9da58f395b0d6e493e23ca7aaaaf78a88058ca5d4c89bab",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "4c84d3370d1dca7bf66ca5b9b037d988750fd6d38aed4ebfacefd33b1dc8c4d6",
+          "review": "sheet-15.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "6dc7b53a2b9e5c3015d144339db6f27ea28db7b9ca1ac5ab49168f37e00467e5",
+          "review": "sheet-15.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-quick-steady-393-1x.long.png",
+      "sha256": "221740252fc3cc3d7dd874e77aabd4462713ef198743ac4367176b220c0fc3dd",
+      "width": 393,
+      "height": 1034,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "21483581cc473345d2e59888759bae1ef9cab4c25d79cd0a8eac07afff823da3",
+          "review": "sheet-10.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1034,
+          "pixel_sha256": "1daaf07939306ae34d2250d37fb49b249f52cd073f08ae19653bfcb2278608ff",
+          "review": "sheet-02.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-quick-steady-393-1x.png",
+      "sha256": "c8494c510c507930d406963dc685d5119d146a15d94179365277bf263fae58d9",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "21483581cc473345d2e59888759bae1ef9cab4c25d79cd0a8eac07afff823da3",
+          "review": "sheet-10.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "254d4a68cc1c576226da9103ec505cd31f472e1d29f110942056eafe5bb50ffd",
+          "review": "sheet-02.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-quick-steady-discard-confirm-320-2x.png",
+      "sha256": "6b2f688a9eb7db7e4d2fbca3178d6800ab58458541eef54a4ec285be96ba14f9",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6d5aed28caf8d454d951b6ce45067ce07aa4c77151610504937d2707da861d52",
+          "review": "sheet-15.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "8ce3480289d930bb0ae8b526fcbf8ffea133872a250a01a3350b2bb96032f62c",
+          "review": "sheet-15.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-quick-steady-discard-confirm-393-1x.png",
+      "sha256": "8ccee4d5e7f8464bed53f0b997d0dc7c33b36de62cb927fc1aa8d60bf22a78c3",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a1a3687835c9bb4be6cf4e57f2cac491e031e3f99146646dfe8a42e9a7f7c20e",
+          "review": "sheet-15.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3e995f9d7ba65be0eef82605d36d29fc29e706fb26a0d5f6e99c963e2cb98863",
+          "review": "sheet-14.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-quick-steady-discarded-320-2x.long.png",
+      "sha256": "b29f1f9dc909ca023dcd2865b0d4424a7485a4fb1dd4d05f54d8ee61e6cf46ef",
+      "width": 320,
+      "height": 1939,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a6aa9ef781460e5016527f099324419f84c6e4f14cdb26c410651cd7359b41ef",
+          "review": "../mom-rest-control-visual-review/sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "0edf1d289b2e804b112ca91367c51524ae8a6a6a4684a4fdcad651b0ae8de7ad",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1939,
+          "pixel_sha256": "8824f3d60a1ba788460adc4d5731a39ee81dafb5cb1f7d7112dd43123bbe2812",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-quick-steady-discarded-320-2x.png",
+      "sha256": "949d736b318ba03da96e742587fe58dc949ae6e8f7a718df1223d8a418fa176c",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "f66b7a03e6e88531cd71f52d1ff824899a311164bb5e57373bf7e2f485b55fcd",
+          "review": "sheet-15.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "f86ce5a43208cbfc8015343072a1cbb1c3325e8a51a6f530c1307ae6a107af80",
+          "review": "sheet-16.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-quick-steady-discarded-393-1x.long.png",
+      "sha256": "0a4e3294f0ff67f0d7ed84ee3eacb393b50571fb4db300a7d15899ba9359a330",
+      "width": 393,
+      "height": 917,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa661999d6307948942c23dc2e7dad221367a614b3ae09dd12dec24bc67fec6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 917,
+          "pixel_sha256": "134109b5afc9a0d972ecc00b197fb963d8131bfc37dbfad2a4c51a0a091a86ad",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-quick-steady-discarded-393-1x.png",
+      "sha256": "32785da9dbd7820cb89380d16be927a03c8c72ff4820b7fefeb674edc6c4eb13",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9a14a7ecfc072685782db6649a863f67482489e3041f5457cb7f0ac73a5b9f35",
+          "review": "sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "efc9e43c0d337ad0fa1ec8e551ca550e3e316e56440b8cb080e2948ce5988291",
+          "review": "../mom-rest-control-visual-review/sheet-18.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-quick-unclear-393-1x.long.png",
+      "sha256": "78fa8363513ea18a0b149963c51dd2f6d289c2a06a60d922eaba51214327efa4",
+      "width": 393,
+      "height": 1034,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "1e80d81b9b210946263b0402bc6c50222068d49cd4c4ca71938ba41f610a5a70",
+          "review": "sheet-16.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1034,
+          "pixel_sha256": "1daaf07939306ae34d2250d37fb49b249f52cd073f08ae19653bfcb2278608ff",
+          "review": "sheet-02.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-quick-unclear-393-1x.png",
+      "sha256": "3cba8f04994c14389e1ea80427cd3b83d0b80bc0f66604b584cf181a4981e06d",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "1e80d81b9b210946263b0402bc6c50222068d49cd4c4ca71938ba41f610a5a70",
+          "review": "sheet-16.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "254d4a68cc1c576226da9103ec505cd31f472e1d29f110942056eafe5bb50ffd",
+          "review": "sheet-02.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-quick-unclear-discard-confirm-393-1x.png",
+      "sha256": "d1d59f7b3178bef42cae113c6b87fe95b8d134ce877f838deb99dfde9287af34",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b13c8b41146525e6779ffc2cee024f2ac604699832bff01a230f85b02d1f01c2",
+          "review": "sheet-16.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3e995f9d7ba65be0eef82605d36d29fc29e706fb26a0d5f6e99c963e2cb98863",
+          "review": "sheet-14.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-quick-unclear-discarded-393-1x.long.png",
+      "sha256": "0a4e3294f0ff67f0d7ed84ee3eacb393b50571fb4db300a7d15899ba9359a330",
+      "width": 393,
+      "height": 917,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa661999d6307948942c23dc2e7dad221367a614b3ae09dd12dec24bc67fec6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 917,
+          "pixel_sha256": "134109b5afc9a0d972ecc00b197fb963d8131bfc37dbfad2a4c51a0a091a86ad",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-quick-unclear-discarded-393-1x.png",
+      "sha256": "32785da9dbd7820cb89380d16be927a03c8c72ff4820b7fefeb674edc6c4eb13",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9a14a7ecfc072685782db6649a863f67482489e3041f5457cb7f0ac73a5b9f35",
+          "review": "sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "efc9e43c0d337ad0fa1ec8e551ca550e3e316e56440b8cb080e2948ce5988291",
+          "review": "../mom-rest-control-visual-review/sheet-18.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-reopened-320-2x.long.png",
+      "sha256": "002beca9c308ad49b381ec5731ece79b46d748749cafe6d5ae59457d3a141183",
+      "width": 320,
+      "height": 2164,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "50796a1b18dbf1e62ef38c881771c0d4c8fd18272b2d8271e4e7ba6acb0a8896",
+          "review": "sheet-05.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "26e9acfc0746ad5f40f442688a12260cbeab00887f6e8dfb9aaebe0d3ec5b905",
+          "review": "sheet-05.png#tile-3"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "7773adffd01050700d5266f301b7a9a09351667038f02a57505f8cb61a078422",
+          "review": "sheet-16.png#tile-3"
+        },
+        {
+          "y0": 1950,
+          "y1": 2164,
+          "pixel_sha256": "52917734737c1c97fd005d10b9b7481544e7fa1805f93c7e5b6d422b5203739a",
+          "review": "sheet-16.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-reopened-320-2x.png",
+      "sha256": "68dee4a0148455246c1ddf589f08e2edccc3ab4db540891cff46bed5318e4c7c",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "50796a1b18dbf1e62ef38c881771c0d4c8fd18272b2d8271e4e7ba6acb0a8896",
+          "review": "sheet-05.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "365a98ee35de62f210640e26a35b5c2b84739e16378d85b6b50f6cca05d8ef7b",
+          "review": "sheet-16.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-reopened-393-1x.long.png",
+      "sha256": "c78b77bfd9a5e0954de54a45c5ed620393a709ae6ac1c86d25197cc17456ad95",
+      "width": 393,
+      "height": 1034,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "0e13a93f1cba5f112b8c522410089ab6c7027efcc5a056dbb31e5b8acf99d07b",
+          "review": "sheet-17.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1034,
+          "pixel_sha256": "541d338f408e7af34361663a7d688b1882dc928133dd11168952497f267b2949",
+          "review": "sheet-17.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-reopened-393-1x.png",
+      "sha256": "743dbc0f1260eeec0108ff1ff3f02ccfdff9b515363db172c44ae6820fa77e3c",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "0e13a93f1cba5f112b8c522410089ab6c7027efcc5a056dbb31e5b8acf99d07b",
+          "review": "sheet-17.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "86ab485fc9cec6da4782bc6920533a12d807d0b70ac581d108517c25ada82639",
+          "review": "sheet-17.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-saved-320-2x.long.png",
+      "sha256": "92f24811c9a66df5f16e2a6c9679b05bb4ea250a1de0df4acedbe91ed7449077",
+      "width": 320,
+      "height": 2206,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "95d4b732d23d6d16a37057a85ebf44017ee42d1ce1a3306f6d88bb6a66fd32a6",
+          "review": "sheet-17.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "26e9acfc0746ad5f40f442688a12260cbeab00887f6e8dfb9aaebe0d3ec5b905",
+          "review": "sheet-05.png#tile-3"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "7773adffd01050700d5266f301b7a9a09351667038f02a57505f8cb61a078422",
+          "review": "sheet-16.png#tile-3"
+        },
+        {
+          "y0": 1950,
+          "y1": 2206,
+          "pixel_sha256": "9c50bae94bf1d0adc680b6eccaa031c3c77204794774c0e1ad873a9e70d52db0",
+          "review": "sheet-17.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-saved-320-2x.png",
+      "sha256": "2451dab2f21e78358f65c5cdf9829daa69267993fff0aa9b5b68fd0123a200bb",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ff6144f40adc82900550b9fdbb2dfb15dd8eb63bd31870c4754d6fd4df152f54",
+          "review": "sheet-17.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "bdfa5d7551ced2bcae3038a1126b908ed89088bb4667250093a899b1b6f3b99a",
+          "review": "sheet-18.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-saved-393-1x.long.png",
+      "sha256": "f7624531d96bdaa0f862cbc150148ad5bb3e87cd96528e66e35a4374b3359de4",
+      "width": 393,
+      "height": 1059,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a5540987b95e6b03e5ce9db10b362e26affab8210b43e7c9fc251f46544df4f5",
+          "review": "sheet-06.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1059,
+          "pixel_sha256": "c15c2faf7ca5d6ed25647e6e3764839cb36f4b403c1f7f45f3ec5e801cf24788",
+          "review": "sheet-18.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-saved-393-1x.png",
+      "sha256": "a2d7b2219f96af222bdcc248604fa16e5d695c51928ff87ef03c4c55a2e28f7c",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "d91a7a1bd10d66532f5fc47b88113936e79eb6381863ec807973444e5a8b1e7b",
+          "review": "sheet-18.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "274f34c2c60e1950ad6301861c34c6408fb953ab4febfad1e918ea4238b903f6",
+          "review": "sheet-18.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-saved-all-cleared-320-2x.long.png",
+      "sha256": "604206194e39f63339b6b063c99db5219da2397b2d9291ad2ad96c8294f3ab51",
+      "width": 320,
+      "height": 2164,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "5c470217ef703806e21a319a8d93ffd905194f613c2bf678d1135d2505d961fa",
+          "review": "sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "83c8b687d947bc12da2a4ff1f4bb3a9a9e21569fb1ebe0941369b2ec0620cc97",
+          "review": "sheet-01.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "7fa382ccb080b6eac448f3e1365a0235ad9dd11a856da94acaba27d30ac3c45f",
+          "review": "sheet-01.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2164,
+          "pixel_sha256": "0dbe3f6d870148766aa3faced9389fd9241d3835fbc6a627c3260a6836c29e38",
+          "review": "sheet-01.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-saved-all-cleared-320-2x.png",
+      "sha256": "9a7fd782bb1d1ab2980f5b872916c295925a1a586eb28600761eab33c07fa61d",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "07a6f8ea2fcc8e2f8f134714b22dac2a620ff01573a224fc477a74e3ead10c04",
+          "review": "sheet-18.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "709d71775df34d72345048c38a0d770f577b507e1c9ed1d1a35aa321bdd14216",
+          "review": "sheet-18.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-saved-all-cleared-393-1x.long.png",
+      "sha256": "62d5fdf339dcc4d30a246a5565be389d05dc1172fe42da8404bce748811a30f1",
+      "width": 393,
+      "height": 1034,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "3db411705f5e6f4646fdcf27f913b3dff50febcb3b5352afe369f2dbea367593",
+          "review": "sheet-03.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1034,
+          "pixel_sha256": "1daaf07939306ae34d2250d37fb49b249f52cd073f08ae19653bfcb2278608ff",
+          "review": "sheet-02.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-saved-all-cleared-393-1x.png",
+      "sha256": "5de59a477c1f6d7a9af109519b4084444abc8cce96349cb618ad04bf108cfb00",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b6813faceccc0888981216f3a3733468e169971ee23e2640c15e3193d308aff4",
+          "review": "sheet-19.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2934f45873467775d228d5d2ff662d44cf05e78a8903e431c88460c158c59650",
+          "review": "sheet-06.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-saved-impact-cleared-320-2x.long.png",
+      "sha256": "484e1f3360a4ffd0ab199d84572ea6d6bd41ab40e8a769cff2a1f4e0ac5d6d59",
+      "width": 320,
+      "height": 2164,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "0ce4917ecc244a5d009b2c89507d02cabaf7c17d0b816e99f7e762bc8d307f73",
+          "review": "sheet-19.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "83c8b687d947bc12da2a4ff1f4bb3a9a9e21569fb1ebe0941369b2ec0620cc97",
+          "review": "sheet-01.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "e3c65c1291d78f782334c879e46c19d306dcfaf3b5a5753ac283986ab63ae13c",
+          "review": "sheet-19.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2164,
+          "pixel_sha256": "0dbe3f6d870148766aa3faced9389fd9241d3835fbc6a627c3260a6836c29e38",
+          "review": "sheet-01.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-saved-impact-cleared-320-2x.png",
+      "sha256": "603f4257849f3b54c97c453707492aa640841f516e043b84ec784380b3cd4f34",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "498f63c10b487f7ced30d2c67769dd04f70359b9e229d58088ace6f62d4dcc9f",
+          "review": "sheet-19.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "b84c2353c464fcb1a6bd11569f73a15914977d282b27a8e5ab23123309477fa8",
+          "review": "sheet-19.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-saved-impact-cleared-393-1x.long.png",
+      "sha256": "c79d09df74f3d3a8bbcbe87c95d220fb927202d77356ca84cec3f175593455b4",
+      "width": 393,
+      "height": 1034,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "7b2ae9557ddd59d06e7ac6f06904c028bc5f180e458b041574d6f01af9f9da5a",
+          "review": "sheet-19.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1034,
+          "pixel_sha256": "a4b9c692a8c365a28c18288f5a22d7106cca89e55d5ccc93d227b8dbe9888af0",
+          "review": "sheet-20.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-saved-impact-cleared-393-1x.png",
+      "sha256": "2f0d69c38ad51ea6a6076878c1a2b49d1b4a63c621321199f0f91e432c16fa90",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "695293a6e424c2127f9134e3ececb9fff750dcffe7725648bf8e0d4614a23407",
+          "review": "sheet-20.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2a80f9765e6ed7d431379d19ea8247ca671d4a0b9236b482699133136461ae1d",
+          "review": "sheet-20.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-saved-pressure-cleared-320-2x.long.png",
+      "sha256": "f27d7e1713ba39c75e75ed02d3ffa58b2799b98e66225506119f3559b70e2b6f",
+      "width": 320,
+      "height": 2164,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "0ce4917ecc244a5d009b2c89507d02cabaf7c17d0b816e99f7e762bc8d307f73",
+          "review": "sheet-19.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "83c8b687d947bc12da2a4ff1f4bb3a9a9e21569fb1ebe0941369b2ec0620cc97",
+          "review": "sheet-01.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "7773adffd01050700d5266f301b7a9a09351667038f02a57505f8cb61a078422",
+          "review": "sheet-16.png#tile-3"
+        },
+        {
+          "y0": 1950,
+          "y1": 2164,
+          "pixel_sha256": "0dbe3f6d870148766aa3faced9389fd9241d3835fbc6a627c3260a6836c29e38",
+          "review": "sheet-01.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-saved-pressure-cleared-320-2x.png",
+      "sha256": "a551ae06690f962beb0bd7c65b885d8a79d86b33028e71c678bfdab6218c6bcd",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6163de671d0b92eab043658c1973c9a83658ee3c4984e96e1da9973b0ec3c95f",
+          "review": "sheet-08.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1210f48731d0a758eeb3c286c41ac0b150ca540bc5faeb68536f11be0990ce39",
+          "review": "sheet-09.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-saved-pressure-cleared-393-1x.long.png",
+      "sha256": "f19b20f6e5e75c721018238cb1a4a5a36f58704993c57647589ea1a2499c8448",
+      "width": 393,
+      "height": 1034,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "7b2ae9557ddd59d06e7ac6f06904c028bc5f180e458b041574d6f01af9f9da5a",
+          "review": "sheet-19.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1034,
+          "pixel_sha256": "dfb0cfe045df8b2d2f5147488db77eb9f5c470065601a5f028b0d936847d9337",
+          "review": "sheet-20.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-saved-pressure-cleared-393-1x.png",
+      "sha256": "2e6ff9ac153831b24249282992cfa4951e1085489732bff9bddc19b50eab2983",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "f66dda387de380b07972dea5f21a410a4684c886ab2547e9f5b5a61e13915de6",
+          "review": "sheet-20.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2a80f9765e6ed7d431379d19ea8247ca671d4a0b9236b482699133136461ae1d",
+          "review": "sheet-20.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-saved-tone-cleared-320-2x.long.png",
+      "sha256": "f18f20b06989f84d2e8bbe7238dabe144707a57b507564208bce9730421a9121",
+      "width": 320,
+      "height": 2164,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "0ce4917ecc244a5d009b2c89507d02cabaf7c17d0b816e99f7e762bc8d307f73",
+          "review": "sheet-19.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "8948e9266290283bdb3972743cb0c222446b2bfa5a4da1bc7ea2ca0781351c86",
+          "review": "sheet-20.png#tile-5"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "7773adffd01050700d5266f301b7a9a09351667038f02a57505f8cb61a078422",
+          "review": "sheet-16.png#tile-3"
+        },
+        {
+          "y0": 1950,
+          "y1": 2164,
+          "pixel_sha256": "0dbe3f6d870148766aa3faced9389fd9241d3835fbc6a627c3260a6836c29e38",
+          "review": "sheet-01.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-saved-tone-cleared-320-2x.png",
+      "sha256": "17b60bfe5673b10cd659841116e424e964df482ff586eee25062d93b96a0049f",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "4fbe087979961e85e260f7a3381ced7362b04b7a8523821c1658350edb6d4579",
+          "review": "sheet-21.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "88aab5b44d3681532148f5007957de8363a936506a0b795b531f6ff5e3efe216",
+          "review": "sheet-21.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-saved-tone-cleared-393-1x.long.png",
+      "sha256": "41f4353b38b8bd35c79aec51ad8782329ad38f633abdec0da41c4089340df1a7",
+      "width": 393,
+      "height": 1034,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "8647cda80a7c1d376d0b77e2c48e6db1724f70683675f10db897212dc39eaca6",
+          "review": "sheet-21.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1034,
+          "pixel_sha256": "dfb0cfe045df8b2d2f5147488db77eb9f5c470065601a5f028b0d936847d9337",
+          "review": "sheet-20.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-saved-tone-cleared-393-1x.png",
+      "sha256": "23d7f350895940f4ce6177fd29bd04611f43e8417a92a1e9514a49c2385aea62",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "49e880b9222cf3a14017117ea9e5eaa03f6278f2e713da39cc7bfd2f23b2197e",
+          "review": "sheet-21.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "457be0590a040858d9aa3fa0b9a2c102e07be8f0a940d0036fa53f002bbdeb02",
+          "review": "sheet-21.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-support-alone-320-2x.long.png",
+      "sha256": "61cdf9f3fa83864bba97cde3d9729f04c57a510a9fc2bee7fef2c17807fa8166",
+      "width": 320,
+      "height": 2164,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "50796a1b18dbf1e62ef38c881771c0d4c8fd18272b2d8271e4e7ba6acb0a8896",
+          "review": "sheet-05.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "26e9acfc0746ad5f40f442688a12260cbeab00887f6e8dfb9aaebe0d3ec5b905",
+          "review": "sheet-05.png#tile-3"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "e98aa0acf35148cb91ad5fb73761611a668b7e874f3ecf576dd32b6e5aed4826",
+          "review": "sheet-07.png#tile-3"
+        },
+        {
+          "y0": 1950,
+          "y1": 2164,
+          "pixel_sha256": "f950cbcf54a294dac0a070665308d5c1f6326a6c833948a86be06c403eb43c35",
+          "review": "sheet-21.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-support-alone-320-2x.png",
+      "sha256": "540d0f8d0212742a0c0d7cb9c27d7ef43459c92198e8b2310e84e92594b17093",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "5fb63adac5e96184ad3d89a4c28d7b844f5a4efe8c465bab284951c15c1e34e0",
+          "review": "sheet-22.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "8de2b35c0945ee999c538c8362ba006a819dc83211873f74d038c5f6591303c6",
+          "review": "sheet-22.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-support-alone-393-1x.long.png",
+      "sha256": "e25172d5d6e90623b690820b07b959e1b764dc135f84d789f97ea5395cbff0ba",
+      "width": 393,
+      "height": 1034,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a5540987b95e6b03e5ce9db10b362e26affab8210b43e7c9fc251f46544df4f5",
+          "review": "sheet-06.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1034,
+          "pixel_sha256": "0c8dd39444c2e538b90d0dbda4e728027de7eefc7b25c680e9c369e6170c12bd",
+          "review": "sheet-22.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-support-alone-393-1x.png",
+      "sha256": "38e5ecaf4d244f7ab2ea89b177b050568796037bffd172f3a1fbd0436fcdda3d",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "12654208de233933d90b24f9308d6cb7bafce23fe3c98f0c271a4cb9033432df",
+          "review": "sheet-07.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "faba6460592d72c0bf7353ec88209245eba0d2542b0fe0a9b3dd2553deb296ac",
+          "review": "sheet-22.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-support-carryingMost-393-1x.long.png",
+      "sha256": "8ecfa8228ddd63cb598df5332ab0db24a458ed84e7fb48dedb47d7c0b587c49e",
+      "width": 393,
+      "height": 1034,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a5540987b95e6b03e5ce9db10b362e26affab8210b43e7c9fc251f46544df4f5",
+          "review": "sheet-06.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1034,
+          "pixel_sha256": "8603128963bab550de9a1eabe1d5feffdb9653d28aaca971c2afb8d60a3f6099",
+          "review": "sheet-22.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-support-carryingMost-393-1x.png",
+      "sha256": "13c9ef9a144f1afedade71b5408b5b7f2dd0689f5c156a28b6d9084991b9c736",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "3810c826964d3150fff315dfec4be1c8de59cfbbe2c55bcf55cfc383a065034a",
+          "review": "sheet-22.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2077342da8b2134d43fa9d6ed2a9a77c0e61302f9ad958df5a40da25ad325a9e",
+          "review": "sheet-23.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-support-cleared-320-2x.long.png",
+      "sha256": "144474a934758d375a3444692a96e287a204f2f35f2d3407734e867b9651b613",
+      "width": 320,
+      "height": 2164,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "50796a1b18dbf1e62ef38c881771c0d4c8fd18272b2d8271e4e7ba6acb0a8896",
+          "review": "sheet-05.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "26e9acfc0746ad5f40f442688a12260cbeab00887f6e8dfb9aaebe0d3ec5b905",
+          "review": "sheet-05.png#tile-3"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "e98aa0acf35148cb91ad5fb73761611a668b7e874f3ecf576dd32b6e5aed4826",
+          "review": "sheet-07.png#tile-3"
+        },
+        {
+          "y0": 1950,
+          "y1": 2164,
+          "pixel_sha256": "0dbe3f6d870148766aa3faced9389fd9241d3835fbc6a627c3260a6836c29e38",
+          "review": "sheet-01.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-support-cleared-320-2x.png",
+      "sha256": "a76d77b7cb45a3a129b3aacda7b4a807473f866fa1312d37c805a2f3a0a9daa7",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "5fb63adac5e96184ad3d89a4c28d7b844f5a4efe8c465bab284951c15c1e34e0",
+          "review": "sheet-22.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "709d71775df34d72345048c38a0d770f577b507e1c9ed1d1a35aa321bdd14216",
+          "review": "sheet-18.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-support-cleared-393-1x.long.png",
+      "sha256": "989dd190a5ce76427fca0aa418a0ee01a901d2bf8d3e12ce044970dc22452b9f",
+      "width": 393,
+      "height": 1034,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a5540987b95e6b03e5ce9db10b362e26affab8210b43e7c9fc251f46544df4f5",
+          "review": "sheet-06.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1034,
+          "pixel_sha256": "db10656ca6d176a4503e7ffa5c90701764076e96dffa90bec49328cf3faadfcb",
+          "review": "sheet-07.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-support-cleared-393-1x.png",
+      "sha256": "18d3d86c0f3b75d051238702fb9a790728dbc0f271227c352cd9868597cfe78c",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "12654208de233933d90b24f9308d6cb7bafce23fe3c98f0c271a4cb9033432df",
+          "review": "sheet-07.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2934f45873467775d228d5d2ff662d44cf05e78a8903e431c88460c158c59650",
+          "review": "sheet-06.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-support-restored-320-2x.long.png",
+      "sha256": "c55dcfd5c5c467cd86868cc54aca9277b7b87eca76250c46c37850724d841a61",
+      "width": 320,
+      "height": 2164,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "50796a1b18dbf1e62ef38c881771c0d4c8fd18272b2d8271e4e7ba6acb0a8896",
+          "review": "sheet-05.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "26e9acfc0746ad5f40f442688a12260cbeab00887f6e8dfb9aaebe0d3ec5b905",
+          "review": "sheet-05.png#tile-3"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "7773adffd01050700d5266f301b7a9a09351667038f02a57505f8cb61a078422",
+          "review": "sheet-16.png#tile-3"
+        },
+        {
+          "y0": 1950,
+          "y1": 2164,
+          "pixel_sha256": "0dbe3f6d870148766aa3faced9389fd9241d3835fbc6a627c3260a6836c29e38",
+          "review": "sheet-01.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-support-restored-320-2x.png",
+      "sha256": "3647aaa9fd53438d67bb799033485d51df097158a60d7020f53a3ef645239b4d",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "10570de23bf3724068762a55f84f9a4ed852471b592664ee35c99893388d1de1",
+          "review": "sheet-23.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "709d71775df34d72345048c38a0d770f577b507e1c9ed1d1a35aa321bdd14216",
+          "review": "sheet-18.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-support-restored-393-1x.long.png",
+      "sha256": "2d2506fb7840ed6631fedd654ddee932c2b0fcc537f5661acd0fabce9bb5b35b",
+      "width": 393,
+      "height": 1034,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a5540987b95e6b03e5ce9db10b362e26affab8210b43e7c9fc251f46544df4f5",
+          "review": "sheet-06.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1034,
+          "pixel_sha256": "dfb0cfe045df8b2d2f5147488db77eb9f5c470065601a5f028b0d936847d9337",
+          "review": "sheet-20.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-support-restored-393-1x.png",
+      "sha256": "b1af9a4815ffccacf26b975ba2a7af1b136f005f008bb876c455bc3170565851",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "d91a7a1bd10d66532f5fc47b88113936e79eb6381863ec807973444e5a8b1e7b",
+          "review": "sheet-18.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2a80f9765e6ed7d431379d19ea8247ca671d4a0b9236b482699133136461ae1d",
+          "review": "sheet-20.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-support-supported-393-1x.long.png",
+      "sha256": "2d2506fb7840ed6631fedd654ddee932c2b0fcc537f5661acd0fabce9bb5b35b",
+      "width": 393,
+      "height": 1034,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a5540987b95e6b03e5ce9db10b362e26affab8210b43e7c9fc251f46544df4f5",
+          "review": "sheet-06.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1034,
+          "pixel_sha256": "dfb0cfe045df8b2d2f5147488db77eb9f5c470065601a5f028b0d936847d9337",
+          "review": "sheet-20.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-support-supported-393-1x.png",
+      "sha256": "b1af9a4815ffccacf26b975ba2a7af1b136f005f008bb876c455bc3170565851",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "d91a7a1bd10d66532f5fc47b88113936e79eb6381863ec807973444e5a8b1e7b",
+          "review": "sheet-18.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2a80f9765e6ed7d431379d19ea8247ca671d4a0b9236b482699133136461ae1d",
+          "review": "sheet-20.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-tone-cleared-320-2x.long.png",
+      "sha256": "604206194e39f63339b6b063c99db5219da2397b2d9291ad2ad96c8294f3ab51",
+      "width": 320,
+      "height": 2164,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "5c470217ef703806e21a319a8d93ffd905194f613c2bf678d1135d2505d961fa",
+          "review": "sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "83c8b687d947bc12da2a4ff1f4bb3a9a9e21569fb1ebe0941369b2ec0620cc97",
+          "review": "sheet-01.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "7fa382ccb080b6eac448f3e1365a0235ad9dd11a856da94acaba27d30ac3c45f",
+          "review": "sheet-01.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2164,
+          "pixel_sha256": "0dbe3f6d870148766aa3faced9389fd9241d3835fbc6a627c3260a6836c29e38",
+          "review": "sheet-01.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-tone-cleared-320-2x.png",
+      "sha256": "12e26ec234a627af7734fea92ce04008c5661e6afc7e8e77a6e51019663d539b",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "8704b04c661d798e401ba5f2db73c0d9237ee7b2bb2f2c32b51acab584c7b9b7",
+          "review": "sheet-23.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a5de764cf96292e64648d3d46589c9b17f6a62d1dbdd7a768f4c62ee0b871d31",
+          "review": "sheet-23.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-tone-cleared-393-1x.long.png",
+      "sha256": "49dcdf0db3437b4d405f57871c595b298525cf10ac15fbce672db90c1fe0563d",
+      "width": 393,
+      "height": 1034,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ece6df388de2c62d3c923268d3631e5a3fbb6a0db298bd14759820240659705a",
+          "review": "sheet-01.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1034,
+          "pixel_sha256": "1daaf07939306ae34d2250d37fb49b249f52cd073f08ae19653bfcb2278608ff",
+          "review": "sheet-02.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-tone-cleared-393-1x.png",
+      "sha256": "3bbc6d39151115b97eda4d2885bd2ab226e69049e4bae9ce0b7b2d273a795f02",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "4f9613c5381cee9b881c9bde12ae7f68b0ed48691dd380fd68f427a4bccddd62",
+          "review": "sheet-23.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "db1e64b4502264a79184028aefc331946b0c9dc54b67e4b712bc8c403f9772e2",
+          "review": "sheet-23.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-tone-low-393-1x.long.png",
+      "sha256": "eb877d0fac430ee02fe71393eaef64cc82ca27cb372ae3a4a2c5bb283d65ee0c",
+      "width": 393,
+      "height": 1034,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "63acf74e6ecc815e3872ac085f756a66cf3fb03ab6d2f5e99c979e7a89ff89db",
+          "review": "sheet-14.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1034,
+          "pixel_sha256": "1daaf07939306ae34d2250d37fb49b249f52cd073f08ae19653bfcb2278608ff",
+          "review": "sheet-02.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-tone-low-393-1x.png",
+      "sha256": "9ae3b4ff41d47e346f308bb06ad07d898d4ae5581efaff92bee6c1f80980b804",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "0d21677adf2d3db1ba20759aeea9da61494f65399196e8f86c691d21bfdf6508",
+          "review": "sheet-24.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "636e9cd5fd4715838720fbd433494363a43f9cbc39058f0b906c145daa6f297f",
+          "review": "sheet-24.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-tone-reactive-393-1x.long.png",
+      "sha256": "1014c1aee5d6c435781043e47b80759cbe511eb76f727c322ecd2d73df9e7fdb",
+      "width": 393,
+      "height": 1034,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6f05fd56e748ed4744355560266d11cb6d817e1001d5e0841dc118ea4298d9ad",
+          "review": "sheet-24.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1034,
+          "pixel_sha256": "1daaf07939306ae34d2250d37fb49b249f52cd073f08ae19653bfcb2278608ff",
+          "review": "sheet-02.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-tone-reactive-393-1x.png",
+      "sha256": "a224ccf625e2cbcdbd7924a9b103a819685a25d8fb9d95303058ead537900579",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b6ba62a0e0d49b5b6cced881b5995c6ac08e23d66691bef634bc54fbd2c281b0",
+          "review": "sheet-24.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "db1e64b4502264a79184028aefc331946b0c9dc54b67e4b712bc8c403f9772e2",
+          "review": "sheet-23.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-tone-restored-320-2x.long.png",
+      "sha256": "54faf2b37e86c0e41a28f793faf97048bbb76a935bcc69810bbfc6830a014187",
+      "width": 320,
+      "height": 2164,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "50796a1b18dbf1e62ef38c881771c0d4c8fd18272b2d8271e4e7ba6acb0a8896",
+          "review": "sheet-05.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "1593b41d726b02696b0f7a402d5f91a4922d9643f20c3c2b64e15a0ed4f44811",
+          "review": "sheet-08.png#tile-4"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "7fa382ccb080b6eac448f3e1365a0235ad9dd11a856da94acaba27d30ac3c45f",
+          "review": "sheet-01.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2164,
+          "pixel_sha256": "0dbe3f6d870148766aa3faced9389fd9241d3835fbc6a627c3260a6836c29e38",
+          "review": "sheet-01.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-tone-restored-320-2x.png",
+      "sha256": "a40d7631ee15826773211d5a27388f4ac6ba0366544ef47e9e494ad6377b1a0b",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "d27eb9b0531304773c9f224da6437dcdaab928474eb737dadd867f9bc67b2c1c",
+          "review": "sheet-24.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "88aab5b44d3681532148f5007957de8363a936506a0b795b531f6ff5e3efe216",
+          "review": "sheet-21.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-tone-restored-393-1x.long.png",
+      "sha256": "221740252fc3cc3d7dd874e77aabd4462713ef198743ac4367176b220c0fc3dd",
+      "width": 393,
+      "height": 1034,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "21483581cc473345d2e59888759bae1ef9cab4c25d79cd0a8eac07afff823da3",
+          "review": "sheet-10.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1034,
+          "pixel_sha256": "1daaf07939306ae34d2250d37fb49b249f52cd073f08ae19653bfcb2278608ff",
+          "review": "sheet-02.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-tone-restored-393-1x.png",
+      "sha256": "8e273fb5b59de0a52d664be24bd9cb599a3807edd035e40e426e0b1b0d8fcab4",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "e443ef29897d521d908a9a8bd6846d989383c0a1abc4d055ad7fc47a70c74b1b",
+          "review": "sheet-24.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "73f48d88d50b251fbe3f44d7f93381d263bb7e821bc3b6191634dc41e0af5361",
+          "review": "sheet-25.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-tone-steady-393-1x.long.png",
+      "sha256": "221740252fc3cc3d7dd874e77aabd4462713ef198743ac4367176b220c0fc3dd",
+      "width": 393,
+      "height": 1034,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "21483581cc473345d2e59888759bae1ef9cab4c25d79cd0a8eac07afff823da3",
+          "review": "sheet-10.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1034,
+          "pixel_sha256": "1daaf07939306ae34d2250d37fb49b249f52cd073f08ae19653bfcb2278608ff",
+          "review": "sheet-02.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-tone-steady-393-1x.png",
+      "sha256": "8e273fb5b59de0a52d664be24bd9cb599a3807edd035e40e426e0b1b0d8fcab4",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "e443ef29897d521d908a9a8bd6846d989383c0a1abc4d055ad7fc47a70c74b1b",
+          "review": "sheet-24.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "73f48d88d50b251fbe3f44d7f93381d263bb7e821bc3b6191634dc41e0af5361",
+          "review": "sheet-25.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-tone-tense-393-1x.long.png",
+      "sha256": "54752699e5a3c658cf3b1868ab38202da7f4b8561a454ea0c3d14ed9b0c8fd7a",
+      "width": 393,
+      "height": 1034,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "1af22e4769cd8367599c6a76d538fecc6b917fc16956aba33a84ff545ddb3169",
+          "review": "sheet-25.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1034,
+          "pixel_sha256": "1daaf07939306ae34d2250d37fb49b249f52cd073f08ae19653bfcb2278608ff",
+          "review": "sheet-02.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-tone-tense-393-1x.png",
+      "sha256": "200a46f9edc5a67b16b9415bc8305be016cc93a80046cb97bb9651449b938acc",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "78b4de22d85f2467487313152dc2c9af0d4d9cc42625923295b7d10bc00f336b",
+          "review": "sheet-25.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "73f48d88d50b251fbe3f44d7f93381d263bb7e821bc3b6191634dc41e0af5361",
+          "review": "sheet-25.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-tone-unclear-320-2x.long.png",
+      "sha256": "73a9e2aea40857deda3368fe2792ddf649c33a88953dd6686e137f0c66d331de",
+      "width": 320,
+      "height": 2164,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "0ce4917ecc244a5d009b2c89507d02cabaf7c17d0b816e99f7e762bc8d307f73",
+          "review": "sheet-19.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "449af0633b7934de279386e8ca327852675a9a71726bb3c803c645e1c9ca6f33",
+          "review": "sheet-25.png#tile-3"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "7fa382ccb080b6eac448f3e1365a0235ad9dd11a856da94acaba27d30ac3c45f",
+          "review": "sheet-01.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2164,
+          "pixel_sha256": "0dbe3f6d870148766aa3faced9389fd9241d3835fbc6a627c3260a6836c29e38",
+          "review": "sheet-01.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-tone-unclear-320-2x.png",
+      "sha256": "abc16ccd9da5b4e7653a338877bef13d005ca5627ec6b3df35c10cb6ff6ebaf0",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "cca18ba70dbcf594a846faa8e3fcd692c5fdf6a051ec2487b6596faa5c66fcf7",
+          "review": "sheet-25.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a5de764cf96292e64648d3d46589c9b17f6a62d1dbdd7a768f4c62ee0b871d31",
+          "review": "sheet-23.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-tone-unclear-393-1x.long.png",
+      "sha256": "78fa8363513ea18a0b149963c51dd2f6d289c2a06a60d922eaba51214327efa4",
+      "width": 393,
+      "height": 1034,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "1e80d81b9b210946263b0402bc6c50222068d49cd4c4ca71938ba41f610a5a70",
+          "review": "sheet-16.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1034,
+          "pixel_sha256": "1daaf07939306ae34d2250d37fb49b249f52cd073f08ae19653bfcb2278608ff",
+          "review": "sheet-02.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-mood-control-tone-unclear-393-1x.png",
+      "sha256": "2e536b7275b2153db16cab8430ba38c7d3e91041b43de285d698700a36201a99",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "8da3a4d5bc4a2f99949a98ddc40ed819e57f8a94c74b361b812362145a35872d",
+          "review": "sheet-25.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "db1e64b4502264a79184028aefc331946b0c9dc54b67e4b712bc8c403f9772e2",
+          "review": "sheet-23.png#tile-5"
+        }
+      ]
+    }
+  ],
+  "unique_segments": 168,
+  "new_segments": 150,
+  "new_sheets": 25
+}

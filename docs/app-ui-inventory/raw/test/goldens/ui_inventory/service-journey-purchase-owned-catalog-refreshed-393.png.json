@@ -1,0 +1,453 @@
+{
+  "source": "test/goldens/ui_inventory/service-journey-purchase-owned-catalog-refreshed-393.png",
+  "evidence": "current-widget-test-render; golden comparison passed",
+  "test_description": "inventory Services purchase validation decline challenge success and booking",
+  "sequence": 12,
+  "sha256": "b3900a2ca7f4a5be043aaeb13ef7915bb582c868b0543e41aee4673632527339",
+  "width": 393,
+  "height": 844,
+  "captured_at": "2026-09-13T13:38:17.070950Z",
+  "widget_types": [
+    "AbsorbPointer",
+    "Actions",
+    "Align",
+    "AnimatedBuilder",
+    "AnimatedContainer",
+    "AnimatedDefaultTextStyle",
+    "AnimatedPhysicalModel",
+    "AnimatedTheme",
+    "AnnotatedRegion<SystemUiOverlayStyle>",
+    "AppBar",
+    "AutomaticKeepAlive",
+    "BlockSemantics",
+    "Builder",
+    "Center",
+    "CircleAvatar",
+    "ClipRect",
+    "ColoredBox",
+    "Column",
+    "ConstrainedBox",
+    "Container",
+    "CupertinoTheme",
+    "CustomMultiChildLayout",
+    "CustomPaint",
+    "CustomSingleChildLayout",
+    "DecoratedBox",
+    "DefaultSelectionStyle",
+    "DefaultTextEditingShortcuts",
+    "DefaultTextStyle",
+    "Directionality",
+    "DualTransitionBuilder",
+    "ExcludeSemantics",
+    "Expanded",
+    "FadeTransition",
+    "FittedBox",
+    "FlexibleSpaceBarSettings",
+    "Focus",
+    "FocusTraversalGroup",
+    "FractionalTranslation",
+    "GestureDetector",
+    "GoRouterStateRegistryScope",
+    "HeroControllerScope",
+    "IconButtonTheme",
+    "IconTheme",
+    "IgnorePointer",
+    "IndexedSemantics",
+    "InheritedCupertinoTheme",
+    "InheritedGoRouter",
+    "InkWell",
+    "KeepAlive",
+    "KeyedSubtree",
+    "LayoutBuilder",
+    "LayoutId",
+    "ListView",
+    "ListenableBuilder",
+    "Listener",
+    "Localizations",
+    "Material",
+    "MaterialApp",
+    "MediaQuery",
+    "ModalBarrier",
+    "MomCozyFlutterApp",
+    "MomCozyLineIcon",
+    "MomCozyPageBody",
+    "MomCozyRuntimeScope",
+    "MouseRegion",
+    "NavigationToolbar",
+    "Navigator",
+    "NotificationListener<KeepAliveNotification>",
+    "NotificationListener<LayoutChangedNotification>",
+    "NotificationListener<NavigationNotification>",
+    "NotificationListener<OverscrollIndicatorNotification>",
+    "NotificationListener<ScrollMetricsNotification>",
+    "NotificationListener<ScrollNotification>",
+    "Offstage",
+    "Overlay",
+    "Padding",
+    "PageStorage",
+    "PhysicalModel",
+    "PhysicalShape",
+    "PrimaryScrollController",
+    "ProviderTeamTile",
+    "RawGestureDetector",
+    "RawView",
+    "RefreshIndicator",
+    "RepaintBoundary",
+    "RestorationScope",
+    "RichText",
+    "RootRestorationScope",
+    "RotationTransition",
+    "Router<Object>",
+    "Row",
+    "SafeArea",
+    "Scaffold",
+    "ScaffoldMessenger",
+    "ScaleTransition",
+    "ScrollConfiguration",
+    "ScrollNotificationObserver",
+    "Scrollable",
+    "Semantics",
+    "ServiceCatalogPage",
+    "ServicePackageFacts",
+    "ServicePrice",
+    "SharedAppData",
+    "ShortcutRegistrar",
+    "Shortcuts",
+    "SizedBox",
+    "SlideTransition",
+    "SliverList",
+    "SliverPadding",
+    "Stack",
+    "StretchEffect",
+    "StretchingOverscrollIndicator",
+    "SvgPicture",
+    "TapRegionSurface",
+    "Text",
+    "TextButton",
+    "Theme",
+    "TickerMode",
+    "Title",
+    "Transform",
+    "UnmanagedRestorationScope",
+    "ValueListenableBuilder<bool>",
+    "VectorGraphic",
+    "View",
+    "Viewport",
+    "WidgetsApp",
+    "_ActionsScope",
+    "_BodyBuilder",
+    "_CustomNavigator",
+    "_EffectiveTickerMode",
+    "_FadeForwardsPageTransition",
+    "_FloatingActionButtonTransition",
+    "_FocusInheritedScope",
+    "_FocusScopeWithExternalFocusNode",
+    "_GestureSemantics",
+    "_InheritedTheme",
+    "_InkFeatures",
+    "_InkResponseStateWidget",
+    "_InputPadding",
+    "_LocalizationsScope",
+    "_MaterialInterior",
+    "_MediaQueryFromView",
+    "_ModalBarrierGestureDetector",
+    "_ModalScope<void>",
+    "_ModalScopeStatus",
+    "_OverlayEntryWidget",
+    "_PackageCard",
+    "_PageTransitionsThemeTransitions<void>",
+    "_ParentInkResponseProvider",
+    "_PipelineOwnerScope",
+    "_PredictiveBackGestureDetector",
+    "_RawPictureVectorGraphicWidget",
+    "_RawViewInternal",
+    "_RenderTheaterMarker",
+    "_RouterScope",
+    "_ScaffoldMessengerScope",
+    "_ScaffoldScope",
+    "_ScrollNotificationObserverScope",
+    "_ScrollSemantics",
+    "_ScrollableScope",
+    "_SelectionKeepAlive",
+    "_ServiceDirections",
+    "_ShapeBorderPaint",
+    "_SharedAppModel",
+    "_ShortcutRegistrarScope",
+    "_Theater",
+    "_ViewScope"
+  ],
+  "texts": [
+    "泌乳支持",
+    "4 个方案",
+    "产后康复",
+    "陆续开放",
+    "IBCLC 专家团队服务",
+    "了解团队",
+    "喂养安心",
+    "$219 USD",
+    "判断宝宝当前是否吃够，明确是否需要调整喂养，并形成 Feeding Plan。",
+    "真人 IBCLC 专家支持  |  2 次 IBCLC 在线咨询",
+    "7 天  |  AI 与 App 持续陪伴和跟进",
+    "查看我的服务",
+    "亲喂改善",
+    "$239 USD",
+    "找到影响亲喂的主要问题，改善含乳、吸吮和喂养体验。",
+    "真人 IBCLC 专家支持  |  2 次 IBCLC 在线咨询",
+    "14 天  |  AI 与 App 持续陪伴和跟进",
+    "查看方案 →",
+    "奶量管理",
+    "$299 USD",
+    "判断奶量问题，建立并持续调整个性化奶量管理方案。",
+    "真人 IBCLC 专家支持  |  3 次 IBCLC 在线咨询",
+    "14 天  |  AI 与 App 持续陪伴和跟进",
+    "查看方案 →",
+    "舒适哺乳支持",
+    "$219 USD",
+    "找到影响舒适度的主要因素，改善不适并及时识别医疗转介需求。",
+    "真人 IBCLC 专家支持  |  2 次 IBCLC 在线咨询",
+    "3 天  |  AI 与 App 持续陪伴和跟进",
+    "查看方案 →",
+    "返回"
+  ],
+  "scrolls": [
+    {
+      "foreground": true,
+      "axis": "vertical",
+      "direction": "down",
+      "pixels": 0.0,
+      "min": 0.0,
+      "max": 197.0,
+      "viewport": 800.0
+    }
+  ],
+  "controls": [
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [
+        "IBCLC 专家团队服务",
+        "了解团队"
+      ],
+      "enabled": true,
+      "bounds": [
+        16.0,
+        116.0,
+        361.0,
+        56.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "TextButton",
+      "key": null,
+      "labels": [
+        "查看我的服务"
+      ],
+      "enabled": true,
+      "bounds": [
+        249.0,
+        335.0,
+        112.0,
+        48.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [
+        "查看我的服务"
+      ],
+      "enabled": true,
+      "bounds": [
+        249.0,
+        337.0,
+        112.0,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "TextButton",
+      "key": null,
+      "labels": [
+        "查看方案 →"
+      ],
+      "enabled": true,
+      "bounds": [
+        249.0,
+        538.0,
+        112.0,
+        48.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [
+        "查看方案 →"
+      ],
+      "enabled": true,
+      "bounds": [
+        249.0,
+        540.0,
+        112.0,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "TextButton",
+      "key": null,
+      "labels": [
+        "查看方案 →"
+      ],
+      "enabled": true,
+      "bounds": [
+        249.0,
+        741.0,
+        112.0,
+        48.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [
+        "查看方案 →"
+      ],
+      "enabled": true,
+      "bounds": [
+        249.0,
+        743.0,
+        112.0,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "TextButton",
+      "key": null,
+      "labels": [
+        "查看方案 →"
+      ],
+      "enabled": true,
+      "bounds": [
+        249.0,
+        944.0,
+        112.0,
+        48.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [
+        "查看方案 →"
+      ],
+      "enabled": true,
+      "bounds": [
+        249.0,
+        946.0,
+        112.0,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "TextButton",
+      "key": null,
+      "labels": [
+        "返回"
+      ],
+      "enabled": true,
+      "bounds": [
+        0.0,
+        0.0,
+        72.0,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [
+        "返回"
+      ],
+      "enabled": true,
+      "bounds": [
+        0.0,
+        0.0,
+        72.0,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    }
+  ],
+  "needs_long_capture": true,
+  "interactions_since_previous_capture": [
+    {
+      "action": "drag",
+      "labels_at_start": [
+        "奶量管理"
+      ],
+      "from": [
+        196.5,
+        444.0
+      ],
+      "to": [
+        196.5,
+        944.0
+      ]
+    },
+    {
+      "action": "drag",
+      "labels_at_start": [
+        "亲喂改善"
+      ],
+      "from": [
+        196.5,
+        444.0
+      ],
+      "to": [
+        196.5,
+        844.0
+      ]
+    }
+  ],
+  "call_stack": "#0      _InventoryComparator._record (file:///Users/lute/project/momcozy-lab/app/test/support/ui_inventory_capture.dart:169:32)\n<asynchronous suspension>\n#1      _InventoryComparator.compare (file:///Users/lute/project/momcozy-lab/app/test/support/ui_inventory_capture.dart:96:17)\n<asynchronous suspension>\n#2      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)\n<asynchronous suspension>\n#3      _AsyncCompleter.complete (dart:async/future_impl.dart:96:3)\n<asynchronous suspension>\n#4      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)\n<asynchronous suspension>\n#5      StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)\n<asynchronous suspension>\n#6      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)\n<asynchronous suspension>\n#7      main.capture (file:///Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart:150:5)\n<asynchronous suspension>\n#8      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart:415:7)\n<asynchronous suspension>\n#9      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)\n<asynchronous suspension>\n#10     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)\n<asynchronous suspension>\n#11     StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)\n<asynchronous suspension>\n",
+  "long_capture": {
+    "status": "complete-measured-scroll-stitch",
+    "file": "/Users/lute/project/momcozy-lab/app/docs/app-ui-inventory/raw/test/goldens/ui_inventory/service-journey-purchase-owned-catalog-refreshed-393.long.png",
+    "offsets": [
+      0.0,
+      197.0
+    ],
+    "scroll_bounds": [
+      0.0,
+      44.0,
+      393.0,
+      800.0
+    ],
+    "content_height": 997.0,
+    "interior_strip_edge_guard": 64.0,
+    "fixed_bottom_overlay_bounds": [],
+    "original_scroll_offset": 0.0,
+    "tooltip_preserved_from_matched_viewport": false
+  }
+}

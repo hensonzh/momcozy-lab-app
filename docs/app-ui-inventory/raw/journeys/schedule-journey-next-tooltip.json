@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/schedule-journey-next-tooltip-393.png",
+  "previous_source": "test/goldens/ui_inventory/schedule-journey-year-editor-393.png",
+  "route": "/schedule",
+  "trigger": "Long press next month → tooltip",
+  "root_entry": "Authenticated More → tap Schedule bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/schedule/schedule_inventory_journey_test.dart"
+}

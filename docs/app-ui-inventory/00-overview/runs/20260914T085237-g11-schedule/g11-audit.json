@@ -1,0 +1,14 @@
+{
+  "source_hashes": {
+    "lib/modules/schedule/presentation/schedule_page.dart": "87f06c1ea10cfb6ee6b503f7f709015a761f58965d7715bdb93423df33db20ba",
+    "lib/modules/schedule/presentation/personal_schedule_editor.dart": "bd11ff86a30046974ba188131c6f4ca46d2c59c2977c06386d662f71d6200c7f",
+    "test/modules/schedule/schedule_inventory_journey_test.dart": "f3b445573978507f7b149d7b0d298afd6a144bfb3ceb39ca06c69625f02196af",
+    "test/support/ui_inventory_capture.dart": "82306c9f718f93573ee7e0ace5c41fb97706e3fa676187d21fb7183ec1eb0d92"
+  },
+  "new_images": 7,
+  "reused_images": 0,
+  "strict_scenarios_passed": 1,
+  "full_images_reviewed": 7,
+  "long_images": 4,
+  "scope": "采集器原先会在拼接时重复画出长按 Tooltip，本轮已修正：固定添加按钮的提示随固定操作区只保留在末帧；日历按钮的提示在原文档位置保留一次，滚动前先完成其消失动画。两个提示长图已单独完整检查，提示、锚点及底部导航各只出现一次；修正后严格复验通过，无须更新视口金图。其它历史提示长图在最终映射时优先引用有效代表，不自动声称旧文件已修复。原用例的旧关闭文本已按当前关闭日程 Tooltip 操作。未修改产品代码。"
+}

@@ -58,7 +58,7 @@ void main() {
     },
   );
   testWidgets(
-    'device permissions are requested only after the check button and tracks close with the dialog',
+    'opening the device dialog requests once and releases tracks after the check',
     (tester) async {
       final probe = _Probe();
       await tester.pumpWidget(
@@ -77,15 +77,14 @@ void main() {
           ),
         ),
       );
+      expect(probe.starts, 0);
       await tester.tap(find.text('检查'));
       await tester.pumpAndSettle();
-      expect(probe.starts, 0);
-      await tester.tap(find.text('开始检查'));
-      await tester.pumpAndSettle();
       expect(probe.starts, 1);
-      await tester.tap(find.text('关闭检查'));
-      await tester.pumpAndSettle();
       expect(probe.closes, 1);
+      await tester.tap(find.byTooltip('关闭设备检测'));
+      await tester.pumpAndSettle();
+      expect(probe.closes, 2);
     },
   );
 }

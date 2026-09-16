@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/baby-development-management-face-head-home-return-393-1x.png",
+  "previous_source": "test/goldens/ui_inventory/baby-development-management-face-head-history-393-1x.png",
+  "route": "/baby",
+  "trigger": "History Back → Baby after face-head management",
+  "root_entry": "Authenticated More → tap Baby bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/baby/baby_development_management_inventory_test.dart"
+}

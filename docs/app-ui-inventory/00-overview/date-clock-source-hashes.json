@@ -1,0 +1,7 @@
+{
+  "lib/modules/baby/presentation/baby_record_fields.dart": "216f25d10b4a7c519c3b0522e1bde0b9141bdffd5890fe44571153bac08ff66d",
+  "lib/modules/schedule/presentation/personal_schedule_editor.dart": "4c508285afa8005d1338ea2f9770ee8145ba5813f76247b171c356bf1bff48a6",
+  "lib/modules/schedule/presentation/schedule_page.dart": "f7b7bde63129d466d469e56ec54a8268f83abe59beb8bb45c6a137a3c195837e",
+  "test/modules/baby/baby_inventory_journey_test.dart": "5b498a40771e01a3d06e0f0c0cfc13f97566b6e0c6bc395561a1d64f81823c12",
+  "test/modules/schedule/schedule_inventory_journey_test.dart": "cef4a54fb6a2a04d79a8876fa150844b05351e9327f955a0bbe6c41888bdb111"
+}

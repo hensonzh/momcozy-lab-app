@@ -1,0 +1,2850 @@
+{
+  "method": "full-width continuous 650px strips; byte-identical decoded pixels reference previously reviewed Rest/Body/Mood or one new lactation tile",
+  "sources": [
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-body-1999-320-2x.long.png",
+      "sha256": "5c0e13c52c2c55386a8464bb35a04fa8d412049027dd4197dccca24447923f23",
+      "width": 320,
+      "height": 2025,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "1f1890499a3ecc082778237e0d37a17fe4ca0ac91b9ccc47d35c715b51f3113f",
+          "review": "../mom-body-control-visual-review/sheet-07.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "0a11809b309d6fd39e1ae5882639f67fa8b666e36a6820ac261d1df401b02649",
+          "review": "../mom-body-control-visual-review/sheet-06.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "f2a22103db408ad69b37a38a42ddc83ffe1473c982580d03071e6961e954be79",
+          "review": "sheet-01.png#tile-0"
+        },
+        {
+          "y0": 1950,
+          "y1": 2025,
+          "pixel_sha256": "32199d25a306f8fd67e835037cdbfb787fa4f221c858f79df8ea5ddc566b2824",
+          "review": "../mom-body-control-visual-review/sheet-06.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-body-1999-320-2x.png",
+      "sha256": "f616b60b8681bfe1cf3d7046b2812d44b968ba6fc50e1a52d0eb4b80cd3d3dd5",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "24d2513f6e1677015dfdbdccd6117cdb34e2b42c81e508574f78ad41fd32c23d",
+          "review": "sheet-01.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "b8a3a2c03acd429f7ed54ffbf15f814ae4d25ec05c5e77ad5b78b7cd9ac4a516",
+          "review": "sheet-01.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-body-1999-393-1x.long.png",
+      "sha256": "705afd5bb188643a62367effe8dfa27f7597c21de310fd174f58d36c2b7bd3d8",
+      "width": 393,
+      "height": 978,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "1f34e19ec16cf72c1ccc47569bec6d13fafa3bfde594a964a8b6e6868008626b",
+          "review": "sheet-01.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 978,
+          "pixel_sha256": "c6530a971517ec793274d248137a78deeb9cc9fab3e5ade62033a64d8604003b",
+          "review": "sheet-01.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-body-1999-393-1x.png",
+      "sha256": "62343c914cc087d164816cdac7ab8e645dc33511dff84e554ffe7ca4e6e7f17d",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "04910ed7f8973cc0435588acf7940a64a500e577475ff3645591330745b68358",
+          "review": "sheet-01.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "257b357dab4ad25d30012b12d818fb5abe5bd45f34a725a47d934870d095d3dd",
+          "review": "sheet-02.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-body-2000-320-2x.long.png",
+      "sha256": "80b15202507907fa77d53a082fdaa97e06d737d2082adb89d1f1f6a2921474c6",
+      "width": 320,
+      "height": 2025,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "1f1890499a3ecc082778237e0d37a17fe4ca0ac91b9ccc47d35c715b51f3113f",
+          "review": "../mom-body-control-visual-review/sheet-07.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "0a11809b309d6fd39e1ae5882639f67fa8b666e36a6820ac261d1df401b02649",
+          "review": "../mom-body-control-visual-review/sheet-06.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "c329160013552355d5c006d8ca08633d467343ee80cbb7f4ce4fd50dd395d9ed",
+          "review": "sheet-02.png#tile-1"
+        },
+        {
+          "y0": 1950,
+          "y1": 2025,
+          "pixel_sha256": "32199d25a306f8fd67e835037cdbfb787fa4f221c858f79df8ea5ddc566b2824",
+          "review": "../mom-body-control-visual-review/sheet-06.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-body-2000-320-2x.png",
+      "sha256": "e3347e0f54889b78ba6e13da2e78ec7c6587264b56066b57d88246ad306434d5",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "24d2513f6e1677015dfdbdccd6117cdb34e2b42c81e508574f78ad41fd32c23d",
+          "review": "sheet-01.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "0304b48f46a6a1a68b7f1fe520fa1ad75ad116f2db263018ce23c7836c3f5385",
+          "review": "sheet-02.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-body-2000-393-1x.long.png",
+      "sha256": "75784cdb534938576545d6f27bb7ce2ae32776dbc85099b1c5454546ac907122",
+      "width": 393,
+      "height": 978,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "1f34e19ec16cf72c1ccc47569bec6d13fafa3bfde594a964a8b6e6868008626b",
+          "review": "sheet-01.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 978,
+          "pixel_sha256": "0d49bfc1996b8ac25620729a381a9f9e650229926d3c7155c660706e8b6c1102",
+          "review": "sheet-02.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-body-2000-393-1x.png",
+      "sha256": "dc914bf655d5843b15c9d2040bcd34a62d208999adf2755b3a1dc4604f38a1c5",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "04910ed7f8973cc0435588acf7940a64a500e577475ff3645591330745b68358",
+          "review": "sheet-01.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "cdaf23925894c2f9a0ee8ae0811180e4aaac64b08266c74d8dfb8fb479fb2e21",
+          "review": "sheet-02.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-body-cleared-320-2x.long.png",
+      "sha256": "077899ad8889ce3d937bb159edbf679b2bd44d505c623a0764290b1a6f87db54",
+      "width": 320,
+      "height": 2025,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "bdae02bbe89ad7fc00ebd7f29d38d83029fd0b5045e650d0bc67c7bbf80e9a44",
+          "review": "../mom-body-control-visual-review/sheet-05.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "0a11809b309d6fd39e1ae5882639f67fa8b666e36a6820ac261d1df401b02649",
+          "review": "../mom-body-control-visual-review/sheet-06.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "6eabac47012d87a0f38d93649a839060a22508ad72306d870aae8cd8aa5b287e",
+          "review": "../mom-body-control-visual-review/sheet-06.png#tile-1"
+        },
+        {
+          "y0": 1950,
+          "y1": 2025,
+          "pixel_sha256": "32199d25a306f8fd67e835037cdbfb787fa4f221c858f79df8ea5ddc566b2824",
+          "review": "../mom-body-control-visual-review/sheet-06.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-body-cleared-320-2x.png",
+      "sha256": "3f669205a9380a47d3d1ec1695a0aedc1159d41d89087231a2ec6d3d0ebd4bb6",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "d35c77342ef38ad55a2883fbe92d63cfddf0e8bc1dde82ed06f1dbdb08e01304",
+          "review": "sheet-02.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "c6b1287a295c199c078b115988ad80a4c4f0fa770805f3ba09b3b2584e6ebc6d",
+          "review": "sheet-03.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-body-cleared-393-1x.long.png",
+      "sha256": "2ffb526cb25450ba4d673b7a2d76201c5e7d453111408d00dc82b4b198814fa0",
+      "width": 393,
+      "height": 978,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "e32b3476551fb3d2c07eb6d6589d2d0e65d3871245f4fe1cd3c03fac988f362f",
+          "review": "sheet-03.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 978,
+          "pixel_sha256": "18192d8a6ac75138d8c88ceee5ff21836804ef956d2822342deddeaa814084b3",
+          "review": "../mom-body-control-visual-review/sheet-06.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-body-cleared-393-1x.png",
+      "sha256": "c6039768372ed7f06f22404f0fcb91bba7abde2121f820bfb9b5c9ea5b5952bb",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "fec401a892d86f902448fbb108f709c33dc890276b857d631e82eb057f326006",
+          "review": "sheet-03.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "eda52d3a6bc4fe154f71b618f2681aab5c1d25f36ce4e6990b1fc1e4f7ac4063",
+          "review": "../mom-body-control-visual-review/sheet-02.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-body-discard-confirm-320-2x.png",
+      "sha256": "f7218ddfc5b24f37d779f861e5589fff0c683610a29a0d4538b9a476510a1d44",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c2ddb9656e13450e6b96a9a59c5ac00d291662b280c7d77734ebcaa961720ccb",
+          "review": "sheet-03.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1db4fbc04356a989025e22d088c3b2ab92fc47957bbecb60672884435acbdf0e",
+          "review": "sheet-03.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-body-discard-confirm-393-1x.png",
+      "sha256": "33343d0a6289558abe66aaef7c2aacf2923e365f50317393a777a226a4db58f6",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "5356b58682e96b715b4104e62f016504a172d4110b0b4a5072615569903331fa",
+          "review": "sheet-03.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "88bbfee2cc29718f60f6eda00c125f75ed01ee26f1a12f451d61a18d428e69c9",
+          "review": "sheet-04.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-body-empty-320-2x.long.png",
+      "sha256": "052624e298107f7da7d631fc5bb76d73f5f37a0bfb436fc9b054ae2d36495583",
+      "width": 320,
+      "height": 2025,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "bdae02bbe89ad7fc00ebd7f29d38d83029fd0b5045e650d0bc67c7bbf80e9a44",
+          "review": "../mom-body-control-visual-review/sheet-05.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "0a11809b309d6fd39e1ae5882639f67fa8b666e36a6820ac261d1df401b02649",
+          "review": "../mom-body-control-visual-review/sheet-06.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "2652df31565b6597df8f311701217559a9854c898674eca4868bc701eeedaa87",
+          "review": "sheet-04.png#tile-1"
+        },
+        {
+          "y0": 1950,
+          "y1": 2025,
+          "pixel_sha256": "32199d25a306f8fd67e835037cdbfb787fa4f221c858f79df8ea5ddc566b2824",
+          "review": "../mom-body-control-visual-review/sheet-06.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-body-empty-320-2x.png",
+      "sha256": "e9eb78a3cc0010a434c2dd4e22952a10faba773963c28e30aa3080d980161308",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "facb007e4de8bd79fd7c69f9607d76c76d587f7ad83b5e425e50202afd2936a5",
+          "review": "sheet-04.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2adf774cec838fd7336d9727af87d79b64327d66b5e469283b748ae408211c8e",
+          "review": "../mom-body-control-visual-review/sheet-16.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-body-empty-393-1x.long.png",
+      "sha256": "e96481523f2b9ed7171ccce129fce86895ae39eb22021f244dd2c8715d191aa4",
+      "width": 393,
+      "height": 978,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "4678a5928eef4f23fbded8eb1c7d04df38f1f2801c726ff5020182eaa7aa1abc",
+          "review": "../mom-body-control-visual-review/sheet-06.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 978,
+          "pixel_sha256": "3c0fd0a8c5961e4a48ecbde6915e769e39f270298a191024844f3029f55c8bc7",
+          "review": "sheet-04.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-body-empty-393-1x.png",
+      "sha256": "58cec416b9f370c0be0ea4b8bd686e00716d038c18095913c50dd17363add560",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a86408c048dbf45134a6a3d846e201d2d0bd6815ae3833a41e585ffbebfaa0fe",
+          "review": "sheet-04.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "151f71aa38976c39205399453577cae6ec4f7a40bcc6b39bf8782b4a857d1dbd",
+          "review": "sheet-04.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-body-home-320-2x.long.png",
+      "sha256": "4298fb2be58bb20695d02f3e1ba1aa15b821b5fe0fb0b4a0df8e60f08215d713",
+      "width": 320,
+      "height": 2062,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b1f7a808bfb15121c031df895f5bfbb79ca22d2e2ae5c3402c20aa884c7e9db9",
+          "review": "../mom-rest-control-visual-review/sheet-16.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "8d25e82a2a4859a86fad5c5f7595c703273a9a574751ceffc73f1f3aa6d3f0da",
+          "review": "sheet-05.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "49f93ff79604ac06a4a845a85055d6edfde5511dd293efc992660c2abda1f048",
+          "review": "../mom-body-control-visual-review/sheet-11.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2062,
+          "pixel_sha256": "873efc1ad07d70326d429bef832fe740960d9621eb065f9273fa719013a4966b",
+          "review": "../mom-rest-control-visual-review/sheet-16.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-body-home-320-2x.png",
+      "sha256": "c9a95bb7edbcc8dff4101178a1114fb538d33654e98f78143e5ce766ddbbad0e",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "223c7ff670d3b58572ae09f870c890e7d3fe1933f58c6b8cc1d7b2803cb115b6",
+          "review": "sheet-05.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "de4a02fa436efd3040a9792a28e859e481e42123cd31dae5f9563214957929f6",
+          "review": "../mom-body-control-visual-review/sheet-11.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-body-home-393-1x.long.png",
+      "sha256": "e6dbb2f4efe89d16213632219d9e545e877fe3be21168756a0a6638709b17101",
+      "width": 393,
+      "height": 920,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9a6ee5684d64c7c91858cfd7c062be7e8d6801a0516632097e8ab61a219a779e",
+          "review": "sheet-05.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 920,
+          "pixel_sha256": "5114e61c90da9079afee7e92bb8d1e1588f7d4ff461871c84ba4a415660ed95d",
+          "review": "../mom-rest-control-visual-review/sheet-17.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-body-home-393-1x.png",
+      "sha256": "8d0da3eb9c6c79cdfa25c76cf32f68167c8c16a355a847e434622242b1cc3b8a",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6bc621cc6f40ddd168db8c044e2e1a5281e2a86226c79653b1b79312882c937d",
+          "review": "sheet-05.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "01ad37a83090b22440e753afe9b5efb12045ec1509aa7b52fb6caa7377abd650",
+          "review": "../mom-rest-control-visual-review/sheet-17.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-body-note-scroll-end-320-2x.long.png",
+      "sha256": "80b15202507907fa77d53a082fdaa97e06d737d2082adb89d1f1f6a2921474c6",
+      "width": 320,
+      "height": 2025,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "1f1890499a3ecc082778237e0d37a17fe4ca0ac91b9ccc47d35c715b51f3113f",
+          "review": "../mom-body-control-visual-review/sheet-07.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "0a11809b309d6fd39e1ae5882639f67fa8b666e36a6820ac261d1df401b02649",
+          "review": "../mom-body-control-visual-review/sheet-06.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "c329160013552355d5c006d8ca08633d467343ee80cbb7f4ce4fd50dd395d9ed",
+          "review": "sheet-02.png#tile-1"
+        },
+        {
+          "y0": 1950,
+          "y1": 2025,
+          "pixel_sha256": "32199d25a306f8fd67e835037cdbfb787fa4f221c858f79df8ea5ddc566b2824",
+          "review": "../mom-body-control-visual-review/sheet-06.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-body-note-scroll-end-320-2x.png",
+      "sha256": "e3347e0f54889b78ba6e13da2e78ec7c6587264b56066b57d88246ad306434d5",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "24d2513f6e1677015dfdbdccd6117cdb34e2b42c81e508574f78ad41fd32c23d",
+          "review": "sheet-01.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "0304b48f46a6a1a68b7f1fe520fa1ad75ad116f2db263018ce23c7836c3f5385",
+          "review": "sheet-02.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-body-note-scroll-end-393-1x.long.png",
+      "sha256": "75784cdb534938576545d6f27bb7ce2ae32776dbc85099b1c5454546ac907122",
+      "width": 393,
+      "height": 978,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "1f34e19ec16cf72c1ccc47569bec6d13fafa3bfde594a964a8b6e6868008626b",
+          "review": "sheet-01.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 978,
+          "pixel_sha256": "0d49bfc1996b8ac25620729a381a9f9e650229926d3c7155c660706e8b6c1102",
+          "review": "sheet-02.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-body-note-scroll-end-393-1x.png",
+      "sha256": "dc914bf655d5843b15c9d2040bcd34a62d208999adf2755b3a1dc4604f38a1c5",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "04910ed7f8973cc0435588acf7940a64a500e577475ff3645591330745b68358",
+          "review": "sheet-01.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "cdaf23925894c2f9a0ee8ae0811180e4aaac64b08266c74d8dfb8fb479fb2e21",
+          "review": "sheet-02.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-body-note-scroll-start-320-2x.long.png",
+      "sha256": "859369ef65f991f030eb503cb1301a521370dae213979ccb5f28b7bf5cfab237",
+      "width": 320,
+      "height": 2025,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "1f1890499a3ecc082778237e0d37a17fe4ca0ac91b9ccc47d35c715b51f3113f",
+          "review": "../mom-body-control-visual-review/sheet-07.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "0a11809b309d6fd39e1ae5882639f67fa8b666e36a6820ac261d1df401b02649",
+          "review": "../mom-body-control-visual-review/sheet-06.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "8cac1e85280cf27c8237ad7e6bdbb5f106425cf49ad922570a280e8561e1f34a",
+          "review": "sheet-05.png#tile-4"
+        },
+        {
+          "y0": 1950,
+          "y1": 2025,
+          "pixel_sha256": "32199d25a306f8fd67e835037cdbfb787fa4f221c858f79df8ea5ddc566b2824",
+          "review": "../mom-body-control-visual-review/sheet-06.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-body-note-scroll-start-320-2x.png",
+      "sha256": "15408f1eb46e5d140365f61d7eed99f8d13e21d93321ba8756dbc887547ec342",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "d34e170e5bf60e8e39da05319d040e7058ae42c47f03b9203d4dec4b95924285",
+          "review": "sheet-05.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "ccce2b9f77a43b31550a21bf7146c3e40f2ee0bf955aafdf749e7537e609082a",
+          "review": "sheet-06.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-body-note-scroll-start-393-1x.long.png",
+      "sha256": "7697c7bb33fe2a1762f5c9865210f233d973ce9d5183beb02c9a792e9b49cd37",
+      "width": 393,
+      "height": 978,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "1f34e19ec16cf72c1ccc47569bec6d13fafa3bfde594a964a8b6e6868008626b",
+          "review": "sheet-01.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 978,
+          "pixel_sha256": "807f2b70a1a04c431e7f8f26d93a69cd91656f9ad2f68dcec01b78d3db5c7d0c",
+          "review": "sheet-06.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-body-note-scroll-start-393-1x.png",
+      "sha256": "a95c138d5615fd924f593a2f46bfddbab72ca8308a8a7c5d3d9c588dbfd60037",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "752010a6ee09b4cbb782a49ddd00d94acdd2db3da8e04bc7a2bb8f7d9e39de1a",
+          "review": "sheet-06.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "996c9f7a17d6a3d2d04f25da7db28757d39d0ec0abab49586d66e9942dad5e6b",
+          "review": "sheet-06.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-body-overflow-truncated-320-2x.long.png",
+      "sha256": "80b15202507907fa77d53a082fdaa97e06d737d2082adb89d1f1f6a2921474c6",
+      "width": 320,
+      "height": 2025,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "1f1890499a3ecc082778237e0d37a17fe4ca0ac91b9ccc47d35c715b51f3113f",
+          "review": "../mom-body-control-visual-review/sheet-07.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "0a11809b309d6fd39e1ae5882639f67fa8b666e36a6820ac261d1df401b02649",
+          "review": "../mom-body-control-visual-review/sheet-06.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "c329160013552355d5c006d8ca08633d467343ee80cbb7f4ce4fd50dd395d9ed",
+          "review": "sheet-02.png#tile-1"
+        },
+        {
+          "y0": 1950,
+          "y1": 2025,
+          "pixel_sha256": "32199d25a306f8fd67e835037cdbfb787fa4f221c858f79df8ea5ddc566b2824",
+          "review": "../mom-body-control-visual-review/sheet-06.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-body-overflow-truncated-320-2x.png",
+      "sha256": "e3347e0f54889b78ba6e13da2e78ec7c6587264b56066b57d88246ad306434d5",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "24d2513f6e1677015dfdbdccd6117cdb34e2b42c81e508574f78ad41fd32c23d",
+          "review": "sheet-01.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "0304b48f46a6a1a68b7f1fe520fa1ad75ad116f2db263018ce23c7836c3f5385",
+          "review": "sheet-02.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-body-overflow-truncated-393-1x.long.png",
+      "sha256": "75784cdb534938576545d6f27bb7ce2ae32776dbc85099b1c5454546ac907122",
+      "width": 393,
+      "height": 978,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "1f34e19ec16cf72c1ccc47569bec6d13fafa3bfde594a964a8b6e6868008626b",
+          "review": "sheet-01.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 978,
+          "pixel_sha256": "0d49bfc1996b8ac25620729a381a9f9e650229926d3c7155c660706e8b6c1102",
+          "review": "sheet-02.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-body-overflow-truncated-393-1x.png",
+      "sha256": "dc914bf655d5843b15c9d2040bcd34a62d208999adf2755b3a1dc4604f38a1c5",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "04910ed7f8973cc0435588acf7940a64a500e577475ff3645591330745b68358",
+          "review": "sheet-01.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "cdaf23925894c2f9a0ee8ae0811180e4aaac64b08266c74d8dfb8fb479fb2e21",
+          "review": "sheet-02.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-body-reopened-320-2x.long.png",
+      "sha256": "b5d5c70ccb2f647f93ebd881287ccc77af43a7e7daa410d8ddff8b7c7c223b26",
+      "width": 320,
+      "height": 2025,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "1f1890499a3ecc082778237e0d37a17fe4ca0ac91b9ccc47d35c715b51f3113f",
+          "review": "../mom-body-control-visual-review/sheet-07.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "0a11809b309d6fd39e1ae5882639f67fa8b666e36a6820ac261d1df401b02649",
+          "review": "../mom-body-control-visual-review/sheet-06.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "2a344012769c4d8c869a0abb92f373966072175a31aeedf878dcfd7b68fd5df8",
+          "review": "sheet-06.png#tile-4"
+        },
+        {
+          "y0": 1950,
+          "y1": 2025,
+          "pixel_sha256": "bcaa1565405191d12012498507c6e6542bf1a84bdcb4c28025c602ef71ceaab1",
+          "review": "sheet-06.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-body-reopened-320-2x.png",
+      "sha256": "9014c11dd68c6f550423d509e6cb6c79f37dd54ddc53509179eefc666098aa23",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "e770850fb975a6d93661b19da68b2ed38ff78939865aedb8d555fa187b6a0151",
+          "review": "sheet-07.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "06093c9c2fba11ded3504592f033d293f2c9ee11b2021dbd41f74ba125fa98e7",
+          "review": "sheet-07.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-body-reopened-393-1x.long.png",
+      "sha256": "fded02414ac0c7b2316ef99e71c179c3dbfac3ca197370e13ae33d40b5e1ca83",
+      "width": 393,
+      "height": 978,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "88a8aa7d7b6a3ad925b231620d39215d82e9ad87886e8b0e6354d0624442b0f3",
+          "review": "sheet-07.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 978,
+          "pixel_sha256": "53f0424df0ebeec6ad1d680ea201fb79a71c3ae1b773e2c354b248452aeb38b0",
+          "review": "sheet-07.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-body-reopened-393-1x.png",
+      "sha256": "71005750bac4e1865c2838fbede59e33767968efc8e56b94f8e81a0c90f0d64c",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "aaed62c2a59e7054c56f4cf639fff3e274a69666126f77cb82c873ca237f2645",
+          "review": "sheet-07.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "5855b5a32505b77b8e5e7aea7da39cd26724bf11f47047e94ca7782e943e3ef3",
+          "review": "sheet-07.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-body-retained-320-2x.long.png",
+      "sha256": "4298fb2be58bb20695d02f3e1ba1aa15b821b5fe0fb0b4a0df8e60f08215d713",
+      "width": 320,
+      "height": 2062,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b1f7a808bfb15121c031df895f5bfbb79ca22d2e2ae5c3402c20aa884c7e9db9",
+          "review": "../mom-rest-control-visual-review/sheet-16.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "8d25e82a2a4859a86fad5c5f7595c703273a9a574751ceffc73f1f3aa6d3f0da",
+          "review": "sheet-05.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "49f93ff79604ac06a4a845a85055d6edfde5511dd293efc992660c2abda1f048",
+          "review": "../mom-body-control-visual-review/sheet-11.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2062,
+          "pixel_sha256": "873efc1ad07d70326d429bef832fe740960d9621eb065f9273fa719013a4966b",
+          "review": "../mom-rest-control-visual-review/sheet-16.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-body-retained-320-2x.png",
+      "sha256": "d9d17d1e908d0f5129dec8e49678e5a58c70bf6bdd58cb82148765542c7e7b00",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "565006b8d47e82d038a4394eb5254040f453666373d7a1b2eb6d104305918e6a",
+          "review": "sheet-08.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "e0f2b122ad5bb94d174cdd00772b7044457ab6caaff6616d0eb8c5b8246cea77",
+          "review": "../mom-body-control-visual-review/sheet-12.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-body-retained-393-1x.long.png",
+      "sha256": "e6dbb2f4efe89d16213632219d9e545e877fe3be21168756a0a6638709b17101",
+      "width": 393,
+      "height": 920,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9a6ee5684d64c7c91858cfd7c062be7e8d6801a0516632097e8ab61a219a779e",
+          "review": "sheet-05.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 920,
+          "pixel_sha256": "5114e61c90da9079afee7e92bb8d1e1588f7d4ff461871c84ba4a415660ed95d",
+          "review": "../mom-rest-control-visual-review/sheet-17.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-body-retained-393-1x.png",
+      "sha256": "e0501f2dc6640771a76e77fd76c222266c6bb13c68adecf51b90ea2866d899b0",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "f5128ab41a8479abf95b48a8dcd8f228fe7472b39d44d9338dfda809e83fc45d",
+          "review": "sheet-08.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "efc9e43c0d337ad0fa1ec8e551ca550e3e316e56440b8cb080e2948ce5988291",
+          "review": "../mom-rest-control-visual-review/sheet-18.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-body-saved-320-2x.long.png",
+      "sha256": "6ed82cc97ba136179cf91048e2b1784507dd1526ca6515d8ff050f462fde5f95",
+      "width": 320,
+      "height": 2067,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "93b7b783e657f84a54bc83e41d0a6079ba5e59491b3085be91e6a5ae38b653c4",
+          "review": "sheet-08.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "0cfd882a40d2d36fb8c696d293f44be9745a871699d8f218bb8e503ff0e9ff92",
+          "review": "sheet-08.png#tile-3"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "c53ff0de06d16102a37596d10ae1290047c2bc1ab58c7ce949e65110c476502a",
+          "review": "sheet-08.png#tile-4"
+        },
+        {
+          "y0": 1950,
+          "y1": 2067,
+          "pixel_sha256": "3a61d69f9b0f1f69c463c09542f5d31ec32974bd7c835d9cfa9fff2f7d97ed15",
+          "review": "sheet-08.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-body-saved-320-2x.png",
+      "sha256": "b0dbd81ccd61560ae7df3a0954cc33a383fea63ceb9d2e59fcab702b00598c87",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "fe8fed0e0a8bea0db64a56168a4c7febed1518485ed638289cdebaf2ea27d0f0",
+          "review": "sheet-09.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "6115e45a6e8aa644b458f4d232290d80da8e60d2e00f3140404ad143d94423fd",
+          "review": "sheet-09.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-body-saved-393-1x.long.png",
+      "sha256": "dc6ce0febc4c245bad3056089bed5c15fa481f649f0b755126540487d4db5a4a",
+      "width": 393,
+      "height": 1003,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "1f34e19ec16cf72c1ccc47569bec6d13fafa3bfde594a964a8b6e6868008626b",
+          "review": "sheet-01.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1003,
+          "pixel_sha256": "db05135c676d1edcb366a307b924a18f4960f2a8d8c09bc4c3ca604c0ae70aa1",
+          "review": "sheet-09.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-body-saved-393-1x.png",
+      "sha256": "57f4769b6adf56d135e2e8482c87a5d0dad6bdcaababf42e455ed3ddbcd637f8",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "04910ed7f8973cc0435588acf7940a64a500e577475ff3645591330745b68358",
+          "review": "sheet-01.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "53a3ddba978a3111967a1e702f5dee47fe6cf55cb2b1418bcf4e5c9daaaabe42",
+          "review": "sheet-09.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-home-entry-320-2x.long.png",
+      "sha256": "b29f1f9dc909ca023dcd2865b0d4424a7485a4fb1dd4d05f54d8ee61e6cf46ef",
+      "width": 320,
+      "height": 1939,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a6aa9ef781460e5016527f099324419f84c6e4f14cdb26c410651cd7359b41ef",
+          "review": "../mom-rest-control-visual-review/sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "0edf1d289b2e804b112ca91367c51524ae8a6a6a4684a4fdcad651b0ae8de7ad",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1939,
+          "pixel_sha256": "8824f3d60a1ba788460adc4d5731a39ee81dafb5cb1f7d7112dd43123bbe2812",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-home-entry-320-2x.png",
+      "sha256": "6b61a480f7a3fd5ddb29685624aed748a99b94ad55016153855b11225ef09868",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a6aa9ef781460e5016527f099324419f84c6e4f14cdb26c410651cd7359b41ef",
+          "review": "../mom-rest-control-visual-review/sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1462d46c4861c29041d879736402097e4fd061fcb6e577142cd6e832cb70fae0",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-home-entry-393-1x.long.png",
+      "sha256": "0a4e3294f0ff67f0d7ed84ee3eacb393b50571fb4db300a7d15899ba9359a330",
+      "width": 393,
+      "height": 917,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa661999d6307948942c23dc2e7dad221367a614b3ae09dd12dec24bc67fec6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 917,
+          "pixel_sha256": "134109b5afc9a0d972ecc00b197fb963d8131bfc37dbfad2a4c51a0a091a86ad",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-home-entry-393-1x.png",
+      "sha256": "be291808401e7f353b8f14552b0df4a698f3edd191e5e2d770c66c2e129fc145",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa661999d6307948942c23dc2e7dad221367a614b3ae09dd12dec24bc67fec6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3208ac8b3b1d4a7464bc46ef7618c8e19bd85dee870d86c1847457571b6198a6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-home-return-320-2x.long.png",
+      "sha256": "e2189b33ab6fd54a455ae5227a3072472c94e28ce1dcd9c15845652fec96a42a",
+      "width": 320,
+      "height": 2036,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b1f7a808bfb15121c031df895f5bfbb79ca22d2e2ae5c3402c20aa884c7e9db9",
+          "review": "../mom-rest-control-visual-review/sheet-16.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "afca2d3b8fbfd02f2b71f6c10409a8cd621b5f73dc76c2b293515f3c94e11506",
+          "review": "sheet-09.png#tile-4"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "628eecf5373a922604d38f4cf0b1dcf34575b8f4193884486214437ea9c32753",
+          "review": "../mom-milk-control-visual-review/sheet-08.png#tile-1"
+        },
+        {
+          "y0": 1950,
+          "y1": 2036,
+          "pixel_sha256": "e42d00455823ba2b854353c61be92b99166683ccd99538d56aaa795574c30bae",
+          "review": "../mom-milk-control-visual-review/sheet-08.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-home-return-320-2x.png",
+      "sha256": "e9af6e3acbff862dadf6bc141537ac6dcb04866a2ed44b7b054c3843dc0bf7ff",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ca6af1589716531403ac1b48c7f614f58bc61e9abb588ecf169f6e2eb0848005",
+          "review": "sheet-09.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3ec25148deffc2389bf75bb1e26f94bf7e28a8f7d473788d157214de24ef650c",
+          "review": "sheet-10.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-home-return-393-1x.long.png",
+      "sha256": "41452bc17a55556510161660de82f716a513c33028f05e0e3d8202b2bd333122",
+      "width": 393,
+      "height": 920,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "23c4c154dcdea9037f35f4eeb778096f68d9d0773f13aff312bab9df4ab000ba",
+          "review": "sheet-10.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 920,
+          "pixel_sha256": "5114e61c90da9079afee7e92bb8d1e1588f7d4ff461871c84ba4a415660ed95d",
+          "review": "../mom-rest-control-visual-review/sheet-17.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-home-return-393-1x.png",
+      "sha256": "ae8f913489bdf430d0338d4928c6603af5cf8541ebbe572f8fdf7f34663b7f81",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "d03381398d8f31c9fa2f9b316f7cdc387150a0792e0ef8ef45142bdd2f06ea03",
+          "review": "sheet-10.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "efc9e43c0d337ad0fa1ec8e551ca550e3e316e56440b8cb080e2948ce5988291",
+          "review": "../mom-rest-control-visual-review/sheet-18.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-milk-1999-320-2x.long.png",
+      "sha256": "7ec907b56dec3509306a25bde51096f5570d6aedd1c6741a15b6e3f94e63f9b2",
+      "width": 320,
+      "height": 1496,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9c7916379d2c8a74fc5d89df09f060f906806d162ba1aa348d2a9006b4fe7f3e",
+          "review": "../mom-milk-control-visual-review/sheet-02.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "45afbd27ef94afabae58001f721a79bf68c33529abee8476dd17ac9da8bef821",
+          "review": "sheet-10.png#tile-3"
+        },
+        {
+          "y0": 1300,
+          "y1": 1496,
+          "pixel_sha256": "5a45fd75937a694acca98f91c3c2cf67f5c0d255b906e2fa5654f251a2591dc5",
+          "review": "sheet-10.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-milk-1999-320-2x.png",
+      "sha256": "b5357f412703991d50e9797742f87d0c96e73cb3d532b57d6f5bdd49c981063f",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "838f7e1eedec483298c37a3456766255390eaf2fffc69a5ac50c7c80c0b8769e",
+          "review": "sheet-10.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2f24c8893f60e92d04b63288bb0eb8c6d8675c50cc93d10e92065f134755ec39",
+          "review": "../mom-milk-control-visual-review/sheet-03.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-milk-1999-393-1x.long.png",
+      "sha256": "fb04af9d7a1acc36275dfa2f069127c0332b6f0dbc0d611520f6e135e6312871",
+      "width": 393,
+      "height": 1142,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "43a194900a949222ad5b192a0a31763dd621ac3b20036465bd81901aab23f616",
+          "review": "sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1142,
+          "pixel_sha256": "ade9af26abec544d0bbe722a736f6ce5973b96819a2690be2a3b5ccfb6a78a22",
+          "review": "sheet-11.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-milk-1999-393-1x.png",
+      "sha256": "21bd5e2b77eb7456c3c9a949a7c5368deacac0766b1c9ab1d9f01595e6dd720c",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9a9f864eed4f4cc5c3ff221c14ccd58d02cc98f0d58c267f2238ae9b2d027d79",
+          "review": "sheet-11.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "08e68261ef20b2391b587c17e60707ed21ba25d2d52c7ad122f159a26e3f56a6",
+          "review": "sheet-11.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-milk-2000-320-2x.long.png",
+      "sha256": "52bf4d1522a5519774a625c8ca157695152fc7b18c1d3880d57ff5fa5883437d",
+      "width": 320,
+      "height": 1496,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9c7916379d2c8a74fc5d89df09f060f906806d162ba1aa348d2a9006b4fe7f3e",
+          "review": "../mom-milk-control-visual-review/sheet-02.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "46e9ccc28b48fb9d16e9be37d5b314229f70b886ec3b28c95428c5ffa72b7319",
+          "review": "sheet-11.png#tile-4"
+        },
+        {
+          "y0": 1300,
+          "y1": 1496,
+          "pixel_sha256": "5a45fd75937a694acca98f91c3c2cf67f5c0d255b906e2fa5654f251a2591dc5",
+          "review": "sheet-10.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-milk-2000-320-2x.png",
+      "sha256": "43e699721ddd95c3db9b956a5482c2fb15886dc57ab2a3c06e44f18bd8db47f1",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "d048d7cd2f919b9f415875289a5a3f81a1113710a672615be45f219eba6b732a",
+          "review": "sheet-11.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2f24c8893f60e92d04b63288bb0eb8c6d8675c50cc93d10e92065f134755ec39",
+          "review": "../mom-milk-control-visual-review/sheet-03.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-milk-2000-393-1x.long.png",
+      "sha256": "19479b2a9a982ab21fda55f0faa2d99462b20de1b55f373d16e645cb6af3fc99",
+      "width": 393,
+      "height": 1142,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "43a194900a949222ad5b192a0a31763dd621ac3b20036465bd81901aab23f616",
+          "review": "sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1142,
+          "pixel_sha256": "d3c0bb25585cf1fe820706a3e135d4509c622984903bc0f072a3126973e5dff2",
+          "review": "sheet-12.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-milk-2000-393-1x.png",
+      "sha256": "ac0ee30e45c4426f0a8c7cc6bc4d3d85f055e4f92330b0ab5b8610d28bcf0593",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ef53d694bc3046c3d6ed3b421a7e0bab539e318193be21e08145b65c80f70fe9",
+          "review": "sheet-12.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3760bc361bc74d0611c702dfc2bbc9c9403cff78166e71a4572bacd2ffdd00e0",
+          "review": "../mom-milk-control-visual-review/sheet-04.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-milk-cleared-320-2x.long.png",
+      "sha256": "5d34622a946a9150e218e8efd9e1e3981533a1b937cb174ba51ecc0a9d2ebb8f",
+      "width": 320,
+      "height": 1397,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "22d6bffeb9a1525c07b09ccd24289bd10cf3b719e2781a08e5ed7d673f735069",
+          "review": "sheet-12.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "144f4ad51aa4f5c06674cdd5c920485b466108bc06ef2e20e27521371bfae4d9",
+          "review": "sheet-12.png#tile-3"
+        },
+        {
+          "y0": 1300,
+          "y1": 1397,
+          "pixel_sha256": "0220106c775ae33874701054e1df3ebe3611a38134f40e9f474f54246f9e66c1",
+          "review": "../mom-milk-control-visual-review/sheet-15.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-milk-cleared-320-2x.png",
+      "sha256": "55cbf147d117be176e34e91f55dab8862970c3074bec24c2b408d38a3957112c",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b32bc3c6cf0c871a960d062c03f443b80b5ddbf8bd151441508b0412ae96fdbb",
+          "review": "sheet-12.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "f2161247cd8363d9429bc2bc72656bbcfbb45cb1bef7a43d19a07f0341e487cb",
+          "review": "sheet-12.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-milk-cleared-393-1x.long.png",
+      "sha256": "4880a32116dce0b657aa9d38663868a826b30bc41a29a8878c803fa65d8dc9cb",
+      "width": 393,
+      "height": 1119,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "793b1d7a88cc0272286a61594d759ef4569e21e43fc202e5937e93eb9dd01882",
+          "review": "sheet-13.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1119,
+          "pixel_sha256": "baf9c36869b298330f910a03d910835480b26c711c93c914af1971225020c828",
+          "review": "sheet-13.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-milk-cleared-393-1x.png",
+      "sha256": "95c19d552002fab2383257ca5dfabd9cc4c300f0df4df5c1983651818bac3e8c",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "949f1512373fef60c35a42821340e768cca0a842b11d590b7720437d7dfa36e1",
+          "review": "sheet-13.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1b36a61364b32fa5b20a84fd60a28b9ef148160641b32a4a3934b76c5fbfe8b8",
+          "review": "sheet-13.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-milk-discard-confirm-320-2x.png",
+      "sha256": "3c4642f3b3c18acc316b2401135da5f5f4198ef0371c6c826a04315714cf6a63",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "0f84095b34e9311d5585cf4a08d1b41bb9e2584733bcebdaf8a995afcfe2b016",
+          "review": "sheet-13.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "137e9ce3a316eb900da538d7d5e97ddc460515d474baa72aea53967b4300efd7",
+          "review": "sheet-13.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-milk-discard-confirm-393-1x.png",
+      "sha256": "a9b537f657787642f9b44e57700721b318f7f1fb9c7661be4f8e93122de4a57f",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ecaaa67794cf0b0ec6f61a4af7cd0c50bff84be2f4f18ff113ffe6600ac6d3f7",
+          "review": "sheet-14.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "aaa83fc8f784de8c40e84b9fe793d17c12ef9374e6098e635b1326760e298002",
+          "review": "sheet-14.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-milk-empty-320-2x.long.png",
+      "sha256": "c3f877f0943cf9941fdc22ba22fb99b8e897e19449de93e99c37b035d016a074",
+      "width": 320,
+      "height": 1394,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9c7916379d2c8a74fc5d89df09f060f906806d162ba1aa348d2a9006b4fe7f3e",
+          "review": "../mom-milk-control-visual-review/sheet-02.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "7ef218ad59f73537d6b3046b38b76d72a50f26ba560ac4de9d0336c3720063bc",
+          "review": "sheet-14.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1394,
+          "pixel_sha256": "030745e998b7f3c5dd55d4857d7cb7fe481d416025669280fb0cd1a4b88f9418",
+          "review": "../mom-milk-control-visual-review/sheet-03.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-milk-empty-320-2x.png",
+      "sha256": "dd054b990b30dcdfffa0b79ce5e34b601245b21a54fa8cdb561d4bcab65e231d",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "65b329306f0a7fb8d6d26396fcf69064a9cfc7f960132e2fd827907bdf1351c2",
+          "review": "sheet-14.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2f24c8893f60e92d04b63288bb0eb8c6d8675c50cc93d10e92065f134755ec39",
+          "review": "../mom-milk-control-visual-review/sheet-03.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-milk-empty-393-1x.long.png",
+      "sha256": "4099f62f58c8a4aa02571e1566d96a351cb3b31a32566f3acf223f8409d8e309",
+      "width": 393,
+      "height": 1090,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ee0fcb5a4293beff366dae947367d241503c309649ad5895178ab256d9bcb362",
+          "review": "sheet-14.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1090,
+          "pixel_sha256": "6c1dbf21d0896fd12b560efff097cb8aa8746b90ce160c6545aca600cf466686",
+          "review": "sheet-14.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-milk-empty-393-1x.png",
+      "sha256": "a86ff5d9522f43b2a31b57396e16714720198876b55b54b7f79589eb2286d525",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "3e2abc1cbd710a71c3b89e0a06d515655f83deb9c35fa3ed11c80cb0ce5f31b3",
+          "review": "sheet-15.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3760bc361bc74d0611c702dfc2bbc9c9403cff78166e71a4572bacd2ffdd00e0",
+          "review": "../mom-milk-control-visual-review/sheet-04.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-milk-note-scroll-end-320-2x.long.png",
+      "sha256": "52bf4d1522a5519774a625c8ca157695152fc7b18c1d3880d57ff5fa5883437d",
+      "width": 320,
+      "height": 1496,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9c7916379d2c8a74fc5d89df09f060f906806d162ba1aa348d2a9006b4fe7f3e",
+          "review": "../mom-milk-control-visual-review/sheet-02.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "46e9ccc28b48fb9d16e9be37d5b314229f70b886ec3b28c95428c5ffa72b7319",
+          "review": "sheet-11.png#tile-4"
+        },
+        {
+          "y0": 1300,
+          "y1": 1496,
+          "pixel_sha256": "5a45fd75937a694acca98f91c3c2cf67f5c0d255b906e2fa5654f251a2591dc5",
+          "review": "sheet-10.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-milk-note-scroll-end-320-2x.png",
+      "sha256": "43e699721ddd95c3db9b956a5482c2fb15886dc57ab2a3c06e44f18bd8db47f1",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "d048d7cd2f919b9f415875289a5a3f81a1113710a672615be45f219eba6b732a",
+          "review": "sheet-11.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2f24c8893f60e92d04b63288bb0eb8c6d8675c50cc93d10e92065f134755ec39",
+          "review": "../mom-milk-control-visual-review/sheet-03.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-milk-note-scroll-end-393-1x.long.png",
+      "sha256": "19479b2a9a982ab21fda55f0faa2d99462b20de1b55f373d16e645cb6af3fc99",
+      "width": 393,
+      "height": 1142,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "43a194900a949222ad5b192a0a31763dd621ac3b20036465bd81901aab23f616",
+          "review": "sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1142,
+          "pixel_sha256": "d3c0bb25585cf1fe820706a3e135d4509c622984903bc0f072a3126973e5dff2",
+          "review": "sheet-12.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-milk-note-scroll-end-393-1x.png",
+      "sha256": "ac0ee30e45c4426f0a8c7cc6bc4d3d85f055e4f92330b0ab5b8610d28bcf0593",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ef53d694bc3046c3d6ed3b421a7e0bab539e318193be21e08145b65c80f70fe9",
+          "review": "sheet-12.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3760bc361bc74d0611c702dfc2bbc9c9403cff78166e71a4572bacd2ffdd00e0",
+          "review": "../mom-milk-control-visual-review/sheet-04.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-milk-note-scroll-start-320-2x.long.png",
+      "sha256": "f0f2076039f14639330e34f473c09190dd989b2f00d2542bd12d9511052586dc",
+      "width": 320,
+      "height": 1496,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9c7916379d2c8a74fc5d89df09f060f906806d162ba1aa348d2a9006b4fe7f3e",
+          "review": "../mom-milk-control-visual-review/sheet-02.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "7690d21917ad351d9ead506737f4e8addae83d4c529a4181591e4af75a558569",
+          "review": "sheet-15.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1496,
+          "pixel_sha256": "5a45fd75937a694acca98f91c3c2cf67f5c0d255b906e2fa5654f251a2591dc5",
+          "review": "sheet-10.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-milk-note-scroll-start-320-2x.png",
+      "sha256": "e0a78bb0515acbbaa515ca23364a607b18780931f78049637c2eedc03e812599",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "1881cbaee2ef86ea3634f7ddd9be1ae08f72d079ea541314535658d34ffbeacc",
+          "review": "sheet-15.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2f24c8893f60e92d04b63288bb0eb8c6d8675c50cc93d10e92065f134755ec39",
+          "review": "../mom-milk-control-visual-review/sheet-03.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-milk-note-scroll-start-393-1x.long.png",
+      "sha256": "c73a4e30f8a4aa0fc66c26d1511093d2d960dcc6f5e13b1b68903f144d3b3ba2",
+      "width": 393,
+      "height": 1142,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "43a194900a949222ad5b192a0a31763dd621ac3b20036465bd81901aab23f616",
+          "review": "sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1142,
+          "pixel_sha256": "53119a807072dad1e59266b9b41b0ea28d0cbe364cacebd94987e83a0fb08719",
+          "review": "sheet-15.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-milk-note-scroll-start-393-1x.png",
+      "sha256": "bf98c6e453aef0c8d600e252275916a781869948bb7e6870c061e3cf72bf3ded",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6a3f5a1842b1d17c25d53e5a464a367f26e9d58023b54a4a045417a1e2f967c9",
+          "review": "sheet-15.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3760bc361bc74d0611c702dfc2bbc9c9403cff78166e71a4572bacd2ffdd00e0",
+          "review": "../mom-milk-control-visual-review/sheet-04.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-milk-overflow-truncated-320-2x.long.png",
+      "sha256": "52bf4d1522a5519774a625c8ca157695152fc7b18c1d3880d57ff5fa5883437d",
+      "width": 320,
+      "height": 1496,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9c7916379d2c8a74fc5d89df09f060f906806d162ba1aa348d2a9006b4fe7f3e",
+          "review": "../mom-milk-control-visual-review/sheet-02.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "46e9ccc28b48fb9d16e9be37d5b314229f70b886ec3b28c95428c5ffa72b7319",
+          "review": "sheet-11.png#tile-4"
+        },
+        {
+          "y0": 1300,
+          "y1": 1496,
+          "pixel_sha256": "5a45fd75937a694acca98f91c3c2cf67f5c0d255b906e2fa5654f251a2591dc5",
+          "review": "sheet-10.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-milk-overflow-truncated-320-2x.png",
+      "sha256": "43e699721ddd95c3db9b956a5482c2fb15886dc57ab2a3c06e44f18bd8db47f1",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "d048d7cd2f919b9f415875289a5a3f81a1113710a672615be45f219eba6b732a",
+          "review": "sheet-11.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2f24c8893f60e92d04b63288bb0eb8c6d8675c50cc93d10e92065f134755ec39",
+          "review": "../mom-milk-control-visual-review/sheet-03.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-milk-overflow-truncated-393-1x.long.png",
+      "sha256": "19479b2a9a982ab21fda55f0faa2d99462b20de1b55f373d16e645cb6af3fc99",
+      "width": 393,
+      "height": 1142,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "43a194900a949222ad5b192a0a31763dd621ac3b20036465bd81901aab23f616",
+          "review": "sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1142,
+          "pixel_sha256": "d3c0bb25585cf1fe820706a3e135d4509c622984903bc0f072a3126973e5dff2",
+          "review": "sheet-12.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-milk-overflow-truncated-393-1x.png",
+      "sha256": "ac0ee30e45c4426f0a8c7cc6bc4d3d85f055e4f92330b0ab5b8610d28bcf0593",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ef53d694bc3046c3d6ed3b421a7e0bab539e318193be21e08145b65c80f70fe9",
+          "review": "sheet-12.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3760bc361bc74d0611c702dfc2bbc9c9403cff78166e71a4572bacd2ffdd00e0",
+          "review": "../mom-milk-control-visual-review/sheet-04.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-milk-reopened-320-2x.long.png",
+      "sha256": "8ecb7f39c1826b8bba9605499db7bc2460031fb6426fd2a6001c0f0433d6ed6c",
+      "width": 320,
+      "height": 1499,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "22d6bffeb9a1525c07b09ccd24289bd10cf3b719e2781a08e5ed7d673f735069",
+          "review": "sheet-12.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "2da8183a294c02935ccf32f756b2546053fb1aae4d9e1430d6bc3b5ac6c3a401",
+          "review": "sheet-15.png#tile-5"
+        },
+        {
+          "y0": 1300,
+          "y1": 1499,
+          "pixel_sha256": "d1e25d0e9b52aae6ab20a7bc5456cbbd368b7cbdcd493c6c611392ffa86e81de",
+          "review": "sheet-16.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-milk-reopened-320-2x.png",
+      "sha256": "1a67fb93f1ec7348f00f789cbc32edbc2de9ccf74f26307eca3a1eea563e8908",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a7a57a031e907ee492c28b93945bc5983992c1132abe18bf840740e491505952",
+          "review": "sheet-16.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "f2161247cd8363d9429bc2bc72656bbcfbb45cb1bef7a43d19a07f0341e487cb",
+          "review": "sheet-12.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-milk-reopened-393-1x.long.png",
+      "sha256": "57125aac21f8aab48a5d396691a0c218b0a385fa6bdc8ad21be2f1d0e9b63caf",
+      "width": 393,
+      "height": 1171,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "f53844dfc1198cf2074cc109ba71792eea7a20e522d228829565c89757ac2910",
+          "review": "sheet-16.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1171,
+          "pixel_sha256": "e94cbd84f5bdf1d456f63df5d9171e595345c9c1cb5bb6b61ee9d10b893182a7",
+          "review": "sheet-16.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-milk-reopened-393-1x.png",
+      "sha256": "06c0b8df564c49d091808c9d6296181dd8d0151b8e4b4c4b9b4c7e7be0b51f59",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9320b0b0818a725b53edf69564c04d9d1da7223db2b000f28a1db39a3728e6dc",
+          "review": "sheet-16.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1b36a61364b32fa5b20a84fd60a28b9ef148160641b32a4a3934b76c5fbfe8b8",
+          "review": "sheet-13.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-milk-retained-320-2x.long.png",
+      "sha256": "96087d6201592d0042917cd37988b8de7926c71200a57a69f1c2ce784143dcb0",
+      "width": 320,
+      "height": 35249,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ccd465bd0b60080d27afcfae50054df687e2814771795da85582be0303a8ec43",
+          "review": "sheet-16.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "5611231ec24a4b79e72b297bb260e120c6f5b8804ff0141104754490ed4326cd",
+          "review": "sheet-17.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "e07557ea5444804fdae129a0ac6a42085f5441c59697432adf772d8878b8caf5",
+          "review": "sheet-17.png#tile-1"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "4475cd50198e869b7b3e5c38da4b9d812e378ea6ad6c1bfec9181d6d2f148ad1",
+          "review": "sheet-17.png#tile-2"
+        },
+        {
+          "y0": 2600,
+          "y1": 3250,
+          "pixel_sha256": "fe225e3e85782a2bd564dfba2bbb74bd87cf1eceeaa079515f27106f23fa49d9",
+          "review": "sheet-17.png#tile-3"
+        },
+        {
+          "y0": 3250,
+          "y1": 3900,
+          "pixel_sha256": "b798764573474519ef7e795a0dd54a50cc71abb5396dcb595ebce57b461d1d18",
+          "review": "sheet-17.png#tile-4"
+        },
+        {
+          "y0": 3900,
+          "y1": 4550,
+          "pixel_sha256": "f038cdd2dc8f5d317098dbd191dbfe5b2ed66d97253885e7f2ed85c095538f30",
+          "review": "sheet-17.png#tile-5"
+        },
+        {
+          "y0": 4550,
+          "y1": 5200,
+          "pixel_sha256": "9e05054d41cc7add998cf1c4e7c51b7c8897904d27eb04cbef5fee770a7a736a",
+          "review": "sheet-18.png#tile-0"
+        },
+        {
+          "y0": 5200,
+          "y1": 5850,
+          "pixel_sha256": "1684f6019a51cb79f030dfcbcbb25e787a40ea5174dd4c209dfe9c8b13b05193",
+          "review": "sheet-18.png#tile-1"
+        },
+        {
+          "y0": 5850,
+          "y1": 6500,
+          "pixel_sha256": "cd02a8896a53a90c71b1dcaccfabe543feaf39f81cf0fa92c82e9d2c082bb45a",
+          "review": "sheet-18.png#tile-2"
+        },
+        {
+          "y0": 6500,
+          "y1": 7150,
+          "pixel_sha256": "088a9b8e06b10b8a73f130d45bfe0e8ed69437ce5ff3d66cf79e4283b44ccef5",
+          "review": "sheet-18.png#tile-3"
+        },
+        {
+          "y0": 7150,
+          "y1": 7800,
+          "pixel_sha256": "6f5ccff7ec087acbb8dcf1dfae21bb6b1297c7b66ec89f2d791984b27efc6de7",
+          "review": "sheet-18.png#tile-4"
+        },
+        {
+          "y0": 7800,
+          "y1": 8450,
+          "pixel_sha256": "47b53552ee9ccfa8d4f90fa2f96b0ff971f89a0b6711afa3f1ee46ebb8ab8049",
+          "review": "sheet-18.png#tile-5"
+        },
+        {
+          "y0": 8450,
+          "y1": 9100,
+          "pixel_sha256": "58a44571c3afeeea03cff2722f1a067501940c6a32e6f4553485931aa478d591",
+          "review": "sheet-19.png#tile-0"
+        },
+        {
+          "y0": 9100,
+          "y1": 9750,
+          "pixel_sha256": "39cf7d8375f951b2f699929681bf3df81dbd5c87bc06f4bbb822d443d502ff82",
+          "review": "sheet-19.png#tile-1"
+        },
+        {
+          "y0": 9750,
+          "y1": 10400,
+          "pixel_sha256": "c61a0cd1ac0a2699e7da5b9b61926f1b7ebe0b5b0c67a08b75ef062d92cd038e",
+          "review": "sheet-19.png#tile-2"
+        },
+        {
+          "y0": 10400,
+          "y1": 11050,
+          "pixel_sha256": "42a73c83917892d97ab171f7573c1594be1106ccb1f5c2e514d5cf4825c0c4df",
+          "review": "sheet-19.png#tile-3"
+        },
+        {
+          "y0": 11050,
+          "y1": 11700,
+          "pixel_sha256": "cd13941d77a7bbaa6c5594f11167aed3698237d894ef62ad92690e1b41aea016",
+          "review": "sheet-19.png#tile-4"
+        },
+        {
+          "y0": 11700,
+          "y1": 12350,
+          "pixel_sha256": "fe3d2e85619c9e3822a68281a86e3b66b8852b75dc8a5a283634df5b731694c0",
+          "review": "sheet-19.png#tile-5"
+        },
+        {
+          "y0": 12350,
+          "y1": 13000,
+          "pixel_sha256": "003115d5e56f648084499ff5d41cc6e470336ad19d0cce87c8c078c47e735e9d",
+          "review": "sheet-20.png#tile-0"
+        },
+        {
+          "y0": 13000,
+          "y1": 13650,
+          "pixel_sha256": "0c32c39150215c0bde6d444067ca477894b4fd7f4811b97cec3fd9dde335ab06",
+          "review": "sheet-20.png#tile-1"
+        },
+        {
+          "y0": 13650,
+          "y1": 14300,
+          "pixel_sha256": "9d25bcc34b00ed7df4e3779127bb04693744aacc3b3b792191336f7e730d979a",
+          "review": "sheet-20.png#tile-2"
+        },
+        {
+          "y0": 14300,
+          "y1": 14950,
+          "pixel_sha256": "2d24bba0a7071dd0c6db765ad9690ac9b2f8f38eab9cb24d93ecded350983fe0",
+          "review": "sheet-20.png#tile-3"
+        },
+        {
+          "y0": 14950,
+          "y1": 15600,
+          "pixel_sha256": "1bc8d102fae71271994a8c6dbee8080b05858421c200f91186f1d62eb7814a37",
+          "review": "sheet-20.png#tile-4"
+        },
+        {
+          "y0": 15600,
+          "y1": 16250,
+          "pixel_sha256": "9a8f2d3d4f19cf32494f718235da2141310198d782e2b3f6376db9ca43d6412a",
+          "review": "sheet-20.png#tile-5"
+        },
+        {
+          "y0": 16250,
+          "y1": 16900,
+          "pixel_sha256": "8efc543fdc825bf4889e68038d1827ece8d4cae57aa2216d79a600b650ca41bd",
+          "review": "sheet-21.png#tile-0"
+        },
+        {
+          "y0": 16900,
+          "y1": 17550,
+          "pixel_sha256": "02f0a4f42c85cef1d883951bbca3342e711f2238881a70081dfc08a4da4d33cb",
+          "review": "sheet-21.png#tile-1"
+        },
+        {
+          "y0": 17550,
+          "y1": 18200,
+          "pixel_sha256": "98e031b2d700dc78c1a04523b13dde228983aa7a093f3584b3087c0f93597471",
+          "review": "sheet-21.png#tile-2"
+        },
+        {
+          "y0": 18200,
+          "y1": 18850,
+          "pixel_sha256": "b78401f6062df47f11288745f7a940cba7bc3aa4f1eaf754e4df2c5207f345ea",
+          "review": "sheet-21.png#tile-3"
+        },
+        {
+          "y0": 18850,
+          "y1": 19500,
+          "pixel_sha256": "e6746aaa1a8d34a6a644d332b7d039cc097e2ba1bd4654a199cb062e6440983f",
+          "review": "sheet-21.png#tile-4"
+        },
+        {
+          "y0": 19500,
+          "y1": 20150,
+          "pixel_sha256": "0170386199d79f89c2733ecc314764adf316883a76dea67895fc6af61b9ae565",
+          "review": "sheet-21.png#tile-5"
+        },
+        {
+          "y0": 20150,
+          "y1": 20800,
+          "pixel_sha256": "e8697c71157f763dacca0acd3739f652df35b640d4774d76db2cfdf9e2a6980e",
+          "review": "sheet-22.png#tile-0"
+        },
+        {
+          "y0": 20800,
+          "y1": 21450,
+          "pixel_sha256": "de355a9ed721da7124b7469d145007e414bb2ab7ad7cb82f55d50be5599dfcc7",
+          "review": "sheet-22.png#tile-1"
+        },
+        {
+          "y0": 21450,
+          "y1": 22100,
+          "pixel_sha256": "215949d75135f6fdc924b070ba09c97e6e0b721c10590b7cfbf4ed285940ba23",
+          "review": "sheet-22.png#tile-2"
+        },
+        {
+          "y0": 22100,
+          "y1": 22750,
+          "pixel_sha256": "8ab374bc9b7e2d123cfa0c6a09e4f5080bcfff4c6e5b748ae9c1d9b870b8645a",
+          "review": "sheet-22.png#tile-3"
+        },
+        {
+          "y0": 22750,
+          "y1": 23400,
+          "pixel_sha256": "1a7c2f00e603fe2d18c6a164cda7e214f6335e96c89eec7e481ac1ca56af776a",
+          "review": "sheet-22.png#tile-4"
+        },
+        {
+          "y0": 23400,
+          "y1": 24050,
+          "pixel_sha256": "a2d5de13a0169b2cb7a087cc6d1225441970c8ed445925528f3896a706628525",
+          "review": "sheet-22.png#tile-5"
+        },
+        {
+          "y0": 24050,
+          "y1": 24700,
+          "pixel_sha256": "ee9a670f02e8cf894a07f6fcc75ed58c6a5c4b6257d66dee3374d90e6067b8cf",
+          "review": "sheet-23.png#tile-0"
+        },
+        {
+          "y0": 24700,
+          "y1": 25350,
+          "pixel_sha256": "906ec90fc727b42c27230a0399f7ce355cad3c50008731812f56b6e1e8eccaac",
+          "review": "sheet-23.png#tile-1"
+        },
+        {
+          "y0": 25350,
+          "y1": 26000,
+          "pixel_sha256": "97263f2dea8efcb00622f52a259730cc450b83a980ed5ee3cee2eb81a6c06162",
+          "review": "sheet-23.png#tile-2"
+        },
+        {
+          "y0": 26000,
+          "y1": 26650,
+          "pixel_sha256": "e57975b1742eddaa5f70f2b108561c92934a635dda14a39f54ba334244afa391",
+          "review": "sheet-23.png#tile-3"
+        },
+        {
+          "y0": 26650,
+          "y1": 27300,
+          "pixel_sha256": "e8bd4dda0f8c4e216f24d7fc4072b2be717c7dbbd8a6f6401bb6c30510e36053",
+          "review": "sheet-23.png#tile-4"
+        },
+        {
+          "y0": 27300,
+          "y1": 27950,
+          "pixel_sha256": "9251bebe15e89b640a93039dfd97231389697b9f5a512b5e09a6777a1cecdea3",
+          "review": "sheet-23.png#tile-5"
+        },
+        {
+          "y0": 27950,
+          "y1": 28600,
+          "pixel_sha256": "99fe6e59857b0a11e532682f597bc9c8b369c8bf1cc36fbd90108773c3cb4988",
+          "review": "sheet-24.png#tile-0"
+        },
+        {
+          "y0": 28600,
+          "y1": 29250,
+          "pixel_sha256": "3cb04c86f909ec6f26f64620ec2280f3a4085cb8ac66f05eca69ef312a4c47a8",
+          "review": "sheet-24.png#tile-1"
+        },
+        {
+          "y0": 29250,
+          "y1": 29900,
+          "pixel_sha256": "1e6031be4d06c50d2e028f10c9cfac491dab327da56bd836735f21a6bf168112",
+          "review": "sheet-24.png#tile-2"
+        },
+        {
+          "y0": 29900,
+          "y1": 30550,
+          "pixel_sha256": "ea773ba8d788475e3da039aaf6a42cc42c8b99bd51ca932d10fde37cda453d4f",
+          "review": "sheet-24.png#tile-3"
+        },
+        {
+          "y0": 30550,
+          "y1": 31200,
+          "pixel_sha256": "5cd724c7db565f8aa91aa6f4e55eec849231b5c735d87376883e2542c0d1c0c3",
+          "review": "sheet-24.png#tile-4"
+        },
+        {
+          "y0": 31200,
+          "y1": 31850,
+          "pixel_sha256": "273814dbc31d1fe6c4cc2811a360bbd1119be50dd9491d0b51f69a60f9fed237",
+          "review": "sheet-24.png#tile-5"
+        },
+        {
+          "y0": 31850,
+          "y1": 32500,
+          "pixel_sha256": "7a84394d5b3ec7970df1cb850d445c73001407aabbe82a8b36f79edd2d2bbcf6",
+          "review": "sheet-25.png#tile-0"
+        },
+        {
+          "y0": 32500,
+          "y1": 33150,
+          "pixel_sha256": "60548802681f14e13caf8904f0a5358eade0e785b6a4036f650ca2c575cf48bc",
+          "review": "sheet-25.png#tile-1"
+        },
+        {
+          "y0": 33150,
+          "y1": 33800,
+          "pixel_sha256": "ed5b82c05925d1a1540f46b338b79da8f9ef38d2452233314d9c298d9280b11c",
+          "review": "sheet-25.png#tile-2"
+        },
+        {
+          "y0": 33800,
+          "y1": 34450,
+          "pixel_sha256": "0748e7bdd3d9618c95d4e8ea6dffee8d75134e2aa1a247291c580cbafdc64cdc",
+          "review": "sheet-25.png#tile-3"
+        },
+        {
+          "y0": 34450,
+          "y1": 35100,
+          "pixel_sha256": "0edf37992971b4ba8e2aa92cedffd2f37897fb45e39eaab9e108dc49b94c1642",
+          "review": "sheet-25.png#tile-4"
+        },
+        {
+          "y0": 35100,
+          "y1": 35249,
+          "pixel_sha256": "86a710d55ee8bbd16de44f9f250a2da3826e349ff6bc3729a62f25d1f20dafb9",
+          "review": "sheet-25.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-milk-retained-320-2x.png",
+      "sha256": "c35cf2db37a45dcde234182f517038f1388940367334a340f35031ce6cb87c12",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ccd465bd0b60080d27afcfae50054df687e2814771795da85582be0303a8ec43",
+          "review": "sheet-16.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "83084a877ca893ee32261405795a927763eb09124ff83bac2a2eab8c5d6df0d3",
+          "review": "sheet-26.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-milk-retained-393-1x.long.png",
+      "sha256": "099b8d9e96656d68b1628e81f84f6acb74f62dabcf11f5cf4d97a188d00319c2",
+      "width": 393,
+      "height": 3529,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ff003111625af48ee68a341e6211ad8075a2b7911a3ce71c62e954062f912aee",
+          "review": "../mom-milk-control-visual-review/sheet-11.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "56e67e067a24555f5fca79a7c696cfa1ede28b54f800a8f6b3d47ac44fa58aa4",
+          "review": "sheet-26.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "b93012df93ac67b84026168025725db8be1a26f72490071a3eefdd7884f4e518",
+          "review": "sheet-26.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "7bfaecb66bec6f447084e64300161c7c2098b574934219e9ab68578af8681d16",
+          "review": "sheet-26.png#tile-3"
+        },
+        {
+          "y0": 2600,
+          "y1": 3250,
+          "pixel_sha256": "74d538d1ecfd47b7e508bf6ca0fbb10d5f955d026232031249820d29522fc5af",
+          "review": "sheet-26.png#tile-4"
+        },
+        {
+          "y0": 3250,
+          "y1": 3529,
+          "pixel_sha256": "41b1119f101a715c09a4f85a443d4b7fc310cc987f356be08215401bfb0a3abe",
+          "review": "sheet-26.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-milk-retained-393-1x.png",
+      "sha256": "544ef8ad34983920db78a312d165763bc1942f8e77e8135a5a675e287133baba",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ff003111625af48ee68a341e6211ad8075a2b7911a3ce71c62e954062f912aee",
+          "review": "../mom-milk-control-visual-review/sheet-11.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "e0ee70e48ab361126c493f20daaf6c80366d9047e6c11d0f3194b4b7b49aca1f",
+          "review": "sheet-27.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-milk-saved-long-note-320-2x.long.png",
+      "sha256": "f76f324fa939cd95db238ff37c837a0ad5e9004ea9f4b4e125347a782355d9e3",
+      "width": 320,
+      "height": 35327,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ccd465bd0b60080d27afcfae50054df687e2814771795da85582be0303a8ec43",
+          "review": "sheet-16.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "589a73e962658d2ab647d930b3f15f2fd35fdd9b84f2593c99c5e04632736508",
+          "review": "sheet-27.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "74119c4bc403e2224de052e0e4b3510b339e89dd25f5fd3cb599cacac60957a8",
+          "review": "sheet-27.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "7ca7f5a654d56d2a31ee4991fa78ab6c850a4ef22335bd4848a44a8f4a6e1ff8",
+          "review": "sheet-27.png#tile-3"
+        },
+        {
+          "y0": 2600,
+          "y1": 3250,
+          "pixel_sha256": "5f9039c8ea9bd6bc5ac93b8c00cd1c9cb610b2f130eb47fb1990f6e2b7e78137",
+          "review": "sheet-27.png#tile-4"
+        },
+        {
+          "y0": 3250,
+          "y1": 3900,
+          "pixel_sha256": "844929426841be7bf771e9742aaa2010c9adc785dd4d550dbc76edf8c642ede9",
+          "review": "sheet-27.png#tile-5"
+        },
+        {
+          "y0": 3900,
+          "y1": 4550,
+          "pixel_sha256": "845091d2fc9437805fdc3607202b65bc0917ae3b77b6b99fede98e98e3d4cb29",
+          "review": "sheet-28.png#tile-0"
+        },
+        {
+          "y0": 4550,
+          "y1": 5200,
+          "pixel_sha256": "ed2bfd3d401c502603fc3c610353b5d9f8553a240862b00754b9745b640ead43",
+          "review": "sheet-28.png#tile-1"
+        },
+        {
+          "y0": 5200,
+          "y1": 5850,
+          "pixel_sha256": "96347b0ca0127aa3e62078e3751d885be93547474801d4165460f3608883dc2a",
+          "review": "sheet-28.png#tile-2"
+        },
+        {
+          "y0": 5850,
+          "y1": 6500,
+          "pixel_sha256": "86d1998464d2ad4e6d953a3416fd729076cd8fabc70778e093abcb1a7058bad2",
+          "review": "sheet-28.png#tile-3"
+        },
+        {
+          "y0": 6500,
+          "y1": 7150,
+          "pixel_sha256": "0b9521024351c621e49f9709ceebc2ec925e55ebc75e4e1048252f79df78d53e",
+          "review": "sheet-28.png#tile-4"
+        },
+        {
+          "y0": 7150,
+          "y1": 7800,
+          "pixel_sha256": "902214da8735681a0ce816e6042ca615dbd20abaac37b88b0ae0d74bf7161c49",
+          "review": "sheet-28.png#tile-5"
+        },
+        {
+          "y0": 7800,
+          "y1": 8450,
+          "pixel_sha256": "b921f4dbf981c7f9ed2e0d700313ce5ab1bf647d97e00f1f81983288f3b76659",
+          "review": "sheet-29.png#tile-0"
+        },
+        {
+          "y0": 8450,
+          "y1": 9100,
+          "pixel_sha256": "12878844eab4377f1c87ef14f8dc1eafc799fa81dfb53eacbfcce70649bac2bb",
+          "review": "sheet-29.png#tile-1"
+        },
+        {
+          "y0": 9100,
+          "y1": 9750,
+          "pixel_sha256": "0be46c65c8fb02bbb78cc40d70b850b7efab144da12ff0d0129c283b97031ad1",
+          "review": "sheet-29.png#tile-2"
+        },
+        {
+          "y0": 9750,
+          "y1": 10400,
+          "pixel_sha256": "ca3738b530a1307a1f91c7be92992e3708e4b92892afbabb5521f50385568c83",
+          "review": "sheet-29.png#tile-3"
+        },
+        {
+          "y0": 10400,
+          "y1": 11050,
+          "pixel_sha256": "70de1ff0440df4fe06505b72a85cff8c07668fc6e47d2d5663ba15f5b12dbb0d",
+          "review": "sheet-29.png#tile-4"
+        },
+        {
+          "y0": 11050,
+          "y1": 11700,
+          "pixel_sha256": "ba60753d89bdccc43a050c6f338616f352a23ab254f147696f4b687a42eebffb",
+          "review": "sheet-29.png#tile-5"
+        },
+        {
+          "y0": 11700,
+          "y1": 12350,
+          "pixel_sha256": "7e4a17c6dc1c1033c8d68ab3b7a8d38c0f3b7553ef7bffe57ad72123cbd51656",
+          "review": "sheet-30.png#tile-0"
+        },
+        {
+          "y0": 12350,
+          "y1": 13000,
+          "pixel_sha256": "3554e632c59c7de53225d4b65693e0576c9e2e682f159cbefc7f7a1211aa4eb5",
+          "review": "sheet-30.png#tile-1"
+        },
+        {
+          "y0": 13000,
+          "y1": 13650,
+          "pixel_sha256": "ab75f2241fada3bd2a1824c498cbd022acb5923637b07c8801074245967605bf",
+          "review": "sheet-30.png#tile-2"
+        },
+        {
+          "y0": 13650,
+          "y1": 14300,
+          "pixel_sha256": "c8865409969601b37b9f1b87038974ab752c87ece57bc8077083cd1be8afeea1",
+          "review": "sheet-30.png#tile-3"
+        },
+        {
+          "y0": 14300,
+          "y1": 14950,
+          "pixel_sha256": "4e2820688d2bb90c21ba62322f345bb3e0ffcfc112450c25b2ae3f85f11adc9e",
+          "review": "sheet-30.png#tile-4"
+        },
+        {
+          "y0": 14950,
+          "y1": 15600,
+          "pixel_sha256": "20d6e30fee151c89c5a4eb27bdbed715609788a1f5a8d0fc1f3fc0daec6171af",
+          "review": "sheet-30.png#tile-5"
+        },
+        {
+          "y0": 15600,
+          "y1": 16250,
+          "pixel_sha256": "f9280094d7c4d5c8d7255eaf2bb459c4b27d138bd76208033d13841a15caef19",
+          "review": "sheet-31.png#tile-0"
+        },
+        {
+          "y0": 16250,
+          "y1": 16900,
+          "pixel_sha256": "efd0a87a6ce54a33e06bdeca337d11b2887877a05d223415360103b16108be86",
+          "review": "sheet-31.png#tile-1"
+        },
+        {
+          "y0": 16900,
+          "y1": 17550,
+          "pixel_sha256": "3bdb28dad5fb29ac64aa4938de3fb2acca2ce1765c640ce76e4257a15c177ac1",
+          "review": "sheet-31.png#tile-2"
+        },
+        {
+          "y0": 17550,
+          "y1": 18200,
+          "pixel_sha256": "02d1a31fb91986489b5e754f39ceff17c1ed34546a24dd7c61e4e94c6b66eb8d",
+          "review": "sheet-31.png#tile-3"
+        },
+        {
+          "y0": 18200,
+          "y1": 18850,
+          "pixel_sha256": "4a0406e5eddfb05c98172b06ab6b039dc785cd8d76b300a4adab178244dd0483",
+          "review": "sheet-31.png#tile-4"
+        },
+        {
+          "y0": 18850,
+          "y1": 19500,
+          "pixel_sha256": "1c07f7f90185b890791f248533bb0a7aeb144d9670add0fe9f0c9f55f39615e7",
+          "review": "sheet-31.png#tile-5"
+        },
+        {
+          "y0": 19500,
+          "y1": 20150,
+          "pixel_sha256": "1d4352f41bb0996dfac5c76232c04e8f6e7af24a78a3d7ee92e69865c8879518",
+          "review": "sheet-32.png#tile-0"
+        },
+        {
+          "y0": 20150,
+          "y1": 20800,
+          "pixel_sha256": "1feaebf03b60ecc09444adc020acfb64d3f51eeb16a8330cf456b99de41b7698",
+          "review": "sheet-32.png#tile-1"
+        },
+        {
+          "y0": 20800,
+          "y1": 21450,
+          "pixel_sha256": "211dcecd1f9b84104e53e200052e5155eaaee121657d61ae27f0e0c554917779",
+          "review": "sheet-32.png#tile-2"
+        },
+        {
+          "y0": 21450,
+          "y1": 22100,
+          "pixel_sha256": "f22dfea77ebcd79da98d90a6a547fc16fbad1847130e65eaefd038dd4d1d7149",
+          "review": "sheet-32.png#tile-3"
+        },
+        {
+          "y0": 22100,
+          "y1": 22750,
+          "pixel_sha256": "7b1be3f0bbc0854bf7f1f7c31b6a723e9affed3eb363a62be1d0b0c9d67b31de",
+          "review": "sheet-32.png#tile-4"
+        },
+        {
+          "y0": 22750,
+          "y1": 23400,
+          "pixel_sha256": "225a78db2685692c34a22a95e08bc3a18a5e8645b642807d46e4a74f25220443",
+          "review": "sheet-32.png#tile-5"
+        },
+        {
+          "y0": 23400,
+          "y1": 24050,
+          "pixel_sha256": "c3e2d1767f2061ce40313ace5d46b8a8404755e14c28443e1e1852c78e6a17cc",
+          "review": "sheet-33.png#tile-0"
+        },
+        {
+          "y0": 24050,
+          "y1": 24700,
+          "pixel_sha256": "92b03d726714025eb1448b2bf57f5514d2714e0c4e2ea73d28e5171192632ea3",
+          "review": "sheet-33.png#tile-1"
+        },
+        {
+          "y0": 24700,
+          "y1": 25350,
+          "pixel_sha256": "0e30b9b411aa96f58aa6760f1bbbb3f9ce2addccb0b5db95475e72479de5ac49",
+          "review": "sheet-33.png#tile-2"
+        },
+        {
+          "y0": 25350,
+          "y1": 26000,
+          "pixel_sha256": "162c865ac491445f1bf455bdac489612df81cdea3377ecd70f0f1039bcd61952",
+          "review": "sheet-33.png#tile-3"
+        },
+        {
+          "y0": 26000,
+          "y1": 26650,
+          "pixel_sha256": "e558409d80ea34bb6a229e20c70dc3b446c233a41b0f8169037e6c9449f0bb7a",
+          "review": "sheet-33.png#tile-4"
+        },
+        {
+          "y0": 26650,
+          "y1": 27300,
+          "pixel_sha256": "433e18c84936474e7392a48efcf6c95b42526d1d73cde207f078e8af0d982d61",
+          "review": "sheet-33.png#tile-5"
+        },
+        {
+          "y0": 27300,
+          "y1": 27950,
+          "pixel_sha256": "c50e70f43b292bcf0162207b277dead124cf6ebfc0d5dd0ae6a6e683c5851d11",
+          "review": "sheet-34.png#tile-0"
+        },
+        {
+          "y0": 27950,
+          "y1": 28600,
+          "pixel_sha256": "c7e69621e61e74e76bc68fc1d0bb5a52c0d9a94da860a04f4002888d03e44db6",
+          "review": "sheet-34.png#tile-1"
+        },
+        {
+          "y0": 28600,
+          "y1": 29250,
+          "pixel_sha256": "cf5f51e1bb1f685b491c8b01adcfdece5f5c45d68b1490a4ec0ef63de7dae699",
+          "review": "sheet-34.png#tile-2"
+        },
+        {
+          "y0": 29250,
+          "y1": 29900,
+          "pixel_sha256": "bf304365485daec570313d2135d383d2de5c5769dc2835a1173743b8996714f9",
+          "review": "sheet-34.png#tile-3"
+        },
+        {
+          "y0": 29900,
+          "y1": 30550,
+          "pixel_sha256": "eaf954d648a52035a1bf5d1e40cf1dc10e1bcb806f4d9e10b034a4c3e861dd00",
+          "review": "sheet-34.png#tile-4"
+        },
+        {
+          "y0": 30550,
+          "y1": 31200,
+          "pixel_sha256": "6cfb54b0bdaf94bd8e9ee8da83c509b57569b27571de791ecf472eebffa8354b",
+          "review": "sheet-34.png#tile-5"
+        },
+        {
+          "y0": 31200,
+          "y1": 31850,
+          "pixel_sha256": "a887cba684c4577aefed6158b22e9a31356cffb837c451a209cf3589d49d86a1",
+          "review": "sheet-35.png#tile-0"
+        },
+        {
+          "y0": 31850,
+          "y1": 32500,
+          "pixel_sha256": "451eb21359fd0094db3396d40b11f38b658af078f04124aedf2dd738708d6c91",
+          "review": "sheet-35.png#tile-1"
+        },
+        {
+          "y0": 32500,
+          "y1": 33150,
+          "pixel_sha256": "0f91eb26e2db7f8c9a68d62403627928706dee3cd6d27b3e824237781c82163d",
+          "review": "sheet-35.png#tile-2"
+        },
+        {
+          "y0": 33150,
+          "y1": 33800,
+          "pixel_sha256": "63a351061b3c2765fd94f823664ab5a9788bd6e23e7a4e5fd61291850e457b1a",
+          "review": "sheet-35.png#tile-3"
+        },
+        {
+          "y0": 33800,
+          "y1": 34450,
+          "pixel_sha256": "cbc8a67fe22a71327c0e09062897d89b8beeab16163813df7bca76674c0d2a9c",
+          "review": "sheet-35.png#tile-4"
+        },
+        {
+          "y0": 34450,
+          "y1": 35100,
+          "pixel_sha256": "551c22545bc1fbb21c8bf1e33a2997c16d604332df93cea80a71a6f482d690ca",
+          "review": "sheet-35.png#tile-5"
+        },
+        {
+          "y0": 35100,
+          "y1": 35327,
+          "pixel_sha256": "3342eeed53a540bf0ef7304bd104bfb53867b22a0e733dc6032311a4c1607111",
+          "review": "sheet-36.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-milk-saved-long-note-320-2x.png",
+      "sha256": "3f9f86bbce48d10b7ea0ebc003ab816a0b5356d77d80a05a079fbba69306359d",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "4dc5d26047a3a0768e82c918336f7d86821e45b5b23bd501d203ce09438d583e",
+          "review": "sheet-36.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "de04a41b63995dc18e4d051be34f96c5bed544d36fbbf993127f631855a34074",
+          "review": "../mom-milk-control-visual-review/sheet-16.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-milk-saved-long-note-393-1x.long.png",
+      "sha256": "5d2ebad5ef53abc9e08eacfd190e0ae9f80ab3e88eefd5a9503029086144e090",
+      "width": 393,
+      "height": 3591,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ff003111625af48ee68a341e6211ad8075a2b7911a3ce71c62e954062f912aee",
+          "review": "../mom-milk-control-visual-review/sheet-11.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "49cf56bc86d9b68aadbde85bdab6dcf584a9b6c01e98b28afae5d6223daf7d65",
+          "review": "sheet-36.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "1b29b556c83ff551b7038a7dcfe5e78dec84413eb2a565804b0bfbad8686940a",
+          "review": "sheet-36.png#tile-3"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "07f4e939fbdf8f9fa178275d58a69f8bdb5ae7ba9570f6996665c37a72538af8",
+          "review": "sheet-36.png#tile-4"
+        },
+        {
+          "y0": 2600,
+          "y1": 3250,
+          "pixel_sha256": "786229b8d7f14304f5926b4ca4939b49db19fa662099f49fecb4a86b1a360ebc",
+          "review": "sheet-36.png#tile-5"
+        },
+        {
+          "y0": 3250,
+          "y1": 3591,
+          "pixel_sha256": "d017ce91a6149687b1053c3f02e8a4d95c773b8833a1b78e5f242d3916a5972c",
+          "review": "sheet-37.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-milk-saved-long-note-393-1x.png",
+      "sha256": "e94d4822f90f9f87c4d03fffe27e87c3eb5bd8f51b0fdf620f47ef762b60571b",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ce3d1e10172204c2db0865f8c1e3f1658ace266fc11c7450ec928b1733eb4a6d",
+          "review": "sheet-37.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2d05e490d08d44bee4c6e6ce06e874ae145179c9abe350dec811b81718e79aaf",
+          "review": "sheet-37.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-more-return-320-2x.png",
+      "sha256": "feee4d506ac1bef973428daf2906121e24ef6412509098c203c180d745777dd0",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9898cc0e7a927b935b24203d50b69997722111759f8dae9af1e9464c52ed64a7",
+          "review": "../mom-rest-control-visual-review/sheet-19.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "f95aac7cc67095efb73a4ae0b9ee5dc9518b86f20195158e860fce9621ec483a",
+          "review": "../mom-rest-control-visual-review/sheet-19.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-note-boundary-more-return-393-1x.png",
+      "sha256": "6ac33e6dd952b54bfe0bbfa4209df0bf816602f324b0120ff7730cb4d19cfda7",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "f3c49068f287b436aca5535634e7bf245847c3c294038c70cc0fc5537f4560a7",
+          "review": "../mom-rest-control-visual-review/sheet-19.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "ae62a60cadfc8bfb09e3e94acb0dc8f7d481c4c260eae5960e33ebdc5f0799db",
+          "review": "../mom-rest-control-visual-review/sheet-20.png#tile-0"
+        }
+      ]
+    }
+  ],
+  "unique_segments": 256,
+  "new_segments": 219,
+  "new_sheets": 37
+}

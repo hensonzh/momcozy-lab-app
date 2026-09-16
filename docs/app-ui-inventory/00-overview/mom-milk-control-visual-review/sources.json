@@ -1,0 +1,2714 @@
+{
+  "method": "full-width continuous 650px strips; byte-identical decoded pixels reference previously reviewed Rest/Body/Mood or one new lactation tile",
+  "sources": [
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-cancel-confirm-320-2x.png",
+      "sha256": "0e36ded7b1cb49094e5b85ed042c495a055580532dbe2787be20925f979a06f7",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6db5e8b962fae2ae29c5e95698e228468e3a78752298fdfac42939585c834c0c",
+          "review": "sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "7c71bac4ffe8307a6e7b36a6864599216badf6723572f47cb1a07158099e9d54",
+          "review": "sheet-01.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-cancel-confirm-393-1x.png",
+      "sha256": "104a9a8861ac14825ea473fc05d140aaf6872bfff8f500b3ee746cb9b7963b7d",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ef24f87c090d7b1a8f3b3872958bd19a619a4b8e653d7234a266805842266334",
+          "review": "sheet-01.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "7d88042768aae731867cc678ae020487043a9d6a717807efe4a56ec936a50bfe",
+          "review": "sheet-01.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-cancel-return-history-320-2x.long.png",
+      "sha256": "f3c2670d3cf9526d9fde7a74481e8e8d8b992ff3eb43e5e69fc2014c5f9fa1f9",
+      "width": 320,
+      "height": 1218,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c3eef71e185b4b875d7db2950822ba03eea53836fc2e3fc92d5e4683b686f707",
+          "review": "sheet-01.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1218,
+          "pixel_sha256": "882ff96c1d69fd8b354a36c42178fc6431e164d8cc12c57e633e9bb5a7e8e37f",
+          "review": "sheet-01.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-cancel-return-history-320-2x.png",
+      "sha256": "bf169f7b98a1c338f900988596448b96a16fbd3734efb8832c001a07f4bcd91a",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c3eef71e185b4b875d7db2950822ba03eea53836fc2e3fc92d5e4683b686f707",
+          "review": "sheet-01.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a1d5904a839059387c27186fea45969a2113f3392e5d32b3fbde01903eed371e",
+          "review": "sheet-02.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-cancel-return-history-393-1x.long.png",
+      "sha256": "c0c192234cad155c134d2b07ddf96876a653110c726802fa514a1c5f014f7f69",
+      "width": 393,
+      "height": 920,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "493e5c4a05ab837dab04c67144e6d00d18b614d19fe812380e3258bd91e1c6b9",
+          "review": "sheet-02.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 920,
+          "pixel_sha256": "d360ad7515e72caf7bf244f8eb6f32c4e2f92e9813626d1c648fcfaa0cb3162e",
+          "review": "sheet-02.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-cancel-return-history-393-1x.png",
+      "sha256": "dd259504d4211b55abf3446cfbed68264e60962d8b9f17b4df1f1e82fc3282d2",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "493e5c4a05ab837dab04c67144e6d00d18b614d19fe812380e3258bd91e1c6b9",
+          "review": "sheet-02.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "e5abcd8f2a9eef00bafa49136bad8e5da745bf293d8f3f01e407a77d3e7bf0bc",
+          "review": "sheet-02.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-comfort-comfortable-320-2x.long.png",
+      "sha256": "6e2f1bcdd626f78f2028946edc8f927ecd6465ee8c85914a815098c832ec1b33",
+      "width": 320,
+      "height": 1394,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9c7916379d2c8a74fc5d89df09f060f906806d162ba1aa348d2a9006b4fe7f3e",
+          "review": "sheet-02.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "3d929a0109f8e254a775a00fa9e7220344d3668aede78b76dbdd5b990d1cb933",
+          "review": "sheet-02.png#tile-5"
+        },
+        {
+          "y0": 1300,
+          "y1": 1394,
+          "pixel_sha256": "030745e998b7f3c5dd55d4857d7cb7fe481d416025669280fb0cd1a4b88f9418",
+          "review": "sheet-03.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-comfort-comfortable-320-2x.png",
+      "sha256": "bf1c9151abc96bb4b38056d730309a45baea0366da8d257f98d186eba149dd96",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "58092c2726ba5ebdf901208c60c14a5383b9b03fc43a824fe22de8a00faabb9b",
+          "review": "sheet-03.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2f24c8893f60e92d04b63288bb0eb8c6d8675c50cc93d10e92065f134755ec39",
+          "review": "sheet-03.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-comfort-comfortable-393-1x.long.png",
+      "sha256": "f06fabec0ab6f85e0cc564bf8ec281fd31256a14c7fccf21f62a1ca55fbb12ca",
+      "width": 393,
+      "height": 1090,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "279615d2137da4f29821c3253d52ff7b791e28d5987a4e5eaf02b6daa69ea7db",
+          "review": "sheet-03.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1090,
+          "pixel_sha256": "bd8ba69d8af1a6fffd91b3a1178b66cc1c7fbbd192030699b4ffc2f4fe6f1a11",
+          "review": "sheet-03.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-comfort-comfortable-393-1x.png",
+      "sha256": "a18014649c4de89a95ea5c105139465a649eace86c28178d314a1849514dea81",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "40137f05a223db7af5b66fbdb4d3201b5d818609c3871d52a332082b58fd4b11",
+          "review": "sheet-03.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3760bc361bc74d0611c702dfc2bbc9c9403cff78166e71a4572bacd2ffdd00e0",
+          "review": "sheet-04.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-comfort-comfortable-cleared-320-2x.long.png",
+      "sha256": "e55f3f4cf89dce3f3eb48f88414b86cfe61f2de850ed5e0976466ddd5f5624bd",
+      "width": 320,
+      "height": 1394,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9c7916379d2c8a74fc5d89df09f060f906806d162ba1aa348d2a9006b4fe7f3e",
+          "review": "sheet-02.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "7f3daf61e5e388c66dcaa5303b8df8f565bdfef35c7b4a67258f3a5e156e1b2b",
+          "review": "sheet-04.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1394,
+          "pixel_sha256": "030745e998b7f3c5dd55d4857d7cb7fe481d416025669280fb0cd1a4b88f9418",
+          "review": "sheet-03.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-comfort-comfortable-cleared-320-2x.png",
+      "sha256": "ce9899d609a4261d7e050c7a6fc1710da769fb72dca933c0029e5669a241f546",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "03fbd995c9b0d3dbca716a9e095860cdd5bcfe8825f0e60ec67d80d375a305bc",
+          "review": "sheet-04.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2f24c8893f60e92d04b63288bb0eb8c6d8675c50cc93d10e92065f134755ec39",
+          "review": "sheet-03.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-comfort-comfortable-cleared-393-1x.long.png",
+      "sha256": "3777dc609acea8436d59cc52dcd94f7f28defd7f52babc51f49bdbab85fca0f5",
+      "width": 393,
+      "height": 1090,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "78647830368fda70b919540211cb4fe001e9e347b4b34261a256b730ff6dd611",
+          "review": "sheet-04.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1090,
+          "pixel_sha256": "958dff64f82a9c9c76a78ec89f53fd528927845e5d3b7bf884c49c9cd0c49d4c",
+          "review": "sheet-04.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-comfort-comfortable-cleared-393-1x.png",
+      "sha256": "827ad48eff4eaf07bf88ec0fbf62a2a6ccad5afd3fd3940cf57c21b707cec02a",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "56cbb3661b3fe78aee7750a015ed913935bdfdf15e4f59021e38a2a923b5d648",
+          "review": "sheet-04.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3760bc361bc74d0611c702dfc2bbc9c9403cff78166e71a4572bacd2ffdd00e0",
+          "review": "sheet-04.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-comfort-full-320-2x.long.png",
+      "sha256": "28597d2b52449e98cd3f95b1aab32d7239c4692beb2aba2f0a63767a5dc98eca",
+      "width": 320,
+      "height": 1394,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9c7916379d2c8a74fc5d89df09f060f906806d162ba1aa348d2a9006b4fe7f3e",
+          "review": "sheet-02.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "ef4ff90b64b00e6006efe5a7f614b35504871e8bd8b1279d5c46853989195f1f",
+          "review": "sheet-05.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1394,
+          "pixel_sha256": "030745e998b7f3c5dd55d4857d7cb7fe481d416025669280fb0cd1a4b88f9418",
+          "review": "sheet-03.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-comfort-full-320-2x.png",
+      "sha256": "03217a5aaef12de577f6c23c761de38e1893a0b6085afb19ca346381da6cbee3",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "128e5fcdcde9ca5cf901ef04671106c8adbe5a1f8b58a117646e0e1977b9a66d",
+          "review": "sheet-05.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2f24c8893f60e92d04b63288bb0eb8c6d8675c50cc93d10e92065f134755ec39",
+          "review": "sheet-03.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-comfort-full-393-1x.long.png",
+      "sha256": "fd730ae8ee7dfc5c66598e7b40c0b49f8c0b14dc91f112e420a3811d5b3964bf",
+      "width": 393,
+      "height": 1090,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "279615d2137da4f29821c3253d52ff7b791e28d5987a4e5eaf02b6daa69ea7db",
+          "review": "sheet-03.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1090,
+          "pixel_sha256": "719e50d8bbe67226fa5a393f7754758db1d7b18466b30559839c95ea0e2a95d3",
+          "review": "sheet-05.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-comfort-full-393-1x.png",
+      "sha256": "c3457fda83cb7300c6a9a6d9d1028d99e6bb537c283bb25306ff4988fe2bb5ab",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "76bf68c4c64ddb925d4e6c68b3bfa9bd9241eec76e11e99b4478553e87d46cdc",
+          "review": "sheet-05.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3760bc361bc74d0611c702dfc2bbc9c9403cff78166e71a4572bacd2ffdd00e0",
+          "review": "sheet-04.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-comfort-full-cleared-320-2x.long.png",
+      "sha256": "e55f3f4cf89dce3f3eb48f88414b86cfe61f2de850ed5e0976466ddd5f5624bd",
+      "width": 320,
+      "height": 1394,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9c7916379d2c8a74fc5d89df09f060f906806d162ba1aa348d2a9006b4fe7f3e",
+          "review": "sheet-02.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "7f3daf61e5e388c66dcaa5303b8df8f565bdfef35c7b4a67258f3a5e156e1b2b",
+          "review": "sheet-04.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1394,
+          "pixel_sha256": "030745e998b7f3c5dd55d4857d7cb7fe481d416025669280fb0cd1a4b88f9418",
+          "review": "sheet-03.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-comfort-full-cleared-320-2x.png",
+      "sha256": "ce9899d609a4261d7e050c7a6fc1710da769fb72dca933c0029e5669a241f546",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "03fbd995c9b0d3dbca716a9e095860cdd5bcfe8825f0e60ec67d80d375a305bc",
+          "review": "sheet-04.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2f24c8893f60e92d04b63288bb0eb8c6d8675c50cc93d10e92065f134755ec39",
+          "review": "sheet-03.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-comfort-full-cleared-393-1x.long.png",
+      "sha256": "3777dc609acea8436d59cc52dcd94f7f28defd7f52babc51f49bdbab85fca0f5",
+      "width": 393,
+      "height": 1090,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "78647830368fda70b919540211cb4fe001e9e347b4b34261a256b730ff6dd611",
+          "review": "sheet-04.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1090,
+          "pixel_sha256": "958dff64f82a9c9c76a78ec89f53fd528927845e5d3b7bf884c49c9cd0c49d4c",
+          "review": "sheet-04.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-comfort-full-cleared-393-1x.png",
+      "sha256": "827ad48eff4eaf07bf88ec0fbf62a2a6ccad5afd3fd3940cf57c21b707cec02a",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "56cbb3661b3fe78aee7750a015ed913935bdfdf15e4f59021e38a2a923b5d648",
+          "review": "sheet-04.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3760bc361bc74d0611c702dfc2bbc9c9403cff78166e71a4572bacd2ffdd00e0",
+          "review": "sheet-04.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-comfort-painful-320-2x.long.png",
+      "sha256": "e82297abf42fed7ec19ba04e616f123761a55f34a8617327c1a92245744f2bd6",
+      "width": 320,
+      "height": 1394,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9c7916379d2c8a74fc5d89df09f060f906806d162ba1aa348d2a9006b4fe7f3e",
+          "review": "sheet-02.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "59ed43dd657ce37dabcd0277a6b0df997092a5358a4360cf27dca86791edce7f",
+          "review": "sheet-05.png#tile-4"
+        },
+        {
+          "y0": 1300,
+          "y1": 1394,
+          "pixel_sha256": "030745e998b7f3c5dd55d4857d7cb7fe481d416025669280fb0cd1a4b88f9418",
+          "review": "sheet-03.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-comfort-painful-320-2x.png",
+      "sha256": "936445249a2cd7ae9085f826487be9c06653c75a25e3ecab36acc46417b47a24",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9564f126a2403856f474681da4087fc51c0ff7a4847239b2c3b2f824f618dc3d",
+          "review": "sheet-05.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2f24c8893f60e92d04b63288bb0eb8c6d8675c50cc93d10e92065f134755ec39",
+          "review": "sheet-03.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-comfort-painful-393-1x.long.png",
+      "sha256": "c032a24d25b9de2969a8d14f2875764e9521883a193b68d6ae4bb6593d5ead05",
+      "width": 393,
+      "height": 1090,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "279615d2137da4f29821c3253d52ff7b791e28d5987a4e5eaf02b6daa69ea7db",
+          "review": "sheet-03.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1090,
+          "pixel_sha256": "e405ff706b065756cde2df14d9033310baf19368091ba5fbe171c6d4dd16c127",
+          "review": "sheet-06.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-comfort-painful-393-1x.png",
+      "sha256": "b64a2344ebcdd5b111c250870b1317a75438e9725bb75860360c35222de2d04d",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "10af20a1c517d85fadfb7d06adaf690513569a47506218cea625112de7148023",
+          "review": "sheet-06.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3760bc361bc74d0611c702dfc2bbc9c9403cff78166e71a4572bacd2ffdd00e0",
+          "review": "sheet-04.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-comfort-painful-cleared-320-2x.long.png",
+      "sha256": "e55f3f4cf89dce3f3eb48f88414b86cfe61f2de850ed5e0976466ddd5f5624bd",
+      "width": 320,
+      "height": 1394,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9c7916379d2c8a74fc5d89df09f060f906806d162ba1aa348d2a9006b4fe7f3e",
+          "review": "sheet-02.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "7f3daf61e5e388c66dcaa5303b8df8f565bdfef35c7b4a67258f3a5e156e1b2b",
+          "review": "sheet-04.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1394,
+          "pixel_sha256": "030745e998b7f3c5dd55d4857d7cb7fe481d416025669280fb0cd1a4b88f9418",
+          "review": "sheet-03.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-comfort-painful-cleared-320-2x.png",
+      "sha256": "ce9899d609a4261d7e050c7a6fc1710da769fb72dca933c0029e5669a241f546",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "03fbd995c9b0d3dbca716a9e095860cdd5bcfe8825f0e60ec67d80d375a305bc",
+          "review": "sheet-04.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2f24c8893f60e92d04b63288bb0eb8c6d8675c50cc93d10e92065f134755ec39",
+          "review": "sheet-03.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-comfort-painful-cleared-393-1x.long.png",
+      "sha256": "3777dc609acea8436d59cc52dcd94f7f28defd7f52babc51f49bdbab85fca0f5",
+      "width": 393,
+      "height": 1090,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "78647830368fda70b919540211cb4fe001e9e347b4b34261a256b730ff6dd611",
+          "review": "sheet-04.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1090,
+          "pixel_sha256": "958dff64f82a9c9c76a78ec89f53fd528927845e5d3b7bf884c49c9cd0c49d4c",
+          "review": "sheet-04.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-comfort-painful-cleared-393-1x.png",
+      "sha256": "827ad48eff4eaf07bf88ec0fbf62a2a6ccad5afd3fd3940cf57c21b707cec02a",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "56cbb3661b3fe78aee7750a015ed913935bdfdf15e4f59021e38a2a923b5d648",
+          "review": "sheet-04.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3760bc361bc74d0611c702dfc2bbc9c9403cff78166e71a4572bacd2ffdd00e0",
+          "review": "sheet-04.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-comfort-restored-320-2x.long.png",
+      "sha256": "6e2f1bcdd626f78f2028946edc8f927ecd6465ee8c85914a815098c832ec1b33",
+      "width": 320,
+      "height": 1394,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9c7916379d2c8a74fc5d89df09f060f906806d162ba1aa348d2a9006b4fe7f3e",
+          "review": "sheet-02.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "3d929a0109f8e254a775a00fa9e7220344d3668aede78b76dbdd5b990d1cb933",
+          "review": "sheet-02.png#tile-5"
+        },
+        {
+          "y0": 1300,
+          "y1": 1394,
+          "pixel_sha256": "030745e998b7f3c5dd55d4857d7cb7fe481d416025669280fb0cd1a4b88f9418",
+          "review": "sheet-03.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-comfort-restored-320-2x.png",
+      "sha256": "bf1c9151abc96bb4b38056d730309a45baea0366da8d257f98d186eba149dd96",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "58092c2726ba5ebdf901208c60c14a5383b9b03fc43a824fe22de8a00faabb9b",
+          "review": "sheet-03.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2f24c8893f60e92d04b63288bb0eb8c6d8675c50cc93d10e92065f134755ec39",
+          "review": "sheet-03.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-comfort-restored-393-1x.long.png",
+      "sha256": "f06fabec0ab6f85e0cc564bf8ec281fd31256a14c7fccf21f62a1ca55fbb12ca",
+      "width": 393,
+      "height": 1090,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "279615d2137da4f29821c3253d52ff7b791e28d5987a4e5eaf02b6daa69ea7db",
+          "review": "sheet-03.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1090,
+          "pixel_sha256": "bd8ba69d8af1a6fffd91b3a1178b66cc1c7fbbd192030699b4ffc2f4fe6f1a11",
+          "review": "sheet-03.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-comfort-restored-393-1x.png",
+      "sha256": "a18014649c4de89a95ea5c105139465a649eace86c28178d314a1849514dea81",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "40137f05a223db7af5b66fbdb4d3201b5d818609c3871d52a332082b58fd4b11",
+          "review": "sheet-03.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3760bc361bc74d0611c702dfc2bbc9c9403cff78166e71a4572bacd2ffdd00e0",
+          "review": "sheet-04.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-comfort-uncertain-320-2x.long.png",
+      "sha256": "b7cfa1af57d1e8a717890bb10aec8bc1670db53e57749b3b4f60f0e36f6ca4cf",
+      "width": 320,
+      "height": 1394,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9c7916379d2c8a74fc5d89df09f060f906806d162ba1aa348d2a9006b4fe7f3e",
+          "review": "sheet-02.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "14378ae4770c74db31036e3e8d7eb6115c18b7b186ad27f4bd8546662e24c46a",
+          "review": "sheet-06.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1394,
+          "pixel_sha256": "030745e998b7f3c5dd55d4857d7cb7fe481d416025669280fb0cd1a4b88f9418",
+          "review": "sheet-03.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-comfort-uncertain-320-2x.png",
+      "sha256": "34502e8f18471596baf0dd7d918ff6dad5e6456731df0a377163b2ac5f1dc0bf",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2741f23a18f44f363fccb04631dbe9843d42df50f0730da88fb83096d93a0266",
+          "review": "sheet-06.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2f24c8893f60e92d04b63288bb0eb8c6d8675c50cc93d10e92065f134755ec39",
+          "review": "sheet-03.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-comfort-uncertain-393-1x.long.png",
+      "sha256": "ffbacc5b4ad616ca0d64e796285b07143da848ff0b89a1d995be7609b3bfb7ac",
+      "width": 393,
+      "height": 1090,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "279615d2137da4f29821c3253d52ff7b791e28d5987a4e5eaf02b6daa69ea7db",
+          "review": "sheet-03.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1090,
+          "pixel_sha256": "9493a728eb957f7d58ce0a9a09151db163d7c7943f70ea4b84382d15d53362de",
+          "review": "sheet-06.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-comfort-uncertain-393-1x.png",
+      "sha256": "170f9d54be82b8b601c99ade65a5d0c5d740e013485aaa17d3d43f3db5dc2c5e",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b7e7b543272c38f10492e4edff982a63399ced3f7b02388b3d3826b2eb5b353f",
+          "review": "sheet-06.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3760bc361bc74d0611c702dfc2bbc9c9403cff78166e71a4572bacd2ffdd00e0",
+          "review": "sheet-04.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-comfort-uncertain-cleared-320-2x.long.png",
+      "sha256": "e55f3f4cf89dce3f3eb48f88414b86cfe61f2de850ed5e0976466ddd5f5624bd",
+      "width": 320,
+      "height": 1394,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9c7916379d2c8a74fc5d89df09f060f906806d162ba1aa348d2a9006b4fe7f3e",
+          "review": "sheet-02.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "7f3daf61e5e388c66dcaa5303b8df8f565bdfef35c7b4a67258f3a5e156e1b2b",
+          "review": "sheet-04.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1394,
+          "pixel_sha256": "030745e998b7f3c5dd55d4857d7cb7fe481d416025669280fb0cd1a4b88f9418",
+          "review": "sheet-03.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-comfort-uncertain-cleared-320-2x.png",
+      "sha256": "ce9899d609a4261d7e050c7a6fc1710da769fb72dca933c0029e5669a241f546",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "03fbd995c9b0d3dbca716a9e095860cdd5bcfe8825f0e60ec67d80d375a305bc",
+          "review": "sheet-04.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2f24c8893f60e92d04b63288bb0eb8c6d8675c50cc93d10e92065f134755ec39",
+          "review": "sheet-03.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-comfort-uncertain-cleared-393-1x.long.png",
+      "sha256": "3777dc609acea8436d59cc52dcd94f7f28defd7f52babc51f49bdbab85fca0f5",
+      "width": 393,
+      "height": 1090,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "78647830368fda70b919540211cb4fe001e9e347b4b34261a256b730ff6dd611",
+          "review": "sheet-04.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1090,
+          "pixel_sha256": "958dff64f82a9c9c76a78ec89f53fd528927845e5d3b7bf884c49c9cd0c49d4c",
+          "review": "sheet-04.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-comfort-uncertain-cleared-393-1x.png",
+      "sha256": "827ad48eff4eaf07bf88ec0fbf62a2a6ccad5afd3fd3940cf57c21b707cec02a",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "56cbb3661b3fe78aee7750a015ed913935bdfdf15e4f59021e38a2a923b5d648",
+          "review": "sheet-04.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3760bc361bc74d0611c702dfc2bbc9c9403cff78166e71a4572bacd2ffdd00e0",
+          "review": "sheet-04.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-history-320-2x.long.png",
+      "sha256": "f3c2670d3cf9526d9fde7a74481e8e8d8b992ff3eb43e5e69fc2014c5f9fa1f9",
+      "width": 320,
+      "height": 1218,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c3eef71e185b4b875d7db2950822ba03eea53836fc2e3fc92d5e4683b686f707",
+          "review": "sheet-01.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1218,
+          "pixel_sha256": "882ff96c1d69fd8b354a36c42178fc6431e164d8cc12c57e633e9bb5a7e8e37f",
+          "review": "sheet-01.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-history-320-2x.png",
+      "sha256": "bf169f7b98a1c338f900988596448b96a16fbd3734efb8832c001a07f4bcd91a",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c3eef71e185b4b875d7db2950822ba03eea53836fc2e3fc92d5e4683b686f707",
+          "review": "sheet-01.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a1d5904a839059387c27186fea45969a2113f3392e5d32b3fbde01903eed371e",
+          "review": "sheet-02.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-history-393-1x.long.png",
+      "sha256": "c0c192234cad155c134d2b07ddf96876a653110c726802fa514a1c5f014f7f69",
+      "width": 393,
+      "height": 920,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "493e5c4a05ab837dab04c67144e6d00d18b614d19fe812380e3258bd91e1c6b9",
+          "review": "sheet-02.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 920,
+          "pixel_sha256": "d360ad7515e72caf7bf244f8eb6f32c4e2f92e9813626d1c648fcfaa0cb3162e",
+          "review": "sheet-02.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-history-393-1x.png",
+      "sha256": "dd259504d4211b55abf3446cfbed68264e60962d8b9f17b4df1f1e82fc3282d2",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "493e5c4a05ab837dab04c67144e6d00d18b614d19fe812380e3258bd91e1c6b9",
+          "review": "sheet-02.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "e5abcd8f2a9eef00bafa49136bad8e5da745bf293d8f3f01e407a77d3e7bf0bc",
+          "review": "sheet-02.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-history-reopened-320-2x.long.png",
+      "sha256": "2e3314a463e420a9fa1f97d410ee083cd3685705b7905d259acccdadfe58ae4d",
+      "width": 320,
+      "height": 1177,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "8b7d8a0cd7def1f0ce5f8e5e2de00f00be8ee48df7392d302dc6875ebe8d9f03",
+          "review": "sheet-07.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1177,
+          "pixel_sha256": "697bbce149272ebbf02e4e2b51d738b2daa9da0b1196c0706adee28b7ba245c6",
+          "review": "sheet-07.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-history-reopened-320-2x.png",
+      "sha256": "441dae8cf6e83d958ec459e91f03317be44cd8274da74c1b6268db44b48de5e9",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "8b7d8a0cd7def1f0ce5f8e5e2de00f00be8ee48df7392d302dc6875ebe8d9f03",
+          "review": "sheet-07.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "540c9d3b906fbca1247f2aae921ba2bf980992eaf5c6c88d7ac8dc6f64ddb607",
+          "review": "sheet-07.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-history-reopened-393-1x.long.png",
+      "sha256": "995863e769d08308868f63650c536ebffaf05a6cc1f454f3183f7c63de81e130",
+      "width": 393,
+      "height": 925,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "8521c319adef9111c79a8bb209d3ca4c17d7fdba8c9072db5ba735ebfe57a447",
+          "review": "sheet-07.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 925,
+          "pixel_sha256": "165721e25c68e67335acd90d32c3b9d6f4d71bb506bacfe8d072c63a3b611208",
+          "review": "sheet-07.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-history-reopened-393-1x.png",
+      "sha256": "1f27ce2f65749317a455959820920dff7a60a51b1be8ab065e750bca08a6a412",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "8521c319adef9111c79a8bb209d3ca4c17d7fdba8c9072db5ba735ebfe57a447",
+          "review": "sheet-07.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "0372e427e85be80965a4148daafeec0913724658de99820f63d7377e072c14b1",
+          "review": "sheet-07.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-home-entry-320-2x.long.png",
+      "sha256": "b29f1f9dc909ca023dcd2865b0d4424a7485a4fb1dd4d05f54d8ee61e6cf46ef",
+      "width": 320,
+      "height": 1939,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a6aa9ef781460e5016527f099324419f84c6e4f14cdb26c410651cd7359b41ef",
+          "review": "../mom-rest-control-visual-review/sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "0edf1d289b2e804b112ca91367c51524ae8a6a6a4684a4fdcad651b0ae8de7ad",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1939,
+          "pixel_sha256": "8824f3d60a1ba788460adc4d5731a39ee81dafb5cb1f7d7112dd43123bbe2812",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-home-entry-320-2x.png",
+      "sha256": "6b61a480f7a3fd5ddb29685624aed748a99b94ad55016153855b11225ef09868",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a6aa9ef781460e5016527f099324419f84c6e4f14cdb26c410651cd7359b41ef",
+          "review": "../mom-rest-control-visual-review/sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1462d46c4861c29041d879736402097e4fd061fcb6e577142cd6e832cb70fae0",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-home-entry-393-1x.long.png",
+      "sha256": "0a4e3294f0ff67f0d7ed84ee3eacb393b50571fb4db300a7d15899ba9359a330",
+      "width": 393,
+      "height": 917,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa661999d6307948942c23dc2e7dad221367a614b3ae09dd12dec24bc67fec6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 917,
+          "pixel_sha256": "134109b5afc9a0d972ecc00b197fb963d8131bfc37dbfad2a4c51a0a091a86ad",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-home-entry-393-1x.png",
+      "sha256": "be291808401e7f353b8f14552b0df4a698f3edd191e5e2d770c66c2e129fc145",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa661999d6307948942c23dc2e7dad221367a614b3ae09dd12dec24bc67fec6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3208ac8b3b1d4a7464bc46ef7618c8e19bd85dee870d86c1847457571b6198a6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-home-nursing-only-320-2x.long.png",
+      "sha256": "b4af5aabfa120d1f10d2090ccb57b01185fb21eb718c986713e27760d9a6b432",
+      "width": 320,
+      "height": 2036,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b1f7a808bfb15121c031df895f5bfbb79ca22d2e2ae5c3402c20aa884c7e9db9",
+          "review": "../mom-rest-control-visual-review/sheet-16.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "69f69b61665820ffc1f7dd4b605b09f11b6878d24a719547e04099b9681b01c8",
+          "review": "sheet-08.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "628eecf5373a922604d38f4cf0b1dcf34575b8f4193884486214437ea9c32753",
+          "review": "sheet-08.png#tile-1"
+        },
+        {
+          "y0": 1950,
+          "y1": 2036,
+          "pixel_sha256": "e42d00455823ba2b854353c61be92b99166683ccd99538d56aaa795574c30bae",
+          "review": "sheet-08.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-home-nursing-only-320-2x.png",
+      "sha256": "47bd10b4150e13eadee63f2a0099850edad8c906c5d3e61d6a8640f9da219298",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "31c9cb144ea4946435d71540ffab996e5781a3578fda4f21a43c0dcfefde62aa",
+          "review": "sheet-08.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "083fa27e88ce35bc110ef49bb6e88735be57bc36209a678c4ee5543a7b2ac4c3",
+          "review": "sheet-08.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-home-nursing-only-393-1x.long.png",
+      "sha256": "d6c7a342735465b7255902900177c9f444492833d06d08445db10b6076e3be2a",
+      "width": 393,
+      "height": 920,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a62f1198a5e13f5bf9eddf07d38442970be5f3ae8544312754d09756675197d6",
+          "review": "sheet-08.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 920,
+          "pixel_sha256": "5114e61c90da9079afee7e92bb8d1e1588f7d4ff461871c84ba4a415660ed95d",
+          "review": "../mom-rest-control-visual-review/sheet-17.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-home-nursing-only-393-1x.png",
+      "sha256": "6437401f725732fca4607a12074f832b5906936edb30103cebab1a385aa215b8",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "5df7500639311aff22f63e6274d65c104290d81bf6c4134dc760bef06c81b5e8",
+          "review": "sheet-09.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "01ad37a83090b22440e753afe9b5efb12045ec1509aa7b52fb6caa7377abd650",
+          "review": "../mom-rest-control-visual-review/sheet-17.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-home-return-320-2x.long.png",
+      "sha256": "b4af5aabfa120d1f10d2090ccb57b01185fb21eb718c986713e27760d9a6b432",
+      "width": 320,
+      "height": 2036,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b1f7a808bfb15121c031df895f5bfbb79ca22d2e2ae5c3402c20aa884c7e9db9",
+          "review": "../mom-rest-control-visual-review/sheet-16.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "69f69b61665820ffc1f7dd4b605b09f11b6878d24a719547e04099b9681b01c8",
+          "review": "sheet-08.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "628eecf5373a922604d38f4cf0b1dcf34575b8f4193884486214437ea9c32753",
+          "review": "sheet-08.png#tile-1"
+        },
+        {
+          "y0": 1950,
+          "y1": 2036,
+          "pixel_sha256": "e42d00455823ba2b854353c61be92b99166683ccd99538d56aaa795574c30bae",
+          "review": "sheet-08.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-home-return-320-2x.png",
+      "sha256": "4888dc2ecf32d4de64d305659102653d2cdc823f73e1bbfee90884f83cfca1a8",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b1f7a808bfb15121c031df895f5bfbb79ca22d2e2ae5c3402c20aa884c7e9db9",
+          "review": "../mom-rest-control-visual-review/sheet-16.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "4c9b3bb0e09d0664cf2d56c6fcf545fc1eb3e9391d9e4c85e5955b3dcd6b2f4d",
+          "review": "sheet-09.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-home-return-393-1x.long.png",
+      "sha256": "d6c7a342735465b7255902900177c9f444492833d06d08445db10b6076e3be2a",
+      "width": 393,
+      "height": 920,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a62f1198a5e13f5bf9eddf07d38442970be5f3ae8544312754d09756675197d6",
+          "review": "sheet-08.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 920,
+          "pixel_sha256": "5114e61c90da9079afee7e92bb8d1e1588f7d4ff461871c84ba4a415660ed95d",
+          "review": "../mom-rest-control-visual-review/sheet-17.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-home-return-393-1x.png",
+      "sha256": "5316a6610d800324985798f632d200312e3d2a08df4d969de06761ce1b837563",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a62f1198a5e13f5bf9eddf07d38442970be5f3ae8544312754d09756675197d6",
+          "review": "sheet-08.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "0c8ec9c8cc63414ace7bfd3ae90bb0ac14ad8793ba284554a9edb1f6ea681384",
+          "review": "sheet-09.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-more-return-320-2x.png",
+      "sha256": "feee4d506ac1bef973428daf2906121e24ef6412509098c203c180d745777dd0",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9898cc0e7a927b935b24203d50b69997722111759f8dae9af1e9464c52ed64a7",
+          "review": "../mom-rest-control-visual-review/sheet-19.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "f95aac7cc67095efb73a4ae0b9ee5dc9518b86f20195158e860fce9621ec483a",
+          "review": "../mom-rest-control-visual-review/sheet-19.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-more-return-393-1x.png",
+      "sha256": "6ac33e6dd952b54bfe0bbfa4209df0bf816602f324b0120ff7730cb4d19cfda7",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "f3c49068f287b436aca5535634e7bf245847c3c294038c70cc0fc5537f4560a7",
+          "review": "../mom-rest-control-visual-review/sheet-19.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "ae62a60cadfc8bfb09e3e94acb0dc8f7d481c4c260eae5960e33ebdc5f0799db",
+          "review": "../mom-rest-control-visual-review/sheet-20.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-note-cleared-320-2x.long.png",
+      "sha256": "6e2f1bcdd626f78f2028946edc8f927ecd6465ee8c85914a815098c832ec1b33",
+      "width": 320,
+      "height": 1394,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9c7916379d2c8a74fc5d89df09f060f906806d162ba1aa348d2a9006b4fe7f3e",
+          "review": "sheet-02.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "3d929a0109f8e254a775a00fa9e7220344d3668aede78b76dbdd5b990d1cb933",
+          "review": "sheet-02.png#tile-5"
+        },
+        {
+          "y0": 1300,
+          "y1": 1394,
+          "pixel_sha256": "030745e998b7f3c5dd55d4857d7cb7fe481d416025669280fb0cd1a4b88f9418",
+          "review": "sheet-03.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-note-cleared-320-2x.png",
+      "sha256": "bf1c9151abc96bb4b38056d730309a45baea0366da8d257f98d186eba149dd96",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "58092c2726ba5ebdf901208c60c14a5383b9b03fc43a824fe22de8a00faabb9b",
+          "review": "sheet-03.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2f24c8893f60e92d04b63288bb0eb8c6d8675c50cc93d10e92065f134755ec39",
+          "review": "sheet-03.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-note-cleared-393-1x.long.png",
+      "sha256": "f06fabec0ab6f85e0cc564bf8ec281fd31256a14c7fccf21f62a1ca55fbb12ca",
+      "width": 393,
+      "height": 1090,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "279615d2137da4f29821c3253d52ff7b791e28d5987a4e5eaf02b6daa69ea7db",
+          "review": "sheet-03.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1090,
+          "pixel_sha256": "bd8ba69d8af1a6fffd91b3a1178b66cc1c7fbbd192030699b4ffc2f4fe6f1a11",
+          "review": "sheet-03.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-note-cleared-393-1x.png",
+      "sha256": "a18014649c4de89a95ea5c105139465a649eace86c28178d314a1849514dea81",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "40137f05a223db7af5b66fbdb4d3201b5d818609c3871d52a332082b58fd4b11",
+          "review": "sheet-03.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3760bc361bc74d0611c702dfc2bbc9c9403cff78166e71a4572bacd2ffdd00e0",
+          "review": "sheet-04.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-note-filled-320-2x.long.png",
+      "sha256": "11c7010100086c67b99d6a5a11de9dd3b245cbe697ed535d1b54833ef9dd1748",
+      "width": 320,
+      "height": 1394,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9c7916379d2c8a74fc5d89df09f060f906806d162ba1aa348d2a9006b4fe7f3e",
+          "review": "sheet-02.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "0b382d1a4e754f0c8a0cb04ab30a1fd6193c37bf155b0f0affe152ff4f44e369",
+          "review": "sheet-09.png#tile-3"
+        },
+        {
+          "y0": 1300,
+          "y1": 1394,
+          "pixel_sha256": "030745e998b7f3c5dd55d4857d7cb7fe481d416025669280fb0cd1a4b88f9418",
+          "review": "sheet-03.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-note-filled-320-2x.png",
+      "sha256": "cf6c07b7ef91d296109350345b5f9d78c0db960167baa1920f1d5115d080b3cd",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "f482d9c94098427b4b18167903141cde35cf385f943cdf580123fbbfb2281409",
+          "review": "sheet-09.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2f24c8893f60e92d04b63288bb0eb8c6d8675c50cc93d10e92065f134755ec39",
+          "review": "sheet-03.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-note-filled-393-1x.long.png",
+      "sha256": "2642783f4681ed09608c34afa630e26f5734c110a1550f930248e59260351df8",
+      "width": 393,
+      "height": 1090,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "279615d2137da4f29821c3253d52ff7b791e28d5987a4e5eaf02b6daa69ea7db",
+          "review": "sheet-03.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1090,
+          "pixel_sha256": "83dad6e9d065e0fddf750aa15bad78e7b1307fefe20888f6d5124a1034991155",
+          "review": "sheet-09.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-note-filled-393-1x.png",
+      "sha256": "7599a5dee38ff7c6e6542fc5357e63d8e401104e5f87f34a7225db3174c9ae35",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "96fe74acd9f1b5b5a7976bdc12dce03dc7f9df9ce55202ece81262d1f8b4156f",
+          "review": "sheet-10.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3760bc361bc74d0611c702dfc2bbc9c9403cff78166e71a4572bacd2ffdd00e0",
+          "review": "sheet-04.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-nurse-duration-320-2x.long.png",
+      "sha256": "26ed5caa639bbc24eb162cc2b36b2e70b50356b2ff3e28d38dcbe2ac1cb472eb",
+      "width": 320,
+      "height": 1028,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "4123797d01313af9b151c1efc59e325a0069f8dd08b169d46a6d885d74102937",
+          "review": "sheet-10.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1028,
+          "pixel_sha256": "0b82c90ca39e8344c93fe2d2c83efad8e35900c4bbec712b6930bcd117dd8248",
+          "review": "sheet-10.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-nurse-duration-320-2x.png",
+      "sha256": "2e132d32e13efd100583a4d2807d7639c8ec7c213404f4a63b836e728a8e5fdb",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "898dfb466b5c878bd892950c2b2ccce2e8c09bc9d65a8eb4d45a97053adf912f",
+          "review": "sheet-10.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2f24c8893f60e92d04b63288bb0eb8c6d8675c50cc93d10e92065f134755ec39",
+          "review": "sheet-03.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-nurse-duration-393-1x.png",
+      "sha256": "2d6923a3ff01f07518162fbb2adc8211d87f3f4c3372532a49aa4bf546478de6",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "cd6e533ce66c79976006613825983faffd56d06fe6902bcb8f9f6e8e65ef8e04",
+          "review": "sheet-10.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "d5f95c9b13cbe4acb534e4b5760d2af6840a7f5351ea68eff0fb0aeae0d9aa95",
+          "review": "sheet-10.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-nurse-no-duration-saved-320-2x.long.png",
+      "sha256": "cbe43a4c960c204a887ad4e48105089e5d5c87cefc9ab7f8160e833df897910b",
+      "width": 320,
+      "height": 1438,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "856a8c597db82a7d7decde0809d631ede9cc574ea4633612f02b50de3f542d24",
+          "review": "sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "109c3885b8f308eb81809e71829d3b3ada5fceffb19b37125c3d6058ba44cb99",
+          "review": "sheet-11.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1438,
+          "pixel_sha256": "3a126c95a21a9a41ab72cd1c8ea0b03a7a1bb29f574db3ef25093c985f18801d",
+          "review": "sheet-11.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-nurse-no-duration-saved-320-2x.png",
+      "sha256": "e6a543796231db990bc3fab997a7d140a3ac53bece885af23bc3f8545729614a",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "3c4ad2914ea5150837d994fb1a430689535c684680ef4d0fe9356e14cf45ad4d",
+          "review": "sheet-11.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "f5d748853c438eba1589f76c1d6ba30c220a41bff90a4ce58ea8a5509cbc6071",
+          "review": "sheet-11.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-nurse-no-duration-saved-393-1x.long.png",
+      "sha256": "1b80ca1a819d71bbed33a9552763b18b1809e4941fd26ba23d590801ef7fb1b4",
+      "width": 393,
+      "height": 992,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ff003111625af48ee68a341e6211ad8075a2b7911a3ce71c62e954062f912aee",
+          "review": "sheet-11.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 992,
+          "pixel_sha256": "da150fbd0ecfcba5180eafc9fafde7bdfb8ec2e452dfc6b33bf9fd8c4aae7a93",
+          "review": "sheet-12.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-nurse-no-duration-saved-393-1x.png",
+      "sha256": "be22f67a3bb24daf0eb0c29584cc2b9948a35cd4be9b4201dd15c41d679c677b",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "01b5ac1239176a17ad11f517ebe2cfc00f2781711987cd1b3675c5c1c06aa06e",
+          "review": "sheet-12.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "b2dd85a7c1ebbdfd2792a1af693a9c5470091ba921a13dd55ddc78f4524a93c9",
+          "review": "sheet-12.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-nurse-switch-cleared-320-2x.long.png",
+      "sha256": "51af5f07f6bdcad3416fa58a28ec07627f89c205471a3a18a43d12e9e2d1b8f5",
+      "width": 320,
+      "height": 1028,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "4123797d01313af9b151c1efc59e325a0069f8dd08b169d46a6d885d74102937",
+          "review": "sheet-10.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1028,
+          "pixel_sha256": "8505d67a3f633b7c9085a645712c3d30dbd3009d644e9c3e2cae5c3cbfbe3a7d",
+          "review": "sheet-12.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-nurse-switch-cleared-320-2x.png",
+      "sha256": "f0c0bd8da005407426dbfb1c642fd2f2e0cc814c0f23645a0a378f4879a6e5f4",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "7a01b74c7e4bb745478fed44e0fc8db50eed0d4cbe4015417152f5497962a1c4",
+          "review": "sheet-12.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2f24c8893f60e92d04b63288bb0eb8c6d8675c50cc93d10e92065f134755ec39",
+          "review": "sheet-03.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-nurse-switch-cleared-393-1x.png",
+      "sha256": "ae95148e1007e3803c96b65599e3b9c3c18d581b7d648acb5219d31e11046a56",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "f27b28d71a53d1b934a894b1c4e848173539e23bfffc6cede3d3507ed97074e0",
+          "review": "sheet-12.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "d5f95c9b13cbe4acb534e4b5760d2af6840a7f5351ea68eff0fb0aeae0d9aa95",
+          "review": "sheet-10.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-optional-collapsed-320-2x.long.png",
+      "sha256": "d0995d148e900807f63ef55e5446687609ee36a8d2904c92ba30d137c0be982a",
+      "width": 320,
+      "height": 1028,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9c7916379d2c8a74fc5d89df09f060f906806d162ba1aa348d2a9006b4fe7f3e",
+          "review": "sheet-02.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1028,
+          "pixel_sha256": "bb042af4b03e51a7e6d1748d43402f1bf556231821d643a7942f71e3a5c5cfe0",
+          "review": "sheet-13.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-optional-collapsed-320-2x.png",
+      "sha256": "c3fcde89a2c390f6e3ef3315373d663c9907d6888582e1ce3184e7d158780d81",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ec619379fe282a2ced6da3c2090396dd6bd9dfa36b3697cdf2b8a4fc34611ec2",
+          "review": "sheet-13.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2f24c8893f60e92d04b63288bb0eb8c6d8675c50cc93d10e92065f134755ec39",
+          "review": "sheet-03.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-optional-collapsed-393-1x.png",
+      "sha256": "69be322a5445e55b9f1bcfb8613dd36182ad74122a0004f1af9b4991b747dd66",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c3b43e6a58a785d57db4dad8824f46a5d1baa1f1f7a93a8fcbb2dec6f7e9ccc1",
+          "review": "sheet-13.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "d5f95c9b13cbe4acb534e4b5760d2af6840a7f5351ea68eff0fb0aeae0d9aa95",
+          "review": "sheet-10.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-optional-open-320-2x.long.png",
+      "sha256": "e55f3f4cf89dce3f3eb48f88414b86cfe61f2de850ed5e0976466ddd5f5624bd",
+      "width": 320,
+      "height": 1394,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9c7916379d2c8a74fc5d89df09f060f906806d162ba1aa348d2a9006b4fe7f3e",
+          "review": "sheet-02.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "7f3daf61e5e388c66dcaa5303b8df8f565bdfef35c7b4a67258f3a5e156e1b2b",
+          "review": "sheet-04.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1394,
+          "pixel_sha256": "030745e998b7f3c5dd55d4857d7cb7fe481d416025669280fb0cd1a4b88f9418",
+          "review": "sheet-03.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-optional-open-320-2x.png",
+      "sha256": "6c1275d6bc0b78c562b4142349383b7037802fd14906f5c74a73096d00a701aa",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9b44c0c4b384cf7d734bd06ed9221f0e97bfed093c0c29f35fef4ab0194e6eb4",
+          "review": "sheet-13.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2f24c8893f60e92d04b63288bb0eb8c6d8675c50cc93d10e92065f134755ec39",
+          "review": "sheet-03.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-optional-open-393-1x.long.png",
+      "sha256": "3777dc609acea8436d59cc52dcd94f7f28defd7f52babc51f49bdbab85fca0f5",
+      "width": 393,
+      "height": 1090,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "78647830368fda70b919540211cb4fe001e9e347b4b34261a256b730ff6dd611",
+          "review": "sheet-04.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1090,
+          "pixel_sha256": "958dff64f82a9c9c76a78ec89f53fd528927845e5d3b7bf884c49c9cd0c49d4c",
+          "review": "sheet-04.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-optional-open-393-1x.png",
+      "sha256": "32b56da49f25706aaf4d6b155ecbe53d5efcf1628ec0403859fc67d78e5ca0a3",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "78647830368fda70b919540211cb4fe001e9e347b4b34261a256b730ff6dd611",
+          "review": "sheet-04.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "ccb5099b66753ecb3a83e7cebdb79b26f1bfca3eba8493dc69cfdd48bbe19b3b",
+          "review": "sheet-13.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-pump-decimal-320-2x.long.png",
+      "sha256": "34804572ea9596bac4cf6bf85e51f4bf4c07b2aa9cc62af71149bd9d3399684d",
+      "width": 320,
+      "height": 1028,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9c7916379d2c8a74fc5d89df09f060f906806d162ba1aa348d2a9006b4fe7f3e",
+          "review": "sheet-02.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1028,
+          "pixel_sha256": "36630a478636351b2b7561ee6e5095d47926de65fb34eaa2c0a770cfc97469be",
+          "review": "sheet-13.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-pump-decimal-320-2x.png",
+      "sha256": "9fb9bf8565e971b3f6a9b3d2c4f02b88ef9724fe9c11539541bf216c9e3c7618",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9230b0020485744fcaf52565bce02805e4aaf90f699ea9eecd2f1705f143df25",
+          "review": "sheet-14.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2f24c8893f60e92d04b63288bb0eb8c6d8675c50cc93d10e92065f134755ec39",
+          "review": "sheet-03.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-pump-decimal-393-1x.png",
+      "sha256": "62b3d33fbb4d3a1860fc36164c016c62c82644a2edea308996f39e58d64c70ca",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2b5cc5e49950e5cb9f6227e26b08976d3721d59d5f05a89b3a0c3c0e45f68b19",
+          "review": "sheet-14.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "d5f95c9b13cbe4acb534e4b5760d2af6840a7f5351ea68eff0fb0aeae0d9aa95",
+          "review": "sheet-10.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-pump-empty-320-2x.long.png",
+      "sha256": "b4417f74625ca218479f09fe0ba18d454833f717283752a4309b3c57c5615b59",
+      "width": 320,
+      "height": 1028,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9c7916379d2c8a74fc5d89df09f060f906806d162ba1aa348d2a9006b4fe7f3e",
+          "review": "sheet-02.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1028,
+          "pixel_sha256": "464c796bded44cb895721abed3df145c5494aecea8aa29ef031ba98767cb6560",
+          "review": "sheet-14.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-pump-empty-320-2x.png",
+      "sha256": "9c94e2f4b0a0897cdfc1f31dad3908c688f2023c7ad103c4bc4a31c331e206a9",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "69c3ff5d35e81ee6a464cf96c75b1c1844a714c98025f26430c7051a84cf6037",
+          "review": "sheet-14.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2f24c8893f60e92d04b63288bb0eb8c6d8675c50cc93d10e92065f134755ec39",
+          "review": "sheet-03.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-pump-empty-393-1x.png",
+      "sha256": "d8ba6bcbdf9e615b1a956def2c09f4ae205ddd78448886d2259b013d2d4fbe8a",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "0f565e38d47270e3b0273117dcb3c7370636ac1871c840c8eaa978a92df67544",
+          "review": "sheet-14.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "d5f95c9b13cbe4acb534e4b5760d2af6840a7f5351ea68eff0fb0aeae0d9aa95",
+          "review": "sheet-10.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-pump-reopened-320-2x.long.png",
+      "sha256": "94bab0c915c128393dc2409c8120842a86d2796ee443e9f736fddfce25d8e535",
+      "width": 320,
+      "height": 1397,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "eccb214f1ea356fbb3836047bebcbb3534fdfd7875218a3fcad5d93b1db88215",
+          "review": "sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "6db7bcfaa56b84163815258c859e58e7852602ec14e4547a0e816e7f7b2c4bde",
+          "review": "sheet-15.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1397,
+          "pixel_sha256": "0220106c775ae33874701054e1df3ebe3611a38134f40e9f474f54246f9e66c1",
+          "review": "sheet-15.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-pump-reopened-320-2x.png",
+      "sha256": "73984a660e969ff338d32197fb5e9a2e585c8655343ca5ddd17bd59b234a06ae",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "eccb214f1ea356fbb3836047bebcbb3534fdfd7875218a3fcad5d93b1db88215",
+          "review": "sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a3dbdf89bd1f01568e79be625ac39a6d1a26bfeebf9b2f6835ebfe51196f411c",
+          "review": "sheet-15.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-pump-reopened-393-1x.long.png",
+      "sha256": "1b8693806b3a86343166a01408c1072526fa60c2100bc3c0f809828b2c9e21e4",
+      "width": 393,
+      "height": 1119,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "eb946e96b330ebf8172b9cf7ec51c61e75e086f0766f5df711c8465ecae9dba7",
+          "review": "sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1119,
+          "pixel_sha256": "125ac0a2b80d73b5159dfd332cee529d03af43e160e89e236441156c18f3d280",
+          "review": "sheet-15.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-pump-reopened-393-1x.png",
+      "sha256": "b3671c73ba9988ce73e98f1046e262b5574fbc178225e27e9da00c229849ef29",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "eb946e96b330ebf8172b9cf7ec51c61e75e086f0766f5df711c8465ecae9dba7",
+          "review": "sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "892310457f92ab6be88810c5d61755440a18d18e3e0dcf9dc8c1c082d042861d",
+          "review": "sheet-15.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-pump-saved-320-2x.long.png",
+      "sha256": "a06e1c675cb83edd50e1bc04a82501d445e6d94dcc5afcb751bdddd7017f3467",
+      "width": 320,
+      "height": 1541,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "cab6a191e27aec1eb67f978fd7de7b47c10925149d6cddface67e0f317718b9a",
+          "review": "sheet-16.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "8cec6147b6e9da9e5cdcfc2d436c6d9585d889a944edc2252f16269559368c19",
+          "review": "sheet-16.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1541,
+          "pixel_sha256": "b8cb84be256bde51e35dc6eec86f64824b6d595c07bb00e81caf1eeafc65b2ee",
+          "review": "sheet-16.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-pump-saved-320-2x.png",
+      "sha256": "44381a5503baf4e2f42f05d364d6b3dc988d7703be09a1c326ae8c66681c5bec",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "7d0e9f3166fbcbbd07871a006fd9634a69d8f33c1b35cffa1e3f187daa942b49",
+          "review": "sheet-16.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "de04a41b63995dc18e4d051be34f96c5bed544d36fbbf993127f631855a34074",
+          "review": "sheet-16.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-pump-saved-393-1x.long.png",
+      "sha256": "bd5b63ec7373ce3c953db26bda2577343a9195b2298b9a91b3c5ec16361dde68",
+      "width": 393,
+      "height": 992,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "f9e763e55b1e4c9fcb012fe8f6ae31a928ec87528ae62f7c2cc2649b1ad54447",
+          "review": "sheet-16.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 992,
+          "pixel_sha256": "60b1c4b6456130eeeac9fa7b1dcac5debbb5b525e55d2c35689dd8d077f0325d",
+          "review": "sheet-17.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-pump-saved-393-1x.png",
+      "sha256": "fc5140f35df761ae584ce93379f244567c11a9ace74417f0d80c0dde07b820bd",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "df1fb0fcc553f7a957859d4050b00beb7b2c6837659ac58500dcac1b2ce7da7f",
+          "review": "sheet-17.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "8418c47f6393dd96079ae401b041c26e1b7347a5316aa3dde92c69517dba5a33",
+          "review": "sheet-17.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-pump-switch-cleared-320-2x.long.png",
+      "sha256": "b4417f74625ca218479f09fe0ba18d454833f717283752a4309b3c57c5615b59",
+      "width": 320,
+      "height": 1028,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9c7916379d2c8a74fc5d89df09f060f906806d162ba1aa348d2a9006b4fe7f3e",
+          "review": "sheet-02.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1028,
+          "pixel_sha256": "464c796bded44cb895721abed3df145c5494aecea8aa29ef031ba98767cb6560",
+          "review": "sheet-14.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-pump-switch-cleared-320-2x.png",
+      "sha256": "b3439af22e11dca3b416e05ad6ddeeb269578971759009161aa9f5b13cf3a41a",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "d14231dae2204d606ac6c155c66a9e10652cc9a538fa7cadf6ee89d805e6dc3d",
+          "review": "sheet-17.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2f24c8893f60e92d04b63288bb0eb8c6d8675c50cc93d10e92065f134755ec39",
+          "review": "sheet-03.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-pump-switch-cleared-393-1x.png",
+      "sha256": "d8ba6bcbdf9e615b1a956def2c09f4ae205ddd78448886d2259b013d2d4fbe8a",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "0f565e38d47270e3b0273117dcb3c7370636ac1871c840c8eaa978a92df67544",
+          "review": "sheet-14.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "d5f95c9b13cbe4acb534e4b5760d2af6840a7f5351ea68eff0fb0aeae0d9aa95",
+          "review": "sheet-10.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-saved-switch-to-nurse-320-2x.long.png",
+      "sha256": "89bb07b6eb5e1ec2ba907962322589466f1907484dd3243ea35557db764fd8bc",
+      "width": 320,
+      "height": 1397,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "98caeee96d74ae629061c452588e6e8d19e228379a0b1d4c8780ad19be0a90bd",
+          "review": "sheet-17.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "a744f5317d01c9b3c66f87ad998c1a2e234c2dcf9dffa56208b40e1d367a8283",
+          "review": "sheet-17.png#tile-5"
+        },
+        {
+          "y0": 1300,
+          "y1": 1397,
+          "pixel_sha256": "0220106c775ae33874701054e1df3ebe3611a38134f40e9f474f54246f9e66c1",
+          "review": "sheet-15.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-saved-switch-to-nurse-320-2x.png",
+      "sha256": "0a2306b40afa6f81e97533fa1bb53a4062c26baa729b21eac25a29d6bfbfc49d",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "0d1cc70e08a60b4cfe075d61699aaf0274e4f156c95a2ebce97f4f150d88a3bb",
+          "review": "sheet-18.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "8029e207b98392d138e9734d812974de93024e9ca7367b1a3a9cfa141eedb34e",
+          "review": "sheet-18.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-saved-switch-to-nurse-393-1x.long.png",
+      "sha256": "16baaff68d888e0a1ecf819c294512e70a81aa842693e4f11c87558a5771191d",
+      "width": 393,
+      "height": 1119,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "5a7139d3f36f81ab0910abe78c4aaceca058e7243ab7690091c787569b812531",
+          "review": "sheet-18.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1119,
+          "pixel_sha256": "125ac0a2b80d73b5159dfd332cee529d03af43e160e89e236441156c18f3d280",
+          "review": "sheet-15.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-saved-switch-to-nurse-393-1x.png",
+      "sha256": "ccdf8b3ab941c2e86b72de8c6859a9051dc62f970374db5fe06d1ee6b4f330e3",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "66dcb898c8a789e13bd38bbf1ba966f99f4576b1dac7557c4c6a9cdf061f560f",
+          "review": "sheet-18.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "826f62b016a2f97c3f2bce0f46a6a7b4496c92e46bef7e4cc6d5b818ee50966d",
+          "review": "sheet-18.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-side-left-320-2x.long.png",
+      "sha256": "b4417f74625ca218479f09fe0ba18d454833f717283752a4309b3c57c5615b59",
+      "width": 320,
+      "height": 1028,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9c7916379d2c8a74fc5d89df09f060f906806d162ba1aa348d2a9006b4fe7f3e",
+          "review": "sheet-02.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1028,
+          "pixel_sha256": "464c796bded44cb895721abed3df145c5494aecea8aa29ef031ba98767cb6560",
+          "review": "sheet-14.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-side-left-320-2x.png",
+      "sha256": "46676eebc990fe8b59817ad3d17eb4923262aff1f8dd1d530b847481ab00d090",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "e1e19b2ec2c340a4d8feac8efde55ead11e85068d41adb5bbf1955ea0fa72069",
+          "review": "sheet-18.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2f24c8893f60e92d04b63288bb0eb8c6d8675c50cc93d10e92065f134755ec39",
+          "review": "sheet-03.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-side-left-393-1x.png",
+      "sha256": "d8ba6bcbdf9e615b1a956def2c09f4ae205ddd78448886d2259b013d2d4fbe8a",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "0f565e38d47270e3b0273117dcb3c7370636ac1871c840c8eaa978a92df67544",
+          "review": "sheet-14.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "d5f95c9b13cbe4acb534e4b5760d2af6840a7f5351ea68eff0fb0aeae0d9aa95",
+          "review": "sheet-10.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-side-right-320-2x.long.png",
+      "sha256": "08daa35ef1ca9542c65a59ee79326ad8a4018dd27db9bfeec3035de5e761a777",
+      "width": 320,
+      "height": 1028,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "06d9e201c7d5fbdbe3cedd39efa08ca7aa9f1bb48f612ea01bcbb0860d8fb0e1",
+          "review": "sheet-19.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1028,
+          "pixel_sha256": "464c796bded44cb895721abed3df145c5494aecea8aa29ef031ba98767cb6560",
+          "review": "sheet-14.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-side-right-320-2x.png",
+      "sha256": "d9025798c3e25367cf8e6cbbb621927299b6d768705bfa2d92af97eba347bec3",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "fd4bdcf0950d2619d87e589522b8830c0b0c279425241a679f24d4fd3a76296c",
+          "review": "sheet-19.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2f24c8893f60e92d04b63288bb0eb8c6d8675c50cc93d10e92065f134755ec39",
+          "review": "sheet-03.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-side-right-393-1x.png",
+      "sha256": "5d45ab5e77c7661214b42ee8c0459ed065a9610e9e823acdc57305062cd9a1d0",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "29fb21639ae9aabbec5eb454ebee679785f9ab3803630e8ce0cd56809b76ccb8",
+          "review": "sheet-19.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "d5f95c9b13cbe4acb534e4b5760d2af6840a7f5351ea68eff0fb0aeae0d9aa95",
+          "review": "sheet-10.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-time-accepted-320-2x.long.png",
+      "sha256": "35de15648016731a1cbd8d71245bd66213dc044ada58458a36ae50a66bac6264",
+      "width": 320,
+      "height": 1028,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "57fabeb4b4f1a3b8d3bdfbc15bc07d4bcfe104dccb1c73248dff55d5d44acccc",
+          "review": "sheet-19.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1028,
+          "pixel_sha256": "bb042af4b03e51a7e6d1748d43402f1bf556231821d643a7942f71e3a5c5cfe0",
+          "review": "sheet-13.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-time-accepted-320-2x.png",
+      "sha256": "d48b7fa2e4eb751b1991d4e41b9bd916aa65626a897fe4d5c259a9e36fe01b72",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a5b850354b2a475abb8f5635434bc1d1f673d0525c64895d42723d8a1263a98d",
+          "review": "sheet-19.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2f24c8893f60e92d04b63288bb0eb8c6d8675c50cc93d10e92065f134755ec39",
+          "review": "sheet-03.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-time-accepted-393-1x.png",
+      "sha256": "c5c82985e99c9c03734a38f558b18f751bea7ba8248a85c782c5dfe05eb27f49",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "09e8d3285198531d8d09847a588a02514258e8d7917d804fd54a53938b434971",
+          "review": "sheet-19.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "d5f95c9b13cbe4acb534e4b5760d2af6840a7f5351ea68eff0fb0aeae0d9aa95",
+          "review": "sheet-10.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-time-cancelled-320-2x.long.png",
+      "sha256": "35de15648016731a1cbd8d71245bd66213dc044ada58458a36ae50a66bac6264",
+      "width": 320,
+      "height": 1028,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "57fabeb4b4f1a3b8d3bdfbc15bc07d4bcfe104dccb1c73248dff55d5d44acccc",
+          "review": "sheet-19.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1028,
+          "pixel_sha256": "bb042af4b03e51a7e6d1748d43402f1bf556231821d643a7942f71e3a5c5cfe0",
+          "review": "sheet-13.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-time-cancelled-320-2x.png",
+      "sha256": "d48b7fa2e4eb751b1991d4e41b9bd916aa65626a897fe4d5c259a9e36fe01b72",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a5b850354b2a475abb8f5635434bc1d1f673d0525c64895d42723d8a1263a98d",
+          "review": "sheet-19.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2f24c8893f60e92d04b63288bb0eb8c6d8675c50cc93d10e92065f134755ec39",
+          "review": "sheet-03.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-time-cancelled-393-1x.png",
+      "sha256": "c5c82985e99c9c03734a38f558b18f751bea7ba8248a85c782c5dfe05eb27f49",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "09e8d3285198531d8d09847a588a02514258e8d7917d804fd54a53938b434971",
+          "review": "sheet-19.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "d5f95c9b13cbe4acb534e4b5760d2af6840a7f5351ea68eff0fb0aeae0d9aa95",
+          "review": "sheet-10.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-time-input-mode-393-1x.png",
+      "sha256": "268be761dff6de8cc5045ef82d1474a1ca5d627214d2bc98860ba67666186365",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9ddbd3760cab499022f29dd76fedfb15d977275c8e33e5ede6c27448251e513d",
+          "review": "sheet-20.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "939d53a2c5e76776229843c81e3401eec7a804bc5d5cee397e6b70e9d1131889",
+          "review": "sheet-20.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-time-open-320-2x.png",
+      "sha256": "bfd406ddee7dda3936e441e298d2df24c58314b53bb7e436645b6e2c8ef9908e",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6e7bc92ec91b1fb01b1178cca311904a4de216c4d22f49c80b63a42715002673",
+          "review": "sheet-20.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "0b1a34a2ae46f12d0c5a3de342565532fb9a8ba3724b2831b7ca9f6c00aafa60",
+          "review": "sheet-20.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-time-open-393-1x.png",
+      "sha256": "509142873a1e480e81295e61e8f8d70649e0486994aa8893436e71a68989f87c",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "dbc5dd003c5e5ba0af0391b59dfac3e63c166309d3fba9534dbe2e4b1fa37058",
+          "review": "sheet-20.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "f734e9a7ae0485e886359b0ffa919640ea819b5085f32a590b6d91700fd45435",
+          "review": "sheet-20.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-time-reopened-320-2x.png",
+      "sha256": "c622f914515e370365440a9368160a3d9c2d399902ac5ead053921fee7af4c5e",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "dd5503ff0babd5055384c5f4e14545b55b19572d39738ac2043aff711364f49e",
+          "review": "sheet-21.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "0b1a34a2ae46f12d0c5a3de342565532fb9a8ba3724b2831b7ca9f6c00aafa60",
+          "review": "sheet-20.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-time-reopened-393-1x.png",
+      "sha256": "f0c9df7bdf40bf05e66771c1448b1ba39e2e279385ab9a7cef8db3e2b56d4607",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "5aff8fbc490a8ec6ae64633872ec5a63c5e714db8c33a7cff2b7b6da509efeaa",
+          "review": "sheet-21.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "f734e9a7ae0485e886359b0ffa919640ea819b5085f32a590b6d91700fd45435",
+          "review": "sheet-20.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-time-valid-input-320-2x.png",
+      "sha256": "c622f914515e370365440a9368160a3d9c2d399902ac5ead053921fee7af4c5e",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "dd5503ff0babd5055384c5f4e14545b55b19572d39738ac2043aff711364f49e",
+          "review": "sheet-21.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "0b1a34a2ae46f12d0c5a3de342565532fb9a8ba3724b2831b7ca9f6c00aafa60",
+          "review": "sheet-20.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-control-time-valid-input-393-1x.png",
+      "sha256": "043964e5e0390e5c253926436db3026473fe3f1c3f7cd68213b1534c12383808",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "de04176eed3e44be41ea35ce9373c318e88ce3af8c593ca63816f2a668bc4f08",
+          "review": "sheet-21.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "939d53a2c5e76776229843c81e3401eec7a804bc5d5cee397e6b70e9d1131889",
+          "review": "sheet-20.png#tile-1"
+        }
+      ]
+    }
+  ],
+  "unique_segments": 137,
+  "new_segments": 123,
+  "new_sheets": 21
+}

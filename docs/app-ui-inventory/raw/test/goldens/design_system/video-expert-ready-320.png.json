@@ -1,0 +1,348 @@
+{
+  "source": "test/goldens/design_system/video-expert-ready-320.png",
+  "evidence": "current-widget-test-render; golden comparison passed",
+  "test_description": "user waiting media controls and leave 320.0 / 1.0",
+  "sequence": 1,
+  "sha256": "095a7e2a35927a6dfafae98fbacc77a7c5daa272e1caec56ff97cd08fbe77d9b",
+  "width": 320,
+  "height": 844,
+  "captured_at": "2026-09-13T13:37:53.777083Z",
+  "widget_types": [
+    "AbsorbPointer",
+    "Actions",
+    "Align",
+    "AnimatedBuilder",
+    "AnimatedContainer",
+    "AnimatedDefaultTextStyle",
+    "AnimatedPhysicalModel",
+    "AnimatedTheme",
+    "AnnotatedRegion<SystemUiOverlayStyle>",
+    "AppBar",
+    "AutomaticKeepAlive",
+    "BlockSemantics",
+    "Builder",
+    "Center",
+    "CircleAvatar",
+    "ClipPath",
+    "ClipRect",
+    "ColoredBox",
+    "Column",
+    "ConstrainedBox",
+    "ConsultationMediaControls",
+    "ConsultationRoomPage",
+    "ConsultationVideoStage",
+    "Container",
+    "CupertinoTheme",
+    "CustomMultiChildLayout",
+    "CustomPaint",
+    "CustomSingleChildLayout",
+    "DecoratedBox",
+    "DefaultSelectionStyle",
+    "DefaultTextEditingShortcuts",
+    "DefaultTextStyle",
+    "Directionality",
+    "Divider",
+    "DualTransitionBuilder",
+    "ExcludeSemantics",
+    "Expanded",
+    "FadeTransition",
+    "Flexible",
+    "FlexibleSpaceBarSettings",
+    "Focus",
+    "FocusScope",
+    "FocusTraversalGroup",
+    "FractionalTranslation",
+    "GestureDetector",
+    "HeroControllerScope",
+    "Icon",
+    "IconButtonTheme",
+    "IconTheme",
+    "IgnorePointer",
+    "IndexedSemantics",
+    "InheritedCupertinoTheme",
+    "InkWell",
+    "KeepAlive",
+    "KeyedSubtree",
+    "LayoutId",
+    "LimitedBox",
+    "ListView",
+    "ListenableBuilder",
+    "Listener",
+    "Localizations",
+    "Material",
+    "MaterialApp",
+    "MediaQuery",
+    "ModalBarrier",
+    "MomCozyBadge",
+    "MomCozyPageBody",
+    "MouseRegion",
+    "NavigationToolbar",
+    "Navigator",
+    "NotificationListener<KeepAliveNotification>",
+    "NotificationListener<LayoutChangedNotification>",
+    "NotificationListener<NavigationNotification>",
+    "NotificationListener<OverscrollIndicatorNotification>",
+    "NotificationListener<ScrollMetricsNotification>",
+    "NotificationListener<ScrollNotification>",
+    "Offstage",
+    "Overlay",
+    "Padding",
+    "PageStorage",
+    "PhysicalModel",
+    "PhysicalShape",
+    "PopScope<Object>",
+    "Positioned",
+    "PreferredSize",
+    "PrimaryScrollController",
+    "RawGestureDetector",
+    "RawView",
+    "RefreshIndicator",
+    "RepaintBoundary",
+    "RestorationScope",
+    "RichText",
+    "RootRestorationScope",
+    "RotationTransition",
+    "Row",
+    "SafeArea",
+    "Scaffold",
+    "ScaffoldMessenger",
+    "ScaleTransition",
+    "ScrollConfiguration",
+    "ScrollNotificationObserver",
+    "Scrollable",
+    "Semantics",
+    "ServiceFlowTheme",
+    "SharedAppData",
+    "ShortcutRegistrar",
+    "Shortcuts",
+    "SizedBox",
+    "SlideTransition",
+    "SliverList",
+    "SliverPadding",
+    "Stack",
+    "StretchEffect",
+    "StretchingOverscrollIndicator",
+    "TapRegionSurface",
+    "Text",
+    "TextButton",
+    "Theme",
+    "TickerMode",
+    "Title",
+    "Transform",
+    "UnmanagedRestorationScope",
+    "UserConsultationVideoStage",
+    "ValueListenableBuilder<bool>",
+    "View",
+    "Viewport",
+    "WidgetsApp",
+    "_ActionsScope",
+    "_AppBarTitleBox",
+    "_BodyBuilder",
+    "_Control",
+    "_EffectiveTickerMode",
+    "_FadeForwardsPageTransition",
+    "_FloatingActionButtonTransition",
+    "_FocusInheritedScope",
+    "_FocusScopeWithExternalFocusNode",
+    "_GestureSemantics",
+    "_InheritedTheme",
+    "_InkFeatures",
+    "_InkResponseStateWidget",
+    "_InputPadding",
+    "_LocalizationsScope",
+    "_MaterialInterior",
+    "_MediaQueryFromView",
+    "_ModalBarrierGestureDetector",
+    "_ModalScope<dynamic>",
+    "_ModalScopeStatus",
+    "_OverlayEntryWidget",
+    "_PageTransitionsThemeTransitions<dynamic>",
+    "_ParentInkResponseProvider",
+    "_PipelineOwnerScope",
+    "_PredictiveBackGestureDetector",
+    "_RawViewInternal",
+    "_RenderTheaterMarker",
+    "_ScaffoldMessengerScope",
+    "_ScaffoldScope",
+    "_ScrollNotificationObserverScope",
+    "_ScrollSemantics",
+    "_ScrollableScope",
+    "_SelectionKeepAlive",
+    "_ShapeBorderPaint",
+    "_SharedAppModel",
+    "_ShortcutRegistrarScope",
+    "_Theater",
+    "_ViewScope"
+  ],
+  "texts": [
+    "TI",
+    "Test IBCLC",
+    "9月8日 周二 · 09:00 – 10:00 PDT",
+    "等待室",
+    "Test IBCLC 已进入",
+    "正在等待专家开始咨询",
+    "媒体已连接",
+    "你",
+    "已静音",
+    "已关闭",
+    "离开房间",
+    "返回",
+    "视频咨询"
+  ],
+  "scrolls": [
+    {
+      "foreground": true,
+      "axis": "vertical",
+      "direction": "down",
+      "pixels": 0.0,
+      "min": 0.0,
+      "max": 0.0,
+      "viewport": 791.0
+    }
+  ],
+  "controls": [
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [
+        "已静音"
+      ],
+      "enabled": true,
+      "bounds": [
+        29.0,
+        529.0,
+        82.0,
+        61.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [
+        "已关闭"
+      ],
+      "enabled": true,
+      "bounds": [
+        119.0,
+        529.0,
+        82.0,
+        61.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [
+        "离开房间"
+      ],
+      "enabled": true,
+      "bounds": [
+        209.0,
+        529.0,
+        82.0,
+        61.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "TextButton",
+      "key": null,
+      "labels": [
+        "返回"
+      ],
+      "enabled": true,
+      "bounds": [
+        0.0,
+        0.0,
+        64.0,
+        52.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [
+        "返回"
+      ],
+      "enabled": true,
+      "bounds": [
+        0.0,
+        0.0,
+        64.0,
+        52.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    }
+  ],
+  "needs_long_capture": false,
+  "interactions_since_previous_capture": [
+    {
+      "action": "tap",
+      "labels_at_start": [
+        "麦克风"
+      ],
+      "from": [
+        70.0,
+        577.0
+      ],
+      "to": [
+        70.0,
+        577.0
+      ]
+    },
+    {
+      "action": "tap",
+      "labels_at_start": [
+        "摄像头"
+      ],
+      "from": [
+        160.0,
+        577.0
+      ],
+      "to": [
+        160.0,
+        577.0
+      ]
+    },
+    {
+      "action": "tap",
+      "labels_at_start": [
+        "已静音"
+      ],
+      "from": [
+        70.0,
+        577.0
+      ],
+      "to": [
+        70.0,
+        577.0
+      ]
+    },
+    {
+      "action": "tap",
+      "labels_at_start": [
+        "已关闭"
+      ],
+      "from": [
+        160.0,
+        577.0
+      ],
+      "to": [
+        160.0,
+        577.0
+      ]
+    }
+  ],
+  "call_stack": "#0      _InventoryComparator._record (file:///Users/lute/project/momcozy-lab/app/test/support/ui_inventory_capture.dart:169:32)\n<asynchronous suspension>\n#1      _InventoryComparator.compare (file:///Users/lute/project/momcozy-lab/app/test/support/ui_inventory_capture.dart:96:17)\n<asynchronous suspension>\n#2      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)\n<asynchronous suspension>\n#3      _AsyncCompleter.complete (dart:async/future_impl.dart:96:3)\n<asynchronous suspension>\n#4      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)\n<asynchronous suspension>\n#5      StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)\n<asynchronous suspension>\n#6      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)\n<asynchronous suspension>\n#7      shot (file:///Users/lute/project/momcozy-lab/app/test/modules/consultation/user_video_test.dart:70:5)\n<asynchronous suspension>\n#8      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/consultation/user_video_test.dart:145:9)\n<asynchronous suspension>\n#9      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)\n<asynchronous suspension>\n#10     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)\n<asynchronous suspension>\n#11     StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)\n<asynchronous suspension>\n",
+  "long_capture": {
+    "status": "no-active-vertical-overflow"
+  }
+}

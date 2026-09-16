@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/mom-journey-purchased-booking-cancel-precheck-393.png",
+  "previous_source": "test/goldens/ui_inventory/mom-journey-purchased-booking-precheck-393.png",
+  "route": "/services/episodes/inventory-episode/booking",
+  "trigger": "Cancel suitability check → booking page",
+  "root_entry": "Authenticated More → tap Me bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/mom/mom_inventory_journey_test.dart"
+}

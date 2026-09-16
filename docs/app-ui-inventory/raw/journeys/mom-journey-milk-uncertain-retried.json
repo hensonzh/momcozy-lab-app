@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/mom-journey-milk-uncertain-retried-393.png",
+  "previous_source": "test/goldens/ui_inventory/mom-journey-milk-uncertain-leave-confirm-393.png",
+  "route": "/me/lactation",
+  "trigger": "Retry same pending save → saved list",
+  "root_entry": "Authenticated More → tap Me bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/mom/mom_inventory_journey_test.dart"
+}

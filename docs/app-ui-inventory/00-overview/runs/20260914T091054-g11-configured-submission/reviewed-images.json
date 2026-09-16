@@ -1,0 +1,35 @@
+[
+  {
+    "name": "auth-invite-submit-pending",
+    "image": "raw/test/goldens/ui_inventory/auth-invite-submit-pending-390.png",
+    "sha256": "90bc8e5dec0bf73a5f1d102442302b2c2f593bdfc78b3e66ec9a72b6128f1e8e",
+    "width": 390,
+    "height": 844,
+    "long": {
+      "status": "no-active-vertical-overflow"
+    },
+    "review": "Full viewport visually inspected; no clipped content or overflow"
+  },
+  {
+    "name": "onboarding-upload-pending",
+    "image": "raw/test/goldens/ui_inventory/onboarding-upload-pending-390.png",
+    "sha256": "5028ac33348ac9a40da2796dba26f9f3e261087d8cf7e31da3fb71ec3261a384",
+    "width": 390,
+    "height": 844,
+    "long": {
+      "status": "no-active-vertical-overflow"
+    },
+    "review": "Full viewport visually inspected; no clipped content or overflow"
+  },
+  {
+    "name": "onboarding-generation-handoff",
+    "image": "raw/test/goldens/ui_inventory/onboarding-generation-handoff-390.png",
+    "sha256": "50af9db12054378397830200949b119037b5f5a4caf44da0ed6c904e8fda9f94",
+    "width": 390,
+    "height": 844,
+    "long": {
+      "status": "no-active-vertical-overflow"
+    },
+    "review": "Full viewport visually inspected; no clipped content or overflow"
+  }
+]

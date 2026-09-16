@@ -2,7 +2,9 @@ import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
-import '../../../shared/widgets/product_feedback.dart';
+import 'package:momcozy_flutter_app/shared/design_system/momcozy_motion.dart';
+import 'media_viewer_feedback.dart';
+import '../../../shared/design_system/mom_home_tokens.dart';
 import 'package:momcozy_flutter_app/shared/design_system/momcozy_design_system.dart';
 import 'package:momcozy_flutter_app/features/media/data/product_asset_repository.dart';
 import 'package:momcozy_flutter_app/features/media/domain/product_asset.dart';
@@ -182,12 +184,19 @@ class _ProductAssetVideoPlayerState extends State<ProductAssetVideoPlayer> {
       PageRouteBuilder<void>(
         settings: const RouteSettings(name: 'product-asset-video-fullscreen'),
         opaque: true,
-        transitionDuration: const Duration(milliseconds: 160),
-        reverseTransitionDuration: const Duration(milliseconds: 120),
+        transitionDuration: MomCozyMotion.duration(
+          context,
+          const Duration(milliseconds: 160),
+        ),
+        reverseTransitionDuration: MomCozyMotion.duration(
+          context,
+          const Duration(milliseconds: 120),
+        ),
         pageBuilder: (context, animation, secondaryAnimation) {
           return _ProductAssetVideoFullscreenPage(controller: controller);
         },
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          if (MediaQuery.disableAnimationsOf(context)) return child;
           return FadeTransition(opacity: animation, child: child);
         },
       ),
@@ -201,34 +210,9 @@ class _ProductAssetVideoPlayerState extends State<ProductAssetVideoPlayer> {
     if (_error != null || controller == null) {
       return _VideoErrorState(onRetry: _loadVideo);
     }
-    return ColoredBox(
-      color: MomCozyColors.background,
-      child: Padding(
-        padding: const EdgeInsets.all(MomCozySpacing.pageGutter),
-        child: Column(
-          children: [
-            OutlinedButton.icon(
-              key: const ValueKey('product-asset-video-fullscreen'),
-              onPressed: _openFullscreen,
-              icon: const Icon(
-                Icons.open_in_full_rounded,
-                size: MomCozyIconSizes.medium,
-              ),
-              label: const Text('全屏播放'),
-            ),
-            const SizedBox(height: MomCozySpacing.compact),
-            Expanded(
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(MomCozyRadii.control),
-                child: _ProductAssetVideoViewport(
-                  controller: controller,
-                  onFullscreen: _openFullscreen,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
+    return _ProductAssetVideoViewport(
+      controller: controller,
+      onFullscreen: _openFullscreen,
     );
   }
 }
@@ -237,45 +221,23 @@ class _VideoLoadingState extends StatelessWidget {
   const _VideoLoadingState();
 
   @override
-  Widget build(BuildContext context) {
-    return const ColoredBox(
-      color: MomCozyColors.mediaBackground,
-      child: Center(
-        key: ValueKey('product-asset-video-loading'),
-        child: SingleChildScrollView(
-          child: ProductLoadingView(
-            label: '加载视频…',
-            foreground: MomCozyColors.onMediaSecondary,
-          ),
-        ),
-      ),
-    );
-  }
+  Widget build(BuildContext context) => const MediaViewerLoading(
+    key: ValueKey('product-asset-video-loading'),
+    label: '加载视频…',
+  );
 }
 
 class _VideoErrorState extends StatelessWidget {
   const _VideoErrorState({required this.onRetry});
   final VoidCallback onRetry;
+
   @override
-  Widget build(BuildContext context) => ColoredBox(
-    color: MomCozyColors.mediaBackground,
-    child: Center(
-      key: const ValueKey('product-asset-video-error'),
-      child: SingleChildScrollView(
-        child: ProductEmptyView(
-          title: '视频加载失败',
-          foreground: MomCozyColors.onMediaSecondary,
-          icon: Icons.videocam_off_outlined,
-          action: IconButton(
-            key: const ValueKey('product-asset-video-retry'),
-            tooltip: '重新加载',
-            onPressed: onRetry,
-            icon: const Icon(Icons.refresh_rounded),
-            color: MomCozyColors.onMediaSecondary,
-          ),
-        ),
-      ),
-    ),
+  Widget build(BuildContext context) => MediaViewerLoadError(
+    key: const ValueKey('product-asset-video-error'),
+    message: '视频加载失败',
+    icon: Icons.videocam_off_outlined,
+    retryButtonKey: const ValueKey('product-asset-video-retry'),
+    onRetry: onRetry,
   );
 }
 
@@ -306,10 +268,7 @@ class _ProductAssetVideoFullscreenPage extends StatelessWidget {
               tooltip: '退出全屏',
               onPressed: () => Navigator.of(context).pop(),
               icon: const Icon(Icons.close_rounded),
-              style: IconButton.styleFrom(
-                foregroundColor: MomCozyColors.onMedia,
-                backgroundColor: MomCozyColors.mediaCloseBackground,
-              ),
+              style: _videoControlStyle(immersive: true),
             ),
           ),
         ],
@@ -341,33 +300,45 @@ class _ProductAssetVideoViewport extends StatelessWidget {
       child: ValueListenableBuilder<VideoPlayerValue>(
         valueListenable: controller,
         builder: (context, value, child) {
-          return Stack(
+          if (value.hasError) {
+            return MediaViewerLoadError(
+              message: '视频播放中断',
+              description: '请返回播放页后重新加载。',
+              icon: Icons.videocam_off_outlined,
+              onRetry: onFullscreen,
+              retryLabel: '返回播放页',
+            );
+          }
+          return Column(
             children: [
-              Positioned.fill(
-                child: _ProductAssetVideoCanvas(
-                  controller: controller,
-                  value: value,
-                  rotateLandscape: immersive,
+              Expanded(
+                child: Stack(
+                  children: [
+                    Positioned.fill(
+                      child: _ProductAssetVideoCanvas(
+                        controller: controller,
+                        value: value,
+                        rotateLandscape: immersive,
+                      ),
+                    ),
+                    if (value.isBuffering)
+                      const Center(
+                        child: SizedBox.square(
+                          dimension: 28,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: MomCozyColors.onMedia,
+                          ),
+                        ),
+                      ),
+                  ],
                 ),
               ),
-              if (value.isBuffering)
-                const Center(
-                  child: SizedBox.square(
-                    dimension: 28,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: MomCozyColors.onMedia,
-                    ),
-                  ),
-                ),
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: _ProductAssetVideoControls(
-                  controller: controller,
-                  value: value,
-                  immersive: immersive,
-                  onFullscreen: onFullscreen,
-                ),
+              _ProductAssetVideoControls(
+                controller: controller,
+                value: value,
+                immersive: immersive,
+                onFullscreen: onFullscreen,
               ),
             ],
           );
@@ -439,32 +410,44 @@ class _ProductAssetVideoControls extends StatelessWidget {
       0,
       durationMilliseconds,
     );
+    final largeText = MediaQuery.textScalerOf(context).scale(1) > 1.4;
+    final time = Text(
+      '${_formatDuration(value.position)} / ${_formatDuration(value.duration)}',
+      textAlign: largeText ? TextAlign.center : TextAlign.left,
+      style: MomHomeTokens.text(
+        13,
+        color: immersive ? MomCozyColors.onMedia : MomHomeTokens.secondary,
+        weight: FontWeight.w600,
+      ),
+    );
     return ColoredBox(
-      color: MomCozyColors.mediaControlBackground,
+      color: immersive ? const Color(0xFF171514) : MomHomeTokens.surface,
       child: SafeArea(
         top: false,
-        left: false,
-        right: false,
-        bottom: immersive,
-        minimum: const EdgeInsets.symmetric(horizontal: MomCozySpacing.xs),
+        left: true,
+        right: true,
+        bottom: true,
+        minimum: const EdgeInsets.fromLTRB(16, 0, 16, 8),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             SizedBox(
-              height: 28,
+              height: MomCozyTapTargets.minimum,
               child: SliderTheme(
                 data: SliderTheme.of(context).copyWith(
-                  trackHeight: 2,
+                  trackHeight: 3,
                   thumbShape: const RoundSliderThumbShape(
-                    enabledThumbRadius: 5,
+                    enabledThumbRadius: 6,
                   ),
                   overlayShape: const RoundSliderOverlayShape(
                     overlayRadius: 12,
                   ),
-                  activeTrackColor: MomCozyColors.primary,
-                  inactiveTrackColor: MomCozyColors.mediaInactiveTrack,
-                  thumbColor: MomCozyColors.onMedia,
-                  overlayColor: MomCozyColors.mediaInteraction,
+                  activeTrackColor: MomHomeTokens.rose,
+                  inactiveTrackColor: immersive
+                      ? const Color(0xFF544B47)
+                      : MomHomeTokens.border,
+                  thumbColor: MomHomeTokens.rose,
+                  overlayColor: MomHomeTokens.rose.withValues(alpha: .12),
                 ),
                 child: Slider(
                   key: const ValueKey('product-asset-video-progress'),
@@ -485,6 +468,11 @@ class _ProductAssetVideoControls extends StatelessWidget {
                 ),
               ),
             ),
+            if (largeText) ...[
+              const SizedBox(height: 8),
+              time,
+              const SizedBox(height: 8),
+            ],
             ConstrainedBox(
               constraints: const BoxConstraints(
                 minHeight: MomCozyTapTargets.minimum,
@@ -500,18 +488,14 @@ class _ProductAssetVideoControls extends StatelessWidget {
                           ? Icons.pause_rounded
                           : Icons.play_arrow_rounded,
                     ),
-                    color: MomCozyColors.onMedia,
-                  ),
-                  Expanded(
-                    child: Text(
-                      '${_formatDuration(value.position)} / ${_formatDuration(value.duration)}',
-                      style: const TextStyle(
-                        color: MomCozyColors.onMedia,
-                        fontSize: MomCozyTypography.captionSize,
-                        fontWeight: FontWeight.w600,
-                      ),
+                    style: _videoControlStyle(
+                      immersive: immersive,
+                      primary: true,
                     ),
                   ),
+                  const SizedBox(width: 8),
+                  if (largeText) const Spacer() else Expanded(child: time),
+                  const SizedBox(width: 8),
                   IconButton(
                     key: const ValueKey('product-asset-video-volume'),
                     tooltip: value.volume == 0 ? '打开声音' : '静音',
@@ -526,13 +510,14 @@ class _ProductAssetVideoControls extends StatelessWidget {
                           ? Icons.volume_off_rounded
                           : Icons.volume_up_rounded,
                     ),
-                    color: MomCozyColors.onMedia,
+                    style: _videoControlStyle(immersive: immersive),
                   ),
+                  const SizedBox(width: 8),
                   IconButton(
                     key: ValueKey(
                       immersive
                           ? 'product-asset-video-exit-fullscreen-control'
-                          : 'product-asset-video-fullscreen-control',
+                          : 'product-asset-video-fullscreen',
                     ),
                     tooltip: immersive ? '退出全屏' : '全屏播放',
                     onPressed: onFullscreen,
@@ -541,7 +526,7 @@ class _ProductAssetVideoControls extends StatelessWidget {
                           ? Icons.fullscreen_exit_rounded
                           : Icons.fullscreen_rounded,
                     ),
-                    color: MomCozyColors.onMedia,
+                    style: _videoControlStyle(immersive: immersive),
                   ),
                 ],
               ),
@@ -563,6 +548,26 @@ class _ProductAssetVideoControls extends StatelessWidget {
     await _runVideoCommand(controller.play);
   }
 }
+
+ButtonStyle _videoControlStyle({
+  required bool immersive,
+  bool primary = false,
+}) => IconButton.styleFrom(
+  foregroundColor: primary || immersive
+      ? MomCozyColors.onMedia
+      : MomHomeTokens.teal,
+  backgroundColor: primary
+      ? MomHomeTokens.rose
+      : immersive
+      ? const Color(0xFF272321)
+      : MomHomeTokens.mint,
+  minimumSize: const Size.square(44),
+  maximumSize: const Size.square(44),
+  iconSize: 22,
+  padding: EdgeInsets.zero,
+  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+);
 
 Future<void> _runVideoCommand(Future<void> Function() command) async {
   try {

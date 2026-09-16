@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/baby-profile-boundaries-maximum-name-saved-320-2x.png",
+  "previous_source": "test/goldens/ui_inventory/baby-profile-boundaries-unicode-length-validation-320-2x.png",
+  "route": "/baby",
+  "trigger": "Save 120-character name → home identity and knowledge label update",
+  "root_entry": "Authenticated More → tap Baby bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/baby/baby_profile_boundary_inventory_test.dart"
+}

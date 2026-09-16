@@ -60,8 +60,11 @@ class BookingController extends ChangeNotifier {
   bool get canPrecheck =>
       canEdit &&
       region != null &&
+      regionSupported &&
       serviceSuitable &&
       emergencyStatus == EmergencyStatus.clear;
+  bool get regionSupported =>
+      data?.providers.any((item) => item.regions.contains(region)) ?? false;
   List<CareProvider> get providers =>
       data?.providers
           .where(

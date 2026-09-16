@@ -1,0 +1,14 @@
+{
+  "command": [
+    "/Users/lute/.local/share/momcozy-toolchains/flutter/bin/flutter",
+    "test",
+    "--no-pub",
+    "--reporter",
+    "expanded",
+    "test/modules/consultation/consultation_inventory_journey_test.dart"
+  ],
+  "tests": [
+    "test/modules/consultation/consultation_inventory_journey_test.dart"
+  ],
+  "note": "Only visual tests: eagerly installing a widget binding would replace HTTP in IO unit tests."
+}

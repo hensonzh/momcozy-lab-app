@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/baby-profile-boundaries-name-119-320-2x.png",
+  "previous_source": "test/goldens/ui_inventory/baby-profile-boundaries-home-entry-320-2x.png",
+  "route": "/baby",
+  "trigger": "Enter 119-character profile name",
+  "root_entry": "Authenticated More → tap Baby bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/baby/baby_profile_boundary_inventory_test.dart"
+}

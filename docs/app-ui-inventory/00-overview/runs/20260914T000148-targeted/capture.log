@@ -1,0 +1,92 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/features/notifications/notification_current_inventory_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: inventory notification inbox empty loading paging and archive
+00:01 +1: inventory notification opening errors unavailable target and appointment route
+00:02 +2: inventory notification pagination mutation waits and error retries
+00:02 +3: inventory current notification settings switches and errors
+00:03 +4: inventory current notification tooltips and empty after archive
+00:04 +5: inventory notification inbox empty loading paging and archive
+00:05 +6: inventory notification opening errors unavailable target and appointment route
+00:05 +7: inventory notification pagination mutation waits and error retries
+00:06 +8: inventory current notification settings switches and errors
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/ui_inventory/notification-current-settings-more-return-320-2x.png": Pixel test
+failed, 12.27%, 33127px diff detected.
+Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/features/notifications/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      _InventoryComparator.compare (file:///Users/lute/project/momcozy-lab/app/test/support/ui_inventory_capture.dart:95:20)
+<asynchronous suspension>
+#2      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#4      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#6      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#7      main.capture (file:///Users/lute/project/momcozy-lab/app/test/features/notifications/notification_current_inventory_test.dart:187:5)
+<asynchronous suspension>
+#8      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/notifications/notification_current_inventory_test.dart:634:7)
+<asynchronous suspension>
+#9      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#10     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:07 +8 -1: inventory current notification settings switches and errors [E]
+  Test failed. See exception logs above.
+  The test description was: inventory current notification settings switches and errors
+  
+00:07 +8 -1: inventory current notification tooltips and empty after archive
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/ui_inventory/notification-current-archive-final-more-320-2x.png": Pixel test
+failed, 35.35%, 95465px diff detected.
+Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/features/notifications/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      _InventoryComparator.compare (file:///Users/lute/project/momcozy-lab/app/test/support/ui_inventory_capture.dart:95:20)
+<asynchronous suspension>
+#2      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#4      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#6      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#7      main.capture (file:///Users/lute/project/momcozy-lab/app/test/features/notifications/notification_current_inventory_test.dart:187:5)
+<asynchronous suspension>
+#8      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/notifications/notification_current_inventory_test.dart:699:9)
+<asynchronous suspension>
+#9      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#10     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:08 +8 -2: inventory current notification tooltips and empty after archive [E]
+  Test failed. See exception logs above.
+  The test description was: inventory current notification tooltips and empty after archive
+  
+00:08 +8 -2: (tearDownAll)
+00:08 +8 -2: Some tests failed.
+
+Failing tests:
+  /Users/lute/project/momcozy-lab/app/test/features/notifications/notification_current_inventory_test.dart: inventory current notification settings switches and errors
+  /Users/lute/project/momcozy-lab/app/test/features/notifications/notification_current_inventory_test.dart: inventory current notification tooltips and empty after archive

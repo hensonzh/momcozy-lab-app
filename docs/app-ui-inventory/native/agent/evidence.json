@@ -1,0 +1,189 @@
+{
+  "device": "emulator-5554",
+  "package": "com.momcozymai.app.flutterpoc.local",
+  "version": "1.0.0+57",
+  "steps": [
+    {
+      "state": "conversation",
+      "action": "妈妈页 → Cozymate，保留原会话与未发送草稿",
+      "previous": null,
+      "png": "conversation.png",
+      "xml": "conversation.xml",
+      "sha256": "1ebb16d2d75586bb70225b023bc7b1daaada91280a0b0443834a89655ebb8a0a",
+      "xml_sha256": "b02612bf057b95f001345b1a37c395abddba05542e79af9af21e3c642d123d1c"
+    },
+    {
+      "state": "attachment-menu",
+      "action": "添加附件 → 相机/照片/PDF 菜单",
+      "previous": "conversation",
+      "png": "attachment-menu.png",
+      "xml": "attachment-menu.xml",
+      "sha256": "39c3da1d0467c26fd2532f73ee62321e9c85f2dc40c2755654c9a0fe79246b52",
+      "xml_sha256": "548d6a0d07e4a3361de0627f4e49f9d958d0c2828b34045b0b62632bc9de7fde"
+    },
+    {
+      "state": "photo-picker",
+      "action": "照片 → Android Photos 空列表",
+      "previous": "attachment-menu",
+      "png": "photo-picker.png",
+      "xml": "photo-picker.xml",
+      "sha256": "3fb5cfa21ce020ac1117d7f83317ad5800356f635b751eb3ab2b427a9cbf32bb",
+      "xml_sha256": "f2e41706667e21b267a72361b6b50dc4a28932be4919e0f3efe39ecc1e941c98"
+    },
+    {
+      "state": "photo-collections",
+      "action": "Collections → 收藏与相机分类",
+      "previous": "photo-picker",
+      "png": "photo-collections.png",
+      "xml": "photo-collections.xml",
+      "sha256": "69bee860916cfc75dc29f68d5811cc4aeef5edf931ac80cbeedf0986cf2e982f",
+      "xml_sha256": "62863114717d21e0ab388cc42f5eec391db07a9af6e82371627cf97e8fe8f44a"
+    },
+    {
+      "state": "photo-return",
+      "action": "系统返回 → Photos 列表",
+      "previous": "photo-collections",
+      "png": "photo-return.png",
+      "xml": "photo-return.xml",
+      "sha256": "df538ddb87bc8ed9ca2d5d3265e88bb9b40efd76afa29ec1de3ebcbdfed83f90",
+      "xml_sha256": "f2e41706667e21b267a72361b6b50dc4a28932be4919e0f3efe39ecc1e941c98"
+    },
+    {
+      "state": "photo-cancelled",
+      "action": "再次返回 → 原会话，未选择照片",
+      "previous": "photo-return",
+      "png": "photo-cancelled.png",
+      "xml": "photo-cancelled.xml",
+      "sha256": "aa2c08223a19ab430cd85a8e68c590a35ba89974f7c73a6c8b64088bbe948189",
+      "xml_sha256": "b02612bf057b95f001345b1a37c395abddba05542e79af9af21e3c642d123d1c"
+    },
+    {
+      "state": "file-menu",
+      "action": "再次打开附件菜单",
+      "previous": "photo-cancelled",
+      "png": "file-menu.png",
+      "xml": "file-menu.xml",
+      "sha256": "526a2392095283daf6e608b21cc859e59282b3f3d7948dea0de92db2cc222ea9",
+      "xml_sha256": "548d6a0d07e4a3361de0627f4e49f9d958d0c2828b34045b0b62632bc9de7fde"
+    },
+    {
+      "state": "file-picker",
+      "action": "文件 → Android Recent 文件选择器，空列表",
+      "previous": "file-menu",
+      "png": "file-picker.png",
+      "xml": "file-picker.xml",
+      "sha256": "685900788690e0aaf93e404bddc88e98385cabe5fdc3cff6221a97b72d07b673",
+      "xml_sha256": "e186a867fa8872fea0f7c346a9620dc03497e83193e646eb65fe118e1c225960"
+    },
+    {
+      "state": "file-cancelled",
+      "action": "系统返回 → 原会话，未选择文件",
+      "previous": "file-picker",
+      "png": "file-cancelled.png",
+      "xml": "file-cancelled.xml",
+      "sha256": "9ee44a10f0ecda6b98554d122b5ec01275c8aef990057cbfb7efe1f5a64fafb1",
+      "xml_sha256": "008c7276fb6cb023fae56926a6e913ab9b922a5bf88f744a7f2302fbff487788"
+    },
+    {
+      "state": "camera-menu",
+      "action": "再次打开附件菜单",
+      "previous": "file-cancelled",
+      "png": "camera-menu.png",
+      "xml": "camera-menu.xml",
+      "sha256": "42c3671db7e7b42d994d0cbbdd162d0642c0d7ab690f9b6e61f368c697424744",
+      "xml_sha256": "edd7f86ff0ed5ede6eef67c0152f5a2dbb37cb7d156a9bd469e43f82b7c5f4c8"
+    },
+    {
+      "state": "camera-launch",
+      "action": "相机 → Android 首次相机权限申请",
+      "previous": "camera-menu",
+      "png": "camera-launch.png",
+      "xml": "camera-launch.xml",
+      "sha256": "f6ef7d9cf59428e513d69fbca68b886ed2d0e73487a86a917e129d7c715ee2f1",
+      "xml_sha256": "6a3daf64cc129ad7269ee4334f77e658975ffc7d0b1e9bbd17d5bd4216647b33"
+    },
+    {
+      "state": "camera-cancelled",
+      "action": "返回取消申请 → App 图片上传失败 Snackbar",
+      "previous": "camera-launch",
+      "png": "camera-cancelled.png",
+      "xml": "camera-cancelled.xml",
+      "sha256": "94cbf032ff8dc224c4e800775ef1539552099faac6a5bb0835e2f5c540b4f765",
+      "xml_sha256": "2ebb957aa24c39eceeec4e539dc7320bf8dcdebf0939261b3ccd7f8793db6175"
+    },
+    {
+      "state": "message-menu",
+      "action": "长按原用户消息 → 复制菜单",
+      "previous": "camera-cancelled",
+      "png": "message-menu.png",
+      "xml": "message-menu.xml",
+      "sha256": "fdcea476cab1cae699f63ed0ebff613d87164650ea10345de4255a28b3390b47",
+      "xml_sha256": "266f6ec4a7cae45163a95c689ab53edcc169a6d9822d395cc1609c4384cca793"
+    },
+    {
+      "state": "message-back",
+      "action": "系统返回 → App 离开前台，出现 Android 桌面",
+      "previous": "message-menu",
+      "png": "message-back.png",
+      "xml": "message-back.xml",
+      "sha256": "ec1fbfa2bf13da6333c22cc62fa507ceb3fcbf98ad0535439e513e82c6cb97af",
+      "xml_sha256": "d70f1f2b90f36b6132694c13fae3e0ca224642b560c69d63cb31a99044b29d18"
+    },
+    {
+      "state": "reopened",
+      "action": "点击桌面 Momcozy Lab → 重新进入首页（XML 先记录加载态，截图时已载入）",
+      "previous": "message-back",
+      "png": "reopened.png",
+      "xml": "reopened.xml",
+      "sha256": "9431cc41f066d40003c704064a75120f471132b38c95739f1001a7334d2db8f8",
+      "xml_sha256": "ea482747aa0142bdc98439386f6cd06fa3c30e2ef17f1efe5f3368e95f9ced93"
+    },
+    {
+      "state": "reopened-mom",
+      "action": "资料读取完成 → 妈妈首页",
+      "previous": "reopened",
+      "png": "reopened-mom.png",
+      "xml": "reopened-mom.xml",
+      "sha256": "9431cc41f066d40003c704064a75120f471132b38c95739f1001a7334d2db8f8",
+      "xml_sha256": "87cdbcea5798bdc2d18e1b23793dfd8c911ffced4924ab4ab79c79215ba5b8d8"
+    },
+    {
+      "state": "conversation-return",
+      "action": "再次进入 Cozymate → 原消息与草稿恢复",
+      "previous": "reopened-mom",
+      "png": "conversation-return.png",
+      "xml": "conversation-return.xml",
+      "sha256": "d19ef82086a61679a4cd1ddde3456dedc5b135b6ed2012d6c74f89ce322aba60",
+      "xml_sha256": "008c7276fb6cb023fae56926a6e913ab9b922a5bf88f744a7f2302fbff487788"
+    },
+    {
+      "state": "message-menu-reopened",
+      "action": "再次长按同一用户消息",
+      "previous": "conversation-return",
+      "png": "message-menu-reopened.png",
+      "xml": "message-menu-reopened.xml",
+      "sha256": "4caf354099b2b70c719bd30ee7ca80c36326a0138453a8ab6620d775fb3d189e",
+      "xml_sha256": "266f6ec4a7cae45163a95c689ab53edcc169a6d9822d395cc1609c4384cca793"
+    },
+    {
+      "state": "menu-dismissed",
+      "action": "点击菜单外部 → 菜单关闭，会话保留",
+      "previous": "message-menu-reopened",
+      "png": "menu-dismissed.png",
+      "xml": "menu-dismissed.xml",
+      "sha256": "fed4b12c26c90242060c4cc158007f363626b409160eef58bbde024a94ebd4fd",
+      "xml_sha256": "10bb895503c70ce1240c8daae49f2b60afffc9c14e64a7b1b604721aa39dde55"
+    },
+    {
+      "state": "restored-mom",
+      "action": "Me → 返回原妈妈首页",
+      "previous": "menu-dismissed",
+      "png": "restored-mom.png",
+      "xml": "restored-mom.xml",
+      "sha256": "f6e03950668798b75c01705c2c6b7cfdc7f8ecf3432e7584168ae3769b3a74f5",
+      "xml_sha256": "87cdbcea5798bdc2d18e1b23793dfd8c911ffced4924ab4ab79c79215ba5b8d8"
+    }
+  ],
+  "restoration": "Original conversation messages and unsent composer draft match after photo/file cancellation and app relaunch. Original Mom semantic labels match restoration. Camera permission grant and flags unchanged. No message sent, no clipboard action, no attachment selected, no record written.",
+  "back_boundary": "Native back left App for Android launcher. No matching Dart exception was captured in the filtered native log; the GoRouter TypeError is separately reproduced by the current-source router test."
+}

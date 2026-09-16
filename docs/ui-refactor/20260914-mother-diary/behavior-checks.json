@@ -1,0 +1,32 @@
+[
+  {
+    "behavior": "selection semantics",
+    "unchanged": true
+  },
+  {
+    "behavior": "legacy baby option rendering",
+    "unchanged": true
+  },
+  {
+    "behavior": "_close",
+    "unchanged": true
+  },
+  {
+    "behavior": "_save",
+    "unchanged": true
+  },
+  {
+    "behavior": "_scrollToFeedback",
+    "unchanged": true
+  },
+  {
+    "behavior": "all 19 field bindings and dependent clear callbacks",
+    "unchanged": true,
+    "count": 19
+  },
+  {
+    "behavior": "confirmed conflict reload refreshes note initial value",
+    "change": "local form revision replaces only BodyFields after user confirms discarding; cancelled confirmation preserves text",
+    "evidence": "mother_diary_redesign_test.dart, all six size/scale cases"
+  }
+]

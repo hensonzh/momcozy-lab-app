@@ -1,0 +1,1304 @@
+[
+  {
+    "id": "mom-diary-editor",
+    "name": "妈妈记录弹窗",
+    "owners": [
+      "mom-home",
+      "mom-diary"
+    ],
+    "required_states": [
+      "身体",
+      "休息",
+      "心情",
+      "编辑",
+      "校验",
+      "保存",
+      "放弃"
+    ],
+    "evidence": [
+      {
+        "state": "mom-journey-diary-body-empty",
+        "evidence_id": "03-mom/mom-journey-diary-body-empty",
+        "image": "03-mom/mom-journey-diary-body-empty/default.png",
+        "metadata": "raw/test/goldens/ui_inventory/mom-journey-diary-body-empty-393.png.json",
+        "trigger": "Home body card → quick body record",
+        "normal_route_observed": true,
+        "extent": "full-measured-scroll-stitch"
+      },
+      {
+        "state": "mom-journey-diary-save-error",
+        "evidence_id": "03-mom/mom-journey-diary-save-error",
+        "image": "03-mom/mom-journey-diary-save-error/default.png",
+        "metadata": "raw/test/goldens/ui_inventory/mom-journey-diary-save-error-393.png.json",
+        "trigger": "Save diary → API error preserves entries",
+        "normal_route_observed": true,
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "interaction_report": "MOM-JOURNEYS.md",
+    "status": "EXPLICIT_STATE_EVIDENCE_MAPPED; version boundaries retained",
+    "state_mapping": "OVERLAY-STATE-MAP.md"
+  },
+  {
+    "id": "lactation-editor",
+    "name": "泌乳记录弹窗",
+    "owners": [
+      "mom-home",
+      "mom-lactation"
+    ],
+    "required_states": [
+      "新增",
+      "编辑",
+      "左右侧",
+      "泵奶与亲喂",
+      "校验",
+      "保存错误"
+    ],
+    "evidence": [
+      {
+        "state": "lactation-dialog-pump",
+        "evidence_id": "03-mom/lactation-dialog-pump",
+        "image": "03-mom/lactation-dialog-pump/default.png",
+        "metadata": "raw/test/goldens/design_system/lactation-dialog-pump-390.png.json",
+        "trigger": "lactation modal switches to nursing and saves at 390.0 / 1.0",
+        "normal_route_observed": false,
+        "extent": "full-measured-scroll-stitch"
+      },
+      {
+        "state": "lactation-dialog-nurse",
+        "evidence_id": "03-mom/lactation-dialog-nurse",
+        "image": "03-mom/lactation-dialog-nurse/default.png",
+        "metadata": "raw/test/goldens/design_system/lactation-dialog-nurse-390.png.json",
+        "trigger": "lactation modal switches to nursing and saves at 390.0 / 1.0",
+        "normal_route_observed": false,
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "interaction_report": "MOM-MILK-CONTROLS.md",
+    "status": "EXPLICIT_STATE_EVIDENCE_MAPPED; version boundaries retained",
+    "state_mapping": "OVERLAY-STATE-MAP.md"
+  },
+  {
+    "id": "baby-profile",
+    "name": "宝宝资料弹窗",
+    "owners": [
+      "baby-home"
+    ],
+    "required_states": [
+      "新增",
+      "编辑",
+      "校验",
+      "保存",
+      "关闭确认"
+    ],
+    "evidence": [
+      {
+        "state": "baby-development-date-profile-editor",
+        "evidence_id": "04-baby/baby-development-date-profile-editor",
+        "image": "04-baby/baby-development-date-profile-editor/default.png",
+        "metadata": "raw/test/goldens/ui_inventory/baby-development-date-profile-editor-393-1x.png.json",
+        "trigger": "Edit current baby profile through switcher",
+        "normal_route_observed": true,
+        "extent": "viewport"
+      }
+    ],
+    "interaction_report": "BABY-PROFILE-CONTROLS.md",
+    "status": "EXPLICIT_STATE_EVIDENCE_MAPPED; version boundaries retained",
+    "state_mapping": "OVERLAY-STATE-MAP.md"
+  },
+  {
+    "id": "baby-record",
+    "name": "宝宝记录弹窗",
+    "owners": [
+      "baby-home",
+      "baby-records"
+    ],
+    "required_states": [
+      "喂养",
+      "睡眠",
+      "尿布",
+      "生长",
+      "发育",
+      "编辑",
+      "校验",
+      "保存"
+    ],
+    "evidence": [
+      {
+        "state": "baby-development-controls-editor-empty",
+        "evidence_id": "04-baby/baby-development-controls-editor-empty",
+        "image": "04-baby/baby-development-controls-editor-empty/default.png",
+        "metadata": "raw/test/goldens/ui_inventory/baby-development-controls-editor-empty-393-1x.png.json",
+        "trigger": "Tap developmental observation → three unselected behavior groups",
+        "normal_route_observed": true,
+        "extent": "viewport"
+      },
+      {
+        "state": "baby-development-controls-saving",
+        "evidence_id": "04-baby/baby-development-controls-saving",
+        "image": "04-baby/baby-development-controls-saving/default.png",
+        "metadata": "raw/test/goldens/ui_inventory/baby-development-controls-saving-393-1x.png.json",
+        "trigger": "Retry save → pending request and disabled saving action",
+        "normal_route_observed": true,
+        "extent": "viewport"
+      }
+    ],
+    "interaction_report": "BABY-JOURNEYS.md",
+    "status": "EXPLICIT_STATE_EVIDENCE_MAPPED; version boundaries retained",
+    "state_mapping": "OVERLAY-STATE-MAP.md"
+  },
+  {
+    "id": "baby-saved",
+    "name": "宝宝保存反馈",
+    "owners": [
+      "baby-home",
+      "baby-records"
+    ],
+    "required_states": [
+      "保存成功",
+      "后续记录"
+    ],
+    "evidence": [
+      {
+        "state": "baby-development-controls-batch-saved",
+        "evidence_id": "04-baby/baby-development-controls-batch-saved",
+        "image": "04-baby/baby-development-controls-batch-saved/default.png",
+        "metadata": "raw/test/goldens/ui_inventory/baby-development-controls-batch-saved-393-1x.png.json",
+        "trigger": "Retry acknowledged → three dated observations saved together",
+        "normal_route_observed": true,
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "interaction_report": "BABY-DEVELOPMENT-CONTROLS.md",
+    "status": "EXPLICIT_STATE_EVIDENCE_MAPPED; version boundaries retained",
+    "state_mapping": "OVERLAY-STATE-MAP.md"
+  },
+  {
+    "id": "baby-switcher",
+    "name": "宝宝切换",
+    "owners": [
+      "baby-home"
+    ],
+    "required_states": [
+      "列表",
+      "当前选择",
+      "取消"
+    ],
+    "evidence": [
+      {
+        "state": "baby-journey-switcher",
+        "evidence_id": "04-baby/baby-journey-switcher",
+        "image": "04-baby/baby-journey-switcher/default.png",
+        "metadata": "raw/test/goldens/ui_inventory/baby-journey-switcher-393.png.json",
+        "trigger": "Tap baby name → two-profile switcher",
+        "normal_route_observed": true,
+        "extent": "viewport"
+      },
+      {
+        "state": "baby-journey-switched-leo",
+        "evidence_id": "04-baby/baby-journey-switched-leo",
+        "image": "04-baby/baby-journey-switched-leo/default.png",
+        "metadata": "raw/test/goldens/ui_inventory/baby-journey-switched-leo-393.png.json",
+        "trigger": "Choose Leo → second profile and independently empty records",
+        "normal_route_observed": true,
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "interaction_report": "BABY-JOURNEYS.md",
+    "status": "EXPLICIT_STATE_EVIDENCE_MAPPED; version boundaries retained",
+    "state_mapping": "OVERLAY-STATE-MAP.md"
+  },
+  {
+    "id": "knowledge",
+    "name": "知识来源与说明",
+    "owners": [
+      "mom-home",
+      "baby-home"
+    ],
+    "required_states": [
+      "来源说明",
+      "关闭"
+    ],
+    "evidence": [
+      {
+        "state": "baby-journey-knowledge-detail",
+        "evidence_id": "04-baby/baby-journey-knowledge-detail",
+        "image": "04-baby/baby-journey-knowledge-detail/default.png",
+        "metadata": "raw/test/goldens/ui_inventory/baby-journey-knowledge-detail-393.png.json",
+        "trigger": "Tap knowledge card → full educational article",
+        "normal_route_observed": true,
+        "extent": "viewport"
+      },
+      {
+        "state": "baby-knowledge-source-source-false-error",
+        "evidence_id": "04-baby/baby-knowledge-source-source-false-error",
+        "image": "04-baby/baby-knowledge-source-source-false-error/default.png",
+        "metadata": "raw/test/goldens/ui_inventory/baby-knowledge-source-source-false-error-393-1x.png.json",
+        "trigger": "External launcher returns false → source error Snackbar",
+        "normal_route_observed": true,
+        "extent": "viewport"
+      }
+    ],
+    "interaction_report": "BABY-KNOWLEDGE-SOURCES.md",
+    "status": "EXPLICIT_STATE_EVIDENCE_MAPPED; version boundaries retained",
+    "state_mapping": "OVERLAY-STATE-MAP.md"
+  },
+  {
+    "id": "agent-history",
+    "name": "对话历史抽屉",
+    "owners": [
+      "agent-home"
+    ],
+    "required_states": [
+      "列表／当前会话",
+      "空",
+      "加载",
+      "加载错误",
+      "回复锁定",
+      "切换中",
+      "切换失败",
+      "关闭"
+    ],
+    "evidence": [
+      {
+        "state": "agent-history-list",
+        "evidence_id": "05-agent/agent-history-list",
+        "image": "05-agent/agent-history-list/default.png",
+        "metadata": "raw/test/goldens/design_system/agent-history-list-390-1x.png.json",
+        "trigger": "history states 390.0/1.0",
+        "normal_route_observed": false,
+        "extent": "full-measured-scroll-stitch"
+      },
+      {
+        "state": "agent-history-switch-error",
+        "evidence_id": "05-agent/agent-history-switch-error",
+        "image": "05-agent/agent-history-switch-error/default.png",
+        "metadata": "raw/test/goldens/design_system/agent-history-switch-error-390-1x.png.json",
+        "trigger": "history states 390.0/1.0",
+        "normal_route_observed": false,
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "interaction_report": "AGENT-ENTRY-CURRENT.md",
+    "status": "EXPLICIT_STATE_EVIDENCE_MAPPED; version boundaries retained",
+    "state_mapping": "OVERLAY-STATE-MAP.md"
+  },
+  {
+    "id": "agent-menu",
+    "name": "消息操作菜单",
+    "owners": [
+      "agent-home"
+    ],
+    "required_states": [
+      "操作项",
+      "复制反馈"
+    ],
+    "evidence": [
+      {
+        "state": "agent-journey-assistant-menu",
+        "evidence_id": "05-agent/agent-journey-assistant-menu",
+        "image": "05-agent/agent-journey-assistant-menu/default.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-journey-assistant-menu-393.png.json",
+        "trigger": "Long press final answer → message menu",
+        "normal_route_observed": true,
+        "extent": "viewport"
+      },
+      {
+        "state": "agent-journey-user-menu",
+        "evidence_id": "05-agent/agent-journey-user-menu",
+        "image": "05-agent/agent-journey-user-menu/default.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-journey-user-menu-393.png.json",
+        "trigger": "Long press submitted user message → copy menu",
+        "normal_route_observed": true,
+        "extent": "viewport"
+      },
+      {
+        "state": "agent-journey-assistant-copied",
+        "evidence_id": "05-agent/agent-journey-assistant-copied",
+        "image": "05-agent/agent-journey-assistant-copied/default.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-journey-assistant-copied-393.png.json",
+        "trigger": "Copy answer → raw Markdown retained in clipboard",
+        "normal_route_observed": true,
+        "extent": "viewport"
+      }
+    ],
+    "interaction_report": "AGENT-JOURNEYS.md",
+    "status": "EXPLICIT_STATE_EVIDENCE_MAPPED; version boundaries retained",
+    "state_mapping": "OVERLAY-STATE-MAP.md"
+  },
+  {
+    "id": "agent-form",
+    "name": "Agent 结构化表单",
+    "owners": [
+      "agent-home"
+    ],
+    "required_states": [
+      "各表单 schema",
+      "校验",
+      "提交",
+      "失败"
+    ],
+    "evidence": [
+      {
+        "state": "agent-form",
+        "evidence_id": "05-agent/agent-form",
+        "image": "05-agent/agent-form/default.png",
+        "metadata": "raw/test/goldens/design_system/agent-form-390.png.json",
+        "trigger": "Agent cards and dialog at 390.0 / 1.0",
+        "normal_route_observed": false,
+        "extent": "viewport"
+      },
+      {
+        "state": "agent-form-choices",
+        "evidence_id": "05-agent/agent-form-choices",
+        "image": "05-agent/agent-form-choices/default.png",
+        "metadata": "raw/test/goldens/design_system/agent-form-choices-390-1x.png.json",
+        "trigger": "form states 390.0/1.0",
+        "normal_route_observed": false,
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "interaction_report": "AGENT-CURRENT-REUSE.md",
+    "status": "EXPLICIT_STATE_EVIDENCE_MAPPED; version boundaries retained",
+    "state_mapping": "OVERLAY-STATE-MAP.md"
+  },
+  {
+    "id": "agent-image",
+    "name": "对话图片预览",
+    "owners": [
+      "agent-home"
+    ],
+    "required_states": [
+      "加载",
+      "图片",
+      "失败",
+      "关闭"
+    ],
+    "evidence": [
+      {
+        "state": "agent-attachment-journey-image-remote-loading",
+        "evidence_id": "05-agent/agent-attachment-journey-image-remote-loading",
+        "image": "05-agent/agent-attachment-journey-image-remote-loading/default.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-attachment-journey-image-remote-loading-393.png.json",
+        "trigger": "inventory attachment image upload failure and preview retry",
+        "normal_route_observed": true,
+        "extent": "viewport"
+      },
+      {
+        "state": "agent-attachment-journey-image-viewer",
+        "evidence_id": "05-agent/agent-attachment-journey-image-viewer",
+        "image": "05-agent/agent-attachment-journey-image-viewer/default.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-attachment-journey-image-viewer-393.png.json",
+        "trigger": "inventory attachment mixed send and image viewer 393.0",
+        "normal_route_observed": true,
+        "extent": "viewport"
+      },
+      {
+        "state": "agent-attachment-journey-image-remote-failed",
+        "evidence_id": "05-agent/agent-attachment-journey-image-remote-failed",
+        "image": "05-agent/agent-attachment-journey-image-remote-failed/default.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-attachment-journey-image-remote-failed-393.png.json",
+        "trigger": "inventory attachment image upload failure and preview retry",
+        "normal_route_observed": true,
+        "extent": "viewport"
+      },
+      {
+        "state": "agent-attachment-journey-image-viewer-return",
+        "evidence_id": "05-agent/agent-attachment-journey-image-viewer-return",
+        "image": "05-agent/agent-attachment-journey-image-viewer-return/default.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-attachment-journey-image-viewer-return-393.png.json",
+        "trigger": "inventory attachment mixed send and image viewer 393.0",
+        "normal_route_observed": true,
+        "extent": "viewport"
+      }
+    ],
+    "interaction_report": "AGENT-ATTACHMENTS.md",
+    "status": "EXPLICIT_STATE_EVIDENCE_MAPPED; version boundaries retained",
+    "state_mapping": "OVERLAY-STATE-MAP.md"
+  },
+  {
+    "id": "schedule-editor",
+    "name": "个人日程表单",
+    "owners": [
+      "schedule"
+    ],
+    "required_states": [
+      "新增",
+      "编辑",
+      "时间",
+      "校验",
+      "保存",
+      "错误"
+    ],
+    "evidence": [
+      {
+        "state": "schedule-create",
+        "evidence_id": "06-schedule/schedule-create",
+        "image": "06-schedule/schedule-create/default.png",
+        "metadata": "raw/test/goldens/design_system/schedule-create-390.png.json",
+        "trigger": "personal schedule create edit delete at 390.0/1.0",
+        "normal_route_observed": false,
+        "extent": "viewport"
+      },
+      {
+        "state": "schedule-date-picker",
+        "evidence_id": "06-schedule/schedule-date-picker",
+        "image": "06-schedule/schedule-date-picker/default.png",
+        "metadata": "raw/test/goldens/design_system/schedule-date-picker.png.json",
+        "trigger": "personal schedule create edit delete at 390.0/1.0",
+        "normal_route_observed": false,
+        "extent": "viewport"
+      }
+    ],
+    "interaction_report": "SCHEDULE-CURRENT.md",
+    "status": "EXPLICIT_STATE_EVIDENCE_MAPPED; version boundaries retained",
+    "state_mapping": "OVERLAY-STATE-MAP.md"
+  },
+  {
+    "id": "schedule-delete",
+    "name": "日程删除确认",
+    "owners": [
+      "schedule"
+    ],
+    "required_states": [
+      "确认",
+      "取消",
+      "等待",
+      "失败"
+    ],
+    "evidence": [
+      {
+        "state": "schedule-journey-delete-confirm",
+        "evidence_id": "06-schedule/schedule-journey-delete-confirm",
+        "image": "06-schedule/schedule-journey-delete-confirm/default.png",
+        "metadata": "raw/test/goldens/ui_inventory/schedule-journey-delete-confirm-393.png.json",
+        "trigger": "Delete → confirmation",
+        "normal_route_observed": true,
+        "extent": "viewport"
+      }
+    ],
+    "interaction_report": "SCHEDULE-FEEDBACK-CURRENT.md",
+    "status": "EXPLICIT_STATE_EVIDENCE_MAPPED; version boundaries retained",
+    "state_mapping": "OVERLAY-STATE-MAP.md"
+  },
+  {
+    "id": "provider-team",
+    "name": "专家团队介绍",
+    "owners": [
+      "service-catalog",
+      "service-package"
+    ],
+    "required_states": [
+      "团队",
+      "空",
+      "关闭"
+    ],
+    "evidence": [
+      {
+        "state": "service-current-catalog-team",
+        "evidence_id": "08-expert-service/service-current-catalog-team",
+        "image": "08-expert-service/service-current-catalog-team/default.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-current-catalog-team-393-1x.png.json",
+        "trigger": "Catalog team action → provider dialog",
+        "normal_route_observed": true,
+        "extent": "viewport"
+      },
+      {
+        "state": "service-current-catalog-team-empty",
+        "evidence_id": "08-expert-service/service-current-catalog-team-empty",
+        "image": "08-expert-service/service-current-catalog-team-empty/default.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-current-catalog-team-empty-393-1x.png.json",
+        "trigger": "Empty catalog team → no available experts",
+        "normal_route_observed": true,
+        "extent": "viewport"
+      }
+    ],
+    "interaction_report": "SERVICE-CURRENT.md",
+    "status": "EXPLICIT_STATE_EVIDENCE_MAPPED; version boundaries retained",
+    "state_mapping": "OVERLAY-STATE-MAP.md"
+  },
+  {
+    "id": "purchase",
+    "name": "购买服务流程",
+    "owners": [
+      "service-package",
+      "service-renew"
+    ],
+    "required_states": [
+      "资格",
+      "付款",
+      "校验",
+      "拒付",
+      "额外验证",
+      "待付",
+      "取消",
+      "成功",
+      "同步权益",
+      "错误"
+    ],
+    "evidence": [
+      {
+        "state": "service-journey-purchase-region-menu",
+        "evidence_id": "08-expert-service/service-journey-purchase-region-menu",
+        "image": "08-expert-service/service-journey-purchase-region-menu/default.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-journey-purchase-region-menu-393.png.json",
+        "trigger": "Open current state selector",
+        "normal_route_observed": true,
+        "extent": "viewport"
+      },
+      {
+        "state": "service-journey-purchase-success",
+        "evidence_id": "08-expert-service/service-journey-purchase-success",
+        "image": "08-expert-service/service-journey-purchase-success/default.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-journey-purchase-success-393.png.json",
+        "trigger": "Confirm bank verification → purchased benefits",
+        "normal_route_observed": true,
+        "extent": "viewport"
+      }
+    ],
+    "interaction_report": "PURCHASE-CURRENT.md",
+    "status": "EXPLICIT_STATE_EVIDENCE_MAPPED; version boundaries retained",
+    "state_mapping": "OVERLAY-STATE-MAP.md"
+  },
+  {
+    "id": "booking-precheck",
+    "name": "预约前确认",
+    "owners": [
+      "booking"
+    ],
+    "required_states": [
+      "州选择",
+      "适用性",
+      "风险",
+      "等待",
+      "拒绝",
+      "重试"
+    ],
+    "evidence": [
+      {
+        "state": "booking-precheck",
+        "evidence_id": "08-expert-service/booking-precheck",
+        "image": "08-expert-service/booking-precheck/default.png",
+        "metadata": "raw/test/goldens/design_system/booking-precheck-390.png.json",
+        "trigger": "booking precheck and held dialog flow at 390.0 / 1.0",
+        "normal_route_observed": false,
+        "extent": "viewport"
+      }
+    ],
+    "interaction_report": "BOOKING-PRECHECK-CURRENT.md",
+    "status": "EXPLICIT_STATE_EVIDENCE_MAPPED; version boundaries retained",
+    "state_mapping": "OVERLAY-STATE-MAP.md"
+  },
+  {
+    "id": "booking-review",
+    "name": "确认预约时间",
+    "owners": [
+      "booking"
+    ],
+    "required_states": [
+      "held",
+      "提醒草稿",
+      "过期",
+      "确认中",
+      "错误",
+      "已确认"
+    ],
+    "evidence": [
+      {
+        "state": "booking-selection-current-held-review",
+        "evidence_id": "08-expert-service/booking-selection-current-held-review",
+        "image": "08-expert-service/booking-selection-current-held-review/default.png",
+        "metadata": "raw/test/goldens/ui_inventory/booking-selection-current-held-review-393-1x.png.json",
+        "trigger": "Retry same idempotency key → held appointment review",
+        "normal_route_observed": true,
+        "extent": "viewport"
+      },
+      {
+        "state": "booking-selection-current-confirm-error",
+        "evidence_id": "08-expert-service/booking-selection-current-confirm-error",
+        "image": "08-expert-service/booking-selection-current-confirm-error/default.png",
+        "metadata": "raw/test/goldens/ui_inventory/booking-selection-current-confirm-error-393-1x.png.json",
+        "trigger": "Pending Back blocked; confirm HTTP 503 → retry",
+        "normal_route_observed": true,
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "interaction_report": "BOOKING-SELECTION-CURRENT.md",
+    "status": "EXPLICIT_STATE_EVIDENCE_MAPPED; version boundaries retained",
+    "state_mapping": "OVERLAY-STATE-MAP.md"
+  },
+  {
+    "id": "appointment-cancel",
+    "name": "取消预约",
+    "owners": [
+      "booking",
+      "appointment",
+      "consultation",
+      "mom-home"
+    ],
+    "required_states": [
+      "确认",
+      "保留",
+      "等待",
+      "未知",
+      "状态变化",
+      "恢复"
+    ],
+    "evidence": [
+      {
+        "state": "appointment-cancel",
+        "evidence_id": "08-expert-service/appointment-cancel",
+        "image": "08-expert-service/appointment-cancel/default.png",
+        "metadata": "raw/test/goldens/design_system/appointment-cancel-390.png.json",
+        "trigger": "appointment keep and cancel at 390.0 / 1.0",
+        "normal_route_observed": false,
+        "extent": "viewport"
+      },
+      {
+        "state": "appointment-cancel-uncertain",
+        "evidence_id": "08-expert-service/appointment-cancel-uncertain",
+        "image": "08-expert-service/appointment-cancel-uncertain/default.png",
+        "metadata": "raw/test/goldens/design_system/appointment-cancel-uncertain-390.png.json",
+        "trigger": "cancel pending locks return and retry uses original appointment version",
+        "normal_route_observed": false,
+        "extent": "viewport"
+      }
+    ],
+    "interaction_report": "BOOKING-RECOVERY-CURRENT.md",
+    "status": "EXPLICIT_STATE_EVIDENCE_MAPPED; version boundaries retained",
+    "state_mapping": "OVERLAY-STATE-MAP.md"
+  },
+  {
+    "id": "home-consultation",
+    "name": "首页预约浮层",
+    "owners": [
+      "mom-home"
+    ],
+    "required_states": [
+      "准备",
+      "信息采集入口",
+      "取消",
+      "过期",
+      "错误"
+    ],
+    "evidence": [
+      {
+        "state": "home-consultation-journey-preparation",
+        "evidence_id": "08-expert-service/home-consultation-journey-preparation",
+        "image": "08-expert-service/home-consultation-journey-preparation/default.png",
+        "metadata": "raw/test/goldens/ui_inventory/home-consultation-journey-preparation-393.png.json",
+        "trigger": "Mom owned plan → View appointment → actual preparation dialog over home",
+        "normal_route_observed": true,
+        "extent": "viewport"
+      },
+      {
+        "state": "home-consultation-journey-cancel-confirm",
+        "evidence_id": "08-expert-service/home-consultation-journey-cancel-confirm",
+        "image": "08-expert-service/home-consultation-journey-cancel-confirm/default.png",
+        "metadata": "raw/test/goldens/ui_inventory/home-consultation-journey-cancel-confirm-393.png.json",
+        "trigger": "Cancel appointment → nested confirmation dialog",
+        "normal_route_observed": true,
+        "extent": "viewport"
+      }
+    ],
+    "interaction_report": "ENTRY-FOLLOWUP.md",
+    "status": "EXPLICIT_STATE_EVIDENCE_MAPPED; version boundaries retained",
+    "state_mapping": "OVERLAY-STATE-MAP.md"
+  },
+  {
+    "id": "intake-consent",
+    "name": "信息使用说明",
+    "owners": [
+      "intake"
+    ],
+    "required_states": [
+      "说明",
+      "关闭"
+    ],
+    "evidence": [
+      {
+        "state": "intake-consent",
+        "evidence_id": "08-expert-service/intake-consent",
+        "image": "08-expert-service/intake-consent/default.png",
+        "metadata": "raw/test/goldens/design_system/intake-consent-390.png.json",
+        "trigger": "intake design disclosures consent and save at 390.0 / 1.0",
+        "normal_route_observed": false,
+        "extent": "viewport"
+      }
+    ],
+    "interaction_report": "INTAKE-CURRENT.md",
+    "status": "EXPLICIT_STATE_EVIDENCE_MAPPED; version boundaries retained",
+    "state_mapping": "OVERLAY-STATE-MAP.md"
+  },
+  {
+    "id": "intake-saved",
+    "name": "信息采集保存成功",
+    "owners": [
+      "intake"
+    ],
+    "required_states": [
+      "保存成功",
+      "预咨询",
+      "稍后"
+    ],
+    "evidence": [
+      {
+        "state": "intake-saved",
+        "evidence_id": "08-expert-service/intake-saved",
+        "image": "08-expert-service/intake-saved/default.png",
+        "metadata": "raw/test/goldens/design_system/intake-saved-390.png.json",
+        "trigger": "intake design disclosures consent and save at 390.0 / 1.0",
+        "normal_route_observed": false,
+        "extent": "viewport"
+      }
+    ],
+    "interaction_report": "INTAKE-CURRENT.md",
+    "status": "EXPLICIT_STATE_EVIDENCE_MAPPED; version boundaries retained",
+    "state_mapping": "OVERLAY-STATE-MAP.md"
+  },
+  {
+    "id": "device-check",
+    "name": "咨询设备检查",
+    "owners": [
+      "consultation",
+      "mom-home"
+    ],
+    "required_states": [
+      "权限未授权",
+      "检查中",
+      "预览",
+      "错误",
+      "通过"
+    ],
+    "evidence": [
+      {
+        "state": "consultation-journey-device-checking",
+        "evidence_id": "08-expert-service/consultation-journey-device-checking",
+        "image": "08-expert-service/consultation-journey-device-checking/default.png",
+        "metadata": "raw/test/goldens/ui_inventory/consultation-journey-device-checking-393.png.json",
+        "trigger": "Device probe pending → permission check in progress",
+        "normal_route_observed": true,
+        "extent": "viewport"
+      },
+      {
+        "state": "consultation-journey-device-denied",
+        "evidence_id": "08-expert-service/consultation-journey-device-denied",
+        "image": "08-expert-service/consultation-journey-device-denied/default.png",
+        "metadata": "raw/test/goldens/ui_inventory/consultation-journey-device-denied-393.png.json",
+        "trigger": "Start consultation → device API denial shown in check dialog",
+        "normal_route_observed": true,
+        "extent": "viewport"
+      },
+      {
+        "state": "consultation-journey-device-recovered",
+        "evidence_id": "08-expert-service/consultation-journey-device-recovered",
+        "image": "08-expert-service/consultation-journey-device-recovered/default.png",
+        "metadata": "raw/test/goldens/ui_inventory/consultation-journey-device-recovered-393.png.json",
+        "trigger": "Retry device APIs after permission recovery → ready",
+        "normal_route_observed": true,
+        "extent": "viewport"
+      }
+    ],
+    "interaction_report": "CONSULTATION-PREFLIGHT-FEEDBACK-CURRENT.md",
+    "status": "EXPLICIT_STATE_EVIDENCE_MAPPED; version boundaries retained",
+    "state_mapping": "OVERLAY-STATE-MAP.md"
+  },
+  {
+    "id": "video-consent",
+    "name": "视频咨询授权",
+    "owners": [
+      "consultation",
+      "mom-home"
+    ],
+    "required_states": [
+      "未勾选",
+      "勾选",
+      "同意",
+      "关闭"
+    ],
+    "evidence": [
+      {
+        "state": "consultation-journey-video-consent",
+        "evidence_id": "08-expert-service/consultation-journey-video-consent",
+        "image": "08-expert-service/consultation-journey-video-consent/default.png",
+        "metadata": "raw/test/goldens/ui_inventory/consultation-journey-video-consent-393.png.json",
+        "trigger": "Video authorization CTA → explicit episode consent dialog",
+        "normal_route_observed": true,
+        "extent": "viewport"
+      },
+      {
+        "state": "consultation-journey-video-consent-selected",
+        "evidence_id": "08-expert-service/consultation-journey-video-consent-selected",
+        "image": "08-expert-service/consultation-journey-video-consent-selected/default.png",
+        "metadata": "raw/test/goldens/ui_inventory/consultation-journey-video-consent-selected-393.png.json",
+        "trigger": "Consent checked → confirmation enabled, no grant before submit",
+        "normal_route_observed": true,
+        "extent": "viewport"
+      }
+    ],
+    "interaction_report": "CONSULTATION-PREFLIGHT-FEEDBACK-CURRENT.md",
+    "status": "EXPLICIT_STATE_EVIDENCE_MAPPED; version boundaries retained",
+    "state_mapping": "OVERLAY-STATE-MAP.md"
+  },
+  {
+    "id": "consultation-start",
+    "name": "进入咨询确认",
+    "owners": [
+      "consultation",
+      "mom-home"
+    ],
+    "required_states": [
+      "准备",
+      "确认",
+      "等待",
+      "失败"
+    ],
+    "evidence": [
+      {
+        "state": "consultation-journey-start-confirmation",
+        "evidence_id": "08-expert-service/consultation-journey-start-confirmation",
+        "image": "08-expert-service/consultation-journey-start-confirmation/default.png",
+        "metadata": "raw/test/goldens/ui_inventory/consultation-journey-start-confirmation-393.png.json",
+        "trigger": "Device check success → location and missing video consent",
+        "normal_route_observed": true,
+        "extent": "viewport"
+      },
+      {
+        "state": "consultation-journey-current-join-request-error",
+        "evidence_id": "08-expert-service/consultation-journey-current-join-request-error",
+        "image": "08-expert-service/consultation-journey-current-join-request-error/default.png",
+        "metadata": "raw/test/goldens/ui_inventory/consultation-journey-current-join-request-error-393.png.json",
+        "trigger": "Location accepted → join fails, start dialog awaits recovery",
+        "normal_route_observed": true,
+        "extent": "viewport"
+      }
+    ],
+    "interaction_report": "CONSULTATION-PREFLIGHT-FEEDBACK-CURRENT.md",
+    "status": "EXPLICIT_STATE_EVIDENCE_MAPPED; version boundaries retained",
+    "state_mapping": "OVERLAY-STATE-MAP.md"
+  },
+  {
+    "id": "consultation-leave",
+    "name": "暂时离开咨询",
+    "owners": [
+      "consultation"
+    ],
+    "required_states": [
+      "确认",
+      "留下",
+      "处理中",
+      "失败"
+    ],
+    "evidence": [
+      {
+        "state": "consultation-journey-current-live-leave-confirmation",
+        "evidence_id": "08-expert-service/consultation-journey-current-live-leave-confirmation",
+        "image": "08-expert-service/consultation-journey-current-live-leave-confirmation/default.png",
+        "metadata": "raw/test/goldens/ui_inventory/consultation-journey-current-live-leave-confirmation-393.png.json",
+        "trigger": "Me → service → booking → preparation → passed checks → room → Leave",
+        "normal_route_observed": true,
+        "extent": "viewport"
+      },
+      {
+        "state": "room-leave-failure",
+        "evidence_id": "08-expert-service/room-leave-failure",
+        "image": "08-expert-service/room-leave-failure/default.png",
+        "metadata": "raw/test/goldens/product_baseline/room-leave-failure-390-1x.png.json",
+        "trigger": "leave recovery 390.0 / 1.0",
+        "normal_route_observed": false,
+        "extent": "viewport"
+      }
+    ],
+    "interaction_report": "CONSULTATION-LIVE-CURRENT.md",
+    "status": "EXPLICIT_STATE_EVIDENCE_MAPPED; version boundaries retained",
+    "state_mapping": "OVERLAY-STATE-MAP.md"
+  },
+  {
+    "id": "notification-education",
+    "name": "通知授权说明",
+    "owners": [
+      "notification-settings",
+      "booking",
+      "appointment"
+    ],
+    "required_states": [
+      "说明",
+      "暂不",
+      "继续",
+      "拒绝后去设置"
+    ],
+    "evidence": [
+      {
+        "state": "notification-permission-current-education-dialog",
+        "evidence_id": "07-me/notification-permission-current-education-dialog",
+        "image": "07-me/notification-permission-current-education-dialog/default.png",
+        "metadata": "raw/test/goldens/ui_inventory/notification-permission-current-education-dialog-393-1x.png.json",
+        "trigger": "Enable appointments → pre-permission education",
+        "normal_route_observed": true,
+        "extent": "viewport"
+      },
+      {
+        "state": "notification-permission-current-offer-settings-dialog",
+        "evidence_id": "07-me/notification-permission-current-offer-settings-dialog",
+        "image": "07-me/notification-permission-current-offer-settings-dialog/default.png",
+        "metadata": "raw/test/goldens/ui_inventory/notification-permission-current-offer-settings-dialog-393-1x.png.json",
+        "trigger": "Enable after denial → system-settings explanation",
+        "normal_route_observed": true,
+        "extent": "viewport"
+      }
+    ],
+    "interaction_report": "NOTIFICATION-PERMISSION-CURRENT.md",
+    "status": "EXPLICIT_STATE_EVIDENCE_MAPPED; version boundaries retained",
+    "state_mapping": "OVERLAY-STATE-MAP.md"
+  },
+  {
+    "id": "auth-language",
+    "name": "登录语言选择",
+    "owners": [
+      "auth-login"
+    ],
+    "required_states": [
+      "语言列表",
+      "选中",
+      "取消"
+    ],
+    "evidence": [
+      {
+        "state": "auth-followup-language-sheet",
+        "evidence_id": "01-auth/auth-followup-language-sheet",
+        "image": "01-auth/auth-followup-language-sheet/default.png",
+        "metadata": "raw/test/goldens/ui_inventory/auth-followup-language-sheet-393-1x.png.json",
+        "trigger": "Language button → English selection sheet",
+        "normal_route_observed": true,
+        "extent": "viewport"
+      },
+      {
+        "state": "auth-followup-language-selected",
+        "evidence_id": "01-auth/auth-followup-language-selected",
+        "image": "01-auth/auth-followup-language-selected/default.png",
+        "metadata": "raw/test/goldens/ui_inventory/auth-followup-language-selected-393-1x.png.json",
+        "trigger": "Select English → close sheet and preserve email/password draft",
+        "normal_route_observed": true,
+        "extent": "viewport"
+      }
+    ],
+    "interaction_report": "AUTH-CURRENT.md",
+    "status": "EXPLICIT_STATE_EVIDENCE_MAPPED; version boundaries retained",
+    "state_mapping": "OVERLAY-STATE-MAP.md"
+  },
+  {
+    "id": "account-confirm",
+    "name": "账号敏感操作确认",
+    "owners": [
+      "account"
+    ],
+    "required_states": [
+      "密码确认",
+      "绑定 Google",
+      "删除账号",
+      "错误"
+    ],
+    "evidence": [
+      {
+        "state": "account-current-password-entered",
+        "evidence_id": "07-me/account-current-password-entered",
+        "image": "07-me/account-current-password-entered/default.png",
+        "metadata": "raw/test/goldens/ui_inventory/account-current-password-entered-393-1x.png.json",
+        "trigger": "Enter password → obscured input",
+        "normal_route_observed": true,
+        "extent": "viewport"
+      },
+      {
+        "state": "account-current-delete-confirm",
+        "evidence_id": "07-me/account-current-delete-confirm",
+        "image": "07-me/account-current-delete-confirm/default.png",
+        "metadata": "raw/test/goldens/ui_inventory/account-current-delete-confirm-393-1x.png.json",
+        "trigger": "Request deletion → confirmation",
+        "normal_route_observed": true,
+        "extent": "viewport"
+      },
+      {
+        "state": "account-current-delete-error",
+        "evidence_id": "07-me/account-current-delete-error",
+        "image": "07-me/account-current-delete-error/default.png",
+        "metadata": "raw/test/goldens/ui_inventory/account-current-delete-error-393-1x.png.json",
+        "trigger": "DELETE 503 → account retained with inline error",
+        "normal_route_observed": true,
+        "extent": "viewport"
+      }
+    ],
+    "interaction_report": "ACCOUNT-CURRENT.md",
+    "status": "EXPLICIT_STATE_EVIDENCE_MAPPED; version boundaries retained",
+    "state_mapping": "OVERLAY-STATE-MAP.md"
+  },
+  {
+    "id": "date-time",
+    "name": "日期／时间选择器",
+    "owners": [
+      "shared"
+    ],
+    "required_states": [
+      "日历",
+      "年份",
+      "输入",
+      "时钟",
+      "校验",
+      "取消",
+      "确认"
+    ],
+    "evidence": [
+      {
+        "state": "mom-journey-nursing-time-picker",
+        "evidence_id": "03-mom/mom-journey-nursing-time-picker",
+        "image": "03-mom/mom-journey-nursing-time-picker/default.png",
+        "metadata": "raw/test/goldens/ui_inventory/mom-journey-nursing-time-picker-393.png.json",
+        "trigger": "Record time → time picker",
+        "normal_route_observed": true,
+        "extent": "viewport"
+      },
+      {
+        "state": "mom-journey-nursing-time-input",
+        "evidence_id": "03-mom/mom-journey-nursing-time-input",
+        "image": "03-mom/mom-journey-nursing-time-input/default.png",
+        "metadata": "raw/test/goldens/ui_inventory/mom-journey-nursing-time-input-393.png.json",
+        "trigger": "Time picker → keyboard time entry",
+        "normal_route_observed": true,
+        "extent": "viewport"
+      }
+    ],
+    "interaction_report": "MOM-MILK-DIAL.md",
+    "status": "EXPLICIT_STATE_EVIDENCE_MAPPED; version boundaries retained",
+    "state_mapping": "OVERLAY-STATE-MAP.md"
+  },
+  {
+    "id": "discard",
+    "name": "放弃修改确认",
+    "owners": [
+      "shared"
+    ],
+    "required_states": [
+      "脏草稿",
+      "未知保存结果",
+      "留下",
+      "放弃"
+    ],
+    "evidence": [
+      {
+        "state": "mom-journey-diary-discard-confirm",
+        "evidence_id": "03-mom/mom-journey-diary-discard-confirm",
+        "image": "03-mom/mom-journey-diary-discard-confirm/default.png",
+        "metadata": "raw/test/goldens/ui_inventory/mom-journey-diary-discard-confirm-393.png.json",
+        "trigger": "Close unsaved three-section diary → discard confirmation",
+        "normal_route_observed": true,
+        "extent": "viewport"
+      },
+      {
+        "state": "mom-journey-diary-draft-retained",
+        "evidence_id": "03-mom/mom-journey-diary-draft-retained",
+        "image": "03-mom/mom-journey-diary-draft-retained/default.png",
+        "metadata": "raw/test/goldens/ui_inventory/mom-journey-diary-draft-retained-393.png.json",
+        "trigger": "Continue editing → selected mood and other draft sections remain",
+        "normal_route_observed": true,
+        "extent": "full-measured-scroll-stitch"
+      },
+      {
+        "state": "schedule-journey-uncertain-discard",
+        "evidence_id": "06-schedule/schedule-journey-uncertain-discard",
+        "image": "06-schedule/schedule-journey-uncertain-discard/default.png",
+        "metadata": "raw/test/goldens/ui_inventory/schedule-journey-uncertain-discard-393.png.json",
+        "trigger": "Close uncertain save → reconciliation warning",
+        "normal_route_observed": true,
+        "extent": "viewport"
+      }
+    ],
+    "interaction_report": "ENTRY-STATUS.md",
+    "status": "EXPLICIT_STATE_EVIDENCE_MAPPED; version boundaries retained",
+    "state_mapping": "OVERLAY-STATE-MAP.md"
+  },
+  {
+    "id": "snackbar",
+    "name": "操作反馈条",
+    "owners": [
+      "shared"
+    ],
+    "required_states": [
+      "成功",
+      "错误",
+      "撤销",
+      "自动消失"
+    ],
+    "evidence": [
+      {
+        "state": "mom-journey-milk-history-deleted",
+        "evidence_id": "03-mom/mom-journey-milk-history-deleted",
+        "image": "03-mom/mom-journey-milk-history-deleted/default.png",
+        "metadata": "raw/test/goldens/ui_inventory/mom-journey-milk-history-deleted-393.png.json",
+        "trigger": "Delete record directly → deletion feedback with undo",
+        "normal_route_observed": true,
+        "extent": "full-measured-scroll-stitch"
+      },
+      {
+        "state": "mom-journey-milk-history-restored",
+        "evidence_id": "03-mom/mom-journey-milk-history-restored",
+        "image": "03-mom/mom-journey-milk-history-restored/default.png",
+        "metadata": "raw/test/goldens/ui_inventory/mom-journey-milk-history-restored-393.png.json",
+        "trigger": "Retry undo → record restored",
+        "normal_route_observed": true,
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "interaction_report": "SNACKBAR-LONG-REVIEW.md",
+    "status": "EXPLICIT_STATE_EVIDENCE_MAPPED; version boundaries retained",
+    "state_mapping": "OVERLAY-STATE-MAP.md"
+  },
+  {
+    "id": "tooltip",
+    "name": "控件提示",
+    "owners": [
+      "shared"
+    ],
+    "required_states": [
+      "出现",
+      "消失"
+    ],
+    "evidence": [
+      {
+        "state": "auth-journey-password-tooltip",
+        "evidence_id": "01-auth/auth-journey-password-tooltip",
+        "image": "01-auth/auth-journey-password-tooltip/default.png",
+        "metadata": "raw/test/goldens/ui_inventory/auth-journey-password-tooltip-393.png.json",
+        "trigger": "Long press password eye → native Flutter Tooltip",
+        "normal_route_observed": true,
+        "extent": "full-measured-scroll-stitch"
+      },
+      {
+        "state": "schedule-journey-current-add-tooltip",
+        "evidence_id": "06-schedule/schedule-journey-current-add-tooltip",
+        "image": "06-schedule/schedule-journey-current-add-tooltip/default.png",
+        "metadata": "raw/test/goldens/ui_inventory/schedule-journey-current-add-tooltip-393.png.json",
+        "trigger": "Long press add → tooltip",
+        "normal_route_observed": true,
+        "extent": "full-measured-scroll-stitch"
+      },
+      {
+        "state": "schedule-journey-current-next-tooltip",
+        "evidence_id": "06-schedule/schedule-journey-current-next-tooltip",
+        "image": "06-schedule/schedule-journey-current-next-tooltip/default.png",
+        "metadata": "raw/test/goldens/ui_inventory/schedule-journey-current-next-tooltip-393.png.json",
+        "trigger": "Long press next month → tooltip",
+        "normal_route_observed": true,
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "interaction_report": "SCHEDULE-FEEDBACK-CURRENT.md",
+    "status": "EXPLICIT_STATE_EVIDENCE_MAPPED; version boundaries retained",
+    "state_mapping": "OVERLAY-STATE-MAP.md"
+  },
+  {
+    "id": "system",
+    "name": "原生系统浮层",
+    "owners": [
+      "shared"
+    ],
+    "required_states": [
+      "键盘",
+      "照片／文件选择",
+      "通知",
+      "相机",
+      "麦克风",
+      "系统设置"
+    ],
+    "evidence": [],
+    "interaction_report": "NATIVE-WINDOWS-CATALOG.md",
+    "status": "EXPLICIT_STATE_EVIDENCE_MAPPED; version boundaries retained",
+    "state_mapping": "OVERLAY-STATE-MAP.md"
+  },
+  {
+    "id": "avatar-dialogs",
+    "name": "数字形象选择与确认",
+    "owners": [
+      "onboarding",
+      "avatar-create",
+      "avatar-review"
+    ],
+    "required_states": [
+      "照片来源",
+      "默认确认",
+      "生成交接（等待／进入 App）",
+      "生成完成",
+      "激活确认"
+    ],
+    "evidence": [
+      {
+        "state": "onboarding-required-source",
+        "evidence_id": "01-auth/onboarding-required-source",
+        "image": "01-auth/onboarding-required-source/default.png",
+        "metadata": "raw/test/goldens/design_system/onboarding-required-source-390.png.json",
+        "trigger": "onboarding avatar required at 390.0 / 1.0",
+        "normal_route_observed": false,
+        "extent": "viewport"
+      },
+      {
+        "state": "onboarding-default-confirm",
+        "evidence_id": "01-auth/onboarding-default-confirm",
+        "image": "01-auth/onboarding-default-confirm/default.png",
+        "metadata": "raw/test/goldens/design_system/onboarding-default-confirm-390.png.json",
+        "trigger": "avatar photo failure and default confirmation at 390.0 / 1.0",
+        "normal_route_observed": false,
+        "extent": "viewport"
+      },
+      {
+        "state": "onboarding-generation-handoff",
+        "evidence_id": "01-auth/onboarding-generation-handoff",
+        "image": "01-auth/onboarding-generation-handoff/default.png",
+        "metadata": "raw/test/goldens/ui_inventory/onboarding-generation-handoff-390.png.json",
+        "trigger": "Portrait accepted and generation queued → handoff dialog",
+        "normal_route_observed": true,
+        "extent": "viewport"
+      }
+    ],
+    "interaction_report": "CONFIGURED-SUBMISSION-CURRENT.md",
+    "status": "EXPLICIT_STATE_EVIDENCE_MAPPED; version boundaries retained",
+    "state_mapping": "OVERLAY-STATE-MAP.md"
+  },
+  {
+    "id": "summary-task-detail",
+    "name": "咨询行动详情",
+    "owners": [
+      "summary"
+    ],
+    "required_states": [
+      "待完成",
+      "进行中",
+      "已完成",
+      "暂时跳过",
+      "更新中",
+      "结果不确定／重试",
+      "方案替换／重新载入",
+      "行动移除／关闭"
+    ],
+    "evidence": [
+      {
+        "state": "consultation-journey-current-summary-task-detail",
+        "evidence_id": "08-expert-service/consultation-journey-current-summary-task-detail",
+        "image": "08-expert-service/consultation-journey-current-summary-task-detail/default.png",
+        "metadata": "raw/test/goldens/ui_inventory/consultation-journey-current-summary-task-detail-393.png.json",
+        "trigger": "Published task → action detail and progress choices",
+        "normal_route_observed": true,
+        "extent": "viewport"
+      },
+      {
+        "state": "consultation-journey-current-summary-task-uncertain",
+        "evidence_id": "08-expert-service/consultation-journey-current-summary-task-uncertain",
+        "image": "08-expert-service/consultation-journey-current-summary-task-uncertain/default.png",
+        "metadata": "raw/test/goldens/ui_inventory/consultation-journey-current-summary-task-uncertain-393.png.json",
+        "trigger": "Task update unavailable → previous progress retained, retry required",
+        "normal_route_observed": true,
+        "extent": "viewport"
+      }
+    ],
+    "interaction_report": "CONSULTATION-SUMMARY-CURRENT.md",
+    "status": "EXPLICIT_STATE_EVIDENCE_MAPPED; version boundaries retained",
+    "state_mapping": "OVERLAY-STATE-MAP.md"
+  }
+]

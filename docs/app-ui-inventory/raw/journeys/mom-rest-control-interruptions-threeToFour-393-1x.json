@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/mom-rest-control-interruptions-threeToFour-393-1x.png",
+  "previous_source": "test/goldens/ui_inventory/mom-rest-control-interruptions-oneToTwo-393-1x.png",
+  "route": "/me",
+  "trigger": "Rest / 夜里大约被打断几次 → select 3–4 次",
+  "root_entry": "Authenticated More → tap Me bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/mom/mom_rest_control_inventory_test.dart"
+}

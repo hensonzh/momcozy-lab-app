@@ -1,0 +1,402 @@
+[
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-conflict-reloaded-393.png",
+    "sha256": "48a58ca5dc36a8bcd0e7bcd493cbe4e106effe8a2da32905e3bd769d88a43776"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-conflict-reloaded-393.long.png",
+    "sha256": "84b4f5eaa8039c729aad6dd58bb3cc263074222d98ae05778d54c4d3ff480f6c"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-conflict-resaved-393.png",
+    "sha256": "3573de8fa3f1f7d93db4989642c538ab04c24f46167eec006a8e2da8984ccc92"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-conflict-resaved-393.long.png",
+    "sha256": "d907b2a13cef3e4d92ac52c9d6304ca98e8629229cba1179044e608c00fdf83a"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-consent-loading-393.png",
+    "sha256": "01f2ed30f53cea2c71f5f5b1b47a3bea740f8b91cfc6ba23f1bf6fd48f833ea4"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-consent-read-error-393.png",
+    "sha256": "34f55780d1ac71d25eeb11a4416e448a9966ba1902272f7bd0f237b1235e2ac8"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-consent-read-retried-393.png",
+    "sha256": "f56e1b2a2f7a829a6f185b5926f8ade44f378945e0ba9ccd5a39b678be3b10ce"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-consent-read-retried-393.long.png",
+    "sha256": "84b4f5eaa8039c729aad6dd58bb3cc263074222d98ae05778d54c4d3ff480f6c"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-empty-back-393.png",
+    "sha256": "1180d5da2a380eca2682cc718cead973186fcb3a6c498614ab0822eed5f79729"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-empty-services-393.png",
+    "sha256": "ddda154bdcc23f533f95878fbb9e6ef68744c29bea7b69f68444deb3ef808e37"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-granted-320-2x.png",
+    "sha256": "7cab024974305e3c22c91f288d4497a36d19fa11d0a5296f3de767db5d31a715"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-granted-320-2x.long.png",
+    "sha256": "e0b7e8cd7d289c04605894f24e8e0d0ff5f07f532836ac6590b5b90d865c2012"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-granted-393.png",
+    "sha256": "7317c0ac11203559c4cb74d1dd23e0a138c4d53e7e36c488751c9cf0ed6de525"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-granted-393.long.png",
+    "sha256": "81b5f1c7b7fcb60e3788c9036bfdafead3a4862adefa7eb0e14270508d5f0f8c"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-leave-confirm-320-2x.png",
+    "sha256": "0b5a532b6ebc88aec65f956e430191442bd7ad0f7ed91020459fe851d782c695"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-leave-confirm-393.png",
+    "sha256": "5c436669f161c45af8dd7be4dd4765b351ed47c9192a65411bae6ecffd1dc336"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-leave-discarded-320-2x.png",
+    "sha256": "bb614574819530e8ff26a1834831182339718b890c554cff929cd9eaff8e3930"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-leave-discarded-393.png",
+    "sha256": "1180d5da2a380eca2682cc718cead973186fcb3a6c498614ab0822eed5f79729"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-leave-kept-320-2x.png",
+    "sha256": "23930237802cf5ca79f8938901989eb3711669d06076a480266490bc2fbe9114"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-leave-kept-320-2x.long.png",
+    "sha256": "616cd5cf195f960ff27d61e24291039374e4885778b8678e2b2336c7fe4d22ac"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-leave-kept-393.png",
+    "sha256": "26cb75ff7a951048bb6f9c94ee82dfcb969841d33a0484be5856ef39b710a7cc"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-leave-kept-393.long.png",
+    "sha256": "df84c3699435bc5538093621340f92384c7ed5231d53fbf8a2d32cf534772317"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-loaded-320-2x.png",
+    "sha256": "29361e50fa79a154b6418421675b94401f22e250c61deba67fcc975bebcf08fc"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-loaded-320-2x.long.png",
+    "sha256": "fa450eca8267bfaaf1d9136653846c476d6abdccde273fd466ef0b67e197d07d"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-loaded-393.png",
+    "sha256": "f56e1b2a2f7a829a6f185b5926f8ade44f378945e0ba9ccd5a39b678be3b10ce"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-loaded-393.long.png",
+    "sha256": "84b4f5eaa8039c729aad6dd58bb3cc263074222d98ae05778d54c4d3ff480f6c"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-notification-settings-320-2x.png",
+    "sha256": "73048382ec4179f21226ff4d55919321d0038f81d89e0174a8403e2d76946cd0"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-notification-settings-320-2x.long.png",
+    "sha256": "b33ea0b5d06064227aeaf6a733c0c8205a87d63b9903f85e40f0c615bfc4222f"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-notification-settings-393.png",
+    "sha256": "91010f6e04d5202dedaf19c04597ef7d82a02856b49d9e0069f48e5a5ed57eb9"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-notifications-return-320-2x.png",
+    "sha256": "bf6461cdceeaef413a5adfb510c6f47e74de4bda6a8f7bcee7a595dee48dc49a"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-notifications-return-320-2x.long.png",
+    "sha256": "616cd5cf195f960ff27d61e24291039374e4885778b8678e2b2336c7fe4d22ac"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-notifications-return-393.png",
+    "sha256": "0afbdf3bc458e0ad4a0ac2a56a91e384d00381e6a70470f11d06d0c2fa2c545a"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-notifications-return-393.long.png",
+    "sha256": "df84c3699435bc5538093621340f92384c7ed5231d53fbf8a2d32cf534772317"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-optional-dirty-320-2x.png",
+    "sha256": "668989da3e93c82f94c9ee0ae59bbe793d68e20e2f6fa4fc7e4a52ef7bfd9685"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-optional-dirty-320-2x.long.png",
+    "sha256": "616cd5cf195f960ff27d61e24291039374e4885778b8678e2b2336c7fe4d22ac"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-optional-dirty-393.png",
+    "sha256": "b7c20a835898e8ae5cd48d436b2a15a244e5c7c2006953eaa03a022f7f1c9999"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-optional-dirty-393.long.png",
+    "sha256": "df84c3699435bc5538093621340f92384c7ed5231d53fbf8a2d32cf534772317"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-optional-saved-320-2x.png",
+    "sha256": "c08f999b57430916674c5422ebc862d82e433218608990e1ceefcc844bc2c01a"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-optional-saved-320-2x.long.png",
+    "sha256": "55cde62d8603b61f6f8282b4b6c9ebd1d581bc7952ddc6e72bdf99a0c03469bb"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-optional-saved-393.png",
+    "sha256": "3573de8fa3f1f7d93db4989642c538ab04c24f46167eec006a8e2da8984ccc92"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-optional-saved-393.long.png",
+    "sha256": "d907b2a13cef3e4d92ac52c9d6304ca98e8629229cba1179044e608c00fdf83a"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-optional-uncertain-393.png",
+    "sha256": "527603cbeeac98466d4dba2aefee82a471de0c07048e98c57f63cc00010e163f"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-optional-uncertain-393.long.png",
+    "sha256": "02a149715190dac4b2a48b9bd63fdbd5c13f1dae2cab4b774cbedb24a1364bed"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-overview-error-393.png",
+    "sha256": "79f1fa5d41b94d85f32fedc101b483c21f1ec49168df1a32fda8b65d3e5387f3"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-overview-loading-393.png",
+    "sha256": "aaa9b5f51e75d5f8c3f7f6b259c6d690c1173b38ce57db247382373321015029"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-partial-uncertain-320-2x.png",
+    "sha256": "9f093475b2120e0d59c366088f538895678eea0ec8e33919f92c94010e67a01c"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-partial-uncertain-320-2x.long.png",
+    "sha256": "1337300c9e0b602807987ee4bd1a576aca94aba7a03403eba22dcc80f67f5774"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-partial-uncertain-393.png",
+    "sha256": "48d1cdb08a0bac0845a9edc99f34f24a746e5083082f950d5c1ef291d25d0428"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-partial-uncertain-393.long.png",
+    "sha256": "7aa72dc1758e1dbddd3f197bee208db754d56ab5f4b053e6aa9e63859aac72a7"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-reentered-320-2x.png",
+    "sha256": "29361e50fa79a154b6418421675b94401f22e250c61deba67fcc975bebcf08fc"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-reentered-320-2x.long.png",
+    "sha256": "fa450eca8267bfaaf1d9136653846c476d6abdccde273fd466ef0b67e197d07d"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-reentered-393.png",
+    "sha256": "f56e1b2a2f7a829a6f185b5926f8ade44f378945e0ba9ccd5a39b678be3b10ce"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-reentered-393.long.png",
+    "sha256": "84b4f5eaa8039c729aad6dd58bb3cc263074222d98ae05778d54c4d3ff480f6c"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-reread-393.png",
+    "sha256": "48a58ca5dc36a8bcd0e7bcd493cbe4e106effe8a2da32905e3bd769d88a43776"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-reread-393.long.png",
+    "sha256": "84b4f5eaa8039c729aad6dd58bb3cc263074222d98ae05778d54c4d3ff480f6c"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-revoke-closed-320-2x.png",
+    "sha256": "58d79017392e0568fe89a5abee5790601edea0e3048a060b88e4b6d73da08019"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-revoke-closed-320-2x.long.png",
+    "sha256": "c0015835ff83c32ed2fdd216d721049884189abdb57d17300cf01e6f1418412b"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-revoke-closed-393.png",
+    "sha256": "0c6a0e929affc800c0e5acd09bac32f7064ec5c57fdd5b9af342c47e427d5624"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-revoke-closed-393.long.png",
+    "sha256": "775f1fa8ff72f643d43cea1d650280ce86c3ddccccb643833f32e8b77e25b8f8"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-revoke-confirm-320-2x.png",
+    "sha256": "e13d43edff0fb43f807a1ede3cb042cc1cd5486440c0eaa1db56ff7a4807c46d"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-revoke-confirm-320-2x.long.png",
+    "sha256": "d155e0cf9e96bf1f2e749e2cde1cbfe6ac5d4e20ba14f09851e144a9acc2a73a"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-revoke-confirm-393.png",
+    "sha256": "bbaecae8a900cd52fe537581d9a2ec31932e172d09753f046c9d3f02d16a394f"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-revoke-kept-320-2x.png",
+    "sha256": "58d79017392e0568fe89a5abee5790601edea0e3048a060b88e4b6d73da08019"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-revoke-kept-320-2x.long.png",
+    "sha256": "c0015835ff83c32ed2fdd216d721049884189abdb57d17300cf01e6f1418412b"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-revoke-kept-393.png",
+    "sha256": "0c6a0e929affc800c0e5acd09bac32f7064ec5c57fdd5b9af342c47e427d5624"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-revoke-kept-393.long.png",
+    "sha256": "775f1fa8ff72f643d43cea1d650280ce86c3ddccccb643833f32e8b77e25b8f8"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-revoked-320-2x.png",
+    "sha256": "2a484e91213b8bc4affcdf4263f2176a23b7469bd49bd6ee41c2c8d45933871a"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-revoked-320-2x.long.png",
+    "sha256": "d1a973701112140dadce9a99d393484ffd16d54cce03ddc22a31bb65e9a9065d"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-revoked-393.png",
+    "sha256": "be05ca4c01aceafc0949b39f495cda0c1ec3aa22cd306c61da40544d80568cdc"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-revoked-393.long.png",
+    "sha256": "a55b7b75bdf7b363828c8bba1a5f1106d3832093df57ccc335a3303622804cbb"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-saving-320-2x.png",
+    "sha256": "35b6e1605e7ac3ed89da1758ff90f42318bb52d585689e71f3f83a38cdec9535"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-saving-320-2x.long.png",
+    "sha256": "1ab71b3f2819503866ea23677413759b3dc8ad8ee8c5166b7ac34bd6216394d5"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-saving-393.png",
+    "sha256": "70bbc4192c9368d723dcc160758635f69dee989220b02e6c588b2127af2a5f16"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-saving-393.long.png",
+    "sha256": "1ab7c72f1fe06845eba4dcfd565dc0b5e08d6c4e23d3f4c8ffe75733796d8d2d"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-second-service-saved-320-2x.png",
+    "sha256": "c08f999b57430916674c5422ebc862d82e433218608990e1ceefcc844bc2c01a"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-second-service-saved-320-2x.long.png",
+    "sha256": "10d9a1b442fd57e072a69052e473071f96e3996897c111ce895d3208799e21c2"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-second-service-saved-393.png",
+    "sha256": "6d55c8f84545e38fe35dffd6056e9abb3ccaab8925ce1071388536b4a87c37a0"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-second-service-saved-393.long.png",
+    "sha256": "680a9ce22ce0900b909470cc75cd704a1a15b9c39c2473f8629e94af36a3abae"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-service-picker-320-2x.png",
+    "sha256": "ed819b385dc788e2ed8a577fd0166db821a0770afb906183c3158ae69dded4ed"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-service-picker-393.png",
+    "sha256": "2b15a142d870d866a0c2324084c859063fa7159c81a07893cca5baea35bc3b3c"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-service-picker-reopened-320-2x.png",
+    "sha256": "ed819b385dc788e2ed8a577fd0166db821a0770afb906183c3158ae69dded4ed"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-service-picker-reopened-393.png",
+    "sha256": "2b15a142d870d866a0c2324084c859063fa7159c81a07893cca5baea35bc3b3c"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-switch-cancelled-320-2x.png",
+    "sha256": "8a5d8cbfdeebda5e3d9336fb357f0179657b88ce4daf59ac7dbde3a354a6d84f"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-switch-cancelled-320-2x.long.png",
+    "sha256": "616cd5cf195f960ff27d61e24291039374e4885778b8678e2b2336c7fe4d22ac"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-switch-cancelled-393.png",
+    "sha256": "0afbdf3bc458e0ad4a0ac2a56a91e384d00381e6a70470f11d06d0c2fa2c545a"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-switch-cancelled-393.long.png",
+    "sha256": "df84c3699435bc5538093621340f92384c7ed5231d53fbf8a2d32cf534772317"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-switch-confirm-320-2x.png",
+    "sha256": "09509ad830512b4713fe40d714de09700011f745b1cf4d2a060decd1ac87764f"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-switch-confirm-393.png",
+    "sha256": "e7bc3df9e7f0f49558e8b1710cb21379d9ebec5599c8fae00b76f240b6e72922"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-switched-320-2x.png",
+    "sha256": "baa84d64f0b462a7f01f474961d3bf0d96ea0a61b06e3c612cb69f81813ae588"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-switched-320-2x.long.png",
+    "sha256": "9c2761c499a9ec048b0d0189b8fcc94bf282469d8832162f4a1c9fcc8fb30dde"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-switched-393.png",
+    "sha256": "36552af307d783980f0230839287c7cd9d9b02ccef99583b2237b5e448d9069b"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-switched-393.long.png",
+    "sha256": "579e641b447cf8d940e24925d605b138f98f81f9070f73db43a5672ba9316ae3"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-uncertain-leave-confirm-320-2x.png",
+    "sha256": "c6dbf960f9f44f075d5d76c7a0cb37664a3374c04a0ef5bd2a1c1e82e23abfd4"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-uncertain-leave-confirm-393.png",
+    "sha256": "610b80267097427860428020889f6f1ea9a8cfeb1a5181e810fc6ff02d6e9141"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-uncertain-retried-320-2x.png",
+    "sha256": "c08f999b57430916674c5422ebc862d82e433218608990e1ceefcc844bc2c01a"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-uncertain-retried-320-2x.long.png",
+    "sha256": "8ecb6b82e2484d254399dc2693a97ee3dd84d36e231a37d3431000af6f1413d8"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-uncertain-retried-393.png",
+    "sha256": "ae003ee7e03f9904036c2eda449652c3b042fc031bb02cc32b2b2d6659f47a0c"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-uncertain-retried-393.long.png",
+    "sha256": "ae89c97c8056d87b0b2a06f9afce300d3932539fc1d105b3d684c045577d0678"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-version-conflict-393.png",
+    "sha256": "5115d4b975fe8ca2893840de1e7ede09cc47a06059f43bdecc11feed1ff12464"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/privacy-journey-version-conflict-393.long.png",
+    "sha256": "7330e871ccdec4eebfbafc7ce7a2c652b72f1b347c7e05e983f565ce0db398de"
+  }
+]

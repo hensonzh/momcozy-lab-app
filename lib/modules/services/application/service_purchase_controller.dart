@@ -33,6 +33,7 @@ class ServicePurchaseController extends ChangeNotifier {
   void setRegion(String? value) {
     if (busy) return;
     region = value;
+    validationMessage = null;
     eligibility = null;
     _createKey = null;
     failure = null;
@@ -82,17 +83,25 @@ class ServicePurchaseController extends ChangeNotifier {
   Future<void> startStripeCheckout() async {
     final current = purchase;
     if (busy || current == null) return;
-    busy = true; failure = null; notifyListeners();
+    busy = true;
+    failure = null;
+    checkoutUrl = null;
+    notifyListeners();
     try {
-      if (repository is! StripeCheckoutRepository) throw UnsupportedError('Stripe Checkout is not configured');
-      final result = await (repository as StripeCheckoutRepository).stripeCheckout(current.order.id);
+      if (repository is! StripeCheckoutRepository) {
+        throw UnsupportedError('Stripe Checkout is not configured');
+      }
+      final result = await (repository as StripeCheckoutRepository)
+          .stripeCheckout(current.order.id);
       if (_disposed) return;
-      purchase = result.purchase; checkoutUrl = result.url;
+      purchase = result.purchase;
+      checkoutUrl = result.url;
     } catch (error) {
       if (_disposed) return;
       failure = _failure(error);
     }
-    busy = false; notifyListeners();
+    busy = false;
+    notifyListeners();
   }
 
   Future<void> submitTestCard(String number) async {

@@ -1,0 +1,1312 @@
+Resolving dependencies...
+Downloading packages...
+  archive 4.0.9 (4.2.0 available)
+  clock 1.1.2 (1.1.3 available)
+  code_assets 1.2.1 (2.0.0 available)
+  cross_file 0.3.5+4 (0.3.5+5 available)
+  dart_webrtc 1.8.1 (1.8.2 available)
+  file_selector_android 0.5.2+8 (0.5.2+10 available)
+  file_selector_ios 0.5.3+5 (0.5.3+6 available)
+  file_selector_linux 0.9.4 (0.9.4+1 available)
+  file_selector_macos 0.9.5 (0.9.5+1 available)
+  file_selector_windows 0.9.3+5 (0.9.3+6 available)
+  flutter_markdown_plus 1.0.11 (1.0.12 available)
+  flutter_secure_storage 10.3.1 (11.1.0 available)
+  flutter_secure_storage_darwin 0.3.2 (0.4.1 available)
+  flutter_secure_storage_linux 3.0.1 (3.0.2 available)
+  flutter_secure_storage_platform_interface 2.0.1 (2.1.0 available)
+  flutter_webrtc 1.6.0 (1.6.2+hotfix.1 available)
+  go_router 17.3.0 (18.0.1 available)
+  hooks 2.0.2 (2.2.0 available)
+  html 0.15.6 (0.15.7 available)
+  image 4.9.1 (4.9.2 available)
+  image_picker_android 0.8.13+19 (0.8.13+22 available)
+  image_picker_ios 0.8.13+6 (0.8.13+7 available)
+  intl 0.20.2 (0.20.3 available)
+  jni 1.0.0 (1.0.3 available)
+  jni_flutter 1.0.1 (1.0.3 available)
+  logger 2.7.0 (2.8.0 available)
+  matcher 0.12.19 (0.12.20 available)
+  material_color_utilities 0.13.0 (0.13.1 available)
+  meta 1.18.0 (1.19.0 available)
+  mime 2.0.0 (2.1.0 available)
+  objective_c 9.4.1 (9.6.0 available)
+  package_config 2.2.0 (3.0.0 available)
+  pdfium_dart 0.1.3 (0.3.0 available)
+  pdfium_flutter 0.1.9 (0.3.0 available)
+  pdfrx 2.2.24 (2.6.1 available)
+  pdfrx_engine 0.3.9 (0.6.0 available)
+  platform 3.1.6 (3.2.0 available)
+  posix 6.5.0 (6.5.2 available)
+  process 5.0.5 (5.0.6 available)
+  pub_semver 2.2.0 (2.2.1 available)
+  record_use 0.6.0 (1.1.1 available)
+  share_plus 13.2.0 (13.3.0 available)
+  share_plus_platform_interface 7.1.0 (7.2.0 available)
+  stack_trace 1.12.1 (1.12.2 available)
+  synchronized 3.4.1 (3.4.2 available)
+  test_api 0.7.11 (0.7.14 available)
+  url_launcher_android 6.3.32 (6.3.33 available)
+  url_launcher_ios 6.4.1 (6.4.2 available)
+  url_launcher_linux 3.2.2 (3.2.3 available)
+  url_launcher_macos 3.2.5 (3.2.6 available)
+  url_launcher_windows 3.1.5 (3.1.6 available)
+  uuid 4.5.3 (4.6.0 available)
+  vector_math 2.2.0 (2.4.2 available)
+  video_player 2.11.1 (2.14.0 available)
+  video_player_android 2.10.0 (2.12.2 available)
+  video_player_avfoundation 2.10.0 (2.12.0 available)
+  vm_service 15.2.0 (15.3.0 available)
+  webdriver 3.1.0 (3.2.0 available)
+  win32 6.3.0 (6.4.0 available)
+  yaml 3.1.3 (3.1.4 available)
+Got dependencies!
+60 packages have newer versions incompatible with dependency constraints.
+Try `flutter pub outdated` for more information.
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/features/agent_hub/artifacts/agent_artifact_voice_test.dart
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/platform_document_input_test.dart: returns a bounded PDF document from the platform picker
+00:00 +1: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/platform_document_input_test.dart: rejects a renamed non-PDF file
+00:00 +2: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/platform_document_input_test.dart: rejects a PDF larger than 10MB
+00:00 +3: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/platform_document_input_test.dart: returns null when document selection is cancelled
+00:00 +4: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/artifacts/agent_result_card_test.dart: unavailable card action is disabled
+00:00 +5: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/artifacts/agent_result_card_test.dart: unavailable card action is disabled
+00:00 +6: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/artifacts/agent_result_card_test.dart: unavailable card action is disabled
+00:00 +7: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/artifacts/agent_result_card_test.dart: unavailable card action is disabled
+00:00 +8: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/artifacts/agent_result_card_test.dart: unavailable card action is disabled
+00:00 +9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/artifacts/agent_result_card_test.dart: unavailable card action is disabled
+00:00 +10: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/artifacts/agent_result_card_test.dart: unavailable card action is disabled
+00:00 +11: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/artifacts/agent_result_card_test.dart: unavailable card action is disabled
+00:00 +12: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/artifacts/agent_result_card_test.dart: unavailable card action is disabled
+00:00 +13: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/artifacts/agent_result_card_test.dart: unavailable card action is disabled
+00:00 +14: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/artifacts/agent_result_card_test.dart: unavailable card action is disabled
+00:00 +15: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/artifacts/agent_result_card_test.dart: unavailable card action is disabled
+00:00 +16: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/artifacts/agent_result_card_test.dart: unavailable card action is disabled
+00:00 +17: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/artifacts/agent_result_card_test.dart: unavailable card action is disabled
+00:00 +18: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/artifacts/agent_result_card_test.dart: unavailable card action is disabled
+00:00 +19: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/artifacts/agent_result_card_test.dart: unavailable card action is disabled
+00:00 +20: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/artifacts/agent_card_export_test.dart: supported cards fit the 360.0 px viewport without exports
+00:00 +21: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/artifacts/agent_card_export_test.dart: supported cards fit the 360.0 px viewport without exports
+00:00 +22: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_me_design_test.dart: conversation drawer long titles at 320.0
+00:00 +23: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_me_design_test.dart: conversation drawer long titles at 320.0
+00:00 +24: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_me_design_test.dart: conversation drawer long titles at 320.0
+00:00 +25: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_me_design_test.dart: conversation drawer long titles at 320.0
+00:00 +26: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_me_design_test.dart: conversation drawer long titles at 320.0
+00:00 +27: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_me_design_test.dart: conversation drawer long titles at 320.0
+00:00 +28: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_me_design_test.dart: conversation drawer long titles at 320.0
+00:00 +29: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_history_design_test.dart: history states 320.0/1.0
+00:01 +30: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_history_design_test.dart: history states 320.0/1.0
+00:01 +31: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_history_design_test.dart: history states 320.0/1.0
+00:01 +32: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_history_design_test.dart: history states 320.0/1.0
+00:01 +33: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_history_design_test.dart: history states 320.0/1.0
+00:01 +34: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_history_design_test.dart: history states 320.0/1.0
+00:01 +35: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_history_design_test.dart: history states 320.0/1.0
+00:01 +36: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_history_design_test.dart: history states 320.0/1.0
+00:01 +37: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 320.0/1.0
+00:01 +38: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 320.0/1.0
+00:01 +39: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 320.0/1.0
+00:01 +39: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_me_design_test.dart: Agent transcript at 320.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/agent-chat-320.png": Pixel test failed, 5.65%, 15248px diff
+detected.
+Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/features/agent_hub/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_me_design_test.dart:245:7)
+<asynchronous suspension>
+#7      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#8      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +39 -1: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 320.0/1.0
+00:01 +39 -1: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_me_design_test.dart: Agent transcript at 320.0 [E]
+  Test failed. See exception logs above.
+  The test description was: Agent transcript at 320.0
+  
+00:01 +39 -1: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 320.0/1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/agent-menu-user-320-1x.png": Pixel test failed, 2.99%, 5426px
+diff detected.
+Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/features/agent_hub/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      main.<anonymous closure>.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart:37:13)
+<asynchronous suspension>
+#7      verifyAgentMessageMenu (file:///Users/lute/project/momcozy-lab/app/test/support/agent_message_menu_scenarios.dart:57:3)
+<asynchronous suspension>
+#8      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart:33:9)
+<asynchronous suspension>
+#9      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#10     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/agent-menu-assistant-320-1x.png": Pixel test failed, 2.11%,
+3835px diff detected.
+Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/features/agent_hub/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      main.<anonymous closure>.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart:37:13)
+<asynchronous suspension>
+#7      verifyAgentMessageMenu (file:///Users/lute/project/momcozy-lab/app/test/support/agent_message_menu_scenarios.dart:79:3)
+<asynchronous suspension>
+#8      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart:33:9)
+<asynchronous suspension>
+#9      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#10     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +40 -1: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 320.0/1.0
+00:01 +41 -1: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 320.0/1.0
+00:01 +42 -1: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 320.0/1.0
+00:02 +43 -1: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 320.0/1.0
+00:02 +44 -1: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 320.0/1.0
+00:02 +45 -1: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 320.0/1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: 'Multiple exceptions (2) were detected during the running of the current test, and at
+least one was unexpected.'
+
+When the exception was thrown, this was the stack:
+#4      verifyAgentMessageMenu (file:///Users/lute/project/momcozy-lab/app/test/support/agent_message_menu_scenarios.dart:119:3)
+<asynchronous suspension>
+#5      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart:33:9)
+<asynchronous suspension>
+#6      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#7      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/support/agent_message_menu_scenarios.dart line 119
+The test description was:
+  message menu 320.0/1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:02 +45 -2: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: form states 320.0/1.0
+00:02 +45 -2: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 320.0/1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: message menu 320.0/1.0
+  
+00:02 +46 -2: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: form states 320.0/1.0
+00:02 +47 -2: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: form states 320.0/1.0
+00:02 +48 -2: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: form states 320.0/1.0
+00:02 +49 -2: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: form states 320.0/1.0
+00:02 +50 -2: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: form states 320.0/1.0
+00:02 +51 -2: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: form states 320.0/1.0
+00:02 +52 -2: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: form states 320.0/1.0
+00:02 +52 -2: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 320.0/2.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/agent-menu-user-320-2x.png": Pixel test failed, 2.18%, 3971px
+diff detected.
+Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/features/agent_hub/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      main.<anonymous closure>.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart:37:13)
+<asynchronous suspension>
+#7      verifyAgentMessageMenu (file:///Users/lute/project/momcozy-lab/app/test/support/agent_message_menu_scenarios.dart:57:3)
+<asynchronous suspension>
+#8      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart:33:9)
+<asynchronous suspension>
+#9      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#10     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/agent-menu-assistant-320-2x.png": Pixel test failed, 24.09%,
+43783px diff detected.
+Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/features/agent_hub/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      main.<anonymous closure>.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart:37:13)
+<asynchronous suspension>
+#7      verifyAgentMessageMenu (file:///Users/lute/project/momcozy-lab/app/test/support/agent_message_menu_scenarios.dart:79:3)
+<asynchronous suspension>
+#8      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart:33:9)
+<asynchronous suspension>
+#9      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#10     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:02 +53 -2: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: form states 320.0/1.0
+00:02 +54 -2: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: form states 320.0/1.0
+00:02 +55 -2: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: form states 320.0/1.0
+00:02 +56 -2: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: form states 320.0/1.0
+00:02 +57 -2: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: form states 320.0/1.0
+00:02 +57 -2: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 320.0/2.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: 'Multiple exceptions (2) were detected during the running of the current test, and at
+least one was unexpected.'
+
+When the exception was thrown, this was the stack:
+#4      verifyAgentMessageMenu (file:///Users/lute/project/momcozy-lab/app/test/support/agent_message_menu_scenarios.dart:119:3)
+<asynchronous suspension>
+#5      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart:33:9)
+<asynchronous suspension>
+#6      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#7      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/support/agent_message_menu_scenarios.dart line 119
+The test description was:
+  message menu 320.0/2.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:02 +57 -3: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: form states 320.0/1.0
+00:02 +57 -3: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 320.0/2.0 [E]
+  Test failed. See exception logs above.
+  The test description was: message menu 320.0/2.0
+  
+00:02 +58 -3: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: form states 320.0/1.0
+00:02 +58 -3: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_me_design_test.dart: Agent transcript at 390.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/agent-chat-390.png": Pixel test failed, 4.34%, 14276px diff
+detected.
+Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/features/agent_hub/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_me_design_test.dart:245:7)
+<asynchronous suspension>
+#7      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#8      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:02 +58 -4: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: form states 320.0/1.0
+00:02 +58 -4: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_me_design_test.dart: Agent transcript at 390.0 [E]
+  Test failed. See exception logs above.
+  The test description was: Agent transcript at 390.0
+  
+00:02 +59 -4: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: form states 320.0/1.0
+00:02 +60 -4: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: form states 320.0/1.0
+00:02 +60 -4: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 390.0/1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/agent-menu-user-390-1x.png": Pixel test failed, 2.81%, 6218px
+diff detected.
+Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/features/agent_hub/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      main.<anonymous closure>.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart:37:13)
+<asynchronous suspension>
+#7      verifyAgentMessageMenu (file:///Users/lute/project/momcozy-lab/app/test/support/agent_message_menu_scenarios.dart:57:3)
+<asynchronous suspension>
+#8      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart:33:9)
+<asynchronous suspension>
+#9      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#10     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/agent-menu-assistant-390-1x.png": Pixel test failed, 2.49%,
+5524px diff detected.
+Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/features/agent_hub/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      main.<anonymous closure>.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart:37:13)
+<asynchronous suspension>
+#7      verifyAgentMessageMenu (file:///Users/lute/project/momcozy-lab/app/test/support/agent_message_menu_scenarios.dart:79:3)
+<asynchronous suspension>
+#8      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart:33:9)
+<asynchronous suspension>
+#9      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#10     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:02 +61 -4: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: form states 320.0/1.0
+00:02 +62 -4: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: form states 320.0/1.0
+00:02 +63 -4: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: form states 320.0/1.0
+00:02 +63 -4: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 390.0/1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: 'Multiple exceptions (2) were detected during the running of the current test, and at
+least one was unexpected.'
+
+When the exception was thrown, this was the stack:
+#4      verifyAgentMessageMenu (file:///Users/lute/project/momcozy-lab/app/test/support/agent_message_menu_scenarios.dart:119:3)
+<asynchronous suspension>
+#5      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart:33:9)
+<asynchronous suspension>
+#6      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#7      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/support/agent_message_menu_scenarios.dart line 119
+The test description was:
+  message menu 390.0/1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:02 +63 -5: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: form states 320.0/1.0
+00:02 +63 -5: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 390.0/1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: message menu 390.0/1.0
+  
+00:02 +64 -5: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: form states 320.0/1.0
+00:02 +65 -5: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_history_design_test.dart: history states 430.0/1.0
+00:02 +66 -5: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_history_design_test.dart: history states 430.0/1.0
+00:03 +67 -5: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_history_design_test.dart: history states 430.0/1.0
+00:03 +68 -5: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_history_design_test.dart: history states 430.0/1.0
+00:03 +69 -5: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_history_design_test.dart: history states 430.0/1.0
+00:03 +70 -5: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_history_design_test.dart: history states 430.0/1.0
+00:03 +71 -5: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_history_design_test.dart: history states 430.0/1.0
+00:03 +72 -5: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_history_design_test.dart: history states 430.0/1.0
+00:03 +73 -5: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_history_design_test.dart: history states 430.0/1.0
+00:03 +74 -5: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_history_design_test.dart: history states 430.0/1.0
+00:03 +74 -5: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 390.0/2.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/agent-menu-user-390-2x.png": Pixel test failed, 8.34%, 18480px
+diff detected.
+Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/features/agent_hub/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      main.<anonymous closure>.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart:37:13)
+<asynchronous suspension>
+#7      verifyAgentMessageMenu (file:///Users/lute/project/momcozy-lab/app/test/support/agent_message_menu_scenarios.dart:57:3)
+<asynchronous suspension>
+#8      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart:33:9)
+<asynchronous suspension>
+#9      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#10     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/agent-menu-assistant-390-2x.png": Pixel test failed, 7.65%,
+16954px diff detected.
+Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/features/agent_hub/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      main.<anonymous closure>.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart:37:13)
+<asynchronous suspension>
+#7      verifyAgentMessageMenu (file:///Users/lute/project/momcozy-lab/app/test/support/agent_message_menu_scenarios.dart:79:3)
+<asynchronous suspension>
+#8      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart:33:9)
+<asynchronous suspension>
+#9      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#10     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:03 +75 -5: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_history_design_test.dart: history states 430.0/1.0
+00:03 +76 -5: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_history_design_test.dart: history states 430.0/1.0
+00:03 +77 -5: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_history_design_test.dart: history states 430.0/1.0
+00:03 +78 -5: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_history_design_test.dart: history states 430.0/1.0
+00:03 +79 -5: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_history_design_test.dart: history states 430.0/1.0
+00:03 +80 -5: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_history_design_test.dart: history states 430.0/1.0
+00:03 +81 -5: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 390.0/2.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: 'Multiple exceptions (2) were detected during the running of the current test, and at
+least one was unexpected.'
+
+When the exception was thrown, this was the stack:
+#4      verifyAgentMessageMenu (file:///Users/lute/project/momcozy-lab/app/test/support/agent_message_menu_scenarios.dart:119:3)
+<asynchronous suspension>
+#5      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart:33:9)
+<asynchronous suspension>
+#6      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#7      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/support/agent_message_menu_scenarios.dart line 119
+The test description was:
+  message menu 390.0/2.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:03 +81 -6: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: form states 320.0/2.0
+00:03 +81 -6: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 390.0/2.0 [E]
+  Test failed. See exception logs above.
+  The test description was: message menu 390.0/2.0
+  
+00:03 +81 -6: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 430.0/1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/agent-menu-user-430-1x.png": Pixel test failed, 2.74%, 6698px
+diff detected.
+Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/features/agent_hub/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      main.<anonymous closure>.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart:37:13)
+<asynchronous suspension>
+#7      verifyAgentMessageMenu (file:///Users/lute/project/momcozy-lab/app/test/support/agent_message_menu_scenarios.dart:57:3)
+<asynchronous suspension>
+#8      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart:33:9)
+<asynchronous suspension>
+#9      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#10     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/agent-menu-assistant-430-1x.png": Pixel test failed, 2.58%,
+6293px diff detected.
+Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/features/agent_hub/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      main.<anonymous closure>.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart:37:13)
+<asynchronous suspension>
+#7      verifyAgentMessageMenu (file:///Users/lute/project/momcozy-lab/app/test/support/agent_message_menu_scenarios.dart:79:3)
+<asynchronous suspension>
+#8      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart:33:9)
+<asynchronous suspension>
+#9      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#10     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:03 +81 -6: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_me_design_test.dart: Agent transcript at 430.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/agent-chat-430.png": Pixel test failed, 4.13%, 14996px diff
+detected.
+Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/features/agent_hub/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_me_design_test.dart:245:7)
+<asynchronous suspension>
+#7      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#8      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:03 +81 -7: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: form states 320.0/2.0
+00:03 +81 -7: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_me_design_test.dart: Agent transcript at 430.0 [E]
+  Test failed. See exception logs above.
+  The test description was: Agent transcript at 430.0
+  
+00:03 +81 -7: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: form states 320.0/2.0
+00:03 +82 -7: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: form states 320.0/2.0
+00:03 +82 -7: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 430.0/1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: 'Multiple exceptions (2) were detected during the running of the current test, and at
+least one was unexpected.'
+
+When the exception was thrown, this was the stack:
+#4      verifyAgentMessageMenu (file:///Users/lute/project/momcozy-lab/app/test/support/agent_message_menu_scenarios.dart:119:3)
+<asynchronous suspension>
+#5      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart:33:9)
+<asynchronous suspension>
+#6      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#7      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/support/agent_message_menu_scenarios.dart line 119
+The test description was:
+  message menu 430.0/1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:03 +82 -8: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: form states 320.0/2.0
+00:03 +82 -8: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 430.0/1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: message menu 430.0/1.0
+  
+00:03 +83 -8: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: form states 320.0/2.0
+00:03 +84 -8: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: form states 320.0/2.0
+00:03 +85 -8: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: form states 320.0/2.0
+00:03 +86 -8: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 430.0/2.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/agent-menu-user-430-2x.png": Pixel test failed, 8.01%, 19554px
+diff detected.
+Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/features/agent_hub/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      main.<anonymous closure>.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart:37:13)
+<asynchronous suspension>
+#7      verifyAgentMessageMenu (file:///Users/lute/project/momcozy-lab/app/test/support/agent_message_menu_scenarios.dart:57:3)
+<asynchronous suspension>
+#8      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart:33:9)
+<asynchronous suspension>
+#9      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#10     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/agent-menu-assistant-430-2x.png": Pixel test failed, 7.70%,
+18799px diff detected.
+Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/features/agent_hub/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      main.<anonymous closure>.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart:37:13)
+<asynchronous suspension>
+#7      verifyAgentMessageMenu (file:///Users/lute/project/momcozy-lab/app/test/support/agent_message_menu_scenarios.dart:79:3)
+<asynchronous suspension>
+#8      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart:33:9)
+<asynchronous suspension>
+#9      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#10     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: 'Multiple exceptions (2) were detected during the running of the current test, and at
+least one was unexpected.'
+
+When the exception was thrown, this was the stack:
+#4      verifyAgentMessageMenu (file:///Users/lute/project/momcozy-lab/app/test/support/agent_message_menu_scenarios.dart:119:3)
+<asynchronous suspension>
+#5      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart:33:9)
+<asynchronous suspension>
+#6      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#7      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/support/agent_message_menu_scenarios.dart line 119
+The test description was:
+  message menu 430.0/2.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:03 +86 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: form states 390.0/1.0
+00:03 +86 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 430.0/2.0 [E]
+  Test failed. See exception logs above.
+  The test description was: message menu 430.0/2.0
+  
+00:03 +86 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: form states 390.0/1.0
+00:03 +87 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: form states 390.0/1.0
+00:03 +88 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: form states 390.0/1.0
+00:03 +89 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: form states 390.0/1.0
+00:03 +90 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: form states 390.0/1.0
+00:03 +91 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: form states 390.0/1.0
+00:03 +92 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: form states 390.0/1.0
+00:03 +93 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: form states 390.0/1.0
+00:03 +94 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: form states 390.0/1.0
+00:03 +95 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: form states 390.0/1.0
+00:03 +96 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: form states 390.0/1.0
+00:03 +97 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: form states 390.0/1.0
+00:03 +98 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: form states 390.0/1.0
+00:03 +99 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: form states 390.0/1.0
+00:03 +100 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: form states 390.0/1.0
+00:03 +101 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: form states 390.0/1.0
+00:03 +102 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: form states 390.0/1.0
+00:03 +103 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: form states 390.0/1.0
+00:03 +104 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: form states 390.0/1.0
+00:03 +105 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: form states 390.0/1.0
+00:03 +106 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: form states 390.0/1.0
+00:03 +107 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: form states 390.0/1.0
+00:04 +108 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: form states 390.0/1.0
+00:04 +109 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: form states 390.0/1.0
+00:04 +110 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: form states 390.0/1.0
+00:04 +111 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart: image metadata, empty response, retry and zoom 320.0/1.0
+00:04 +112 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 320.0/1.0
+00:04 +113 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 320.0/1.0
+00:04 +114 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 320.0/1.0
+00:04 +115 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 320.0/1.0
+00:04 +116 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 320.0/1.0
+00:04 +117 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 320.0/1.0
+00:04 +118 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 320.0/1.0
+00:04 +119 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 320.0/1.0
+00:04 +120 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 320.0/1.0
+00:04 +121 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 320.0/1.0
+00:04 +122 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 320.0/1.0
+00:04 +123 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 320.0/1.0
+00:04 +124 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 320.0/1.0
+00:04 +125 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 320.0/1.0
+00:04 +126 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 320.0/1.0
+00:04 +127 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 320.0/1.0
+00:04 +128 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 320.0/1.0
+00:04 +129 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 320.0/1.0
+00:04 +130 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 320.0/1.0
+00:04 +131 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 320.0/1.0
+00:04 +132 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 320.0/1.0
+00:04 +133 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 320.0/1.0
+00:04 +134 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 320.0/1.0
+00:04 +135 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 320.0/1.0
+00:04 +136 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 320.0/1.0
+00:04 +137 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 320.0/1.0
+00:04 +138 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 320.0/1.0
+00:04 +139 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 320.0/1.0
+00:04 +140 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 320.0/1.0
+00:04 +141 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 320.0/1.0
+00:05 +142 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 320.0/1.0
+00:05 +143 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 320.0/1.0
+00:05 +144 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 320.0/1.0
+00:05 +145 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 320.0/1.0
+00:05 +146 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 320.0/1.0
+00:05 +147 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 320.0/1.0
+00:05 +148 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 320.0/1.0
+00:05 +149 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 320.0/1.0
+00:05 +150 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 320.0/1.0
+00:05 +151 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 320.0/1.0
+00:05 +152 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 320.0/1.0
+00:05 +153 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 320.0/1.0
+00:05 +154 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 320.0/1.0
+00:05 +155 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 320.0/1.0
+00:05 +156 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 320.0/1.0
+00:05 +157 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 320.0/1.0
+00:05 +158 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 320.0/1.0
+00:05 +159 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 320.0/1.0
+00:05 +160 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 320.0/1.0
+00:05 +161 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 320.0/1.0
+00:05 +162 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 320.0/1.0
+00:05 +163 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 320.0/1.0
+00:05 +164 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_test.dart: history message copies its own complete text
+00:05 +165 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 390.0/1.0
+00:05 +166 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 390.0/1.0
+00:05 +167 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 390.0/1.0
+00:05 +168 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 390.0/1.0
+00:06 +169 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 390.0/1.0
+00:06 +170 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 390.0/1.0
+00:06 +171 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 390.0/1.0
+00:06 +172 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 390.0/1.0
+00:06 +173 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 390.0/1.0
+00:06 +174 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 390.0/1.0
+00:06 +175 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 390.0/1.0
+00:06 +176 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 390.0/1.0
+00:06 +177 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 390.0/1.0
+00:06 +178 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 320.0/2.0
+00:06 +179 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 320.0/2.0
+00:06 +180 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 320.0/2.0
+00:06 +181 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 320.0/2.0
+00:06 +182 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 320.0/2.0
+00:06 +183 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 320.0/2.0
+00:06 +184 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 320.0/2.0
+00:06 +185 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 390.0/2.0
+00:06 +186 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 390.0/2.0
+00:06 +187 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 390.0/2.0
+00:06 +188 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 390.0/2.0
+00:06 +189 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 390.0/2.0
+00:06 +190 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 390.0/2.0
+00:06 +191 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 390.0/2.0
+00:06 +192 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 390.0/2.0
+00:06 +193 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:06 +194 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:06 +195 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:06 +196 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:06 +197 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:06 +198 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:06 +199 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:06 +200 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:06 +201 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:06 +202 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:06 +203 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:06 +204 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:07 +205 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:07 +206 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:07 +207 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:07 +208 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:07 +209 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:07 +210 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:07 +211 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:07 +212 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:07 +213 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:07 +214 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:07 +215 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:07 +216 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:07 +217 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:07 +218 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:07 +219 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:07 +220 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:07 +221 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:07 +222 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:07 +223 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:07 +224 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:07 +225 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:07 +226 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:07 +227 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:07 +228 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:07 +229 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:07 +230 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:07 +231 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:07 +232 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:07 +233 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:07 +234 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:07 +235 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:07 +236 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:07 +237 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:07 +238 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:07 +239 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:07 +240 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:07 +241 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:07 +242 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:07 +243 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:07 +244 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:07 +245 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:07 +246 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:07 +247 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:07 +248 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 430.0/2.0
+00:07 +249 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 430.0/2.0
+00:07 +250 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 430.0/2.0
+00:07 +251 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 430.0/2.0
+00:07 +252 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 430.0/2.0
+00:07 +253 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 430.0/2.0
+00:07 +254 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 430.0/2.0
+00:07 +255 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 430.0/2.0
+00:07 +256 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 430.0/2.0
+00:07 +257 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 430.0/2.0
+00:07 +258 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 430.0/2.0
+00:07 +259 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 390.0/2.0
+00:07 +260 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 390.0/2.0
+00:07 +261 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 390.0/2.0
+00:07 +262 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 390.0/2.0
+00:07 +263 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 390.0/2.0
+00:07 +264 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 390.0/2.0
+00:07 +265 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 390.0/2.0
+00:07 +266 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 390.0/2.0
+00:07 +267 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 390.0/2.0
+00:07 +268 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 390.0/2.0
+00:07 +269 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 390.0/2.0
+00:07 +270 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 390.0/2.0
+00:07 +271 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 390.0/2.0
+00:07 +272 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 390.0/2.0
+00:07 +273 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 390.0/2.0
+00:07 +274 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 390.0/2.0
+00:07 +275 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 390.0/2.0
+00:07 +276 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 390.0/2.0
+00:07 +277 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 390.0/2.0
+00:07 +278 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 390.0/2.0
+00:07 +279 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 390.0/2.0
+00:07 +280 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 390.0/2.0
+00:07 +281 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 390.0/2.0
+00:07 +282 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 390.0/2.0
+00:07 +283 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 390.0/2.0
+00:07 +284 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 390.0/2.0
+00:07 +285 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 390.0/2.0
+00:07 +286 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 390.0/2.0
+00:07 +287 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 390.0/2.0
+00:07 +288 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 390.0/1.0
+00:07 +289 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 390.0/1.0
+00:07 +290 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/1.0
+00:07 +291 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/1.0
+00:08 +292 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/1.0
+00:08 +293 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/1.0
+00:08 +294 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/1.0
+00:08 +295 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/1.0
+00:08 +296 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/1.0
+00:08 +297 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/1.0
+00:08 +298 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/1.0
+00:08 +299 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/1.0
+00:08 +300 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/1.0
+00:08 +301 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/1.0
+00:08 +302 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/1.0
+00:08 +303 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/1.0
+00:08 +304 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/1.0
+00:08 +305 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/1.0
+00:08 +306 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/1.0
+00:08 +307 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/1.0
+00:08 +308 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/1.0
+00:08 +309 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/1.0
+00:08 +310 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/1.0
+00:08 +311 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/1.0
+00:08 +312 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/1.0
+00:08 +313 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/1.0
+00:08 +314 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/1.0
+00:08 +315 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/1.0
+00:08 +316 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/1.0
+00:08 +317 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/1.0
+00:08 +318 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/1.0
+00:08 +319 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/1.0
+00:08 +320 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/1.0
+00:08 +321 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/1.0
+00:08 +322 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/1.0
+00:08 +323 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/1.0
+00:08 +324 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/1.0
+00:08 +325 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/1.0
+00:08 +326 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/1.0
+00:08 +327 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/1.0
+00:08 +328 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/1.0
+00:08 +329 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/1.0
+00:08 +330 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/1.0
+00:08 +331 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/1.0
+00:08 +332 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/1.0
+00:08 +333 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/1.0
+00:08 +334 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/1.0
+00:08 +335 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/1.0
+00:08 +336 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/1.0
+00:08 +337 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/1.0
+00:08 +338 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/1.0
+00:08 +339 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/1.0
+00:08 +340 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/1.0
+00:08 +341 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/1.0
+00:08 +342 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/1.0
+00:08 +343 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/1.0
+00:08 +344 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/1.0
+00:08 +345 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/1.0
+00:08 +346 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/1.0
+00:08 +347 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/1.0
+00:08 +348 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/1.0
+00:08 +349 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/1.0
+00:08 +350 -9: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: reduced motion opens fullscreen fully without elapsed animation
+00:08 +351 -9: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: reduced motion opens fullscreen fully without elapsed animation
+00:08 +352 -9: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: reduced motion opens fullscreen fully without elapsed animation
+00:08 +353 -9: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: reduced motion opens fullscreen fully without elapsed animation
+00:08 +354 -9: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: reduced motion opens fullscreen fully without elapsed animation
+00:08 +355 -9: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: reduced motion opens fullscreen fully without elapsed animation
+00:08 +356 -9: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: reduced motion opens fullscreen fully without elapsed animation
+00:08 +357 -9: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: reduced motion opens fullscreen fully without elapsed animation
+00:08 +358 -9: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: reduced motion opens fullscreen fully without elapsed animation
+00:08 +359 -9: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: reduced motion opens fullscreen fully without elapsed animation
+00:08 +360 -9: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: reduced motion opens fullscreen fully without elapsed animation
+00:08 +361 -9: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: reduced motion opens fullscreen fully without elapsed animation
+00:08 +362 -9: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: reduced motion opens fullscreen fully without elapsed animation
+00:08 +363 -9: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: reduced motion opens fullscreen fully without elapsed animation
+00:08 +364 -9: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: reduced motion opens fullscreen fully without elapsed animation
+00:08 +365 -9: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: reduced motion opens fullscreen fully without elapsed animation
+00:08 +366 -9: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: reduced motion opens fullscreen fully without elapsed animation
+00:08 +367 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/2.0
+00:08 +368 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/2.0
+00:09 +369 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/2.0
+00:09 +370 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/2.0
+00:09 +371 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/2.0
+00:09 +372 -9: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_image_test.dart: switching resources hides the previous image while loading
+00:09 +373 -9: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_image_test.dart: switching resources hides the previous image while loading
+00:09 +374 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub clears cached active runs when restored
+00:09 +375 -9: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: video long duration, controls and fullscreen 390.0 / 1.0
+00:09 +376 -9: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: video long duration, controls and fullscreen 390.0 / 1.0
+00:09 +377 -9: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: video long duration, controls and fullscreen 390.0 / 1.0
+00:09 +378 -9: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: video long duration, controls and fullscreen 390.0 / 1.0
+00:09 +379 -9: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: video long duration, controls and fullscreen 390.0 / 1.0
+00:09 +380 -9: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: video long duration, controls and fullscreen 390.0 / 1.0
+00:09 +381 -9: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: video long duration, controls and fullscreen 390.0 / 1.0
+00:09 +382 -9: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: video long duration, controls and fullscreen 390.0 / 1.0
+00:09 +383 -9: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: video long duration, controls and fullscreen 390.0 / 1.0
+00:09 +384 -9: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: video long duration, controls and fullscreen 390.0 / 1.0
+00:09 +385 -9: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: video long duration, controls and fullscreen 390.0 / 1.0
+00:09 +386 -9: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: video long duration, controls and fullscreen 390.0 / 1.0
+00:09 +387 -9: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: video long duration, controls and fullscreen 390.0 / 1.0
+00:09 +388 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub can auto-send an initial composer prefill once
+00:09 +389 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub can auto-send an initial composer prefill once
+00:09 +390 -9: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: video long duration, controls and fullscreen 390.0 / 2.0
+00:09 +391 -9: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: video long duration, controls and fullscreen 390.0 / 2.0
+00:09 +392 -9: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: video long duration, controls and fullscreen 390.0 / 2.0
+00:09 +393 -9: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: video long duration, controls and fullscreen 390.0 / 2.0
+00:09 +394 -9: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: video long duration, controls and fullscreen 390.0 / 2.0
+00:09 +395 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub starts auto voice playback after finished reply
+00:09 +396 -9: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: video long duration, controls and fullscreen 430.0 / 1.0
+00:09 +397 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub appends generated reply chunks to realtime voice
+00:09 +398 -9: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: video long duration, controls and fullscreen 430.0 / 2.0
+00:09 +399 -9: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: video long duration, controls and fullscreen 430.0 / 2.0
+00:09 +400 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub forwards media voice metadata to realtime playback
+00:09 +401 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub forwards media voice metadata to realtime playback
+00:09 +402 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub forwards media voice metadata to realtime playback
+00:09 +403 -9: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: streams authenticated video and exposes playback controls
+00:09 +404 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub appends standalone media narration after a textless reply
+00:09 +405 -9: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: refreshes authorization once after initialization failure
+00:09 +406 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub does not replay media narration already resolved from a URL
+00:09 +407 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub does not replay media narration already resolved from a URL
+00:09 +408 -9: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: fullscreen interruption returns to a retryable player
+00:09 +409 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub speaks safe pure artifact copy without artifact actions
+00:09 +410 -9: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: turns a runtime playback failure into a retryable state
+00:09 +411 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub does not repeat artifact copy when reply text is present
+00:09 +412 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub never replaces or replays spoken text on completed mismatch
+00:09 +413 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub keeps auto voice stable when message id arrives late
+00:09 +414 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub cancels active auto voice when voice is disabled
+00:10 +415 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub keeps notification voice ahead of auto reply
+00:10 +416 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub clears speaking avatar when notification interrupts auto voice
+00:10 +417 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub retries auto voice after notification voice becomes idle
+00:10 +418 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub can locally stop an active run
+00:10 +419 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub keeps failed copy button-free and accepts the next turn
+00:10 +420 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub settles server cancel before starting the next turn
+00:10 +421 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub does not claim server cancellation after a 401
+00:10 +422 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub sends follow-up content while interrupting an active run
+00:10 +423 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub queues a follow-up after completed text until run terminal
+00:10 +424 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub bounds follow-up handoff when the terminal event is missing
+00:10 +425 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub keeps queued text when the run starts awaiting confirmation
+00:10 +426 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub releases visible running UI after completed assistant message
+00:10 +427 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub renders repeated streaming text deltas immediately
+00:10 +428 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub throttles active run snapshot writes during deltas
+00:10 +429 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub posts best-effort cancel for active runner
+00:10 +430 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub retries the last request after disconnect
+00:10 +431 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub maps backend timeout to retryable copy
+00:10 +432 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub reuses the turn idempotency key when run creation is retried
+00:10 +433 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub maps offline send failure to retryable copy
+00:10 +434 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub hides tool progress internals from stream events
+00:10 +435 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub merges tool progress by payload tool call id
+00:10 +436 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub renders and confirms production action cards
+00:10 +437 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub renders only user-visible action cards
+00:10 +438 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub restores waiting action state from durable snapshot
+00:10 +439 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub replay does not revive an applied-only action card
+00:10 +440 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub restores historical artifacts from durable snapshot
+00:10 +441 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub does not archive an unpublished failed artifact
+00:10 +442 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub persists citations when archiving a reply
+00:10 +443 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub restores submitted historical forms as read-only
+00:10 +444 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub waits for final text then loads and auto-opens a new form once
+00:10 +445 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: cancelled form dialog keeps its draft for manual reopen
+00:10 +446 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: artifact form dialog blocks barrier and back dismissal while submitting
+00:11 +447 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: artifact form dialog scrolls validation feedback into view
+00:11 +448 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: artifact form dialog stacks long actions on narrow large-text screens
+00:11 +449 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub resumes stream after action confirmation and keeps backend terminal status
+00:11 +450 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub renders safe tool failure progress
+00:11 +451 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub renders safe artifact cards from stream events
+00:11 +452 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub renders cards from indexed reducer events
+00:11 +453 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub submits a support ticket without a second confirmation
+00:11 +454 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub keeps the support form retryable when submission fails
+00:11 +455 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub aligns grouped artifact form defaults other input and submit lock
+00:11 +456 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent artifact form stays editable when submission is rejected
+00:11 +457 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub restores form editing when run creation fails
+00:11 +458 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub treats legacy checkbox_group fields as multi-select
+00:11 +459 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub treats legacy checkbox_group fields as multi-select
+00:11 +460 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub treats legacy checkbox_group fields as multi-select
+00:11 +461 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub renders rich text card rows and button actions
+00:11 +462 -9: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: (setUpAll)
+00:11 +462 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub renders citation and reference links safely
+00:11 +463 -9: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media missing unavailable and return 320.0 / 1.0
+00:11 +464 -9: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media missing unavailable and return 320.0 / 1.0
+00:11 +465 -9: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media missing unavailable and return 320.0 / 1.0
+00:11 +466 -9: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media missing unavailable and return 320.0 / 1.0
+00:11 +467 -9: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media missing unavailable and return 320.0 / 1.0
+00:11 +468 -9: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media missing unavailable and return 320.0 / 1.0
+00:11 +469 -9: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media missing unavailable and return 320.0 / 1.0
+00:11 +470 -9: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media missing unavailable and return 320.0 / 1.0
+00:11 +471 -9: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media missing unavailable and return 320.0 / 1.0
+00:11 +472 -9: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media missing unavailable and return 320.0 / 1.0
+00:11 +472 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub degrades retired skill assets without network or viewer actions
+
+Warning: A call to tap() with finder "Found 1 widget with key [<'agent-artifact-action-retired-media-0'>]: [
+  FilledButton-[<'agent-artifact-action-retired-media-0'>](style: ButtonStyle#e5d08(textStyle: WidgetStatePropertyAll(TextStyle(inherit: true, family: Manrope, size: 13.0, weight: 600)), backgroundColor: WidgetStateMapper<Color?>({WidgetState.disabled: null, WidgetState.any: Color(alpha: 1.0000, red: 0.9412, green: 0.9059, blue: 0.9804, colorSpace: ColorSpace.sRGB)}), foregroundColor: WidgetStateMapper<Color?>({WidgetState.disabled: null, WidgetState.any: Color(alpha: 1.0000, red: 0.4745, green: 0.2627, blue: 0.7098, colorSpace: ColorSpace.sRGB)}), overlayColor: WidgetStateMapper<Color?>({WidgetState.pressed: Color(alpha: 0.1020, red: 0.4745, green: 0.2627, blue: 0.7098, colorSpace: ColorSpace.sRGB), WidgetState.hovered: Color(alpha: 0.0784, red: 0.4745, green: 0.2627, blue: 0.7098, colorSpace: ColorSpace.sRGB), WidgetState.focused: Color(alpha: 0.1020, red: 0.4745, green: 0.2627, blue: 0.7098, colorSpace: ColorSpace.sRGB)}), padding: WidgetStatePropertyAll(EdgeInsets(12.0, 10.0, 12.0, 10.0)), minimumSize: WidgetStatePropertyAll(Size(0.0, 44.0)), shape: WidgetStatePropertyAll(RoundedRectangleBorder(BorderSide(width: 0.0, style: none), BorderRadius.circular(12.0))), mouseCursor: WidgetStateMapper<MouseCursor?>({WidgetState.disabled: null, WidgetState.any: null})), dependencies: [IconTheme, InheritedCupertinoTheme, MediaQuery, _InheritedTheme, _LocalizationsScope-[GlobalKey#1552b]], state: _ButtonStyleState#37dc2),
+]" derived an Offset (Offset(425.0, 523.0)) that would not hit test on the specified widget.
+Maybe the widget is actually off-screen, or another widget is obscuring it, or the widget cannot receive pointer events.
+The finder corresponds to this RenderBox: RenderSemanticsAnnotations#ed8ec relayoutBoundary=up10
+The hit test result at that offset is: HitTestResult(RenderDecoratedBox#45613@Offset(425.0, 523.0), RenderDecoratedBox#5e2b5@Offset(425.0, 523.0), RenderDecoratedBox#37377@Offset(425.0, 523.0), RenderStack#0fabf@Offset(425.0, 523.0), _RenderColoredBox#97054@Offset(425.0, 523.0), _RenderLayoutBuilder#c280f@Offset(425.0, 523.0), RenderPadding#4bdf3@Offset(425.0, 523.0), RenderCustomMultiChildLayoutBox#eefcf@Offset(425.0, 523.0), _RenderInkFeatures#a528a@Offset(425.0, 523.0), RenderPhysicalModel#766ce@Offset(425.0, 523.0), RenderSemanticsAnnotations#fcb3a@Offset(425.0, 523.0), RenderRepaintBoundary#76b2f@Offset(425.0, 523.0), RenderIgnorePointer#18485@Offset(425.0, 523.0), RenderAnimatedOpacity#47744@Offset(425.0, 523.0), RenderAnimatedOpacity#8dac9@Offset(425.0, 523.0), _RenderColoredBox#975c7@Offset(425.0, 523.0), RenderAnimatedOpacity#13093@Offset(425.0, 523.0), RenderIgnorePointer#d8591@Offset(425.0, 523.0), RenderAnimatedOpacity#b3ecc@Offset(425.0, 523.0), RenderRepaintBoundary#bf324@Offset(425.0, 523.0), RenderSemanticsAnnotations#bd626@Offset(425.0, 523.0), RenderOffstage#48415@Offset(425.0, 523.0), RenderSemanticsAnnotations#883b2@Offset(425.0, 523.0), _RenderTheater#d92db@Offset(425.0, 523.0), RenderAbsorbPointer#40cec@Offset(425.0, 523.0), RenderPointerListener#8c234@Offset(425.0, 523.0), RenderSemanticsAnnotations#3251a@Offset(425.0, 523.0), RenderSemanticsAnnotations#38609@Offset(425.0, 523.0), RenderSemanticsAnnotations#ade42@Offset(425.0, 523.0), RenderSemanticsAnnotations#207d0@Offset(425.0, 523.0), RenderTapRegionSurface#54354@Offset(425.0, 523.0), RenderSemanticsAnnotations#03633@Offset(425.0, 523.0), RenderSemanticsAnnotations#e6056@Offset(425.0, 523.0), HitTestEntry<HitTestTarget>#89aa3(_ReusableRenderView#a41a9), HitTestEntry<HitTestTarget>#1dcc2(<AutomatedTestWidgetsFlutterBinding>))
+#0      WidgetController._getElementPoint (package:flutter_test/src/controller.dart:2165:25)
+#1      WidgetController.getCenter (package:flutter_test/src/controller.dart:1947:12)
+#2      WidgetController.tap (package:flutter_test/src/controller.dart:1080:7)
+#3      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart:6896:20)
+<asynchronous suspension>
+#4      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#5      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+#6      StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)
+<asynchronous suspension>
+To silence this warning, pass "warnIfMissed: false" to "tap()".
+To make this warning fatal, set WidgetController.hitTestWarningShouldBeFatal to true.
+
+00:11 +473 -9: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media missing unavailable and return 320.0 / 1.0
+00:11 +474 -9: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media missing unavailable and return 320.0 / 1.0
+00:11 +475 -9: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media missing unavailable and return 320.0 / 1.0
+00:11 +476 -9: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media missing unavailable and return 320.0 / 1.0
+00:11 +477 -9: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media missing unavailable and return 320.0 / 1.0
+00:11 +478 -9: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media missing unavailable and return 320.0 / 1.0
+00:11 +479 -9: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media missing unavailable and return 320.0 / 1.0
+00:11 +480 -9: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media missing unavailable and return 320.0 / 1.0
+00:11 +481 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub uses tool semantic labels for loop status
+00:11 +482 -9: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media image unavailable and return 320.0 / 1.0
+00:11 +483 -9: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media image unavailable and return 320.0 / 1.0
+00:11 +484 -9: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media image unavailable and return 320.0 / 1.0
+00:11 +485 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent thinking note stays event-driven until cleared
+00:11 +486 -9: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media pdf unavailable and return 320.0 / 1.0
+00:11 +487 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub ignores non-semantic tool and artifact status fallbacks
+00:11 +488 -9: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media video unavailable and return 320.0 / 1.0
+00:11 +489 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub renders after-tool status and thinking note
+00:12 +490 -9: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: image loading failure retry and zoom 320.0 / 1.0
+00:12 +491 -9: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: image loading failure retry and zoom 320.0 / 1.0
+00:12 +492 -9: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: image loading failure retry and zoom 320.0 / 1.0
+00:12 +493 -9: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: image loading failure retry and zoom 320.0 / 1.0
+00:12 +494 -9: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: image loading failure retry and zoom 320.0 / 1.0
+00:12 +495 -9: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: image loading failure retry and zoom 320.0 / 1.0
+00:12 +496 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub keeps status through user persistence and token streaming
+00:12 +497 -9: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: PDF loading failure retry and return 320.0 / 1.0
+00:12 +498 -9: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: PDF loading failure retry and return 320.0 / 1.0
+00:12 +499 -9: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media missing unavailable and return 320.0 / 2.0
+00:12 +500 -9: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media image unavailable and return 320.0 / 2.0
+00:12 +501 -9: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media pdf unavailable and return 320.0 / 2.0
+00:12 +502 -9: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media video unavailable and return 320.0 / 2.0
+00:12 +503 -9: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: image loading failure retry and zoom 320.0 / 2.0
+00:12 +504 -9: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: PDF loading failure retry and return 320.0 / 2.0
+00:12 +505 -9: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media missing unavailable and return 390.0 / 1.0
+00:12 +506 -9: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media image unavailable and return 390.0 / 1.0
+00:12 +507 -9: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media pdf unavailable and return 390.0 / 1.0
+00:12 +508 -9: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media video unavailable and return 390.0 / 1.0
+00:12 +509 -9: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: image loading failure retry and zoom 390.0 / 1.0
+00:12 +510 -9: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: PDF loading failure retry and return 390.0 / 1.0
+00:12 +511 -9: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media missing unavailable and return 390.0 / 2.0
+00:12 +512 -9: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media image unavailable and return 390.0 / 2.0
+00:12 +513 -9: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media pdf unavailable and return 390.0 / 2.0
+00:12 +514 -9: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media video unavailable and return 390.0 / 2.0
+00:12 +515 -9: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: image loading failure retry and zoom 390.0 / 2.0
+00:12 +516 -9: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: PDF loading failure retry and return 390.0 / 2.0
+00:12 +517 -9: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media missing unavailable and return 430.0 / 1.0
+00:12 +518 -9: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media image unavailable and return 430.0 / 1.0
+00:12 +519 -9: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media pdf unavailable and return 430.0 / 1.0
+00:12 +520 -9: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media video unavailable and return 430.0 / 1.0
+00:12 +521 -9: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: image loading failure retry and zoom 430.0 / 1.0
+00:13 +522 -9: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: PDF loading failure retry and return 430.0 / 1.0
+00:13 +523 -9: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media missing unavailable and return 430.0 / 2.0
+00:13 +524 -9: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media image unavailable and return 430.0 / 2.0
+00:13 +525 -9: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media pdf unavailable and return 430.0 / 2.0
+00:13 +526 -9: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media video unavailable and return 430.0 / 2.0
+00:13 +527 -9: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: image loading failure retry and zoom 430.0 / 2.0
+00:13 +528 -9: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: PDF loading failure retry and return 430.0 / 2.0
+00:13 +529 -9: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: image authorization or unsupported content 401 remains retryable
+00:13 +530 -9: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: image authorization or unsupported content 403 remains retryable
+00:13 +531 -9: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: image authorization or unsupported content 200 remains retryable
+00:13 +532 -9: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: pdf authorization or unsupported content 401 remains retryable
+00:13 +533 -9: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: pdf authorization or unsupported content 403 remains retryable
+00:13 +534 -9: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: pdf authorization or unsupported content 200 remains retryable
+00:13 +535 -9: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: (tearDownAll)
+00:13 +535 -9: Some tests failed.
+
+Failing tests:
+  /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_me_design_test.dart: Agent transcript at 320.0
+  /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_me_design_test.dart: Agent transcript at 390.0
+  /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_me_design_test.dart: Agent transcript at 430.0
+  /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 320.0/1.0
+  ... and 5 more

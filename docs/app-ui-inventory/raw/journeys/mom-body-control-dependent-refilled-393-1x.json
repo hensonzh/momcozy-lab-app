@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/mom-body-control-dependent-refilled-393-1x.png",
+  "previous_source": "test/goldens/ui_inventory/mom-body-control-site-restored-dependent-empty-393-1x.png",
+  "route": "/me",
+  "trigger": "Fill returned severity and impact",
+  "root_entry": "Authenticated More → tap Me bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/mom/mom_body_control_inventory_test.dart"
+}

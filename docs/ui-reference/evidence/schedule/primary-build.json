@@ -1,0 +1,8 @@
+{
+  "at": "2026-09-12T11:55:55.978808",
+  "apk": "build/app/outputs/flutter-apk/app-local-debug.apk",
+  "sha256": "349b37eaf436f148298be1d48be2f008b774ba8a15c0d0ab49be8ef9e9f51184",
+  "mode": "local debug",
+  "tests_passed": 102,
+  "native_account_state": "Mia, no active service or appointment"
+}

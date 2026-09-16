@@ -1,0 +1,95 @@
+{
+  "root": "/Users/lute/project/momcozy-lab产品设计",
+  "files": [
+    {
+      "source": "src/pages/UserApp.tsx",
+      "snapshot": "source/src/pages/UserApp.tsx",
+      "sha256": "b6e1f16bbcead983beae5929d8973c4b5aaf24d53d696205aaeb57a921248fa9"
+    },
+    {
+      "source": "src/pages/Workbench.tsx",
+      "snapshot": "source/src/pages/Workbench.tsx",
+      "sha256": "58728a67d4dd370c39372b649047fd4dcebcb383ec81bd8c20979e4941ff9245"
+    },
+    {
+      "source": "src/App.tsx",
+      "snapshot": "source/src/App.tsx",
+      "sha256": "bd11c751d2c1191634dcf4491853113b9527be143097a4f9fda9c6848d4b1285"
+    },
+    {
+      "source": "src/components/UI.tsx",
+      "snapshot": "source/src/components/UI.tsx",
+      "sha256": "e1560efbc4c13b141885fb8705f8bcbfa9d6e2330afbf664bb19c4b2f638f1ac"
+    },
+    {
+      "source": "src/components/MeOverview.tsx",
+      "snapshot": "source/src/components/MeOverview.tsx",
+      "sha256": "b16dac3ff072c780a2ffdae1d635bd201ba9f80cbcc9254c10948e78905abdac"
+    },
+    {
+      "source": "src/styles.css",
+      "snapshot": "source/src/styles.css",
+      "sha256": "c4642c8479cc6da616e0d81ac69465956c1adec71eb128ac9042ec22e99a6d56"
+    },
+    {
+      "source": "src/styles/me-milk.css",
+      "snapshot": "source/src/styles/me-milk.css",
+      "sha256": "08af1aee7dd108a5dda8d568c9cca104839c6fb357641731185536c815c5aa6d"
+    },
+    {
+      "source": "src/styles/me-agent.css",
+      "snapshot": "source/src/styles/me-agent.css",
+      "sha256": "03a97a15b7a21f045da36627b39245cf09eba81e3da2ab5ad4d8b0dbd703f32d"
+    },
+    {
+      "source": "src/styles/me-diary.css",
+      "snapshot": "source/src/styles/me-diary.css",
+      "sha256": "4cad864c4db250d9d4d245637cb52131e69bc05e91b10bf4a584d34c2c832f91"
+    },
+    {
+      "source": "src/styles/baby.css",
+      "snapshot": "source/src/styles/baby.css",
+      "sha256": "62b5d02304c3ae9d61c529d5bd4a2ab6e24692b8ab5e05fe4a914fda2256d490"
+    },
+    {
+      "source": "src/styles/fonts.css",
+      "snapshot": "source/src/styles/fonts.css",
+      "sha256": "12fe541a60e96f67645d15b05d950d4ca8664a78f16b9e347aba6d7f601895d9"
+    },
+    {
+      "source": "src/styles/me-service-progress.css",
+      "snapshot": "source/src/styles/me-service-progress.css",
+      "sha256": "de09dc2e5782ecd71989dfc7d9432ee6fd32bc06c69f37c4bac4a20e0e0e5712"
+    },
+    {
+      "source": "src/features/baby/growthStandards.ts",
+      "snapshot": "source/src/features/baby/growthStandards.ts",
+      "sha256": "8af8632b8c69353872bf317164987706ac4dd09af2985717d4fc77f303a87b6a"
+    },
+    {
+      "source": "src/features/consultation/deviceCheck.ts",
+      "snapshot": "source/src/features/consultation/deviceCheck.ts",
+      "sha256": "70386a150ac85485d65984509437eef555733e27d8102340af2d501d05e76f88"
+    },
+    {
+      "source": "src/features/consultation/appointments.ts",
+      "snapshot": "source/src/features/consultation/appointments.ts",
+      "sha256": "d4277e6ceb54f2fb88b1d6bb6282db3932e69462e30fd8d4136547d65e19a1b7"
+    },
+    {
+      "source": "me-ui-optimization/02-approved-system/生活陪伴型-design-system.md",
+      "snapshot": "source/me-ui-optimization/02-approved-system/生活陪伴型-design-system.md",
+      "sha256": "a74282e49cce45f86d39dbcf9881ba023d61dd092dec89f52ef63ae2c29b3a42"
+    },
+    {
+      "source": "me-agent-style-sync/README.md",
+      "snapshot": "source/me-agent-style-sync/README.md",
+      "sha256": "014c02f2f90845bf6c7f785731bb735760b72afa5196da0dea7dd4fceb3d6513"
+    },
+    {
+      "source": "baby-me-style-sync/README.md",
+      "snapshot": "source/baby-me-style-sync/README.md",
+      "sha256": "33f1f467e5bb94968ff9915b88b54174427848e27eacc5e1ba47561b6077137a"
+    }
+  ]
+}

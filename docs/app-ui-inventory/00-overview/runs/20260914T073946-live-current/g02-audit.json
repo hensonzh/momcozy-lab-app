@@ -1,0 +1,225 @@
+{
+  "gap": "G02",
+  "completion": "CLOSED_FOR_RECORDED_SOURCE",
+  "scope": "Current live/leave UI and actual normal App leave/re-entry chain; media faults simulated at controller boundary, no real remote video or OS permission acceptance",
+  "source_drift": [
+    "lib/features/agent_hub/agent_hub_page.dart",
+    "test/features/agent_hub/agent_conversation_design_test.dart",
+    "test/support/agent_conversation_scenarios.dart"
+  ],
+  "relevant_source_drift": [],
+  "images_reviewed": [
+    {
+      "entry": "08-expert-service/consultation-journey-current-live-active",
+      "image": "../raw/test/goldens/ui_inventory/consultation-journey-current-live-active-393.png",
+      "sha256": "e7c2ab3cfe7168691a3decf1a27a071c06b8d38e048008b6f6bbe98b1f504667",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "normal_route": true,
+      "metadata": "raw/test/goldens/ui_inventory/consultation-journey-current-live-active-393.png.json"
+    },
+    {
+      "entry": "08-expert-service/consultation-journey-current-live-leave-confirmation",
+      "image": "../raw/test/goldens/ui_inventory/consultation-journey-current-live-leave-confirmation-393.png",
+      "sha256": "b342727f5e9c4f1717eae9a691a48068871740a13743f14f47d712af22af4862",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "normal_route": true,
+      "metadata": "raw/test/goldens/ui_inventory/consultation-journey-current-live-leave-confirmation-393.png.json"
+    },
+    {
+      "entry": "08-expert-service/consultation-journey-current-live-left-booking",
+      "image": "../raw/test/goldens/ui_inventory/consultation-journey-current-live-left-booking-393.png",
+      "sha256": "604f59951f127e6029f6154c321730a956c6200da4e97787123216db0a89cb91",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "normal_route": true,
+      "metadata": "raw/test/goldens/ui_inventory/consultation-journey-current-live-left-booking-393.png.json"
+    },
+    {
+      "entry": "08-expert-service/consultation-journey-current-live-reentry-preparation",
+      "image": "../raw/test/goldens/ui_inventory/consultation-journey-current-live-reentry-preparation-393.png",
+      "sha256": "1c6d243cf479e97eb3eb5f8ffe19e1c57fdf64a9ed429a2fe1840db43000fa17",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "normal_route": true,
+      "metadata": "raw/test/goldens/ui_inventory/consultation-journey-current-live-reentry-preparation-393.png.json"
+    },
+    {
+      "entry": "08-expert-service/room-leave-failure",
+      "image": "../raw/test/goldens/product_baseline/room-leave-failure-390-1x.png",
+      "sha256": "74bcb7d2641ae4d8df2d38bcfcff1b5d86b87293f8ae068bdb6546c4efbc17aa",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "normal_route": false,
+      "metadata": "raw/test/goldens/product_baseline/room-leave-failure-390-1x.png.json"
+    },
+    {
+      "entry": "08-expert-service/room-leave-retry-confirmation",
+      "image": "../raw/test/goldens/product_baseline/room-leave-retry-confirmation-390-1x.png",
+      "sha256": "fcb0ff38515b44218cd692b546d2cd35a9ff89333ab1fc7b0a9ceb2437f55b14",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "normal_route": false,
+      "metadata": "raw/test/goldens/product_baseline/room-leave-retry-confirmation-390-1x.png.json"
+    },
+    {
+      "entry": "08-expert-service/video-camera-off",
+      "image": "../raw/test/goldens/design_system/video-camera-off-390.png",
+      "sha256": "3ae9b96c9c0980b5e1ae5be4a054946b9e414bdd43d9abd8af093e86767ffdbe",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "normal_route": false,
+      "metadata": "raw/test/goldens/design_system/video-camera-off-390.png.json"
+    },
+    {
+      "entry": "08-expert-service/video-controls",
+      "image": "../raw/test/goldens/design_system/video-controls-390.png",
+      "sha256": "7e6b9c1565c701a564f1356aabd0f98a7d05409bacb54f3eb2f90043a149b8ac",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "normal_route": false,
+      "metadata": "raw/test/goldens/design_system/video-controls-390.png.json"
+    },
+    {
+      "entry": "08-expert-service/video-disconnected",
+      "image": "../raw/test/goldens/design_system/video-disconnected-390.png",
+      "sha256": "f9619fdbca11ba323b28fe1ad529a8da8d5e147da118c0bc2a17bb872e69653a",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "normal_route": false,
+      "metadata": "raw/test/goldens/design_system/video-disconnected-390.png.json"
+    },
+    {
+      "entry": "08-expert-service/video-disconnected-actions",
+      "image": "../raw/test/goldens/design_system/video-disconnected-actions-390.png",
+      "sha256": "f9619fdbca11ba323b28fe1ad529a8da8d5e147da118c0bc2a17bb872e69653a",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "normal_route": false,
+      "metadata": "raw/test/goldens/design_system/video-disconnected-actions-390.png.json"
+    },
+    {
+      "entry": "08-expert-service/video-expert-ready",
+      "image": "../raw/test/goldens/design_system/video-expert-ready-390.png",
+      "sha256": "a7e446f5e42c30e730f68969535afdaccc3d8c503a3c4128efb37815cf947a19",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "normal_route": false,
+      "metadata": "raw/test/goldens/design_system/video-expert-ready-390.png.json"
+    },
+    {
+      "entry": "08-expert-service/video-leave",
+      "image": "../raw/test/goldens/design_system/video-leave-390.png",
+      "sha256": "e337024f09566c87e5fbb8009976eae74c6a3bab82be1cce55d8c1f72945e40d",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "normal_route": false,
+      "metadata": "raw/test/goldens/design_system/video-leave-390.png.json"
+    },
+    {
+      "entry": "08-expert-service/video-media-audio-enabled",
+      "image": "../raw/test/goldens/design_system/video-media-audio-enabled-390.png",
+      "sha256": "2e628f7a20033805976f6dc64d43f4480351c552abecc91f850c896f8e3a079b",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "normal_route": false,
+      "metadata": "raw/test/goldens/design_system/video-media-audio-enabled-390.png.json"
+    },
+    {
+      "entry": "08-expert-service/video-media-error",
+      "image": "../raw/test/goldens/design_system/video-media-error-390.long.png",
+      "sha256": "79450536f002c687c7d6003374815f28da44ff18e4d086a6aa9797bb859bf7a6",
+      "long_capture": {
+        "status": "complete-measured-scroll-stitch",
+        "file": "/Users/lute/project/momcozy-lab/app/docs/app-ui-inventory/raw/test/goldens/design_system/video-media-error-390.long.png",
+        "offsets": [
+          0.0,
+          44.0
+        ],
+        "scroll_bounds": [
+          0.0,
+          64.0,
+          390.0,
+          780.0
+        ],
+        "frame_scroll_bounds": [
+          [
+            0.0,
+            64.0,
+            390.0,
+            780.0
+          ],
+          [
+            0.0,
+            64.0,
+            390.0,
+            780.0
+          ]
+        ],
+        "content_height": 824.0,
+        "interior_strip_edge_guard": 64.0,
+        "fixed_bottom_overlay_bounds": [],
+        "original_scroll_offset": 44.0,
+        "tooltip_preserved_from_matched_viewport": false
+      },
+      "normal_route": false,
+      "metadata": "raw/test/goldens/design_system/video-media-error-390.png.json"
+    },
+    {
+      "entry": "08-expert-service/video-reconnecting",
+      "image": "../raw/test/goldens/design_system/video-reconnecting-390.png",
+      "sha256": "44459675318f26b14270b639fbaeff1e052459927349303f844215587725f703",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "normal_route": false,
+      "metadata": "raw/test/goldens/design_system/video-reconnecting-390.png.json"
+    },
+    {
+      "entry": "08-expert-service/video-waiting",
+      "image": "../raw/test/goldens/design_system/video-waiting-390.png",
+      "sha256": "7e6b9c1565c701a564f1356aabd0f98a7d05409bacb54f3eb2f90043a149b8ac",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "normal_route": false,
+      "metadata": "raw/test/goldens/design_system/video-waiting-390.png.json"
+    }
+  ],
+  "normal_route_checks": [
+    "leave confirmation via visible button",
+    "stay preserves connection",
+    "close confirmation preserves connection",
+    "expert active",
+    "temporary leave returns to booking",
+    "no room/end request",
+    "presence left reported",
+    "visible return-to-room button",
+    "device checks and re-entry create second connection"
+  ],
+  "media_action_checks": [
+    "microphone off",
+    "camera off",
+    "busy/reconnecting/disconnected controls disabled",
+    "reconnect",
+    "return to preparation",
+    "audio playback unblock removes CTA",
+    "leave failure retains room",
+    "retry confirmation and successful leave callback"
+  ],
+  "visual_review": "All 16 complete images inspected; media-error measured long image includes final controls; no clipped text/CTA found"
+}

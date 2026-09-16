@@ -1,0 +1,805 @@
+[
+  {
+    "id": "03-mom/mom-journey-purchased-progress",
+    "module": "妈妈",
+    "label": "喂养安心",
+    "state": "mom-journey-purchased-progress",
+    "image": "03-mom/mom-journey-purchased-progress/default.png",
+    "viewport": "03-mom/mom-journey-purchased-progress/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/inventory-episode"
+    ],
+    "mapped_design_candidates": [
+      "services/progress",
+      "common/not-found"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/modules/services/presentation/service_progress_page.dart",
+      "lib/modules/services/presentation/service_timeline.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/mom/mom_inventory_journey_test.dart",
+    "test_case": "inventory Mom purchased home service progress and booking entry",
+    "metadata": "raw/test/goldens/ui_inventory/mom-journey-purchased-progress-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/mom-journey-purchased-progress-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/mom-journey-purchased-progress-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/inventory-episode",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Owned plan → actual service timeline route",
+    "journey": {
+      "source": "test/goldens/ui_inventory/mom-journey-purchased-progress-393.png",
+      "previous_source": "test/goldens/ui_inventory/mom-journey-purchased-home-393.png",
+      "route": "/services/episodes/inventory-episode",
+      "trigger": "Owned plan → actual service timeline route",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/mom/mom_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "06-schedule/schedule-journey-plan-route",
+    "module": "日程",
+    "label": "TI",
+    "state": "schedule-journey-plan-route",
+    "image": "06-schedule/schedule-journey-plan-route/default.png",
+    "viewport": "06-schedule/schedule-journey-plan-route/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode"
+    ],
+    "mapped_design_candidates": [
+      "services/progress",
+      "common/not-found"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/modules/services/presentation/service_progress_page.dart",
+      "lib/modules/services/presentation/service_timeline.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/schedule/schedule_inventory_journey_test.dart",
+    "test_case": "inventory schedule care task statuses and plan",
+    "metadata": "raw/test/goldens/ui_inventory/schedule-journey-plan-route-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/schedule-journey-plan-route-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/schedule-journey-plan-route-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode",
+    "entry": "Authenticated More → tap Schedule bottom navigation",
+    "trigger": "View care plan → actual episode route",
+    "journey": {
+      "source": "test/goldens/ui_inventory/schedule-journey-plan-route-393.png",
+      "previous_source": "test/goldens/ui_inventory/schedule-journey-plan-expanded-393.png",
+      "route": "/services/episodes/service-episode",
+      "trigger": "View care plan → actual episode route",
+      "root_entry": "Authenticated More → tap Schedule bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/schedule/schedule_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "06-schedule/schedule-journey-task-plan-route",
+    "module": "日程",
+    "label": "TI",
+    "state": "schedule-journey-task-plan-route",
+    "image": "06-schedule/schedule-journey-task-plan-route/default.png",
+    "viewport": "06-schedule/schedule-journey-task-plan-route/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode"
+    ],
+    "mapped_design_candidates": [
+      "services/progress",
+      "common/not-found"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/modules/services/presentation/service_progress_page.dart",
+      "lib/modules/services/presentation/service_timeline.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/schedule/schedule_inventory_journey_test.dart",
+    "test_case": "inventory schedule picker cancel and task menu route",
+    "metadata": "raw/test/goldens/ui_inventory/schedule-journey-task-plan-route-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/schedule-journey-task-plan-route-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/schedule-journey-task-plan-route-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode",
+    "entry": "Authenticated More → tap Schedule bottom navigation",
+    "trigger": "Task menu view service plan → actual episode route",
+    "journey": {
+      "source": "test/goldens/ui_inventory/schedule-journey-task-plan-route-393.png",
+      "previous_source": "test/goldens/ui_inventory/schedule-journey-clean-editor-closed-393.png",
+      "route": "/services/episodes/service-episode",
+      "trigger": "Task menu view service plan → actual episode route",
+      "root_entry": "Authenticated More → tap Schedule bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/schedule/schedule_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "07-me/notification-navigation-current-episode-opened",
+    "module": "账号与隐私",
+    "label": "TI",
+    "state": "notification-navigation-current-episode-opened",
+    "image": "07-me/notification-navigation-current-episode-opened/default.png",
+    "viewport": "07-me/notification-navigation-current-episode-opened/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/22222222-2222-4222-8222-222222222222"
+    ],
+    "mapped_design_candidates": [
+      "services/progress",
+      "common/not-found"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/modules/services/presentation/service_progress_page.dart",
+      "lib/modules/services/presentation/service_timeline.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/notifications/notification_navigation_current_inventory_test.dart",
+    "test_case": "notification safe target episode false",
+    "metadata": "raw/test/goldens/ui_inventory/notification-navigation-current-episode-opened-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/notification-navigation-current-episode-opened-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/notification-navigation-current-episode-opened-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/notification-navigation-current-episode-opened-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/notification-navigation-current-episode-opened-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/22222222-2222-4222-8222-222222222222",
+    "entry": "Authenticated More page",
+    "trigger": "Tap notification → validated episode target, notification marked read",
+    "journey": {
+      "source": "test/goldens/ui_inventory/notification-navigation-current-episode-opened-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/notification-navigation-current-episode-inbox-393-1x.png",
+      "route": "/services/episodes/22222222-2222-4222-8222-222222222222",
+      "trigger": "Tap notification → validated episode target, notification marked read",
+      "root_entry": "Authenticated More page",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production notification coordinator/repository/controller; isolated HTTP, push gateway and permission platform; real router.go and ScaffoldMessenger callbacks, no native OS dialog or remote push",
+      "test": "test/features/notifications/notification_navigation_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/consultation-journey-summary-to-progress",
+    "module": "专家服务与咨询",
+    "label": "TI",
+    "state": "consultation-journey-summary-to-progress",
+    "image": "08-expert-service/consultation-journey-summary-to-progress/default.png",
+    "viewport": "08-expert-service/consultation-journey-summary-to-progress/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode"
+    ],
+    "mapped_design_candidates": [
+      "services/progress",
+      "common/not-found"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/modules/services/presentation/service_progress_page.dart",
+      "lib/modules/services/presentation/service_timeline.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/consultation/consultation_inventory_journey_test.dart",
+    "test_case": "inventory consultation ended summary publication task updates and routes",
+    "metadata": "raw/test/goldens/ui_inventory/consultation-journey-summary-to-progress-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/consultation-journey-summary-to-progress-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/consultation-journey-summary-to-progress-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Summary service progress → episode timeline",
+    "journey": {
+      "source": "test/goldens/ui_inventory/consultation-journey-summary-to-progress-393.png",
+      "previous_source": "test/goldens/ui_inventory/consultation-journey-summary-service-information-393.png",
+      "route": "/services/episodes/service-episode",
+      "trigger": "Summary service progress → episode timeline",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories/codecs and LiveKit device checks; isolated HTTP and native method channels, sandbox room, fixed clock/timezone; no real OS permission dialog or remote media",
+      "test": "test/modules/consultation/consultation_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/progress-completed-renewal",
+    "module": "专家服务与咨询",
+    "label": "喂养安心",
+    "state": "progress-completed-renewal",
+    "image": "08-expert-service/progress-completed-renewal/default.png",
+    "viewport": "08-expert-service/progress-completed-renewal/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/:episodeId"
+    ],
+    "mapped_design_candidates": [
+      "services/progress"
+    ],
+    "production_widget_files": [
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/modules/services/presentation/service_progress_page.dart",
+      "lib/modules/services/presentation/service_timeline.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/services/service_progress_test.dart",
+    "test_case": "ended service opens renewal without changing the service",
+    "metadata": "raw/test/goldens/design_system/progress-completed-renewal-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/progress-completed-renewal-390.png",
+        "metadata": "raw/test/goldens/design_system/progress-completed-renewal-390.png.json",
+        "width": 390,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "08-expert-service/progress-earlier",
+    "module": "专家服务与咨询",
+    "label": "TI",
+    "state": "progress-earlier",
+    "image": "08-expert-service/progress-earlier/default.png",
+    "viewport": "08-expert-service/progress-earlier/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/:episodeId"
+    ],
+    "mapped_design_candidates": [
+      "services/progress"
+    ],
+    "production_widget_files": [
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/modules/services/presentation/service_progress_page.dart",
+      "lib/modules/services/presentation/service_timeline.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/services/service_progress_test.dart",
+    "test_case": "full timeline navigation at 390.0 / 1.0",
+    "metadata": "raw/test/goldens/design_system/progress-earlier-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/progress-earlier-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/progress-earlier-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/progress-earlier-320.png",
+        "metadata": "raw/test/goldens/design_system/progress-earlier-320.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/progress-earlier-390-2x.png",
+        "metadata": "raw/test/goldens/design_system/progress-earlier-390-2x.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/progress-earlier-390.png",
+        "metadata": "raw/test/goldens/design_system/progress-earlier-390.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/progress-earlier-430-2x.png",
+        "metadata": "raw/test/goldens/design_system/progress-earlier-430-2x.png.json",
+        "width": 430,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/progress-earlier-430.png",
+        "metadata": "raw/test/goldens/design_system/progress-earlier-430.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "08-expert-service/progress-empty",
+    "module": "专家服务与咨询",
+    "label": "暂时找不到这个服务包",
+    "state": "progress-empty",
+    "image": "08-expert-service/progress-empty/default.png",
+    "viewport": "08-expert-service/progress-empty/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/:episodeId"
+    ],
+    "mapped_design_candidates": [
+      "services/progress",
+      "common/loading",
+      "common/empty",
+      "common/error"
+    ],
+    "production_widget_files": [
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/modules/services/presentation/service_progress_page.dart",
+      "lib/shared/widgets/product_feedback.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/services/service_progress_test.dart",
+    "test_case": "missing service has recoverable empty state",
+    "metadata": "raw/test/goldens/design_system/progress-empty-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/progress-empty-390.png",
+        "metadata": "raw/test/goldens/design_system/progress-empty-390.png.json",
+        "width": 390,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "08-expert-service/progress-latest",
+    "module": "专家服务与咨询",
+    "label": "TI",
+    "state": "progress-latest",
+    "image": "08-expert-service/progress-latest/default.png",
+    "viewport": "08-expert-service/progress-latest/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/:episodeId"
+    ],
+    "mapped_design_candidates": [
+      "services/progress"
+    ],
+    "production_widget_files": [
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/modules/services/presentation/service_progress_page.dart",
+      "lib/modules/services/presentation/service_timeline.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/services/service_progress_test.dart",
+    "test_case": "full timeline navigation at 390.0 / 1.0",
+    "metadata": "raw/test/goldens/design_system/progress-latest-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/progress-latest-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/progress-latest-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/progress-latest-320.png",
+        "metadata": "raw/test/goldens/design_system/progress-latest-320.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/progress-latest-390-2x.png",
+        "metadata": "raw/test/goldens/design_system/progress-latest-390-2x.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/progress-latest-390.png",
+        "metadata": "raw/test/goldens/design_system/progress-latest-390.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/progress-latest-430-2x.png",
+        "metadata": "raw/test/goldens/design_system/progress-latest-430-2x.png.json",
+        "width": 430,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/progress-latest-430.png",
+        "metadata": "raw/test/goldens/design_system/progress-latest-430.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "08-expert-service/progress-loading",
+    "module": "专家服务与咨询",
+    "label": "喂养安心",
+    "state": "progress-loading",
+    "image": "08-expert-service/progress-loading/default.png",
+    "viewport": "08-expert-service/progress-loading/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/:episodeId"
+    ],
+    "mapped_design_candidates": [
+      "services/progress"
+    ],
+    "production_widget_files": [
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/modules/services/presentation/service_progress_page.dart",
+      "lib/modules/services/presentation/service_timeline.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/services/service_progress_test.dart",
+    "test_case": "pending context and navigation away release safely",
+    "metadata": "raw/test/goldens/design_system/progress-loading-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/progress-loading-390.png",
+        "metadata": "raw/test/goldens/design_system/progress-loading-390.png.json",
+        "width": 390,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "08-expert-service/progress-offline",
+    "module": "专家服务与咨询",
+    "label": "喂养安心",
+    "state": "progress-offline",
+    "image": "08-expert-service/progress-offline/default.png",
+    "viewport": "08-expert-service/progress-offline/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/:episodeId"
+    ],
+    "mapped_design_candidates": [
+      "services/progress"
+    ],
+    "production_widget_files": [
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/modules/services/presentation/service_progress_page.dart",
+      "lib/modules/services/presentation/service_timeline.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/services/service_progress_test.dart",
+    "test_case": "failed appointment read preserves order and retry reads fresh appointments",
+    "metadata": "raw/test/goldens/design_system/progress-offline-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/progress-offline-390.png",
+        "metadata": "raw/test/goldens/design_system/progress-offline-390.png.json",
+        "width": 390,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "08-expert-service/progress-short",
+    "module": "专家服务与咨询",
+    "label": "TI",
+    "state": "progress-short",
+    "image": "08-expert-service/progress-short/default.png",
+    "viewport": "08-expert-service/progress-short/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/:episodeId"
+    ],
+    "mapped_design_candidates": [
+      "services/progress"
+    ],
+    "production_widget_files": [
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/modules/services/presentation/service_progress_page.dart",
+      "lib/modules/services/presentation/service_timeline.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/services/service_progress_test.dart",
+    "test_case": "short display with enlarged text keeps timeline scrollable",
+    "metadata": "raw/test/goldens/design_system/progress-short-320-2x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/progress-short-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/progress-short-320-2x.png.json",
+        "width": 320,
+        "height": 568
+      }
+    ]
+  },
+  {
+    "id": "08-expert-service/renew-journey-active-progress",
+    "module": "专家服务与咨询",
+    "label": "喂养安心",
+    "state": "renew-journey-active-progress",
+    "image": "08-expert-service/renew-journey-active-progress/default.png",
+    "viewport": "08-expert-service/renew-journey-active-progress/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode"
+    ],
+    "mapped_design_candidates": [
+      "services/progress",
+      "common/not-found"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/modules/services/presentation/service_progress_page.dart",
+      "lib/modules/services/presentation/service_timeline.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/renew_inventory_journey_test.dart",
+    "test_case": "inventory completed service renewal purchase and return 393.0",
+    "metadata": "raw/test/goldens/ui_inventory/renew-journey-active-progress-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/renew-journey-active-progress-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/renew-journey-active-progress-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/renew-journey-active-progress-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/renew-journey-active-progress-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "View current service → actual newly purchased progress",
+    "journey": {
+      "source": "test/goldens/ui_inventory/renew-journey-active-progress-393.png",
+      "previous_source": "test/goldens/ui_inventory/renew-journey-purchase-return-393.png",
+      "route": "/services/episodes/service-episode",
+      "trigger": "View current service → actual newly purchased progress",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production home/timeline/renew/purchase pages and repositories; isolated HTTP with completed original service preserved independently; fixed clock and timezone, no remote order/payment",
+      "test": "test/modules/services/renew_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/renew-journey-completed-progress",
+    "module": "专家服务与咨询",
+    "label": "喂养安心",
+    "state": "renew-journey-completed-progress",
+    "image": "08-expert-service/renew-journey-completed-progress/default.png",
+    "viewport": "08-expert-service/renew-journey-completed-progress/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/completed-episode"
+    ],
+    "mapped_design_candidates": [
+      "services/progress",
+      "common/not-found"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/modules/services/presentation/service_progress_page.dart",
+      "lib/modules/services/presentation/service_timeline.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/renew_inventory_journey_test.dart",
+    "test_case": "inventory renewal loading retry empty and refresh",
+    "metadata": "raw/test/goldens/ui_inventory/renew-journey-completed-progress-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/renew-journey-completed-progress-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/renew-journey-completed-progress-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/renew-journey-completed-progress-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/renew-journey-completed-progress-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/completed-episode",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "More → Me → completed service progress; continue support CTA",
+    "journey": {
+      "source": "test/goldens/ui_inventory/renew-journey-completed-progress-393.png",
+      "previous_source": null,
+      "route": "/services/episodes/completed-episode",
+      "trigger": "More → Me → completed service progress; continue support CTA",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production home/timeline/renew/purchase pages and repositories; isolated HTTP with completed original service preserved independently; fixed clock and timezone, no remote order/payment",
+      "test": "test/modules/services/renew_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/renew-journey-completed-return",
+    "module": "专家服务与咨询",
+    "label": "喂养安心",
+    "state": "renew-journey-completed-return",
+    "image": "08-expert-service/renew-journey-completed-return/default.png",
+    "viewport": "08-expert-service/renew-journey-completed-return/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/completed-episode"
+    ],
+    "mapped_design_candidates": [
+      "services/progress",
+      "common/not-found"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/modules/services/presentation/service_progress_page.dart",
+      "lib/modules/services/presentation/service_timeline.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/renew_inventory_journey_test.dart",
+    "test_case": "inventory completed service renewal purchase and return 393.0",
+    "metadata": "raw/test/goldens/ui_inventory/renew-journey-completed-return-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/renew-journey-completed-return-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/renew-journey-completed-return-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/renew-journey-completed-return-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/renew-journey-completed-return-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/completed-episode",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Renewal back → original completed service timeline",
+    "journey": {
+      "source": "test/goldens/ui_inventory/renew-journey-completed-return-393.png",
+      "previous_source": "test/goldens/ui_inventory/renew-journey-active-return-393.png",
+      "route": "/services/episodes/completed-episode",
+      "trigger": "Renewal back → original completed service timeline",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production home/timeline/renew/purchase pages and repositories; isolated HTTP with completed original service preserved independently; fixed clock and timezone, no remote order/payment",
+      "test": "test/modules/services/renew_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-journey-booking-cancelled-timeline",
+    "module": "专家服务与咨询",
+    "label": "喂养安心",
+    "state": "service-journey-booking-cancelled-timeline",
+    "image": "08-expert-service/service-journey-booking-cancelled-timeline/default.png",
+    "viewport": "08-expert-service/service-journey-booking-cancelled-timeline/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode"
+    ],
+    "mapped_design_candidates": [
+      "services/progress",
+      "common/not-found"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/modules/services/presentation/service_progress_page.dart",
+      "lib/modules/services/presentation/service_timeline.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_inventory_journey_test.dart",
+    "test_case": "inventory Services booking eligibility hold confirm intake and cancellation",
+    "metadata": "raw/test/goldens/ui_inventory/service-journey-booking-cancelled-timeline-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-journey-booking-cancelled-timeline-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-journey-booking-cancelled-timeline-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Package service progress → cancellation included in timeline",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-journey-booking-cancelled-timeline-393.png",
+      "previous_source": "test/goldens/ui_inventory/service-journey-booking-cancelled-393.png",
+      "route": "/services/episodes/service-episode",
+      "trigger": "Package service progress → cancellation included in timeline",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-progress",
+    "module": "专家服务与咨询",
+    "label": "喂养安心",
+    "state": "service-progress",
+    "image": "08-expert-service/service-progress/default.png",
+    "viewport": "08-expert-service/service-progress/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/:episodeId"
+    ],
+    "mapped_design_candidates": [
+      "services/progress"
+    ],
+    "production_widget_files": [
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/modules/services/presentation/service_progress_page.dart",
+      "lib/modules/services/presentation/service_timeline.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/services/service_design_test.dart",
+    "test_case": "service progress at 390.0 / 1.0",
+    "metadata": "raw/test/goldens/design_system/service-progress-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/service-progress-320.png",
+        "metadata": "raw/test/goldens/design_system/service-progress-320.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/service-progress-390.png",
+        "metadata": "raw/test/goldens/design_system/service-progress-390.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/service-progress-430.png",
+        "metadata": "raw/test/goldens/design_system/service-progress-430.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  }
+]

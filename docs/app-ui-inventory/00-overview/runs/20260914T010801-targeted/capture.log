@@ -1,0 +1,14 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/modules/services/purchase_current_inventory_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: current purchase eligibility rejection create retry false
+00:02 +1: current purchase fields decline verification success false
+00:03 +2: current purchase uncertain payment retry query false
+00:04 +3: current purchase cancelled challenge reconciling and entitlement sync false
+00:05 +4: current purchase plain cancellation and reconciliation completion false
+00:06 +5: current purchase eligibility rejection create retry true
+00:07 +6: current purchase fields decline verification success true
+00:08 +7: current purchase uncertain payment retry query true
+00:09 +8: current purchase cancelled challenge reconciling and entitlement sync true
+00:11 +9: current purchase plain cancellation and reconciliation completion true
+00:12 +10: (tearDownAll)
+00:12 +10: All tests passed!

@@ -1,0 +1,988 @@
+[
+  {
+    "owner_id": "auth-login",
+    "state": "初始",
+    "source_ids": [
+      "01-auth/auth-journey-login"
+    ],
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "224:1108"
+    ],
+    "evidence_mode": "direct",
+    "layout_evidence": [
+      "test/goldens/design_system/auth-login-390.png"
+    ],
+    "note": "欢迎与表单分组、Google/邮箱层级。",
+    "verification": "Existing Figma-first delivery, current production fingerprints, inspected behavior source, archived regression and current targeted regression. Shared golden references demonstrate the reusable layout/control, not a claim of replaying every source journey."
+  },
+  {
+    "owner_id": "auth-login",
+    "state": "密码可见",
+    "source_ids": [
+      "01-auth/auth-followup-login-password-visible"
+    ],
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "225:1291"
+    ],
+    "evidence_mode": "shared_control",
+    "layout_evidence": [
+      "test/goldens/design_system/auth-login-390.png"
+    ],
+    "note": "同一密码字段保留显隐和导航时重置；consumer_auth_page_test 直接断言 obscureText。",
+    "verification": "Existing Figma-first delivery, current production fingerprints, inspected behavior source, archived regression and current targeted regression. Shared golden references demonstrate the reusable layout/control, not a claim of replaying every source journey."
+  },
+  {
+    "owner_id": "auth-login",
+    "state": "提交中",
+    "source_ids": [
+      "01-auth/auth-journey-login-busy"
+    ],
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "225:1256"
+    ],
+    "evidence_mode": "direct",
+    "layout_evidence": [
+      "test/goldens/design_system/auth-busy-320-2x-short.png"
+    ],
+    "note": "_run 锁定请求、字段、显隐与提交；失败后保留输入。",
+    "verification": "Existing Figma-first delivery, current production fingerprints, inspected behavior source, archived regression and current targeted regression. Shared golden references demonstrate the reusable layout/control, not a claim of replaying every source journey."
+  },
+  {
+    "owner_id": "auth-login",
+    "state": "认证错误",
+    "source_ids": [
+      "01-auth/auth-journey-invalid-credentials"
+    ],
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "225:1182"
+    ],
+    "evidence_mode": "direct",
+    "layout_evidence": [
+      "test/goldens/design_system/auth-login-error-320-2x-short.png"
+    ],
+    "note": "AuthNotice 显示认证错误，恢复原字段重试。",
+    "verification": "Existing Figma-first delivery, current production fingerprints, inspected behavior source, archived regression and current targeted regression. Shared golden references demonstrate the reusable layout/control, not a claim of replaying every source journey."
+  },
+  {
+    "owner_id": "auth-login",
+    "state": "成功跳转",
+    "source_ids": [
+      "01-auth/auth-followup-reset-login-more"
+    ],
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "224:1108",
+      "122:9"
+    ],
+    "evidence_mode": "destination",
+    "layout_evidence": [
+      "test/goldens/design_system/auth-login-390.png"
+    ],
+    "note": "源图为 /more；会话保存及路由延用，目的页视觉由 More 交付负责。",
+    "verification": "Existing Figma-first delivery, current production fingerprints, inspected behavior source, archived regression and current targeted regression. Shared golden references demonstrate the reusable layout/control, not a claim of replaying every source journey."
+  },
+  {
+    "owner_id": "auth-login",
+    "state": "Google 不可用",
+    "source_ids": [
+      "01-auth/auth-journey-google-unavailable"
+    ],
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "225:1145"
+    ],
+    "evidence_mode": "direct",
+    "layout_evidence": [
+      "test/goldens/design_system/auth-google-error-320-2x-short.png"
+    ],
+    "note": "错误保留在 Google 下方；邮箱恢复可用。",
+    "verification": "Existing Figma-first delivery, current production fingerprints, inspected behavior source, archived regression and current targeted regression. Shared golden references demonstrate the reusable layout/control, not a claim of replaying every source journey."
+  },
+  {
+    "owner_id": "auth-register",
+    "state": "空表单",
+    "source_ids": [
+      "01-auth/auth-register"
+    ],
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "224:1143"
+    ],
+    "evidence_mode": "direct",
+    "layout_evidence": [
+      "test/goldens/design_system/auth-register-390.png"
+    ],
+    "note": "注册单独任务头与表单卡片。",
+    "verification": "Existing Figma-first delivery, current production fingerprints, inspected behavior source, archived regression and current targeted regression. Shared golden references demonstrate the reusable layout/control, not a claim of replaying every source journey."
+  },
+  {
+    "owner_id": "auth-register",
+    "state": "校验错误",
+    "source_ids": [
+      "01-auth/auth-register-validation"
+    ],
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "225:1437"
+    ],
+    "evidence_mode": "direct",
+    "layout_evidence": [
+      "test/goldens/design_system/auth-register-validation-390.png"
+    ],
+    "note": "邮箱与密码校验，非法输入不发送请求。",
+    "verification": "Existing Figma-first delivery, current production fingerprints, inspected behavior source, archived regression and current targeted regression. Shared golden references demonstrate the reusable layout/control, not a claim of replaying every source journey."
+  },
+  {
+    "owner_id": "auth-register",
+    "state": "提交中",
+    "source_ids": [
+      "01-auth/auth-followup-register-pending"
+    ],
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "225:1463"
+    ],
+    "evidence_mode": "shared_control",
+    "layout_evidence": [
+      "test/goldens/design_system/auth-busy-320-2x-short.png"
+    ],
+    "note": "注册复用 _busy 与 _run；Figma 独立注册忙碌布局，登录 golden 仅证明共用锁定与进度控件。",
+    "verification": "Existing Figma-first delivery, current production fingerprints, inspected behavior source, archived regression and current targeted regression. Shared golden references demonstrate the reusable layout/control, not a claim of replaying every source journey."
+  },
+  {
+    "owner_id": "auth-register",
+    "state": "发送验证码",
+    "source_ids": [
+      "01-auth/auth-journey-verify"
+    ],
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "224:1167"
+    ],
+    "evidence_mode": "transition",
+    "layout_evidence": [
+      "test/goldens/design_system/auth-verify-390.png"
+    ],
+    "note": "注册成功转验证码页；保留邮箱、冷却时间及未认证状态。",
+    "verification": "Existing Figma-first delivery, current production fingerprints, inspected behavior source, archived regression and current targeted regression. Shared golden references demonstrate the reusable layout/control, not a claim of replaying every source journey."
+  },
+  {
+    "owner_id": "auth-register",
+    "state": "服务错误",
+    "source_ids": [
+      "01-auth/auth-followup-register-email-unavailable"
+    ],
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "224:1143",
+      "225:1629"
+    ],
+    "evidence_mode": "shared_notice",
+    "layout_evidence": [
+      "test/goldens/design_system/auth-register-390.png"
+    ],
+    "note": "注册布局复用邮箱服务错误 AuthNotice；实际错误文案由 accountAuthErrorText 保留。",
+    "verification": "Existing Figma-first delivery, current production fingerprints, inspected behavior source, archived regression and current targeted regression. Shared golden references demonstrate the reusable layout/control, not a claim of replaying every source journey."
+  },
+  {
+    "owner_id": "auth-verify",
+    "state": "待输入",
+    "source_ids": [
+      "01-auth/auth-verify"
+    ],
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "224:1167"
+    ],
+    "evidence_mode": "direct",
+    "layout_evidence": [
+      "test/goldens/design_system/auth-verify-390.png"
+    ],
+    "note": "验证码、密码、重发与返回同一滚动容器。",
+    "verification": "Existing Figma-first delivery, current production fingerprints, inspected behavior source, archived regression and current targeted regression. Shared golden references demonstrate the reusable layout/control, not a claim of replaying every source journey."
+  },
+  {
+    "owner_id": "auth-verify",
+    "state": "验证码错误",
+    "source_ids": [
+      "01-auth/auth-journey-code-validation"
+    ],
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "225:1487",
+      "225:1515"
+    ],
+    "evidence_mode": "direct",
+    "layout_evidence": [
+      "test/goldens/design_system/auth-code-validation-320-2x-short.png",
+      "test/goldens/design_system/auth-code-expired-320-2x-short.png"
+    ],
+    "note": "8 位校验与服务器代码过期反馈。",
+    "verification": "Existing Figma-first delivery, current production fingerprints, inspected behavior source, archived regression and current targeted regression. Shared golden references demonstrate the reusable layout/control, not a claim of replaying every source journey."
+  },
+  {
+    "owner_id": "auth-verify",
+    "state": "重发等待与反馈",
+    "source_ids": [
+      "01-auth/auth-followup-verify-resend-pending",
+      "01-auth/auth-followup-verify-resend-success"
+    ],
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "225:1544",
+      "225:1602"
+    ],
+    "evidence_mode": "direct",
+    "layout_evidence": [
+      "test/goldens/design_system/auth-resend-cooldown-320-2x-short.png",
+      "test/goldens/design_system/auth-resend-busy-320-2x-short.png"
+    ],
+    "note": "重发忙碌锁定、成功提示与 60 秒冷却均有断言。",
+    "verification": "Existing Figma-first delivery, current production fingerprints, inspected behavior source, archived regression and current targeted regression. Shared golden references demonstrate the reusable layout/control, not a claim of replaying every source journey."
+  },
+  {
+    "owner_id": "auth-verify",
+    "state": "提交中",
+    "source_ids": [
+      "01-auth/auth-followup-verify-submit-pending"
+    ],
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "225:1602"
+    ],
+    "evidence_mode": "shared_control",
+    "layout_evidence": [
+      "test/goldens/design_system/auth-resend-busy-320-2x-short.png"
+    ],
+    "note": "验证与重发共用 _run、相同字段/按钮锁定与进度位置；保留各自 API 调用。",
+    "verification": "Existing Figma-first delivery, current production fingerprints, inspected behavior source, archived regression and current targeted regression. Shared golden references demonstrate the reusable layout/control, not a claim of replaying every source journey."
+  },
+  {
+    "owner_id": "auth-verify",
+    "state": "验证成功",
+    "source_ids": [
+      "01-auth/auth-followup-verify-more"
+    ],
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "224:1167",
+      "122:9"
+    ],
+    "evidence_mode": "destination",
+    "layout_evidence": [
+      "test/goldens/design_system/auth-verify-390.png"
+    ],
+    "note": "源图 auth-followup-verify-more 为 More；验证码成功保存会话有测试，More 布局复用其既有交付。",
+    "verification": "Existing Figma-first delivery, current production fingerprints, inspected behavior source, archived regression and current targeted regression. Shared golden references demonstrate the reusable layout/control, not a claim of replaying every source journey."
+  },
+  {
+    "owner_id": "auth-forgot",
+    "state": "初始",
+    "source_ids": [
+      "01-auth/auth-forgot"
+    ],
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "224:1196"
+    ],
+    "evidence_mode": "direct",
+    "layout_evidence": [
+      "test/goldens/design_system/auth-forgot-390.png"
+    ],
+    "note": "邮箱表单与说明卡。",
+    "verification": "Existing Figma-first delivery, current production fingerprints, inspected behavior source, archived regression and current targeted regression. Shared golden references demonstrate the reusable layout/control, not a claim of replaying every source journey."
+  },
+  {
+    "owner_id": "auth-forgot",
+    "state": "校验错误",
+    "source_ids": [
+      "01-auth/auth-followup-forgot-validation"
+    ],
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "224:1196",
+      "225:1108"
+    ],
+    "evidence_mode": "shared_control",
+    "layout_evidence": [
+      "test/goldens/design_system/auth-forgot-390.png"
+    ],
+    "note": "共用 email validator 和表单错误样式；原校验文案保留。",
+    "verification": "Existing Figma-first delivery, current production fingerprints, inspected behavior source, archived regression and current targeted regression. Shared golden references demonstrate the reusable layout/control, not a claim of replaying every source journey."
+  },
+  {
+    "owner_id": "auth-forgot",
+    "state": "提交中",
+    "source_ids": [
+      "01-auth/auth-followup-forgot-pending"
+    ],
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "224:1196",
+      "225:1256"
+    ],
+    "evidence_mode": "shared_control",
+    "layout_evidence": [
+      "test/goldens/design_system/auth-forgot-390.png"
+    ],
+    "note": "找回布局复用统一 _run 忙碌处理；不新增提交条件。",
+    "verification": "Existing Figma-first delivery, current production fingerprints, inspected behavior source, archived regression and current targeted regression. Shared golden references demonstrate the reusable layout/control, not a claim of replaying every source journey."
+  },
+  {
+    "owner_id": "auth-forgot",
+    "state": "发送失败",
+    "source_ids": [
+      "01-auth/auth-followup-forgot-email-unavailable"
+    ],
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "225:1629"
+    ],
+    "evidence_mode": "shared_notice",
+    "layout_evidence": [
+      "test/goldens/design_system/auth-forgot-390.png"
+    ],
+    "note": "邮箱服务不可用 Figma 独立画板；_run 错误映射和 AuthNotice 保留。",
+    "verification": "Existing Figma-first delivery, current production fingerprints, inspected behavior source, archived regression and current targeted regression. Shared golden references demonstrate the reusable layout/control, not a claim of replaying every source journey."
+  },
+  {
+    "owner_id": "auth-forgot",
+    "state": "进入重置",
+    "source_ids": [
+      "01-auth/auth-followup-reset-code-form"
+    ],
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "224:1212"
+    ],
+    "evidence_mode": "transition",
+    "layout_evidence": [
+      "test/goldens/design_system/auth-reset-390.png"
+    ],
+    "note": "成功转重置页，保留通用确认文案，清空密码。",
+    "verification": "Existing Figma-first delivery, current production fingerprints, inspected behavior source, archived regression and current targeted regression. Shared golden references demonstrate the reusable layout/control, not a claim of replaying every source journey."
+  },
+  {
+    "owner_id": "auth-reset",
+    "state": "初始",
+    "source_ids": [
+      "01-auth/auth-reset"
+    ],
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "224:1212"
+    ],
+    "evidence_mode": "direct",
+    "layout_evidence": [
+      "test/goldens/design_system/auth-reset-390.png"
+    ],
+    "note": "验证码和新密码表单，键盘下可滚动。",
+    "verification": "Existing Figma-first delivery, current production fingerprints, inspected behavior source, archived regression and current targeted regression. Shared golden references demonstrate the reusable layout/control, not a claim of replaying every source journey."
+  },
+  {
+    "owner_id": "auth-reset",
+    "state": "密码和验证码校验",
+    "source_ids": [
+      "01-auth/auth-followup-reset-empty-validation",
+      "01-auth/auth-followup-reset-password-validation"
+    ],
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "224:1212",
+      "225:1437",
+      "225:1487"
+    ],
+    "evidence_mode": "shared_control",
+    "layout_evidence": [
+      "test/goldens/design_system/auth-register-validation-390.png",
+      "test/goldens/design_system/auth-code-validation-320-2x-short.png"
+    ],
+    "note": "复用同一密码与验证码校验器和字段错误布局，保留重置标题/操作。",
+    "verification": "Existing Figma-first delivery, current production fingerprints, inspected behavior source, archived regression and current targeted regression. Shared golden references demonstrate the reusable layout/control, not a claim of replaying every source journey."
+  },
+  {
+    "owner_id": "auth-reset",
+    "state": "提交中",
+    "source_ids": [
+      "01-auth/auth-followup-reset-pending"
+    ],
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "225:1647"
+    ],
+    "evidence_mode": "shared_control",
+    "layout_evidence": [
+      "test/goldens/design_system/auth-busy-320-2x-short.png"
+    ],
+    "note": "独立重置忙碌设计，_busy/_run 共用锁定。",
+    "verification": "Existing Figma-first delivery, current production fingerprints, inspected behavior source, archived regression and current targeted regression. Shared golden references demonstrate the reusable layout/control, not a claim of replaying every source journey."
+  },
+  {
+    "owner_id": "auth-reset",
+    "state": "失败",
+    "source_ids": [
+      "01-auth/auth-followup-reset-expired-code"
+    ],
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "224:1212",
+      "225:1515"
+    ],
+    "evidence_mode": "shared_notice",
+    "layout_evidence": [
+      "test/goldens/design_system/auth-code-expired-320-2x-short.png"
+    ],
+    "note": "重置代码过期沿用同一错误映射与提示组件；实际重置 API 不变。",
+    "verification": "Existing Figma-first delivery, current production fingerprints, inspected behavior source, archived regression and current targeted regression. Shared golden references demonstrate the reusable layout/control, not a claim of replaying every source journey."
+  },
+  {
+    "owner_id": "auth-reset",
+    "state": "成功返回登录",
+    "source_ids": [
+      "01-auth/auth-followup-reset-complete"
+    ],
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "225:1363"
+    ],
+    "evidence_mode": "transition",
+    "layout_evidence": [
+      "test/goldens/design_system/auth-reset-complete-390.png"
+    ],
+    "note": "成功清空密码并转登录，显示重置完成提示。",
+    "verification": "Existing Figma-first delivery, current production fingerprints, inspected behavior source, archived regression and current targeted regression. Shared golden references demonstrate the reusable layout/control, not a claim of replaying every source journey."
+  },
+  {
+    "owner_id": "invite",
+    "state": "输入",
+    "source_ids": [
+      "01-auth/auth-invite"
+    ],
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "224:1241"
+    ],
+    "evidence_mode": "direct",
+    "layout_evidence": [
+      "test/goldens/design_system/auth-invite-390.png"
+    ],
+    "note": "局部认证主题与共享表单卡。",
+    "verification": "Existing Figma-first delivery, current production fingerprints, inspected behavior source, archived regression and current targeted regression. Shared golden references demonstrate the reusable layout/control, not a claim of replaying every source journey."
+  },
+  {
+    "owner_id": "invite",
+    "state": "校验",
+    "source_ids": [
+      "01-auth/auth-invite-validation"
+    ],
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "225:1833"
+    ],
+    "evidence_mode": "direct",
+    "layout_evidence": [
+      "test/goldens/design_system/auth-invite-validation-390.png"
+    ],
+    "note": "空邀请码提示并恢复焦点。",
+    "verification": "Existing Figma-first delivery, current production fingerprints, inspected behavior source, archived regression and current targeted regression. Shared golden references demonstrate the reusable layout/control, not a claim of replaying every source journey."
+  },
+  {
+    "owner_id": "invite",
+    "state": "提交",
+    "source_ids": [
+      "01-auth/auth-invite-submit-pending"
+    ],
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "225:1849"
+    ],
+    "evidence_mode": "shared_control",
+    "layout_evidence": [
+      "test/goldens/design_system/auth-invite-390.png"
+    ],
+    "note": "_submitting 控制字段和按钮，原设备标识/邀请码提交分支保持。",
+    "verification": "Existing Figma-first delivery, current production fingerprints, inspected behavior source, archived regression and current targeted regression. Shared golden references demonstrate the reusable layout/control, not a claim of replaying every source journey."
+  },
+  {
+    "owner_id": "invite",
+    "state": "错误",
+    "source_ids": [
+      "01-auth/auth-invite-device-error",
+      "01-auth/auth-invite-storage-error"
+    ],
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "225:1833"
+    ],
+    "evidence_mode": "shared_notice",
+    "layout_evidence": [
+      "test/goldens/design_system/auth-invite-validation-390.png"
+    ],
+    "note": "设备标识读取和会话存储失败复用同一 AuthNotice 区域；不将校验示例文案替换真实错误。",
+    "verification": "Existing Figma-first delivery, current production fingerprints, inspected behavior source, archived regression and current targeted regression. Shared golden references demonstrate the reusable layout/control, not a claim of replaying every source journey."
+  },
+  {
+    "owner_id": "onboarding",
+    "state": "加载",
+    "source_ids": [
+      "01-auth/onboarding-loading"
+    ],
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "230:1300"
+    ],
+    "evidence_mode": "direct",
+    "layout_evidence": [
+      "test/goldens/design_system/onboarding-loading-390.png"
+    ],
+    "note": "资料加载独立等待界面。",
+    "verification": "Existing Figma-first delivery, current production fingerprints, inspected behavior source, archived regression and current targeted regression. Shared golden references demonstrate the reusable layout/control, not a claim of replaying every source journey."
+  },
+  {
+    "owner_id": "onboarding",
+    "state": "错误",
+    "source_ids": [
+      "01-auth/onboarding-load-error"
+    ],
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "230:1313"
+    ],
+    "evidence_mode": "direct",
+    "layout_evidence": [
+      "test/goldens/design_system/onboarding-load-error-390.png"
+    ],
+    "note": "加载错误可重试，恢复后进入资料。",
+    "verification": "Existing Figma-first delivery, current production fingerprints, inspected behavior source, archived regression and current targeted regression. Shared golden references demonstrate the reusable layout/control, not a claim of replaying every source journey."
+  },
+  {
+    "owner_id": "onboarding",
+    "state": "基本资料",
+    "source_ids": [
+      "01-auth/onboarding-basics"
+    ],
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "230:1108",
+      "230:1328"
+    ],
+    "evidence_mode": "direct",
+    "layout_evidence": [
+      "test/goldens/design_system/onboarding-basics-390.png"
+    ],
+    "note": "进度、说明与填写区分组；姓名/年龄语义保留。",
+    "verification": "Existing Figma-first delivery, current production fingerprints, inspected behavior source, archived regression and current targeted regression. Shared golden references demonstrate the reusable layout/control, not a claim of replaying every source journey."
+  },
+  {
+    "owner_id": "onboarding",
+    "state": "分娩资料",
+    "source_ids": [
+      "01-auth/onboarding-delivery"
+    ],
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "230:1132",
+      "230:1352"
+    ],
+    "evidence_mode": "direct",
+    "layout_evidence": [
+      "test/goldens/design_system/onboarding-delivery-390.png"
+    ],
+    "note": "日期仍使用系统控件及原日期范围。",
+    "verification": "Existing Figma-first delivery, current production fingerprints, inspected behavior source, archived regression and current targeted regression. Shared golden references demonstrate the reusable layout/control, not a claim of replaying every source journey."
+  },
+  {
+    "owner_id": "onboarding",
+    "state": "宝宝资料",
+    "source_ids": [
+      "01-auth/onboarding-birth"
+    ],
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "230:1152",
+      "230:1446",
+      "230:1476"
+    ],
+    "evidence_mode": "direct",
+    "layout_evidence": [
+      "test/goldens/design_system/onboarding-birth-390.png"
+    ],
+    "note": "分娩方式与宝宝数量，字号增大时标签完整换行。",
+    "verification": "Existing Figma-first delivery, current production fingerprints, inspected behavior source, archived regression and current targeted regression. Shared golden references demonstrate the reusable layout/control, not a claim of replaying every source journey."
+  },
+  {
+    "owner_id": "onboarding",
+    "state": "校验与保存",
+    "source_ids": [
+      "01-auth/onboarding-birth-error",
+      "01-auth/onboarding-short-busy",
+      "01-auth/onboarding-short-error"
+    ],
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "230:1176",
+      "230:1202",
+      "230:1228",
+      "230:1250",
+      "230:1276"
+    ],
+    "evidence_mode": "direct",
+    "layout_evidence": [
+      "test/goldens/design_system/onboarding-birth-error-390.png",
+      "test/goldens/design_system/onboarding-short-busy-320-2x.png",
+      "test/goldens/design_system/onboarding-short-error-320-2x.png"
+    ],
+    "note": "校验、保存锁定、失败保留草稿，重试请求体一致。",
+    "verification": "Existing Figma-first delivery, current production fingerprints, inspected behavior source, archived regression and current targeted regression. Shared golden references demonstrate the reusable layout/control, not a claim of replaying every source journey."
+  },
+  {
+    "owner_id": "avatar-create",
+    "state": "默认选择",
+    "source_ids": [
+      "01-auth/onboarding-required"
+    ],
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "234:1108",
+      "234:1534"
+    ],
+    "evidence_mode": "direct",
+    "layout_evidence": [
+      "test/goldens/design_system/onboarding-required-390.png"
+    ],
+    "note": "说明卡、形象样例与上传操作分组。",
+    "verification": "Existing Figma-first delivery, current production fingerprints, inspected behavior source, archived regression and current targeted regression. Shared golden references demonstrate the reusable layout/control, not a claim of replaying every source journey."
+  },
+  {
+    "owner_id": "avatar-create",
+    "state": "照片",
+    "source_ids": [
+      "01-auth/onboarding-required-source"
+    ],
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "234:1144",
+      "234:1566"
+    ],
+    "evidence_mode": "direct",
+    "layout_evidence": [
+      "test/goldens/design_system/onboarding-required-source-390.png"
+    ],
+    "note": "来源选择保留原返回值和平台控件。",
+    "verification": "Existing Figma-first delivery, current production fingerprints, inspected behavior source, archived regression and current targeted regression. Shared golden references demonstrate the reusable layout/control, not a claim of replaying every source journey."
+  },
+  {
+    "owner_id": "avatar-create",
+    "state": "上传",
+    "source_ids": [
+      "01-auth/onboarding-upload-pending"
+    ],
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "234:1193"
+    ],
+    "evidence_mode": "shared_control",
+    "layout_evidence": [
+      "test/goldens/design_system/onboarding-required-390.png"
+    ],
+    "note": "上传保留创建页 _avatarChoiceView，MomCozyPrimaryButton.loading 随 controller.busy 显示进度并禁用操作；接收后才转 _AvatarGenerationWaitingView。",
+    "verification": "Existing Figma-first delivery, current production fingerprints, inspected behavior source, archived regression and current targeted regression. Shared golden references demonstrate the reusable layout/control, not a claim of replaying every source journey."
+  },
+  {
+    "owner_id": "avatar-create",
+    "state": "生成中",
+    "source_ids": [
+      "01-auth/onboarding-generating",
+      "01-auth/onboarding-generation-handoff"
+    ],
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "234:1210",
+      "234:1230",
+      "234:1250",
+      "234:1270"
+    ],
+    "evidence_mode": "direct",
+    "layout_evidence": [
+      "test/goldens/design_system/onboarding-generating-390.png",
+      "test/goldens/design_system/onboarding-reading-generation-wait-390-1x.png"
+    ],
+    "note": "阶段优先级与后台生成交接保持。",
+    "verification": "Existing Figma-first delivery, current production fingerprints, inspected behavior source, archived regression and current targeted regression. Shared golden references demonstrate the reusable layout/control, not a claim of replaying every source journey."
+  },
+  {
+    "owner_id": "avatar-create",
+    "state": "失败",
+    "source_ids": [
+      "01-auth/onboarding-photo-error",
+      "01-auth/onboarding-request-error"
+    ],
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "234:1125",
+      "234:1418",
+      "234:1721"
+    ],
+    "evidence_mode": "shared_notice",
+    "layout_evidence": [
+      "test/goldens/design_system/onboarding-photo-error-390.png",
+      "test/goldens/design_system/onboarding-failed-390.png"
+    ],
+    "note": "照片失败、请求失败使用共用提示，保留各自恢复操作；缩略图错误属于候选页补充。",
+    "verification": "Existing Figma-first delivery, current production fingerprints, inspected behavior source, archived regression and current targeted regression. Shared golden references demonstrate the reusable layout/control, not a claim of replaying every source journey."
+  },
+  {
+    "owner_id": "avatar-create",
+    "state": "重试",
+    "source_ids": [
+      "01-auth/onboarding-generation-handoff"
+    ],
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "234:1270"
+    ],
+    "evidence_mode": "source_boundary",
+    "layout_evidence": [
+      "test/goldens/design_system/onboarding-reading-generation-wait-390-1x.png"
+    ],
+    "note": "规范源图实际是 generation-handoff；验收其等待/进入 App 与已有恢复路径，不虚构独立的云端重新生成成功截图。",
+    "verification": "Existing Figma-first delivery, current production fingerprints, inspected behavior source, archived regression and current targeted regression. Shared golden references demonstrate the reusable layout/control, not a claim of replaying every source journey."
+  },
+  {
+    "owner_id": "avatar-review",
+    "state": "候选选择",
+    "source_ids": [
+      "01-auth/onboarding-review-selected"
+    ],
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "234:1298",
+      "234:1328",
+      "234:1358"
+    ],
+    "evidence_mode": "direct",
+    "layout_evidence": [
+      "test/goldens/design_system/onboarding-review-selected-390.png"
+    ],
+    "note": "候选边框与勾选、原形象选项；真实候选 ID 保留。",
+    "verification": "Existing Figma-first delivery, current production fingerprints, inspected behavior source, archived regression and current targeted regression. Shared golden references demonstrate the reusable layout/control, not a claim of replaying every source journey."
+  },
+  {
+    "owner_id": "avatar-review",
+    "state": "默认确认",
+    "source_ids": [
+      "01-auth/onboarding-default-confirm"
+    ],
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "234:1168",
+      "234:1589"
+    ],
+    "evidence_mode": "direct",
+    "layout_evidence": [
+      "test/goldens/design_system/onboarding-default-confirm-390.png"
+    ],
+    "note": "共享 MomSettingsFlowDialog，取消/继续及遮罩规则不变。",
+    "verification": "Existing Figma-first delivery, current production fingerprints, inspected behavior source, archived regression and current targeted regression. Shared golden references demonstrate the reusable layout/control, not a claim of replaying every source journey."
+  },
+  {
+    "owner_id": "avatar-review",
+    "state": "激活中",
+    "source_ids": [
+      "01-auth/onboarding-avatar-short-confirm-busy"
+    ],
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "234:1480",
+      "234:1661"
+    ],
+    "evidence_mode": "direct",
+    "layout_evidence": [
+      "test/goldens/design_system/onboarding-avatar-short-confirm-busy-320-2x.png"
+    ],
+    "note": "确认忙碌禁用候选、换照片及重复提交。",
+    "verification": "Existing Figma-first delivery, current production fingerprints, inspected behavior source, archived regression and current targeted regression. Shared golden references demonstrate the reusable layout/control, not a claim of replaying every source journey."
+  },
+  {
+    "owner_id": "avatar-review",
+    "state": "失败",
+    "source_ids": [
+      "01-auth/onboarding-avatar-short-confirm-error"
+    ],
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "234:1448",
+      "234:1691"
+    ],
+    "evidence_mode": "direct",
+    "layout_evidence": [
+      "test/goldens/design_system/onboarding-avatar-short-confirm-error-320-2x.png",
+      "test/goldens/design_system/onboarding-avatar-short-image-error-320-2x.png"
+    ],
+    "note": "图片失败重试与确认失败保留选择均有断言。",
+    "verification": "Existing Figma-first delivery, current production fingerprints, inspected behavior source, archived regression and current targeted regression. Shared golden references demonstrate the reusable layout/control, not a claim of replaying every source journey."
+  },
+  {
+    "owner_id": "avatar-review",
+    "state": "完成",
+    "source_ids": [
+      "01-auth/onboarding-reading-activation"
+    ],
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "234:1524"
+    ],
+    "evidence_mode": "direct",
+    "layout_evidence": [
+      "test/goldens/design_system/onboarding-reading-activation-390-1x.png"
+    ],
+    "note": "薄荷成功提示，沿用启用完成与进入 App 行为。",
+    "verification": "Existing Figma-first delivery, current production fingerprints, inspected behavior source, archived regression and current targeted regression. Shared golden references demonstrate the reusable layout/control, not a claim of replaying every source journey."
+  },
+  {
+    "owner_id": "auth-language",
+    "state": "语言列表",
+    "source_ids": [
+      "01-auth/auth-followup-language-sheet"
+    ],
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "224:1255",
+      "225:1795"
+    ],
+    "evidence_mode": "direct",
+    "layout_evidence": [
+      "test/goldens/design_system/auth-language-390.png"
+    ],
+    "note": "大字号列表可滚动，仅原 English 选项。",
+    "verification": "Existing Figma-first delivery, current production fingerprints, inspected behavior source, archived regression and current targeted regression. Shared golden references demonstrate the reusable layout/control, not a claim of replaying every source journey."
+  },
+  {
+    "owner_id": "auth-language",
+    "state": "选中",
+    "source_ids": [
+      "01-auth/auth-followup-language-selected"
+    ],
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "224:1255"
+    ],
+    "evidence_mode": "shared_control",
+    "layout_evidence": [
+      "test/goldens/design_system/auth-language-390.png"
+    ],
+    "note": "English 的勾选与关闭；consumer_auth_page_test 验证输入保留。",
+    "verification": "Existing Figma-first delivery, current production fingerprints, inspected behavior source, archived regression and current targeted regression. Shared golden references demonstrate the reusable layout/control, not a claim of replaying every source journey."
+  },
+  {
+    "owner_id": "auth-language",
+    "state": "取消",
+    "source_ids": [
+      "01-auth/auth-followup-language-dismissed"
+    ],
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "224:1108",
+      "224:1255"
+    ],
+    "evidence_mode": "transition",
+    "layout_evidence": [
+      "test/goldens/design_system/auth-login-390.png"
+    ],
+    "note": "弹层取消返回原登录表单，不创建独立页面。",
+    "verification": "Existing Figma-first delivery, current production fingerprints, inspected behavior source, archived regression and current targeted regression. Shared golden references demonstrate the reusable layout/control, not a claim of replaying every source journey."
+  },
+  {
+    "owner_id": "avatar-dialogs",
+    "state": "照片来源",
+    "source_ids": [
+      "01-auth/onboarding-required-source"
+    ],
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "234:1144",
+      "234:1566"
+    ],
+    "evidence_mode": "direct",
+    "layout_evidence": [
+      "test/goldens/design_system/onboarding-required-source-390.png"
+    ],
+    "note": "同创建页照片来源弹层，共用一次设计。",
+    "verification": "Existing Figma-first delivery, current production fingerprints, inspected behavior source, archived regression and current targeted regression. Shared golden references demonstrate the reusable layout/control, not a claim of replaying every source journey."
+  },
+  {
+    "owner_id": "avatar-dialogs",
+    "state": "默认确认",
+    "source_ids": [
+      "01-auth/onboarding-default-confirm"
+    ],
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "234:1168",
+      "234:1589"
+    ],
+    "evidence_mode": "direct",
+    "layout_evidence": [
+      "test/goldens/design_system/onboarding-default-confirm-390.png"
+    ],
+    "note": "同候选/创建流程默认确认弹层。",
+    "verification": "Existing Figma-first delivery, current production fingerprints, inspected behavior source, archived regression and current targeted regression. Shared golden references demonstrate the reusable layout/control, not a claim of replaying every source journey."
+  },
+  {
+    "owner_id": "avatar-dialogs",
+    "state": "生成交接（等待／进入 App）",
+    "source_ids": [
+      "01-auth/onboarding-generation-handoff"
+    ],
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "234:1270",
+      "234:1633"
+    ],
+    "evidence_mode": "direct",
+    "layout_evidence": [
+      "test/goldens/design_system/onboarding-reading-generation-wait-390-1x.png"
+    ],
+    "note": "交接提示内容/按钮可滚动，保留原遮罩与返回规则。",
+    "verification": "Existing Figma-first delivery, current production fingerprints, inspected behavior source, archived regression and current targeted regression. Shared golden references demonstrate the reusable layout/control, not a claim of replaying every source journey."
+  },
+  {
+    "owner_id": "avatar-dialogs",
+    "state": "生成完成",
+    "source_ids": [
+      "01-auth/onboarding-banners"
+    ],
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "234:1736",
+      "234:1753"
+    ],
+    "evidence_mode": "direct",
+    "layout_evidence": [
+      "test/goldens/design_system/onboarding-banners-390.png"
+    ],
+    "note": "任务 Banner 按生成/可选/失败/完成分支展示，点击条件不变。",
+    "verification": "Existing Figma-first delivery, current production fingerprints, inspected behavior source, archived regression and current targeted regression. Shared golden references demonstrate the reusable layout/control, not a claim of replaying every source journey."
+  },
+  {
+    "owner_id": "avatar-dialogs",
+    "state": "激活确认",
+    "source_ids": [
+      "01-auth/onboarding-reading-activation"
+    ],
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "234:1524"
+    ],
+    "evidence_mode": "direct",
+    "layout_evidence": [
+      "test/goldens/design_system/onboarding-reading-activation-390-1x.png"
+    ],
+    "note": "复用启用完成提示，无重复设计。",
+    "verification": "Existing Figma-first delivery, current production fingerprints, inspected behavior source, archived regression and current targeted regression. Shared golden references demonstrate the reusable layout/control, not a claim of replaying every source journey."
+  }
+]

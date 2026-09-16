@@ -1,0 +1,9 @@
+{
+  "apk": "build/app/outputs/flutter-apk/app-local-debug.apk",
+  "sha256": "713785012a92246498c7e174ed231713b315d025c1092725c25a58fdca28afc1",
+  "version": "1.0.0+57",
+  "flavor": "local",
+  "installed_on": "emulator-5554",
+  "test_account": "Mia",
+  "scope": "ordinary APK install and signed-in cold start; no real consultation"
+}

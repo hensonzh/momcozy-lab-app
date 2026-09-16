@@ -1,0 +1,344 @@
+[
+  {
+    "state": "notification-journey-appointment-to-inbox",
+    "source": "07-me/notification-journey-appointment-to-inbox/viewport.png",
+    "sha256": "561fd8986a442dd2814ef4022822efe74ed80c90c50aff8ed47aba4d2ec3e2ef",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "notification-journey-appointments-disabled",
+    "source": "07-me/notification-journey-appointments-disabled/viewport.png",
+    "sha256": "6dc2af643d63a854d018d3c34454ec54b8c784d29ea4a6014cd90c9134ce3988",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "notification-journey-appointments-enabled",
+    "source": "07-me/notification-journey-appointments-enabled/viewport.png",
+    "sha256": "a7047e10e9a368fa098d452958a1d9064eb35bc68e6b0ae9bace4b66a74e41ed",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "notification-journey-archive-error",
+    "source": "07-me/notification-journey-archive-error/viewport.png",
+    "sha256": "4b107194914bcc42babae6c2fa6d828187b1856146d6f888f7e1fe688a5e76c1",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "notification-journey-archive-pending",
+    "source": "07-me/notification-journey-archive-pending/viewport.png",
+    "sha256": "27a91023c0feec985e2b2be088c3963e7e87b44eea7c02259d5976d52109f25d",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "notification-journey-archive-pending-completed",
+    "source": "07-me/notification-journey-archive-pending-completed/viewport.png",
+    "sha256": "88f6da7b14afd3037b8ca5a387f2ca86ab4ab573c9bec9b0c58995e897d2ee88",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "notification-journey-archive-retry",
+    "source": "07-me/notification-journey-archive-retry/viewport.png",
+    "sha256": "88f6da7b14afd3037b8ca5a387f2ca86ab4ab573c9bec9b0c58995e897d2ee88",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "notification-journey-category-consultations-off",
+    "source": "07-me/notification-journey-category-consultations-off/viewport.png",
+    "sha256": "8e265715c7204db2a40c15f2b70de6557ed280f5b30240c0ea93ea5ad7218f99",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "notification-journey-category-expert-feedback-off",
+    "source": "07-me/notification-journey-category-expert-feedback-off/viewport.png",
+    "sha256": "3994593c6d9625590191b53ac96ca0f90cee47a23f9f04b7e6844fef9b2c16ea",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "notification-journey-category-expert-feedback-on",
+    "source": "07-me/notification-journey-category-expert-feedback-on/viewport.png",
+    "sha256": "0d5c1afdaa26f30a8faafa252a90ce291976b304960c0063613af03ac2669436",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "notification-journey-category-service-updates-off",
+    "source": "07-me/notification-journey-category-service-updates-off/viewport.png",
+    "sha256": "45c55917a3c71cbb672855949989184e93c0756dd4f92e4dbbbe8d23b0d81db0",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "notification-journey-category-service-updates-on",
+    "source": "07-me/notification-journey-category-service-updates-on/viewport.png",
+    "sha256": "0d5c1afdaa26f30a8faafa252a90ce291976b304960c0063613af03ac2669436",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "notification-journey-inbox-all-read",
+    "source": "07-me/notification-journey-inbox-all-read/viewport.png",
+    "sha256": "099bb13ace8699618361168234ad719fab00eb1c2aa2223a303810369976da2f",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "notification-journey-inbox-archived",
+    "source": "07-me/notification-journey-inbox-archived/viewport.png",
+    "sha256": "515331f0ea07204dfeff357c9b332559909258c3b58020fef399b5b441561e3d",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "notification-journey-inbox-empty",
+    "source": "07-me/notification-journey-inbox-empty/viewport.png",
+    "sha256": "b4e99901520cbf7929982c7516915a0c95eef2e95fee8c35adb7f80257537c9a",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "notification-journey-inbox-first-page",
+    "source": "07-me/notification-journey-inbox-first-page/viewport.png",
+    "sha256": "174daca0c382131c1048ded6d09d79d92aed45a3c4c484994d29b57b1dbf76a1",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "notification-journey-inbox-last-page",
+    "source": "07-me/notification-journey-inbox-last-page/viewport.png",
+    "sha256": "4a38653f76912f6866db667041457cd803183f3ac33071b1dbab1dd15c5074d7",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "notification-journey-inbox-loading",
+    "source": "07-me/notification-journey-inbox-loading/viewport.png",
+    "sha256": "c67de5aae29f01731880921534bce0afc1da42c0dc91ebdaf2dda8d4c18d1e67",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "notification-journey-inbox-open-entry",
+    "source": "07-me/notification-journey-inbox-open-entry/viewport.png",
+    "sha256": "14ba45bd5dbaf35baeb4ca4cfb2e526bd868969b7f02ce475f484804ff7fa103",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "notification-journey-inbox-read-error",
+    "source": "07-me/notification-journey-inbox-read-error/viewport.png",
+    "sha256": "7110f76cb765cded7883af2f86f53ed06b09af7b3c14bf2291247499d038b392",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "notification-journey-inbox-second-page",
+    "source": "07-me/notification-journey-inbox-second-page/viewport.png",
+    "sha256": "150801555dadb71b3480252ea0e2d1ec62109daf194a79843649c2a5130430f3",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "notification-journey-inbox-to-more",
+    "source": "07-me/notification-journey-inbox-to-more/viewport.png",
+    "sha256": "09a3a06a83f8ec2450701c68bd8f36b092ef205b1f85045571bc63fa9ca8b217",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "notification-journey-inbox-to-settings",
+    "source": "07-me/notification-journey-inbox-to-settings/viewport.png",
+    "sha256": "91010f6e04d5202dedaf19c04597ef7d82a02856b49d9e0069f48e5a5ed57eb9",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "notification-journey-mark-all-error",
+    "source": "07-me/notification-journey-mark-all-error/viewport.png",
+    "sha256": "be3fb9791372e5bbec84b52e79f544fc213510006412b6b78a972ba35cdc85fd",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "notification-journey-mark-all-pending",
+    "source": "07-me/notification-journey-mark-all-pending/viewport.png",
+    "sha256": "1d72af4ef5710a1124c0357021b3c7a406e86e3a863655ccfd2eff5556047e2c",
+    "sheet": "overview-3.jpg"
+  },
+  {
+    "state": "notification-journey-mark-all-retry",
+    "source": "07-me/notification-journey-mark-all-retry/viewport.png",
+    "sha256": "099bb13ace8699618361168234ad719fab00eb1c2aa2223a303810369976da2f",
+    "sheet": "overview-3.jpg"
+  },
+  {
+    "state": "notification-journey-notification-open-error",
+    "source": "07-me/notification-journey-notification-open-error/viewport.png",
+    "sha256": "02b8db3762ba8698e2beadaf58fae70463e589869be95b6e04e8220b0890648e",
+    "sheet": "overview-3.jpg"
+  },
+  {
+    "state": "notification-journey-notification-preference-disabled",
+    "source": "07-me/notification-journey-notification-preference-disabled/viewport.png",
+    "sha256": "019e8687988446bf5a582947faa976dfafc7af5dc9470f6de204b5faa9d10671",
+    "sheet": "overview-3.jpg"
+  },
+  {
+    "state": "notification-journey-notification-target-unavailable",
+    "source": "07-me/notification-journey-notification-target-unavailable/viewport.png",
+    "sha256": "ed5f82948588050147316b723d86b7e7710165ba85ee87b8919fcefecec9e6bf",
+    "sheet": "overview-3.jpg"
+  },
+  {
+    "state": "notification-journey-notification-to-appointment",
+    "source": "07-me/notification-journey-notification-to-appointment/viewport.png",
+    "sha256": "1309d972acc328a90464012c24d6c9b2f72f528990b6118f0d7ee2b8c96c7e73",
+    "sheet": "overview-3.jpg"
+  },
+  {
+    "state": "notification-journey-pagination-error",
+    "source": "07-me/notification-journey-pagination-error/viewport.png",
+    "sha256": "0219270bae92bce7c6f99fff4a9ddae0e376ffbbc82bbae4fb7c731fe1452870",
+    "sheet": "overview-3.jpg"
+  },
+  {
+    "state": "notification-journey-pagination-loading",
+    "source": "07-me/notification-journey-pagination-loading/viewport.png",
+    "sha256": "7340a69bc8a4490e7e2ab3953542ea17b3fe5dda23bf853b679f3a28454c5a31",
+    "sheet": "overview-3.jpg"
+  },
+  {
+    "state": "notification-journey-pagination-retry",
+    "source": "07-me/notification-journey-pagination-retry/viewport.png",
+    "sha256": "150801555dadb71b3480252ea0e2d1ec62109daf194a79843649c2a5130430f3",
+    "sheet": "overview-3.jpg"
+  },
+  {
+    "state": "notification-journey-permission-denied",
+    "source": "07-me/notification-journey-permission-denied/viewport.png",
+    "sha256": "b3e3ec06ed1ab7c8dd5807525d89a6686bf3b78099a86d5467e0a9b238accf64",
+    "sheet": "overview-3.jpg"
+  },
+  {
+    "state": "notification-journey-permission-platform-unavailable",
+    "source": "07-me/notification-journey-permission-platform-unavailable/viewport.png",
+    "sha256": "25c762e4c3ffe106865347d084e361a1f487d293127925116f92d8a1bd4af8ff",
+    "sheet": "overview-3.jpg"
+  },
+  {
+    "state": "notification-journey-permission-provisional",
+    "source": "07-me/notification-journey-permission-provisional/viewport.png",
+    "sha256": "0d5c1afdaa26f30a8faafa252a90ce291976b304960c0063613af03ac2669436",
+    "sheet": "overview-3.jpg"
+  },
+  {
+    "state": "notification-journey-permission-settings-offer",
+    "source": "07-me/notification-journey-permission-settings-offer/viewport.png",
+    "sha256": "2de204055301801ac082da963dd0e61094a3733cda829443e5f2454a147d19ba",
+    "sheet": "overview-4.jpg"
+  },
+  {
+    "state": "notification-journey-permission-settings-requested",
+    "source": "07-me/notification-journey-permission-settings-requested/viewport.png",
+    "sha256": "b3e3ec06ed1ab7c8dd5807525d89a6686bf3b78099a86d5467e0a9b238accf64",
+    "sheet": "overview-4.jpg"
+  },
+  {
+    "state": "notification-journey-preference-write-error",
+    "source": "07-me/notification-journey-preference-write-error/viewport.png",
+    "sha256": "34cefdde0588d87fcbc19091f5ca2974060e3ce457de4676cb62b557a1969c0a",
+    "sheet": "overview-4.jpg"
+  },
+  {
+    "state": "notification-journey-preference-write-retry",
+    "source": "07-me/notification-journey-preference-write-retry/viewport.png",
+    "sha256": "f6f073a32532d36eaded9952d357ce6390eebacb1ca4128f4f4ae7ca56eac349",
+    "sheet": "overview-4.jpg"
+  },
+  {
+    "state": "notification-journey-preferences-loading",
+    "source": "07-me/notification-journey-preferences-loading/viewport.png",
+    "sha256": "7000434d8d66b4a1abe61ccfa13e4c40cbeffb24d56ed45a9ed9746e626d8218",
+    "sheet": "overview-4.jpg"
+  },
+  {
+    "state": "notification-journey-preferences-read-error",
+    "source": "07-me/notification-journey-preferences-read-error/viewport.png",
+    "sha256": "ab1b218c1297d86b11070878cd5af22c6c6bf86838147c2a41700bc530cd4ca7",
+    "sheet": "overview-4.jpg"
+  },
+  {
+    "state": "notification-journey-preferences-recovered",
+    "source": "07-me/notification-journey-preferences-recovered/viewport.png",
+    "sha256": "f6f073a32532d36eaded9952d357ce6390eebacb1ca4128f4f4ae7ca56eac349",
+    "sheet": "overview-4.jpg"
+  },
+  {
+    "state": "notification-journey-push-restored",
+    "source": "07-me/notification-journey-push-restored/viewport.png",
+    "sha256": "a7047e10e9a368fa098d452958a1d9064eb35bc68e6b0ae9bace4b66a74e41ed",
+    "sheet": "overview-4.jpg"
+  },
+  {
+    "state": "notification-journey-push-unavailable",
+    "source": "07-me/notification-journey-push-unavailable/viewport.png",
+    "sha256": "f7731a3c6257d8c69018674f5a70ad75c0be3861981235c65408d4c340e4a0b6",
+    "sheet": "overview-4.jpg"
+  },
+  {
+    "state": "notification-journey-reminder-disabled",
+    "source": "07-me/notification-journey-reminder-disabled/viewport.png",
+    "sha256": "6854c90cd2ccd9c6585e8ebda99420848538dc4c719595d49465c4eedaa9d0a6",
+    "sheet": "overview-4.jpg"
+  },
+  {
+    "state": "notification-journey-reminder-education",
+    "source": "07-me/notification-journey-reminder-education/viewport.png",
+    "sha256": "7914dc55599c1a0a0101bd4894e5e3dd2208c5ceb73e60c4e60a5692df1f4b69",
+    "sheet": "overview-4.jpg"
+  },
+  {
+    "state": "notification-journey-reminder-education-declined",
+    "source": "07-me/notification-journey-reminder-education-declined/viewport.png",
+    "sha256": "b3e3ec06ed1ab7c8dd5807525d89a6686bf3b78099a86d5467e0a9b238accf64",
+    "sheet": "overview-4.jpg"
+  },
+  {
+    "state": "notification-journey-reminder-enabled",
+    "source": "07-me/notification-journey-reminder-enabled/viewport.png",
+    "sha256": "43d94333231965e40c744eb30b10ac23fc86b5430137698b7e1293668000f88a",
+    "sheet": "overview-5.jpg"
+  },
+  {
+    "state": "notification-journey-reminder-expired",
+    "source": "07-me/notification-journey-reminder-expired/viewport.png",
+    "sha256": "d00d6e1377021051bc0c33aeded98e7542e0efb8c368543cdf2e9b20737677fa",
+    "sheet": "overview-5.jpg"
+  },
+  {
+    "state": "notification-journey-reminder-not-requested",
+    "source": "07-me/notification-journey-reminder-not-requested/viewport.png",
+    "sha256": "6854c90cd2ccd9c6585e8ebda99420848538dc4c719595d49465c4eedaa9d0a6",
+    "sheet": "overview-5.jpg"
+  },
+  {
+    "state": "notification-journey-reminder-read-error",
+    "source": "07-me/notification-journey-reminder-read-error/viewport.png",
+    "sha256": "1e5e4c5010fe140605caf2c01098d76797d4c62701797d22c3c4db8e8ba0c59c",
+    "sheet": "overview-5.jpg"
+  },
+  {
+    "state": "notification-journey-reminder-read-retry",
+    "source": "07-me/notification-journey-reminder-read-retry/viewport.png",
+    "sha256": "6854c90cd2ccd9c6585e8ebda99420848538dc4c719595d49465c4eedaa9d0a6",
+    "sheet": "overview-5.jpg"
+  },
+  {
+    "state": "notification-journey-settings-allowed",
+    "source": "07-me/notification-journey-settings-allowed/viewport.png",
+    "sha256": "a7047e10e9a368fa098d452958a1d9064eb35bc68e6b0ae9bace4b66a74e41ed",
+    "sheet": "overview-5.jpg"
+  },
+  {
+    "state": "notification-journey-settings-denied",
+    "source": "07-me/notification-journey-settings-denied/viewport.png",
+    "sha256": "1a2bbe3d2ae3cd2d21255a64e289a271b2b91e67f1242709930c5988353dd88c",
+    "sheet": "overview-5.jpg"
+  },
+  {
+    "state": "notification-journey-settings-permission-restored",
+    "source": "07-me/notification-journey-settings-permission-restored/viewport.png",
+    "sha256": "a7047e10e9a368fa098d452958a1d9064eb35bc68e6b0ae9bace4b66a74e41ed",
+    "sheet": "overview-5.jpg"
+  },
+  {
+    "state": "notification-journey-settings-push-unavailable",
+    "source": "07-me/notification-journey-settings-push-unavailable/viewport.png",
+    "sha256": "9d6eb3348ef27c1ada7796f7c50260707715bbdec0c11dedab2c2976e4325ed9",
+    "sheet": "overview-5.jpg"
+  }
+]

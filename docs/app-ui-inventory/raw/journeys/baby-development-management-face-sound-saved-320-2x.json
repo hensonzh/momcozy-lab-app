@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/baby-development-management-face-sound-saved-320-2x.png",
+  "previous_source": "test/goldens/ui_inventory/baby-development-management-face-sound-selected-responds-to-sound-320-2x.png",
+  "route": "/baby",
+  "trigger": "Save face-sound → 2 observations, homepage feedback without undo",
+  "root_entry": "Authenticated More → tap Baby bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/baby/baby_development_management_inventory_test.dart"
+}

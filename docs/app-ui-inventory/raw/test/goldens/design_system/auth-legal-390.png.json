@@ -1,0 +1,534 @@
+{
+  "source": "test/goldens/design_system/auth-legal-390.png",
+  "evidence": "current-widget-test-render; golden comparison passed",
+  "test_description": "email entry and registration at 390.0 / 1.0",
+  "sequence": 2,
+  "sha256": "a3e0e5114dd343ab6a44ba1eba2f94544bf1aca27b0f646f1e6a3f8700e14420",
+  "width": 390,
+  "height": 844,
+  "captured_at": "2026-09-14T07:56:02.963238Z",
+  "widget_types": [
+    "AbsorbPointer",
+    "Actions",
+    "Align",
+    "AnimatedBuilder",
+    "AnimatedDefaultTextStyle",
+    "AnimatedOpacity",
+    "AnimatedPhysicalModel",
+    "AnimatedTheme",
+    "AuthLegalFooter",
+    "AuthLoginHeader",
+    "AutofillGroup",
+    "BlockSemantics",
+    "Builder",
+    "Center",
+    "ClipRect",
+    "ColoredBox",
+    "Column",
+    "CompositedTransformTarget",
+    "ConstrainedBox",
+    "Container",
+    "CupertinoTheme",
+    "CustomMultiChildLayout",
+    "CustomPaint",
+    "DecoratedBox",
+    "DefaultSelectionStyle",
+    "DefaultTextEditingShortcuts",
+    "DefaultTextStyle",
+    "Directionality",
+    "Divider",
+    "DualTransitionBuilder",
+    "EditableText",
+    "ExcludeSemantics",
+    "Expanded",
+    "FadeTransition",
+    "FilledButton",
+    "Flexible",
+    "Focus",
+    "FocusScope",
+    "FocusTraversalGroup",
+    "Form",
+    "FractionalTranslation",
+    "GestureDetector",
+    "HeroControllerScope",
+    "Icon",
+    "IconButton",
+    "IconButtonTheme",
+    "IconTheme",
+    "IgnorePointer",
+    "Image",
+    "InheritedCupertinoTheme",
+    "Ink",
+    "InkWell",
+    "InputDecorator",
+    "KeyedSubtree",
+    "LayoutId",
+    "LimitedBox",
+    "ListenableBuilder",
+    "Listener",
+    "Localizations",
+    "Material",
+    "MaterialApp",
+    "MediaQuery",
+    "ModalBarrier",
+    "MomCozyAuthPage",
+    "MomCozyPageBody",
+    "MomHomeSurface",
+    "MomSettingsCard",
+    "MouseRegion",
+    "Navigator",
+    "NotificationListener<LayoutChangedNotification>",
+    "NotificationListener<NavigationNotification>",
+    "NotificationListener<ScrollMetricsNotification>",
+    "NotificationListener<ScrollNotification>",
+    "NotificationListener<ScrollUpdateNotification>",
+    "Offstage",
+    "OutlinedButton",
+    "Overlay",
+    "OverlayPortal",
+    "Padding",
+    "PageStorage",
+    "PhysicalModel",
+    "PhysicalShape",
+    "PrimaryScrollController",
+    "RawGestureDetector",
+    "RawImage",
+    "RawTooltip",
+    "RawView",
+    "RepaintBoundary",
+    "RestorationScope",
+    "RichText",
+    "RootRestorationScope",
+    "RotationTransition",
+    "Row",
+    "SafeArea",
+    "Scaffold",
+    "ScaffoldMessenger",
+    "ScaleTransition",
+    "ScrollConfiguration",
+    "ScrollNotificationObserver",
+    "Scrollable",
+    "Semantics",
+    "SharedAppData",
+    "ShortcutRegistrar",
+    "Shortcuts",
+    "SingleChildScrollView",
+    "SizeChangedLayoutNotifier",
+    "SizedBox",
+    "SlideTransition",
+    "Stack",
+    "StretchEffect",
+    "StretchingOverscrollIndicator",
+    "TapRegionSurface",
+    "Text",
+    "TextButton",
+    "TextField",
+    "TextFieldTapRegion",
+    "TextFormField",
+    "TextSelectionGestureDetector",
+    "Theme",
+    "TickerMode",
+    "Title",
+    "Tooltip",
+    "Transform",
+    "UndoHistory<TextEditingValue>",
+    "UnmanagedRestorationScope",
+    "ValueListenableBuilder<bool>",
+    "View",
+    "WidgetsApp",
+    "WillPopScope",
+    "Wrap",
+    "_ActionsScope",
+    "_AuthField",
+    "_AutofillScope",
+    "_BodyBuilder",
+    "_BorderContainer",
+    "_CompositionCallback",
+    "_Decorator",
+    "_Editable",
+    "_EffectiveTickerMode",
+    "_ExclusiveMouseRegion",
+    "_FadeForwardsPageTransition",
+    "_FloatingActionButtonTransition",
+    "_FocusInheritedScope",
+    "_FocusScopeWithExternalFocusNode",
+    "_FormScope",
+    "_GestureSemantics",
+    "_HelperError",
+    "_IconButtonM3",
+    "_InheritedTheme",
+    "_InkFeatures",
+    "_InkResponseStateWidget",
+    "_InputPadding",
+    "_LocalizationsScope",
+    "_MaterialInterior",
+    "_MediaQueryFromView",
+    "_ModalBarrierGestureDetector",
+    "_ModalScope<dynamic>",
+    "_ModalScopeStatus",
+    "_OutlinedButtonWithIconChild",
+    "_OverlayEntryWidget",
+    "_OverlayPortal",
+    "_PageTransitionsThemeTransitions<dynamic>",
+    "_ParentInkResponseProvider",
+    "_PipelineOwnerScope",
+    "_PredictiveBackGestureDetector",
+    "_RawViewInternal",
+    "_RenderTheaterMarker",
+    "_ScaffoldMessengerScope",
+    "_ScaffoldScope",
+    "_ScribbleFocusable",
+    "_ScrollNotificationObserverScope",
+    "_ScrollSemantics",
+    "_ScrollableScope",
+    "_SelectableIconButton",
+    "_ShapeBorderPaint",
+    "_SharedAppModel",
+    "_ShortcutRegistrarScope",
+    "_SingleChildViewport",
+    "_Theater",
+    "_ViewScope"
+  ],
+  "texts": [
+    "Momcozy",
+    "English",
+    "Welcome back",
+    "Care and support, every step of the way.",
+    "Continue with Google",
+    "or continue with email",
+    "Email",
+    "you@example.com",
+    "Password",
+    "Forgot password?",
+    "Enter your password",
+    "Sign in",
+    "New here?",
+    "Create an account",
+    "By continuing, you agree to our",
+    "Terms of Use",
+    "and",
+    "Privacy Policy."
+  ],
+  "scrolls": [
+    {
+      "foreground": true,
+      "axis": "vertical",
+      "direction": "down",
+      "pixels": 0.0,
+      "min": 0.0,
+      "max": 0.0,
+      "viewport": 735.0
+    },
+    {
+      "foreground": true,
+      "axis": "horizontal",
+      "direction": "right",
+      "pixels": 0.0,
+      "min": 0.0,
+      "max": 0.0,
+      "viewport": 284.0
+    },
+    {
+      "foreground": true,
+      "axis": "horizontal",
+      "direction": "right",
+      "pixels": 0.0,
+      "min": 0.0,
+      "max": 0.0,
+      "viewport": 252.0
+    }
+  ],
+  "controls": [
+    {
+      "widget": "TextButton",
+      "key": "[<'auth-language-button'>]",
+      "labels": [
+        "English"
+      ],
+      "enabled": true,
+      "bounds": [
+        277.83900451660156,
+        16.0,
+        96.16099548339844,
+        48.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [
+        "English"
+      ],
+      "enabled": true,
+      "bounds": [
+        277.83900451660156,
+        18.0,
+        96.16099548339844,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "OutlinedButton",
+      "key": "[<'auth-google-button'>]",
+      "labels": [
+        "Continue with Google"
+      ],
+      "enabled": true,
+      "bounds": [
+        33.0,
+        203.0,
+        324.0,
+        48.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [
+        "Continue with Google"
+      ],
+      "enabled": true,
+      "bounds": [
+        33.0,
+        203.0,
+        324.0,
+        48.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "TextButton",
+      "key": null,
+      "labels": [
+        "Forgot password?"
+      ],
+      "enabled": true,
+      "bounds": [
+        258.1799774169922,
+        381.0,
+        98.82002258300781,
+        48.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [
+        "Forgot password?"
+      ],
+      "enabled": true,
+      "bounds": [
+        258.1799774169922,
+        383.0,
+        98.82002258300781,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "IconButton",
+      "key": "[<'auth-password-visibility'>]",
+      "labels": [
+        "Show password"
+      ],
+      "enabled": true,
+      "bounds": [
+        309.0,
+        437.0,
+        48.0,
+        48.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "_IconButtonM3",
+      "key": null,
+      "labels": [
+        "Show password"
+      ],
+      "enabled": true,
+      "bounds": [
+        309.0,
+        437.0,
+        48.0,
+        48.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [],
+      "enabled": true,
+      "bounds": [
+        309.0,
+        437.0,
+        48.0,
+        48.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "FilledButton",
+      "key": "[<'auth-submit-button'>]",
+      "labels": [
+        "Sign in"
+      ],
+      "enabled": true,
+      "bounds": [
+        33.0,
+        501.0,
+        324.0,
+        48.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [
+        "Sign in"
+      ],
+      "enabled": true,
+      "bounds": [
+        33.0,
+        501.0,
+        324.0,
+        48.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "TextButton",
+      "key": null,
+      "labels": [
+        "Create an account"
+      ],
+      "enabled": true,
+      "bounds": [
+        160.2044906616211,
+        557.0,
+        132.84901428222656,
+        48.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [
+        "Create an account"
+      ],
+      "enabled": true,
+      "bounds": [
+        160.2044906616211,
+        559.0,
+        132.84901428222656,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "TextButton",
+      "key": null,
+      "labels": [
+        "Terms of Use"
+      ],
+      "enabled": true,
+      "bounds": [
+        100.35400390625,
+        659.0,
+        79.74800109863281,
+        48.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [
+        "Terms of Use"
+      ],
+      "enabled": true,
+      "bounds": [
+        100.35400390625,
+        661.0,
+        79.74800109863281,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "TextButton",
+      "key": null,
+      "labels": [
+        "Privacy Policy."
+      ],
+      "enabled": true,
+      "bounds": [
+        201.61801147460938,
+        659.0,
+        88.02798461914062,
+        48.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [
+        "Privacy Policy."
+      ],
+      "enabled": true,
+      "bounds": [
+        201.61801147460938,
+        661.0,
+        88.02798461914062,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    }
+  ],
+  "needs_long_capture": false,
+  "interactions_since_previous_capture": [
+    {
+      "action": "tap",
+      "labels_at_start": [
+        "English"
+      ],
+      "from": [
+        195.0,
+        792.0
+      ],
+      "to": [
+        195.0,
+        792.0
+      ]
+    }
+  ],
+  "call_stack": "#0      _InventoryComparator._record (file:///Users/lute/project/momcozy-lab/app/test/support/ui_inventory_capture.dart:169:32)\n<asynchronous suspension>\n#1      _InventoryComparator.compare (file:///Users/lute/project/momcozy-lab/app/test/support/ui_inventory_capture.dart:96:17)\n<asynchronous suspension>\n#2      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)\n<asynchronous suspension>\n#3      _AsyncCompleter.complete (dart:async/future_impl.dart:96:3)\n<asynchronous suspension>\n#4      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)\n<asynchronous suspension>\n#5      StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)\n<asynchronous suspension>\n#6      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)\n<asynchronous suspension>\n#7      main.capture (file:///Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart:67:11)\n<asynchronous suspension>\n#8      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart:107:9)\n<asynchronous suspension>\n#9      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)\n<asynchronous suspension>\n#10     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)\n<asynchronous suspension>\n#11     StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)\n<asynchronous suspension>\n",
+  "long_capture": {
+    "status": "no-active-vertical-overflow"
+  }
+}

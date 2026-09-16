@@ -1,0 +1,15 @@
+{"at": "2026-09-13T21:13:50.725110+00:00", "capture": "original-mom", "png_sha256": "eea6a2d17eecc5d8ccd5af9a3538463e8ab5b56308f877b230b588a02f973458", "xml_sha256": "674f1053c9f95cda22dc220f3818cba51356b13e38eab10a9978eb1315e2a5d9"}
+{"at": "2026-09-13T21:13:50.812366+00:00", "tap": "Baby", "bounds": "[270,2571][517,2766]", "coordinate": [393, 2668]}
+{"at": "2026-09-13T21:13:53.280245+00:00", "capture": "baby-entry", "png_sha256": "90923ef4dfb358d3aff014beab8faedeef5e1769f4868e9d059cbecc76823918", "xml_sha256": "6ebaf71bc79c0da6344644784048e53eece2af6a2551d022e90f16b5cccd14f4"}
+{"at": "2026-09-13T21:14:16.410037+00:00", "tap": "更好地了解 Luna\n看成长，关键是同一口径下的连续变化\n体重、身长和头围需要结合年龄与连续测量来理解，单独一个数字不能说明宝宝的生长状态。", "bounds": "[24,420][1256,1092]", "coordinate": [640, 756]}
+{"at": "2026-09-13T21:14:18.619149+00:00", "capture": "knowledge-detail", "png_sha256": "c2c060db883b2b8bce088a680fd78b628474afaa0ca05e6214e9fa056f6ab6d9", "xml_sha256": "c83b5c96f801bf53dcf6c7a560fc8650a0ec1a266c1f9555a18ad12c45cbf9ef"}
+{"at": "2026-09-13T21:14:39.984946+00:00", "tap": "WHO · 儿童生长标准", "bounds": "[102,1871][1178,2015]", "coordinate": [640, 1943]}
+{"at": "2026-09-13T21:14:45.709070+00:00", "capture": "external-open", "png_sha256": "45f6013e80ec63a972b5e8c1ad956a097009320382af1b0106c87d1f75921910", "xml_sha256": "d0cb838f96a22642529b2a9e4c767f8cf19952dba434384394c8b26a60ecd6e0"}
+{"at": "2026-09-13T21:15:03.910380+00:00", "tap": "Close", "bounds": "[72,2640][1208,2784]", "coordinate": [640, 2712]}
+{"at": "2026-09-13T21:15:06.605327+00:00", "capture": "external-page", "png_sha256": "4051a9a29552d76b6a9686951c45e75bf0536864f040763a6452ff7332e5cc92", "xml_sha256": "71368967a461d176dce67c5526c88c859c90f069e29787c419497b99967fa559"}
+{"at": "2026-09-13T21:15:29.029171+00:00", "key": "BACK"}
+{"at": "2026-09-13T21:15:31.754050+00:00", "capture": "source-return", "png_sha256": "916421e99eac9a0c11d0fe09b16484014a382d451e6dda9eccf61811b5114c91", "xml_sha256": "c83b5c96f801bf53dcf6c7a560fc8650a0ec1a266c1f9555a18ad12c45cbf9ef"}
+{"at": "2026-09-13T21:15:31.844003+00:00", "tap": "关闭", "bounds": "[1070,572][1220,716]", "coordinate": [1145, 644]}
+{"at": "2026-09-13T21:15:34.066651+00:00", "capture": "baby-return", "png_sha256": "d6b5a3e59f835624c4fc24208fb24f56b6bad4bf400e748447416573cee00868", "xml_sha256": "6ebaf71bc79c0da6344644784048e53eece2af6a2551d022e90f16b5cccd14f4"}
+{"at": "2026-09-13T21:15:34.131912+00:00", "tap": "Me", "bounds": "[24,2571][270,2766]", "coordinate": [147, 2668]}
+{"at": "2026-09-13T21:15:36.591389+00:00", "capture": "restored-mom", "png_sha256": "f21a4ef5b7358757bf8718fb093192b453a7434aa8d873ff3d4ddbf3f35aae09", "xml_sha256": "674f1053c9f95cda22dc220f3818cba51356b13e38eab10a9978eb1315e2a5d9"}

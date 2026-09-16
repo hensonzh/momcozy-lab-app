@@ -1,0 +1,17 @@
+{
+  "command": [
+    "/Users/lute/.local/share/momcozy-toolchains/flutter/bin/flutter",
+    "test",
+    "--no-pub",
+    "--no-uninstall",
+    "--flavor",
+    "local",
+    "-d",
+    "emulator-5554",
+    "integration_test/agent_resource_inventory_test.dart",
+    "--reporter",
+    "expanded"
+  ],
+  "purpose": "transient native inventory integration, no publication",
+  "preserve_install_data": true
+}

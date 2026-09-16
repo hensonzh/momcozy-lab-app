@@ -1,0 +1,8 @@
+{
+  "lib/modules/consultation/presentation/device_check_dialog.dart": "6ea94e71e9041f386c7dd5e313fad06743d1ceb013c2a94772d1b036ea4f5f7c",
+  "lib/modules/consultation/presentation/consultation_start_dialog.dart": "de86de9a8c1abb0143b175feb1a8e595b44d906637e5a636d1f47af7cc98cd0f",
+  "test/modules/consultation/device_check_test.dart": "a89d4e034d2622fccd2d2475685e602c863afc1fef6932ce7e431fb66a07b0d2",
+  "test/modules/consultation/device_check_design_test.dart": "e8cebeb91546df7f22131c25de19292b3d3d5c558a19f90aff7ceac4ef8ff954",
+  "test/modules/consultation/consultation_start_test.dart": "ff67153470c8496cc55c3e8c522cb0b981ef384451aee442f68df10e28aa7619",
+  "test/modules/consultation/room_design_test.dart": "8d032b1bb714999d2439c52dce570631cffd83b1592e62996218aa2896c7b43a"
+}

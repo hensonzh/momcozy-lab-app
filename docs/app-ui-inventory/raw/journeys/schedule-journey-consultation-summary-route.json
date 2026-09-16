@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/schedule-journey-consultation-summary-route-393.png",
+  "previous_source": "test/goldens/ui_inventory/schedule-journey-service-filter-reset-393.png",
+  "route": "/services/appointments/service-appointment/summary",
+  "trigger": "Completed appointment summary → actual published summary route",
+  "root_entry": "Authenticated More → tap Schedule bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/schedule/schedule_inventory_journey_test.dart"
+}

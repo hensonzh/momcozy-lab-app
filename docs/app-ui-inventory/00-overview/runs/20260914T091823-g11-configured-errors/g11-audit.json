@@ -1,0 +1,14 @@
+{
+  "source_hashes": {
+    "lib/features/auth/presentation/invite_auth_page.dart": "51b02cb9d3c973aa931abbeb7e9ec3352476b889db496b7cd583ef757732c51b",
+    "lib/features/onboarding/presentation/onboarding_page.dart": "2d5ec507c926086540c9bbdc770e3aa68c319dbe3357a7b57d7a0ff1a28487dc",
+    "lib/features/onboarding/presentation/onboarding_controller.dart": "f6695f43ca276446fd95189345799825e454cee72bc780f1d96a69208fca582f",
+    "lib/app/momcozy_app.dart": "4e28954f3c930728bd0efd196e2a59a374ab3962675bf9305ca7ad8b77e57627",
+    "test/features/onboarding/configured_submission_inventory_test.dart": "a1dc09cd908e40b15a7c0c2e4ace802525e7195881b618dd64aacaffb23f351f"
+  },
+  "new_images": 3,
+  "strict_scenarios_passed": 2,
+  "shared_error_image": "Both upload failure and default activation failure compared against same golden in strict run; fixture message identical. Not a claim that arbitrary backend messages are identical.",
+  "route_results": "Invitation retry and default avatar retry both reach authenticated /more",
+  "scope": "Named configured error feedback only; final full state mapping separate"
+}

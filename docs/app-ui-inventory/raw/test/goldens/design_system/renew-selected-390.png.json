@@ -1,0 +1,412 @@
+{
+  "source": "test/goldens/design_system/renew-selected-390.png",
+  "evidence": "current-widget-test-render; golden comparison passed",
+  "test_description": "renew selection opens existing eligibility flow 390.0/1.0",
+  "sequence": 2,
+  "sha256": "0968bca4a228f314e99146e313858d6c6153361362329b09246b83faa0b616e0",
+  "width": 390,
+  "height": 844,
+  "captured_at": "2026-09-14T08:05:00.874381Z",
+  "widget_types": [
+    "AbsorbPointer",
+    "Actions",
+    "Align",
+    "AnimatedBuilder",
+    "AnimatedDefaultTextStyle",
+    "AnimatedPhysicalModel",
+    "AnimatedTheme",
+    "AnnotatedRegion<SystemUiOverlayStyle>",
+    "AppBar",
+    "AutomaticKeepAlive",
+    "BlockSemantics",
+    "Builder",
+    "Center",
+    "ClipRect",
+    "ColoredBox",
+    "Column",
+    "ConstrainedBox",
+    "Container",
+    "CupertinoTheme",
+    "CustomMultiChildLayout",
+    "CustomPaint",
+    "CustomSingleChildLayout",
+    "DecoratedBox",
+    "DefaultSelectionStyle",
+    "DefaultTextEditingShortcuts",
+    "DefaultTextStyle",
+    "Directionality",
+    "DualTransitionBuilder",
+    "ExcludeSemantics",
+    "Expanded",
+    "FadeTransition",
+    "FilledButton",
+    "FittedBox",
+    "FlexibleSpaceBarSettings",
+    "Focus",
+    "FocusScope",
+    "FocusTraversalGroup",
+    "FractionalTranslation",
+    "GestureDetector",
+    "HeroControllerScope",
+    "Icon",
+    "IconButton",
+    "IconButtonTheme",
+    "IconTheme",
+    "IgnorePointer",
+    "IndexedSemantics",
+    "InheritedCupertinoTheme",
+    "Ink",
+    "InkWell",
+    "KeepAlive",
+    "KeyedSubtree",
+    "LayoutId",
+    "ListView",
+    "ListenableBuilder",
+    "Listener",
+    "Localizations",
+    "Material",
+    "MaterialApp",
+    "MediaQuery",
+    "ModalBarrier",
+    "MomCozyLineIcon",
+    "MomHomeSurface",
+    "MomServicePackageFacts",
+    "MomServicePrice",
+    "MomSettingsCard",
+    "MouseRegion",
+    "NavigationToolbar",
+    "Navigator",
+    "NotificationListener<KeepAliveNotification>",
+    "NotificationListener<LayoutChangedNotification>",
+    "NotificationListener<NavigationNotification>",
+    "NotificationListener<OverscrollIndicatorNotification>",
+    "NotificationListener<ScrollMetricsNotification>",
+    "NotificationListener<ScrollNotification>",
+    "Offstage",
+    "Overlay",
+    "OverlayPortal",
+    "Padding",
+    "PageStorage",
+    "PhysicalModel",
+    "PhysicalShape",
+    "PrimaryScrollController",
+    "RawGestureDetector",
+    "RawTooltip",
+    "RawView",
+    "RefreshIndicator",
+    "RepaintBoundary",
+    "RestorationScope",
+    "RichText",
+    "RootRestorationScope",
+    "RotationTransition",
+    "Row",
+    "SafeArea",
+    "Scaffold",
+    "ScaffoldMessenger",
+    "ScaleTransition",
+    "ScrollConfiguration",
+    "ScrollNotificationObserver",
+    "Scrollable",
+    "Semantics",
+    "ServiceRenewPage",
+    "SharedAppData",
+    "ShortcutRegistrar",
+    "Shortcuts",
+    "SizedBox",
+    "SlideTransition",
+    "SliverList",
+    "SliverPadding",
+    "Stack",
+    "StretchEffect",
+    "StretchingOverscrollIndicator",
+    "SvgPicture",
+    "TapRegionSurface",
+    "Text",
+    "Theme",
+    "TickerMode",
+    "Title",
+    "Tooltip",
+    "Transform",
+    "UnmanagedRestorationScope",
+    "ValueListenableBuilder<bool>",
+    "VectorGraphic",
+    "View",
+    "Viewport",
+    "WidgetsApp",
+    "_ActionsScope",
+    "_AppBarTitleBox",
+    "_BodyBuilder",
+    "_EffectiveTickerMode",
+    "_ExclusiveMouseRegion",
+    "_FadeForwardsPageTransition",
+    "_FloatingActionButtonTransition",
+    "_FocusInheritedScope",
+    "_FocusScopeWithExternalFocusNode",
+    "_GestureSemantics",
+    "_IconButtonM3",
+    "_InheritedTheme",
+    "_InkFeatures",
+    "_InkResponseStateWidget",
+    "_InputPadding",
+    "_LocalizationsScope",
+    "_MaterialInterior",
+    "_MediaQueryFromView",
+    "_ModalBarrierGestureDetector",
+    "_ModalScope<dynamic>",
+    "_ModalScopeStatus",
+    "_OverlayEntryWidget",
+    "_OverlayPortal",
+    "_PageTransitionsThemeTransitions<dynamic>",
+    "_ParentInkResponseProvider",
+    "_PipelineOwnerScope",
+    "_PredictiveBackGestureDetector",
+    "_RawPictureVectorGraphicWidget",
+    "_RawViewInternal",
+    "_RenderTheaterMarker",
+    "_RenewPackageCard",
+    "_ScaffoldMessengerScope",
+    "_ScaffoldScope",
+    "_ScrollNotificationObserverScope",
+    "_ScrollSemantics",
+    "_ScrollableScope",
+    "_SelectableIconButton",
+    "_SelectionKeepAlive",
+    "_ShapeBorderPaint",
+    "_SharedAppModel",
+    "_ShortcutRegistrarScope",
+    "_Theater",
+    "_ViewScope"
+  ],
+  "texts": [
+    "亲喂改善",
+    "找到影响亲喂的主要问题，改善含乳、吸吮和喂养体验。",
+    "2 次 IBCLC 在线咨询",
+    "14 天持续陪伴",
+    "$239 USD",
+    "选择",
+    "奶量管理",
+    "判断奶量问题，建立并持续调整个性化奶量管理方案。",
+    "3 次 IBCLC 在线咨询",
+    "14 天持续陪伴",
+    "$299 USD",
+    "选择",
+    "舒适哺乳支持",
+    "找到影响舒适度的主要因素，改善不适并及时识别医疗转介需求。",
+    "2 次 IBCLC 在线咨询",
+    "3 天持续陪伴",
+    "$219 USD",
+    "选择",
+    "继续支持"
+  ],
+  "scrolls": [
+    {
+      "foreground": true,
+      "axis": "vertical",
+      "direction": "down",
+      "pixels": 508.0,
+      "min": 0.0,
+      "max": 508.0,
+      "viewport": 780.0
+    }
+  ],
+  "controls": [
+    {
+      "widget": "FilledButton",
+      "key": null,
+      "labels": [
+        "选择"
+      ],
+      "enabled": true,
+      "bounds": [
+        33.0,
+        125.0,
+        324.0,
+        48.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [
+        "选择"
+      ],
+      "enabled": true,
+      "bounds": [
+        33.0,
+        127.0,
+        324.0,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "FilledButton",
+      "key": null,
+      "labels": [
+        "选择"
+      ],
+      "enabled": true,
+      "bounds": [
+        33.0,
+        421.0,
+        324.0,
+        48.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [
+        "选择"
+      ],
+      "enabled": true,
+      "bounds": [
+        33.0,
+        423.0,
+        324.0,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "FilledButton",
+      "key": null,
+      "labels": [
+        "选择"
+      ],
+      "enabled": true,
+      "bounds": [
+        33.0,
+        737.0,
+        324.0,
+        48.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [
+        "选择"
+      ],
+      "enabled": true,
+      "bounds": [
+        33.0,
+        739.0,
+        324.0,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "IconButton",
+      "key": null,
+      "labels": [
+        "返回"
+      ],
+      "enabled": true,
+      "bounds": [
+        4.0,
+        8.0,
+        48.0,
+        48.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "_IconButtonM3",
+      "key": null,
+      "labels": [
+        "返回"
+      ],
+      "enabled": true,
+      "bounds": [
+        4.0,
+        8.0,
+        48.0,
+        48.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [],
+      "enabled": true,
+      "bounds": [
+        6.0,
+        10.0,
+        44.0,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    }
+  ],
+  "needs_long_capture": true,
+  "interactions_since_previous_capture": [
+    {
+      "action": "tap",
+      "labels_at_start": [],
+      "from": [
+        324.0,
+        396.0
+      ],
+      "to": [
+        324.0,
+        396.0
+      ]
+    }
+  ],
+  "call_stack": "#0      _InventoryComparator._record (file:///Users/lute/project/momcozy-lab/app/test/support/ui_inventory_capture.dart:169:32)\n<asynchronous suspension>\n#1      _InventoryComparator.compare (file:///Users/lute/project/momcozy-lab/app/test/support/ui_inventory_capture.dart:96:17)\n<asynchronous suspension>\n#2      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)\n<asynchronous suspension>\n#3      _AsyncCompleter.complete (dart:async/future_impl.dart:96:3)\n<asynchronous suspension>\n#4      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)\n<asynchronous suspension>\n#5      StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)\n<asynchronous suspension>\n#6      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)\n<asynchronous suspension>\n#7      shot (file:///Users/lute/project/momcozy-lab/app/test/modules/services/service_renew_test.dart:213:3)\n<asynchronous suspension>\n#8      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/services/service_renew_test.dart:236:11)\n<asynchronous suspension>\n#9      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)\n<asynchronous suspension>\n#10     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)\n<asynchronous suspension>\n#11     StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)\n<asynchronous suspension>\n",
+  "long_capture": {
+    "status": "complete-measured-scroll-stitch",
+    "file": "/Users/lute/project/momcozy-lab/app/docs/app-ui-inventory/raw/test/goldens/design_system/renew-selected-390.long.png",
+    "offsets": [
+      0.0,
+      358.0,
+      540.0
+    ],
+    "scroll_bounds": [
+      0.0,
+      64.0,
+      390.0,
+      780.0
+    ],
+    "frame_scroll_bounds": [
+      [
+        0.0,
+        64.0,
+        390.0,
+        780.0
+      ],
+      [
+        0.0,
+        64.0,
+        390.0,
+        780.0
+      ],
+      [
+        0.0,
+        64.0,
+        390.0,
+        780.0
+      ]
+    ],
+    "content_height": 1320.0,
+    "interior_strip_edge_guard": 64.0,
+    "fixed_bottom_overlay_bounds": [],
+    "original_scroll_offset": 508.0,
+    "tooltip_preserved_from_matched_viewport": false
+  }
+}

@@ -1,0 +1,5024 @@
+{
+  "method": "full-width continuous 650px strips; identical pixels reference prior reviewed Mom or Baby controls; remaining segments reviewed at native width",
+  "sources": [
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-catalog-320-2x.long.png",
+      "sha256": "dfe029de1a0b06403e982e81a22f52e064e3a84ed88f666dd89d8d473753c230",
+      "width": 320,
+      "height": 3161,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "3080ed1e9099f20a15fa2c3cb615ed0d8624a066c7a7c5e4cb570f52bd8263fd",
+          "review": "sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "701d67450a0486656e4e942b279540206444850701fa3805c2c7e73b81561570",
+          "review": "sheet-01.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "3921da55ed9b6d493f46e0f448c55e776ec191ca0647b5bce138219a0c5eb232",
+          "review": "sheet-01.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "a752944d98d6700c5344afd38980d7369b801eb3d5c3a5edadbec7f81d3216ce",
+          "review": "sheet-01.png#tile-3"
+        },
+        {
+          "y0": 2600,
+          "y1": 3161,
+          "pixel_sha256": "c2abcae664025db75933328ad375b6ecc780d49a335ccec5a2581efe80f05229",
+          "review": "sheet-01.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-catalog-320-2x.png",
+      "sha256": "369af5703768cbadeb9a63085d13f89d7f607787ba51e860788d4035a16704ad",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "3080ed1e9099f20a15fa2c3cb615ed0d8624a066c7a7c5e4cb570f52bd8263fd",
+          "review": "sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "9e6d7dad877015a6f5a925003120c1d9de941debc3cd9b24c9a49f3fe8f798cd",
+          "review": "sheet-01.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-catalog-393-1x.long.png",
+      "sha256": "626202225717f37c86a1dcb0abec46903f41943181d0ea28951e6e6c20699541",
+      "width": 393,
+      "height": 1615,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6df2083d88e72ff4cf599bc51a8bb8d3d96204d4c77266a8a7c617207b58a42b",
+          "review": "sheet-02.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "ac603a6c0ae53bcbb33c98452c22a6f916d5b3e323ade4a8ba1ec569cca03c7f",
+          "review": "sheet-02.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1615,
+          "pixel_sha256": "b5ffaff21f524e96af55ffee46fa2defa5398d0f8a37ebd3e08ce17ab3512c27",
+          "review": "sheet-02.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-catalog-393-1x.png",
+      "sha256": "13c6c89c1fbfdfaed6e7ab1543ca02599d84121c7e0aa2401bc8a609f7ead7ac",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6df2083d88e72ff4cf599bc51a8bb8d3d96204d4c77266a8a7c617207b58a42b",
+          "review": "sheet-02.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "b44c3d7a72178fd743ec2bf9b67abd99b21e97c5af8b0cbae5f17feb4ecb411f",
+          "review": "sheet-02.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-catalog-all-return-320-2x.long.png",
+      "sha256": "dfe029de1a0b06403e982e81a22f52e064e3a84ed88f666dd89d8d473753c230",
+      "width": 320,
+      "height": 3161,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "3080ed1e9099f20a15fa2c3cb615ed0d8624a066c7a7c5e4cb570f52bd8263fd",
+          "review": "sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "701d67450a0486656e4e942b279540206444850701fa3805c2c7e73b81561570",
+          "review": "sheet-01.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "3921da55ed9b6d493f46e0f448c55e776ec191ca0647b5bce138219a0c5eb232",
+          "review": "sheet-01.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "a752944d98d6700c5344afd38980d7369b801eb3d5c3a5edadbec7f81d3216ce",
+          "review": "sheet-01.png#tile-3"
+        },
+        {
+          "y0": 2600,
+          "y1": 3161,
+          "pixel_sha256": "c2abcae664025db75933328ad375b6ecc780d49a335ccec5a2581efe80f05229",
+          "review": "sheet-01.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-catalog-all-return-320-2x.png",
+      "sha256": "e7de081ce791ffe21fbb140c9e6d299cb1dd3cb12a83e1b36b759619979dbc10",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "631ee112f37c62c95a6e5e4bcf55c97e8227d1ef43e57a01dfaeeafcc4c51dfd",
+          "review": "sheet-02.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "347958989725645ba574ac3be5e7faa3ef590f6ede0cc0218390cc79637a155a",
+          "review": "sheet-02.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-catalog-all-return-393-1x.long.png",
+      "sha256": "626202225717f37c86a1dcb0abec46903f41943181d0ea28951e6e6c20699541",
+      "width": 393,
+      "height": 1615,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6df2083d88e72ff4cf599bc51a8bb8d3d96204d4c77266a8a7c617207b58a42b",
+          "review": "sheet-02.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "ac603a6c0ae53bcbb33c98452c22a6f916d5b3e323ade4a8ba1ec569cca03c7f",
+          "review": "sheet-02.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1615,
+          "pixel_sha256": "b5ffaff21f524e96af55ffee46fa2defa5398d0f8a37ebd3e08ce17ab3512c27",
+          "review": "sheet-02.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-catalog-all-return-393-1x.png",
+      "sha256": "30b31176455aef7a3d172a54d01c3fb13cb24d6f1ee3ec07d4ed2aba473b46c1",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "73cb59b494ae80fc0f372ea4a454716eb98a65a330c93fb5ffbb23486ee18199",
+          "review": "sheet-03.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "33604e4392fdf9a516a1d4fd6aac235585c4208c76eb823e47f90ca9afccb4a4",
+          "review": "sheet-03.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-catalog-empty-320-2x.long.png",
+      "sha256": "ed3713736ec4cb4085bc5404cc41abd0c6a58b7832917a22f811ff405a039e7d",
+      "width": 320,
+      "height": 979,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "d244df19b33135c82e68140fb469cb39282960fe509a7c1dc9b68db571f1798d",
+          "review": "sheet-03.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 979,
+          "pixel_sha256": "a00db2a3429b04c5a2a7f85940d1bbda52c88720128be0e32b21184c95ce398d",
+          "review": "sheet-03.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-catalog-empty-320-2x.png",
+      "sha256": "7dcec6469c8260a489b6473f4cce6e96050dff1ffbe9741df1517bb851c0d2d1",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "d244df19b33135c82e68140fb469cb39282960fe509a7c1dc9b68db571f1798d",
+          "review": "sheet-03.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "cba027712dd9c592948b24af6de3158fd8d9999a21f9b78a728a44d221649a73",
+          "review": "sheet-03.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-catalog-empty-393-1x.png",
+      "sha256": "ee609ed07000d354d80214ee188da1238f13506e4e1e74aa482ef4ef9f10a855",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "4e11523b4a287b7ecdcee3277dd10fa39ed55539462290e87c70e96d584bb1cf",
+          "review": "sheet-03.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "5e269ca9e36daffe984531405b8fd9a7fd95687843288196663912cae234267b",
+          "review": "../account-current-visual-review/sheet-05.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-catalog-error-320-2x.png",
+      "sha256": "57780c8e6b5f782583d20b8e5a007014c0f721380dec6998bee28c7cf706bc94",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c285f309c09ea2cad59be0c573a4d48fc388dbddb4f09d54c4b41761cf3ba9fa",
+          "review": "sheet-04.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "c65f45a9e7b9b361a0c4b43630dc19d5d3c121f954f7c47798296da08ea227e9",
+          "review": "../account-current-visual-review/sheet-07.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-catalog-error-393-1x.png",
+      "sha256": "e6d5cd7672c4e2c2120b177b8714c72e450a75756b0628e0bc17952d5bca9081",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "4b3fbef1568aefc124eab6a427fc8f93b696e59d97da5a3c6a5c14b3d869bc3d",
+          "review": "sheet-04.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "5e269ca9e36daffe984531405b8fd9a7fd95687843288196663912cae234267b",
+          "review": "../account-current-visual-review/sheet-05.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-catalog-home-return-320-2x.long.png",
+      "sha256": "b29f1f9dc909ca023dcd2865b0d4424a7485a4fb1dd4d05f54d8ee61e6cf46ef",
+      "width": 320,
+      "height": 1939,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a6aa9ef781460e5016527f099324419f84c6e4f14cdb26c410651cd7359b41ef",
+          "review": "../mom-rest-control-visual-review/sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "0edf1d289b2e804b112ca91367c51524ae8a6a6a4684a4fdcad651b0ae8de7ad",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1939,
+          "pixel_sha256": "8824f3d60a1ba788460adc4d5731a39ee81dafb5cb1f7d7112dd43123bbe2812",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-catalog-home-return-320-2x.png",
+      "sha256": "6b61a480f7a3fd5ddb29685624aed748a99b94ad55016153855b11225ef09868",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a6aa9ef781460e5016527f099324419f84c6e4f14cdb26c410651cd7359b41ef",
+          "review": "../mom-rest-control-visual-review/sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1462d46c4861c29041d879736402097e4fd061fcb6e577142cd6e832cb70fae0",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-catalog-home-return-393-1x.long.png",
+      "sha256": "0a4e3294f0ff67f0d7ed84ee3eacb393b50571fb4db300a7d15899ba9359a330",
+      "width": 393,
+      "height": 917,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa661999d6307948942c23dc2e7dad221367a614b3ae09dd12dec24bc67fec6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 917,
+          "pixel_sha256": "134109b5afc9a0d972ecc00b197fb963d8131bfc37dbfad2a4c51a0a091a86ad",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-catalog-home-return-393-1x.png",
+      "sha256": "be291808401e7f353b8f14552b0df4a698f3edd191e5e2d770c66c2e129fc145",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa661999d6307948942c23dc2e7dad221367a614b3ae09dd12dec24bc67fec6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3208ac8b3b1d4a7464bc46ef7618c8e19bd85dee870d86c1847457571b6198a6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-catalog-loading-320-2x.png",
+      "sha256": "bb0e55114efe9ea68f9549a740aec3a5cf40879d042ba5209e2a4b5e985dbb1e",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "bba3d196ee9a35a8ad539cc7f86d110b8c92c19df8a9a960b3a6a072a09a50a1",
+          "review": "sheet-04.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "c65f45a9e7b9b361a0c4b43630dc19d5d3c121f954f7c47798296da08ea227e9",
+          "review": "../account-current-visual-review/sheet-07.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-catalog-loading-393-1x.png",
+      "sha256": "fa9f86a3a23db7726c4b9a8bc342f71b2b8d7fc31f446af0f40542161d9db978",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "05beebb0dd380f7bb14ed335fda93f6aa2439e3100061c287b7e9db697db3902",
+          "review": "sheet-04.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "5e269ca9e36daffe984531405b8fd9a7fd95687843288196663912cae234267b",
+          "review": "../account-current-visual-review/sheet-05.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-catalog-recovery-home-320-2x.long.png",
+      "sha256": "133665976f885c3aa6528a990379ac328eaada77bcf121c2028e9c3e2d60ce26",
+      "width": 320,
+      "height": 2055,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a6aa9ef781460e5016527f099324419f84c6e4f14cdb26c410651cd7359b41ef",
+          "review": "../mom-rest-control-visual-review/sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "0edf1d289b2e804b112ca91367c51524ae8a6a6a4684a4fdcad651b0ae8de7ad",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "681c1716775d1400c592d305ceb60833cb032cbb28fd70688ae852722905bc3c",
+          "review": "sheet-04.png#tile-4"
+        },
+        {
+          "y0": 1950,
+          "y1": 2055,
+          "pixel_sha256": "2884cc7da1e23b0c53c83f15a40cde9e426123670971b17800dd85e3c178666d",
+          "review": "sheet-04.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-catalog-recovery-home-320-2x.png",
+      "sha256": "6b61a480f7a3fd5ddb29685624aed748a99b94ad55016153855b11225ef09868",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a6aa9ef781460e5016527f099324419f84c6e4f14cdb26c410651cd7359b41ef",
+          "review": "../mom-rest-control-visual-review/sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1462d46c4861c29041d879736402097e4fd061fcb6e577142cd6e832cb70fae0",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-catalog-recovery-home-393-1x.long.png",
+      "sha256": "0a4e3294f0ff67f0d7ed84ee3eacb393b50571fb4db300a7d15899ba9359a330",
+      "width": 393,
+      "height": 917,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa661999d6307948942c23dc2e7dad221367a614b3ae09dd12dec24bc67fec6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 917,
+          "pixel_sha256": "134109b5afc9a0d972ecc00b197fb963d8131bfc37dbfad2a4c51a0a091a86ad",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-catalog-recovery-home-393-1x.png",
+      "sha256": "be291808401e7f353b8f14552b0df4a698f3edd191e5e2d770c66c2e129fc145",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa661999d6307948942c23dc2e7dad221367a614b3ae09dd12dec24bc67fec6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3208ac8b3b1d4a7464bc46ef7618c8e19bd85dee870d86c1847457571b6198a6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-catalog-recovery-home-return-320-2x.long.png",
+      "sha256": "b29f1f9dc909ca023dcd2865b0d4424a7485a4fb1dd4d05f54d8ee61e6cf46ef",
+      "width": 320,
+      "height": 1939,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a6aa9ef781460e5016527f099324419f84c6e4f14cdb26c410651cd7359b41ef",
+          "review": "../mom-rest-control-visual-review/sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "0edf1d289b2e804b112ca91367c51524ae8a6a6a4684a4fdcad651b0ae8de7ad",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1939,
+          "pixel_sha256": "8824f3d60a1ba788460adc4d5731a39ee81dafb5cb1f7d7112dd43123bbe2812",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-catalog-recovery-home-return-320-2x.png",
+      "sha256": "6b61a480f7a3fd5ddb29685624aed748a99b94ad55016153855b11225ef09868",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a6aa9ef781460e5016527f099324419f84c6e4f14cdb26c410651cd7359b41ef",
+          "review": "../mom-rest-control-visual-review/sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1462d46c4861c29041d879736402097e4fd061fcb6e577142cd6e832cb70fae0",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-catalog-recovery-home-return-393-1x.long.png",
+      "sha256": "0a4e3294f0ff67f0d7ed84ee3eacb393b50571fb4db300a7d15899ba9359a330",
+      "width": 393,
+      "height": 917,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa661999d6307948942c23dc2e7dad221367a614b3ae09dd12dec24bc67fec6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 917,
+          "pixel_sha256": "134109b5afc9a0d972ecc00b197fb963d8131bfc37dbfad2a4c51a0a091a86ad",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-catalog-recovery-home-return-393-1x.png",
+      "sha256": "be291808401e7f353b8f14552b0df4a698f3edd191e5e2d770c66c2e129fc145",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa661999d6307948942c23dc2e7dad221367a614b3ae09dd12dec24bc67fec6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3208ac8b3b1d4a7464bc46ef7618c8e19bd85dee870d86c1847457571b6198a6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-catalog-refresh-error-320-2x.long.png",
+      "sha256": "80ba05301d4391f95fe88dcb9f863c2d97341786b2c5abca853a8618adc0302f",
+      "width": 320,
+      "height": 3351,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c13c671c9cf3abbfc32c5a88d703354f8e4033c5c982af4afd3ffe11890345ce",
+          "review": "sheet-05.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "c1ab95fe56aa937a932268e8603a4f8cd4815a69c07efc5e414c62a4ee01390b",
+          "review": "sheet-05.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "884b996cb8cd3654a1d204f8b1fbe492ccf487abf5bcdfc56c710ce7cd480e23",
+          "review": "sheet-05.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "e88906f0b25d6912b5df6d1888e1df3c3aa9e84ab10222ed47870e71c833272a",
+          "review": "sheet-05.png#tile-3"
+        },
+        {
+          "y0": 2600,
+          "y1": 3250,
+          "pixel_sha256": "76d7c1862480c3901b35727fa95f3f324b5e4a902ad5d7dcc0b5c5f11853e803",
+          "review": "sheet-05.png#tile-4"
+        },
+        {
+          "y0": 3250,
+          "y1": 3351,
+          "pixel_sha256": "bc94aae419b2ff917c2e5eca25e8db1b9ed5e17e0e9ae4ba260994a9a3d1a431",
+          "review": "sheet-05.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-catalog-refresh-error-320-2x.png",
+      "sha256": "7ba97003d1ba410b583e02ff682303f8643b96ecd5b3cf3ed4084604ffec965f",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c13c671c9cf3abbfc32c5a88d703354f8e4033c5c982af4afd3ffe11890345ce",
+          "review": "sheet-05.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "66c7754bb2532b21c768edbd7dbd31c212be48316902cfcd493c95fef073cd37",
+          "review": "sheet-06.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-catalog-refresh-error-393-1x.long.png",
+      "sha256": "9989751d21919f6d106d7bb565dd2dcd0a41be7b470edb8c63638184672cdea8",
+      "width": 393,
+      "height": 1729,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2b648f19863ed439bee5ef854db69717255c5582f0a29b137acab78cdde6885c",
+          "review": "sheet-06.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "c690e2562aaf7754173e8fb105a623797b75871c7993e2d50b9e74403c1b97d3",
+          "review": "sheet-06.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1729,
+          "pixel_sha256": "283b9a18c5e828806b09faa101b312b71dba00ec1b845287469d06a127a9d4a5",
+          "review": "sheet-06.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-catalog-refresh-error-393-1x.png",
+      "sha256": "99838a7a8c91c5bdf185820620846980d02f020c9459fb85b0d3f041e5972962",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2b648f19863ed439bee5ef854db69717255c5582f0a29b137acab78cdde6885c",
+          "review": "sheet-06.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2c8971435abd5e89e6c1975bc346335fb55b6ea3cb73292a09ea6c55368064dc",
+          "review": "sheet-06.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-catalog-refresh-filled-320-2x.long.png",
+      "sha256": "dfe029de1a0b06403e982e81a22f52e064e3a84ed88f666dd89d8d473753c230",
+      "width": 320,
+      "height": 3161,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "3080ed1e9099f20a15fa2c3cb615ed0d8624a066c7a7c5e4cb570f52bd8263fd",
+          "review": "sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "701d67450a0486656e4e942b279540206444850701fa3805c2c7e73b81561570",
+          "review": "sheet-01.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "3921da55ed9b6d493f46e0f448c55e776ec191ca0647b5bce138219a0c5eb232",
+          "review": "sheet-01.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "a752944d98d6700c5344afd38980d7369b801eb3d5c3a5edadbec7f81d3216ce",
+          "review": "sheet-01.png#tile-3"
+        },
+        {
+          "y0": 2600,
+          "y1": 3161,
+          "pixel_sha256": "c2abcae664025db75933328ad375b6ecc780d49a335ccec5a2581efe80f05229",
+          "review": "sheet-01.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-catalog-refresh-filled-320-2x.png",
+      "sha256": "369af5703768cbadeb9a63085d13f89d7f607787ba51e860788d4035a16704ad",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "3080ed1e9099f20a15fa2c3cb615ed0d8624a066c7a7c5e4cb570f52bd8263fd",
+          "review": "sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "9e6d7dad877015a6f5a925003120c1d9de941debc3cd9b24c9a49f3fe8f798cd",
+          "review": "sheet-01.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-catalog-refresh-filled-393-1x.long.png",
+      "sha256": "626202225717f37c86a1dcb0abec46903f41943181d0ea28951e6e6c20699541",
+      "width": 393,
+      "height": 1615,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6df2083d88e72ff4cf599bc51a8bb8d3d96204d4c77266a8a7c617207b58a42b",
+          "review": "sheet-02.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "ac603a6c0ae53bcbb33c98452c22a6f916d5b3e323ade4a8ba1ec569cca03c7f",
+          "review": "sheet-02.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1615,
+          "pixel_sha256": "b5ffaff21f524e96af55ffee46fa2defa5398d0f8a37ebd3e08ce17ab3512c27",
+          "review": "sheet-02.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-catalog-refresh-filled-393-1x.png",
+      "sha256": "13c6c89c1fbfdfaed6e7ab1543ca02599d84121c7e0aa2401bc8a609f7ead7ac",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6df2083d88e72ff4cf599bc51a8bb8d3d96204d4c77266a8a7c617207b58a42b",
+          "review": "sheet-02.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "b44c3d7a72178fd743ec2bf9b67abd99b21e97c5af8b0cbae5f17feb4ecb411f",
+          "review": "sheet-02.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-catalog-refresh-pending-320-2x.long.png",
+      "sha256": "4aa52b0952cd054540c447eaf4e5d66f462cd17252cfe406c1eed29c2c30599a",
+      "width": 320,
+      "height": 3165,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "227293098cf38135032421b70ea57d5bbe8c791c1b126e0177c565e83ca3c28b",
+          "review": "sheet-06.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "fb3be119d5f91718ecac6c6baa2dac96ec0c87bcf7db812e47209aacdd662864",
+          "review": "sheet-07.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "e8d0746aa889015dde714d50b925e064cb1466f8fa3ae2494be13524d4bf79d6",
+          "review": "sheet-07.png#tile-1"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "684872c0160e3faabb95be154bd186790f305d5a25918611d2b0bd7084b70426",
+          "review": "sheet-07.png#tile-2"
+        },
+        {
+          "y0": 2600,
+          "y1": 3165,
+          "pixel_sha256": "411693849e8e26d7fd90ea0f7fa886ec78ca2f7ad427c122e2efd081535b4306",
+          "review": "sheet-07.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-catalog-refresh-pending-320-2x.png",
+      "sha256": "e8ac1df18f095ec93a9cfe621491e7c856ca251ccff522465e9bdd4ea9d62d11",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "227293098cf38135032421b70ea57d5bbe8c791c1b126e0177c565e83ca3c28b",
+          "review": "sheet-06.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "58bc56192218d800003ccf64fd412b458cb87598d321e7a97ba0bc8d755d19fc",
+          "review": "sheet-07.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-catalog-refresh-pending-393-1x.long.png",
+      "sha256": "99aa2d6c1d58360c132519f87cb6a63af2ea9feca726b7273de912617b4bf5e0",
+      "width": 393,
+      "height": 1619,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b8ad4f01425042b9108e8719b1c921e9ef9d69d6a50dd783b8b49ecc9dc1198f",
+          "review": "sheet-07.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "98b9f83155ac50f9201748dc6cc07968d870057d7307e19b4054a7018693ee43",
+          "review": "sheet-08.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1619,
+          "pixel_sha256": "7ec407425747bd84a25da166ae050f3234e77c16c03dbb31f9ffe28b2662e72d",
+          "review": "sheet-08.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-catalog-refresh-pending-393-1x.png",
+      "sha256": "0f1fe1f17d5944737dc323afde1c4d8fd347ae567343fd9675e3e01b3865e8cc",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b8ad4f01425042b9108e8719b1c921e9ef9d69d6a50dd783b8b49ecc9dc1198f",
+          "review": "sheet-07.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "37b92a57421948ea6e53149040056a5e9dd29a4f75cc66aff9e867e29b7af8e2",
+          "review": "sheet-08.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-catalog-refresh-recovered-320-2x.long.png",
+      "sha256": "dfe029de1a0b06403e982e81a22f52e064e3a84ed88f666dd89d8d473753c230",
+      "width": 320,
+      "height": 3161,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "3080ed1e9099f20a15fa2c3cb615ed0d8624a066c7a7c5e4cb570f52bd8263fd",
+          "review": "sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "701d67450a0486656e4e942b279540206444850701fa3805c2c7e73b81561570",
+          "review": "sheet-01.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "3921da55ed9b6d493f46e0f448c55e776ec191ca0647b5bce138219a0c5eb232",
+          "review": "sheet-01.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "a752944d98d6700c5344afd38980d7369b801eb3d5c3a5edadbec7f81d3216ce",
+          "review": "sheet-01.png#tile-3"
+        },
+        {
+          "y0": 2600,
+          "y1": 3161,
+          "pixel_sha256": "c2abcae664025db75933328ad375b6ecc780d49a335ccec5a2581efe80f05229",
+          "review": "sheet-01.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-catalog-refresh-recovered-320-2x.png",
+      "sha256": "3d92ce0bfbe0c53d8aa673bea856449985c02eebccb04b45f90a7bffc276f56f",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "88e32ed4e24204868c9da5496c5d08604eb991a9332f516b3b1b9bb4f6e92254",
+          "review": "sheet-08.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "513dc01b575c2c1b5fbdadbed2a7645c3516c2067083be7a75dab278fc3ad9a4",
+          "review": "sheet-08.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-catalog-refresh-recovered-393-1x.long.png",
+      "sha256": "626202225717f37c86a1dcb0abec46903f41943181d0ea28951e6e6c20699541",
+      "width": 393,
+      "height": 1615,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6df2083d88e72ff4cf599bc51a8bb8d3d96204d4c77266a8a7c617207b58a42b",
+          "review": "sheet-02.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "ac603a6c0ae53bcbb33c98452c22a6f916d5b3e323ade4a8ba1ec569cca03c7f",
+          "review": "sheet-02.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1615,
+          "pixel_sha256": "b5ffaff21f524e96af55ffee46fa2defa5398d0f8a37ebd3e08ce17ab3512c27",
+          "review": "sheet-02.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-catalog-refresh-recovered-393-1x.png",
+      "sha256": "07cb82c355f4e0dd7759ce9ab008e7a526b4b7507b9dc6edd4ff84aa21e89324",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "16da6b38ab2c82a69821586aedba72ab8d13e934e2874a1cbac1b21b14dc2573",
+          "review": "sheet-08.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "71650f76831fb37be9f56069ca7f8fe183669c0054aaf6835a2dae294073e63a",
+          "review": "sheet-09.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-catalog-team-320-2x.long.png",
+      "sha256": "e9093f25cafadb8add0525e561849cda24c6ff9d42d8e1baaf590bbbf994a853",
+      "width": 320,
+      "height": 1113,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "76a440339da49b029e3db5e5e0fc9525fc7cc9600cee81b16fa3780c08b8db8c",
+          "review": "sheet-09.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1113,
+          "pixel_sha256": "492d28756bb739d620528762c4be38ae702ef6675cdd38da226e2befc654fe14",
+          "review": "sheet-09.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-catalog-team-320-2x.png",
+      "sha256": "dd94fdeca94189297be327d199b618f37e1b02896fd85a7efd000df1fef09733",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "76a440339da49b029e3db5e5e0fc9525fc7cc9600cee81b16fa3780c08b8db8c",
+          "review": "sheet-09.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "0f871a825959e541fb92e72fabc18a3b25649dc2399ee229b5701cbcbbff06c8",
+          "review": "sheet-09.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-catalog-team-393-1x.png",
+      "sha256": "b447c2032a2ff8ea69e584bea065ba29ef54bc93e5e8ef9fd6deeab1baed9d99",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "5f11df934ddb34618ed6d76ef7075017b2629195bb57a3e1dc154bdba7c19fe4",
+          "review": "sheet-09.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "6b6d0b50f82430578d919b087709f0dc1cda4170a35f8c55b73cb48cc8bd9864",
+          "review": "sheet-09.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-catalog-team-back-dismissed-320-2x.long.png",
+      "sha256": "dfe029de1a0b06403e982e81a22f52e064e3a84ed88f666dd89d8d473753c230",
+      "width": 320,
+      "height": 3161,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "3080ed1e9099f20a15fa2c3cb615ed0d8624a066c7a7c5e4cb570f52bd8263fd",
+          "review": "sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "701d67450a0486656e4e942b279540206444850701fa3805c2c7e73b81561570",
+          "review": "sheet-01.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "3921da55ed9b6d493f46e0f448c55e776ec191ca0647b5bce138219a0c5eb232",
+          "review": "sheet-01.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "a752944d98d6700c5344afd38980d7369b801eb3d5c3a5edadbec7f81d3216ce",
+          "review": "sheet-01.png#tile-3"
+        },
+        {
+          "y0": 2600,
+          "y1": 3161,
+          "pixel_sha256": "c2abcae664025db75933328ad375b6ecc780d49a335ccec5a2581efe80f05229",
+          "review": "sheet-01.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-catalog-team-back-dismissed-320-2x.png",
+      "sha256": "085fc7420b1b22ce1c923044c573e38a0ad424ec2a4751241a30ef65ffde7a55",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ad9c8c455b5e59b7d87719386850933720d9a61d81eee014dd12ecc73a6379fb",
+          "review": "sheet-10.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "6f9790229d75d7a495d5fff475a352124c1b21d241582e23e3b283fbf56fd012",
+          "review": "sheet-10.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-catalog-team-back-dismissed-393-1x.long.png",
+      "sha256": "626202225717f37c86a1dcb0abec46903f41943181d0ea28951e6e6c20699541",
+      "width": 393,
+      "height": 1615,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6df2083d88e72ff4cf599bc51a8bb8d3d96204d4c77266a8a7c617207b58a42b",
+          "review": "sheet-02.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "ac603a6c0ae53bcbb33c98452c22a6f916d5b3e323ade4a8ba1ec569cca03c7f",
+          "review": "sheet-02.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1615,
+          "pixel_sha256": "b5ffaff21f524e96af55ffee46fa2defa5398d0f8a37ebd3e08ce17ab3512c27",
+          "review": "sheet-02.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-catalog-team-back-dismissed-393-1x.png",
+      "sha256": "ae44339991e756eb3ce6b169d7a65fb8a1a4348c5fef20e17685a2f28a11fa47",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "1eab1d9668491538259de5ec54b1a5a644f3998c5cb3e2e0c34f532abf07c63d",
+          "review": "sheet-10.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "47c9616b7bfefd19832214f6a4bad40513b05227273e69afa8e9b06a109b7a1e",
+          "review": "sheet-10.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-catalog-team-barrier-dismissed-320-2x.long.png",
+      "sha256": "dfe029de1a0b06403e982e81a22f52e064e3a84ed88f666dd89d8d473753c230",
+      "width": 320,
+      "height": 3161,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "3080ed1e9099f20a15fa2c3cb615ed0d8624a066c7a7c5e4cb570f52bd8263fd",
+          "review": "sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "701d67450a0486656e4e942b279540206444850701fa3805c2c7e73b81561570",
+          "review": "sheet-01.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "3921da55ed9b6d493f46e0f448c55e776ec191ca0647b5bce138219a0c5eb232",
+          "review": "sheet-01.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "a752944d98d6700c5344afd38980d7369b801eb3d5c3a5edadbec7f81d3216ce",
+          "review": "sheet-01.png#tile-3"
+        },
+        {
+          "y0": 2600,
+          "y1": 3161,
+          "pixel_sha256": "c2abcae664025db75933328ad375b6ecc780d49a335ccec5a2581efe80f05229",
+          "review": "sheet-01.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-catalog-team-barrier-dismissed-320-2x.png",
+      "sha256": "085fc7420b1b22ce1c923044c573e38a0ad424ec2a4751241a30ef65ffde7a55",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ad9c8c455b5e59b7d87719386850933720d9a61d81eee014dd12ecc73a6379fb",
+          "review": "sheet-10.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "6f9790229d75d7a495d5fff475a352124c1b21d241582e23e3b283fbf56fd012",
+          "review": "sheet-10.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-catalog-team-barrier-dismissed-393-1x.long.png",
+      "sha256": "626202225717f37c86a1dcb0abec46903f41943181d0ea28951e6e6c20699541",
+      "width": 393,
+      "height": 1615,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6df2083d88e72ff4cf599bc51a8bb8d3d96204d4c77266a8a7c617207b58a42b",
+          "review": "sheet-02.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "ac603a6c0ae53bcbb33c98452c22a6f916d5b3e323ade4a8ba1ec569cca03c7f",
+          "review": "sheet-02.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1615,
+          "pixel_sha256": "b5ffaff21f524e96af55ffee46fa2defa5398d0f8a37ebd3e08ce17ab3512c27",
+          "review": "sheet-02.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-catalog-team-barrier-dismissed-393-1x.png",
+      "sha256": "ae44339991e756eb3ce6b169d7a65fb8a1a4348c5fef20e17685a2f28a11fa47",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "1eab1d9668491538259de5ec54b1a5a644f3998c5cb3e2e0c34f532abf07c63d",
+          "review": "sheet-10.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "47c9616b7bfefd19832214f6a4bad40513b05227273e69afa8e9b06a109b7a1e",
+          "review": "sheet-10.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-catalog-team-closed-320-2x.long.png",
+      "sha256": "dfe029de1a0b06403e982e81a22f52e064e3a84ed88f666dd89d8d473753c230",
+      "width": 320,
+      "height": 3161,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "3080ed1e9099f20a15fa2c3cb615ed0d8624a066c7a7c5e4cb570f52bd8263fd",
+          "review": "sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "701d67450a0486656e4e942b279540206444850701fa3805c2c7e73b81561570",
+          "review": "sheet-01.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "3921da55ed9b6d493f46e0f448c55e776ec191ca0647b5bce138219a0c5eb232",
+          "review": "sheet-01.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "a752944d98d6700c5344afd38980d7369b801eb3d5c3a5edadbec7f81d3216ce",
+          "review": "sheet-01.png#tile-3"
+        },
+        {
+          "y0": 2600,
+          "y1": 3161,
+          "pixel_sha256": "c2abcae664025db75933328ad375b6ecc780d49a335ccec5a2581efe80f05229",
+          "review": "sheet-01.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-catalog-team-closed-320-2x.png",
+      "sha256": "085fc7420b1b22ce1c923044c573e38a0ad424ec2a4751241a30ef65ffde7a55",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ad9c8c455b5e59b7d87719386850933720d9a61d81eee014dd12ecc73a6379fb",
+          "review": "sheet-10.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "6f9790229d75d7a495d5fff475a352124c1b21d241582e23e3b283fbf56fd012",
+          "review": "sheet-10.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-catalog-team-closed-393-1x.long.png",
+      "sha256": "626202225717f37c86a1dcb0abec46903f41943181d0ea28951e6e6c20699541",
+      "width": 393,
+      "height": 1615,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6df2083d88e72ff4cf599bc51a8bb8d3d96204d4c77266a8a7c617207b58a42b",
+          "review": "sheet-02.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "ac603a6c0ae53bcbb33c98452c22a6f916d5b3e323ade4a8ba1ec569cca03c7f",
+          "review": "sheet-02.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1615,
+          "pixel_sha256": "b5ffaff21f524e96af55ffee46fa2defa5398d0f8a37ebd3e08ce17ab3512c27",
+          "review": "sheet-02.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-catalog-team-closed-393-1x.png",
+      "sha256": "ae44339991e756eb3ce6b169d7a65fb8a1a4348c5fef20e17685a2f28a11fa47",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "1eab1d9668491538259de5ec54b1a5a644f3998c5cb3e2e0c34f532abf07c63d",
+          "review": "sheet-10.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "47c9616b7bfefd19832214f6a4bad40513b05227273e69afa8e9b06a109b7a1e",
+          "review": "sheet-10.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-catalog-team-empty-320-2x.long.png",
+      "sha256": "1d9e4a174282ea18f2d9497fcf190183bc99f65e6e0374f8b33e35a980fd4b4b",
+      "width": 320,
+      "height": 999,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c3919a177929d44bb6e3c8c2fc87710ddb9c8be0c622cd6aa0a73dbd20e14448",
+          "review": "sheet-10.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 999,
+          "pixel_sha256": "d10da2e516bcd3db4accea55ee49f8121c502b10a889529092916aec15ab3bf3",
+          "review": "sheet-10.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-catalog-team-empty-320-2x.png",
+      "sha256": "b4cbd49a26c1ef3214245a927e1f86d03c74f4b9e1a08e2fa0fa71c46050146f",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c3919a177929d44bb6e3c8c2fc87710ddb9c8be0c622cd6aa0a73dbd20e14448",
+          "review": "sheet-10.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "55bac0bfbfaf5ac911b1d184ea7f57f915b08b3b20f0cda6937833f067b99eff",
+          "review": "sheet-11.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-catalog-team-empty-393-1x.png",
+      "sha256": "bc95c0573a5d7642ee212e3bc7448e7282c75150cf1f805e86aec70b9059e0e8",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "5487fb70533534eb822773272cf2e7f6bc8f853ebefb57c337e8c64ef877f4f9",
+          "review": "sheet-11.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "bbd36b1645da8184f628418ff2b42800a6a01ccf3c640ecdb9c5bc4724552286",
+          "review": "sheet-11.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-discovery-home-320-2x.long.png",
+      "sha256": "b29f1f9dc909ca023dcd2865b0d4424a7485a4fb1dd4d05f54d8ee61e6cf46ef",
+      "width": 320,
+      "height": 1939,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a6aa9ef781460e5016527f099324419f84c6e4f14cdb26c410651cd7359b41ef",
+          "review": "../mom-rest-control-visual-review/sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "0edf1d289b2e804b112ca91367c51524ae8a6a6a4684a4fdcad651b0ae8de7ad",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1939,
+          "pixel_sha256": "8824f3d60a1ba788460adc4d5731a39ee81dafb5cb1f7d7112dd43123bbe2812",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-discovery-home-320-2x.png",
+      "sha256": "6b61a480f7a3fd5ddb29685624aed748a99b94ad55016153855b11225ef09868",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a6aa9ef781460e5016527f099324419f84c6e4f14cdb26c410651cd7359b41ef",
+          "review": "../mom-rest-control-visual-review/sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1462d46c4861c29041d879736402097e4fd061fcb6e577142cd6e832cb70fae0",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-discovery-home-393-1x.long.png",
+      "sha256": "0a4e3294f0ff67f0d7ed84ee3eacb393b50571fb4db300a7d15899ba9359a330",
+      "width": 393,
+      "height": 917,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa661999d6307948942c23dc2e7dad221367a614b3ae09dd12dec24bc67fec6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 917,
+          "pixel_sha256": "134109b5afc9a0d972ecc00b197fb963d8131bfc37dbfad2a4c51a0a091a86ad",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-discovery-home-393-1x.png",
+      "sha256": "be291808401e7f353b8f14552b0df4a698f3edd191e5e2d770c66c2e129fc145",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa661999d6307948942c23dc2e7dad221367a614b3ae09dd12dec24bc67fec6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3208ac8b3b1d4a7464bc46ef7618c8e19bd85dee870d86c1847457571b6198a6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-owned-booking-320-2x.long.png",
+      "sha256": "fb3fefc3474b713e419ccaa6a5311d23891d6fb504c1ecc53f560c23e654ada8",
+      "width": 320,
+      "height": 1123,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "4939d48bc8d1cc106a1dfd193eb12c6688bf0077cd8eec7ff11373f9f55d1e2e",
+          "review": "sheet-11.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1123,
+          "pixel_sha256": "80780d15c2d59186ef644a9219914021bf4241120ea8f61bb398be9636131aeb",
+          "review": "sheet-11.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-owned-booking-320-2x.png",
+      "sha256": "f136ce939796ace273baa2bf0999267869f68eb1a96d81fba1676f5e54a6306b",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "4939d48bc8d1cc106a1dfd193eb12c6688bf0077cd8eec7ff11373f9f55d1e2e",
+          "review": "sheet-11.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "20368731372907646c7c644ab958088176d7d236761b1ef0216e50c3b6a8560d",
+          "review": "sheet-11.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-owned-booking-393-1x.png",
+      "sha256": "15ba20e272414d373a432186af649c7b3c638d1ca16c7f5cfd7814bf2b04a537",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "e361d4d4e401e012e7910dd5e7bdc3bf4ccfcbefc3dd6a860338fcd13786ade5",
+          "review": "sheet-12.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "e8daee8a386c4a2347522e7387a7f6bd1eec7a0a652316de8713c3071a7f8384",
+          "review": "sheet-12.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-owned-booking-return-320-2x.long.png",
+      "sha256": "12e772a0869f8dca6d99de934a409daec4c352899f8dcd2bdf8c4bc6f37d56b1",
+      "width": 320,
+      "height": 2426,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "3bc93003b58853d413ef36869ba51bce09368769e2bfee123be7d00daa3b5dec",
+          "review": "sheet-12.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "9a36a8e973a285c960de21fde17e3612d251b111cdf3256316558afe0d57fe2e",
+          "review": "sheet-12.png#tile-3"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "7965fc4b18ead2e3d8adaa7b43fc7d33c89e72f128173835ba407ecffb9cfa11",
+          "review": "sheet-12.png#tile-4"
+        },
+        {
+          "y0": 1950,
+          "y1": 2426,
+          "pixel_sha256": "201c0929e9f6cb5a1f0b94980eadf71d1c44011fa76f81879ceff49902601d59",
+          "review": "sheet-12.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-owned-booking-return-320-2x.png",
+      "sha256": "96e55a64c0361773ddc1ae554a3085e8c12fb8152ec85e636e6fea4d05622bb1",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "06123d4bb892c7bbb981f94961fffe6030bce1b7f2b125c57e4ee1c2f7620fcc",
+          "review": "sheet-13.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1f52922247990c188f1a8bc196290e8e87beed2a03c6436efa68d9053dfcdcb1",
+          "review": "sheet-13.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-owned-booking-return-393-1x.long.png",
+      "sha256": "add186eedbfa58be82bd981c635cb9f727aa09bd5c4a57720a333b6039aacb10",
+      "width": 393,
+      "height": 1272,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "222a57c85f9ac9033a32e75910c1c3dee67bf565293e6e51a8dd1dfbc4a33b93",
+          "review": "sheet-13.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1272,
+          "pixel_sha256": "62bd42c9be6644cb0a0a13780c53f29e6f5cb835c016ddff47fe2af10cc5e55a",
+          "review": "sheet-13.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-owned-booking-return-393-1x.png",
+      "sha256": "9260c6898f3389c267799603f5ca119fdd28cf29fbf772f812048ee95b771494",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "f3c6850a7abb3a402ea5b667dbab9ce990db68e73d77c71e7275906e405eef96",
+          "review": "sheet-13.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "f46088a54eca54cac142439e17b37ae11ba6aa91d575947340eb6a2bac0134c8",
+          "review": "sheet-13.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-owned-catalog-320-2x.long.png",
+      "sha256": "ea79eb084e76caca4d7333b66416a28e75ef8b6b456d3558cb49655833b2bb11",
+      "width": 320,
+      "height": 3380,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b6b0235802f8c1d8be989174d2b19c959647299092c0dc096dbcc09bb12a993b",
+          "review": "sheet-14.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "28ff03e4e5e44f72847dc0e5fe8bd813f133ee985fb5fa663d137e2f87e03a9e",
+          "review": "sheet-14.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "9adcbaf0f0926602dd7ac0b054e0852d73f842ccd42b1670789dcfffaa53718e",
+          "review": "sheet-14.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "b2aa47b10a8290b467cf474b539431b7189ebebc990a98cfb177d0b5d440523f",
+          "review": "sheet-14.png#tile-3"
+        },
+        {
+          "y0": 2600,
+          "y1": 3250,
+          "pixel_sha256": "ae24947f085d4dd886d26b07015529de30fc0b1a1dcd02e2b49c3295bce93d15",
+          "review": "sheet-14.png#tile-4"
+        },
+        {
+          "y0": 3250,
+          "y1": 3380,
+          "pixel_sha256": "eede2435db7b0b06cb263474894db80bfaa8480b86bfb4d447df056c3babf035",
+          "review": "sheet-14.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-owned-catalog-320-2x.png",
+      "sha256": "e0ae3fac70561ae6da2a5c4055cd994448c5b44ea06a18a0711c47d0c09481b3",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b6b0235802f8c1d8be989174d2b19c959647299092c0dc096dbcc09bb12a993b",
+          "review": "sheet-14.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1ace70f230e329aaf8ea6ef4eef3f299207628632ad1d254bc7d01927d733ea5",
+          "review": "sheet-15.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-owned-catalog-393-1x.long.png",
+      "sha256": "0ae4d4b3f8682030580b597f2ba7388f4ccc5a300e5f7a97b9dd9a744ac32597",
+      "width": 393,
+      "height": 1815,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "37e62ab4003a64f6eaace7daf4d0c9c9836150df26ac094d755bc653ca83a120",
+          "review": "sheet-15.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "aa0f0e62ef0cd914986c6fba70940eac52bb037c43cf51f5978d8c95a419b610",
+          "review": "sheet-15.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1815,
+          "pixel_sha256": "e2723f96ac39fb4f274755fa6d9719aba78b14e12c48a34472ede684002f2d2c",
+          "review": "sheet-15.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-owned-catalog-393-1x.png",
+      "sha256": "efd443122c195ff1e1b6954c2deb0ed89e1d069ed9e5a53e5240f72b25164b8a",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "37e62ab4003a64f6eaace7daf4d0c9c9836150df26ac094d755bc653ca83a120",
+          "review": "sheet-15.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "758a7a13517891c4bc6221cf3752e6cf8edb3a1a0a9fe0bb31a0e74a98401e78",
+          "review": "sheet-15.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-owned-home-320-2x.long.png",
+      "sha256": "2fa0ada62a6d9ca50683e54400f6043cf68a1e285a2eae008e38ff1f462eb258",
+      "width": 320,
+      "height": 2459,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a6aa9ef781460e5016527f099324419f84c6e4f14cdb26c410651cd7359b41ef",
+          "review": "../mom-rest-control-visual-review/sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "0edf1d289b2e804b112ca91367c51524ae8a6a6a4684a4fdcad651b0ae8de7ad",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "737fbf296926091c9d3d8c054e5fcb5aa6828a0542d136aef0e678fcf5a2a305",
+          "review": "../more-current-visual-review/sheet-04.png#tile-5"
+        },
+        {
+          "y0": 1950,
+          "y1": 2459,
+          "pixel_sha256": "0692ec2c55d8d8438d85f340a92827d471acee47031f9c8fde3159a11158b360",
+          "review": "sheet-15.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-owned-home-320-2x.png",
+      "sha256": "6b61a480f7a3fd5ddb29685624aed748a99b94ad55016153855b11225ef09868",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a6aa9ef781460e5016527f099324419f84c6e4f14cdb26c410651cd7359b41ef",
+          "review": "../mom-rest-control-visual-review/sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1462d46c4861c29041d879736402097e4fd061fcb6e577142cd6e832cb70fae0",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-owned-home-393-1x.long.png",
+      "sha256": "0f04c06b170ca26a6ceca6d9954f08895999c1df1446be6abb5fb53f267160ab",
+      "width": 393,
+      "height": 1211,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa661999d6307948942c23dc2e7dad221367a614b3ae09dd12dec24bc67fec6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1211,
+          "pixel_sha256": "468a1f2363d31ad56f5959e2dbd4aba2e602497cea767b2f5d8d0ec625cb9890",
+          "review": "sheet-16.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-owned-home-393-1x.png",
+      "sha256": "be291808401e7f353b8f14552b0df4a698f3edd191e5e2d770c66c2e129fc145",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa661999d6307948942c23dc2e7dad221367a614b3ae09dd12dec24bc67fec6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3208ac8b3b1d4a7464bc46ef7618c8e19bd85dee870d86c1847457571b6198a6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-owned-home-return-320-2x.long.png",
+      "sha256": "53dab76bd108ef47f8dc98bb82b9de00bc97767d776666d423af0937807b0883",
+      "width": 320,
+      "height": 2585,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a6aa9ef781460e5016527f099324419f84c6e4f14cdb26c410651cd7359b41ef",
+          "review": "../mom-rest-control-visual-review/sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "0edf1d289b2e804b112ca91367c51524ae8a6a6a4684a4fdcad651b0ae8de7ad",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "e0a661dbc2c0d912b322872ec7a45a9fd2b4df80fcc6622dd5db0d47c6b57381",
+          "review": "sheet-16.png#tile-1"
+        },
+        {
+          "y0": 1950,
+          "y1": 2585,
+          "pixel_sha256": "c5bdf4a8bba3be58d1ae38d9f65ac4b082911e10b97a365b565f41de47f24293",
+          "review": "sheet-16.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-owned-home-return-320-2x.png",
+      "sha256": "6b61a480f7a3fd5ddb29685624aed748a99b94ad55016153855b11225ef09868",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a6aa9ef781460e5016527f099324419f84c6e4f14cdb26c410651cd7359b41ef",
+          "review": "../mom-rest-control-visual-review/sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1462d46c4861c29041d879736402097e4fd061fcb6e577142cd6e832cb70fae0",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-owned-home-return-393-1x.long.png",
+      "sha256": "7dca995b257e6bf92087e0d7fe613c40c3868b4e2fbe8341ba169a704c585646",
+      "width": 393,
+      "height": 1264,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa661999d6307948942c23dc2e7dad221367a614b3ae09dd12dec24bc67fec6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1264,
+          "pixel_sha256": "626ec0fa289ae723b45b92f00d1cf871d198cd768285d265591928707a7ba0e7",
+          "review": "sheet-16.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-owned-home-return-393-1x.png",
+      "sha256": "be291808401e7f353b8f14552b0df4a698f3edd191e5e2d770c66c2e129fc145",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa661999d6307948942c23dc2e7dad221367a614b3ae09dd12dec24bc67fec6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3208ac8b3b1d4a7464bc46ef7618c8e19bd85dee870d86c1847457571b6198a6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-owned-package-320-2x.long.png",
+      "sha256": "12e772a0869f8dca6d99de934a409daec4c352899f8dcd2bdf8c4bc6f37d56b1",
+      "width": 320,
+      "height": 2426,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "3bc93003b58853d413ef36869ba51bce09368769e2bfee123be7d00daa3b5dec",
+          "review": "sheet-12.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "9a36a8e973a285c960de21fde17e3612d251b111cdf3256316558afe0d57fe2e",
+          "review": "sheet-12.png#tile-3"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "7965fc4b18ead2e3d8adaa7b43fc7d33c89e72f128173835ba407ecffb9cfa11",
+          "review": "sheet-12.png#tile-4"
+        },
+        {
+          "y0": 1950,
+          "y1": 2426,
+          "pixel_sha256": "201c0929e9f6cb5a1f0b94980eadf71d1c44011fa76f81879ceff49902601d59",
+          "review": "sheet-12.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-owned-package-320-2x.png",
+      "sha256": "9a106badc7a01b451c71f7304520fffda7844efca780e45187cc4c6c90997f9b",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "3bc93003b58853d413ef36869ba51bce09368769e2bfee123be7d00daa3b5dec",
+          "review": "sheet-12.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "e5db96a85f82452ec3716ea5b4d7b971e31222a46029e6e6bcea271bf7ea84a3",
+          "review": "sheet-16.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-owned-package-393-1x.long.png",
+      "sha256": "add186eedbfa58be82bd981c635cb9f727aa09bd5c4a57720a333b6039aacb10",
+      "width": 393,
+      "height": 1272,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "222a57c85f9ac9033a32e75910c1c3dee67bf565293e6e51a8dd1dfbc4a33b93",
+          "review": "sheet-13.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1272,
+          "pixel_sha256": "62bd42c9be6644cb0a0a13780c53f29e6f5cb835c016ddff47fe2af10cc5e55a",
+          "review": "sheet-13.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-owned-package-393-1x.png",
+      "sha256": "6a6010c7ba628f9684391ac5b13ed4182d8d4754bd0b2378ef4aa784329a77b4",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "222a57c85f9ac9033a32e75910c1c3dee67bf565293e6e51a8dd1dfbc4a33b93",
+          "review": "sheet-13.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1d3ef37a7d6b299aa5cca32446b248a1f5e9f5f5a250d01e2e9e13e48502a666",
+          "review": "sheet-16.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-owned-progress-320-2x.long.png",
+      "sha256": "8df9974e54be0c149c5e125618bcb21f04320581f1cf449f0d55c49cef5fa18d",
+      "width": 320,
+      "height": 1120,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "301c85c0a89433acfcf659cf318d535f25a18865acc2e5c308cd9c41ea2d9142",
+          "review": "sheet-17.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1120,
+          "pixel_sha256": "62c1b6324b570e1d5e524429c0a1166f8595a0af77fb513ee8beced9aa1b5061",
+          "review": "sheet-17.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-owned-progress-320-2x.png",
+      "sha256": "44218dab4e4b9dddc40662b57718ee1e48180096fa07541dbac5d84553be5a72",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a0ed3274ffa60730714e4f9434defb29bcac4e48a6c870e6dd543c02cf179a1f",
+          "review": "sheet-17.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "44440790e37de8cbebfe0501fe709a72999b7fb4da8d6c3d998045b6cac01250",
+          "review": "sheet-17.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-owned-progress-393-1x.png",
+      "sha256": "52490774a2183bf38b8a6a9d875f0929fe11eabd8ad218b0ad565c96b6952973",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "14c3aeb76547e0f459d48a2e07666bf74bfb6e981691f342122e102361799eed",
+          "review": "sheet-17.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "5e269ca9e36daffe984531405b8fd9a7fd95687843288196663912cae234267b",
+          "review": "../account-current-visual-review/sheet-05.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-owned-progress-return-320-2x.long.png",
+      "sha256": "12e772a0869f8dca6d99de934a409daec4c352899f8dcd2bdf8c4bc6f37d56b1",
+      "width": 320,
+      "height": 2426,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "3bc93003b58853d413ef36869ba51bce09368769e2bfee123be7d00daa3b5dec",
+          "review": "sheet-12.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "9a36a8e973a285c960de21fde17e3612d251b111cdf3256316558afe0d57fe2e",
+          "review": "sheet-12.png#tile-3"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "7965fc4b18ead2e3d8adaa7b43fc7d33c89e72f128173835ba407ecffb9cfa11",
+          "review": "sheet-12.png#tile-4"
+        },
+        {
+          "y0": 1950,
+          "y1": 2426,
+          "pixel_sha256": "201c0929e9f6cb5a1f0b94980eadf71d1c44011fa76f81879ceff49902601d59",
+          "review": "sheet-12.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-owned-progress-return-320-2x.png",
+      "sha256": "96e55a64c0361773ddc1ae554a3085e8c12fb8152ec85e636e6fea4d05622bb1",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "06123d4bb892c7bbb981f94961fffe6030bce1b7f2b125c57e4ee1c2f7620fcc",
+          "review": "sheet-13.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1f52922247990c188f1a8bc196290e8e87beed2a03c6436efa68d9053dfcdcb1",
+          "review": "sheet-13.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-owned-progress-return-393-1x.long.png",
+      "sha256": "add186eedbfa58be82bd981c635cb9f727aa09bd5c4a57720a333b6039aacb10",
+      "width": 393,
+      "height": 1272,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "222a57c85f9ac9033a32e75910c1c3dee67bf565293e6e51a8dd1dfbc4a33b93",
+          "review": "sheet-13.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1272,
+          "pixel_sha256": "62bd42c9be6644cb0a0a13780c53f29e6f5cb835c016ddff47fe2af10cc5e55a",
+          "review": "sheet-13.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-owned-progress-return-393-1x.png",
+      "sha256": "9260c6898f3389c267799603f5ca119fdd28cf29fbf772f812048ee95b771494",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "f3c6850a7abb3a402ea5b667dbab9ce990db68e73d77c71e7275906e405eef96",
+          "review": "sheet-13.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "f46088a54eca54cac142439e17b37ae11ba6aa91d575947340eb6a2bac0134c8",
+          "review": "sheet-13.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-better-breastfeeding-320-2x.long.png",
+      "sha256": "487eeaf97afb7c955b9c720ca1549eaacb155a781498c56aea0f35603dae00a8",
+      "width": 320,
+      "height": 1968,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2bca3f80bde0965f272dd20434599b0942a64d95fcdff677ad14df2624f4e30d",
+          "review": "sheet-17.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "3876cb54007fb8d28352faae1268f2e8cd678076f8d25850c40c82d663312def",
+          "review": "sheet-18.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "d3def8854c2692f18f67f932935b45c3aba8ed5c59defb3c3639e557e534ea3e",
+          "review": "sheet-18.png#tile-1"
+        },
+        {
+          "y0": 1950,
+          "y1": 1968,
+          "pixel_sha256": "51b35ef9ab9a9cb065148d1326ee8c5f87e1333f804e47362efd97312a046621",
+          "review": "sheet-18.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-better-breastfeeding-320-2x.png",
+      "sha256": "1fbf36c3e74e945570dd3625b1edc3cb4d4b5350d4dd3b286f2c9d4b8dd6d543",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2a8e1063cd47fdbecaa9babd76509974983a959150021ffd1b906e278394f2c7",
+          "review": "sheet-18.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "f70935b6f025e5c8332725f21907f19242665e573bbecfa27dee28e59725a35c",
+          "review": "sheet-18.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-better-breastfeeding-393-1x.long.png",
+      "sha256": "623cf7da952a5ca4eba4f020cd049ffe08b8fb09289b73742d67c1234ac2e51f",
+      "width": 393,
+      "height": 980,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6a04cffdc2c2d40ab76d35d81fd985ff93dbf17192a361f9800c743c41dcc558",
+          "review": "sheet-18.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 980,
+          "pixel_sha256": "1dd711ac80471b345b89d6c65e565ddb8953540a4453bd7e949a07733806ebab",
+          "review": "sheet-19.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-better-breastfeeding-393-1x.png",
+      "sha256": "fc47a4d2edeffc78f49cb54ed1116f6baee1a6845245ed1ad2bcb14b2fe3c510",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6a04cffdc2c2d40ab76d35d81fd985ff93dbf17192a361f9800c743c41dcc558",
+          "review": "sheet-18.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "21b9ac1a2426dbe960daad57a7fbe73bcd922ad921c8866af510478c42759578",
+          "review": "sheet-19.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-buy-better-breastfeeding-320-2x.long.png",
+      "sha256": "2cc0f21885a6f3c699d1f3b6977177c39c72d281fed3c4ac087f9ed6c95659e8",
+      "width": 320,
+      "height": 1094,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "03348715f4c46a0453626e1163283e5f81f1e9020d8505973ee9a09f94ddb20c",
+          "review": "sheet-19.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1094,
+          "pixel_sha256": "21638edfacee13eaff1b0753be39e73f900f62e0626e248d98752aafa3f1088d",
+          "review": "sheet-19.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-buy-better-breastfeeding-320-2x.png",
+      "sha256": "a90faaf665c74d0bad49dad649941415d9f97e843a445a0e3bdbf0c93978bc77",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "03348715f4c46a0453626e1163283e5f81f1e9020d8505973ee9a09f94ddb20c",
+          "review": "sheet-19.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "84af94ab86a68abd76a651e0ddefb4ca5f407a46f6e219820a157c25460030d5",
+          "review": "sheet-19.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-buy-better-breastfeeding-393-1x.png",
+      "sha256": "b7e7b9463d530368a35fbf0157f1e393f8a97517b8b6a788b6d0ad13f43b138f",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "defb373e27a7beaa480681e6701dbce52e23573b42184509bdb003fc23fe914c",
+          "review": "sheet-19.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "667d8679d2568775b06ca68df1f6db223528948f1abf2044ab065b946c1d9365",
+          "review": "sheet-20.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-buy-cancel-better-breastfeeding-320-2x.long.png",
+      "sha256": "487eeaf97afb7c955b9c720ca1549eaacb155a781498c56aea0f35603dae00a8",
+      "width": 320,
+      "height": 1968,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2bca3f80bde0965f272dd20434599b0942a64d95fcdff677ad14df2624f4e30d",
+          "review": "sheet-17.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "3876cb54007fb8d28352faae1268f2e8cd678076f8d25850c40c82d663312def",
+          "review": "sheet-18.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "d3def8854c2692f18f67f932935b45c3aba8ed5c59defb3c3639e557e534ea3e",
+          "review": "sheet-18.png#tile-1"
+        },
+        {
+          "y0": 1950,
+          "y1": 1968,
+          "pixel_sha256": "51b35ef9ab9a9cb065148d1326ee8c5f87e1333f804e47362efd97312a046621",
+          "review": "sheet-18.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-buy-cancel-better-breastfeeding-320-2x.png",
+      "sha256": "7b0e6af0137da04869bd9c5685ec0a98dd1ecb7f4d7d29802b447b93bf6d5ed3",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "574d90fa9072c09c45066c602c2aab5b9095ddca170f64ecb32730559b8b55e2",
+          "review": "sheet-20.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "48f904269554c05705898aebffb864c1a4c308182c22929d77f49ca5ef96ca49",
+          "review": "sheet-20.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-buy-cancel-better-breastfeeding-393-1x.long.png",
+      "sha256": "623cf7da952a5ca4eba4f020cd049ffe08b8fb09289b73742d67c1234ac2e51f",
+      "width": 393,
+      "height": 980,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6a04cffdc2c2d40ab76d35d81fd985ff93dbf17192a361f9800c743c41dcc558",
+          "review": "sheet-18.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 980,
+          "pixel_sha256": "1dd711ac80471b345b89d6c65e565ddb8953540a4453bd7e949a07733806ebab",
+          "review": "sheet-19.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-buy-cancel-better-breastfeeding-393-1x.png",
+      "sha256": "7751cfd04846ee8f29a7d4a02f75e8981b3562671430930efb5f008f839984b3",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "adb3813dc43a2123ed234b044ea7dae594d3b565747ebd2d7da402432648f431",
+          "review": "sheet-20.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "984229f6c44de3b8f0bb8c991f0d12b370d4ba4436f6f1fbeac0a16e7bc4908b",
+          "review": "sheet-20.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-buy-cancel-comfortable-feeding-320-2x.long.png",
+      "sha256": "bc1bb1b9a87fe0604a3247c6b8296f209908969e5cd39c39d6c7250d5321bcf6",
+      "width": 320,
+      "height": 1968,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "df3fc103463626d30717c1486ed9c29d61569112065716f0a6606a34663f4d58",
+          "review": "sheet-20.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "ee8e04271895b13e4d9e600a9fd59e5fa640aa1963c69273933b0686a5efaba5",
+          "review": "sheet-21.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "83766875cd2fc006682d3ee2d0640917180406bd958a6f126000145d689947b1",
+          "review": "sheet-21.png#tile-1"
+        },
+        {
+          "y0": 1950,
+          "y1": 1968,
+          "pixel_sha256": "51b35ef9ab9a9cb065148d1326ee8c5f87e1333f804e47362efd97312a046621",
+          "review": "sheet-18.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-buy-cancel-comfortable-feeding-320-2x.png",
+      "sha256": "c940efd70e97a342b0fdbc60367aeaba6194a5c92bd4154f569d9a75e5ab1b98",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "4684a9ee56b588bdb0b878d8cc30542860c5185936d14d9186b3fb58d0eb3f0e",
+          "review": "sheet-21.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "44c59c53daf79df3fa47030e3ddb734079aec637c0529a39438735b08f92a279",
+          "review": "sheet-21.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-buy-cancel-comfortable-feeding-393-1x.long.png",
+      "sha256": "9d97acde5709577df3f8fa4ad92c4d2085944be83eb5f20f642e9b2fb0bfe9ca",
+      "width": 393,
+      "height": 1000,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "4dbfea15ba2c45672ba933d6404d5136e7830a34cd861f536f07017060126085",
+          "review": "sheet-21.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1000,
+          "pixel_sha256": "73bed66f9babbcd5c602ac3fd27503e529719d4160d2078331ae54516984172d",
+          "review": "sheet-21.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-buy-cancel-comfortable-feeding-393-1x.png",
+      "sha256": "66425efc4bf3adeaf6ab4fa0658453346191b13eb3732208fd6fc5aafcc1e9bf",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "63e5a9f3ebe4eafae9fe65fb5f990dea92a7c5435d56090e70d366ebcc53a924",
+          "review": "sheet-22.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "065efb0ae095dc558cf6f7839afaa8c4bc29d3ae3a72747759cd5c1a0a7648f5",
+          "review": "sheet-22.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-buy-cancel-feeding-confidence-320-2x.long.png",
+      "sha256": "ddeeabe3d2ea7801edf98d82f32a83767c0c8990ca59a7dc9ce26631c011437e",
+      "width": 320,
+      "height": 2008,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2761111ff7ead03718e169cfe59fac0a82c0f0a0588fb9342bc34d69352d876b",
+          "review": "sheet-22.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "ee8e04271895b13e4d9e600a9fd59e5fa640aa1963c69273933b0686a5efaba5",
+          "review": "sheet-21.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "d58ded7df8989fa893e947db4482e9fc1a1fd022f62db9aeb8da29273611fd00",
+          "review": "sheet-22.png#tile-3"
+        },
+        {
+          "y0": 1950,
+          "y1": 2008,
+          "pixel_sha256": "889273b4de5ae28a8c66c15256496d50e1ca0895766215915b752a542c783fb4",
+          "review": "sheet-22.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-buy-cancel-feeding-confidence-320-2x.png",
+      "sha256": "7c9e69b1363283930e8d2b068191154c057c2aa719242a16ea890d99ef470a10",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "94ba1b91b38db05305524edc418e39f3c8d51d9bc9be92b3bf6672a9cb8b3cfd",
+          "review": "sheet-22.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "ba4b2463e39966236f77aeccddaa9058b21e46b6ec087d6f4b4370d0a39cdb68",
+          "review": "sheet-23.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-buy-cancel-feeding-confidence-393-1x.long.png",
+      "sha256": "32173148e547dacd963cd69e9dc624e38f1ae4cfa7883e83d53241d2860a5cb2",
+      "width": 393,
+      "height": 1000,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "35e98e8bce5f0b6f7de91e98bd8f83e892d9f77034bb0edcfb80725b5d2e3033",
+          "review": "sheet-23.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1000,
+          "pixel_sha256": "99099c1f732d65db360ee805fcfafcb3cfa196908aa2df57f7f216ec81dc8808",
+          "review": "sheet-23.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-buy-cancel-feeding-confidence-393-1x.png",
+      "sha256": "0364a97365392b3f3dbbb20d5f7538db9aa4eb35a9c886ac6226dee6cf8cc681",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "e6e5c2316df04135175b562b8005184188741f03efe1ff3b8a1033c1f5c3a240",
+          "review": "sheet-23.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "06ba976c704386c37a062b5b4a08765d6d96d5ad02d3dc6923f4377fe100c080",
+          "review": "sheet-23.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-buy-cancel-milk-supply-care-320-2x.long.png",
+      "sha256": "5eeca7c1b97f45b6c2b8197d5adfc671ef9ca67115dc58d487978ea47e26b7f4",
+      "width": 320,
+      "height": 1968,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c57bc765cb371eef37ded8f3f8455454c4fd7c7a50b9abebd991c5bd0c2731b8",
+          "review": "sheet-23.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "10c7c36ad8c8dd8ea6f97dc8a54066efc076d67ee76c5d485ee7ec037c4d3aa4",
+          "review": "sheet-24.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "80aba94cd75864f942797a197b625e1013bd978315ec1dbaa84d803d026902de",
+          "review": "sheet-24.png#tile-1"
+        },
+        {
+          "y0": 1950,
+          "y1": 1968,
+          "pixel_sha256": "51b35ef9ab9a9cb065148d1326ee8c5f87e1333f804e47362efd97312a046621",
+          "review": "sheet-18.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-buy-cancel-milk-supply-care-320-2x.png",
+      "sha256": "a6e59bdab07913eed18e407239f4481de3c9cbb2d3f28fc621d38e76cfa7fdb8",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b0f9a6358c76746ed969d0e57d7607933cc51b1c7761c9d58eb98ded41e1b25a",
+          "review": "sheet-24.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2768e72748e3740a0b4d62bd558daf16018fb66cb5f1e3fd51d227b2c541c3a9",
+          "review": "sheet-24.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-buy-cancel-milk-supply-care-393-1x.long.png",
+      "sha256": "7d6150b5ad575ab29f1c04d70a8639b4d062ec5f46c2de4e3f2888a934d43543",
+      "width": 393,
+      "height": 980,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "f1eb90fdd91e08aa9bbaeabb4ca8d16d7b4ea2dceaaa3dbc2e021fc0937cdf5e",
+          "review": "sheet-24.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 980,
+          "pixel_sha256": "30bc7c19a64df303d44e4bfefcb339df9ebec712c8c423d9c8d491bb1f5b931a",
+          "review": "sheet-24.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-buy-cancel-milk-supply-care-393-1x.png",
+      "sha256": "8da4f66b1be79738cf344aa7dc17d700a0496746fb1840a111e494cd847da624",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "7e813c528a51e8c4976cf1227a7ed5663ab9f302dffbe64e5c4d88cbcd0e98b7",
+          "review": "sheet-25.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "5fd75fab04c97b77bd4bb417d72200768c8626f9222d40a3fc9e244e4b015c45",
+          "review": "sheet-25.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-buy-comfortable-feeding-320-2x.long.png",
+      "sha256": "62e4ac73127406fde792900c771891752557438bcf3153aed0a1b03a05f74c02",
+      "width": 320,
+      "height": 1094,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "3ec8ce0e814839785e915bc9cdee3ecf0df5f8d84520ea43b9685723816ed83c",
+          "review": "sheet-25.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1094,
+          "pixel_sha256": "21638edfacee13eaff1b0753be39e73f900f62e0626e248d98752aafa3f1088d",
+          "review": "sheet-19.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-buy-comfortable-feeding-320-2x.png",
+      "sha256": "80aa97d89fa43283fa531df795745e30a79ba5b3996e8cf2d596270b265dc126",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "3ec8ce0e814839785e915bc9cdee3ecf0df5f8d84520ea43b9685723816ed83c",
+          "review": "sheet-25.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "84af94ab86a68abd76a651e0ddefb4ca5f407a46f6e219820a157c25460030d5",
+          "review": "sheet-19.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-buy-comfortable-feeding-393-1x.png",
+      "sha256": "838166c370614e89f90e2be69bc8200d2453af0e9fd90f022db8ce05f116989a",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "824dae51799f4f3a04a558a88171069bd23d55bc9a82ed7fbeaa815646cc3839",
+          "review": "sheet-25.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "667d8679d2568775b06ca68df1f6db223528948f1abf2044ab065b946c1d9365",
+          "review": "sheet-20.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-buy-feeding-confidence-320-2x.long.png",
+      "sha256": "24b2b834c065a8cf86c10b31dd3b75e122b3051dd0cffc28cfd408f9f8fae352",
+      "width": 320,
+      "height": 1094,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a05cd5d1c498c4e6efdd9237c998b8c957896b00ff214e5251b36d50ad892413",
+          "review": "sheet-25.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1094,
+          "pixel_sha256": "21638edfacee13eaff1b0753be39e73f900f62e0626e248d98752aafa3f1088d",
+          "review": "sheet-19.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-buy-feeding-confidence-320-2x.png",
+      "sha256": "8f4fca405e379c20e6018654007493111a5a13e65520770ebb99308723afd8f8",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a05cd5d1c498c4e6efdd9237c998b8c957896b00ff214e5251b36d50ad892413",
+          "review": "sheet-25.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "84af94ab86a68abd76a651e0ddefb4ca5f407a46f6e219820a157c25460030d5",
+          "review": "sheet-19.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-buy-feeding-confidence-393-1x.png",
+      "sha256": "19d372f62923b6e5f6910c974bea42e25aa9b217d70917f81b1d1ef171d28173",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "611d609f798995f5442c309ea9a910c5773d5d72de48896781c50fa05dbb7676",
+          "review": "sheet-25.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "667d8679d2568775b06ca68df1f6db223528948f1abf2044ab065b946c1d9365",
+          "review": "sheet-20.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-buy-milk-supply-care-320-2x.long.png",
+      "sha256": "651558ce06ce8c70e0eda02b2d1546ec0d1933d9780b4a13a104c55544653abd",
+      "width": 320,
+      "height": 1094,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "015ae7e7ff3b970161a8dbf35fc8d0f337d46e7ed9ea4264c76cdf18103b2605",
+          "review": "sheet-26.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1094,
+          "pixel_sha256": "21638edfacee13eaff1b0753be39e73f900f62e0626e248d98752aafa3f1088d",
+          "review": "sheet-19.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-buy-milk-supply-care-320-2x.png",
+      "sha256": "93f534e9ad7544a00a33b1735ca9c284577b37fc187b03f5a08f1c89f634e8e0",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "015ae7e7ff3b970161a8dbf35fc8d0f337d46e7ed9ea4264c76cdf18103b2605",
+          "review": "sheet-26.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "84af94ab86a68abd76a651e0ddefb4ca5f407a46f6e219820a157c25460030d5",
+          "review": "sheet-19.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-buy-milk-supply-care-393-1x.png",
+      "sha256": "f570c0fb37a52d21b294a6fd660354f4e5a4ddf94ade37db13f015f5e317ff54",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c503ecb9209ffe0643bc75bcccaf480e3426903e599ac5cca2b71b96c1ca9b58",
+          "review": "sheet-26.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "667d8679d2568775b06ca68df1f6db223528948f1abf2044ab065b946c1d9365",
+          "review": "sheet-20.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-comfortable-feeding-320-2x.long.png",
+      "sha256": "bc1bb1b9a87fe0604a3247c6b8296f209908969e5cd39c39d6c7250d5321bcf6",
+      "width": 320,
+      "height": 1968,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "df3fc103463626d30717c1486ed9c29d61569112065716f0a6606a34663f4d58",
+          "review": "sheet-20.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "ee8e04271895b13e4d9e600a9fd59e5fa640aa1963c69273933b0686a5efaba5",
+          "review": "sheet-21.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "83766875cd2fc006682d3ee2d0640917180406bd958a6f126000145d689947b1",
+          "review": "sheet-21.png#tile-1"
+        },
+        {
+          "y0": 1950,
+          "y1": 1968,
+          "pixel_sha256": "51b35ef9ab9a9cb065148d1326ee8c5f87e1333f804e47362efd97312a046621",
+          "review": "sheet-18.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-comfortable-feeding-320-2x.png",
+      "sha256": "178fe9eeafb59bce783c73e9f76037ce4b24e7047d9dc2c8978e378b2ad031a7",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "e1b0c51d7e3c5d8961ef813471ebac734caadbd9923b90086bfb803457fab1eb",
+          "review": "sheet-26.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "515cdac34ef810c0341adb482ffbb299c3a22bc25fe2e49a3e430a36db2fa720",
+          "review": "sheet-26.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-comfortable-feeding-393-1x.long.png",
+      "sha256": "9d97acde5709577df3f8fa4ad92c4d2085944be83eb5f20f642e9b2fb0bfe9ca",
+      "width": 393,
+      "height": 1000,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "4dbfea15ba2c45672ba933d6404d5136e7830a34cd861f536f07017060126085",
+          "review": "sheet-21.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1000,
+          "pixel_sha256": "73bed66f9babbcd5c602ac3fd27503e529719d4160d2078331ae54516984172d",
+          "review": "sheet-21.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-comfortable-feeding-393-1x.png",
+      "sha256": "ee3ec3bccb660188a0547ee9e129731ff5de32490a7daffbf78252b73fda815e",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "4dbfea15ba2c45672ba933d6404d5136e7830a34cd861f536f07017060126085",
+          "review": "sheet-21.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "ba6e19567666c4deb7987f809c151ba99be27a851f83e42aa629ac41fcde6407",
+          "review": "sheet-26.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-error-320-2x.png",
+      "sha256": "18fc6b3c6ce9b08677f1e844d6e816b1a1c887eab1531d3664f5f987a8b138b6",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "fd23d5377bf9cf7f90544b08ca166d63b050f08e3a9d4d1012f111eb3fc325b6",
+          "review": "sheet-26.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "c65f45a9e7b9b361a0c4b43630dc19d5d3c121f954f7c47798296da08ea227e9",
+          "review": "../account-current-visual-review/sheet-07.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-error-393-1x.png",
+      "sha256": "d8f1367f0a0bde83b564fe1104ef989d9119b9624808c7bc0ba27f64a2235ccc",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b4f80ece531e9aabb1a5e65363a84c6b593c610a19e78dc5774d7afefb172d2b",
+          "review": "sheet-27.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "5e269ca9e36daffe984531405b8fd9a7fd95687843288196663912cae234267b",
+          "review": "../account-current-visual-review/sheet-05.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-feeding-confidence-320-2x.long.png",
+      "sha256": "ddeeabe3d2ea7801edf98d82f32a83767c0c8990ca59a7dc9ce26631c011437e",
+      "width": 320,
+      "height": 2008,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2761111ff7ead03718e169cfe59fac0a82c0f0a0588fb9342bc34d69352d876b",
+          "review": "sheet-22.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "ee8e04271895b13e4d9e600a9fd59e5fa640aa1963c69273933b0686a5efaba5",
+          "review": "sheet-21.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "d58ded7df8989fa893e947db4482e9fc1a1fd022f62db9aeb8da29273611fd00",
+          "review": "sheet-22.png#tile-3"
+        },
+        {
+          "y0": 1950,
+          "y1": 2008,
+          "pixel_sha256": "889273b4de5ae28a8c66c15256496d50e1ca0895766215915b752a542c783fb4",
+          "review": "sheet-22.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-feeding-confidence-320-2x.png",
+      "sha256": "288f60072696050aa5563436dad12c7d4adc0821f266262c7398085bcfaed356",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "224532604c16d4061cad40218219f6fa9d8f85db8e023ae12c2f8eb2d1d69beb",
+          "review": "sheet-27.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "515cdac34ef810c0341adb482ffbb299c3a22bc25fe2e49a3e430a36db2fa720",
+          "review": "sheet-26.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-feeding-confidence-393-1x.long.png",
+      "sha256": "32173148e547dacd963cd69e9dc624e38f1ae4cfa7883e83d53241d2860a5cb2",
+      "width": 393,
+      "height": 1000,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "35e98e8bce5f0b6f7de91e98bd8f83e892d9f77034bb0edcfb80725b5d2e3033",
+          "review": "sheet-23.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1000,
+          "pixel_sha256": "99099c1f732d65db360ee805fcfafcb3cfa196908aa2df57f7f216ec81dc8808",
+          "review": "sheet-23.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-feeding-confidence-393-1x.png",
+      "sha256": "e560fd8a139273bc75c4ca3b2aaef2837dd245bf86a2f327172244794f552bfb",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "35e98e8bce5f0b6f7de91e98bd8f83e892d9f77034bb0edcfb80725b5d2e3033",
+          "review": "sheet-23.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "ca6f4f9941a943122673f21fe5c2391f6375e028c05085cc08588ce28f3a0382",
+          "review": "sheet-27.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-loading-320-2x.png",
+      "sha256": "033f6cb743196aa0014bea56d18996a8d10f3f68166534a39d139e7e9e106480",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6f8358f5c7237583d63ae5ff046cfa74fd610afef1c1002f3290f76a2c453328",
+          "review": "sheet-27.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "c65f45a9e7b9b361a0c4b43630dc19d5d3c121f954f7c47798296da08ea227e9",
+          "review": "../account-current-visual-review/sheet-07.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-loading-393-1x.png",
+      "sha256": "7fd6f95b8c2a211d94644cc287c11d3b3a66d485906207525d63781c076e943e",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "8535246a4a784cabcc9976f7e82afafde9b586fdecd99a8e1f1f5933a6a53003",
+          "review": "sheet-27.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "5e269ca9e36daffe984531405b8fd9a7fd95687843288196663912cae234267b",
+          "review": "../account-current-visual-review/sheet-05.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-milk-supply-care-320-2x.long.png",
+      "sha256": "5eeca7c1b97f45b6c2b8197d5adfc671ef9ca67115dc58d487978ea47e26b7f4",
+      "width": 320,
+      "height": 1968,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c57bc765cb371eef37ded8f3f8455454c4fd7c7a50b9abebd991c5bd0c2731b8",
+          "review": "sheet-23.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "10c7c36ad8c8dd8ea6f97dc8a54066efc076d67ee76c5d485ee7ec037c4d3aa4",
+          "review": "sheet-24.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "80aba94cd75864f942797a197b625e1013bd978315ec1dbaa84d803d026902de",
+          "review": "sheet-24.png#tile-1"
+        },
+        {
+          "y0": 1950,
+          "y1": 1968,
+          "pixel_sha256": "51b35ef9ab9a9cb065148d1326ee8c5f87e1333f804e47362efd97312a046621",
+          "review": "sheet-18.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-milk-supply-care-320-2x.png",
+      "sha256": "1c9241e0b24d87032304bf70a0ce636dad4ded9e99a5107da88829f7619cc293",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "52769a300f0e1bd5d6aa3dd6457a97b12e33062d80a15e212460cae63ae13678",
+          "review": "sheet-27.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "7703d339d5ccbe655c6ae57837e4a39541b06ebc51d0aeb33ae5568ee06a0ffc",
+          "review": "sheet-28.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-milk-supply-care-393-1x.long.png",
+      "sha256": "7d6150b5ad575ab29f1c04d70a8639b4d062ec5f46c2de4e3f2888a934d43543",
+      "width": 393,
+      "height": 980,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "f1eb90fdd91e08aa9bbaeabb4ca8d16d7b4ea2dceaaa3dbc2e021fc0937cdf5e",
+          "review": "sheet-24.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 980,
+          "pixel_sha256": "30bc7c19a64df303d44e4bfefcb339df9ebec712c8c423d9c8d491bb1f5b931a",
+          "review": "sheet-24.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-milk-supply-care-393-1x.png",
+      "sha256": "47cc418a221a03a9036793d9be3b47dfcfe9a6bfdd7ae0b1b467388572c31c9b",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "f1eb90fdd91e08aa9bbaeabb4ca8d16d7b4ea2dceaaa3dbc2e021fc0937cdf5e",
+          "review": "sheet-24.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "ad35cc698abadc4c84aa4969b1d4fe67bb7e8c769f2086a2e766f01a8ea76983",
+          "review": "sheet-28.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-missing-320-2x.png",
+      "sha256": "48d1d3980486abf28bbaacc4edfef6396d7a8d3a0216b79fe8a046dfb6a9f6f7",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ae44e0c8e3f44945e2e3cfcc9cf3401a34f415dbd562c9a428c7347c6454199e",
+          "review": "sheet-28.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "c65f45a9e7b9b361a0c4b43630dc19d5d3c121f954f7c47798296da08ea227e9",
+          "review": "../account-current-visual-review/sheet-07.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-missing-393-1x.png",
+      "sha256": "0c42a9a13d1e3b29667a20c010c33340df4ffabd3bf65e8c47574b287a21b112",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ee32da07ee10eb56d0f577487af806b74d7fa17cb6f4f539e2a2c08dece779db",
+          "review": "sheet-28.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "5e269ca9e36daffe984531405b8fd9a7fd95687843288196663912cae234267b",
+          "review": "../account-current-visual-review/sheet-05.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-purchase-disabled-320-2x.long.png",
+      "sha256": "3f08eeb67e5be08328b9d7bc5599b0be87f935f3c64a07bd60b742ffada4ff2e",
+      "width": 320,
+      "height": 2008,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2761111ff7ead03718e169cfe59fac0a82c0f0a0588fb9342bc34d69352d876b",
+          "review": "sheet-22.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "ee8e04271895b13e4d9e600a9fd59e5fa640aa1963c69273933b0686a5efaba5",
+          "review": "sheet-21.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "504d6176aa225d403625d8497c32e55338042a48bbac5351f37e3de676d1971c",
+          "review": "sheet-28.png#tile-4"
+        },
+        {
+          "y0": 1950,
+          "y1": 2008,
+          "pixel_sha256": "b2357f42b7c74ed082cf4cc1d87c3548d6b093024a3d11d6e82a381391b0bdba",
+          "review": "sheet-28.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-purchase-disabled-320-2x.png",
+      "sha256": "91ace090e8a16e2fdaf6c2a14212d9049a6c44621dce86352bbf100a73c76af4",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "224532604c16d4061cad40218219f6fa9d8f85db8e023ae12c2f8eb2d1d69beb",
+          "review": "sheet-27.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "7db9535e29364f4701759cfe598c3b4ea67ed19f8efe2b7e7f47ea108db785ab",
+          "review": "sheet-29.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-purchase-disabled-393-1x.long.png",
+      "sha256": "516ba2840fe72f5526b8d694b5d43b6749ae05679c9235df0121c492514b8676",
+      "width": 393,
+      "height": 1000,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "35e98e8bce5f0b6f7de91e98bd8f83e892d9f77034bb0edcfb80725b5d2e3033",
+          "review": "sheet-23.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1000,
+          "pixel_sha256": "a51154b17fd74d1438b96caf5a799a35e10d7a6b69a1ce525e790121d5fd4e11",
+          "review": "sheet-29.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-purchase-disabled-393-1x.png",
+      "sha256": "06cdd4780c5ed0e57b453d682a06787bb6f172aecd22e69f6337a73899a84a59",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "35e98e8bce5f0b6f7de91e98bd8f83e892d9f77034bb0edcfb80725b5d2e3033",
+          "review": "sheet-23.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "dd2fef7dcdde153c85f783281f0a1e18b8acda6ac424b009cc0063b6c6bc62e7",
+          "review": "sheet-29.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-recovery-catalog-320-2x.long.png",
+      "sha256": "dfe029de1a0b06403e982e81a22f52e064e3a84ed88f666dd89d8d473753c230",
+      "width": 320,
+      "height": 3161,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "3080ed1e9099f20a15fa2c3cb615ed0d8624a066c7a7c5e4cb570f52bd8263fd",
+          "review": "sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "701d67450a0486656e4e942b279540206444850701fa3805c2c7e73b81561570",
+          "review": "sheet-01.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "3921da55ed9b6d493f46e0f448c55e776ec191ca0647b5bce138219a0c5eb232",
+          "review": "sheet-01.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "a752944d98d6700c5344afd38980d7369b801eb3d5c3a5edadbec7f81d3216ce",
+          "review": "sheet-01.png#tile-3"
+        },
+        {
+          "y0": 2600,
+          "y1": 3161,
+          "pixel_sha256": "c2abcae664025db75933328ad375b6ecc780d49a335ccec5a2581efe80f05229",
+          "review": "sheet-01.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-recovery-catalog-320-2x.png",
+      "sha256": "369af5703768cbadeb9a63085d13f89d7f607787ba51e860788d4035a16704ad",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "3080ed1e9099f20a15fa2c3cb615ed0d8624a066c7a7c5e4cb570f52bd8263fd",
+          "review": "sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "9e6d7dad877015a6f5a925003120c1d9de941debc3cd9b24c9a49f3fe8f798cd",
+          "review": "sheet-01.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-recovery-catalog-393-1x.long.png",
+      "sha256": "626202225717f37c86a1dcb0abec46903f41943181d0ea28951e6e6c20699541",
+      "width": 393,
+      "height": 1615,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6df2083d88e72ff4cf599bc51a8bb8d3d96204d4c77266a8a7c617207b58a42b",
+          "review": "sheet-02.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "ac603a6c0ae53bcbb33c98452c22a6f916d5b3e323ade4a8ba1ec569cca03c7f",
+          "review": "sheet-02.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1615,
+          "pixel_sha256": "b5ffaff21f524e96af55ffee46fa2defa5398d0f8a37ebd3e08ce17ab3512c27",
+          "review": "sheet-02.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-recovery-catalog-393-1x.png",
+      "sha256": "13c6c89c1fbfdfaed6e7ab1543ca02599d84121c7e0aa2401bc8a609f7ead7ac",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6df2083d88e72ff4cf599bc51a8bb8d3d96204d4c77266a8a7c617207b58a42b",
+          "review": "sheet-02.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "b44c3d7a72178fd743ec2bf9b67abd99b21e97c5af8b0cbae5f17feb4ecb411f",
+          "review": "sheet-02.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-recovery-home-320-2x.long.png",
+      "sha256": "b29f1f9dc909ca023dcd2865b0d4424a7485a4fb1dd4d05f54d8ee61e6cf46ef",
+      "width": 320,
+      "height": 1939,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a6aa9ef781460e5016527f099324419f84c6e4f14cdb26c410651cd7359b41ef",
+          "review": "../mom-rest-control-visual-review/sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "0edf1d289b2e804b112ca91367c51524ae8a6a6a4684a4fdcad651b0ae8de7ad",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1939,
+          "pixel_sha256": "8824f3d60a1ba788460adc4d5731a39ee81dafb5cb1f7d7112dd43123bbe2812",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-recovery-home-320-2x.png",
+      "sha256": "6b61a480f7a3fd5ddb29685624aed748a99b94ad55016153855b11225ef09868",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a6aa9ef781460e5016527f099324419f84c6e4f14cdb26c410651cd7359b41ef",
+          "review": "../mom-rest-control-visual-review/sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1462d46c4861c29041d879736402097e4fd061fcb6e577142cd6e832cb70fae0",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-recovery-home-393-1x.long.png",
+      "sha256": "0a4e3294f0ff67f0d7ed84ee3eacb393b50571fb4db300a7d15899ba9359a330",
+      "width": 393,
+      "height": 917,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa661999d6307948942c23dc2e7dad221367a614b3ae09dd12dec24bc67fec6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 917,
+          "pixel_sha256": "134109b5afc9a0d972ecc00b197fb963d8131bfc37dbfad2a4c51a0a091a86ad",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-recovery-home-393-1x.png",
+      "sha256": "be291808401e7f353b8f14552b0df4a698f3edd191e5e2d770c66c2e129fc145",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa661999d6307948942c23dc2e7dad221367a614b3ae09dd12dec24bc67fec6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3208ac8b3b1d4a7464bc46ef7618c8e19bd85dee870d86c1847457571b6198a6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-recovery-home-return-320-2x.long.png",
+      "sha256": "b29f1f9dc909ca023dcd2865b0d4424a7485a4fb1dd4d05f54d8ee61e6cf46ef",
+      "width": 320,
+      "height": 1939,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a6aa9ef781460e5016527f099324419f84c6e4f14cdb26c410651cd7359b41ef",
+          "review": "../mom-rest-control-visual-review/sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "0edf1d289b2e804b112ca91367c51524ae8a6a6a4684a4fdcad651b0ae8de7ad",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1939,
+          "pixel_sha256": "8824f3d60a1ba788460adc4d5731a39ee81dafb5cb1f7d7112dd43123bbe2812",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-recovery-home-return-320-2x.png",
+      "sha256": "6b61a480f7a3fd5ddb29685624aed748a99b94ad55016153855b11225ef09868",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a6aa9ef781460e5016527f099324419f84c6e4f14cdb26c410651cd7359b41ef",
+          "review": "../mom-rest-control-visual-review/sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1462d46c4861c29041d879736402097e4fd061fcb6e577142cd6e832cb70fae0",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-recovery-home-return-393-1x.long.png",
+      "sha256": "0a4e3294f0ff67f0d7ed84ee3eacb393b50571fb4db300a7d15899ba9359a330",
+      "width": 393,
+      "height": 917,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa661999d6307948942c23dc2e7dad221367a614b3ae09dd12dec24bc67fec6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 917,
+          "pixel_sha256": "134109b5afc9a0d972ecc00b197fb963d8131bfc37dbfad2a4c51a0a091a86ad",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-recovery-home-return-393-1x.png",
+      "sha256": "be291808401e7f353b8f14552b0df4a698f3edd191e5e2d770c66c2e129fc145",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa661999d6307948942c23dc2e7dad221367a614b3ae09dd12dec24bc67fec6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3208ac8b3b1d4a7464bc46ef7618c8e19bd85dee870d86c1847457571b6198a6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-team-better-breastfeeding-320-2x.long.png",
+      "sha256": "8d1e46bda7e609bed813701019bd97b769fadac9252e3208757310e2a12ebcac",
+      "width": 320,
+      "height": 1113,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "706421283297d5dea3cae1af7af12b706db6717ffd055c61a60f4b4a635b5606",
+          "review": "sheet-29.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1113,
+          "pixel_sha256": "cef3d6fd23dc28e46656a565c40b0efdf214377c51ea0a895da5d3b5493fdeae",
+          "review": "sheet-29.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-team-better-breastfeeding-320-2x.png",
+      "sha256": "3043ad735d79f82234b59fbce7b578e929eb9ea75eb456681f4961d281d708bc",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "706421283297d5dea3cae1af7af12b706db6717ffd055c61a60f4b4a635b5606",
+          "review": "sheet-29.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "24d79a3e0823bf3013c36e5cf14d79dbc84a3f49a2bd36911e4c10a7fa2b3ff3",
+          "review": "sheet-29.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-team-better-breastfeeding-393-1x.png",
+      "sha256": "68dd12353227eb122b8304a95ccbc143f538e1c8e5ce42c8bbf66b2863774808",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "13c6c3fe9e8a5445f0e3fc2314a0276db6bea6a4d25f0e799f3d55b9d3f8b364",
+          "review": "sheet-30.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "13a897769ad9d6f221aaa2a36379947414fd8ff7f26e0f0a76193b3de75e2db6",
+          "review": "sheet-30.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-team-comfortable-feeding-320-2x.long.png",
+      "sha256": "8d1e46bda7e609bed813701019bd97b769fadac9252e3208757310e2a12ebcac",
+      "width": 320,
+      "height": 1113,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "706421283297d5dea3cae1af7af12b706db6717ffd055c61a60f4b4a635b5606",
+          "review": "sheet-29.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1113,
+          "pixel_sha256": "cef3d6fd23dc28e46656a565c40b0efdf214377c51ea0a895da5d3b5493fdeae",
+          "review": "sheet-29.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-team-comfortable-feeding-320-2x.png",
+      "sha256": "3043ad735d79f82234b59fbce7b578e929eb9ea75eb456681f4961d281d708bc",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "706421283297d5dea3cae1af7af12b706db6717ffd055c61a60f4b4a635b5606",
+          "review": "sheet-29.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "24d79a3e0823bf3013c36e5cf14d79dbc84a3f49a2bd36911e4c10a7fa2b3ff3",
+          "review": "sheet-29.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-team-comfortable-feeding-393-1x.png",
+      "sha256": "64957848b088c73d65b4b7bc38add073dc59ce1928ad582fed86f554c016db18",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "3874b56c0f2eccd5f00dd6d3dc79a721d712ada622dd990f543dd0887cace290",
+          "review": "sheet-30.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "13a897769ad9d6f221aaa2a36379947414fd8ff7f26e0f0a76193b3de75e2db6",
+          "review": "sheet-30.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-team-feeding-confidence-320-2x.long.png",
+      "sha256": "8d1e46bda7e609bed813701019bd97b769fadac9252e3208757310e2a12ebcac",
+      "width": 320,
+      "height": 1113,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "706421283297d5dea3cae1af7af12b706db6717ffd055c61a60f4b4a635b5606",
+          "review": "sheet-29.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1113,
+          "pixel_sha256": "cef3d6fd23dc28e46656a565c40b0efdf214377c51ea0a895da5d3b5493fdeae",
+          "review": "sheet-29.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-team-feeding-confidence-320-2x.png",
+      "sha256": "3043ad735d79f82234b59fbce7b578e929eb9ea75eb456681f4961d281d708bc",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "706421283297d5dea3cae1af7af12b706db6717ffd055c61a60f4b4a635b5606",
+          "review": "sheet-29.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "24d79a3e0823bf3013c36e5cf14d79dbc84a3f49a2bd36911e4c10a7fa2b3ff3",
+          "review": "sheet-29.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-team-feeding-confidence-393-1x.png",
+      "sha256": "6d3737d61084364441e17efe9dc9922711cf54d798723d7446f28b4b5a57cfe4",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a4e6c39655619596b66a8249f2729e04536601f8d13197cd437ca8a80895e922",
+          "review": "sheet-30.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "13a897769ad9d6f221aaa2a36379947414fd8ff7f26e0f0a76193b3de75e2db6",
+          "review": "sheet-30.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-team-milk-supply-care-320-2x.long.png",
+      "sha256": "8d1e46bda7e609bed813701019bd97b769fadac9252e3208757310e2a12ebcac",
+      "width": 320,
+      "height": 1113,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "706421283297d5dea3cae1af7af12b706db6717ffd055c61a60f4b4a635b5606",
+          "review": "sheet-29.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1113,
+          "pixel_sha256": "cef3d6fd23dc28e46656a565c40b0efdf214377c51ea0a895da5d3b5493fdeae",
+          "review": "sheet-29.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-team-milk-supply-care-320-2x.png",
+      "sha256": "3043ad735d79f82234b59fbce7b578e929eb9ea75eb456681f4961d281d708bc",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "706421283297d5dea3cae1af7af12b706db6717ffd055c61a60f4b4a635b5606",
+          "review": "sheet-29.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "24d79a3e0823bf3013c36e5cf14d79dbc84a3f49a2bd36911e4c10a7fa2b3ff3",
+          "review": "sheet-29.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-package-team-milk-supply-care-393-1x.png",
+      "sha256": "15c15fb88d0b301f0a20f17ee5a567e6ccf4ade19c8f9adac5c9d22fcdb2805f",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "10a6d49ce780acbc3249ce20cb9193ba17e99bc387d2a8750a4387d81e61faf5",
+          "review": "sheet-30.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "13a897769ad9d6f221aaa2a36379947414fd8ff7f26e0f0a76193b3de75e2db6",
+          "review": "sheet-30.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-paused-booking-320-2x.png",
+      "sha256": "32fb4af3ba8d8545239f8d94e46b51164dd8a8212e3c16a38f8e3445bc1d420b",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "5cb8f8b3d2ff7c149b642e3e7f37c7a2940a2080676ff18fefed09058434e6e0",
+          "review": "sheet-30.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "f7043fd582499e9fe8215488a2e25e1eff5d2cd1c570c878a62675f46e57df37",
+          "review": "../notification-navigation-current-visual-review/sheet-06.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-paused-booking-393-1x.png",
+      "sha256": "46eafb7375fe7a04f7d3e172233c0e0bd01785e4b99b8e0d554626ff89407f9b",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "bf9176360e9dc8136a2b460ed517415961be872a44fd6babffe5655387ec94fa",
+          "review": "sheet-31.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "8bdeffc41d4a3f4c9ce4bf04d242795fab314a5a6f5ce005f84e01795430343f",
+          "review": "../baby-feeding-control-visual-review/sheet-16.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-paused-package-320-2x.long.png",
+      "sha256": "84d2b86c60f633326df92da47e0e53238bb2a785a82256b144eb7943c4d0b445",
+      "width": 320,
+      "height": 2426,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "69e52b4d0ac041372421f5f49bda293ba9a5f2107650d8b4352d65bcb84ca17e",
+          "review": "sheet-31.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "9a36a8e973a285c960de21fde17e3612d251b111cdf3256316558afe0d57fe2e",
+          "review": "sheet-12.png#tile-3"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "7965fc4b18ead2e3d8adaa7b43fc7d33c89e72f128173835ba407ecffb9cfa11",
+          "review": "sheet-12.png#tile-4"
+        },
+        {
+          "y0": 1950,
+          "y1": 2426,
+          "pixel_sha256": "201c0929e9f6cb5a1f0b94980eadf71d1c44011fa76f81879ceff49902601d59",
+          "review": "sheet-12.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-paused-package-320-2x.png",
+      "sha256": "9685b64edf9e83ac46a772b47b4c6fa7de98bb869e17afe593355ac24392fbe9",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "69e52b4d0ac041372421f5f49bda293ba9a5f2107650d8b4352d65bcb84ca17e",
+          "review": "sheet-31.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "e5db96a85f82452ec3716ea5b4d7b971e31222a46029e6e6bcea271bf7ea84a3",
+          "review": "sheet-16.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-paused-package-393-1x.long.png",
+      "sha256": "caa43ed244e6bae0d76cbd80377201a9c392b5bde98f9a641579851892802c95",
+      "width": 393,
+      "height": 1272,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9f50c567f7a2ab8730cb017e8dfb4e1d13a74492beb313d946a5448b0db543e4",
+          "review": "sheet-31.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1272,
+          "pixel_sha256": "62bd42c9be6644cb0a0a13780c53f29e6f5cb835c016ddff47fe2af10cc5e55a",
+          "review": "sheet-13.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-paused-package-393-1x.png",
+      "sha256": "b2e8655d002a9422439bf01ceb5f98ac980cc866264f115a448c7d965bf3fe4f",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9f50c567f7a2ab8730cb017e8dfb4e1d13a74492beb313d946a5448b0db543e4",
+          "review": "sheet-31.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1d3ef37a7d6b299aa5cca32446b248a1f5e9f5f5a250d01e2e9e13e48502a666",
+          "review": "sheet-16.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-pending-catalog-320-2x.long.png",
+      "sha256": "a524e76ee77415be5864f95fadaf23853ea1667fdced16aabb978a0791457cbd",
+      "width": 320,
+      "height": 3333,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "fe83d189b32982d7213384cb119822526968593ab9cd0242c697fd2a1abbac38",
+          "review": "sheet-31.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "4aad148c43a46d32b44edbc46079c761f2325a1f3d07bfb4a841f40d54f6bc51",
+          "review": "sheet-31.png#tile-4"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "ff0305654758c6f7164f599de5c8543774248a3b5593ee4a482cbb40ec5427fc",
+          "review": "sheet-31.png#tile-5"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "bd8caacbc330075563cea075e417b5886196b6ca0a9d47a05665abc9ccaa6e1c",
+          "review": "sheet-32.png#tile-0"
+        },
+        {
+          "y0": 2600,
+          "y1": 3250,
+          "pixel_sha256": "ac43a4c608fb4367d5adf91ce68ef12a2352046a102e3e38d6f6bcfda9baf6cc",
+          "review": "sheet-32.png#tile-1"
+        },
+        {
+          "y0": 3250,
+          "y1": 3333,
+          "pixel_sha256": "e9b3c13dca94a61802fa246327764b166765c0092ed015aca43ac49955eda84f",
+          "review": "sheet-32.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-pending-catalog-320-2x.png",
+      "sha256": "969c4a1fa4ec3ff32b5e634cfd4d32bead60faef7ea6dddf4c932d3538343455",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "fe83d189b32982d7213384cb119822526968593ab9cd0242c697fd2a1abbac38",
+          "review": "sheet-31.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "eb1b718f5ffb7333abdc0cbfd4a427fd0e746aba046eb784c9a72c930631acfb",
+          "review": "sheet-32.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-pending-catalog-393-1x.long.png",
+      "sha256": "effdbaf18d43d0eff48d37b234669c14b55109aef505974dda16f915a791f0f5",
+      "width": 393,
+      "height": 1744,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "5cdea0d6ef0dfb75ed12b2798e117a762ba7c11f5f32e1f08f96538784851e1d",
+          "review": "sheet-32.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "49ab291152a696d8b9069f4ec3f14afd7a4853f1753d96d5173c3d1e6717a5b1",
+          "review": "sheet-32.png#tile-5"
+        },
+        {
+          "y0": 1300,
+          "y1": 1744,
+          "pixel_sha256": "13f023cf6064f39c43824e47e493f48ba484e2da7f6ea30b15d15b582e7230d6",
+          "review": "sheet-33.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-pending-catalog-393-1x.png",
+      "sha256": "80d01f8c9852e642b72e5aff810d7e732dc89ee6eb88c7e9258f5ba3fc678d30",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "5cdea0d6ef0dfb75ed12b2798e117a762ba7c11f5f32e1f08f96538784851e1d",
+          "review": "sheet-32.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "8921bc8fdf0b2bb40b454ce5176c31f26e26a35ae811b925a4381540b7265914",
+          "review": "sheet-33.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-pending-catalog-return-320-2x.long.png",
+      "sha256": "a524e76ee77415be5864f95fadaf23853ea1667fdced16aabb978a0791457cbd",
+      "width": 320,
+      "height": 3333,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "fe83d189b32982d7213384cb119822526968593ab9cd0242c697fd2a1abbac38",
+          "review": "sheet-31.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "4aad148c43a46d32b44edbc46079c761f2325a1f3d07bfb4a841f40d54f6bc51",
+          "review": "sheet-31.png#tile-4"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "ff0305654758c6f7164f599de5c8543774248a3b5593ee4a482cbb40ec5427fc",
+          "review": "sheet-31.png#tile-5"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "bd8caacbc330075563cea075e417b5886196b6ca0a9d47a05665abc9ccaa6e1c",
+          "review": "sheet-32.png#tile-0"
+        },
+        {
+          "y0": 2600,
+          "y1": 3250,
+          "pixel_sha256": "ac43a4c608fb4367d5adf91ce68ef12a2352046a102e3e38d6f6bcfda9baf6cc",
+          "review": "sheet-32.png#tile-1"
+        },
+        {
+          "y0": 3250,
+          "y1": 3333,
+          "pixel_sha256": "e9b3c13dca94a61802fa246327764b166765c0092ed015aca43ac49955eda84f",
+          "review": "sheet-32.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-pending-catalog-return-320-2x.png",
+      "sha256": "f5bbfc219b96da0fac4f22e83023afecce7a3645d3b51374202bd9a74c8c42d4",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "7bf87e6cd435dfe4a1f279143077fe868040f9bf1217016132835afaf9bb4000",
+          "review": "sheet-33.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "75fbf451c2c10600cb339a113e37d8f12a95eef29b7d3432426de03be7aa8f20",
+          "review": "sheet-33.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-pending-catalog-return-393-1x.long.png",
+      "sha256": "effdbaf18d43d0eff48d37b234669c14b55109aef505974dda16f915a791f0f5",
+      "width": 393,
+      "height": 1744,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "5cdea0d6ef0dfb75ed12b2798e117a762ba7c11f5f32e1f08f96538784851e1d",
+          "review": "sheet-32.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "49ab291152a696d8b9069f4ec3f14afd7a4853f1753d96d5173c3d1e6717a5b1",
+          "review": "sheet-32.png#tile-5"
+        },
+        {
+          "y0": 1300,
+          "y1": 1744,
+          "pixel_sha256": "13f023cf6064f39c43824e47e493f48ba484e2da7f6ea30b15d15b582e7230d6",
+          "review": "sheet-33.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-pending-catalog-return-393-1x.png",
+      "sha256": "11aefbe76b124355304c4381bae1ae8738c4e71ed9c07082c56c8ec6c993a420",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "54932e3c4708d3b81076fad7056f0307440b4f52749d57fe5425b8dd316d7023",
+          "review": "sheet-33.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "6f6d277689c4c325cc71967e25ebd48515c8106bdedd3fe02cb2ff6fb43a722b",
+          "review": "sheet-33.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-pending-home-320-2x.long.png",
+      "sha256": "b29f1f9dc909ca023dcd2865b0d4424a7485a4fb1dd4d05f54d8ee61e6cf46ef",
+      "width": 320,
+      "height": 1939,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a6aa9ef781460e5016527f099324419f84c6e4f14cdb26c410651cd7359b41ef",
+          "review": "../mom-rest-control-visual-review/sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "0edf1d289b2e804b112ca91367c51524ae8a6a6a4684a4fdcad651b0ae8de7ad",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1939,
+          "pixel_sha256": "8824f3d60a1ba788460adc4d5731a39ee81dafb5cb1f7d7112dd43123bbe2812",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-pending-home-320-2x.png",
+      "sha256": "6b61a480f7a3fd5ddb29685624aed748a99b94ad55016153855b11225ef09868",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a6aa9ef781460e5016527f099324419f84c6e4f14cdb26c410651cd7359b41ef",
+          "review": "../mom-rest-control-visual-review/sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1462d46c4861c29041d879736402097e4fd061fcb6e577142cd6e832cb70fae0",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-pending-home-393-1x.long.png",
+      "sha256": "0a4e3294f0ff67f0d7ed84ee3eacb393b50571fb4db300a7d15899ba9359a330",
+      "width": 393,
+      "height": 917,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa661999d6307948942c23dc2e7dad221367a614b3ae09dd12dec24bc67fec6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 917,
+          "pixel_sha256": "134109b5afc9a0d972ecc00b197fb963d8131bfc37dbfad2a4c51a0a091a86ad",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-pending-home-393-1x.png",
+      "sha256": "be291808401e7f353b8f14552b0df4a698f3edd191e5e2d770c66c2e129fc145",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa661999d6307948942c23dc2e7dad221367a614b3ae09dd12dec24bc67fec6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3208ac8b3b1d4a7464bc46ef7618c8e19bd85dee870d86c1847457571b6198a6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-pending-home-return-320-2x.long.png",
+      "sha256": "b29f1f9dc909ca023dcd2865b0d4424a7485a4fb1dd4d05f54d8ee61e6cf46ef",
+      "width": 320,
+      "height": 1939,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a6aa9ef781460e5016527f099324419f84c6e4f14cdb26c410651cd7359b41ef",
+          "review": "../mom-rest-control-visual-review/sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "0edf1d289b2e804b112ca91367c51524ae8a6a6a4684a4fdcad651b0ae8de7ad",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1939,
+          "pixel_sha256": "8824f3d60a1ba788460adc4d5731a39ee81dafb5cb1f7d7112dd43123bbe2812",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-pending-home-return-320-2x.png",
+      "sha256": "6b61a480f7a3fd5ddb29685624aed748a99b94ad55016153855b11225ef09868",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a6aa9ef781460e5016527f099324419f84c6e4f14cdb26c410651cd7359b41ef",
+          "review": "../mom-rest-control-visual-review/sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1462d46c4861c29041d879736402097e4fd061fcb6e577142cd6e832cb70fae0",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-pending-home-return-393-1x.long.png",
+      "sha256": "0a4e3294f0ff67f0d7ed84ee3eacb393b50571fb4db300a7d15899ba9359a330",
+      "width": 393,
+      "height": 917,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa661999d6307948942c23dc2e7dad221367a614b3ae09dd12dec24bc67fec6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 917,
+          "pixel_sha256": "134109b5afc9a0d972ecc00b197fb963d8131bfc37dbfad2a4c51a0a091a86ad",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-pending-home-return-393-1x.png",
+      "sha256": "be291808401e7f353b8f14552b0df4a698f3edd191e5e2d770c66c2e129fc145",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa661999d6307948942c23dc2e7dad221367a614b3ae09dd12dec24bc67fec6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3208ac8b3b1d4a7464bc46ef7618c8e19bd85dee870d86c1847457571b6198a6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-pending-order-closed-320-2x.long.png",
+      "sha256": "8baec43d29dbcc14df024c676cfc14902c1de95fd0694c0b18609f833c82b039",
+      "width": 320,
+      "height": 2008,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2761111ff7ead03718e169cfe59fac0a82c0f0a0588fb9342bc34d69352d876b",
+          "review": "sheet-22.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "ee8e04271895b13e4d9e600a9fd59e5fa640aa1963c69273933b0686a5efaba5",
+          "review": "sheet-21.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "d58ded7df8989fa893e947db4482e9fc1a1fd022f62db9aeb8da29273611fd00",
+          "review": "sheet-22.png#tile-3"
+        },
+        {
+          "y0": 1950,
+          "y1": 2008,
+          "pixel_sha256": "5cdc0b70ac1139c3de69107062b125a6bdb63d97da63e5192ca87abbdc1f0be9",
+          "review": "sheet-34.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-pending-order-closed-320-2x.png",
+      "sha256": "fd5d42e9dc63935e46fd4a02b6da3ed8b73e6bc313db2055e4025decdaf18562",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "224532604c16d4061cad40218219f6fa9d8f85db8e023ae12c2f8eb2d1d69beb",
+          "review": "sheet-27.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "606aebea479c96426091e659170dcac2995383f00e61a4460817d046c4c60b29",
+          "review": "sheet-34.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-pending-order-closed-393-1x.long.png",
+      "sha256": "70d81eadfd02853583ec625c333020cd5bb1f87d7fed3b6ffff1ca2c76a3c2cc",
+      "width": 393,
+      "height": 1000,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "35e98e8bce5f0b6f7de91e98bd8f83e892d9f77034bb0edcfb80725b5d2e3033",
+          "review": "sheet-23.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1000,
+          "pixel_sha256": "baace0aed656d5225c4e2bb8d1becfdd6f09bbe605197224facc64734e33a5ff",
+          "review": "sheet-34.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-pending-order-closed-393-1x.png",
+      "sha256": "8f4fd09dbd3073ff5ded8d02d58f24c852405cd0adcff9deb548c76832fa8e2d",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "35e98e8bce5f0b6f7de91e98bd8f83e892d9f77034bb0edcfb80725b5d2e3033",
+          "review": "sheet-23.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "10bd514446fb673176419abd5141c173e3a056ec004b916b703758e21c47a929",
+          "review": "sheet-34.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-pending-order-error-320-2x.long.png",
+      "sha256": "b82871f67de39c82a32c0f87b712e481574519ece8768c14d23dfa1c7a0dc52a",
+      "width": 320,
+      "height": 2008,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2761111ff7ead03718e169cfe59fac0a82c0f0a0588fb9342bc34d69352d876b",
+          "review": "sheet-22.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "ee8e04271895b13e4d9e600a9fd59e5fa640aa1963c69273933b0686a5efaba5",
+          "review": "sheet-21.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "a437e8047db6f01654b5193e89dbfaa4082c1ad7e2df47e26109716a4b0fb4b3",
+          "review": "sheet-34.png#tile-4"
+        },
+        {
+          "y0": 1950,
+          "y1": 2008,
+          "pixel_sha256": "13a8b7dbdfa38a19dff76868cbdd49844b880b33c78fcd35af994c30708e2428",
+          "review": "sheet-34.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-pending-order-error-320-2x.png",
+      "sha256": "2c3cb134862b3166d06a5add6ed2ecda112c6e57797705deded9a6d275698d07",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "224532604c16d4061cad40218219f6fa9d8f85db8e023ae12c2f8eb2d1d69beb",
+          "review": "sheet-27.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "18dc293bc064ef5b4f78fc0ee210c990c18163319e2a2229e972461de2e4be1e",
+          "review": "sheet-35.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-pending-order-error-393-1x.long.png",
+      "sha256": "3283f12b4a6e9885b6a7410b86024b3ba180afb4d96e9ae18000f81982d9541d",
+      "width": 393,
+      "height": 1000,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "35e98e8bce5f0b6f7de91e98bd8f83e892d9f77034bb0edcfb80725b5d2e3033",
+          "review": "sheet-23.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1000,
+          "pixel_sha256": "a3378e95cdb74ab428810da9aff4b88f0808f3673fd29e2a0d6c491f312432dd",
+          "review": "sheet-35.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-pending-order-error-393-1x.png",
+      "sha256": "db5301615d4ec640bac0db34c52446ffb3ff658d50ea920460903a404cda65e5",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "35e98e8bce5f0b6f7de91e98bd8f83e892d9f77034bb0edcfb80725b5d2e3033",
+          "review": "sheet-23.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "096d7e49d5d7bf0f63db98a02e85484c5d4f5bdf12ca9bc8c08b83120eb413ca",
+          "review": "sheet-35.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-pending-order-error-dismissed-320-2x.long.png",
+      "sha256": "8baec43d29dbcc14df024c676cfc14902c1de95fd0694c0b18609f833c82b039",
+      "width": 320,
+      "height": 2008,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2761111ff7ead03718e169cfe59fac0a82c0f0a0588fb9342bc34d69352d876b",
+          "review": "sheet-22.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "ee8e04271895b13e4d9e600a9fd59e5fa640aa1963c69273933b0686a5efaba5",
+          "review": "sheet-21.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "d58ded7df8989fa893e947db4482e9fc1a1fd022f62db9aeb8da29273611fd00",
+          "review": "sheet-22.png#tile-3"
+        },
+        {
+          "y0": 1950,
+          "y1": 2008,
+          "pixel_sha256": "5cdc0b70ac1139c3de69107062b125a6bdb63d97da63e5192ca87abbdc1f0be9",
+          "review": "sheet-34.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-pending-order-error-dismissed-320-2x.png",
+      "sha256": "fd5d42e9dc63935e46fd4a02b6da3ed8b73e6bc313db2055e4025decdaf18562",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "224532604c16d4061cad40218219f6fa9d8f85db8e023ae12c2f8eb2d1d69beb",
+          "review": "sheet-27.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "606aebea479c96426091e659170dcac2995383f00e61a4460817d046c4c60b29",
+          "review": "sheet-34.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-pending-order-error-dismissed-393-1x.long.png",
+      "sha256": "70d81eadfd02853583ec625c333020cd5bb1f87d7fed3b6ffff1ca2c76a3c2cc",
+      "width": 393,
+      "height": 1000,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "35e98e8bce5f0b6f7de91e98bd8f83e892d9f77034bb0edcfb80725b5d2e3033",
+          "review": "sheet-23.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1000,
+          "pixel_sha256": "baace0aed656d5225c4e2bb8d1becfdd6f09bbe605197224facc64734e33a5ff",
+          "review": "sheet-34.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-pending-order-error-dismissed-393-1x.png",
+      "sha256": "8f4fd09dbd3073ff5ded8d02d58f24c852405cd0adcff9deb548c76832fa8e2d",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "35e98e8bce5f0b6f7de91e98bd8f83e892d9f77034bb0edcfb80725b5d2e3033",
+          "review": "sheet-23.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "10bd514446fb673176419abd5141c173e3a056ec004b916b703758e21c47a929",
+          "review": "sheet-34.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-pending-order-opening-320-2x.long.png",
+      "sha256": "fd18df9dc381cafde0b5ab389dffed56a080d871c20bc0aa26f291168a2de430",
+      "width": 320,
+      "height": 2008,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2761111ff7ead03718e169cfe59fac0a82c0f0a0588fb9342bc34d69352d876b",
+          "review": "sheet-22.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "ee8e04271895b13e4d9e600a9fd59e5fa640aa1963c69273933b0686a5efaba5",
+          "review": "sheet-21.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "504d6176aa225d403625d8497c32e55338042a48bbac5351f37e3de676d1971c",
+          "review": "sheet-28.png#tile-4"
+        },
+        {
+          "y0": 1950,
+          "y1": 2008,
+          "pixel_sha256": "ca0d8ee2225f3020d777f07461dd259af0752baed247601662b6bb35f84eb71b",
+          "review": "sheet-35.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-pending-order-opening-320-2x.png",
+      "sha256": "f1dcd95844c4e7508c4684dd152991d34b8e4a80f6f4f51fdd2759c407daab8e",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "224532604c16d4061cad40218219f6fa9d8f85db8e023ae12c2f8eb2d1d69beb",
+          "review": "sheet-27.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1ae2661f62608838d649c764f3735ec7d857be203945bd00460ec3903416f1e1",
+          "review": "sheet-35.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-pending-order-opening-393-1x.long.png",
+      "sha256": "1167d000bcdf489045032fb7ed27e43cedffd4e406db7fef2a219f7243b15854",
+      "width": 393,
+      "height": 1000,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "35e98e8bce5f0b6f7de91e98bd8f83e892d9f77034bb0edcfb80725b5d2e3033",
+          "review": "sheet-23.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1000,
+          "pixel_sha256": "21a08a1a5e91f27843f7de9f6cc311a213026d26e580728f11fcc371eb1b8514",
+          "review": "sheet-35.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-pending-order-opening-393-1x.png",
+      "sha256": "7413eb068485e2da30797b34a4b41626f3b1495b0bb71002fcd785a821a0423d",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "35e98e8bce5f0b6f7de91e98bd8f83e892d9f77034bb0edcfb80725b5d2e3033",
+          "review": "sheet-23.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "e8c41de1e666e2238801bc2a44e7888bf4efc86fb5f9a87b9a9ca4d2502a8fbb",
+          "review": "sheet-36.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-pending-order-resumed-320-2x.long.png",
+      "sha256": "d18f384c1f1fb3c9c1be0cd266324b94acfc56758961d7dfb08ea39442e8fe83",
+      "width": 320,
+      "height": 1489,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "06e196fe5d11e32c82672e36f55012f60d23ff0d40b194feef3e2d134dab78b5",
+          "review": "sheet-36.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "8082e8281fa2d4ef25921a4315a02f918a05e97632580c1039009de5391258b3",
+          "review": "sheet-36.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1489,
+          "pixel_sha256": "595f64b013d82f617a7f83f57e43a70cc013a12871bdfb5f78ce2b271e5ad60e",
+          "review": "sheet-36.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-pending-order-resumed-320-2x.png",
+      "sha256": "dab334e2152387f98780fcf7371e35dc30a8829e37f8fe60fceb5f69f4628c79",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "06e196fe5d11e32c82672e36f55012f60d23ff0d40b194feef3e2d134dab78b5",
+          "review": "sheet-36.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "7c5cf1d7dd4d1b35cfaf604721a5cdaa45cc9eb56b0ede30e7f0e4438a404a3d",
+          "review": "sheet-36.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-pending-order-resumed-393-1x.long.png",
+      "sha256": "fb476e8b3f411994d0f94e14c172f998bc9f957331a0a297605dc7926b3998c0",
+      "width": 393,
+      "height": 906,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "873c9465f5c3323f3905a273f0c7ffdbbc8729c0e1b6b5e4b2aa990437037275",
+          "review": "sheet-36.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 906,
+          "pixel_sha256": "18cd70f708187316be48b2916722e9637c7d2e5d2e10c0abfe0f0d9e0ae80f2b",
+          "review": "sheet-37.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-pending-order-resumed-393-1x.png",
+      "sha256": "2c34f3bf7d3664d1857f8e2db08716a839241943d354a4d1735399a34702f761",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "873c9465f5c3323f3905a273f0c7ffdbbc8729c0e1b6b5e4b2aa990437037275",
+          "review": "sheet-36.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "7e522f2e996ccb57e78259accbc9348441c21fe6b4d9aba2cb7134b89f71c855",
+          "review": "sheet-37.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-pending-package-320-2x.long.png",
+      "sha256": "8baec43d29dbcc14df024c676cfc14902c1de95fd0694c0b18609f833c82b039",
+      "width": 320,
+      "height": 2008,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2761111ff7ead03718e169cfe59fac0a82c0f0a0588fb9342bc34d69352d876b",
+          "review": "sheet-22.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "ee8e04271895b13e4d9e600a9fd59e5fa640aa1963c69273933b0686a5efaba5",
+          "review": "sheet-21.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "d58ded7df8989fa893e947db4482e9fc1a1fd022f62db9aeb8da29273611fd00",
+          "review": "sheet-22.png#tile-3"
+        },
+        {
+          "y0": 1950,
+          "y1": 2008,
+          "pixel_sha256": "5cdc0b70ac1139c3de69107062b125a6bdb63d97da63e5192ca87abbdc1f0be9",
+          "review": "sheet-34.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-pending-package-320-2x.png",
+      "sha256": "fd5d42e9dc63935e46fd4a02b6da3ed8b73e6bc313db2055e4025decdaf18562",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "224532604c16d4061cad40218219f6fa9d8f85db8e023ae12c2f8eb2d1d69beb",
+          "review": "sheet-27.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "606aebea479c96426091e659170dcac2995383f00e61a4460817d046c4c60b29",
+          "review": "sheet-34.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-pending-package-393-1x.long.png",
+      "sha256": "70d81eadfd02853583ec625c333020cd5bb1f87d7fed3b6ffff1ca2c76a3c2cc",
+      "width": 393,
+      "height": 1000,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "35e98e8bce5f0b6f7de91e98bd8f83e892d9f77034bb0edcfb80725b5d2e3033",
+          "review": "sheet-23.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1000,
+          "pixel_sha256": "baace0aed656d5225c4e2bb8d1becfdd6f09bbe605197224facc64734e33a5ff",
+          "review": "sheet-34.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/service-current-pending-package-393-1x.png",
+      "sha256": "8f4fd09dbd3073ff5ded8d02d58f24c852405cd0adcff9deb548c76832fa8e2d",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "35e98e8bce5f0b6f7de91e98bd8f83e892d9f77034bb0edcfb80725b5d2e3033",
+          "review": "sheet-23.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "10bd514446fb673176419abd5141c173e3a056ec004b916b703758e21c47a929",
+          "review": "sheet-34.png#tile-3"
+        }
+      ]
+    }
+  ],
+  "unique_segments": 230,
+  "new_segments": 218,
+  "new_sheets": 37
+}

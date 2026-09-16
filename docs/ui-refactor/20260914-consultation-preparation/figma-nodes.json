@@ -1,0 +1,146 @@
+[
+  {
+    "id": "178:1108",
+    "name": "Preparation / ready",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "178:1139",
+    "name": "Preparation / early",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "178:1171",
+    "name": "Preparation / expired",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "178:1206",
+    "name": "Preparation / intake-required",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "178:1241",
+    "name": "Preparation / case-consent-required",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "178:1276",
+    "name": "Preparation / video-disabled",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "178:1309",
+    "name": "Preparation / demo-early",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "178:1341",
+    "name": "Preparation / cancel-pending",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "178:1372",
+    "name": "Preparation / active-rejoin",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "178:1401",
+    "name": "Preparation / refresh-error",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "178:1436",
+    "name": "Preparation / home-ready",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "178:1612",
+    "name": "Preparation / home-loading",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "178:1767",
+    "name": "Preparation / home-error",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "178:1923",
+    "name": "Preparation / large-ready",
+    "width": 320,
+    "height": 844
+  },
+  {
+    "id": "178:1954",
+    "name": "Preparation / large-intake",
+    "width": 320,
+    "height": 844
+  },
+  {
+    "id": "178:1989",
+    "name": "Preparation / large-expired",
+    "width": 320,
+    "height": 844
+  },
+  {
+    "id": "178:2024",
+    "name": "Preparation / large-pending",
+    "width": 320,
+    "height": 844
+  },
+  {
+    "id": "178:2055",
+    "name": "Preparation / pending-end",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "178:2088",
+    "name": "Preparation / large-home-error",
+    "width": 320,
+    "height": 844
+  },
+  {
+    "id": "179:1108",
+    "name": "Preparation / large-ready-actions",
+    "width": 320,
+    "height": 844
+  },
+  {
+    "id": "179:1139",
+    "name": "Preparation / large-intake-actions",
+    "width": 320,
+    "height": 844
+  },
+  {
+    "id": "179:1174",
+    "name": "Preparation / large-expired-actions",
+    "width": 320,
+    "height": 844
+  },
+  {
+    "id": "180:1108",
+    "name": "Preparation / short-home-loading",
+    "width": 320,
+    "height": 568
+  },
+  {
+    "id": "180:1263",
+    "name": "Preparation / short-home-error",
+    "width": 320,
+    "height": 568
+  }
+]

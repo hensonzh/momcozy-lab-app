@@ -1,0 +1,7 @@
+{
+  "lib/modules/consultation/presentation/room_page.dart": "63735fa676f4344e218670e680d3017117e6def10cc120bdfed8348616839173",
+  "lib/modules/consultation/application/room_controller.dart": "f132e15522022d8203ffd1360829dd6067266ed1214db9316582f5dc5557577b",
+  "test/support/room_leave_recovery_scenarios.dart": "fbf008a4e31cde97be56d98f97310bf15731f86547c5673d1520441c9e408aa1",
+  "test/modules/consultation/room_leave_recovery_test.dart": "6546a3da1893a54bbd643910f4d531a877c461b6e8b9d2594fe40746fe05fbad",
+  "integration_test/room_leave_recovery_test.dart": "8467983bb435877f9c6b97374d98aa59b3771ac74617e3021f7bda5c380fe0b6"
+}

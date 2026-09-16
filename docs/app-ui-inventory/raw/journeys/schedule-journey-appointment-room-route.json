@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/schedule-journey-appointment-room-route-393.png",
+  "previous_source": "test/goldens/ui_inventory/schedule-journey-appointment-entry-393.png",
+  "route": "/services/appointments/service-appointment/room",
+  "trigger": "Confirmed consultation view → real preparation route",
+  "root_entry": "Authenticated More → tap Schedule bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/schedule/schedule_inventory_journey_test.dart"
+}

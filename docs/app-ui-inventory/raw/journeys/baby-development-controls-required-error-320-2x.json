@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/baby-development-controls-required-error-320-2x.png",
+  "previous_source": "test/goldens/ui_inventory/baby-development-controls-editor-empty-320-2x.png",
+  "route": "/baby",
+  "trigger": "Tap save → 至少记录一项具体行为，拿不准可以选择“不确定”。; no write request",
+  "root_entry": "Authenticated More → tap Baby bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/baby/baby_development_control_inventory_test.dart"
+}

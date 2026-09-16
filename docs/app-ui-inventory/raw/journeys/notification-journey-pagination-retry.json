@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/notification-journey-pagination-retry-393.png",
+  "previous_source": "test/goldens/ui_inventory/notification-journey-pagination-error-393.png",
+  "route": "/notifications",
+  "trigger": "Retry load more with same cursor → append second page",
+  "root_entry": "Authenticated More page",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production notification coordinator/repository/controller; isolated HTTP, push gateway and permission platform; real router.go and ScaffoldMessenger callbacks, no native OS dialog or remote push",
+  "test": "test/features/notifications/notification_inventory_journey_test.dart"
+}

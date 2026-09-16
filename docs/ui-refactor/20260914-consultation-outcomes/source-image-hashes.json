@@ -1,0 +1,10 @@
+{
+  "06-schedule/schedule-journey-appointment-cancelled-route": "d4f0180dc317012230c37d5ea83c11cf7ca9aa56b4ebef1495ac9ab6dab297c0",
+  "08-expert-service/consultation-journey-consultation-completed": "7dcec0aa2c972bc0ef7799a2ca0dd08e36f6fe609380580d7d9a4cba55697985",
+  "08-expert-service/consultation-journey-no-show-outcome": "d855604423dcbfaf6cba23ac1154734f15c4c108af9a04464823e5aad202cfde",
+  "08-expert-service/consultation-journey-safety-outcome": "8a98842b77cc6f09efd838877f488d7445eea7539957b9657b61a8279ec41fdf",
+  "08-expert-service/consultation-journey-technical-outcome": "96f2f60c70ddeecd98c4414efc4ca92c5569f49d54acbfea667dc366004b7e8e",
+  "08-expert-service/room-no-show": "5e15fbf28b035f3c7f543c0b48ea32be0e1111b7afe088dd4bff3392b58bf452",
+  "08-expert-service/room-outcome": "5b3880210e1d7820917edc2bd65b1f989391bba70015ac153a7e21f5985528bf",
+  "08-expert-service/room-technical-failure": "4ff0cc2fac1c68b8cab529f8131930800580e1b50cc45a6a5ab1100a983c3cfb"
+}

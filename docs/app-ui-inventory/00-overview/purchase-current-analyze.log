@@ -1,0 +1,5 @@
+Analyzing app...                                                
+
+  error • The getter 'readOnly' isn't defined for the type 'TextFormField'. Try importing the library that defines 'readOnly', correcting the name to the name of an existing getter, or defining a getter or field named 'readOnly' • test/modules/services/intake_test.dart:419:42 • undefined_getter
+
+1 issue found. (ran in 2.8s)

@@ -1,0 +1,238 @@
+{
+  "result": "PASS",
+  "scope": "body controls source, route, PNG and complete visual review evidence; not all App completion",
+  "states": 58,
+  "viewport_variants": 94,
+  "long_variants": 92,
+  "original_pngs": 186,
+  "continuous_segments": 462,
+  "reviewed_unique_segments": 207,
+  "reviewed_sheets": 36,
+  "option_observations": [
+    {
+      "group": "今天身体的电量",
+      "field": "energyLabels",
+      "option": "energized",
+      "label": "有力气",
+      "state": "03-mom/mom-body-control-energy-energized",
+      "variant": "393/1x",
+      "evidence": "actual tap and selected-value assertion"
+    },
+    {
+      "group": "今天身体的电量",
+      "field": "energyLabels",
+      "option": "managing",
+      "label": "勉强应付",
+      "state": "03-mom/mom-body-control-energy-managing",
+      "variant": "393/1x",
+      "evidence": "actual tap and selected-value assertion"
+    },
+    {
+      "group": "今天身体的电量",
+      "field": "energyLabels",
+      "option": "depleted",
+      "label": "身体被掏空",
+      "state": "03-mom/mom-body-control-energy-depleted",
+      "variant": "393/1x",
+      "evidence": "actual tap and selected-value assertion"
+    },
+    {
+      "group": "今天哪里最需要照顾？",
+      "field": "siteLabels",
+      "option": "lowerAbdomen",
+      "label": "下腹 / 宫缩",
+      "state": "03-mom/mom-body-control-site-lowerAbdomen",
+      "variant": "393/1x",
+      "evidence": "actual tap and selected-value assertion"
+    },
+    {
+      "group": "今天哪里最需要照顾？",
+      "field": "siteLabels",
+      "option": "perineum",
+      "label": "会阴 / 伤口",
+      "state": "03-mom/mom-body-control-site-perineum",
+      "variant": "393/1x",
+      "evidence": "actual tap and selected-value assertion"
+    },
+    {
+      "group": "今天哪里最需要照顾？",
+      "field": "siteLabels",
+      "option": "cesarean",
+      "label": "剖腹产切口",
+      "state": "03-mom/mom-body-control-site-cesarean",
+      "variant": "393/1x",
+      "evidence": "actual tap and selected-value assertion"
+    },
+    {
+      "group": "今天哪里最需要照顾？",
+      "field": "siteLabels",
+      "option": "back",
+      "label": "腰背",
+      "state": "03-mom/mom-body-control-site-back",
+      "variant": "393/1x",
+      "evidence": "actual tap and selected-value assertion"
+    },
+    {
+      "group": "今天哪里最需要照顾？",
+      "field": "siteLabels",
+      "option": "headChest",
+      "label": "头痛 / 胸闷",
+      "state": "03-mom/mom-body-control-site-headChest",
+      "variant": "393/1x",
+      "evidence": "actual tap and selected-value assertion"
+    },
+    {
+      "group": "今天哪里最需要照顾？",
+      "field": "siteLabels",
+      "option": "other",
+      "label": "其他",
+      "state": "03-mom/mom-body-control-site-other",
+      "variant": "393/1x",
+      "evidence": "actual tap and selected-value assertion"
+    },
+    {
+      "group": "这种不适有多难受？",
+      "field": "severityLabels",
+      "option": "mild",
+      "label": "轻微",
+      "state": "03-mom/mom-body-control-severity-mild",
+      "variant": "393/1x",
+      "evidence": "actual tap and selected-value assertion"
+    },
+    {
+      "group": "这种不适有多难受？",
+      "field": "severityLabels",
+      "option": "noticeable",
+      "label": "明显",
+      "state": "03-mom/mom-body-control-severity-noticeable",
+      "variant": "393/1x",
+      "evidence": "actual tap and selected-value assertion"
+    },
+    {
+      "group": "这种不适有多难受？",
+      "field": "severityLabels",
+      "option": "hardToIgnore",
+      "label": "很难忽略",
+      "state": "03-mom/mom-body-control-severity-hardToIgnore",
+      "variant": "393/1x",
+      "evidence": "actual tap and selected-value assertion"
+    },
+    {
+      "group": "这种不适影响到你了吗？",
+      "field": "bodyImpactLabels",
+      "option": "none",
+      "label": "没有影响",
+      "state": "03-mom/mom-body-control-impact-none",
+      "variant": "393/1x",
+      "evidence": "actual tap and selected-value assertion"
+    },
+    {
+      "group": "这种不适影响到你了吗？",
+      "field": "bodyImpactLabels",
+      "option": "some",
+      "label": "有一点影响",
+      "state": "03-mom/mom-body-control-impact-some",
+      "variant": "393/1x",
+      "evidence": "actual tap and selected-value assertion"
+    },
+    {
+      "group": "这种不适影响到你了吗？",
+      "field": "bodyImpactLabels",
+      "option": "careLimited",
+      "label": "影响走路 / 抱宝宝",
+      "state": "03-mom/mom-body-control-impact-careLimited",
+      "variant": "393/1x",
+      "evidence": "actual tap and selected-value assertion"
+    },
+    {
+      "group": "和昨天相比，身体感觉",
+      "field": "trendLabels",
+      "option": "better",
+      "label": "好一些",
+      "state": "03-mom/mom-body-control-trend-better",
+      "variant": "393/1x",
+      "evidence": "actual tap and selected-value assertion"
+    },
+    {
+      "group": "和昨天相比，身体感觉",
+      "field": "trendLabels",
+      "option": "same",
+      "label": "差不多",
+      "state": "03-mom/mom-body-control-trend-same",
+      "variant": "393/1x",
+      "evidence": "actual tap and selected-value assertion"
+    },
+    {
+      "group": "和昨天相比，身体感觉",
+      "field": "trendLabels",
+      "option": "worse",
+      "label": "更不舒服",
+      "state": "03-mom/mom-body-control-trend-worse",
+      "variant": "393/1x",
+      "evidence": "actual tap and selected-value assertion"
+    },
+    {
+      "group": "排尿",
+      "field": "urinationLabels",
+      "option": "normal",
+      "label": "正常",
+      "state": "03-mom/mom-body-control-urination-normal",
+      "variant": "393/1x",
+      "evidence": "actual tap and selected-value assertion"
+    },
+    {
+      "group": "排尿",
+      "field": "urinationLabels",
+      "option": "leakingUrgency",
+      "label": "尿急 / 漏尿",
+      "state": "03-mom/mom-body-control-urination-leakingUrgency",
+      "variant": "393/1x",
+      "evidence": "actual tap and selected-value assertion"
+    },
+    {
+      "group": "排尿",
+      "field": "urinationLabels",
+      "option": "painfulDifficult",
+      "label": "刺痛 / 困难",
+      "state": "03-mom/mom-body-control-urination-painfulDifficult",
+      "variant": "393/1x",
+      "evidence": "actual tap and selected-value assertion"
+    },
+    {
+      "group": "排便",
+      "field": "bowelLabels",
+      "option": "smooth",
+      "label": "顺畅",
+      "state": "03-mom/mom-body-control-bowel-smooth",
+      "variant": "393/1x",
+      "evidence": "actual tap and selected-value assertion"
+    },
+    {
+      "group": "排便",
+      "field": "bowelLabels",
+      "option": "difficult",
+      "label": "费力",
+      "state": "03-mom/mom-body-control-bowel-difficult",
+      "variant": "393/1x",
+      "evidence": "actual tap and selected-value assertion"
+    },
+    {
+      "group": "排便",
+      "field": "bowelLabels",
+      "option": "painfulPiles",
+      "label": "疼痛 / 痔疮",
+      "state": "03-mom/mom-body-control-bowel-painfulPiles",
+      "variant": "393/1x",
+      "evidence": "actual tap and selected-value assertion"
+    }
+  ],
+  "route_journey_variants": 94,
+  "source_hashes": {
+    "test/modules/mom/mom_body_control_inventory_test.dart": "ba3f9030c6ceb098850cbcb2799721a74af56bf0420b661ece4ead6ec26a2099",
+    "lib/modules/mom/presentation/diary_fields.dart": "f89a12bf4e975c1f5323dfce6c9fb142c0b11d35c8802685a63d63c355fbdf30",
+    "lib/modules/mom/presentation/diary_labels.dart": "575a2c9b92e2517abb2c6c04c19f0eba78e7b528274b986688c376ced7833c79",
+    "lib/shared/widgets/choice_field.dart": "417db3d0d30d86537467474efbdbb7d8fba585a5ce75c536a76339495f290990",
+    "lib/modules/mom/presentation/mother_diary_editor.dart": "b27713314588f40ef41dcf304e1abac0d9b9d162b201a4c35cb7d7a2dbe491f4"
+  },
+  "report_links_checked": 136
+}

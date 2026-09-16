@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/baby-profile-boundaries-unicode-length-validation-393-1x.png",
+  "previous_source": "test/goldens/ui_inventory/baby-profile-boundaries-name-scroll-end-393-1x.png",
+  "route": "/baby",
+  "trigger": "61 combining-accent letters exceed 120 Unicode code points → domain length validation",
+  "root_entry": "Authenticated More → tap Baby bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/baby/baby_profile_boundary_inventory_test.dart"
+}

@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/baby-profile-recovery-more-return-320-2x.png",
+  "previous_source": "test/goldens/ui_inventory/baby-profile-recovery-saved-reopened-320-2x.png",
+  "route": "/more",
+  "trigger": "Close unchanged editor → More",
+  "root_entry": "Authenticated More → tap Baby bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/baby/baby_profile_recovery_inventory_test.dart"
+}

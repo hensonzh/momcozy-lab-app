@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/consultation-journey-summary-task-in-progress-393.png",
+  "previous_source": "test/goldens/ui_inventory/consultation-journey-summary-task-detail-393.png",
+  "route": "/services/appointments/service-appointment/summary",
+  "trigger": "Set task progress → persisted in-progress state",
+  "root_entry": "Authenticated More → tap Me bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories/codecs and LiveKit device checks; isolated HTTP and native method channels, sandbox room, fixed clock/timezone; no real OS permission dialog or remote media",
+  "test": "test/modules/consultation/consultation_inventory_journey_test.dart"
+}

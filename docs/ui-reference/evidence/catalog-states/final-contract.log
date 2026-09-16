@@ -1,0 +1,13 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: four catalog packages open the matching detail and purchase confirmation 320.0/1.0
+00:00 +1: four catalog packages open the matching detail and purchase confirmation 320.0/2.0
+00:01 +2: four catalog packages open the matching detail and purchase confirmation 390.0/1.0
+00:01 +3: four catalog packages open the matching detail and purchase confirmation 390.0/2.0
+00:01 +4: four catalog packages open the matching detail and purchase confirmation 430.0/1.0
+00:02 +5: four catalog packages open the matching detail and purchase confirmation 430.0/2.0
+00:02 +6: catalog refresh failures remain visible and can recover without losing packages
+00:02 +7: catalog with no packages explains empty state
+00:02 +8: resuming an order shows busy state, blocks repeats and recovers read failure
+00:02 +9: (tearDownAll)
+00:02 +9: All tests passed!

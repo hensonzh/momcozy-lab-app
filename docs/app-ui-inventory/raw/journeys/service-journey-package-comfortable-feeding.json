@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/service-journey-package-comfortable-feeding-393.png",
+  "previous_source": "test/goldens/ui_inventory/service-journey-package-team-milk-supply-care-393.png",
+  "route": "/services/comfortable-feeding",
+  "trigger": "Catalog 舒适哺乳支持 → detail and purchase CTA",
+  "root_entry": "Authenticated More → tap Me bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/services/service_inventory_journey_test.dart"
+}

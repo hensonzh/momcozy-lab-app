@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/mom-body-control-energy-restored-320-2x.png",
+  "previous_source": "test/goldens/ui_inventory/mom-body-control-energy-cleared-320-2x.png",
+  "route": "/me",
+  "trigger": "Choose energized after clearing",
+  "root_entry": "Authenticated More → tap Me bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/mom/mom_body_control_inventory_test.dart"
+}

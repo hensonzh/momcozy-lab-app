@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/notification-current-notification-target-unavailable-393-1x.png",
+  "previous_source": "test/goldens/ui_inventory/notification-current-notification-open-error-393-1x.png",
+  "route": "/notifications",
+  "trigger": "Retry open → server reports resource unavailable, item read, no navigation",
+  "root_entry": "Authenticated More page",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production notification coordinator/repository/controller; isolated HTTP, push gateway and permission platform; real router.go and ScaffoldMessenger callbacks, no native OS dialog or remote push",
+  "test": "test/features/notifications/notification_current_inventory_test.dart"
+}

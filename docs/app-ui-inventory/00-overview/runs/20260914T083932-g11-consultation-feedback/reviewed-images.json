@@ -1,0 +1,209 @@
+[
+  {
+    "image": "raw/test/goldens/ui_inventory/consultation-journey-current-room-loading-393.png",
+    "sha256": "c9e41088c160fd3e471a7b17082c733fea24564be83b9a233cf0bdb78979710d",
+    "metadata": "raw/test/goldens/ui_inventory/consultation-journey-current-room-loading-393.png.json",
+    "long": {
+      "status": "no-active-vertical-overflow"
+    },
+    "scenario": "inventory consultation current preflight feedback gaps",
+    "texts": [
+      "已确认 · IBCLC 咨询",
+      "9月13日 周日 · 01:05 – 02:05 PDT",
+      "60 分钟 · America/Los_Angeles",
+      "TI",
+      "本次咨询专家",
+      "Test IBCLC",
+      "IBCLC · 哺乳顾问",
+      "取消预约",
+      "咨询前准备",
+      "咨询前请完成信息采集表，让专家了解这次最想解决的问题。",
+      "查看信息采集表",
+      "咨询前准备",
+      "预约提醒",
+      "此设备尚未开启提醒，预约已保存。",
+      "通知设置",
+      "返回",
+      "预约详情",
+      "正在读取咨询信息",
+      "预约信息载入后，你可以查看咨询前准备。",
+      "视频咨询"
+    ]
+  },
+  {
+    "image": "raw/test/goldens/ui_inventory/consultation-journey-current-room-load-error-393.png",
+    "sha256": "16401dc5dfe3d736b8fae23e6d75d4b30a389acf008646fb94a7db4a21c2302a",
+    "metadata": "raw/test/goldens/ui_inventory/consultation-journey-current-room-load-error-393.png.json",
+    "long": {
+      "status": "no-active-vertical-overflow"
+    },
+    "scenario": "inventory consultation current preflight feedback gaps",
+    "texts": [
+      "暂时无法载入，请稍后重试",
+      "重试",
+      "视频咨询"
+    ]
+  },
+  {
+    "image": "raw/test/goldens/ui_inventory/consultation-journey-current-video-consent-error-393.png",
+    "sha256": "c955c5369b725a98b7e1d977527352675723592b87c1fe31263cdc4f03f5791e",
+    "metadata": "raw/test/goldens/ui_inventory/consultation-journey-current-video-consent-error-393.png.json",
+    "long": {
+      "status": "no-active-vertical-overflow"
+    },
+    "scenario": "inventory consultation current preflight feedback gaps",
+    "texts": [
+      "预约详情",
+      "连接暂时中断，请重试。已提交的操作会继续核对。",
+      "刷新咨询状态",
+      "9月13日 周日 · 01:05 – 02:05 PDT",
+      "60 分钟 · America/Los_Angeles",
+      "TI",
+      "本次咨询专家",
+      "Test IBCLC",
+      "IBCLC · 哺乳顾问",
+      "距离咨询",
+      "00:05:00",
+      "开始前准备",
+      "开始前请确认当前所在州，并确保摄像头与麦克风可用。",
+      "请稍候…",
+      "取消预约",
+      "当前为模拟咨询，不传输远程音视频。",
+      "开始视频咨询",
+      "开始前请确认你当前所在的位置。",
+      "当前所在州",
+      "California (CA)",
+      "需要开启本次服务的视频咨询授权",
+      "去授权",
+      "确认并进入咨询室",
+      "视频咨询授权",
+      "开启后，可以与本次负责的 IBCLC 进行实时音视频咨询。",
+      "我同意开启本次服务的视频咨询",
+      "连接暂时中断，请重试。已提交的操作会继续核对。",
+      "确认视频授权"
+    ]
+  },
+  {
+    "image": "raw/test/goldens/ui_inventory/consultation-journey-current-location-request-error-393.png",
+    "sha256": "8948e9ba1ca072bc6bb5b37570b2e9582dd58635cb2b939d5e337b887e9a4a74",
+    "metadata": "raw/test/goldens/ui_inventory/consultation-journey-current-location-request-error-393.png.json",
+    "long": {
+      "status": "no-active-vertical-overflow"
+    },
+    "scenario": "inventory consultation current preflight feedback gaps",
+    "texts": [
+      "预约详情",
+      "连接暂时中断，请重试。已提交的操作会继续核对。",
+      "刷新咨询状态",
+      "9月13日 周日 · 01:05 – 02:05 PDT",
+      "60 分钟 · America/Los_Angeles",
+      "TI",
+      "本次咨询专家",
+      "Test IBCLC",
+      "IBCLC · 哺乳顾问",
+      "距离咨询",
+      "00:05:00",
+      "开始前准备",
+      "开始前请确认当前所在州，并确保摄像头与麦克风可用。",
+      "请稍候…",
+      "取消预约",
+      "当前为模拟咨询，不传输远程音视频。",
+      "开始视频咨询",
+      "开始前请确认你当前所在的位置。",
+      "当前所在州",
+      "California (CA)",
+      "连接暂时中断，请重试。已提交的操作会继续核对。",
+      "确认并进入咨询室"
+    ]
+  },
+  {
+    "image": "raw/test/goldens/ui_inventory/consultation-journey-current-join-request-error-393.png",
+    "sha256": "4486d8ee77e3a792df8d050ac8a246e452d7ed7c5a93b7635d64b47363d11193",
+    "metadata": "raw/test/goldens/ui_inventory/consultation-journey-current-join-request-error-393.png.json",
+    "long": {
+      "status": "no-active-vertical-overflow"
+    },
+    "scenario": "inventory consultation current preflight feedback gaps",
+    "texts": [
+      "预约详情",
+      "连接暂时中断，请重试。已提交的操作会继续核对。",
+      "刷新咨询状态",
+      "9月13日 周日 · 01:05 – 02:05 PDT",
+      "60 分钟 · America/Los_Angeles",
+      "TI",
+      "本次咨询专家",
+      "Test IBCLC",
+      "IBCLC · 哺乳顾问",
+      "距离咨询",
+      "00:05:00",
+      "开始前准备",
+      "开始前请确认当前所在州，并确保摄像头与麦克风可用。",
+      "请稍候…",
+      "取消预约",
+      "当前为模拟咨询，不传输远程音视频。",
+      "开始视频咨询",
+      "开始前请确认你当前所在的位置。",
+      "当前所在州",
+      "California (CA)",
+      "连接暂时中断，请重试。已提交的操作会继续核对。",
+      "咨询室正在准备，请稍候。关闭将取消本次进入。",
+      "正在进入…"
+    ]
+  },
+  {
+    "image": "raw/test/goldens/design_system/room-entry-page-loading-390.png",
+    "sha256": "3902821263ef503f65cf399e9bb8472f7407d013168cdc56f3ddd1a53587f4e8",
+    "metadata": "raw/test/goldens/design_system/room-entry-page-loading-390.png.json",
+    "long": {
+      "status": "no-active-vertical-overflow"
+    },
+    "scenario": "entry loads, retries one request and recovers false/390.0/1.0",
+    "texts": [
+      "正在读取咨询信息",
+      "预约信息载入后，你可以查看咨询前准备。",
+      "视频咨询"
+    ]
+  },
+  {
+    "image": "raw/test/goldens/design_system/room-entry-page-error-390.png",
+    "sha256": "1219f5e036e50016906bfb94090a2673b30f4346deeb3c9dfcf3d341ec06dc43",
+    "metadata": "raw/test/goldens/design_system/room-entry-page-error-390.png.json",
+    "long": {
+      "status": "no-active-vertical-overflow"
+    },
+    "scenario": "entry loads, retries one request and recovers false/390.0/1.0",
+    "texts": [
+      "暂时无法载入，请稍后重试",
+      "重试",
+      "视频咨询"
+    ]
+  },
+  {
+    "image": "raw/test/goldens/design_system/room-entry-modal-loading-390.png",
+    "sha256": "dc02166ba65673107f6c0d2a55ab23574f2dba78dc9c58003f7755bdb96d6dd9",
+    "metadata": "raw/test/goldens/design_system/room-entry-modal-loading-390.png.json",
+    "long": {
+      "status": "no-active-vertical-overflow"
+    },
+    "scenario": "entry loads, retries one request and recovers true/390.0/1.0",
+    "texts": [
+      "预约详情",
+      "正在读取咨询信息",
+      "预约信息载入后，你可以查看咨询前准备。"
+    ]
+  },
+  {
+    "image": "raw/test/goldens/design_system/room-entry-modal-error-390.png",
+    "sha256": "7700891a48357815ae0aed12b4e3e14d82587ace2a7cad56345d1bb7b5a9faa4",
+    "metadata": "raw/test/goldens/design_system/room-entry-modal-error-390.png.json",
+    "long": {
+      "status": "no-active-vertical-overflow"
+    },
+    "scenario": "entry loads, retries one request and recovers true/390.0/1.0",
+    "texts": [
+      "预约详情",
+      "暂时无法载入，请稍后重试",
+      "重试"
+    ]
+  }
+]

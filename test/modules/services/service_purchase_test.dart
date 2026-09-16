@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:momcozy_flutter_app/core/routing/external_url_launcher.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/domain/care/care_episode.dart';
@@ -17,7 +18,7 @@ import '../../support/fixture_api_transport.dart';
 import '../../support/momcozy_test_fonts.dart';
 
 final _now = DateTime.utc(2026, 9, 8, 10);
-ServiceCatalog _catalog() {
+ServiceCatalog _catalog({PaymentMode mode = PaymentMode.sandbox}) {
   final json = Map<String, Object?>.from(
     jsonDecode(
           File(
@@ -27,6 +28,7 @@ ServiceCatalog _catalog() {
         as Map,
   );
   json['available_regions'] = ['CA'];
+  json['payment_mode'] = mode.name;
   return readServiceCatalog(json);
 }
 
@@ -63,6 +65,275 @@ const _episode = CareEpisode(
 );
 
 void main() {
+  for (final width in [320.0, 390.0, 430.0]) {
+    for (final scale in [1.0, 2.0]) {
+      testWidgets('purchase states and booking result at $width / $scale', (
+        tester,
+      ) async {
+        final repository = _Repository();
+        final controller = ServicePurchaseController(
+          repository: repository,
+          packageId: 'feeding-confidence',
+          now: () => _now,
+        );
+        addTearDown(controller.dispose);
+        CareEpisode? result;
+        await _mountPurchase(
+          tester,
+          controller,
+          width: width,
+          scale: scale,
+          onResult: (value) => result = value,
+        );
+        await _region(tester, 'California (CA)');
+        await _capture(tester, 'eligibility', width, scale);
+        expect(
+          tester
+              .widget<FilledButton>(find.widgetWithText(FilledButton, '确认并继续'))
+              .onPressed,
+          isNull,
+        );
+        await _region(tester, 'New York (NY)');
+        await tester.ensureVisible(find.byType(CheckboxListTile));
+        await tester.tap(find.byType(CheckboxListTile));
+        await tester.pumpAndSettle();
+        expect(
+          tester
+              .widget<FilledButton>(find.widgetWithText(FilledButton, '确认并继续'))
+              .onPressed,
+          isNull,
+        );
+        expect(repository.createKeys, isEmpty);
+        await _capture(tester, 'unavailable', width, scale);
+        await _region(tester, 'California (CA)');
+        await _click(tester, '确认并继续');
+        expect(repository.createKeys, hasLength(1));
+        await _capture(tester, 'payment', width, scale);
+        await tester.enterText(
+          find.byType(TextFormField).first,
+          '4000 0000 0000 9995',
+        );
+        await _click(tester, '支付 \$219');
+        expect(controller.purchase!.order.status, CareOrderStatus.failed);
+        expect(controller.purchase!.episode, isNull);
+        await _capture(tester, 'failed', width, scale);
+        await tester.ensureVisible(find.byType(TextFormField).first);
+        await tester.enterText(
+          find.byType(TextFormField).first,
+          '4000 0025 0000 3155',
+        );
+        await _click(tester, '支付 \$219');
+        expect(
+          controller.purchase!.order.status,
+          CareOrderStatus.requiresAction,
+        );
+        expect(
+          tester.widget<TextField>(find.byType(TextField).first).readOnly,
+          isTrue,
+        );
+        await _capture(tester, 'challenge', width, scale);
+        await _click(tester, '确认验证');
+        expect(controller.purchase!.episode, _episode);
+        expect(find.byType(TextFormField), findsNothing);
+        await _capture(tester, 'success', width, scale);
+        await _click(tester, '开始预约');
+        expect(result, _episode);
+        expect(find.byType(ServicePurchaseDialog), findsNothing);
+        expect(repository.outcomes, [
+          SandboxPaymentOutcome.declined,
+          SandboxPaymentOutcome.requiresAction,
+          SandboxPaymentOutcome.succeeded,
+        ]);
+      });
+    }
+  }
+
+  testWidgets(
+    'Stripe uses order mode, reports launch failure and queries returned benefits',
+    (tester) async {
+      final repository = _StripeRepository();
+      final launcher = _Launcher();
+      final controller = ServicePurchaseController(
+        repository: repository,
+        packageId: 'feeding-confidence',
+        purchase: repository.current,
+      );
+      addTearDown(controller.dispose);
+      await _mountPurchase(tester, controller, launcher: launcher);
+      expect(find.byType(TextFormField), findsNothing);
+      await _click(tester, '打开 Stripe Checkout');
+      expect(launcher.opened, hasLength(1));
+      expect(find.text('暂时无法打开支付页面，请重试或查询订单结果。'), findsOneWidget);
+      await _capture(tester, 'stripe-launch-error', 390, 1);
+      repository.failCheckout = true;
+      await _click(tester, '打开 Stripe Checkout');
+      expect(launcher.opened, hasLength(1));
+      expect(controller.checkoutUrl, isNull);
+      repository.failCheckout = false;
+      launcher.throws = true;
+      await _click(tester, '打开 Stripe Checkout');
+      expect(find.text('暂时无法打开支付页面，请重试或查询订单结果。'), findsOneWidget);
+      repository.current = Purchase(
+        order: readCareOrder({
+          ..._orderJson(status: 'paid'),
+          'payment_mode': 'stripe',
+        }),
+        episode: _episode,
+      );
+      await _click(tester, '我已完成付款，查询结果');
+      expect(repository.purchaseCalls, 1);
+      expect(find.text('购买成功'), findsOneWidget);
+      expect(find.text('打开 Stripe Checkout'), findsNothing);
+      expect(find.text('暂时无法打开支付页面，请重试或查询订单结果。'), findsNothing);
+      expect(repository.outcomes, isEmpty);
+      await _click(tester, '稍后预约');
+      expect(find.byType(ServicePurchaseDialog), findsNothing);
+    },
+  );
+
+  testWidgets(
+    'pending payment blocks back and uncertain retry keeps original card and outcome',
+    (tester) async {
+      final repository = _Repository();
+      final controller = ServicePurchaseController(
+        repository: repository,
+        packageId: 'feeding-confidence',
+        purchase: repository.current,
+      );
+      addTearDown(controller.dispose);
+      await _mountPurchase(
+        tester,
+        controller,
+        width: 320,
+        height: 568,
+        scale: 2,
+      );
+      await tester.enterText(find.byType(TextFormField).first, '12');
+      tester.view.viewInsets = const FakeViewPadding(bottom: 250);
+      addTearDown(tester.view.resetViewInsets);
+      await tester.pumpAndSettle();
+      await _click(tester, '支付 \$219');
+      expect(find.text('请填写 16 位测试卡号'), findsOneWidget);
+      expect(repository.outcomes, isEmpty);
+      expect(tester.takeException(), isNull);
+      tester.view.resetViewInsets();
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(find.byType(TextFormField).first);
+      await tester.enterText(
+        find.byType(TextFormField).first,
+        '4242 4242 4242 4242',
+      );
+      final pending = Completer<Purchase>();
+      repository.nextPayment = pending.future;
+      await _click(tester, '支付 \$219');
+      expect(controller.busy, isTrue);
+      await tester.binding.handlePopRoute();
+      await tester.pumpAndSettle();
+      expect(find.byType(ServicePurchaseDialog), findsOneWidget);
+      expect(
+        tester
+            .widget<IconButton>(
+              find.byWidgetPredicate(
+                (widget) => widget is IconButton && widget.tooltip == '关闭购买',
+              ),
+            )
+            .onPressed,
+        isNull,
+      );
+      pending.completeError(const ProductFailure(ProductFailureKind.offline));
+      await tester.pumpAndSettle();
+      expect(controller.uncertainPayment, isTrue);
+      final field = tester.widget<TextFormField>(
+        find.byType(TextFormField).first,
+      );
+      expect(
+        tester.widget<TextField>(find.byType(TextField).first).readOnly,
+        isTrue,
+      );
+      expect(field.controller!.text, '4242 4242 4242 4242');
+      repository.nextPayment = null;
+      await _click(tester, '重试这笔付款');
+      expect(repository.outcomes, [
+        SandboxPaymentOutcome.succeeded,
+        SandboxPaymentOutcome.succeeded,
+      ]);
+      expect(find.text('购买成功'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
+  for (final mode in [PaymentMode.sandbox, PaymentMode.stripe]) {
+    testWidgets('cancelled $mode purchase has no payment entry', (
+      tester,
+    ) async {
+      final controller = ServicePurchaseController(
+        repository: _Repository(),
+        packageId: 'feeding-confidence',
+        purchase: Purchase(
+          order: readCareOrder({
+            ..._orderJson(status: 'cancelled'),
+            'payment_mode': mode.name,
+          }),
+        ),
+      );
+      addTearDown(controller.dispose);
+      await _mountPurchase(tester, controller);
+      expect(find.byType(TextFormField), findsNothing);
+      expect(find.text('打开 Stripe Checkout'), findsNothing);
+      await _click(tester, '返回方案');
+      expect(find.byType(ServicePurchaseDialog), findsNothing);
+    });
+  }
+
+  test('existing backend stripe catalog and order modes decode', () {
+    expect(_catalog(mode: PaymentMode.stripe).paymentMode, PaymentMode.stripe);
+    expect(
+      readCareOrder({..._orderJson(), 'payment_mode': 'stripe'}).paymentMode,
+      PaymentMode.stripe,
+    );
+  });
+
+  test('failed checkout refresh clears the previous destination', () async {
+    final repository = _StripeRepository();
+    final controller = ServicePurchaseController(
+      repository: repository,
+      packageId: 'feeding-confidence',
+      purchase: repository.current,
+    );
+    addTearDown(controller.dispose);
+    await controller.startStripeCheckout();
+    expect(controller.checkoutUrl, isNotNull);
+    repository.failCheckout = true;
+    await controller.startStripeCheckout();
+    expect(controller.checkoutUrl, isNull);
+    expect(controller.failure, isNotNull);
+  });
+  testWidgets(
+    'paid order without returned benefits only offers result lookup',
+    (tester) async {
+      final catalog = _catalog();
+      final controller = ServicePurchaseController(
+        repository: _Repository(),
+        packageId: 'feeding-confidence',
+        purchase: Purchase(order: _order(status: CareOrderStatus.paid)),
+      );
+      addTearDown(controller.dispose);
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: momCozyTheme(),
+          home: ServicePurchaseDialog(
+            controller: controller,
+            package: catalog.packages.first,
+            catalog: catalog,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.byType(TextFormField), findsNothing);
+      expect(find.text('查询结果'), findsOneWidget);
+    },
+  );
+
   test(
     'repository posts no price, owner or card data and carries mutation identity',
     () async {
@@ -276,7 +547,7 @@ void main() {
 
 class _Repository implements CareRepository {
   Purchase current = Purchase(order: _order());
-  int eligibilityCalls = 0;
+  int eligibilityCalls = 0, purchaseCalls = 0;
   final createKeys = <String>[];
   final outcomes = <SandboxPaymentOutcome>[];
   Future<Purchase>? nextCreate, nextPayment;
@@ -313,7 +584,11 @@ class _Repository implements CareRepository {
   }
 
   @override
-  Future<Purchase> purchase(String orderId) async => current;
+  Future<Purchase> purchase(String orderId) async {
+    purchaseCalls++;
+    return current;
+  }
+
   @override
   Future<Purchase> sandboxPayment(
     String orderId, {
@@ -334,5 +609,126 @@ class _Repository implements CareRepository {
       episode: status == CareOrderStatus.paid ? _episode : null,
     );
     return current;
+  }
+}
+
+class _StripeRepository extends _Repository
+    implements StripeCheckoutRepository {
+  _StripeRepository() {
+    current = Purchase(
+      order: readCareOrder({..._orderJson(), 'payment_mode': 'stripe'}),
+    );
+  }
+  bool failCheckout = false;
+  @override
+  Future<StripeCheckout> stripeCheckout(String orderId) async {
+    if (failCheckout) throw const ProductFailure(ProductFailureKind.offline);
+    return StripeCheckout(
+      url: Uri.parse('https://checkout.stripe.com/c/pay/test'),
+      purchase: current,
+    );
+  }
+}
+
+class _Launcher implements ExternalUrlLauncher {
+  final opened = <Uri>[];
+  bool succeeds = false, throws = false;
+  @override
+  Future<bool> open(Uri uri) async {
+    opened.add(uri);
+    if (throws) throw StateError('launcher unavailable');
+    return succeeds;
+  }
+}
+
+Future<void> _mountPurchase(
+  WidgetTester tester,
+  ServicePurchaseController controller, {
+  double width = 390,
+  double height = 844,
+  double scale = 1,
+  ExternalUrlLauncher? launcher,
+  ValueChanged<CareEpisode?>? onResult,
+}) async {
+  await loadMomCozyTestFonts();
+  tester.view.physicalSize = Size(width, height);
+  tester.view.devicePixelRatio = 1;
+  addTearDown(tester.view.resetPhysicalSize);
+  addTearDown(tester.view.resetDevicePixelRatio);
+  final catalog = _catalog();
+  await tester.pumpWidget(
+    RepaintBoundary(
+      key: const ValueKey('capture'),
+      child: MaterialApp(
+        theme: momCozyTheme(),
+        debugShowCheckedModeBanner: false,
+        builder: (context, child) => MediaQuery(
+          data: MediaQuery.of(
+            context,
+          ).copyWith(textScaler: TextScaler.linear(scale)),
+          child: child!,
+        ),
+        home: Scaffold(
+          body: Builder(
+            builder: (context) => Center(
+              child: TextButton(
+                onPressed: () async {
+                  final result = await showDialog<CareEpisode>(
+                    context: context,
+                    barrierDismissible: false,
+                    builder: (_) => ServicePurchaseDialog(
+                      controller: controller,
+                      package: catalog.packages.first,
+                      catalog: catalog,
+                      urlLauncher: launcher ?? _Launcher(),
+                    ),
+                  );
+                  onResult?.call(result);
+                },
+                child: const Text('打开购买'),
+              ),
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
+  await tester.tap(find.text('打开购买'));
+  await tester.pumpAndSettle();
+}
+
+Future<void> _click(WidgetTester tester, String text) async {
+  await tester.pumpAndSettle();
+  await Scrollable.ensureVisible(
+    tester.element(find.text(text)),
+    alignment: .5,
+  );
+  await tester.pumpAndSettle();
+  await tester.tap(find.text(text));
+  await tester.pumpAndSettle();
+}
+
+Future<void> _region(WidgetTester tester, String label) async {
+  await tester.ensureVisible(find.byType(DropdownButtonFormField<String>));
+  await tester.tap(find.byType(DropdownButtonFormField<String>));
+  await tester.pumpAndSettle();
+  await tester.tap(find.text(label).last);
+  await tester.pumpAndSettle();
+}
+
+Future<void> _capture(
+  WidgetTester tester,
+  String name,
+  double width,
+  double scale,
+) async {
+  expect(tester.takeException(), isNull);
+  if (scale == 1 || width == 320) {
+    await expectLater(
+      find.byKey(const ValueKey('capture')),
+      matchesGoldenFile(
+        '../../goldens/design_system/purchase-$name-${width.toInt()}${scale == 2 ? '-2x' : ''}.png',
+      ),
+    );
   }
 }

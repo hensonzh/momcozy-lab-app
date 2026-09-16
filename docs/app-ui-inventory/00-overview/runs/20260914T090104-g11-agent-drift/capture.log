@@ -1,0 +1,52 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_markdown_design_test.dart
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_resource_card_design_test.dart: (setUpAll)
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_me_design_test.dart: (setUpAll)
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: (setUpAll)
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_notice_design_test.dart: attachment image-error preserves draft 390.0/1.0
+00:00 +1: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_notice_design_test.dart: attachment image-error preserves draft 390.0/1.0
+00:00 +2: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_markdown_design_test.dart: markdown reading 390.0/1.0
+00:01 +3: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_markdown_design_test.dart: markdown reading 390.0/1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: FlutterError:<Golden "../../goldens/design_system/agent-markdown-top-390-1x.png": Pixel
+test failed, 0.68%, 2253px diff detected.
+          Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/features/agent_hub/failures>
+
+When the exception was thrown, this was the stack:
+#4      verifyAgentMarkdown (file:///Users/lute/project/momcozy-lab/app/test/support/agent_markdown_scenarios.dart:102:3)
+<asynchronous suspension>
+#5      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_markdown_design_test.dart:18:9)
+<asynchronous suspension>
+#6      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#7      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/support/agent_markdown_scenarios.dart line 102
+The test description was:
+  markdown reading 390.0/1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +3 -1: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 390.0/1.0
+00:01 +3 -1: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_markdown_design_test.dart: markdown reading 390.0/1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: markdown reading 390.0/1.0
+  
+00:01 +3 -1: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 390.0/1.0
+00:01 +4 -1: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 390.0/1.0
+00:01 +5 -1: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_notice_design_test.dart: attachment too-large preserves draft 390.0/1.0
+00:01 +6 -1: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: greeting playback and replay indicator 390.0/1.0
+00:01 +7 -1: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_notice_design_test.dart: attachment unsupported preserves draft 390.0/1.0
+00:01 +8 -1: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_notice_design_test.dart: attachment cleanup-error preserves draft 390.0/1.0
+00:01 +9 -1: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_notice_design_test.dart: (tearDownAll)
+00:03 +9 -1: /Users/lute/project/momcozy-lab/app/test/app/notification_conversation_route_test.dart: (setUpAll)
+00:03 +9 -1: /Users/lute/project/momcozy-lab/app/test/app/notification_conversation_route_test.dart: notification conversation opens and keeps drafts scoped to its runtime and thread 393.0 / 1.0
+00:04 +10 -1: /Users/lute/project/momcozy-lab/app/test/app/notification_conversation_route_test.dart: (tearDownAll)
+00:04 +10 -1: Some tests failed.
+
+Failing tests:
+  /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_markdown_design_test.dart: markdown reading 390.0/1.0

@@ -1,0 +1,198 @@
+[
+  {
+    "node_id": "326:1086",
+    "state": "recorded",
+    "scale": 1,
+    "path": "figma/326-1086.png",
+    "sha256": "238ae81ee7fea858d5e75e193c905267ef4a11cc3985c1e3c69cf00d03b6275b"
+  },
+  {
+    "node_id": "326:1236",
+    "state": "recorded",
+    "scale": 2,
+    "path": "figma/326-1236.png",
+    "sha256": "7df242f9f6b5237040a6fbe0dbcb9478fd595bc3e3c1824a3f575cdf3c4c18e0"
+  },
+  {
+    "node_id": "327:1086",
+    "state": "empty",
+    "scale": 1,
+    "path": "figma/327-1086.png",
+    "sha256": "3508e9c9fac92c7f72d28475648e180ffac0df6e46e16c7c3e4e43016dc49113"
+  },
+  {
+    "node_id": "327:1232",
+    "state": "empty",
+    "scale": 2,
+    "path": "figma/327-1232.png",
+    "sha256": "6df3c760fe976d3ee5eaf153339d2129fba256a36850ea6a9fe236c9c53a05d2"
+  },
+  {
+    "node_id": "327:1378",
+    "state": "loading",
+    "scale": 1,
+    "path": "figma/327-1378.png",
+    "sha256": "d36766334520fafe49824beef6488e9aa067e23a8489d4d72b3ae6fe11adea79"
+  },
+  {
+    "node_id": "327:1505",
+    "state": "loading",
+    "scale": 2,
+    "path": "figma/327-1505.png",
+    "sha256": "e2022127732366b882a515520a518c354ad4754b7bf4a6d24de7c9d6ac3751e4"
+  },
+  {
+    "node_id": "327:1632",
+    "state": "error",
+    "scale": 1,
+    "path": "figma/327-1632.png",
+    "sha256": "09cb33f296d966f473e04088ea682abf02e87e9abb9857d34cc1a242af5e02a5"
+  },
+  {
+    "node_id": "327:1772",
+    "state": "error",
+    "scale": 2,
+    "path": "figma/327-1772.png",
+    "sha256": "cdd669c58c07b0df7aeb1a9ae26fe9dcf8c9a7233a814c5bb50c0efd3118979d"
+  },
+  {
+    "node_id": "327:1912",
+    "state": "missing",
+    "scale": 1,
+    "path": "figma/327-1912.png",
+    "sha256": "d214ce3ef5580cb6c065a1f9abefb941f12da1aa57331f7c4394520a479162c6"
+  },
+  {
+    "node_id": "327:2041",
+    "state": "missing",
+    "scale": 2,
+    "path": "figma/327-2041.png",
+    "sha256": "fe06e7c32f9c8537463383f4b0f457db44b040dfc0b65158f13bfed32fd1d8a8"
+  },
+  {
+    "node_id": "327:2170",
+    "state": "active",
+    "scale": 1,
+    "path": "figma/327-2170.png",
+    "sha256": "71d30d6cb2bad1b2841223689427f1f057c07acb88467f1f38ceb312aface999"
+  },
+  {
+    "node_id": "327:2320",
+    "state": "active",
+    "scale": 2,
+    "path": "figma/327-2320.png",
+    "sha256": "9c7165938455999e013d767de637a0310aeef19dffbae390ce6fd9a587676bc3"
+  },
+  {
+    "node_id": "327:2470",
+    "state": "no-profile",
+    "scale": 1,
+    "path": "figma/327-2470.png",
+    "sha256": "a4c25109405c26c5ae26152d2944b9095b4d43d7f342aa3948c57bb614a8c2d7"
+  },
+  {
+    "node_id": "327:2515",
+    "state": "no-profile",
+    "scale": 2,
+    "path": "figma/327-2515.png",
+    "sha256": "6082b9942272219e184746fce4f436cddf7377da2581e0bb79c4d06578024b78"
+  },
+  {
+    "node_id": "327:2560",
+    "state": "switcher",
+    "scale": 1,
+    "path": "figma/327-2560.png",
+    "sha256": "9e2711b6b70d0e12dd6b712dfd0286ea50c249bfa221e75c6c4ba93225af11fa"
+  },
+  {
+    "node_id": "327:2576",
+    "state": "switcher",
+    "scale": 2,
+    "path": "figma/327-2576.png",
+    "sha256": "9d9290e42e692c52be264a6e249a5a4d9a189793d8ef7f2c5e553f330d844ed1"
+  },
+  {
+    "node_id": "327:2592",
+    "state": "knowledge",
+    "scale": 1,
+    "path": "figma/327-2592.png",
+    "sha256": "8b378efd0bb5b0230f52bd0819982b2686c8accecb4d696cad3bff07f7366359"
+  },
+  {
+    "node_id": "327:2612",
+    "state": "knowledge",
+    "scale": 2,
+    "path": "figma/327-2612.png",
+    "sha256": "b7ec4c8e43366286d23fc4e446cc9590b189244171cf9740e6a2cb5e3581001f"
+  },
+  {
+    "node_id": "327:2632",
+    "state": "saved",
+    "scale": 1,
+    "path": "figma/327-2632.png",
+    "sha256": "59dd65cfff1a265e79ae2177663d61cdf85fd6de17ba7b67f8fc25588fc5e3b3"
+  },
+  {
+    "node_id": "327:2687",
+    "state": "saved",
+    "scale": 2,
+    "path": "figma/327-2687.png",
+    "sha256": "f1253cca4a7f3150244844a965b19ba0cd3bffbde30d03475061d8b5f1862c4c"
+  },
+  {
+    "node_id": "327:2742",
+    "state": "undone",
+    "scale": 1,
+    "path": "figma/327-2742.png",
+    "sha256": "7b6af43af70dc204a479c62dc4059ec8ce3e988c2b4f95f837f4a7f18b49c6dc"
+  },
+  {
+    "node_id": "327:2795",
+    "state": "undone",
+    "scale": 2,
+    "path": "figma/327-2795.png",
+    "sha256": "a7134820fa9a6eb5cf3d06e723fcb409bd401af06a9ab9378424971ab62c5c5c"
+  },
+  {
+    "node_id": "327:2848",
+    "state": "undo-error",
+    "scale": 1,
+    "path": "figma/327-2848.png",
+    "sha256": "ee66360f359cfb280945bef6826f4d7881ebd486a85102d9c2e37b3bb38f70d7"
+  },
+  {
+    "node_id": "327:2903",
+    "state": "undo-error",
+    "scale": 2,
+    "path": "figma/327-2903.png",
+    "sha256": "67b583f61292f34fc92bfa77df1e6aa394b933f2a7c6ee1a22bf8c43d2f05402"
+  },
+  {
+    "node_id": "327:2958",
+    "state": "long-name",
+    "scale": 1,
+    "path": "figma/327-2958.png",
+    "sha256": "506f386e90dc86dfff677343ff07e7bdea9a2e3d31e351f801284b2ad3015f24"
+  },
+  {
+    "node_id": "327:3104",
+    "state": "long-name",
+    "scale": 2,
+    "path": "figma/327-3104.png",
+    "sha256": "d668d8c4d4f9a94402a9cb45f0df516bdf309ea59b91f2e5221760699346bba1"
+  },
+  {
+    "node_id": "327:3250",
+    "state": "growth-身长",
+    "scale": 1,
+    "path": "figma/327-3250.png",
+    "sha256": "206eb448d02bbbf72fe3d4a8f741f6e978a0b01358b32ac877c8159a408d5392"
+  },
+  {
+    "node_id": "327:3282",
+    "state": "growth-头围",
+    "scale": 1,
+    "path": "figma/327-3282.png",
+    "sha256": "8a6e9c34d888b39532736aa5bb2e3f82944b521eda42840492f6d0a865d74cfb"
+  }
+]

@@ -1,0 +1,140 @@
+[
+  {
+    "file": "docs/app-ui-inventory/native/notification-permission/native-permission-allow-allowed.png",
+    "sha256": "c2c41b1746e5c9df183728e55c8599d6d417afdc123b57dd7e992c9f58309e93",
+    "width": 1280,
+    "height": 2856
+  },
+  {
+    "file": "docs/app-ui-inventory/native/notification-permission/native-permission-allow-category-disabled.png",
+    "sha256": "2e77a6a8fde8243f8138ec089b628e731f0a01d5e89b9c8eec3cd3c20454b1cb",
+    "width": 1280,
+    "height": 2856
+  },
+  {
+    "file": "docs/app-ui-inventory/native/notification-permission/native-permission-allow-education.png",
+    "sha256": "6d2491a5244d4a2962d9d2001310431bc51adc09a133d456ad51d953b4435854",
+    "width": 1280,
+    "height": 2856
+  },
+  {
+    "file": "docs/app-ui-inventory/native/notification-permission/native-permission-allow-inbox-return.png",
+    "sha256": "b03ca97dbb60a4c2d4a070283540235eaa6c0758d32726709df381cca7283a5c",
+    "width": 1280,
+    "height": 2856
+  },
+  {
+    "file": "docs/app-ui-inventory/native/notification-permission/native-permission-allow-inbox.png",
+    "sha256": "b03ca97dbb60a4c2d4a070283540235eaa6c0758d32726709df381cca7283a5c",
+    "width": 1280,
+    "height": 2856
+  },
+  {
+    "file": "docs/app-ui-inventory/native/notification-permission/native-permission-allow-more-return.png",
+    "sha256": "6e31839009efe6b3a1e3da54e10df0e9b69d88c3b0a48a1009ede7696fcc8dc9",
+    "width": 1280,
+    "height": 2856
+  },
+  {
+    "file": "docs/app-ui-inventory/native/notification-permission/native-permission-allow-more.png",
+    "sha256": "6e31839009efe6b3a1e3da54e10df0e9b69d88c3b0a48a1009ede7696fcc8dc9",
+    "width": 1280,
+    "height": 2856
+  },
+  {
+    "file": "docs/app-ui-inventory/native/notification-permission/native-permission-allow-not-requested.png",
+    "sha256": "87f7ddfca86a7bdd5d46f35fe6c537974e9b480169527e2fc820e75bc71d5011",
+    "width": 1280,
+    "height": 2856
+  },
+  {
+    "file": "docs/app-ui-inventory/native/notification-permission/native-permission-allow-system-request.png",
+    "sha256": "b92e9f31c965183344276a61c64cb697d0dd09d98586c75b2ab85728e9e1e408",
+    "width": 1280,
+    "height": 2856
+  },
+  {
+    "file": "docs/app-ui-inventory/native/notification-permission/native-permission-deny-category-disabled.png",
+    "sha256": "2e77a6a8fde8243f8138ec089b628e731f0a01d5e89b9c8eec3cd3c20454b1cb",
+    "width": 1280,
+    "height": 2856
+  },
+  {
+    "file": "docs/app-ui-inventory/native/notification-permission/native-permission-deny-category-enabled.png",
+    "sha256": "c2c41b1746e5c9df183728e55c8599d6d417afdc123b57dd7e992c9f58309e93",
+    "width": 1280,
+    "height": 2856
+  },
+  {
+    "file": "docs/app-ui-inventory/native/notification-permission/native-permission-deny-denied.png",
+    "sha256": "b64e8bae7ba2a6e1e274bbd86d71638a3ae136550afbe35d830ef8a2bba4d95a",
+    "width": 1280,
+    "height": 2856
+  },
+  {
+    "file": "docs/app-ui-inventory/native/notification-permission/native-permission-deny-education.png",
+    "sha256": "0596878693d13313e680f93ed1de8d9f2520940a2b27f91297eed38bc4e6238c",
+    "width": 1280,
+    "height": 2856
+  },
+  {
+    "file": "docs/app-ui-inventory/native/notification-permission/native-permission-deny-inbox-return.png",
+    "sha256": "b03ca97dbb60a4c2d4a070283540235eaa6c0758d32726709df381cca7283a5c",
+    "width": 1280,
+    "height": 2856
+  },
+  {
+    "file": "docs/app-ui-inventory/native/notification-permission/native-permission-deny-inbox.png",
+    "sha256": "b03ca97dbb60a4c2d4a070283540235eaa6c0758d32726709df381cca7283a5c",
+    "width": 1280,
+    "height": 2856
+  },
+  {
+    "file": "docs/app-ui-inventory/native/notification-permission/native-permission-deny-more-return.png",
+    "sha256": "6e31839009efe6b3a1e3da54e10df0e9b69d88c3b0a48a1009ede7696fcc8dc9",
+    "width": 1280,
+    "height": 2856
+  },
+  {
+    "file": "docs/app-ui-inventory/native/notification-permission/native-permission-deny-more.png",
+    "sha256": "6e31839009efe6b3a1e3da54e10df0e9b69d88c3b0a48a1009ede7696fcc8dc9",
+    "width": 1280,
+    "height": 2856
+  },
+  {
+    "file": "docs/app-ui-inventory/native/notification-permission/native-permission-deny-not-requested.png",
+    "sha256": "87f7ddfca86a7bdd5d46f35fe6c537974e9b480169527e2fc820e75bc71d5011",
+    "width": 1280,
+    "height": 2856
+  },
+  {
+    "file": "docs/app-ui-inventory/native/notification-permission/native-permission-deny-settings-allowed.png",
+    "sha256": "2e77a6a8fde8243f8138ec089b628e731f0a01d5e89b9c8eec3cd3c20454b1cb",
+    "width": 1280,
+    "height": 2856
+  },
+  {
+    "file": "docs/app-ui-inventory/native/notification-permission/native-permission-deny-settings-offer.png",
+    "sha256": "6c3da9ae6b1b6ab357e3f49c8e08f5d6949fc3c30d25dc69caf24ff2c8586ea9",
+    "width": 1280,
+    "height": 2856
+  },
+  {
+    "file": "docs/app-ui-inventory/native/notification-permission/native-permission-deny-system-request.png",
+    "sha256": "f3c313eb4bae5de03534c8e97c25cc7d284561d29367f20ac1c684d6ce1b3c59",
+    "width": 1280,
+    "height": 2856
+  },
+  {
+    "file": "docs/app-ui-inventory/native/notification-permission/native-permission-deny-system-settings-off.png",
+    "sha256": "28dcc42babbb31957016b40e4527dd601b620b51db797bfcaedab8b4011fa4f3",
+    "width": 1280,
+    "height": 2856
+  },
+  {
+    "file": "docs/app-ui-inventory/native/notification-permission/native-permission-deny-system-settings-on.png",
+    "sha256": "6d685b66de9b64d34129b2f17083e818a503be9fff5b34ca71280c22eece70f4",
+    "width": 1280,
+    "height": 2856
+  }
+]

@@ -1,0 +1,23 @@
+[
+  "test/goldens/design_system/notifications-inbox-320.png",
+  "test/goldens/design_system/account-390.png",
+  "test/goldens/design_system/notifications-consent-430.png",
+  "test/goldens/design_system/account-430.png",
+  "test/goldens/design_system/notifications-consent-390.png",
+  "test/goldens/design_system/notifications-consent-320.png",
+  "test/goldens/design_system/notifications-inbox-430.png",
+  "test/goldens/design_system/account-320.png",
+  "test/goldens/design_system/notifications-inbox-390.png",
+  "test/goldens/design_system/notifications-settings-430.png",
+  "test/goldens/design_system/notifications-error-430.png",
+  "test/goldens/design_system/account-delete-430.png",
+  "test/goldens/design_system/notifications-error-390.png",
+  "test/goldens/design_system/account-delete-390.png",
+  "test/goldens/design_system/notifications-read-320.png",
+  "test/goldens/design_system/notifications-settings-390.png",
+  "test/goldens/design_system/notifications-settings-320.png",
+  "test/goldens/design_system/notifications-read-390.png",
+  "test/goldens/design_system/account-delete-320.png",
+  "test/goldens/design_system/notifications-error-320.png",
+  "test/goldens/design_system/notifications-read-430.png"
+]

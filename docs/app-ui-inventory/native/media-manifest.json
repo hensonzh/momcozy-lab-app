@@ -1,0 +1,92 @@
+[
+  {
+    "id": "11-media/native-media-pdf-page-1",
+    "title": "PDF 已载入第一页",
+    "trigger": "实际 /media-viewer 路由，注入两页 PDF 资产",
+    "route": "/media-viewer",
+    "image": "native/native-media-pdf-page-1.png",
+    "platform": "Android emulator",
+    "data": "synthetic authenticated media fixture",
+    "source": "integration_test/media_viewer_pdf_test.dart",
+    "sha256": "9841f7b0826ecf57c05db48a22bf9cb91c5b74f8cb7288afcf07d14473b71413",
+    "entry_evidence": "registered route exercised; external Agent origin still requires linkage audit",
+    "full_document": "native/native-media-pdf-full-document.png",
+    "scroll_metadata": "native/native-media-pdf-full-document.json"
+  },
+  {
+    "id": "11-media/native-media-pdf-page-2",
+    "title": "PDF 第二页",
+    "trigger": "点击下一页",
+    "route": "/media-viewer",
+    "image": "native/native-media-pdf-page-2.png",
+    "platform": "Android emulator",
+    "data": "synthetic authenticated media fixture",
+    "source": "integration_test/media_viewer_pdf_test.dart",
+    "sha256": "d7fef51b0c3a1af73482a78c4591da6ba1f098a8f203cc9e64337a7fd49b1bc5",
+    "entry_evidence": "registered route exercised; external Agent origin still requires linkage audit",
+    "full_document": "native/native-media-pdf-full-document.png",
+    "scroll_metadata": "native/native-media-pdf-full-document.json"
+  },
+  {
+    "id": "11-media/native-media-pdf-zoomed",
+    "title": "PDF 放大",
+    "trigger": "点击放大文档",
+    "route": "/media-viewer",
+    "image": "native/native-media-pdf-zoomed.png",
+    "platform": "Android emulator",
+    "data": "synthetic authenticated media fixture",
+    "source": "integration_test/media_viewer_pdf_test.dart",
+    "sha256": "4b3af9600d02744794598640c43fdbab9d6425c0e0d9d61af0af7bf4ae865618",
+    "entry_evidence": "registered route exercised; external Agent origin still requires linkage audit",
+    "full_document": "native/native-media-pdf-zoomed-full-document.png",
+    "scroll_metadata": "native/native-media-pdf-zoomed-full-document.json"
+  },
+  {
+    "id": "11-media/native-media-video-ready",
+    "title": "视频已载入",
+    "trigger": "实际 /media-viewer 路由，注入视频资产",
+    "route": "/media-viewer",
+    "image": "native/native-media-video-ready.png",
+    "platform": "Android emulator",
+    "data": "synthetic authenticated media fixture",
+    "source": "integration_test/media_viewer_video_test.dart",
+    "sha256": "9cfa6bed7438211b68337c5ee388ddb96436977377fd10fb3d07074fcb37af75",
+    "entry_evidence": "registered route exercised; external Agent origin still requires linkage audit"
+  },
+  {
+    "id": "11-media/native-media-video-playing",
+    "title": "视频播放中",
+    "trigger": "点击播放",
+    "route": "/media-viewer",
+    "image": "native/native-media-video-playing.png",
+    "platform": "Android emulator",
+    "data": "synthetic authenticated media fixture",
+    "source": "integration_test/media_viewer_video_test.dart",
+    "sha256": "af5173e6ecd5e90fe10acdad09fb0b2dca42b2c595e39a76da1ad138e1389cfe",
+    "entry_evidence": "registered route exercised; external Agent origin still requires linkage audit"
+  },
+  {
+    "id": "11-media/native-media-video",
+    "title": "视频已暂停",
+    "trigger": "点击暂停",
+    "route": "/media-viewer",
+    "image": "native/native-media-video.png",
+    "platform": "Android emulator",
+    "data": "synthetic authenticated media fixture",
+    "source": "integration_test/media_viewer_video_test.dart",
+    "sha256": "4d3b86a694709b4a168c9fa0f6063ea74217311184dcff09c1ad9deeebacb395",
+    "entry_evidence": "registered route exercised; external Agent origin still requires linkage audit"
+  },
+  {
+    "id": "11-media/native-media-video-fullscreen",
+    "title": "视频全屏",
+    "trigger": "点击全屏",
+    "route": "/media-viewer",
+    "image": "native/native-media-video-fullscreen.png",
+    "platform": "Android emulator",
+    "data": "synthetic authenticated media fixture",
+    "source": "integration_test/media_viewer_video_test.dart",
+    "sha256": "8d47d392e4515c2919c6dfbf56e427d7b69d006f8c83ffc255d8581654f17070",
+    "entry_evidence": "registered route exercised; external Agent origin still requires linkage audit"
+  }
+]

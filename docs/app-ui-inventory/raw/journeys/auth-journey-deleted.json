@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/auth-journey-deleted-393.png",
+  "previous_source": "test/goldens/ui_inventory/account-journey-delete-error-393.png",
+  "route": "/login",
+  "trigger": "Confirm delete → fixture success → session cleared → login plus deletion Snackbar",
+  "root_entry": "Open More while signed out → real auth redirect",
+  "evidence": "Actual MomCozyFlutterApp and createMomCozyRouter; only HTTP/session/native-intent dependencies replaced with isolated fixtures",
+  "test": "test/features/auth/auth_inventory_journey_test.dart"
+}

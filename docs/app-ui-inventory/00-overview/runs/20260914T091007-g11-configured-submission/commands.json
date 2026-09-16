@@ -1,0 +1,33 @@
+[
+  [
+    "new-configured-baselines",
+    [
+      "/Users/lute/.local/share/momcozy-toolchains/flutter/bin/flutter",
+      "--suppress-analytics",
+      "test",
+      "--no-pub",
+      "--reporter",
+      "expanded",
+      "--dart-define=MOMCOZY_INTERNAL_INVITE_LOGIN=true",
+      "test/features/onboarding/configured_submission_inventory_test.dart",
+      "--name",
+      "inventory configured",
+      "--update-goldens"
+    ]
+  ],
+  [
+    "strict-capture",
+    [
+      "/Users/lute/.local/share/momcozy-toolchains/flutter/bin/flutter",
+      "--suppress-analytics",
+      "test",
+      "--no-pub",
+      "--reporter",
+      "expanded",
+      "--dart-define=MOMCOZY_INTERNAL_INVITE_LOGIN=true",
+      "test/features/onboarding/configured_submission_inventory_test.dart",
+      "--name",
+      "inventory configured"
+    ]
+  ]
+]

@@ -1,0 +1,479 @@
+{
+  "source": "test/goldens/design_system/booking-unavailable-390.png",
+  "evidence": "current-widget-test-render; golden comparison passed",
+  "test_description": "booking precheck and held dialog flow at 390.0 / 1.0",
+  "sequence": 1,
+  "sha256": "29576c1e92d7903af35909a39227d3bd7055e07faaf72c785553a4d2be9eb00c",
+  "width": 390,
+  "height": 844,
+  "captured_at": "2026-09-13T13:38:10.126726Z",
+  "widget_types": [
+    "AbsorbPointer",
+    "Actions",
+    "Align",
+    "AnimatedBuilder",
+    "AnimatedDefaultTextStyle",
+    "AnimatedModalBarrier",
+    "AnimatedPadding",
+    "AnimatedPhysicalModel",
+    "AnimatedTheme",
+    "AnnotatedRegion<SystemUiOverlayStyle>",
+    "AppBar",
+    "AutomaticKeepAlive",
+    "BlockSemantics",
+    "BookingNotice",
+    "BookingPage",
+    "BookingPrecheckDialog",
+    "Builder",
+    "Card",
+    "Center",
+    "Checkbox",
+    "CheckboxListTile",
+    "ClipRect",
+    "ColoredBox",
+    "Column",
+    "ConstrainedBox",
+    "Container",
+    "CupertinoTheme",
+    "CustomMultiChildLayout",
+    "CustomPaint",
+    "CustomSingleChildLayout",
+    "DecoratedBox",
+    "DefaultSelectionStyle",
+    "DefaultTextEditingShortcuts",
+    "DefaultTextStyle",
+    "Dialog",
+    "Directionality",
+    "DisplayFeatureSubScreen",
+    "Divider",
+    "DropdownButton<String>",
+    "DropdownButtonFormField<String>",
+    "DropdownButtonHideUnderline",
+    "DropdownMenuItem<String>",
+    "DualTransitionBuilder",
+    "ExcludeFocus",
+    "ExcludeSemantics",
+    "Expanded",
+    "FadeTransition",
+    "FilledButton",
+    "Flexible",
+    "FlexibleSpaceBarSettings",
+    "Focus",
+    "FocusScope",
+    "FocusTraversalGroup",
+    "FocusableActionDetector",
+    "FractionalTranslation",
+    "GestureDetector",
+    "HeroControllerScope",
+    "Icon",
+    "IconButton",
+    "IconButtonTheme",
+    "IconTheme",
+    "IgnorePointer",
+    "IndexedSemantics",
+    "IndexedStack",
+    "InheritedCupertinoTheme",
+    "Ink",
+    "InkWell",
+    "InputDecorator",
+    "KeepAlive",
+    "KeyedSubtree",
+    "LayoutId",
+    "LimitedBox",
+    "ListTile",
+    "ListView",
+    "ListenableBuilder",
+    "Listener",
+    "Localizations",
+    "Material",
+    "MaterialApp",
+    "MediaQuery",
+    "MergeSemantics",
+    "ModalBarrier",
+    "MomCozyPageBody",
+    "MomCozySurface",
+    "MouseRegion",
+    "NavigationToolbar",
+    "Navigator",
+    "NotificationListener<KeepAliveNotification>",
+    "NotificationListener<LayoutChangedNotification>",
+    "NotificationListener<NavigationNotification>",
+    "NotificationListener<OverscrollIndicatorNotification>",
+    "NotificationListener<ScrollMetricsNotification>",
+    "NotificationListener<ScrollNotification>",
+    "Offstage",
+    "Overlay",
+    "OverlayPortal",
+    "Padding",
+    "PageStorage",
+    "PhysicalModel",
+    "PhysicalShape",
+    "PopScope<dynamic>",
+    "Positioned",
+    "PreferredSize",
+    "PrimaryScrollController",
+    "ProductFlowDialog",
+    "Radio<EmergencyStatus>",
+    "RadioGroup<EmergencyStatus>",
+    "RadioListTile<EmergencyStatus>",
+    "RawGestureDetector",
+    "RawRadio<EmergencyStatus>",
+    "RawTooltip",
+    "RawView",
+    "RefreshIndicator",
+    "RepaintBoundary",
+    "RestorationScope",
+    "RichText",
+    "RootRestorationScope",
+    "RotationTransition",
+    "Row",
+    "SafeArea",
+    "Scaffold",
+    "ScaffoldMessenger",
+    "ScaleTransition",
+    "ScrollConfiguration",
+    "ScrollNotificationObserver",
+    "Scrollable",
+    "Semantics",
+    "ServiceFlowTheme",
+    "SharedAppData",
+    "ShortcutRegistrar",
+    "Shortcuts",
+    "SingleChildScrollView",
+    "SizedBox",
+    "SlideTransition",
+    "SliverList",
+    "SliverPadding",
+    "Stack",
+    "StretchEffect",
+    "StretchingOverscrollIndicator",
+    "TapRegionSurface",
+    "Text",
+    "TextButton",
+    "Theme",
+    "TickerMode",
+    "Title",
+    "Tooltip",
+    "Transform",
+    "UnmanagedRestorationScope",
+    "ValueListenableBuilder<bool>",
+    "View",
+    "Viewport",
+    "Visibility",
+    "WidgetsApp",
+    "_ActionsScope",
+    "_AppBarTitleBox",
+    "_BodyBuilder",
+    "_BorderContainer",
+    "_CaptureAll",
+    "_Decorator",
+    "_EffectiveTickerMode",
+    "_ExclusiveMouseRegion",
+    "_FadeForwardsPageTransition",
+    "_FloatingActionButtonTransition",
+    "_FocusInheritedScope",
+    "_FocusScopeWithExternalFocusNode",
+    "_GestureSemantics",
+    "_HelperError",
+    "_IconButtonM3",
+    "_InheritedTheme",
+    "_InkFeatures",
+    "_InkResponseStateWidget",
+    "_InputPadding",
+    "_ListTile",
+    "_LocalizationsScope",
+    "_MaterialInterior",
+    "_MediaQueryFromView",
+    "_ModalBarrierGestureDetector",
+    "_ModalScope<bool>",
+    "_ModalScope<dynamic>",
+    "_ModalScopeStatus",
+    "_OverlayEntryWidget",
+    "_OverlayPortal",
+    "_PageTransitionsThemeTransitions<dynamic>",
+    "_ParentInkResponseProvider",
+    "_PipelineOwnerScope",
+    "_PredictiveBackGestureDetector",
+    "_RadioGroupStateScope<EmergencyStatus>",
+    "_RadioPaint",
+    "_RawIndexedStack",
+    "_RawViewInternal",
+    "_RenderTheaterMarker",
+    "_ScaffoldMessengerScope",
+    "_ScaffoldScope",
+    "_ScrollNotificationObserverScope",
+    "_ScrollSemantics",
+    "_ScrollableScope",
+    "_SelectableIconButton",
+    "_SelectionKeepAlive",
+    "_ShapeBorderPaint",
+    "_SharedAppModel",
+    "_ShortcutRegistrarScope",
+    "_SingleChildViewport",
+    "_Theater",
+    "_ViewScope",
+    "_Visibility",
+    "_VisibilityScope"
+  ],
+  "texts": [
+    "先做个预约前确认",
+    "确认所在州、服务适用性与紧急风险。",
+    "开始确认",
+    "返回",
+    "选择时间",
+    "预约前确认",
+    "关闭",
+    "当前所在州",
+    "New York (NY)",
+    "当前服务暂未覆盖该州，暂不能继续预约。",
+    "我需要的是哺乳或喂养相关的 IBCLC 咨询",
+    "服务适用性",
+    "如妈妈或宝宝出现呼吸困难、无法唤醒、大量出血等情况，应先寻求紧急医疗帮助。",
+    "目前没有上述紧急情况",
+    "有，或我不确定",
+    "紧急风险判断",
+    "继续选择时间"
+  ],
+  "scrolls": [
+    {
+      "foreground": false,
+      "axis": "vertical",
+      "direction": "down",
+      "pixels": 0.0,
+      "min": 0.0,
+      "max": 0.0,
+      "viewport": 791.0
+    },
+    {
+      "foreground": true,
+      "axis": "vertical",
+      "direction": "down",
+      "pixels": 0.0,
+      "min": 0.0,
+      "max": 0.0,
+      "viewport": 565.0
+    }
+  ],
+  "controls": [
+    {
+      "widget": "TextButton",
+      "key": null,
+      "labels": [
+        "关闭"
+      ],
+      "enabled": true,
+      "bounds": [
+        311.79999923706055,
+        201.0,
+        48.20000076293945,
+        48.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [
+        "关闭"
+      ],
+      "enabled": true,
+      "bounds": [
+        311.79999923706055,
+        203.0,
+        48.20000076293945,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "ListTile",
+      "key": null,
+      "labels": [
+        "我需要的是哺乳或喂养相关的 IBCLC 咨询"
+      ],
+      "enabled": true,
+      "bounds": [
+        52.0,
+        446.0,
+        286.0,
+        56.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [
+        "我需要的是哺乳或喂养相关的 IBCLC 咨询"
+      ],
+      "enabled": true,
+      "bounds": [
+        52.0,
+        446.0,
+        286.0,
+        56.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "Checkbox",
+      "key": null,
+      "labels": [],
+      "enabled": true,
+      "bounds": [
+        52.0,
+        454.0,
+        40.0,
+        40.0
+      ],
+      "selected": true,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "ListTile",
+      "key": null,
+      "labels": [
+        "目前没有上述紧急情况"
+      ],
+      "enabled": true,
+      "bounds": [
+        53.0,
+        606.0,
+        284.0,
+        56.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [
+        "目前没有上述紧急情况"
+      ],
+      "enabled": true,
+      "bounds": [
+        53.0,
+        606.0,
+        284.0,
+        56.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "ListTile",
+      "key": null,
+      "labels": [
+        "有，或我不确定"
+      ],
+      "enabled": true,
+      "bounds": [
+        53.0,
+        673.0,
+        284.0,
+        56.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [
+        "有，或我不确定"
+      ],
+      "enabled": true,
+      "bounds": [
+        53.0,
+        673.0,
+        284.0,
+        56.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "FilledButton",
+      "key": null,
+      "labels": [
+        "继续选择时间"
+      ],
+      "enabled": false,
+      "bounds": [
+        38.0,
+        758.0,
+        314.0,
+        48.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    }
+  ],
+  "needs_long_capture": false,
+  "interactions_since_previous_capture": [
+    {
+      "action": "tap",
+      "labels_at_start": [],
+      "from": [
+        195.0,
+        374.0
+      ],
+      "to": [
+        195.0,
+        374.0
+      ]
+    },
+    {
+      "action": "tap",
+      "labels_at_start": [
+        "服务适用性",
+        "New York (NY)"
+      ],
+      "from": [
+        81.94649505615234,
+        422.0
+      ],
+      "to": [
+        81.94649505615234,
+        422.0
+      ]
+    },
+    {
+      "action": "tap",
+      "labels_at_start": [
+        "我需要的是哺乳或喂养相关的 IBCLC 咨询"
+      ],
+      "from": [
+        223.0,
+        474.0
+      ],
+      "to": [
+        223.0,
+        474.0
+      ]
+    },
+    {
+      "action": "tap",
+      "labels_at_start": [
+        "目前没有上述紧急情况"
+      ],
+      "from": [
+        223.0,
+        634.0
+      ],
+      "to": [
+        223.0,
+        634.0
+      ]
+    }
+  ],
+  "call_stack": "#0      _InventoryComparator._record (file:///Users/lute/project/momcozy-lab/app/test/support/ui_inventory_capture.dart:169:32)\n<asynchronous suspension>\n#1      _InventoryComparator.compare (file:///Users/lute/project/momcozy-lab/app/test/support/ui_inventory_capture.dart:96:17)\n<asynchronous suspension>\n#2      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)\n<asynchronous suspension>\n#3      _AsyncCompleter.complete (dart:async/future_impl.dart:96:3)\n<asynchronous suspension>\n#4      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)\n<asynchronous suspension>\n#5      StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)\n<asynchronous suspension>\n#6      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)\n<asynchronous suspension>\n#7      _bookingShot (file:///Users/lute/project/momcozy-lab/app/test/modules/services/booking_test.dart:91:5)\n<asynchronous suspension>\n#8      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/services/booking_test.dart:341:9)\n<asynchronous suspension>\n#9      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)\n<asynchronous suspension>\n#10     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)\n<asynchronous suspension>\n#11     StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)\n<asynchronous suspension>\n",
+  "long_capture": {
+    "status": "no-active-vertical-overflow"
+  }
+}

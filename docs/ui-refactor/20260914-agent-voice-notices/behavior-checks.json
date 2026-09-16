@@ -1,0 +1,5 @@
+{
+  "Agent Hub changes limited to three SnackBar builders and speaking ring color, ignoring formatter whitespace": true,
+  "Voice notice message and replay/dismiss callbacks preserved": true,
+  "Previously approved message menu feedback unchanged": true
+}

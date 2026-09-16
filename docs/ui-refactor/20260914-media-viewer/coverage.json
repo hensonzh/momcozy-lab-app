@@ -1,0 +1,302 @@
+[
+  {
+    "id": "05-agent/agent-attachment-journey-image-panned",
+    "figma_nodes": [
+      "265:1104",
+      "265:1287",
+      "265:1220",
+      "265:1403"
+    ],
+    "note": "Shared zoom/pan composition plus attachment header; attachment gesture limits remain unchanged."
+  },
+  {
+    "id": "05-agent/agent-attachment-journey-image-remote-failed",
+    "figma_nodes": [
+      "265:1229",
+      "265:1412"
+    ],
+    "note": "Shared image viewer or feedback state; business flow preserved and widget verified."
+  },
+  {
+    "id": "05-agent/agent-attachment-journey-image-remote-loading",
+    "figma_nodes": [
+      "265:1257",
+      "265:1440"
+    ],
+    "note": "Shared image viewer or feedback state; business flow preserved and widget verified."
+  },
+  {
+    "id": "05-agent/agent-attachment-journey-image-remote-recovered",
+    "figma_nodes": [
+      "265:1220",
+      "265:1403"
+    ],
+    "note": "Shared image viewer or feedback state; business flow preserved and widget verified."
+  },
+  {
+    "id": "05-agent/agent-attachment-journey-image-remote-return",
+    "figma_nodes": [
+      "262:1086",
+      "262:1115",
+      "246:1144",
+      "247:1150"
+    ],
+    "note": "Return destination reuses completed conversation and sent-image metadata designs; this slice verifies viewer return, not a full replay of the original upload journey."
+  },
+  {
+    "id": "05-agent/agent-attachment-journey-image-viewer",
+    "figma_nodes": [
+      "265:1220",
+      "265:1403"
+    ],
+    "note": "Shared image viewer or feedback state; business flow preserved and widget verified."
+  },
+  {
+    "id": "05-agent/agent-attachment-journey-image-viewer-error",
+    "figma_nodes": [
+      "265:1229",
+      "265:1412"
+    ],
+    "note": "Shared image viewer or feedback state; business flow preserved and widget verified."
+  },
+  {
+    "id": "05-agent/agent-attachment-journey-image-viewer-return",
+    "figma_nodes": [
+      "262:1086",
+      "262:1115",
+      "246:1144",
+      "247:1150"
+    ],
+    "note": "Return destination reuses completed conversation and sent-image metadata designs; this slice verifies viewer return, not a full replay of the original upload journey."
+  },
+  {
+    "id": "05-agent/agent-attachment-journey-image-zoomed",
+    "figma_nodes": [
+      "265:1095",
+      "265:1278",
+      "265:1220",
+      "265:1403"
+    ],
+    "note": "Shared zoom/pan composition plus attachment header; attachment gesture limits remain unchanged."
+  },
+  {
+    "id": "05-agent/agent-image-empty-response",
+    "figma_nodes": [
+      "265:1229",
+      "265:1412"
+    ],
+    "note": "Shared image viewer or feedback state; business flow preserved and widget verified."
+  },
+  {
+    "id": "05-agent/agent-image-loaded",
+    "figma_nodes": [
+      "265:1220",
+      "265:1403"
+    ],
+    "note": "Shared image viewer or feedback state; business flow preserved and widget verified."
+  },
+  {
+    "id": "05-agent/agent-image-loading",
+    "figma_nodes": [
+      "265:1257",
+      "265:1440",
+      "262:1086",
+      "262:1115"
+    ],
+    "note": "Old loading source includes a transition through sent-image metadata. Both metadata and the actual viewer loading state have designs; current loading is verified by image scenario tests."
+  },
+  {
+    "id": "05-agent/agent-image-unavailable",
+    "figma_nodes": [
+      "265:1244",
+      "265:1427"
+    ],
+    "note": "Shared image viewer or feedback state; business flow preserved and widget verified."
+  },
+  {
+    "id": "05-agent/agent-image-zoomed",
+    "figma_nodes": [
+      "265:1095",
+      "265:1278",
+      "265:1220",
+      "265:1403"
+    ],
+    "note": "Shared zoom/pan composition plus attachment header; attachment gesture limits remain unchanged."
+  },
+  {
+    "id": "05-agent/agent-resource-journey-image-cached",
+    "figma_nodes": [
+      "265:1086",
+      "265:1269"
+    ],
+    "note": "Shared image viewer or feedback state; business flow preserved and widget verified."
+  },
+  {
+    "id": "05-agent/agent-resource-journey-image-error",
+    "figma_nodes": [
+      "265:1125",
+      "265:1308"
+    ],
+    "note": "Shared image viewer or feedback state; business flow preserved and widget verified."
+  },
+  {
+    "id": "05-agent/agent-resource-journey-image-loaded",
+    "figma_nodes": [
+      "265:1086",
+      "265:1269"
+    ],
+    "note": "Shared image viewer or feedback state; business flow preserved and widget verified."
+  },
+  {
+    "id": "05-agent/agent-resource-journey-image-loading",
+    "figma_nodes": [
+      "265:1113",
+      "265:1296"
+    ],
+    "note": "Shared image viewer or feedback state; business flow preserved and widget verified."
+  },
+  {
+    "id": "05-agent/agent-resource-journey-image-panned",
+    "figma_nodes": [
+      "265:1104",
+      "265:1287"
+    ],
+    "note": "Shared image viewer or feedback state; business flow preserved and widget verified."
+  },
+  {
+    "id": "05-agent/agent-resource-journey-image-reset",
+    "figma_nodes": [
+      "265:1086",
+      "265:1269"
+    ],
+    "note": "Shared image viewer or feedback state; business flow preserved and widget verified."
+  },
+  {
+    "id": "05-agent/agent-resource-journey-image-zoomed",
+    "figma_nodes": [
+      "265:1095",
+      "265:1278"
+    ],
+    "note": "Shared image viewer or feedback state; business flow preserved and widget verified."
+  },
+  {
+    "id": "05-agent/agent-resource-journey-pdf-error",
+    "figma_nodes": [
+      "265:1165",
+      "265:1348"
+    ],
+    "note": "Shared image viewer or feedback state; business flow preserved and widget verified."
+  },
+  {
+    "id": "05-agent/agent-resource-journey-pdf-forbidden",
+    "figma_nodes": [
+      "265:1165",
+      "265:1348"
+    ],
+    "note": "Shared image viewer or feedback state; business flow preserved and widget verified."
+  },
+  {
+    "id": "05-agent/agent-resource-journey-pdf-loading",
+    "figma_nodes": [
+      "265:1153",
+      "265:1336"
+    ],
+    "note": "Shared image viewer or feedback state; business flow preserved and widget verified."
+  },
+  {
+    "id": "05-agent/agent-resource-journey-pdf-retrying",
+    "figma_nodes": [
+      "265:1153",
+      "265:1336"
+    ],
+    "note": "Shared image viewer or feedback state; business flow preserved and widget verified."
+  },
+  {
+    "id": "11-media/media-image-loaded",
+    "figma_nodes": [
+      "265:1086",
+      "265:1269"
+    ],
+    "note": "Shared image viewer or feedback state; business flow preserved and widget verified."
+  },
+  {
+    "id": "11-media/media-image-loading",
+    "figma_nodes": [
+      "265:1113",
+      "265:1296"
+    ],
+    "note": "Shared image viewer or feedback state; business flow preserved and widget verified."
+  },
+  {
+    "id": "11-media/media-image-retry",
+    "figma_nodes": [
+      "265:1125",
+      "265:1308"
+    ],
+    "note": "Shared image viewer or feedback state; business flow preserved and widget verified."
+  },
+  {
+    "id": "11-media/media-pdf-loading",
+    "figma_nodes": [
+      "265:1153",
+      "265:1336"
+    ],
+    "note": "Shared image viewer or feedback state; business flow preserved and widget verified."
+  },
+  {
+    "id": "11-media/media-pdf-retry",
+    "figma_nodes": [
+      "265:1165",
+      "265:1348"
+    ],
+    "note": "Shared image viewer or feedback state; business flow preserved and widget verified."
+  },
+  {
+    "id": "11-media/media-unavailable-image",
+    "figma_nodes": [
+      "265:1140",
+      "265:1323"
+    ],
+    "note": "Shared image viewer or feedback state; business flow preserved and widget verified."
+  },
+  {
+    "id": "11-media/media-unavailable-missing",
+    "figma_nodes": [
+      "265:1193",
+      "265:1376"
+    ],
+    "note": "Shared image viewer or feedback state; business flow preserved and widget verified."
+  },
+  {
+    "id": "11-media/media-unavailable-pdf",
+    "figma_nodes": [
+      "265:1180",
+      "265:1363"
+    ],
+    "note": "Shared image viewer or feedback state; business flow preserved and widget verified."
+  },
+  {
+    "id": "11-media/media-unavailable-video",
+    "figma_nodes": [
+      "265:1207",
+      "265:1390"
+    ],
+    "note": "Shared image viewer or feedback state; business flow preserved and widget verified."
+  },
+  {
+    "id": "11-media/native-resource-image",
+    "figma_nodes": [
+      "265:1086",
+      "265:1269"
+    ],
+    "note": "Shared image viewer or feedback state; business flow preserved and widget verified."
+  },
+  {
+    "id": "11-media/native-resource-image-zoom",
+    "figma_nodes": [
+      "265:1086",
+      "265:1269"
+    ],
+    "note": "Shared image viewer or feedback state; business flow preserved and widget verified."
+  }
+]

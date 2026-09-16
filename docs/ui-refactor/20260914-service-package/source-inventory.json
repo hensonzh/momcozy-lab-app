@@ -1,0 +1,2297 @@
+[
+  {
+    "id": "07-me/more-current-expert-package",
+    "module": "账号与隐私",
+    "label": "IBCLC 专家团队服务",
+    "state": "more-current-expert-package",
+    "image": "07-me/more-current-expert-package/default.png",
+    "viewport": "07-me/more-current-expert-package/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/feeding-confidence"
+    ],
+    "mapped_design_candidates": [
+      "services/catalog",
+      "services/package",
+      "services/team",
+      "common/not-found",
+      "services/state-20",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_catalog_page.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/profile/more_current_inventory_test.dart",
+    "test_case": "inventory current More routes 393/1x",
+    "metadata": "raw/test/goldens/ui_inventory/more-current-expert-package-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/more-current-expert-package-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/more-current-expert-package-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/more-current-expert-package-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/more-current-expert-package-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/feeding-confidence",
+    "entry": "Authenticated Me → tap More bottom navigation",
+    "trigger": "My service → purchased package details",
+    "journey": {
+      "source": "test/goldens/ui_inventory/more-current-expert-package-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/more-current-expert-catalog-393-1x.png",
+      "route": "/services/feeding-confidence",
+      "trigger": "My service → purchased package details",
+      "root_entry": "Authenticated Me → tap More bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production More/account/privacy/service pages and notification coordinator/repositories; isolated HTTP, push gateway and permission platform; real router.go and ScaffoldMessenger callbacks, no native OS dialog or remote push",
+      "test": "test/modules/profile/more_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "07-me/notification-followup-booking-package",
+    "module": "账号与隐私",
+    "label": "IBCLC 专家团队服务",
+    "state": "notification-followup-booking-package",
+    "image": "07-me/notification-followup-booking-package/default.png",
+    "viewport": "07-me/notification-followup-booking-package/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/feeding-confidence"
+    ],
+    "mapped_design_candidates": [
+      "services/catalog",
+      "services/package",
+      "services/team",
+      "common/not-found",
+      "services/state-20",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_catalog_page.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/notifications/notification_followup_inventory_test.dart",
+    "test_case": "notification registration waiting failure pending and retry from booking",
+    "metadata": "raw/test/goldens/ui_inventory/notification-followup-booking-package-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/notification-followup-booking-package-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/notification-followup-booking-package-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/feeding-confidence",
+    "entry": "Authenticated More page",
+    "trigger": "My service → purchased package details",
+    "journey": {
+      "source": "test/goldens/ui_inventory/notification-followup-booking-package-393.png",
+      "previous_source": "test/goldens/ui_inventory/notification-followup-booking-catalog-393.png",
+      "route": "/services/feeding-confidence",
+      "trigger": "My service → purchased package details",
+      "root_entry": "Authenticated More page",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production notification coordinator/repository/controller; isolated HTTP, push gateway and permission platform; real router.go and ScaffoldMessenger callbacks, no native OS dialog or remote push",
+      "test": "test/features/notifications/notification_followup_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-journey-booking-cancelled",
+    "module": "专家服务与咨询",
+    "label": "IBCLC 专家团队服务",
+    "state": "service-journey-booking-cancelled",
+    "image": "08-expert-service/service-journey-booking-cancelled/default.png",
+    "viewport": "08-expert-service/service-journey-booking-cancelled/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/feeding-confidence"
+    ],
+    "mapped_design_candidates": [
+      "services/catalog",
+      "services/package",
+      "services/team",
+      "common/not-found",
+      "services/state-20",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_catalog_page.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_inventory_journey_test.dart",
+    "test_case": "inventory Services booking eligibility hold confirm intake and cancellation",
+    "metadata": "raw/test/goldens/ui_inventory/service-journey-booking-cancelled-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-journey-booking-cancelled-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-journey-booking-cancelled-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/feeding-confidence",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Retry cancellation → actual product returns to package detail",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-journey-booking-cancelled-393.png",
+      "previous_source": "test/goldens/ui_inventory/service-journey-booking-cancel-error-393.png",
+      "route": "/services/feeding-confidence",
+      "trigger": "Retry cancellation → actual product returns to package detail",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-journey-package-better-breastfeeding",
+    "module": "专家服务与咨询",
+    "label": "IBCLC 专家团队服务",
+    "state": "service-journey-package-better-breastfeeding",
+    "image": "08-expert-service/service-journey-package-better-breastfeeding/default.png",
+    "viewport": "08-expert-service/service-journey-package-better-breastfeeding/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/better-breastfeeding"
+    ],
+    "mapped_design_candidates": [
+      "services/catalog",
+      "services/package",
+      "services/team",
+      "common/not-found",
+      "services/state-20",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_catalog_page.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_inventory_journey_test.dart",
+    "test_case": "inventory Services catalog team and every package detail",
+    "metadata": "raw/test/goldens/ui_inventory/service-journey-package-better-breastfeeding-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-journey-package-better-breastfeeding-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-journey-package-better-breastfeeding-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/better-breastfeeding",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Catalog 亲喂改善 → detail and purchase CTA",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-journey-package-better-breastfeeding-393.png",
+      "previous_source": "test/goldens/ui_inventory/service-journey-package-team-feeding-confidence-393.png",
+      "route": "/services/better-breastfeeding",
+      "trigger": "Catalog 亲喂改善 → detail and purchase CTA",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-journey-package-comfortable-feeding",
+    "module": "专家服务与咨询",
+    "label": "IBCLC 专家团队服务",
+    "state": "service-journey-package-comfortable-feeding",
+    "image": "08-expert-service/service-journey-package-comfortable-feeding/default.png",
+    "viewport": "08-expert-service/service-journey-package-comfortable-feeding/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/comfortable-feeding"
+    ],
+    "mapped_design_candidates": [
+      "services/catalog",
+      "services/package",
+      "services/team",
+      "common/not-found",
+      "services/state-20",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_catalog_page.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_inventory_journey_test.dart",
+    "test_case": "inventory Services catalog team and every package detail",
+    "metadata": "raw/test/goldens/ui_inventory/service-journey-package-comfortable-feeding-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-journey-package-comfortable-feeding-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-journey-package-comfortable-feeding-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/comfortable-feeding",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Catalog 舒适哺乳支持 → detail and purchase CTA",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-journey-package-comfortable-feeding-393.png",
+      "previous_source": "test/goldens/ui_inventory/service-journey-package-team-milk-supply-care-393.png",
+      "route": "/services/comfortable-feeding",
+      "trigger": "Catalog 舒适哺乳支持 → detail and purchase CTA",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-journey-package-feeding-confidence",
+    "module": "专家服务与咨询",
+    "label": "IBCLC 专家团队服务",
+    "state": "service-journey-package-feeding-confidence",
+    "image": "08-expert-service/service-journey-package-feeding-confidence/default.png",
+    "viewport": "08-expert-service/service-journey-package-feeding-confidence/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/feeding-confidence"
+    ],
+    "mapped_design_candidates": [
+      "services/catalog",
+      "services/package",
+      "services/team",
+      "common/not-found",
+      "services/state-20",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_catalog_page.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_inventory_journey_test.dart",
+    "test_case": "inventory Services catalog team and every package detail",
+    "metadata": "raw/test/goldens/ui_inventory/service-journey-package-feeding-confidence-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-journey-package-feeding-confidence-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-journey-package-feeding-confidence-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/feeding-confidence",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Catalog 喂养安心 → detail and purchase CTA",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-journey-package-feeding-confidence-393.png",
+      "previous_source": "test/goldens/ui_inventory/service-journey-catalog-team-393.png",
+      "route": "/services/feeding-confidence",
+      "trigger": "Catalog 喂养安心 → detail and purchase CTA",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-journey-package-milk-supply-care",
+    "module": "专家服务与咨询",
+    "label": "IBCLC 专家团队服务",
+    "state": "service-journey-package-milk-supply-care",
+    "image": "08-expert-service/service-journey-package-milk-supply-care/default.png",
+    "viewport": "08-expert-service/service-journey-package-milk-supply-care/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/milk-supply-care"
+    ],
+    "mapped_design_candidates": [
+      "services/catalog",
+      "services/package",
+      "services/team",
+      "common/not-found",
+      "services/state-20",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_catalog_page.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_inventory_journey_test.dart",
+    "test_case": "inventory Services catalog team and every package detail",
+    "metadata": "raw/test/goldens/ui_inventory/service-journey-package-milk-supply-care-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-journey-package-milk-supply-care-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-journey-package-milk-supply-care-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/milk-supply-care",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Catalog 奶量管理 → detail and purchase CTA",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-journey-package-milk-supply-care-393.png",
+      "previous_source": "test/goldens/ui_inventory/service-journey-package-team-better-breastfeeding-393.png",
+      "route": "/services/milk-supply-care",
+      "trigger": "Catalog 奶量管理 → detail and purchase CTA",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-journey-package-payment-disabled",
+    "module": "专家服务与咨询",
+    "label": "IBCLC 专家团队服务",
+    "state": "service-journey-package-payment-disabled",
+    "image": "08-expert-service/service-journey-package-payment-disabled/default.png",
+    "viewport": "08-expert-service/service-journey-package-payment-disabled/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/feeding-confidence"
+    ],
+    "mapped_design_candidates": [
+      "services/catalog",
+      "services/package",
+      "services/team",
+      "common/not-found",
+      "services/state-20",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_catalog_page.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_inventory_journey_test.dart",
+    "test_case": "inventory Services catalog loading error empty and package refresh",
+    "metadata": "raw/test/goldens/ui_inventory/service-journey-package-payment-disabled-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-journey-package-payment-disabled-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-journey-package-payment-disabled-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/feeding-confidence",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Package with disabled payment mode → purchase unavailable",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-journey-package-payment-disabled-393.png",
+      "previous_source": "test/goldens/ui_inventory/service-journey-package-read-recovered-393.png",
+      "route": "/services/feeding-confidence",
+      "trigger": "Package with disabled payment mode → purchase unavailable",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-journey-package-read-error",
+    "module": "专家服务与咨询",
+    "label": "暂时无法载入，请稍后重试",
+    "state": "service-journey-package-read-error",
+    "image": "08-expert-service/service-journey-package-read-error/default.png",
+    "viewport": "08-expert-service/service-journey-package-read-error/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/feeding-confidence"
+    ],
+    "mapped_design_candidates": [
+      "services/package",
+      "common/not-found",
+      "common/loading",
+      "common/empty",
+      "common/error",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/product_feedback.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_inventory_journey_test.dart",
+    "test_case": "inventory Services catalog loading error empty and package refresh",
+    "metadata": "raw/test/goldens/ui_inventory/service-journey-package-read-error-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-journey-package-read-error-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-journey-package-read-error-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/feeding-confidence",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Enter package while API unavailable → detail error",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-journey-package-read-error-393.png",
+      "previous_source": "test/goldens/ui_inventory/service-journey-catalog-pull-refreshed-393.png",
+      "route": "/services/feeding-confidence",
+      "trigger": "Enter package while API unavailable → detail error",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-journey-package-read-recovered",
+    "module": "专家服务与咨询",
+    "label": "IBCLC 专家团队服务",
+    "state": "service-journey-package-read-recovered",
+    "image": "08-expert-service/service-journey-package-read-recovered/default.png",
+    "viewport": "08-expert-service/service-journey-package-read-recovered/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/feeding-confidence"
+    ],
+    "mapped_design_candidates": [
+      "services/catalog",
+      "services/package",
+      "services/team",
+      "common/not-found",
+      "services/state-20",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_catalog_page.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_inventory_journey_test.dart",
+    "test_case": "inventory Services catalog loading error empty and package refresh",
+    "metadata": "raw/test/goldens/ui_inventory/service-journey-package-read-recovered-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-journey-package-read-recovered-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-journey-package-read-recovered-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/feeding-confidence",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Retry package read → full detail",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-journey-package-read-recovered-393.png",
+      "previous_source": "test/goldens/ui_inventory/service-journey-package-read-error-393.png",
+      "route": "/services/feeding-confidence",
+      "trigger": "Retry package read → full detail",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-journey-package-team-better-breastfeeding",
+    "module": "专家服务与咨询",
+    "label": "IBCLC 专家团队服务",
+    "state": "service-journey-package-team-better-breastfeeding",
+    "image": "08-expert-service/service-journey-package-team-better-breastfeeding/default.png",
+    "viewport": "08-expert-service/service-journey-package-team-better-breastfeeding/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/better-breastfeeding"
+    ],
+    "mapped_design_candidates": [
+      "services/catalog",
+      "services/package",
+      "services/team",
+      "common/not-found",
+      "services/state-20",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_catalog_page.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_inventory_journey_test.dart",
+    "test_case": "inventory Services catalog team and every package detail",
+    "metadata": "raw/test/goldens/ui_inventory/service-journey-package-team-better-breastfeeding-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-journey-package-team-better-breastfeeding-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-journey-package-team-better-breastfeeding-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/better-breastfeeding",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Package detail → team information",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-journey-package-team-better-breastfeeding-393.png",
+      "previous_source": "test/goldens/ui_inventory/service-journey-package-better-breastfeeding-393.png",
+      "route": "/services/better-breastfeeding",
+      "trigger": "Package detail → team information",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-journey-package-team-comfortable-feeding",
+    "module": "专家服务与咨询",
+    "label": "IBCLC 专家团队服务",
+    "state": "service-journey-package-team-comfortable-feeding",
+    "image": "08-expert-service/service-journey-package-team-comfortable-feeding/default.png",
+    "viewport": "08-expert-service/service-journey-package-team-comfortable-feeding/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/comfortable-feeding"
+    ],
+    "mapped_design_candidates": [
+      "services/catalog",
+      "services/package",
+      "services/team",
+      "common/not-found",
+      "services/state-20",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_catalog_page.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_inventory_journey_test.dart",
+    "test_case": "inventory Services catalog team and every package detail",
+    "metadata": "raw/test/goldens/ui_inventory/service-journey-package-team-comfortable-feeding-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-journey-package-team-comfortable-feeding-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-journey-package-team-comfortable-feeding-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/comfortable-feeding",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Package detail → team information",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-journey-package-team-comfortable-feeding-393.png",
+      "previous_source": "test/goldens/ui_inventory/service-journey-package-comfortable-feeding-393.png",
+      "route": "/services/comfortable-feeding",
+      "trigger": "Package detail → team information",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-journey-package-team-feeding-confidence",
+    "module": "专家服务与咨询",
+    "label": "IBCLC 专家团队服务",
+    "state": "service-journey-package-team-feeding-confidence",
+    "image": "08-expert-service/service-journey-package-team-feeding-confidence/default.png",
+    "viewport": "08-expert-service/service-journey-package-team-feeding-confidence/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/feeding-confidence"
+    ],
+    "mapped_design_candidates": [
+      "services/catalog",
+      "services/package",
+      "services/team",
+      "common/not-found",
+      "services/state-20",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_catalog_page.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_inventory_journey_test.dart",
+    "test_case": "inventory Services catalog team and every package detail",
+    "metadata": "raw/test/goldens/ui_inventory/service-journey-package-team-feeding-confidence-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-journey-package-team-feeding-confidence-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-journey-package-team-feeding-confidence-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/feeding-confidence",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Package detail → team information",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-journey-package-team-feeding-confidence-393.png",
+      "previous_source": "test/goldens/ui_inventory/service-journey-package-feeding-confidence-393.png",
+      "route": "/services/feeding-confidence",
+      "trigger": "Package detail → team information",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-journey-package-team-milk-supply-care",
+    "module": "专家服务与咨询",
+    "label": "IBCLC 专家团队服务",
+    "state": "service-journey-package-team-milk-supply-care",
+    "image": "08-expert-service/service-journey-package-team-milk-supply-care/default.png",
+    "viewport": "08-expert-service/service-journey-package-team-milk-supply-care/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/milk-supply-care"
+    ],
+    "mapped_design_candidates": [
+      "services/catalog",
+      "services/package",
+      "services/team",
+      "common/not-found",
+      "services/state-20",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_catalog_page.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_inventory_journey_test.dart",
+    "test_case": "inventory Services catalog team and every package detail",
+    "metadata": "raw/test/goldens/ui_inventory/service-journey-package-team-milk-supply-care-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-journey-package-team-milk-supply-care-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-journey-package-team-milk-supply-care-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/milk-supply-care",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Package detail → team information",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-journey-package-team-milk-supply-care-393.png",
+      "previous_source": "test/goldens/ui_inventory/service-journey-package-milk-supply-care-393.png",
+      "route": "/services/milk-supply-care",
+      "trigger": "Package detail → team information",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-journey-purchase-bank-challenge",
+    "module": "专家服务与咨询",
+    "label": "IBCLC 专家团队服务",
+    "state": "service-journey-purchase-bank-challenge",
+    "image": "08-expert-service/service-journey-purchase-bank-challenge/default.png",
+    "viewport": "08-expert-service/service-journey-purchase-bank-challenge/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/feeding-confidence"
+    ],
+    "mapped_design_candidates": [
+      "services/catalog",
+      "services/package",
+      "services/team",
+      "services/purchase",
+      "common/not-found",
+      "services/state-20",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24",
+      "services/state-25",
+      "services/state-26",
+      "services/state-27",
+      "services/state-28",
+      "services/state-29",
+      "services/state-30"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_catalog_page.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/modules/services/presentation/service_purchase_dialog.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_inventory_journey_test.dart",
+    "test_case": "inventory Services purchase validation decline challenge success and booking",
+    "metadata": "raw/test/goldens/ui_inventory/service-journey-purchase-bank-challenge-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-journey-purchase-bank-challenge-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-journey-purchase-bank-challenge-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/feeding-confidence",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Challenge test card → bank verification",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-journey-purchase-bank-challenge-393.png",
+      "previous_source": "test/goldens/ui_inventory/service-journey-purchase-declined-393.png",
+      "route": "/services/feeding-confidence",
+      "trigger": "Challenge test card → bank verification",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-journey-purchase-cancelled-detail",
+    "module": "专家服务与咨询",
+    "label": "IBCLC 专家团队服务",
+    "state": "service-journey-purchase-cancelled-detail",
+    "image": "08-expert-service/service-journey-purchase-cancelled-detail/default.png",
+    "viewport": "08-expert-service/service-journey-purchase-cancelled-detail/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/feeding-confidence"
+    ],
+    "mapped_design_candidates": [
+      "services/catalog",
+      "services/package",
+      "services/team",
+      "common/not-found",
+      "services/state-20",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_catalog_page.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_inventory_journey_test.dart",
+    "test_case": "inventory Services cancelled challenge and reconciling payment",
+    "metadata": "raw/test/goldens/ui_inventory/service-journey-purchase-cancelled-detail-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-journey-purchase-cancelled-detail-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-journey-purchase-cancelled-detail-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/feeding-confidence",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Cancelled order back → package can be purchased again",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-journey-purchase-cancelled-detail-393.png",
+      "previous_source": "test/goldens/ui_inventory/service-journey-purchase-challenge-cancelled-393.png",
+      "route": "/services/feeding-confidence",
+      "trigger": "Cancelled order back → package can be purchased again",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-journey-purchase-card-form",
+    "module": "专家服务与咨询",
+    "label": "IBCLC 专家团队服务",
+    "state": "service-journey-purchase-card-form",
+    "image": "08-expert-service/service-journey-purchase-card-form/default.png",
+    "viewport": "08-expert-service/service-journey-purchase-card-form/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/feeding-confidence"
+    ],
+    "mapped_design_candidates": [
+      "services/catalog",
+      "services/package",
+      "services/team",
+      "services/purchase",
+      "common/not-found",
+      "services/state-20",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24",
+      "services/state-25",
+      "services/state-26",
+      "services/state-27",
+      "services/state-28",
+      "services/state-29",
+      "services/state-30"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_catalog_page.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/modules/services/presentation/service_purchase_dialog.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_inventory_journey_test.dart",
+    "test_case": "inventory Services purchase validation decline challenge success and booking",
+    "metadata": "raw/test/goldens/ui_inventory/service-journey-purchase-card-form-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-journey-purchase-card-form-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-journey-purchase-card-form-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/feeding-confidence",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Eligibility and order API responses → sandbox card form",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-journey-purchase-card-form-393.png",
+      "previous_source": "test/goldens/ui_inventory/service-journey-purchase-eligibility-ready-393.png",
+      "route": "/services/feeding-confidence",
+      "trigger": "Eligibility and order API responses → sandbox card form",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-journey-purchase-challenge-cancelled",
+    "module": "专家服务与咨询",
+    "label": "IBCLC 专家团队服务",
+    "state": "service-journey-purchase-challenge-cancelled",
+    "image": "08-expert-service/service-journey-purchase-challenge-cancelled/default.png",
+    "viewport": "08-expert-service/service-journey-purchase-challenge-cancelled/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/feeding-confidence"
+    ],
+    "mapped_design_candidates": [
+      "services/catalog",
+      "services/package",
+      "services/team",
+      "services/purchase",
+      "common/not-found",
+      "services/state-20",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24",
+      "services/state-25",
+      "services/state-26",
+      "services/state-27",
+      "services/state-28",
+      "services/state-29",
+      "services/state-30"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_catalog_page.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/modules/services/presentation/service_purchase_dialog.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_inventory_journey_test.dart",
+    "test_case": "inventory Services cancelled challenge and reconciling payment",
+    "metadata": "raw/test/goldens/ui_inventory/service-journey-purchase-challenge-cancelled-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-journey-purchase-challenge-cancelled-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-journey-purchase-challenge-cancelled-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/feeding-confidence",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Cancel bank verification → cancelled order with no entitlement",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-journey-purchase-challenge-cancelled-393.png",
+      "previous_source": null,
+      "route": "/services/feeding-confidence",
+      "trigger": "Cancel bank verification → cancelled order with no entitlement",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-journey-purchase-declined",
+    "module": "专家服务与咨询",
+    "label": "IBCLC 专家团队服务",
+    "state": "service-journey-purchase-declined",
+    "image": "08-expert-service/service-journey-purchase-declined/default.png",
+    "viewport": "08-expert-service/service-journey-purchase-declined/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/feeding-confidence"
+    ],
+    "mapped_design_candidates": [
+      "services/catalog",
+      "services/package",
+      "services/team",
+      "services/purchase",
+      "common/not-found",
+      "services/state-20",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24",
+      "services/state-25",
+      "services/state-26",
+      "services/state-27",
+      "services/state-28",
+      "services/state-29",
+      "services/state-30"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_catalog_page.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/modules/services/presentation/service_purchase_dialog.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_inventory_journey_test.dart",
+    "test_case": "inventory Services purchase validation decline challenge success and booking",
+    "metadata": "raw/test/goldens/ui_inventory/service-journey-purchase-declined-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-journey-purchase-declined-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-journey-purchase-declined-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/feeding-confidence",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Declined test card → retryable payment failure",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-journey-purchase-declined-393.png",
+      "previous_source": "test/goldens/ui_inventory/service-journey-purchase-invalid-card-393.png",
+      "route": "/services/feeding-confidence",
+      "trigger": "Declined test card → retryable payment failure",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-journey-purchase-eligibility-empty",
+    "module": "专家服务与咨询",
+    "label": "IBCLC 专家团队服务",
+    "state": "service-journey-purchase-eligibility-empty",
+    "image": "08-expert-service/service-journey-purchase-eligibility-empty/default.png",
+    "viewport": "08-expert-service/service-journey-purchase-eligibility-empty/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/feeding-confidence"
+    ],
+    "mapped_design_candidates": [
+      "services/catalog",
+      "services/package",
+      "services/team",
+      "services/purchase",
+      "common/not-found",
+      "services/state-20",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24",
+      "services/state-25",
+      "services/state-26",
+      "services/state-27",
+      "services/state-28",
+      "services/state-29",
+      "services/state-30"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_catalog_page.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/modules/services/presentation/service_purchase_dialog.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_inventory_journey_test.dart",
+    "test_case": "inventory Services purchase validation decline challenge success and booking",
+    "metadata": "raw/test/goldens/ui_inventory/service-journey-purchase-eligibility-empty-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-journey-purchase-eligibility-empty-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-journey-purchase-eligibility-empty-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/feeding-confidence",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Purchase → eligibility dialog",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-journey-purchase-eligibility-empty-393.png",
+      "previous_source": null,
+      "route": "/services/feeding-confidence",
+      "trigger": "Purchase → eligibility dialog",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-journey-purchase-eligibility-ready",
+    "module": "专家服务与咨询",
+    "label": "IBCLC 专家团队服务",
+    "state": "service-journey-purchase-eligibility-ready",
+    "image": "08-expert-service/service-journey-purchase-eligibility-ready/default.png",
+    "viewport": "08-expert-service/service-journey-purchase-eligibility-ready/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/feeding-confidence"
+    ],
+    "mapped_design_candidates": [
+      "services/catalog",
+      "services/package",
+      "services/team",
+      "services/purchase",
+      "common/not-found",
+      "services/state-20",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24",
+      "services/state-25",
+      "services/state-26",
+      "services/state-27",
+      "services/state-28",
+      "services/state-29",
+      "services/state-30"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_catalog_page.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/modules/services/presentation/service_purchase_dialog.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_inventory_journey_test.dart",
+    "test_case": "inventory Services purchase validation decline challenge success and booking",
+    "metadata": "raw/test/goldens/ui_inventory/service-journey-purchase-eligibility-ready-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-journey-purchase-eligibility-ready-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-journey-purchase-eligibility-ready-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/feeding-confidence",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Supported state → eligibility can be submitted",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-journey-purchase-eligibility-ready-393.png",
+      "previous_source": "test/goldens/ui_inventory/service-journey-purchase-unsupported-region-393.png",
+      "route": "/services/feeding-confidence",
+      "trigger": "Supported state → eligibility can be submitted",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-journey-purchase-invalid-card",
+    "module": "专家服务与咨询",
+    "label": "IBCLC 专家团队服务",
+    "state": "service-journey-purchase-invalid-card",
+    "image": "08-expert-service/service-journey-purchase-invalid-card/default.png",
+    "viewport": "08-expert-service/service-journey-purchase-invalid-card/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/feeding-confidence"
+    ],
+    "mapped_design_candidates": [
+      "services/catalog",
+      "services/package",
+      "services/team",
+      "services/purchase",
+      "common/not-found",
+      "services/state-20",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24",
+      "services/state-25",
+      "services/state-26",
+      "services/state-27",
+      "services/state-28",
+      "services/state-29",
+      "services/state-30"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_catalog_page.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/modules/services/presentation/service_purchase_dialog.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_inventory_journey_test.dart",
+    "test_case": "inventory Services purchase validation decline challenge success and booking",
+    "metadata": "raw/test/goldens/ui_inventory/service-journey-purchase-invalid-card-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-journey-purchase-invalid-card-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-journey-purchase-invalid-card-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/feeding-confidence",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Submit short card number → inline validation",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-journey-purchase-invalid-card-393.png",
+      "previous_source": "test/goldens/ui_inventory/service-journey-purchase-card-form-393.png",
+      "route": "/services/feeding-confidence",
+      "trigger": "Submit short card number → inline validation",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-journey-purchase-later-booking",
+    "module": "专家服务与咨询",
+    "label": "IBCLC 专家团队服务",
+    "state": "service-journey-purchase-later-booking",
+    "image": "08-expert-service/service-journey-purchase-later-booking/default.png",
+    "viewport": "08-expert-service/service-journey-purchase-later-booking/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/feeding-confidence"
+    ],
+    "mapped_design_candidates": [
+      "services/catalog",
+      "services/package",
+      "services/team",
+      "common/not-found",
+      "services/state-20",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_catalog_page.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_inventory_journey_test.dart",
+    "test_case": "inventory Services create order retry pending payment and resume",
+    "metadata": "raw/test/goldens/ui_inventory/service-journey-purchase-later-booking-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-journey-purchase-later-booking-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-journey-purchase-later-booking-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/feeding-confidence",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Book later → owned detail without automatic booking",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-journey-purchase-later-booking-393.png",
+      "previous_source": "test/goldens/ui_inventory/service-journey-purchase-retry-success-393.png",
+      "route": "/services/feeding-confidence",
+      "trigger": "Book later → owned detail without automatic booking",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-journey-purchase-order-error",
+    "module": "专家服务与咨询",
+    "label": "IBCLC 专家团队服务",
+    "state": "service-journey-purchase-order-error",
+    "image": "08-expert-service/service-journey-purchase-order-error/default.png",
+    "viewport": "08-expert-service/service-journey-purchase-order-error/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/feeding-confidence"
+    ],
+    "mapped_design_candidates": [
+      "services/catalog",
+      "services/package",
+      "services/team",
+      "services/purchase",
+      "common/not-found",
+      "services/state-20",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24",
+      "services/state-25",
+      "services/state-26",
+      "services/state-27",
+      "services/state-28",
+      "services/state-29",
+      "services/state-30"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_catalog_page.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/modules/services/presentation/service_purchase_dialog.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_inventory_journey_test.dart",
+    "test_case": "inventory Services create order retry pending payment and resume",
+    "metadata": "raw/test/goldens/ui_inventory/service-journey-purchase-order-error-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-journey-purchase-order-error-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-journey-purchase-order-error-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/feeding-confidence",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Order creation unavailable → retry retains eligibility",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-journey-purchase-order-error-393.png",
+      "previous_source": null,
+      "route": "/services/feeding-confidence",
+      "trigger": "Order creation unavailable → retry retains eligibility",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-journey-purchase-owned-detail",
+    "module": "专家服务与咨询",
+    "label": "IBCLC 专家团队服务",
+    "state": "service-journey-purchase-owned-detail",
+    "image": "08-expert-service/service-journey-purchase-owned-detail/default.png",
+    "viewport": "08-expert-service/service-journey-purchase-owned-detail/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/feeding-confidence"
+    ],
+    "mapped_design_candidates": [
+      "services/catalog",
+      "services/package",
+      "services/team",
+      "common/not-found",
+      "services/state-20",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_catalog_page.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_inventory_journey_test.dart",
+    "test_case": "inventory Services purchase validation decline challenge success and booking",
+    "metadata": "raw/test/goldens/ui_inventory/service-journey-purchase-owned-detail-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-journey-purchase-owned-detail-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-journey-purchase-owned-detail-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/feeding-confidence",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Booking back → purchased package detail",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-journey-purchase-owned-detail-393.png",
+      "previous_source": "test/goldens/ui_inventory/service-journey-purchase-to-booking-393.png",
+      "route": "/services/feeding-confidence",
+      "trigger": "Booking back → purchased package detail",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-journey-purchase-payment-pending",
+    "module": "专家服务与咨询",
+    "label": "IBCLC 专家团队服务",
+    "state": "service-journey-purchase-payment-pending",
+    "image": "08-expert-service/service-journey-purchase-payment-pending/default.png",
+    "viewport": "08-expert-service/service-journey-purchase-payment-pending/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/feeding-confidence"
+    ],
+    "mapped_design_candidates": [
+      "services/catalog",
+      "services/package",
+      "services/team",
+      "services/purchase",
+      "common/not-found",
+      "services/state-20",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24",
+      "services/state-25",
+      "services/state-26",
+      "services/state-27",
+      "services/state-28",
+      "services/state-29",
+      "services/state-30"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_catalog_page.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/modules/services/presentation/service_purchase_dialog.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_inventory_journey_test.dart",
+    "test_case": "inventory Services create order retry pending payment and resume",
+    "metadata": "raw/test/goldens/ui_inventory/service-journey-purchase-payment-pending-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-journey-purchase-payment-pending-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-journey-purchase-payment-pending-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/feeding-confidence",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Payment response pending → controls and close disabled",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-journey-purchase-payment-pending-393.png",
+      "previous_source": "test/goldens/ui_inventory/service-journey-purchase-resumed-form-393.png",
+      "route": "/services/feeding-confidence",
+      "trigger": "Payment response pending → controls and close disabled",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-journey-purchase-payment-uncertain",
+    "module": "专家服务与咨询",
+    "label": "IBCLC 专家团队服务",
+    "state": "service-journey-purchase-payment-uncertain",
+    "image": "08-expert-service/service-journey-purchase-payment-uncertain/default.png",
+    "viewport": "08-expert-service/service-journey-purchase-payment-uncertain/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/feeding-confidence"
+    ],
+    "mapped_design_candidates": [
+      "services/catalog",
+      "services/package",
+      "services/team",
+      "services/purchase",
+      "common/not-found",
+      "services/state-20",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24",
+      "services/state-25",
+      "services/state-26",
+      "services/state-27",
+      "services/state-28",
+      "services/state-29",
+      "services/state-30"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_catalog_page.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/modules/services/presentation/service_purchase_dialog.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_inventory_journey_test.dart",
+    "test_case": "inventory Services create order retry pending payment and resume",
+    "metadata": "raw/test/goldens/ui_inventory/service-journey-purchase-payment-uncertain-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-journey-purchase-payment-uncertain-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-journey-purchase-payment-uncertain-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/feeding-confidence",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Payment unavailable → pending outcome retained for retry",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-journey-purchase-payment-uncertain-393.png",
+      "previous_source": "test/goldens/ui_inventory/service-journey-purchase-payment-pending-393.png",
+      "route": "/services/feeding-confidence",
+      "trigger": "Payment unavailable → pending outcome retained for retry",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-journey-purchase-pending-detail",
+    "module": "专家服务与咨询",
+    "label": "IBCLC 专家团队服务",
+    "state": "service-journey-purchase-pending-detail",
+    "image": "08-expert-service/service-journey-purchase-pending-detail/default.png",
+    "viewport": "08-expert-service/service-journey-purchase-pending-detail/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/feeding-confidence"
+    ],
+    "mapped_design_candidates": [
+      "services/catalog",
+      "services/package",
+      "services/team",
+      "common/not-found",
+      "services/state-20",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_catalog_page.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_inventory_journey_test.dart",
+    "test_case": "inventory Services create order retry pending payment and resume",
+    "metadata": "raw/test/goldens/ui_inventory/service-journey-purchase-pending-detail-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-journey-purchase-pending-detail-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-journey-purchase-pending-detail-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/feeding-confidence",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Close unpaid order → continue payment on package",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-journey-purchase-pending-detail-393.png",
+      "previous_source": "test/goldens/ui_inventory/service-journey-purchase-order-error-393.png",
+      "route": "/services/feeding-confidence",
+      "trigger": "Close unpaid order → continue payment on package",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-journey-purchase-query-error",
+    "module": "专家服务与咨询",
+    "label": "IBCLC 专家团队服务",
+    "state": "service-journey-purchase-query-error",
+    "image": "08-expert-service/service-journey-purchase-query-error/default.png",
+    "viewport": "08-expert-service/service-journey-purchase-query-error/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/feeding-confidence"
+    ],
+    "mapped_design_candidates": [
+      "services/catalog",
+      "services/package",
+      "services/team",
+      "services/purchase",
+      "common/not-found",
+      "services/state-20",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24",
+      "services/state-25",
+      "services/state-26",
+      "services/state-27",
+      "services/state-28",
+      "services/state-29",
+      "services/state-30"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_catalog_page.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/modules/services/presentation/service_purchase_dialog.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_inventory_journey_test.dart",
+    "test_case": "inventory Services cancelled challenge and reconciling payment",
+    "metadata": "raw/test/goldens/ui_inventory/service-journey-purchase-query-error-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-journey-purchase-query-error-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-journey-purchase-query-error-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/feeding-confidence",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Query reconciling payment fails → recoverable order error",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-journey-purchase-query-error-393.png",
+      "previous_source": "test/goldens/ui_inventory/service-journey-purchase-reconciling-393.png",
+      "route": "/services/feeding-confidence",
+      "trigger": "Query reconciling payment fails → recoverable order error",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-journey-purchase-reconciliation-complete",
+    "module": "专家服务与咨询",
+    "label": "IBCLC 专家团队服务",
+    "state": "service-journey-purchase-reconciliation-complete",
+    "image": "08-expert-service/service-journey-purchase-reconciliation-complete/default.png",
+    "viewport": "08-expert-service/service-journey-purchase-reconciliation-complete/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/feeding-confidence"
+    ],
+    "mapped_design_candidates": [
+      "services/catalog",
+      "services/package",
+      "services/team",
+      "services/purchase",
+      "common/not-found",
+      "services/state-20",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24",
+      "services/state-25",
+      "services/state-26",
+      "services/state-27",
+      "services/state-28",
+      "services/state-29",
+      "services/state-30"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_catalog_page.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/modules/services/presentation/service_purchase_dialog.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_inventory_journey_test.dart",
+    "test_case": "inventory Services cancelled challenge and reconciling payment",
+    "metadata": "raw/test/goldens/ui_inventory/service-journey-purchase-reconciliation-complete-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-journey-purchase-reconciliation-complete-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-journey-purchase-reconciliation-complete-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/feeding-confidence",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Complete pending sandbox payment → purchased benefits",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-journey-purchase-reconciliation-complete-393.png",
+      "previous_source": "test/goldens/ui_inventory/service-journey-purchase-query-error-393.png",
+      "route": "/services/feeding-confidence",
+      "trigger": "Complete pending sandbox payment → purchased benefits",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-journey-purchase-reconciling",
+    "module": "专家服务与咨询",
+    "label": "IBCLC 专家团队服务",
+    "state": "service-journey-purchase-reconciling",
+    "image": "08-expert-service/service-journey-purchase-reconciling/default.png",
+    "viewport": "08-expert-service/service-journey-purchase-reconciling/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/feeding-confidence"
+    ],
+    "mapped_design_candidates": [
+      "services/catalog",
+      "services/package",
+      "services/team",
+      "services/purchase",
+      "common/not-found",
+      "services/state-20",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24",
+      "services/state-25",
+      "services/state-26",
+      "services/state-27",
+      "services/state-28",
+      "services/state-29",
+      "services/state-30"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_catalog_page.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/modules/services/presentation/service_purchase_dialog.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_inventory_journey_test.dart",
+    "test_case": "inventory Services cancelled challenge and reconciling payment",
+    "metadata": "raw/test/goldens/ui_inventory/service-journey-purchase-reconciling-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-journey-purchase-reconciling-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-journey-purchase-reconciling-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/feeding-confidence",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Server payment reconciliation → query instead of duplicate payment",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-journey-purchase-reconciling-393.png",
+      "previous_source": "test/goldens/ui_inventory/service-journey-purchase-cancelled-detail-393.png",
+      "route": "/services/feeding-confidence",
+      "trigger": "Server payment reconciliation → query instead of duplicate payment",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-journey-purchase-region-menu",
+    "module": "专家服务与咨询",
+    "label": "IBCLC 专家团队服务",
+    "state": "service-journey-purchase-region-menu",
+    "image": "08-expert-service/service-journey-purchase-region-menu/default.png",
+    "viewport": "08-expert-service/service-journey-purchase-region-menu/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/feeding-confidence"
+    ],
+    "mapped_design_candidates": [
+      "services/catalog",
+      "services/package",
+      "services/team",
+      "services/purchase",
+      "common/not-found",
+      "services/state-20",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24",
+      "services/state-25",
+      "services/state-26",
+      "services/state-27",
+      "services/state-28",
+      "services/state-29",
+      "services/state-30"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_catalog_page.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/modules/services/presentation/service_purchase_dialog.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_inventory_journey_test.dart",
+    "test_case": "inventory Services purchase validation decline challenge success and booking",
+    "metadata": "raw/test/goldens/ui_inventory/service-journey-purchase-region-menu-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-journey-purchase-region-menu-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-journey-purchase-region-menu-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/feeding-confidence",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Open current state selector",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-journey-purchase-region-menu-393.png",
+      "previous_source": "test/goldens/ui_inventory/service-journey-purchase-eligibility-empty-393.png",
+      "route": "/services/feeding-confidence",
+      "trigger": "Open current state selector",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-journey-purchase-resume-error",
+    "module": "专家服务与咨询",
+    "label": "IBCLC 专家团队服务",
+    "state": "service-journey-purchase-resume-error",
+    "image": "08-expert-service/service-journey-purchase-resume-error/default.png",
+    "viewport": "08-expert-service/service-journey-purchase-resume-error/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/feeding-confidence"
+    ],
+    "mapped_design_candidates": [
+      "services/catalog",
+      "services/package",
+      "services/team",
+      "common/not-found",
+      "services/state-20",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_catalog_page.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_inventory_journey_test.dart",
+    "test_case": "inventory Services create order retry pending payment and resume",
+    "metadata": "raw/test/goldens/ui_inventory/service-journey-purchase-resume-error-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-journey-purchase-resume-error-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-journey-purchase-resume-error-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/feeding-confidence",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Resume order read fails → snackbar on package",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-journey-purchase-resume-error-393.png",
+      "previous_source": "test/goldens/ui_inventory/service-journey-purchase-pending-catalog-refreshed-393.png",
+      "route": "/services/feeding-confidence",
+      "trigger": "Resume order read fails → snackbar on package",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-journey-purchase-resume-message-dismissed",
+    "module": "专家服务与咨询",
+    "label": "IBCLC 专家团队服务",
+    "state": "service-journey-purchase-resume-message-dismissed",
+    "image": "08-expert-service/service-journey-purchase-resume-message-dismissed/default.png",
+    "viewport": "08-expert-service/service-journey-purchase-resume-message-dismissed/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/feeding-confidence"
+    ],
+    "mapped_design_candidates": [
+      "services/catalog",
+      "services/package",
+      "services/team",
+      "common/not-found",
+      "services/state-20",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_catalog_page.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_inventory_journey_test.dart",
+    "test_case": "inventory Services create order retry pending payment and resume",
+    "metadata": "raw/test/goldens/ui_inventory/service-journey-purchase-resume-message-dismissed-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-journey-purchase-resume-message-dismissed-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-journey-purchase-resume-message-dismissed-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/feeding-confidence",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Transient error snackbar expires → payment CTA unobscured",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-journey-purchase-resume-message-dismissed-393.png",
+      "previous_source": "test/goldens/ui_inventory/service-journey-purchase-resume-error-393.png",
+      "route": "/services/feeding-confidence",
+      "trigger": "Transient error snackbar expires → payment CTA unobscured",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-journey-purchase-resumed-form",
+    "module": "专家服务与咨询",
+    "label": "IBCLC 专家团队服务",
+    "state": "service-journey-purchase-resumed-form",
+    "image": "08-expert-service/service-journey-purchase-resumed-form/default.png",
+    "viewport": "08-expert-service/service-journey-purchase-resumed-form/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/feeding-confidence"
+    ],
+    "mapped_design_candidates": [
+      "services/catalog",
+      "services/package",
+      "services/team",
+      "services/purchase",
+      "common/not-found",
+      "services/state-20",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24",
+      "services/state-25",
+      "services/state-26",
+      "services/state-27",
+      "services/state-28",
+      "services/state-29",
+      "services/state-30"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_catalog_page.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/modules/services/presentation/service_purchase_dialog.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_inventory_journey_test.dart",
+    "test_case": "inventory Services create order retry pending payment and resume",
+    "metadata": "raw/test/goldens/ui_inventory/service-journey-purchase-resumed-form-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-journey-purchase-resumed-form-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-journey-purchase-resumed-form-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/feeding-confidence",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Retry resume → same order card form",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-journey-purchase-resumed-form-393.png",
+      "previous_source": "test/goldens/ui_inventory/service-journey-purchase-resume-message-dismissed-393.png",
+      "route": "/services/feeding-confidence",
+      "trigger": "Retry resume → same order card form",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-journey-purchase-retry-success",
+    "module": "专家服务与咨询",
+    "label": "IBCLC 专家团队服务",
+    "state": "service-journey-purchase-retry-success",
+    "image": "08-expert-service/service-journey-purchase-retry-success/default.png",
+    "viewport": "08-expert-service/service-journey-purchase-retry-success/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/feeding-confidence"
+    ],
+    "mapped_design_candidates": [
+      "services/catalog",
+      "services/package",
+      "services/team",
+      "services/purchase",
+      "common/not-found",
+      "services/state-20",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24",
+      "services/state-25",
+      "services/state-26",
+      "services/state-27",
+      "services/state-28",
+      "services/state-29",
+      "services/state-30"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_catalog_page.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/modules/services/presentation/service_purchase_dialog.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_inventory_journey_test.dart",
+    "test_case": "inventory Services create order retry pending payment and resume",
+    "metadata": "raw/test/goldens/ui_inventory/service-journey-purchase-retry-success-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-journey-purchase-retry-success-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-journey-purchase-retry-success-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/feeding-confidence",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Retry same outcome → payment and benefits confirmed",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-journey-purchase-retry-success-393.png",
+      "previous_source": "test/goldens/ui_inventory/service-journey-purchase-payment-uncertain-393.png",
+      "route": "/services/feeding-confidence",
+      "trigger": "Retry same outcome → payment and benefits confirmed",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-journey-purchase-success",
+    "module": "专家服务与咨询",
+    "label": "IBCLC 专家团队服务",
+    "state": "service-journey-purchase-success",
+    "image": "08-expert-service/service-journey-purchase-success/default.png",
+    "viewport": "08-expert-service/service-journey-purchase-success/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/feeding-confidence"
+    ],
+    "mapped_design_candidates": [
+      "services/catalog",
+      "services/package",
+      "services/team",
+      "services/purchase",
+      "common/not-found",
+      "services/state-20",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24",
+      "services/state-25",
+      "services/state-26",
+      "services/state-27",
+      "services/state-28",
+      "services/state-29",
+      "services/state-30"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_catalog_page.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/modules/services/presentation/service_purchase_dialog.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_inventory_journey_test.dart",
+    "test_case": "inventory Services purchase validation decline challenge success and booking",
+    "metadata": "raw/test/goldens/ui_inventory/service-journey-purchase-success-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-journey-purchase-success-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-journey-purchase-success-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/feeding-confidence",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Confirm bank verification → purchased benefits",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-journey-purchase-success-393.png",
+      "previous_source": "test/goldens/ui_inventory/service-journey-purchase-bank-challenge-393.png",
+      "route": "/services/feeding-confidence",
+      "trigger": "Confirm bank verification → purchased benefits",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-journey-purchase-unsupported-region",
+    "module": "专家服务与咨询",
+    "label": "IBCLC 专家团队服务",
+    "state": "service-journey-purchase-unsupported-region",
+    "image": "08-expert-service/service-journey-purchase-unsupported-region/default.png",
+    "viewport": "08-expert-service/service-journey-purchase-unsupported-region/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/feeding-confidence"
+    ],
+    "mapped_design_candidates": [
+      "services/catalog",
+      "services/package",
+      "services/team",
+      "services/purchase",
+      "common/not-found",
+      "services/state-20",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24",
+      "services/state-25",
+      "services/state-26",
+      "services/state-27",
+      "services/state-28",
+      "services/state-29",
+      "services/state-30"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_catalog_page.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/modules/services/presentation/service_purchase_dialog.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_inventory_journey_test.dart",
+    "test_case": "inventory Services purchase validation decline challenge success and booking",
+    "metadata": "raw/test/goldens/ui_inventory/service-journey-purchase-unsupported-region-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-journey-purchase-unsupported-region-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-journey-purchase-unsupported-region-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/feeding-confidence",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Unsupported state and acknowledgment → blocked CTA",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-journey-purchase-unsupported-region-393.png",
+      "previous_source": "test/goldens/ui_inventory/service-journey-purchase-region-menu-393.png",
+      "route": "/services/feeding-confidence",
+      "trigger": "Unsupported state and acknowledgment → blocked CTA",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_inventory_journey_test.dart"
+    }
+  }
+]

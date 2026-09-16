@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/home-consultation-journey-intake-return-home-320-2x.png",
+  "previous_source": "test/goldens/ui_inventory/home-consultation-journey-intake-320-2x.png",
+  "route": "/me",
+  "trigger": "Close intake → Mom home; preparation does not auto-reopen",
+  "root_entry": "Authenticated More → tap Me bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories/codecs and LiveKit device checks; isolated HTTP and native method channels, sandbox room, fixed clock/timezone; no real OS permission dialog or remote media",
+  "test": "test/modules/consultation/home_consultation_inventory_journey_test.dart"
+}

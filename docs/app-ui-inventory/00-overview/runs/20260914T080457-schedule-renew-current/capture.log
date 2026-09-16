@@ -1,0 +1,21 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_page_golden_test.dart
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/modules/schedule/personal_schedule_editor_test.dart: (setUpAll)
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/modules/services/service_renew_test.dart: renew selection opens existing eligibility flow 390.0/1.0
+00:00 +1: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_page_golden_test.dart: task menu writes progress with the current version at 390.0/1.0
+00:01 +2: /Users/lute/project/momcozy-lab/app/test/modules/schedule/personal_schedule_editor_test.dart: personal schedule create edit delete at 390.0/1.0
+00:01 +3: /Users/lute/project/momcozy-lab/app/test/modules/schedule/personal_schedule_editor_test.dart: personal schedule create edit delete at 390.0/1.0
+00:01 +4: /Users/lute/project/momcozy-lab/app/test/modules/schedule/personal_schedule_editor_test.dart: personal schedule create edit delete at 390.0/1.0
+00:01 +5: /Users/lute/project/momcozy-lab/app/test/modules/schedule/personal_schedule_editor_test.dart: personal schedule create edit delete at 390.0/1.0
+00:01 +6: /Users/lute/project/momcozy-lab/app/test/modules/schedule/personal_schedule_editor_test.dart: personal schedule create edit delete at 390.0/1.0
+00:01 +7: /Users/lute/project/momcozy-lab/app/test/modules/schedule/personal_schedule_editor_test.dart: personal schedule create edit delete at 390.0/1.0
+00:01 +8: /Users/lute/project/momcozy-lab/app/test/modules/services/service_renew_test.dart: short large catalog loads, scrolls and returns without ordering
+00:01 +9: /Users/lute/project/momcozy-lab/app/test/modules/services/service_renew_test.dart: short large catalog loads, scrolls and returns without ordering
+00:01 +10: /Users/lute/project/momcozy-lab/app/test/modules/schedule/personal_schedule_editor_test.dart: failed save preserves the draft and retries the same creation
+00:01 +11: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_page_golden_test.dart: task write disables competing changes and keeps server version
+00:01 +12: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_page_golden_test.dart: task write disables competing changes and keeps server version
+00:01 +13: /Users/lute/project/momcozy-lab/app/test/modules/schedule/personal_schedule_editor_test.dart: pending personal save locks edits and close then creates once
+00:01 +14: /Users/lute/project/momcozy-lab/app/test/modules/services/service_renew_test.dart: owned service remains reachable with purchase disabled CareEpisodeStatus.provisioningPending
+00:01 +15: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_page_golden_test.dart: hundred loaded entries scroll to final action on short large display
+00:02 +16: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_page_golden_test.dart: hundred loaded entries scroll to final action on short large display
+00:02 +17: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_page_golden_test.dart: hundred loaded entries scroll to final action on short large display
+00:02 +18: All tests passed!

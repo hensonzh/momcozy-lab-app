@@ -1,0 +1,155 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_redesign_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: diary loading, conflict, draft boundary and versioned reload 320.0/1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following _TypeError was thrown running a test:
+type 'RawTooltip' is not a subtype of type 'IconButton' in type cast
+
+When the exception was thrown, this was the stack:
+#0      WidgetController.widget (package:flutter_test/src/controller.dart:828:44)
+#1      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_redesign_test.dart:179:20)
+<asynchronous suspension>
+#2      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#3      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  diary loading, conflict, draft boundary and versioned reload 320.0/1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +0 -1: diary loading, conflict, draft boundary and versioned reload 320.0/1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: diary loading, conflict, draft boundary and versioned reload 320.0/1.0
+  
+00:01 +0 -1: diary quick mood, exclusive pressure and clearing saved record 320.0/1.0
+00:01 +1 -1: diary loading, conflict, draft boundary and versioned reload 320.0/2.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following _TypeError was thrown running a test:
+type 'RawTooltip' is not a subtype of type 'IconButton' in type cast
+
+When the exception was thrown, this was the stack:
+#0      WidgetController.widget (package:flutter_test/src/controller.dart:828:44)
+#1      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_redesign_test.dart:179:20)
+<asynchronous suspension>
+#2      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#3      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  diary loading, conflict, draft boundary and versioned reload 320.0/2.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +1 -2: diary loading, conflict, draft boundary and versioned reload 320.0/2.0 [E]
+  Test failed. See exception logs above.
+  The test description was: diary loading, conflict, draft boundary and versioned reload 320.0/2.0
+  
+00:01 +1 -2: diary quick mood, exclusive pressure and clearing saved record 320.0/2.0
+00:02 +2 -2: diary loading, conflict, draft boundary and versioned reload 390.0/1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following _TypeError was thrown running a test:
+type 'RawTooltip' is not a subtype of type 'IconButton' in type cast
+
+When the exception was thrown, this was the stack:
+#0      WidgetController.widget (package:flutter_test/src/controller.dart:828:44)
+#1      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_redesign_test.dart:179:20)
+<asynchronous suspension>
+#2      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#3      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  diary loading, conflict, draft boundary and versioned reload 390.0/1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:02 +2 -3: diary loading, conflict, draft boundary and versioned reload 390.0/1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: diary loading, conflict, draft boundary and versioned reload 390.0/1.0
+  
+00:02 +2 -3: diary quick mood, exclusive pressure and clearing saved record 390.0/1.0
+00:02 +3 -3: diary loading, conflict, draft boundary and versioned reload 390.0/2.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following _TypeError was thrown running a test:
+type 'RawTooltip' is not a subtype of type 'IconButton' in type cast
+
+When the exception was thrown, this was the stack:
+#0      WidgetController.widget (package:flutter_test/src/controller.dart:828:44)
+#1      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_redesign_test.dart:179:20)
+<asynchronous suspension>
+#2      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#3      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  diary loading, conflict, draft boundary and versioned reload 390.0/2.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:03 +3 -4: diary loading, conflict, draft boundary and versioned reload 390.0/2.0 [E]
+  Test failed. See exception logs above.
+  The test description was: diary loading, conflict, draft boundary and versioned reload 390.0/2.0
+  
+00:03 +3 -4: diary quick mood, exclusive pressure and clearing saved record 390.0/2.0
+00:03 +4 -4: diary loading, conflict, draft boundary and versioned reload 430.0/1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following _TypeError was thrown running a test:
+type 'RawTooltip' is not a subtype of type 'IconButton' in type cast
+
+When the exception was thrown, this was the stack:
+#0      WidgetController.widget (package:flutter_test/src/controller.dart:828:44)
+#1      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_redesign_test.dart:179:20)
+<asynchronous suspension>
+#2      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#3      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  diary loading, conflict, draft boundary and versioned reload 430.0/1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:03 +4 -5: diary loading, conflict, draft boundary and versioned reload 430.0/1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: diary loading, conflict, draft boundary and versioned reload 430.0/1.0
+  
+00:03 +4 -5: diary quick mood, exclusive pressure and clearing saved record 430.0/1.0
+00:03 +5 -5: diary loading, conflict, draft boundary and versioned reload 430.0/2.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following _TypeError was thrown running a test:
+type 'RawTooltip' is not a subtype of type 'IconButton' in type cast
+
+When the exception was thrown, this was the stack:
+#0      WidgetController.widget (package:flutter_test/src/controller.dart:828:44)
+#1      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_redesign_test.dart:179:20)
+<asynchronous suspension>
+#2      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#3      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  diary loading, conflict, draft boundary and versioned reload 430.0/2.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:03 +5 -6: diary loading, conflict, draft boundary and versioned reload 430.0/2.0 [E]
+  Test failed. See exception logs above.
+  The test description was: diary loading, conflict, draft boundary and versioned reload 430.0/2.0
+  
+00:03 +5 -6: diary quick mood, exclusive pressure and clearing saved record 430.0/2.0
+00:04 +6 -6: (tearDownAll)
+00:04 +6 -6: Some tests failed.
+
+Failing tests:
+  /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_redesign_test.dart: diary loading, conflict, draft boundary and versioned reload 320.0/1.0
+  /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_redesign_test.dart: diary loading, conflict, draft boundary and versioned reload 320.0/2.0
+  /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_redesign_test.dart: diary loading, conflict, draft boundary and versioned reload 390.0/1.0
+  /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_redesign_test.dart: diary loading, conflict, draft boundary and versioned reload 390.0/2.0
+  ... and 2 more

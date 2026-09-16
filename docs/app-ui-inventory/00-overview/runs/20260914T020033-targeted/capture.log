@@ -1,0 +1,8 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/modules/services/booking_precheck_current_inventory_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: current booking precheck controls and recovery false
+00:01 +1: current booking precheck availability loading and retry false
+00:02 +2: current booking precheck controls and recovery true
+00:03 +3: current booking precheck availability loading and retry true
+00:04 +4: (tearDownAll)
+00:04 +4: All tests passed!

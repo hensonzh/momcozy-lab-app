@@ -1,0 +1,3444 @@
+{
+  "method": "full-width continuous 650px strips; identical pixels reference prior reviewed Mom or Baby controls; remaining segments reviewed at native width",
+  "sources": [
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-active-320-2x.long.png",
+      "sha256": "1203c705a85c511735d638db8270616fa9fae0c951a3c4b42cd3cabe1185c9cc",
+      "width": 320,
+      "height": 1120,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "301c85c0a89433acfcf659cf318d535f25a18865acc2e5c308cd9c41ea2d9142",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-17.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1120,
+          "pixel_sha256": "9ef94423e37b052c3249b6b56bc8c1530591cbd34d99a95156d8560f69053fed",
+          "review": "../service-current-visual-review-update/sheet-02.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-active-320-2x.png",
+      "sha256": "44218dab4e4b9dddc40662b57718ee1e48180096fa07541dbac5d84553be5a72",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a0ed3274ffa60730714e4f9434defb29bcac4e48a6c870e6dd543c02cf179a1f",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-17.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "44440790e37de8cbebfe0501fe709a72999b7fb4da8d6c3d998045b6cac01250",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-17.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-active-393-1x.png",
+      "sha256": "52490774a2183bf38b8a6a9d875f0929fe11eabd8ad218b0ad565c96b6952973",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "14c3aeb76547e0f459d48a2e07666bf74bfb6e981691f342122e102361799eed",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-17.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "5e269ca9e36daffe984531405b8fd9a7fd95687843288196663912cae234267b",
+          "review": "../account-current-visual-review/sheet-05.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-active-booking-320-2x.long.png",
+      "sha256": "79d8e2ece99a9abe64e3a63e5e8ffc4a98b5288f3a3dcf4bb8caf660a35231da",
+      "width": 320,
+      "height": 1365,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "75dc3d2fbfddd672909159d15f19ced1f67ec99a8d1d5c6ead079730b4efa058",
+          "review": "../service-current-visual-review-update/sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "b4cfad8f93fe6fed758d4a3d8c920c29a1de5690cd2b86572a871b15fda14200",
+          "review": "../service-current-visual-review-update/sheet-01.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1365,
+          "pixel_sha256": "1754b8fe7ef59e676b6d9028364b143c58c456593d9763ab0ac37d24061934aa",
+          "review": "../service-current-visual-review-update/sheet-01.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-active-booking-320-2x.png",
+      "sha256": "c2d47ccaeccf56f49e9e8e75de34351a48024b45df96891e7e6f8fe73506a4d5",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "75dc3d2fbfddd672909159d15f19ced1f67ec99a8d1d5c6ead079730b4efa058",
+          "review": "../service-current-visual-review-update/sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "ee6bc495a8572be53bd846ea290d7c1c0a0739258f2173d3b909705f701a5667",
+          "review": "../service-current-visual-review-update/sheet-01.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-active-booking-393-1x.png",
+      "sha256": "45a5a35239fda1752c7485876cd86bb22cae958bcff3d4bae3dcdd5c6fe2f654",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "262965a8eecf8c806b782b0bd4de1dffa3fa23599d309f8e353cf25230e56cdc",
+          "review": "../service-current-visual-review-update/sheet-01.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "d4f6ba81fe88fcc3b3a8f41cdde93dd45c9b633d230a789001769096dda35f86",
+          "review": "../service-current-visual-review-update/sheet-01.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-active-booking-closed-320-2x.png",
+      "sha256": "2a07951f054d1cc6f75666d95a0288ecb8e109ce51777e75be37550807c05f6a",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "18f4cdc2a24908b63b816ac599738f56269cba3ff123ea2b10e8441d7d02e887",
+          "review": "../progress-current-visual-review/sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "c65f45a9e7b9b361a0c4b43630dc19d5d3c121f954f7c47798296da08ea227e9",
+          "review": "../account-current-visual-review/sheet-07.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-active-booking-closed-393-1x.png",
+      "sha256": "a03e1c3cb64677955589e52a3938ca9137487a1be5b5b2ed7a98ab1443c8647e",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "e62ca9b1986d0be2938850d24db6dcf5ce9ec97a34dd2e04bb40c869b05b0454",
+          "review": "../progress-current-visual-review/sheet-01.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "5e269ca9e36daffe984531405b8fd9a7fd95687843288196663912cae234267b",
+          "review": "../account-current-visual-review/sheet-05.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-active-booking-return-320-2x.long.png",
+      "sha256": "1203c705a85c511735d638db8270616fa9fae0c951a3c4b42cd3cabe1185c9cc",
+      "width": 320,
+      "height": 1120,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "301c85c0a89433acfcf659cf318d535f25a18865acc2e5c308cd9c41ea2d9142",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-17.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1120,
+          "pixel_sha256": "9ef94423e37b052c3249b6b56bc8c1530591cbd34d99a95156d8560f69053fed",
+          "review": "../service-current-visual-review-update/sheet-02.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-active-booking-return-320-2x.png",
+      "sha256": "44218dab4e4b9dddc40662b57718ee1e48180096fa07541dbac5d84553be5a72",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a0ed3274ffa60730714e4f9434defb29bcac4e48a6c870e6dd543c02cf179a1f",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-17.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "44440790e37de8cbebfe0501fe709a72999b7fb4da8d6c3d998045b6cac01250",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-17.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-active-booking-return-393-1x.png",
+      "sha256": "52490774a2183bf38b8a6a9d875f0929fe11eabd8ad218b0ad565c96b6952973",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "14c3aeb76547e0f459d48a2e07666bf74bfb6e981691f342122e102361799eed",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-17.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "5e269ca9e36daffe984531405b8fd9a7fd95687843288196663912cae234267b",
+          "review": "../account-current-visual-review/sheet-05.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-active-exhausted-320-2x.long.png",
+      "sha256": "5c826253351d4c44a4fac52b5f498ce58d287773ab520d0b845265630d0d1601",
+      "width": 320,
+      "height": 1060,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "336e20ec63b6a748bfe36166774d993b208fc46f79239c8d0d506ac445d80700",
+          "review": "../progress-current-visual-review/sheet-01.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1060,
+          "pixel_sha256": "bcb2858770d66c2ec84bcdd41563feffc25921d44eeb0e6268e79132fcc7d156",
+          "review": "../progress-current-visual-review/sheet-01.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-active-exhausted-320-2x.png",
+      "sha256": "213ba3649ed6902b151003d75e39238e78fc6e07871c0c30ebd7d580c3e73715",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "336e20ec63b6a748bfe36166774d993b208fc46f79239c8d0d506ac445d80700",
+          "review": "../progress-current-visual-review/sheet-01.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "eeaf62b8add7665107a5ab98b27ff75928b701bc7a64a6723580b90405b2a3a8",
+          "review": "../progress-current-visual-review/sheet-01.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-active-exhausted-393-1x.png",
+      "sha256": "6608078acffe5c36e85c98f59f3f56f77e1e5c51cd5cf62ba71ce000489ca84d",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "299ce271302a1c8a8b6f9d6783942ff8be46e590c2068673f56e5c90da0d88cc",
+          "review": "../progress-current-visual-review/sheet-01.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "5e269ca9e36daffe984531405b8fd9a7fd95687843288196663912cae234267b",
+          "review": "../account-current-visual-review/sheet-05.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-active-past-end-320-2x.long.png",
+      "sha256": "c4a10eb8c0d5d3e7da93258d44a7ddf72c4ee0f25e07eddac980703fc3c5a136",
+      "width": 320,
+      "height": 1120,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "85fc7dbb04a47cc9aa009ca7cde8726bc05c4483be207d82b15f28c811f397f3",
+          "review": "../progress-current-visual-review/sheet-02.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1120,
+          "pixel_sha256": "9ef94423e37b052c3249b6b56bc8c1530591cbd34d99a95156d8560f69053fed",
+          "review": "../service-current-visual-review-update/sheet-02.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-active-past-end-320-2x.png",
+      "sha256": "0434d28be2c455d3cbdb20129791b08bca9825343eb3e32ff8f7c216aeb3c72a",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "85fc7dbb04a47cc9aa009ca7cde8726bc05c4483be207d82b15f28c811f397f3",
+          "review": "../progress-current-visual-review/sheet-02.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "eeaf62b8add7665107a5ab98b27ff75928b701bc7a64a6723580b90405b2a3a8",
+          "review": "../progress-current-visual-review/sheet-01.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-active-past-end-393-1x.png",
+      "sha256": "26d30b00c6e21a2a034de08756b651506b08f9b358069daa27a7e0d5f8075097",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a326df4957a526e9965a1d2a7e2c32dce09f443af1e9ec5af6b9371fa3733046",
+          "review": "../progress-current-visual-review/sheet-02.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "5e269ca9e36daffe984531405b8fd9a7fd95687843288196663912cae234267b",
+          "review": "../account-current-visual-review/sheet-05.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-appointment-return-320-2x.long.png",
+      "sha256": "61f2a544b1b07130ac2d9c13bbc0fd1b9802209ea0b3445c8c2c15e2cf848404",
+      "width": 320,
+      "height": 2574,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2f87fc9057311bdaac5e030e3e28474388c3bd0c2391e0192ac19f85fa999070",
+          "review": "../progress-current-visual-review/sheet-02.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "ddded4f038e8cf3b48da5b41ed7dd22f2412fd9219fc5a956a4574d46de4bd13",
+          "review": "../progress-current-visual-review/sheet-02.png#tile-3"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "41e84a7215a7172b0d33234a35d8e2fc2f776ea0be7359ed3bddf8ca8c29197a",
+          "review": "../progress-current-visual-review/sheet-02.png#tile-4"
+        },
+        {
+          "y0": 1950,
+          "y1": 2574,
+          "pixel_sha256": "40ee4f530c0be03ad0936ae5012a6fb7e9605045f2ac3e44b3138b5bd4ef44a9",
+          "review": "../progress-current-visual-review/sheet-02.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-appointment-return-320-2x.png",
+      "sha256": "e904436e431a124c2ec41a746b7151f779923f06cb982eb41cbbf7208780dae9",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "8bfff7b410dfa4d739e27d1edab6c07132d1ec0cb59ea3c8b0a607cb305df2a3",
+          "review": "../progress-current-visual-review/sheet-03.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "44440790e37de8cbebfe0501fe709a72999b7fb4da8d6c3d998045b6cac01250",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-17.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-appointment-return-393-1x.long.png",
+      "sha256": "e60a8caee9bee046e62ce653ee555f5156b4c1cac10bb9af30a8beaf115be9c4",
+      "width": 393,
+      "height": 1518,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "5ff70dd0415412593ad0a09300144c75b66528cec21eebe1e55bf430fe74504e",
+          "review": "../progress-current-visual-review/sheet-03.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "c94ab336e71b534bb65e7ee5e5eae2f19f5ec46094446f9edc6b93a620c7ce4d",
+          "review": "../progress-current-visual-review/sheet-03.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1518,
+          "pixel_sha256": "692f70b1b58da914c56e77e61f78e9dd7cd6c7888351687c241b72b72f789dad",
+          "review": "../progress-current-visual-review/sheet-03.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-appointment-return-393-1x.png",
+      "sha256": "5e71ccb951f7f568a2b18ca3692c142ba53ee5075e63d981bf387feb21e9a517",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a3ff8cfecbe59db641222017b55f926272fe7764d672ced2d390fab72b820371",
+          "review": "../progress-current-visual-review/sheet-03.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "625b33df6067982482f917cdfc9efda9037a0cb53ab22704ab8f1ead7b954de4",
+          "review": "../progress-current-visual-review/sheet-03.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-appointments-error-320-2x.long.png",
+      "sha256": "b3262d61e4d1928e35e6191fd60b672b73799002b6dac4a680607cc22911e1d8",
+      "width": 320,
+      "height": 1348,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "301c85c0a89433acfcf659cf318d535f25a18865acc2e5c308cd9c41ea2d9142",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-17.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "76c0f082961d6e889395f5180acd6e0c6dac02d270bff37c3cafc8e817551e49",
+          "review": "../progress-current-visual-review/sheet-04.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1348,
+          "pixel_sha256": "50d0098c43ce6f769a4c6cac5c1df3dee346eb7bf3d4eb8249690e73412ef291",
+          "review": "../progress-current-visual-review/sheet-04.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-appointments-error-320-2x.png",
+      "sha256": "9704b961a7904183db9b736e755635b129f44397fe75992b084d2d440993532a",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "edeb1350ef3a12701f295d4b6757f4cd21dad806383d171713a212107c08d58a",
+          "review": "../progress-current-visual-review/sheet-04.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "44440790e37de8cbebfe0501fe709a72999b7fb4da8d6c3d998045b6cac01250",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-17.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-appointments-error-393-1x.png",
+      "sha256": "58b22c3f9ce2e2c9376c204bb1d1e67ababa53ef71f5b6ae94bdcf2639ce58cf",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a893ab0ea9b327c773ee34a86326249c5804fdc585e8257e776f6f5534da17e7",
+          "review": "../progress-current-visual-review/sheet-04.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "62d55213582c5f636da21659ddbb15a4d61d2170b0279c32eaec248026349153",
+          "review": "../progress-current-visual-review/sheet-04.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-appointments-loading-320-2x.long.png",
+      "sha256": "0987e28512ba94b42c099fee1da7e268aa638f39e83c5d7a359a992f027577ea",
+      "width": 320,
+      "height": 1122,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "cedd428c22be97550952866c1d1fff5ea8f3b747695de980d5f559ae23238302",
+          "review": "../progress-current-visual-review/sheet-04.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1122,
+          "pixel_sha256": "b98cac1e84c29c53d2df4f280f612772b9bce0c5a2f7f8020c5f221c042a8e14",
+          "review": "../progress-current-visual-review/sheet-05.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-appointments-loading-320-2x.png",
+      "sha256": "6b35ff76fe58f8d82a9a9d0d12d219d6d6c9fa224d9ad7052e41796ab5fcfbd7",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "eea2901bd257da334d53ef36e361e700edb892864249f2155420845d01e7a56e",
+          "review": "../progress-current-visual-review/sheet-05.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "44440790e37de8cbebfe0501fe709a72999b7fb4da8d6c3d998045b6cac01250",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-17.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-appointments-loading-393-1x.png",
+      "sha256": "be93fb209a3183335e8a1f581d7b50040e7293df488f173283bcd06207e8c4f7",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c347b4f670f00f78821aff73df5eab4bc739cf74f21959d9ac8e18b88194aca1",
+          "review": "../progress-current-visual-review/sheet-05.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "5e269ca9e36daffe984531405b8fd9a7fd95687843288196663912cae234267b",
+          "review": "../account-current-visual-review/sheet-05.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-appointments-recovered-320-2x.long.png",
+      "sha256": "1203c705a85c511735d638db8270616fa9fae0c951a3c4b42cd3cabe1185c9cc",
+      "width": 320,
+      "height": 1120,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "301c85c0a89433acfcf659cf318d535f25a18865acc2e5c308cd9c41ea2d9142",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-17.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1120,
+          "pixel_sha256": "9ef94423e37b052c3249b6b56bc8c1530591cbd34d99a95156d8560f69053fed",
+          "review": "../service-current-visual-review-update/sheet-02.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-appointments-recovered-320-2x.png",
+      "sha256": "44218dab4e4b9dddc40662b57718ee1e48180096fa07541dbac5d84553be5a72",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a0ed3274ffa60730714e4f9434defb29bcac4e48a6c870e6dd543c02cf179a1f",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-17.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "44440790e37de8cbebfe0501fe709a72999b7fb4da8d6c3d998045b6cac01250",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-17.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-appointments-recovered-393-1x.png",
+      "sha256": "52490774a2183bf38b8a6a9d875f0929fe11eabd8ad218b0ad565c96b6952973",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "14c3aeb76547e0f459d48a2e07666bf74bfb6e981691f342122e102361799eed",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-17.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "5e269ca9e36daffe984531405b8fd9a7fd95687843288196663912cae234267b",
+          "review": "../account-current-visual-review/sheet-05.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-booking-return-320-2x.long.png",
+      "sha256": "61f2a544b1b07130ac2d9c13bbc0fd1b9802209ea0b3445c8c2c15e2cf848404",
+      "width": 320,
+      "height": 2574,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2f87fc9057311bdaac5e030e3e28474388c3bd0c2391e0192ac19f85fa999070",
+          "review": "../progress-current-visual-review/sheet-02.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "ddded4f038e8cf3b48da5b41ed7dd22f2412fd9219fc5a956a4574d46de4bd13",
+          "review": "../progress-current-visual-review/sheet-02.png#tile-3"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "41e84a7215a7172b0d33234a35d8e2fc2f776ea0be7359ed3bddf8ca8c29197a",
+          "review": "../progress-current-visual-review/sheet-02.png#tile-4"
+        },
+        {
+          "y0": 1950,
+          "y1": 2574,
+          "pixel_sha256": "40ee4f530c0be03ad0936ae5012a6fb7e9605045f2ac3e44b3138b5bd4ef44a9",
+          "review": "../progress-current-visual-review/sheet-02.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-booking-return-320-2x.png",
+      "sha256": "e904436e431a124c2ec41a746b7151f779923f06cb982eb41cbbf7208780dae9",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "8bfff7b410dfa4d739e27d1edab6c07132d1ec0cb59ea3c8b0a607cb305df2a3",
+          "review": "../progress-current-visual-review/sheet-03.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "44440790e37de8cbebfe0501fe709a72999b7fb4da8d6c3d998045b6cac01250",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-17.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-booking-return-393-1x.long.png",
+      "sha256": "e60a8caee9bee046e62ce653ee555f5156b4c1cac10bb9af30a8beaf115be9c4",
+      "width": 393,
+      "height": 1518,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "5ff70dd0415412593ad0a09300144c75b66528cec21eebe1e55bf430fe74504e",
+          "review": "../progress-current-visual-review/sheet-03.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "c94ab336e71b534bb65e7ee5e5eae2f19f5ec46094446f9edc6b93a620c7ce4d",
+          "review": "../progress-current-visual-review/sheet-03.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1518,
+          "pixel_sha256": "692f70b1b58da914c56e77e61f78e9dd7cd6c7888351687c241b72b72f789dad",
+          "review": "../progress-current-visual-review/sheet-03.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-booking-return-393-1x.png",
+      "sha256": "5e71ccb951f7f568a2b18ca3692c142ba53ee5075e63d981bf387feb21e9a517",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a3ff8cfecbe59db641222017b55f926272fe7764d672ced2d390fab72b820371",
+          "review": "../progress-current-visual-review/sheet-03.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "625b33df6067982482f917cdfc9efda9037a0cb53ab22704ab8f1ead7b954de4",
+          "review": "../progress-current-visual-review/sheet-03.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-episode-missing-320-2x.png",
+      "sha256": "be28bbedba7969f44a6627c7f1bf80951ba111f529fa59640c9026eb72d9dc91",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "186fa4a856f97947e9a94752c8880426d86b86dae4ebe9ff26537a266a51ff42",
+          "review": "../progress-current-visual-review/sheet-05.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "c65f45a9e7b9b361a0c4b43630dc19d5d3c121f954f7c47798296da08ea227e9",
+          "review": "../account-current-visual-review/sheet-07.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-episode-missing-393-1x.png",
+      "sha256": "19096419f4fe35642d609f66bb016c3ef2e9587df466a71d54cfb0961ed5a187",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "5a8ed3573741f655e67f52b4e50db905e9a439902c7b541956594acdbe1bef29",
+          "review": "../progress-current-visual-review/sheet-05.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "5e269ca9e36daffe984531405b8fd9a7fd95687843288196663912cae234267b",
+          "review": "../account-current-visual-review/sheet-05.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-errors-home-320-2x.long.png",
+      "sha256": "2fa0ada62a6d9ca50683e54400f6043cf68a1e285a2eae008e38ff1f462eb258",
+      "width": 320,
+      "height": 2459,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a6aa9ef781460e5016527f099324419f84c6e4f14cdb26c410651cd7359b41ef",
+          "review": "../mom-rest-control-visual-review/sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "0edf1d289b2e804b112ca91367c51524ae8a6a6a4684a4fdcad651b0ae8de7ad",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "737fbf296926091c9d3d8c054e5fcb5aa6828a0542d136aef0e678fcf5a2a305",
+          "review": "../more-current-visual-review/sheet-04.png#tile-5"
+        },
+        {
+          "y0": 1950,
+          "y1": 2459,
+          "pixel_sha256": "0692ec2c55d8d8438d85f340a92827d471acee47031f9c8fde3159a11158b360",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-15.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-errors-home-320-2x.png",
+      "sha256": "6b61a480f7a3fd5ddb29685624aed748a99b94ad55016153855b11225ef09868",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a6aa9ef781460e5016527f099324419f84c6e4f14cdb26c410651cd7359b41ef",
+          "review": "../mom-rest-control-visual-review/sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1462d46c4861c29041d879736402097e4fd061fcb6e577142cd6e832cb70fae0",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-errors-home-393-1x.long.png",
+      "sha256": "0f04c06b170ca26a6ceca6d9954f08895999c1df1446be6abb5fb53f267160ab",
+      "width": 393,
+      "height": 1211,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa661999d6307948942c23dc2e7dad221367a614b3ae09dd12dec24bc67fec6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1211,
+          "pixel_sha256": "468a1f2363d31ad56f5959e2dbd4aba2e602497cea767b2f5d8d0ec625cb9890",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-16.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-errors-home-393-1x.png",
+      "sha256": "be291808401e7f353b8f14552b0df4a698f3edd191e5e2d770c66c2e129fc145",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa661999d6307948942c23dc2e7dad221367a614b3ae09dd12dec24bc67fec6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3208ac8b3b1d4a7464bc46ef7618c8e19bd85dee870d86c1847457571b6198a6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-errors-home-return-320-2x.long.png",
+      "sha256": "80bbadca77a31b252939f53a6948f40fd16e33ec82685e5bd17bac90104316ab",
+      "width": 320,
+      "height": 2459,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a6aa9ef781460e5016527f099324419f84c6e4f14cdb26c410651cd7359b41ef",
+          "review": "../mom-rest-control-visual-review/sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "0edf1d289b2e804b112ca91367c51524ae8a6a6a4684a4fdcad651b0ae8de7ad",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "737fbf296926091c9d3d8c054e5fcb5aa6828a0542d136aef0e678fcf5a2a305",
+          "review": "../more-current-visual-review/sheet-04.png#tile-5"
+        },
+        {
+          "y0": 1950,
+          "y1": 2459,
+          "pixel_sha256": "4c901e8aeaa7a2f38ea1127b73df3721e0bd32824c25cb80be40fcff6a7008ed",
+          "review": "../progress-current-visual-review/sheet-05.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-errors-home-return-320-2x.png",
+      "sha256": "6b61a480f7a3fd5ddb29685624aed748a99b94ad55016153855b11225ef09868",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a6aa9ef781460e5016527f099324419f84c6e4f14cdb26c410651cd7359b41ef",
+          "review": "../mom-rest-control-visual-review/sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1462d46c4861c29041d879736402097e4fd061fcb6e577142cd6e832cb70fae0",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-errors-home-return-393-1x.long.png",
+      "sha256": "0f04c06b170ca26a6ceca6d9954f08895999c1df1446be6abb5fb53f267160ab",
+      "width": 393,
+      "height": 1211,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa661999d6307948942c23dc2e7dad221367a614b3ae09dd12dec24bc67fec6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1211,
+          "pixel_sha256": "468a1f2363d31ad56f5959e2dbd4aba2e602497cea767b2f5d8d0ec625cb9890",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-16.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-errors-home-return-393-1x.png",
+      "sha256": "be291808401e7f353b8f14552b0df4a698f3edd191e5e2d770c66c2e129fc145",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa661999d6307948942c23dc2e7dad221367a614b3ae09dd12dec24bc67fec6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3208ac8b3b1d4a7464bc46ef7618c8e19bd85dee870d86c1847457571b6198a6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-event-appointment-320-2x.long.png",
+      "sha256": "145e94c52101551968b981bed4186abe0871f6aece896ff10a1735283b0e20bf",
+      "width": 320,
+      "height": 1368,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "22d8a6cab4d6d4559fb27cf8ae4f300eeb1acfab4de5befd0b4cc294df1a92e1",
+          "review": "../progress-current-visual-review/sheet-06.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "42460066a2a6685207f79c34077da293fdb2725de8ec8c6d31efdb32335d9e7b",
+          "review": "../progress-current-visual-review/sheet-06.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1368,
+          "pixel_sha256": "4e3073e0a411688af7a24a0f639bd3fc751fd0da0e7e7fbd2d5c0b710690c2f5",
+          "review": "../progress-current-visual-review/sheet-06.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-event-appointment-320-2x.png",
+      "sha256": "120b237585f5803342c67ab6c0ec8079aec2c671e643214d5b0c9948ebf2c3e9",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "22d8a6cab4d6d4559fb27cf8ae4f300eeb1acfab4de5befd0b4cc294df1a92e1",
+          "review": "../progress-current-visual-review/sheet-06.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3e1b231a407d526ce382388354742d8ec3c44635b5ff1e85b9063d4377c78e94",
+          "review": "../progress-current-visual-review/sheet-06.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-event-appointment-393-1x.png",
+      "sha256": "d5f8252f8b666bb9c29efe2f007d3faba55a1376829274fc4b9147fa2ec8eb0e",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "21f533226ff2ddf1e21853af6b3cf325b59745d3cf7c069348fe0a254600dac3",
+          "review": "../progress-current-visual-review/sheet-06.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "37f3dccbf87a2078e481712b01a3c6960ac9193bbcf2e2f1ad1395d8c2dcc18d",
+          "review": "../progress-current-visual-review/sheet-06.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-event-booking-320-2x.long.png",
+      "sha256": "94ca9a971112a94411adf79f431317a44d4b86c2164285f86b16cd10c9657a8c",
+      "width": 320,
+      "height": 1337,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "4923f2eb6caf525001922aa61ccd777d259fb049dbcbf837fe7a5df9cccb87d2",
+          "review": "../progress-current-visual-review/sheet-07.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "063a1ae5c32b41c7a814216c7f323a9b1730006ac05bdbe21802b2acafd62d87",
+          "review": "../progress-current-visual-review/sheet-07.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1337,
+          "pixel_sha256": "b83d94ed08fa8c9356d460dcefdc01bc313afbac558538cd44ab1eccb3b42f14",
+          "review": "../progress-current-visual-review/sheet-07.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-event-booking-320-2x.png",
+      "sha256": "0fe3386d58234fbac35a4a3475fe6ed069f326ba93712ccee9efc3158282e753",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "4923f2eb6caf525001922aa61ccd777d259fb049dbcbf837fe7a5df9cccb87d2",
+          "review": "../progress-current-visual-review/sheet-07.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "fd25aaa5f0afcaaec411c7f7a68c8db7f1e8763a02c6cd3105166387fccfb0c0",
+          "review": "../progress-current-visual-review/sheet-07.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-event-booking-393-1x.png",
+      "sha256": "77f226c7512f017d49de0f9ca9086428c14e1f399bfa170dd27296b4db9032f6",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "126dab67616e28b153cc23cc1b8d9dd3dc56624c38e3112f3512af94b269038a",
+          "review": "../progress-current-visual-review/sheet-07.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1585373ef5f681776dd1a51bec267f1493425e5f2aa676ddb24a0b02e60a44c2",
+          "review": "../progress-current-visual-review/sheet-07.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-event-in-progress-320-2x.long.png",
+      "sha256": "9e0ed223f2a34b9fcf66cb41f28d19f2cfaeeb7c7f7ed8530e93c27846e6986d",
+      "width": 320,
+      "height": 2574,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "e7fd423613eab724bbcbc030f1775a97ff2593d9aef72472becf824ceea72815",
+          "review": "../progress-current-visual-review/sheet-08.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "ddded4f038e8cf3b48da5b41ed7dd22f2412fd9219fc5a956a4574d46de4bd13",
+          "review": "../progress-current-visual-review/sheet-02.png#tile-3"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "41e84a7215a7172b0d33234a35d8e2fc2f776ea0be7359ed3bddf8ca8c29197a",
+          "review": "../progress-current-visual-review/sheet-02.png#tile-4"
+        },
+        {
+          "y0": 1950,
+          "y1": 2574,
+          "pixel_sha256": "ffe726de2c30890704884ce66e5c3e767939697e0def25ad86c044f1d3fd0d0b",
+          "review": "../progress-current-visual-review/sheet-08.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-event-in-progress-320-2x.png",
+      "sha256": "04950e3443af84cea09210f3cfbe1581956d6cf853c70ab16ed1afd822f84b28",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "e7fd423613eab724bbcbc030f1775a97ff2593d9aef72472becf824ceea72815",
+          "review": "../progress-current-visual-review/sheet-08.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "4f01a9bfc92a3cf4f5801e513e918caa7683658da5ef437f3c7a2f486976d3b6",
+          "review": "../progress-current-visual-review/sheet-08.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-event-in-progress-393-1x.long.png",
+      "sha256": "902530e29ef459b12e317f880f904f4610c00fe86e93ee474b9de64a819422bc",
+      "width": 393,
+      "height": 1518,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "3bc2d0ca4c806d1703f9f9a45b0d4988e06bd350e1668fdf93ba53feea0d0b16",
+          "review": "../progress-current-visual-review/sheet-08.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "6d297a2f533617eac19cddcb52a272ae4848a9244a3254363a1717d8d095e8b7",
+          "review": "../progress-current-visual-review/sheet-08.png#tile-4"
+        },
+        {
+          "y0": 1300,
+          "y1": 1518,
+          "pixel_sha256": "692f70b1b58da914c56e77e61f78e9dd7cd6c7888351687c241b72b72f789dad",
+          "review": "../progress-current-visual-review/sheet-03.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-event-in-progress-393-1x.png",
+      "sha256": "e8fbb40a37ffdcf99fbddbb2040f693184f77e787f794d3f42d43044f9b220a5",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "3bc2d0ca4c806d1703f9f9a45b0d4988e06bd350e1668fdf93ba53feea0d0b16",
+          "review": "../progress-current-visual-review/sheet-08.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "162fc7b80752bfc298e1ad5be5353859acbdffd28372d8fef753f776589ca371",
+          "review": "../progress-current-visual-review/sheet-08.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-event-summary-320-2x.long.png",
+      "sha256": "76b2f192d761b2a05774e56af3daea09369c629040ff59dcae0768fbd1645731",
+      "width": 320,
+      "height": 1767,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ab5ca581fa44349990711e2f8771918964e88e09e80f01e57942e6156714cc17",
+          "review": "../notification-navigation-current-visual-review/sheet-06.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "ef43568b0d286c2ffee695a3b7ac0443295c19136c66057316062e323fb4e41f",
+          "review": "../notification-navigation-current-visual-review/sheet-06.png#tile-5"
+        },
+        {
+          "y0": 1300,
+          "y1": 1767,
+          "pixel_sha256": "48effc83ed178410a1cd4a3c10ca5442223696a0c221e57d14ca6d3ff163f268",
+          "review": "../progress-current-visual-review/sheet-09.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-event-summary-320-2x.png",
+      "sha256": "28308d55250ee1f3458fef7e9cfbaceaaf5e647c916bc16f4a3ca864e9541905",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ab5ca581fa44349990711e2f8771918964e88e09e80f01e57942e6156714cc17",
+          "review": "../notification-navigation-current-visual-review/sheet-06.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "20dc7da98ade305c994dab622ddbb6e22c2fccfd91e7da1aca54ba98669db05e",
+          "review": "../notification-navigation-current-visual-review/sheet-07.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-event-summary-393-1x.long.png",
+      "sha256": "ca5f79a62e2590c8384f30a02b5297fc5329062bee24e5902ee1002ccbc9f040",
+      "width": 393,
+      "height": 882,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "8124385fa2cc52f8dac5fee39ecf3546378fefacfa448f5314fd2d8f6fe742f1",
+          "review": "../notification-navigation-current-visual-review/sheet-07.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 882,
+          "pixel_sha256": "72dfcedd97ca430b19d993210ed14db7ed4f66aea3204aa25acdf4c1fa357f5a",
+          "review": "../progress-current-visual-review/sheet-09.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-event-summary-393-1x.png",
+      "sha256": "1f4ad5770d16e95309bd75aced71840fdff0125492f5b4427687f65d2c434b04",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "8124385fa2cc52f8dac5fee39ecf3546378fefacfa448f5314fd2d8f6fe742f1",
+          "review": "../notification-navigation-current-visual-review/sheet-07.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "7f38115108c8391317c8e1f832f28f04ef808733d23b292fdefd6f8ebf2eb337",
+          "review": "../progress-current-visual-review/sheet-09.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-events-earlier-320-2x.long.png",
+      "sha256": "61f2a544b1b07130ac2d9c13bbc0fd1b9802209ea0b3445c8c2c15e2cf848404",
+      "width": 320,
+      "height": 2574,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2f87fc9057311bdaac5e030e3e28474388c3bd0c2391e0192ac19f85fa999070",
+          "review": "../progress-current-visual-review/sheet-02.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "ddded4f038e8cf3b48da5b41ed7dd22f2412fd9219fc5a956a4574d46de4bd13",
+          "review": "../progress-current-visual-review/sheet-02.png#tile-3"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "41e84a7215a7172b0d33234a35d8e2fc2f776ea0be7359ed3bddf8ca8c29197a",
+          "review": "../progress-current-visual-review/sheet-02.png#tile-4"
+        },
+        {
+          "y0": 1950,
+          "y1": 2574,
+          "pixel_sha256": "40ee4f530c0be03ad0936ae5012a6fb7e9605045f2ac3e44b3138b5bd4ef44a9",
+          "review": "../progress-current-visual-review/sheet-02.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-events-earlier-320-2x.png",
+      "sha256": "55959d68e1e98f7bb415ed08a5996ca6c2c2ebc402f2f26fd712dd4f661941b3",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2f87fc9057311bdaac5e030e3e28474388c3bd0c2391e0192ac19f85fa999070",
+          "review": "../progress-current-visual-review/sheet-02.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "4f01a9bfc92a3cf4f5801e513e918caa7683658da5ef437f3c7a2f486976d3b6",
+          "review": "../progress-current-visual-review/sheet-08.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-events-earlier-393-1x.long.png",
+      "sha256": "e60a8caee9bee046e62ce653ee555f5156b4c1cac10bb9af30a8beaf115be9c4",
+      "width": 393,
+      "height": 1518,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "5ff70dd0415412593ad0a09300144c75b66528cec21eebe1e55bf430fe74504e",
+          "review": "../progress-current-visual-review/sheet-03.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "c94ab336e71b534bb65e7ee5e5eae2f19f5ec46094446f9edc6b93a620c7ce4d",
+          "review": "../progress-current-visual-review/sheet-03.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1518,
+          "pixel_sha256": "692f70b1b58da914c56e77e61f78e9dd7cd6c7888351687c241b72b72f789dad",
+          "review": "../progress-current-visual-review/sheet-03.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-events-earlier-393-1x.png",
+      "sha256": "4e5531271373a136b290c3d512142806f376181d70bf35f012f83d0f38538bf6",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "5ff70dd0415412593ad0a09300144c75b66528cec21eebe1e55bf430fe74504e",
+          "review": "../progress-current-visual-review/sheet-03.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "162fc7b80752bfc298e1ad5be5353859acbdffd28372d8fef753f776589ca371",
+          "review": "../progress-current-visual-review/sheet-08.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-events-home-320-2x.long.png",
+      "sha256": "9515932299778869feb048b8a893a3b3d6ea2cb309d3aafc19f91207ef928461",
+      "width": 320,
+      "height": 2634,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a6aa9ef781460e5016527f099324419f84c6e4f14cdb26c410651cd7359b41ef",
+          "review": "../mom-rest-control-visual-review/sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "0edf1d289b2e804b112ca91367c51524ae8a6a6a4684a4fdcad651b0ae8de7ad",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "737fbf296926091c9d3d8c054e5fcb5aa6828a0542d136aef0e678fcf5a2a305",
+          "review": "../more-current-visual-review/sheet-04.png#tile-5"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "41b478f0708b4d27228659234ba19832ec1364b71cd4d15260015ff96d1cfd5c",
+          "review": "../progress-current-visual-review/sheet-09.png#tile-3"
+        },
+        {
+          "y0": 2600,
+          "y1": 2634,
+          "pixel_sha256": "2804a544d90f398b1dadbdaa7279e9a39f7200a108b527ab908a824cb6ecfc98",
+          "review": "../progress-current-visual-review/sheet-09.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-events-home-320-2x.png",
+      "sha256": "6b61a480f7a3fd5ddb29685624aed748a99b94ad55016153855b11225ef09868",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a6aa9ef781460e5016527f099324419f84c6e4f14cdb26c410651cd7359b41ef",
+          "review": "../mom-rest-control-visual-review/sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1462d46c4861c29041d879736402097e4fd061fcb6e577142cd6e832cb70fae0",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-events-home-393-1x.long.png",
+      "sha256": "08bc388c93a1ea25e7967087ba7d08b25f6b31086a9da3e91900e8a427a39b7d",
+      "width": 393,
+      "height": 1265,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa661999d6307948942c23dc2e7dad221367a614b3ae09dd12dec24bc67fec6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1265,
+          "pixel_sha256": "4c45b6b549fab50459d412d32f0956d2714dc2a0d2d65916ebdaba03e4268c08",
+          "review": "../progress-current-visual-review/sheet-09.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-events-home-393-1x.png",
+      "sha256": "be291808401e7f353b8f14552b0df4a698f3edd191e5e2d770c66c2e129fc145",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa661999d6307948942c23dc2e7dad221367a614b3ae09dd12dec24bc67fec6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3208ac8b3b1d4a7464bc46ef7618c8e19bd85dee870d86c1847457571b6198a6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-events-home-return-320-2x.long.png",
+      "sha256": "5434e85d265e8f5c83779046abccefbb62bc06aac28cf687760f39be55e21e45",
+      "width": 320,
+      "height": 2632,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a6aa9ef781460e5016527f099324419f84c6e4f14cdb26c410651cd7359b41ef",
+          "review": "../mom-rest-control-visual-review/sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "0edf1d289b2e804b112ca91367c51524ae8a6a6a4684a4fdcad651b0ae8de7ad",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "737fbf296926091c9d3d8c054e5fcb5aa6828a0542d136aef0e678fcf5a2a305",
+          "review": "../more-current-visual-review/sheet-04.png#tile-5"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "2707eb174761f8e7da8f0772b3d9652af42836de179763a292375f9ef4267ab4",
+          "review": "../progress-current-visual-review/sheet-10.png#tile-0"
+        },
+        {
+          "y0": 2600,
+          "y1": 2632,
+          "pixel_sha256": "3b7a0a91c34455cd936bb9e7c300fe49668695b79f3c98b8b43e37193c05f5f0",
+          "review": "../more-current-visual-review/sheet-05.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-events-home-return-320-2x.png",
+      "sha256": "6b61a480f7a3fd5ddb29685624aed748a99b94ad55016153855b11225ef09868",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a6aa9ef781460e5016527f099324419f84c6e4f14cdb26c410651cd7359b41ef",
+          "review": "../mom-rest-control-visual-review/sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1462d46c4861c29041d879736402097e4fd061fcb6e577142cd6e832cb70fae0",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-events-home-return-393-1x.long.png",
+      "sha256": "bac062a352638474c7d09639d82f788674e487626046eb580378b37518c3d799",
+      "width": 393,
+      "height": 1265,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa661999d6307948942c23dc2e7dad221367a614b3ae09dd12dec24bc67fec6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1265,
+          "pixel_sha256": "6505ce0bb4cbcee1c87b8a7bd3a03ed8051ade0ac2c0c403ebe7ea50dbf387a3",
+          "review": "../progress-current-visual-review/sheet-10.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-events-home-return-393-1x.png",
+      "sha256": "be291808401e7f353b8f14552b0df4a698f3edd191e5e2d770c66c2e129fc145",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa661999d6307948942c23dc2e7dad221367a614b3ae09dd12dec24bc67fec6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3208ac8b3b1d4a7464bc46ef7618c8e19bd85dee870d86c1847457571b6198a6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-events-latest-320-2x.long.png",
+      "sha256": "61f2a544b1b07130ac2d9c13bbc0fd1b9802209ea0b3445c8c2c15e2cf848404",
+      "width": 320,
+      "height": 2574,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2f87fc9057311bdaac5e030e3e28474388c3bd0c2391e0192ac19f85fa999070",
+          "review": "../progress-current-visual-review/sheet-02.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "ddded4f038e8cf3b48da5b41ed7dd22f2412fd9219fc5a956a4574d46de4bd13",
+          "review": "../progress-current-visual-review/sheet-02.png#tile-3"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "41e84a7215a7172b0d33234a35d8e2fc2f776ea0be7359ed3bddf8ca8c29197a",
+          "review": "../progress-current-visual-review/sheet-02.png#tile-4"
+        },
+        {
+          "y0": 1950,
+          "y1": 2574,
+          "pixel_sha256": "40ee4f530c0be03ad0936ae5012a6fb7e9605045f2ac3e44b3138b5bd4ef44a9",
+          "review": "../progress-current-visual-review/sheet-02.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-events-latest-320-2x.png",
+      "sha256": "e904436e431a124c2ec41a746b7151f779923f06cb982eb41cbbf7208780dae9",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "8bfff7b410dfa4d739e27d1edab6c07132d1ec0cb59ea3c8b0a607cb305df2a3",
+          "review": "../progress-current-visual-review/sheet-03.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "44440790e37de8cbebfe0501fe709a72999b7fb4da8d6c3d998045b6cac01250",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-17.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-events-latest-393-1x.long.png",
+      "sha256": "e60a8caee9bee046e62ce653ee555f5156b4c1cac10bb9af30a8beaf115be9c4",
+      "width": 393,
+      "height": 1518,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "5ff70dd0415412593ad0a09300144c75b66528cec21eebe1e55bf430fe74504e",
+          "review": "../progress-current-visual-review/sheet-03.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "c94ab336e71b534bb65e7ee5e5eae2f19f5ec46094446f9edc6b93a620c7ce4d",
+          "review": "../progress-current-visual-review/sheet-03.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1518,
+          "pixel_sha256": "692f70b1b58da914c56e77e61f78e9dd7cd6c7888351687c241b72b72f789dad",
+          "review": "../progress-current-visual-review/sheet-03.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-events-latest-393-1x.png",
+      "sha256": "5e71ccb951f7f568a2b18ca3692c142ba53ee5075e63d981bf387feb21e9a517",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a3ff8cfecbe59db641222017b55f926272fe7764d672ced2d390fab72b820371",
+          "review": "../progress-current-visual-review/sheet-03.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "625b33df6067982482f917cdfc9efda9037a0cb53ab22704ab8f1ead7b954de4",
+          "review": "../progress-current-visual-review/sheet-03.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-events-latest-return-320-2x.long.png",
+      "sha256": "61f2a544b1b07130ac2d9c13bbc0fd1b9802209ea0b3445c8c2c15e2cf848404",
+      "width": 320,
+      "height": 2574,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2f87fc9057311bdaac5e030e3e28474388c3bd0c2391e0192ac19f85fa999070",
+          "review": "../progress-current-visual-review/sheet-02.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "ddded4f038e8cf3b48da5b41ed7dd22f2412fd9219fc5a956a4574d46de4bd13",
+          "review": "../progress-current-visual-review/sheet-02.png#tile-3"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "41e84a7215a7172b0d33234a35d8e2fc2f776ea0be7359ed3bddf8ca8c29197a",
+          "review": "../progress-current-visual-review/sheet-02.png#tile-4"
+        },
+        {
+          "y0": 1950,
+          "y1": 2574,
+          "pixel_sha256": "40ee4f530c0be03ad0936ae5012a6fb7e9605045f2ac3e44b3138b5bd4ef44a9",
+          "review": "../progress-current-visual-review/sheet-02.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-events-latest-return-320-2x.png",
+      "sha256": "e904436e431a124c2ec41a746b7151f779923f06cb982eb41cbbf7208780dae9",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "8bfff7b410dfa4d739e27d1edab6c07132d1ec0cb59ea3c8b0a607cb305df2a3",
+          "review": "../progress-current-visual-review/sheet-03.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "44440790e37de8cbebfe0501fe709a72999b7fb4da8d6c3d998045b6cac01250",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-17.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-events-latest-return-393-1x.long.png",
+      "sha256": "e60a8caee9bee046e62ce653ee555f5156b4c1cac10bb9af30a8beaf115be9c4",
+      "width": 393,
+      "height": 1518,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "5ff70dd0415412593ad0a09300144c75b66528cec21eebe1e55bf430fe74504e",
+          "review": "../progress-current-visual-review/sheet-03.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "c94ab336e71b534bb65e7ee5e5eae2f19f5ec46094446f9edc6b93a620c7ce4d",
+          "review": "../progress-current-visual-review/sheet-03.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1518,
+          "pixel_sha256": "692f70b1b58da914c56e77e61f78e9dd7cd6c7888351687c241b72b72f789dad",
+          "review": "../progress-current-visual-review/sheet-03.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-events-latest-return-393-1x.png",
+      "sha256": "5e71ccb951f7f568a2b18ca3692c142ba53ee5075e63d981bf387feb21e9a517",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a3ff8cfecbe59db641222017b55f926272fe7764d672ced2d390fab72b820371",
+          "review": "../progress-current-visual-review/sheet-03.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "625b33df6067982482f917cdfc9efda9037a0cb53ab22704ab8f1ead7b954de4",
+          "review": "../progress-current-visual-review/sheet-03.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-events-refresh-error-320-2x.long.png",
+      "sha256": "72ca730f1d924fda7d2cb03012791c69380eda1fa39f6425e124a71ca47b84ef",
+      "width": 320,
+      "height": 2802,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "e7fd423613eab724bbcbc030f1775a97ff2593d9aef72472becf824ceea72815",
+          "review": "../progress-current-visual-review/sheet-08.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "ddded4f038e8cf3b48da5b41ed7dd22f2412fd9219fc5a956a4574d46de4bd13",
+          "review": "../progress-current-visual-review/sheet-02.png#tile-3"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "41e84a7215a7172b0d33234a35d8e2fc2f776ea0be7359ed3bddf8ca8c29197a",
+          "review": "../progress-current-visual-review/sheet-02.png#tile-4"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "deb85cafb4bb35ad89b16df52469abad9bc830d8bba25fe0304e6b3846bd26e4",
+          "review": "../progress-current-visual-review/sheet-10.png#tile-2"
+        },
+        {
+          "y0": 2600,
+          "y1": 2802,
+          "pixel_sha256": "b163ed60bcf042883e4b4a60c217a2adc48f063e6f3503f7eac84477bd62dab9",
+          "review": "../progress-current-visual-review/sheet-10.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-events-refresh-error-320-2x.png",
+      "sha256": "85c217038423f8fd2a043a8be42ead127f81ca60b898a7ed7f6b647d22bda7a2",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "01e381aa1c5c4fd03609a8e52790af9b085a5ec20fb6f735aaf69e513cc88c11",
+          "review": "../progress-current-visual-review/sheet-10.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "44440790e37de8cbebfe0501fe709a72999b7fb4da8d6c3d998045b6cac01250",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-17.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-events-refresh-error-393-1x.long.png",
+      "sha256": "3f422724f9e3a7c28e499fd1c3e3a71888e44dd1abc93cc27ccf2b5718cea837",
+      "width": 393,
+      "height": 1634,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "3bc2d0ca4c806d1703f9f9a45b0d4988e06bd350e1668fdf93ba53feea0d0b16",
+          "review": "../progress-current-visual-review/sheet-08.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "c94ab336e71b534bb65e7ee5e5eae2f19f5ec46094446f9edc6b93a620c7ce4d",
+          "review": "../progress-current-visual-review/sheet-03.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1634,
+          "pixel_sha256": "918fca9cd3be5ab1dddddbcc0bba496c03183d9e2cdb6dff0189534fdcf74c99",
+          "review": "../progress-current-visual-review/sheet-10.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-events-refresh-error-393-1x.png",
+      "sha256": "be17d19f26404b6bb9a186e3cde5dd3295f5b3b8a8ad178787b295953ba1b451",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "bc9473b54187ba0d7de3295b485c064e81f235b1893b67c079643566371d8da0",
+          "review": "../progress-current-visual-review/sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "e272136a1ddff9adf41c643ff6ca38ac3ca902ecd74e5c8f055d9ddc3ec4e8c1",
+          "review": "../progress-current-visual-review/sheet-11.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-events-refresh-pending-320-2x.long.png",
+      "sha256": "46dcc2d909922b4f8b7e66b29d6fde2180f618e1adfd51d7160b53af2ba02d90",
+      "width": 320,
+      "height": 2576,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "29197b0a9615dcf2727b263d788d6e9e5377d30b5e3fb8e680af91c973f066e2",
+          "review": "../progress-current-visual-review/sheet-11.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "dbae83807740e24d2519238bd0db8602b854103fc65f0065d2f32851356bc395",
+          "review": "../progress-current-visual-review/sheet-11.png#tile-3"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "1ab1594d03b34a4672cc14fa2d734791cc16ac8403e7bcf90d4663836ca4af41",
+          "review": "../progress-current-visual-review/sheet-11.png#tile-4"
+        },
+        {
+          "y0": 1950,
+          "y1": 2576,
+          "pixel_sha256": "7284bfec42fb325a28191702cf67e06e07c919c633ed2d798b1e953530aebd15",
+          "review": "../progress-current-visual-review/sheet-11.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-events-refresh-pending-320-2x.png",
+      "sha256": "70c43feacc2f76f3a1ee03014926879d1e57afb9d4ab0f51393131d7b561ec03",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "29197b0a9615dcf2727b263d788d6e9e5377d30b5e3fb8e680af91c973f066e2",
+          "review": "../progress-current-visual-review/sheet-11.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1e3af7f84e3375604a781d5d85b80ca3e8fd53008abb533750e669260e62b0d5",
+          "review": "../progress-current-visual-review/sheet-12.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-events-refresh-pending-393-1x.long.png",
+      "sha256": "5f1623dcbbf5e9239f98bbbbed9c2789c756babb55ff9ab2104bf69e70e66aeb",
+      "width": 393,
+      "height": 1520,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a571b25845210461516bac19dd7326d86c26dca41a6340f52f58ebfa741737c9",
+          "review": "../progress-current-visual-review/sheet-12.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "83a55fdb0bc05af80a6b658f55b3075505f266170a3152af4de8e00588f20b36",
+          "review": "../progress-current-visual-review/sheet-12.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1520,
+          "pixel_sha256": "c3338d98ec8e92a669891bd845a816753ed8c38379056b630d0ca4cd3ad6555d",
+          "review": "../progress-current-visual-review/sheet-12.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-events-refresh-pending-393-1x.png",
+      "sha256": "7280dc4536a5369e9830827e1ee1b408e3d587a7fbef721ed7fdea1b15f8dfe4",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a571b25845210461516bac19dd7326d86c26dca41a6340f52f58ebfa741737c9",
+          "review": "../progress-current-visual-review/sheet-12.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "20b6525db16154931c7d0731f08028688869072577b312127cebef31e1d68ac4",
+          "review": "../progress-current-visual-review/sheet-12.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-events-refresh-recovered-320-2x.long.png",
+      "sha256": "5e6b08aea183ebeae28352e01bd1d4c8a5da6b6bb937ac808596cc40d4327c89",
+      "width": 320,
+      "height": 2574,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "e7fd423613eab724bbcbc030f1775a97ff2593d9aef72472becf824ceea72815",
+          "review": "../progress-current-visual-review/sheet-08.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "ddded4f038e8cf3b48da5b41ed7dd22f2412fd9219fc5a956a4574d46de4bd13",
+          "review": "../progress-current-visual-review/sheet-02.png#tile-3"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "41e84a7215a7172b0d33234a35d8e2fc2f776ea0be7359ed3bddf8ca8c29197a",
+          "review": "../progress-current-visual-review/sheet-02.png#tile-4"
+        },
+        {
+          "y0": 1950,
+          "y1": 2574,
+          "pixel_sha256": "40ee4f530c0be03ad0936ae5012a6fb7e9605045f2ac3e44b3138b5bd4ef44a9",
+          "review": "../progress-current-visual-review/sheet-02.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-events-refresh-recovered-320-2x.png",
+      "sha256": "e904436e431a124c2ec41a746b7151f779923f06cb982eb41cbbf7208780dae9",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "8bfff7b410dfa4d739e27d1edab6c07132d1ec0cb59ea3c8b0a607cb305df2a3",
+          "review": "../progress-current-visual-review/sheet-03.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "44440790e37de8cbebfe0501fe709a72999b7fb4da8d6c3d998045b6cac01250",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-17.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-events-refresh-recovered-393-1x.long.png",
+      "sha256": "9c14276a110b8d5d53e4636a4d30c0cb68a26fcfa9128d0fadf69bc6e6c25b48",
+      "width": 393,
+      "height": 1518,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "3bc2d0ca4c806d1703f9f9a45b0d4988e06bd350e1668fdf93ba53feea0d0b16",
+          "review": "../progress-current-visual-review/sheet-08.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "c94ab336e71b534bb65e7ee5e5eae2f19f5ec46094446f9edc6b93a620c7ce4d",
+          "review": "../progress-current-visual-review/sheet-03.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1518,
+          "pixel_sha256": "692f70b1b58da914c56e77e61f78e9dd7cd6c7888351687c241b72b72f789dad",
+          "review": "../progress-current-visual-review/sheet-03.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-events-refresh-recovered-393-1x.png",
+      "sha256": "5e71ccb951f7f568a2b18ca3692c142ba53ee5075e63d981bf387feb21e9a517",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a3ff8cfecbe59db641222017b55f926272fe7764d672ced2d390fab72b820371",
+          "review": "../progress-current-visual-review/sheet-03.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "625b33df6067982482f917cdfc9efda9037a0cb53ab22704ab8f1ead7b954de4",
+          "review": "../progress-current-visual-review/sheet-03.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-in-progress-return-320-2x.long.png",
+      "sha256": "9e0ed223f2a34b9fcf66cb41f28d19f2cfaeeb7c7f7ed8530e93c27846e6986d",
+      "width": 320,
+      "height": 2574,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "e7fd423613eab724bbcbc030f1775a97ff2593d9aef72472becf824ceea72815",
+          "review": "../progress-current-visual-review/sheet-08.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "ddded4f038e8cf3b48da5b41ed7dd22f2412fd9219fc5a956a4574d46de4bd13",
+          "review": "../progress-current-visual-review/sheet-02.png#tile-3"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "41e84a7215a7172b0d33234a35d8e2fc2f776ea0be7359ed3bddf8ca8c29197a",
+          "review": "../progress-current-visual-review/sheet-02.png#tile-4"
+        },
+        {
+          "y0": 1950,
+          "y1": 2574,
+          "pixel_sha256": "ffe726de2c30890704884ce66e5c3e767939697e0def25ad86c044f1d3fd0d0b",
+          "review": "../progress-current-visual-review/sheet-08.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-in-progress-return-320-2x.png",
+      "sha256": "2920e1c1d26ba938b770957cb1a9eb446893cc0f6ef50b7dc1fec102a7286d8c",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "14e43444875783be2da2c4d9880f59646e3c53aa92e07d531b6488cfee9d8f2e",
+          "review": "../progress-current-visual-review/sheet-12.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "44440790e37de8cbebfe0501fe709a72999b7fb4da8d6c3d998045b6cac01250",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-17.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-in-progress-return-393-1x.long.png",
+      "sha256": "902530e29ef459b12e317f880f904f4610c00fe86e93ee474b9de64a819422bc",
+      "width": 393,
+      "height": 1518,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "3bc2d0ca4c806d1703f9f9a45b0d4988e06bd350e1668fdf93ba53feea0d0b16",
+          "review": "../progress-current-visual-review/sheet-08.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "6d297a2f533617eac19cddcb52a272ae4848a9244a3254363a1717d8d095e8b7",
+          "review": "../progress-current-visual-review/sheet-08.png#tile-4"
+        },
+        {
+          "y0": 1300,
+          "y1": 1518,
+          "pixel_sha256": "692f70b1b58da914c56e77e61f78e9dd7cd6c7888351687c241b72b72f789dad",
+          "review": "../progress-current-visual-review/sheet-03.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-in-progress-return-393-1x.png",
+      "sha256": "e216afbce6119f8ddf3a3023b770ce7660a73dcc219b272416bdd0de85613132",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "76ef4a367a3f6dfdb4d4a5a00c38a7ebabaa05abbcd5e0d5247d322def1dcfee",
+          "review": "../progress-current-visual-review/sheet-13.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "625b33df6067982482f917cdfc9efda9037a0cb53ab22704ab8f1ead7b954de4",
+          "review": "../progress-current-visual-review/sheet-03.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-in-progress-room-320-2x.long.png",
+      "sha256": "47c1aa4d7f6e2b7de29b07f5a9206871c39c3984677081f571aa8ad99b577e13",
+      "width": 320,
+      "height": 1232,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2756f0fc961bcec4175b74ed14507d581c6f5f22202f6b74213b7b189d4f56d5",
+          "review": "../progress-current-visual-review/sheet-13.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1232,
+          "pixel_sha256": "ed498cacd905c30432547a975eae2cd09d93ab6453b76629dbc6eb973fd23ccf",
+          "review": "../progress-current-visual-review/sheet-13.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-in-progress-room-320-2x.png",
+      "sha256": "f295d52bc5c99db29fc7472100fc26fe0d3ef1bc4170a5c6316aea093f0dc5aa",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2756f0fc961bcec4175b74ed14507d581c6f5f22202f6b74213b7b189d4f56d5",
+          "review": "../progress-current-visual-review/sheet-13.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "050ba517f2926b0e0566a01ee2dc7fce5beb5b9b7ad998afc05a9832c18bf28a",
+          "review": "../progress-current-visual-review/sheet-13.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-in-progress-room-393-1x.png",
+      "sha256": "6e5b5ef10ad39f7c32a0a1338f0fb003e117f814587e8dddf91ffb4f87ae5deb",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "8a3a5991eec4ed0521e9ce869c321811802226371895e4356d0d619e755b3155",
+          "review": "../progress-current-visual-review/sheet-13.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "f8729002aae48cd549225c0ffe63878a8ff0ab7262759aa6a26afaff98065f73",
+          "review": "../progress-current-visual-review/sheet-13.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-initial-error-320-2x.png",
+      "sha256": "7efca32163a907e8f26e97fa95294a842835e7b10eb9c5ba5fc78a248d0cfacd",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "aaa10d4b80ca699578e58faeae6434bebe3e6e50033190f954658f26e4c97813",
+          "review": "../progress-current-visual-review/sheet-14.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "c65f45a9e7b9b361a0c4b43630dc19d5d3c121f954f7c47798296da08ea227e9",
+          "review": "../account-current-visual-review/sheet-07.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-initial-error-393-1x.png",
+      "sha256": "b93c9ae6f5a0f02f743b772c883a26475b57665448bf62a28c135be514b09637",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "55c0da56befe26f77e1923413d220c5cb8a9d3b76d4dbd3bce65075e9c55f130",
+          "review": "../progress-current-visual-review/sheet-14.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "5e269ca9e36daffe984531405b8fd9a7fd95687843288196663912cae234267b",
+          "review": "../account-current-visual-review/sheet-05.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-initial-loading-320-2x.png",
+      "sha256": "5673c9a621ebe7093e12c39fca4b7605cf53646b38a541fda9ada2daa7a586e0",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "683645442ed09061e30fabbf3c4315d3794d82b0b9f07bc34a8260f26e0715fc",
+          "review": "../progress-current-visual-review/sheet-14.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "c65f45a9e7b9b361a0c4b43630dc19d5d3c121f954f7c47798296da08ea227e9",
+          "review": "../account-current-visual-review/sheet-07.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-initial-loading-393-1x.png",
+      "sha256": "8260613ecf037c97e3e9b656a0b7526dedf89d3fe476a9cf25cd180999df6357",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b487d120296d84de36f9020d5f1e78bda0a1f920b6e262079591fafdb0332e6e",
+          "review": "../progress-current-visual-review/sheet-14.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "5e269ca9e36daffe984531405b8fd9a7fd95687843288196663912cae234267b",
+          "review": "../account-current-visual-review/sheet-05.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-missing-home-return-320-2x.long.png",
+      "sha256": "2fa0ada62a6d9ca50683e54400f6043cf68a1e285a2eae008e38ff1f462eb258",
+      "width": 320,
+      "height": 2459,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a6aa9ef781460e5016527f099324419f84c6e4f14cdb26c410651cd7359b41ef",
+          "review": "../mom-rest-control-visual-review/sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "0edf1d289b2e804b112ca91367c51524ae8a6a6a4684a4fdcad651b0ae8de7ad",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "737fbf296926091c9d3d8c054e5fcb5aa6828a0542d136aef0e678fcf5a2a305",
+          "review": "../more-current-visual-review/sheet-04.png#tile-5"
+        },
+        {
+          "y0": 1950,
+          "y1": 2459,
+          "pixel_sha256": "0692ec2c55d8d8438d85f340a92827d471acee47031f9c8fde3159a11158b360",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-15.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-missing-home-return-320-2x.png",
+      "sha256": "6b61a480f7a3fd5ddb29685624aed748a99b94ad55016153855b11225ef09868",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a6aa9ef781460e5016527f099324419f84c6e4f14cdb26c410651cd7359b41ef",
+          "review": "../mom-rest-control-visual-review/sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1462d46c4861c29041d879736402097e4fd061fcb6e577142cd6e832cb70fae0",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-missing-home-return-393-1x.long.png",
+      "sha256": "0f04c06b170ca26a6ceca6d9954f08895999c1df1446be6abb5fb53f267160ab",
+      "width": 393,
+      "height": 1211,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa661999d6307948942c23dc2e7dad221367a614b3ae09dd12dec24bc67fec6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1211,
+          "pixel_sha256": "468a1f2363d31ad56f5959e2dbd4aba2e602497cea767b2f5d8d0ec625cb9890",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-16.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-missing-home-return-393-1x.png",
+      "sha256": "be291808401e7f353b8f14552b0df4a698f3edd191e5e2d770c66c2e129fc145",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa661999d6307948942c23dc2e7dad221367a614b3ae09dd12dec24bc67fec6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3208ac8b3b1d4a7464bc46ef7618c8e19bd85dee870d86c1847457571b6198a6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-past-end-booking-320-2x.long.png",
+      "sha256": "79d8e2ece99a9abe64e3a63e5e8ffc4a98b5288f3a3dcf4bb8caf660a35231da",
+      "width": 320,
+      "height": 1365,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "75dc3d2fbfddd672909159d15f19ced1f67ec99a8d1d5c6ead079730b4efa058",
+          "review": "../service-current-visual-review-update/sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "b4cfad8f93fe6fed758d4a3d8c920c29a1de5690cd2b86572a871b15fda14200",
+          "review": "../service-current-visual-review-update/sheet-01.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1365,
+          "pixel_sha256": "1754b8fe7ef59e676b6d9028364b143c58c456593d9763ab0ac37d24061934aa",
+          "review": "../service-current-visual-review-update/sheet-01.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-past-end-booking-320-2x.png",
+      "sha256": "c2d47ccaeccf56f49e9e8e75de34351a48024b45df96891e7e6f8fe73506a4d5",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "75dc3d2fbfddd672909159d15f19ced1f67ec99a8d1d5c6ead079730b4efa058",
+          "review": "../service-current-visual-review-update/sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "ee6bc495a8572be53bd846ea290d7c1c0a0739258f2173d3b909705f701a5667",
+          "review": "../service-current-visual-review-update/sheet-01.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-past-end-booking-393-1x.png",
+      "sha256": "45a5a35239fda1752c7485876cd86bb22cae958bcff3d4bae3dcdd5c6fe2f654",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "262965a8eecf8c806b782b0bd4de1dffa3fa23599d309f8e353cf25230e56cdc",
+          "review": "../service-current-visual-review-update/sheet-01.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "d4f6ba81fe88fcc3b3a8f41cdde93dd45c9b633d230a789001769096dda35f86",
+          "review": "../service-current-visual-review-update/sheet-01.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-past-end-return-320-2x.long.png",
+      "sha256": "c4a10eb8c0d5d3e7da93258d44a7ddf72c4ee0f25e07eddac980703fc3c5a136",
+      "width": 320,
+      "height": 1120,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "85fc7dbb04a47cc9aa009ca7cde8726bc05c4483be207d82b15f28c811f397f3",
+          "review": "../progress-current-visual-review/sheet-02.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1120,
+          "pixel_sha256": "9ef94423e37b052c3249b6b56bc8c1530591cbd34d99a95156d8560f69053fed",
+          "review": "../service-current-visual-review-update/sheet-02.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-past-end-return-320-2x.png",
+      "sha256": "4f2ed55fcb6b82950a3204db075073c52d6da9aa5c2d380acc7fbfde92b2a0d5",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "d43b9838b04f104b5896ebfd6d82b992ab297f5bb71c37c8e6f6a4c99d425d93",
+          "review": "../progress-current-visual-review/sheet-14.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "44440790e37de8cbebfe0501fe709a72999b7fb4da8d6c3d998045b6cac01250",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-17.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-past-end-return-393-1x.png",
+      "sha256": "26d30b00c6e21a2a034de08756b651506b08f9b358069daa27a7e0d5f8075097",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a326df4957a526e9965a1d2a7e2c32dce09f443af1e9ec5af6b9371fa3733046",
+          "review": "../progress-current-visual-review/sheet-02.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "5e269ca9e36daffe984531405b8fd9a7fd95687843288196663912cae234267b",
+          "review": "../account-current-visual-review/sheet-05.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-refresh-error-320-2x.png",
+      "sha256": "7efca32163a907e8f26e97fa95294a842835e7b10eb9c5ba5fc78a248d0cfacd",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "aaa10d4b80ca699578e58faeae6434bebe3e6e50033190f954658f26e4c97813",
+          "review": "../progress-current-visual-review/sheet-14.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "c65f45a9e7b9b361a0c4b43630dc19d5d3c121f954f7c47798296da08ea227e9",
+          "review": "../account-current-visual-review/sheet-07.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-refresh-error-393-1x.png",
+      "sha256": "b93c9ae6f5a0f02f743b772c883a26475b57665448bf62a28c135be514b09637",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "55c0da56befe26f77e1923413d220c5cb8a9d3b76d4dbd3bce65075e9c55f130",
+          "review": "../progress-current-visual-review/sheet-14.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "5e269ca9e36daffe984531405b8fd9a7fd95687843288196663912cae234267b",
+          "review": "../account-current-visual-review/sheet-05.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-refresh-loading-320-2x.long.png",
+      "sha256": "30672eabddcc07dc5c12aa45b2a4e772068ba97efcba21fff96c9656129e927f",
+      "width": 320,
+      "height": 1122,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "4538cb650c2b5369623a91aa5fe16af4361c543d76e856d992f0a03c9f29d6fa",
+          "review": "../progress-current-visual-review/sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1122,
+          "pixel_sha256": "b98cac1e84c29c53d2df4f280f612772b9bce0c5a2f7f8020c5f221c042a8e14",
+          "review": "../progress-current-visual-review/sheet-05.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-refresh-loading-320-2x.png",
+      "sha256": "290d2d82715faacf0313e1f980c30a42cdf0ffbd3fb132bdc168035c4a05734f",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "4538cb650c2b5369623a91aa5fe16af4361c543d76e856d992f0a03c9f29d6fa",
+          "review": "../progress-current-visual-review/sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "fde8f1f126c2be454fde3612582bb632837d69f9171dee65637ac72f3b89ea9a",
+          "review": "../progress-current-visual-review/sheet-15.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-refresh-loading-393-1x.png",
+      "sha256": "67631a061bb283a779577bfdd46de2e34e8a926b11f8dff545c09311e15f4f9c",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "d289d62381c6f1810b643c14e65bb0e9865195fd71b973cf73b058b4dc20ec47",
+          "review": "../progress-current-visual-review/sheet-15.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "5e269ca9e36daffe984531405b8fd9a7fd95687843288196663912cae234267b",
+          "review": "../account-current-visual-review/sheet-05.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-refresh-recovered-320-2x.long.png",
+      "sha256": "1203c705a85c511735d638db8270616fa9fae0c951a3c4b42cd3cabe1185c9cc",
+      "width": 320,
+      "height": 1120,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "301c85c0a89433acfcf659cf318d535f25a18865acc2e5c308cd9c41ea2d9142",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-17.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1120,
+          "pixel_sha256": "9ef94423e37b052c3249b6b56bc8c1530591cbd34d99a95156d8560f69053fed",
+          "review": "../service-current-visual-review-update/sheet-02.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-refresh-recovered-320-2x.png",
+      "sha256": "44218dab4e4b9dddc40662b57718ee1e48180096fa07541dbac5d84553be5a72",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a0ed3274ffa60730714e4f9434defb29bcac4e48a6c870e6dd543c02cf179a1f",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-17.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "44440790e37de8cbebfe0501fe709a72999b7fb4da8d6c3d998045b6cac01250",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-17.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-refresh-recovered-393-1x.png",
+      "sha256": "52490774a2183bf38b8a6a9d875f0929fe11eabd8ad218b0ad565c96b6952973",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "14c3aeb76547e0f459d48a2e07666bf74bfb6e981691f342122e102361799eed",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-17.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "5e269ca9e36daffe984531405b8fd9a7fd95687843288196663912cae234267b",
+          "review": "../account-current-visual-review/sheet-05.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-renew-options-320-2x.long.png",
+      "sha256": "c195f9a915308e8d6cea12ec9ad11ec15ff67a135ae3f0fd0dc4729d58dec38c",
+      "width": 320,
+      "height": 1229,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "e6f6c4d9534f7b990349d49c26743e3c601f2519a087be454995f37cf583dbc0",
+          "review": "../progress-current-visual-review/sheet-15.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1229,
+          "pixel_sha256": "551da70a8c00951dcbd5286c4e55eff89afce6edd9b0c755010efb7a07acd046",
+          "review": "../progress-current-visual-review/sheet-15.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-renew-options-320-2x.png",
+      "sha256": "ead8e5c1d7b6e60c995467468fcff8673f2ea59385da635a63151062ac924eea",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "e6f6c4d9534f7b990349d49c26743e3c601f2519a087be454995f37cf583dbc0",
+          "review": "../progress-current-visual-review/sheet-15.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1350dd757814550bb2c34cbd25363e60de572af14dc6350132d9c1b808308a8e",
+          "review": "../progress-current-visual-review/sheet-15.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-renew-options-393-1x.png",
+      "sha256": "86f0d08ed2564d46fe4f51678bfdde301e1e18ec5169e0764903b73bb33b15a9",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6af95458c0c9301ea4cc7689602a427a8041d469438401bf7fecd9227fbad3aa",
+          "review": "../progress-current-visual-review/sheet-15.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "b772ac9857a55bb18a7c1054b34e5f3509ca95efbb21077274dc2131a89dbda2",
+          "review": "../progress-current-visual-review/sheet-16.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-renew-purchase-320-2x.long.png",
+      "sha256": "33f58ddcce5257deb1be0c4fe4394848ec4f9ea8ba399fb84976093f0aadedac",
+      "width": 320,
+      "height": 1094,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "e0cca4fb9d49f8083f2b840deb89577b70d1c524734291a1a89ad5fe662239c5",
+          "review": "../progress-current-visual-review/sheet-16.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1094,
+          "pixel_sha256": "781016333854d4591b17ba71756830fc231c1597624e68f984755c86b968fad4",
+          "review": "../progress-current-visual-review/sheet-16.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-renew-purchase-320-2x.png",
+      "sha256": "1443946e5f6f922f6e317ecc36ac71728fe865885315ae83f760162ede3c4d1e",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "e0cca4fb9d49f8083f2b840deb89577b70d1c524734291a1a89ad5fe662239c5",
+          "review": "../progress-current-visual-review/sheet-16.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "c38d844881c133b4bd2c0e92701026e020de7984a8e2091904b04f2df0fb8701",
+          "review": "../progress-current-visual-review/sheet-16.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-renew-purchase-393-1x.png",
+      "sha256": "364c2fb8b70ad264b3ab85e156375b41188fea3b51ab92fc9ccd15f8186d8d72",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "af41ad0a17a8e662acb25533350b98beb543dc1c129cc01c54553329538a9024",
+          "review": "../progress-current-visual-review/sheet-16.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a8d577683de4f0f24a9f432f5edc8f3b1a2a0f87eab6f155e21680888e8fd30b",
+          "review": "../progress-current-visual-review/sheet-16.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-renew-purchase-closed-320-2x.long.png",
+      "sha256": "c195f9a915308e8d6cea12ec9ad11ec15ff67a135ae3f0fd0dc4729d58dec38c",
+      "width": 320,
+      "height": 1229,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "e6f6c4d9534f7b990349d49c26743e3c601f2519a087be454995f37cf583dbc0",
+          "review": "../progress-current-visual-review/sheet-15.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1229,
+          "pixel_sha256": "551da70a8c00951dcbd5286c4e55eff89afce6edd9b0c755010efb7a07acd046",
+          "review": "../progress-current-visual-review/sheet-15.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-renew-purchase-closed-320-2x.png",
+      "sha256": "7221da8ae5ec454b88ea973803333c7d87900f15302b3bffabdd12c5e859c091",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "3184bb50b04fd62635a612bd286e9c55879068b243716e9d50e0c6bd93eeb4c7",
+          "review": "../progress-current-visual-review/sheet-17.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "44b4b12380f62dcebb834272dc624f3c9020f85295120e5426ac6e343d6bd6f9",
+          "review": "../progress-current-visual-review/sheet-17.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-renew-purchase-closed-393-1x.png",
+      "sha256": "86f0d08ed2564d46fe4f51678bfdde301e1e18ec5169e0764903b73bb33b15a9",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6af95458c0c9301ea4cc7689602a427a8041d469438401bf7fecd9227fbad3aa",
+          "review": "../progress-current-visual-review/sheet-15.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "b772ac9857a55bb18a7c1054b34e5f3509ca95efbb21077274dc2131a89dbda2",
+          "review": "../progress-current-visual-review/sheet-16.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-renew-return-320-2x.long.png",
+      "sha256": "433fb2ae849dcff6d9c31eeef5c4d84fff6d01727451840c5c9877d6e26e39fd",
+      "width": 320,
+      "height": 1120,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "047ced121b03be2c3bb058c2d01904dc45b8aeae03e5c5e905c256e3dfca06c7",
+          "review": "../progress-current-visual-review/sheet-17.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1120,
+          "pixel_sha256": "f28e7395382fb8802dd41d5cf4995ef769d0d939ee0e21bb218f118be1acb468",
+          "review": "../progress-current-visual-review/sheet-17.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-renew-return-320-2x.png",
+      "sha256": "27a81390d466fe01c8be3e4d3593a768dc48026e43ee5cfa3ba1a4024331484b",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "4c531d28735996da1033915e9f4af6ae22b671d22f04ab2543a5d51026586edf",
+          "review": "../progress-current-visual-review/sheet-17.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "95d31b71e7385d4522e25d61270e2ace1358a9534c478a78a14553f647a4c9ef",
+          "review": "../progress-current-visual-review/sheet-17.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-renew-return-393-1x.png",
+      "sha256": "fa21c942f420d2b927fe798624d0002e6bcc0036ffff7f6a1da27c60c7a94f73",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b763689b466dad285bd610750c67701cd7fb66c124388727b3ba464f7d44578f",
+          "review": "../progress-current-visual-review/sheet-18.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "5e269ca9e36daffe984531405b8fd9a7fd95687843288196663912cae234267b",
+          "review": "../account-current-visual-review/sheet-05.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-state-cancelled-320-2x.long.png",
+      "sha256": "433fb2ae849dcff6d9c31eeef5c4d84fff6d01727451840c5c9877d6e26e39fd",
+      "width": 320,
+      "height": 1120,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "047ced121b03be2c3bb058c2d01904dc45b8aeae03e5c5e905c256e3dfca06c7",
+          "review": "../progress-current-visual-review/sheet-17.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1120,
+          "pixel_sha256": "f28e7395382fb8802dd41d5cf4995ef769d0d939ee0e21bb218f118be1acb468",
+          "review": "../progress-current-visual-review/sheet-17.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-state-cancelled-320-2x.png",
+      "sha256": "ef0ad1acb6859d50e4c2604ddd84ec2989b48fb0fdf58342538c234f11191144",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "047ced121b03be2c3bb058c2d01904dc45b8aeae03e5c5e905c256e3dfca06c7",
+          "review": "../progress-current-visual-review/sheet-17.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "eeaf62b8add7665107a5ab98b27ff75928b701bc7a64a6723580b90405b2a3a8",
+          "review": "../progress-current-visual-review/sheet-01.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-state-cancelled-393-1x.png",
+      "sha256": "fa21c942f420d2b927fe798624d0002e6bcc0036ffff7f6a1da27c60c7a94f73",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b763689b466dad285bd610750c67701cd7fb66c124388727b3ba464f7d44578f",
+          "review": "../progress-current-visual-review/sheet-18.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "5e269ca9e36daffe984531405b8fd9a7fd95687843288196663912cae234267b",
+          "review": "../account-current-visual-review/sheet-05.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-state-completed-320-2x.long.png",
+      "sha256": "0c10be24a9a02446996413db8a2dd5db99684644aacd853e484ebaa2145affcb",
+      "width": 320,
+      "height": 1120,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "310667847b61e16b2fb0f6c67474bd2ac63c74e06a58fa29be077e2eebd9ce34",
+          "review": "../progress-current-visual-review/sheet-18.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1120,
+          "pixel_sha256": "37baa778488dd9ba3a9e3b16d8bdd3df44991055b5cd399fcee2ed5514c25e48",
+          "review": "../progress-current-visual-review/sheet-18.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-state-completed-320-2x.png",
+      "sha256": "89af6cc2b48bc06b0468848fd6bddf5aab87967a729cc098c8cb4bffc89106cd",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "310667847b61e16b2fb0f6c67474bd2ac63c74e06a58fa29be077e2eebd9ce34",
+          "review": "../progress-current-visual-review/sheet-18.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "eeaf62b8add7665107a5ab98b27ff75928b701bc7a64a6723580b90405b2a3a8",
+          "review": "../progress-current-visual-review/sheet-01.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-state-completed-393-1x.png",
+      "sha256": "153e7bdc2ab01497416d97a36dc8d448515f6cf61bfc6d1992874ecd34f815ec",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "5b3f55f5e04d75a2a55e995d6ccfe3d2f12344ae2f5b6e847b7505cac68e7dde",
+          "review": "../progress-current-visual-review/sheet-18.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "5e269ca9e36daffe984531405b8fd9a7fd95687843288196663912cae234267b",
+          "review": "../account-current-visual-review/sheet-05.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-state-paused-320-2x.long.png",
+      "sha256": "2ee858bc886565e11325642fe99b738e3bd4cc96604b1079bd71713ee710c4ca",
+      "width": 320,
+      "height": 1060,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6caad7efd6953f62039f554cc88d427aa95cbdab7d6176b04a984521eba33b9b",
+          "review": "../progress-current-visual-review/sheet-18.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1060,
+          "pixel_sha256": "43b2651993897253118631d8a69dbf000fb1d85f2579d43199f9396c3679f6df",
+          "review": "../progress-current-visual-review/sheet-18.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-state-paused-320-2x.png",
+      "sha256": "d2a22952698734efecbcc6094acb02e0a07762b19d01a2d0fc8ae6f84138a33b",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6caad7efd6953f62039f554cc88d427aa95cbdab7d6176b04a984521eba33b9b",
+          "review": "../progress-current-visual-review/sheet-18.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "eeaf62b8add7665107a5ab98b27ff75928b701bc7a64a6723580b90405b2a3a8",
+          "review": "../progress-current-visual-review/sheet-01.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-state-paused-393-1x.png",
+      "sha256": "5e09c5ea9649394dfb509e9f11159a6015c3503393ccd00d8e2fa6b864e2875d",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "752999d717571217bb984f0eef705eea047ff58a47b3d640ec97c9d1e14a902d",
+          "review": "../progress-current-visual-review/sheet-19.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "5e269ca9e36daffe984531405b8fd9a7fd95687843288196663912cae234267b",
+          "review": "../account-current-visual-review/sheet-05.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-state-provisioning_pending-320-2x.long.png",
+      "sha256": "ec403cbbdd4e1dc2ef5ed28ae25c7ae1f5669b90d6cc17b2fca53b1fa28e9c18",
+      "width": 320,
+      "height": 1060,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "3ef6c3c5c82bd07b70e6c0609ac3fd6c92c083eb2ffa179e56f0830a73d36ba6",
+          "review": "../progress-current-visual-review/sheet-19.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1060,
+          "pixel_sha256": "ac8464383f3d198fc2c292f2ea356af5b5931ad85ffa461ec4a634bcdfe63bf6",
+          "review": "../progress-current-visual-review/sheet-19.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-state-provisioning_pending-320-2x.png",
+      "sha256": "2bacdb1fc3b437d4de18e9aeab2e0741964e5085d4dca0a7ab1d24a2655f1a83",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "3ef6c3c5c82bd07b70e6c0609ac3fd6c92c083eb2ffa179e56f0830a73d36ba6",
+          "review": "../progress-current-visual-review/sheet-19.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "eeaf62b8add7665107a5ab98b27ff75928b701bc7a64a6723580b90405b2a3a8",
+          "review": "../progress-current-visual-review/sheet-01.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-state-provisioning_pending-393-1x.png",
+      "sha256": "d54bde4f19eff6f0540ebd92181e56d5eb3689ed08580d2bb47f5581ad079aeb",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "d9712bb13937554afbd10623f90351d9dd22cc6b8d9037f06bc2156a104b26e1",
+          "review": "../progress-current-visual-review/sheet-19.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "5e269ca9e36daffe984531405b8fd9a7fd95687843288196663912cae234267b",
+          "review": "../account-current-visual-review/sheet-05.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-states-home-320-2x.long.png",
+      "sha256": "2fa0ada62a6d9ca50683e54400f6043cf68a1e285a2eae008e38ff1f462eb258",
+      "width": 320,
+      "height": 2459,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a6aa9ef781460e5016527f099324419f84c6e4f14cdb26c410651cd7359b41ef",
+          "review": "../mom-rest-control-visual-review/sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "0edf1d289b2e804b112ca91367c51524ae8a6a6a4684a4fdcad651b0ae8de7ad",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "737fbf296926091c9d3d8c054e5fcb5aa6828a0542d136aef0e678fcf5a2a305",
+          "review": "../more-current-visual-review/sheet-04.png#tile-5"
+        },
+        {
+          "y0": 1950,
+          "y1": 2459,
+          "pixel_sha256": "0692ec2c55d8d8438d85f340a92827d471acee47031f9c8fde3159a11158b360",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-15.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-states-home-320-2x.png",
+      "sha256": "6b61a480f7a3fd5ddb29685624aed748a99b94ad55016153855b11225ef09868",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a6aa9ef781460e5016527f099324419f84c6e4f14cdb26c410651cd7359b41ef",
+          "review": "../mom-rest-control-visual-review/sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1462d46c4861c29041d879736402097e4fd061fcb6e577142cd6e832cb70fae0",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-states-home-393-1x.long.png",
+      "sha256": "0f04c06b170ca26a6ceca6d9954f08895999c1df1446be6abb5fb53f267160ab",
+      "width": 393,
+      "height": 1211,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa661999d6307948942c23dc2e7dad221367a614b3ae09dd12dec24bc67fec6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1211,
+          "pixel_sha256": "468a1f2363d31ad56f5959e2dbd4aba2e602497cea767b2f5d8d0ec625cb9890",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-16.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-states-home-393-1x.png",
+      "sha256": "be291808401e7f353b8f14552b0df4a698f3edd191e5e2d770c66c2e129fc145",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa661999d6307948942c23dc2e7dad221367a614b3ae09dd12dec24bc67fec6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3208ac8b3b1d4a7464bc46ef7618c8e19bd85dee870d86c1847457571b6198a6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-states-home-return-320-2x.long.png",
+      "sha256": "099d5f3bfb02fa31166198da27fe4a5238047bd78f41aa384182ba78e6374249",
+      "width": 320,
+      "height": 2503,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a6aa9ef781460e5016527f099324419f84c6e4f14cdb26c410651cd7359b41ef",
+          "review": "../mom-rest-control-visual-review/sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "0edf1d289b2e804b112ca91367c51524ae8a6a6a4684a4fdcad651b0ae8de7ad",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "e0a661dbc2c0d912b322872ec7a45a9fd2b4df80fcc6622dd5db0d47c6b57381",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-16.png#tile-1"
+        },
+        {
+          "y0": 1950,
+          "y1": 2503,
+          "pixel_sha256": "2ae56bad605e9ba3f65d907b00516175d79ca0156264e469f403098075ed0f82",
+          "review": "../progress-current-visual-review/sheet-19.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-states-home-return-320-2x.png",
+      "sha256": "6b61a480f7a3fd5ddb29685624aed748a99b94ad55016153855b11225ef09868",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a6aa9ef781460e5016527f099324419f84c6e4f14cdb26c410651cd7359b41ef",
+          "review": "../mom-rest-control-visual-review/sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1462d46c4861c29041d879736402097e4fd061fcb6e577142cd6e832cb70fae0",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-states-home-return-393-1x.long.png",
+      "sha256": "7a03e16a011b5e5010befb82b2d216bd8069074ae865af6206eb2ff593f2c47a",
+      "width": 393,
+      "height": 1238,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa661999d6307948942c23dc2e7dad221367a614b3ae09dd12dec24bc67fec6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1238,
+          "pixel_sha256": "042c834423d5d002b7d503092a46d3e2316c3152bcf537fbe0a1c5682c5d901f",
+          "review": "../progress-current-visual-review/sheet-19.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-states-home-return-393-1x.png",
+      "sha256": "be291808401e7f353b8f14552b0df4a698f3edd191e5e2d770c66c2e129fc145",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa661999d6307948942c23dc2e7dad221367a614b3ae09dd12dec24bc67fec6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3208ac8b3b1d4a7464bc46ef7618c8e19bd85dee870d86c1847457571b6198a6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-summary-return-320-2x.long.png",
+      "sha256": "61f2a544b1b07130ac2d9c13bbc0fd1b9802209ea0b3445c8c2c15e2cf848404",
+      "width": 320,
+      "height": 2574,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2f87fc9057311bdaac5e030e3e28474388c3bd0c2391e0192ac19f85fa999070",
+          "review": "../progress-current-visual-review/sheet-02.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "ddded4f038e8cf3b48da5b41ed7dd22f2412fd9219fc5a956a4574d46de4bd13",
+          "review": "../progress-current-visual-review/sheet-02.png#tile-3"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "41e84a7215a7172b0d33234a35d8e2fc2f776ea0be7359ed3bddf8ca8c29197a",
+          "review": "../progress-current-visual-review/sheet-02.png#tile-4"
+        },
+        {
+          "y0": 1950,
+          "y1": 2574,
+          "pixel_sha256": "40ee4f530c0be03ad0936ae5012a6fb7e9605045f2ac3e44b3138b5bd4ef44a9",
+          "review": "../progress-current-visual-review/sheet-02.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-summary-return-320-2x.png",
+      "sha256": "d4773cb73d5b24b26ad40e9877434cb3aae6f47f87dac51295752ac88122a187",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "89eca20bbe6ee459cf174f5ecb20d63097022fba5d6dd166a03c88c05e97009a",
+          "review": "../progress-current-visual-review/sheet-20.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "6de66c98c36c33dfae93d42e93f7fd4cad0a25790cf45bef4f455147cf0881f9",
+          "review": "../progress-current-visual-review/sheet-20.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-summary-return-393-1x.long.png",
+      "sha256": "e60a8caee9bee046e62ce653ee555f5156b4c1cac10bb9af30a8beaf115be9c4",
+      "width": 393,
+      "height": 1518,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "5ff70dd0415412593ad0a09300144c75b66528cec21eebe1e55bf430fe74504e",
+          "review": "../progress-current-visual-review/sheet-03.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "c94ab336e71b534bb65e7ee5e5eae2f19f5ec46094446f9edc6b93a620c7ce4d",
+          "review": "../progress-current-visual-review/sheet-03.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1518,
+          "pixel_sha256": "692f70b1b58da914c56e77e61f78e9dd7cd6c7888351687c241b72b72f789dad",
+          "review": "../progress-current-visual-review/sheet-03.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/progress-current-summary-return-393-1x.png",
+      "sha256": "d9b8ffe85483bd40dccb2b6f9125c81be7647e1308f7ea35f26b54e5574d0bef",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c9c29587ad5077acf09ee9caa0f584e8874b685c5239637be99e4899206c4117",
+          "review": "../progress-current-visual-review/sheet-20.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "9cf86e8ed7f8bc702b8a697b3bd9a801f456b182b47b038d9cf4d902db5b95ce",
+          "review": "../progress-current-visual-review/sheet-20.png#tile-3"
+        }
+      ]
+    }
+  ],
+  "unique_segments": 145,
+  "new_segments": 0,
+  "new_sheets": 0
+}

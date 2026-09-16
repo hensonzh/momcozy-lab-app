@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/service-current-pending-order-error-dismissed-393-1x.png",
+  "previous_source": "test/goldens/ui_inventory/service-current-pending-order-error-393-1x.png",
+  "route": "/services/feeding-confidence",
+  "trigger": "Open order feedback timeout → resume available",
+  "root_entry": "Authenticated More → tap Me bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/services/service_current_inventory_test.dart"
+}

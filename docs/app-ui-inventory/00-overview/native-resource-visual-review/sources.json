@@ -1,0 +1,152 @@
+[
+  {
+    "file": "docs/app-ui-inventory/native/resource-journey/native-resource-card-long.png",
+    "sha256": "351afc76a54c38495b6f3332dfa0c2abd0dd62840b72eb843569a015017060af",
+    "width": 1280,
+    "height": 3306
+  },
+  {
+    "file": "docs/app-ui-inventory/native/resource-journey/native-resource-card.png",
+    "sha256": "ad2a958439a3922a75830574db5829d0609271b4711e0f7d70caa19086f6c896",
+    "width": 1280,
+    "height": 2856
+  },
+  {
+    "file": "docs/app-ui-inventory/native/resource-journey/native-resource-image-return-long.png",
+    "sha256": "351afc76a54c38495b6f3332dfa0c2abd0dd62840b72eb843569a015017060af",
+    "width": 1280,
+    "height": 3306
+  },
+  {
+    "file": "docs/app-ui-inventory/native/resource-journey/native-resource-image-return.png",
+    "sha256": "ad2a958439a3922a75830574db5829d0609271b4711e0f7d70caa19086f6c896",
+    "width": 1280,
+    "height": 2856
+  },
+  {
+    "file": "docs/app-ui-inventory/native/resource-journey/native-resource-image-zoom.png",
+    "sha256": "144c7495b9ca47b4109fcb50ed1a0e2a4698d3eaee6c4f1e0d5449840e3de628",
+    "width": 1280,
+    "height": 2856
+  },
+  {
+    "file": "docs/app-ui-inventory/native/resource-journey/native-resource-image.png",
+    "sha256": "6392f33755e983f17d404055d3464a376fcfe7bcf6df9663eb4149213b103634",
+    "width": 1280,
+    "height": 2856
+  },
+  {
+    "file": "docs/app-ui-inventory/native/resource-journey/native-resource-pdf-first.png",
+    "sha256": "fc1a4f0979a539181ca571c3da24bc8ea8b8f5b470d4da8084061c0fc41c35dc",
+    "width": 1280,
+    "height": 2856
+  },
+  {
+    "file": "docs/app-ui-inventory/native/resource-journey/native-resource-pdf-full.png",
+    "sha256": "2e7c2569960c689c77072d3d038fbd97a6b373982bef1c5a3f692ef88e467cd8",
+    "width": 1280,
+    "height": 3902
+  },
+  {
+    "file": "docs/app-ui-inventory/native/resource-journey/native-resource-pdf-next.png",
+    "sha256": "b52b5f7d210f485de1333bcd3b90a6148e98de2fa3ad93b9a52188cc31bc6d5c",
+    "width": 1280,
+    "height": 2856
+  },
+  {
+    "file": "docs/app-ui-inventory/native/resource-journey/native-resource-pdf-reset.png",
+    "sha256": "fc1a4f0979a539181ca571c3da24bc8ea8b8f5b470d4da8084061c0fc41c35dc",
+    "width": 1280,
+    "height": 2856
+  },
+  {
+    "file": "docs/app-ui-inventory/native/resource-journey/native-resource-pdf-return-long.png",
+    "sha256": "351afc76a54c38495b6f3332dfa0c2abd0dd62840b72eb843569a015017060af",
+    "width": 1280,
+    "height": 3306
+  },
+  {
+    "file": "docs/app-ui-inventory/native/resource-journey/native-resource-pdf-return.png",
+    "sha256": "ad2a958439a3922a75830574db5829d0609271b4711e0f7d70caa19086f6c896",
+    "width": 1280,
+    "height": 2856
+  },
+  {
+    "file": "docs/app-ui-inventory/native/resource-journey/native-resource-pdf-zoom-full.png",
+    "sha256": "1c0f615c02d9fab6733c2d425f19ed20feefb0854256f9c5a686a70e13a38226",
+    "width": 1280,
+    "height": 7240
+  },
+  {
+    "file": "docs/app-ui-inventory/native/resource-journey/native-resource-pdf-zoom.png",
+    "sha256": "17da7863d4529eff620808dfbfb85db5781311804bdfd716b58c3363f7519c34",
+    "width": 1280,
+    "height": 2856
+  },
+  {
+    "file": "docs/app-ui-inventory/native/resource-journey/native-resource-renew-return-long.png",
+    "sha256": "351afc76a54c38495b6f3332dfa0c2abd0dd62840b72eb843569a015017060af",
+    "width": 1280,
+    "height": 3306
+  },
+  {
+    "file": "docs/app-ui-inventory/native/resource-journey/native-resource-renew-return.png",
+    "sha256": "ad2a958439a3922a75830574db5829d0609271b4711e0f7d70caa19086f6c896",
+    "width": 1280,
+    "height": 2856
+  },
+  {
+    "file": "docs/app-ui-inventory/native/resource-journey/native-resource-renew.png",
+    "sha256": "b944f71af6fd71a0239e7784410206b3535882e5082b1d8aa19c0d2c8285ac2f",
+    "width": 1280,
+    "height": 2856
+  },
+  {
+    "file": "docs/app-ui-inventory/native/resource-journey/native-resource-video-fullscreen.png",
+    "sha256": "ba4329cbb2691c703a611b96b4252fada779b23b419dd8ce3ff23d3c06bd1d3f",
+    "width": 1280,
+    "height": 2856
+  },
+  {
+    "file": "docs/app-ui-inventory/native/resource-journey/native-resource-video-inline.png",
+    "sha256": "ed028241953f98c46e451e053f56b2bd4f8092f856d66aad50e8e27e61146fd0",
+    "width": 1280,
+    "height": 2856
+  },
+  {
+    "file": "docs/app-ui-inventory/native/resource-journey/native-resource-video-paused.png",
+    "sha256": "148a937293fac637bd9defbea2ece743ddf9246a0ba1da62b2d6b45d9f2ba338",
+    "width": 1280,
+    "height": 2856
+  },
+  {
+    "file": "docs/app-ui-inventory/native/resource-journey/native-resource-video-playing.png",
+    "sha256": "4c0fbde2935e5d6cbc918448d568bda81c0262a2f32416d5feae7ecbd4f2a614",
+    "width": 1280,
+    "height": 2856
+  },
+  {
+    "file": "docs/app-ui-inventory/native/resource-journey/native-resource-video-ready.png",
+    "sha256": "f03eeec1495daad3c7e84be2de0594d1818e5bb38d2950498b78989cbfef4813",
+    "width": 1280,
+    "height": 2856
+  },
+  {
+    "file": "docs/app-ui-inventory/native/resource-journey/native-resource-video-return-long.png",
+    "sha256": "351afc76a54c38495b6f3332dfa0c2abd0dd62840b72eb843569a015017060af",
+    "width": 1280,
+    "height": 3306
+  },
+  {
+    "file": "docs/app-ui-inventory/native/resource-journey/native-resource-video-return.png",
+    "sha256": "ad2a958439a3922a75830574db5829d0609271b4711e0f7d70caa19086f6c896",
+    "width": 1280,
+    "height": 2856
+  },
+  {
+    "file": "docs/app-ui-inventory/native/resource-journey/native-resource-video-seek-mute.png",
+    "sha256": "ed028241953f98c46e451e053f56b2bd4f8092f856d66aad50e8e27e61146fd0",
+    "width": 1280,
+    "height": 2856
+  }
+]

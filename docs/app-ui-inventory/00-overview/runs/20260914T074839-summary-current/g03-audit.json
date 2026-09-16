@@ -1,0 +1,850 @@
+{
+  "gap": "G03",
+  "completion": "CLOSED_FOR_RECORDED_SOURCE",
+  "initial_state_run": "runs/20260914T074520-summary-current",
+  "final_route_run": "runs/20260914T074839-summary-current",
+  "source_drift": [],
+  "relevant_source_drift": [],
+  "images": [
+    {
+      "id": "08-expert-service/consultation-journey-current-summary-full-plan",
+      "source": "test/goldens/ui_inventory/consultation-journey-current-summary-full-plan-393.png",
+      "image": "../raw/test/goldens/ui_inventory/consultation-journey-current-summary-full-plan-393.long.png",
+      "sha256": "297b8fda8e9e5153393149fd118fe92334e43bb43dd7897ea41e4cb789fa77b9",
+      "metadata": "raw/test/goldens/ui_inventory/consultation-journey-current-summary-full-plan-393.png.json",
+      "long_capture": {
+        "status": "complete-measured-scroll-stitch",
+        "file": "/Users/lute/project/momcozy-lab/app/docs/app-ui-inventory/raw/test/goldens/ui_inventory/consultation-journey-current-summary-full-plan-393.long.png",
+        "offsets": [
+          0.0,
+          313.0,
+          415.0
+        ],
+        "scroll_bounds": [
+          0.0,
+          0.0,
+          393.0,
+          690.0
+        ],
+        "frame_scroll_bounds": [
+          [
+            0.0,
+            0.0,
+            393.0,
+            690.0
+          ],
+          [
+            0.0,
+            0.0,
+            393.0,
+            690.0
+          ],
+          [
+            0.0,
+            0.0,
+            393.0,
+            690.0
+          ]
+        ],
+        "content_height": 1105.0,
+        "interior_strip_edge_guard": 64.0,
+        "fixed_bottom_overlay_bounds": [],
+        "original_scroll_offset": 0.0,
+        "tooltip_preserved_from_matched_viewport": false
+      },
+      "normal_route": true
+    },
+    {
+      "id": "08-expert-service/consultation-journey-current-summary-published",
+      "source": "test/goldens/ui_inventory/consultation-journey-current-summary-published-393.png",
+      "image": "../raw/test/goldens/ui_inventory/consultation-journey-current-summary-published-393.long.png",
+      "sha256": "c11fbae6bf51a99e1e5b683b69f58c7eb7ed8d54da0983332dd8fb80f91d5029",
+      "metadata": "raw/test/goldens/ui_inventory/consultation-journey-current-summary-published-393.png.json",
+      "long_capture": {
+        "status": "complete-measured-scroll-stitch",
+        "file": "/Users/lute/project/momcozy-lab/app/docs/app-ui-inventory/raw/test/goldens/ui_inventory/consultation-journey-current-summary-published-393.long.png",
+        "offsets": [
+          0.0,
+          100.0
+        ],
+        "scroll_bounds": [
+          0.0,
+          64.0,
+          393.0,
+          780.0
+        ],
+        "frame_scroll_bounds": [
+          [
+            0.0,
+            64.0,
+            393.0,
+            780.0
+          ],
+          [
+            0.0,
+            64.0,
+            393.0,
+            780.0
+          ]
+        ],
+        "content_height": 880.0,
+        "interior_strip_edge_guard": 64.0,
+        "fixed_bottom_overlay_bounds": [],
+        "original_scroll_offset": 0.0,
+        "tooltip_preserved_from_matched_viewport": false
+      },
+      "normal_route": true
+    },
+    {
+      "id": "08-expert-service/consultation-journey-current-summary-service-information",
+      "source": "test/goldens/ui_inventory/consultation-journey-current-summary-service-information-393.png",
+      "image": "../raw/test/goldens/ui_inventory/consultation-journey-current-summary-service-information-393.long.png",
+      "sha256": "75658ed4c45931aa6fb5463799268b3156f031be114134f4dfa37afc96133c4f",
+      "metadata": "raw/test/goldens/ui_inventory/consultation-journey-current-summary-service-information-393.png.json",
+      "long_capture": {
+        "status": "complete-measured-scroll-stitch",
+        "file": "/Users/lute/project/momcozy-lab/app/docs/app-ui-inventory/raw/test/goldens/ui_inventory/consultation-journey-current-summary-service-information-393.long.png",
+        "offsets": [
+          0.0,
+          283.0
+        ],
+        "scroll_bounds": [
+          0.0,
+          64.0,
+          393.0,
+          780.0
+        ],
+        "frame_scroll_bounds": [
+          [
+            0.0,
+            64.0,
+            393.0,
+            780.0
+          ],
+          [
+            0.0,
+            64.0,
+            393.0,
+            780.0
+          ]
+        ],
+        "content_height": 1063.0,
+        "interior_strip_edge_guard": 64.0,
+        "fixed_bottom_overlay_bounds": [],
+        "original_scroll_offset": 100.0,
+        "tooltip_preserved_from_matched_viewport": false
+      },
+      "normal_route": true
+    },
+    {
+      "id": "08-expert-service/consultation-journey-current-summary-task-detail",
+      "source": "test/goldens/ui_inventory/consultation-journey-current-summary-task-detail-393.png",
+      "image": "../raw/test/goldens/ui_inventory/consultation-journey-current-summary-task-detail-393.png",
+      "sha256": "4520dd718268d802464f2a5843cbdb18647b8e6e990d389672c92e268b57b9f3",
+      "metadata": "raw/test/goldens/ui_inventory/consultation-journey-current-summary-task-detail-393.png.json",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "normal_route": true
+    },
+    {
+      "id": "08-expert-service/consultation-journey-current-summary-task-in-progress",
+      "source": "test/goldens/ui_inventory/consultation-journey-current-summary-task-in-progress-393.png",
+      "image": "../raw/test/goldens/ui_inventory/consultation-journey-current-summary-task-in-progress-393.png",
+      "sha256": "f0cdaa5d8f7d2dab7c2d581b4df164ce03f11741263aabf4daaa5bdf5b1e41ac",
+      "metadata": "raw/test/goldens/ui_inventory/consultation-journey-current-summary-task-in-progress-393.png.json",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "normal_route": true
+    },
+    {
+      "id": "08-expert-service/consultation-journey-current-summary-task-recovered",
+      "source": "test/goldens/ui_inventory/consultation-journey-current-summary-task-recovered-393.png",
+      "image": "../raw/test/goldens/ui_inventory/consultation-journey-current-summary-task-recovered-393.png",
+      "sha256": "0341040e95e39569bb5954b5a5c1e460c65d6d104b649bb06aee43d66099ea6a",
+      "metadata": "raw/test/goldens/ui_inventory/consultation-journey-current-summary-task-recovered-393.png.json",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "normal_route": true
+    },
+    {
+      "id": "08-expert-service/consultation-journey-current-summary-task-return",
+      "source": "test/goldens/ui_inventory/consultation-journey-current-summary-task-return-393.png",
+      "image": "../raw/test/goldens/ui_inventory/consultation-journey-current-summary-task-return-393.long.png",
+      "sha256": "c11fbae6bf51a99e1e5b683b69f58c7eb7ed8d54da0983332dd8fb80f91d5029",
+      "metadata": "raw/test/goldens/ui_inventory/consultation-journey-current-summary-task-return-393.png.json",
+      "long_capture": {
+        "status": "complete-measured-scroll-stitch",
+        "file": "/Users/lute/project/momcozy-lab/app/docs/app-ui-inventory/raw/test/goldens/ui_inventory/consultation-journey-current-summary-task-return-393.long.png",
+        "offsets": [
+          0.0,
+          100.0
+        ],
+        "scroll_bounds": [
+          0.0,
+          64.0,
+          393.0,
+          780.0
+        ],
+        "frame_scroll_bounds": [
+          [
+            0.0,
+            64.0,
+            393.0,
+            780.0
+          ],
+          [
+            0.0,
+            64.0,
+            393.0,
+            780.0
+          ]
+        ],
+        "content_height": 880.0,
+        "interior_strip_edge_guard": 64.0,
+        "fixed_bottom_overlay_bounds": [],
+        "original_scroll_offset": 100.0,
+        "tooltip_preserved_from_matched_viewport": false
+      },
+      "normal_route": true
+    },
+    {
+      "id": "08-expert-service/consultation-journey-current-summary-task-skipped",
+      "source": "test/goldens/ui_inventory/consultation-journey-current-summary-task-skipped-393.png",
+      "image": "../raw/test/goldens/ui_inventory/consultation-journey-current-summary-task-skipped-393.png",
+      "sha256": "119c71d7600514d0a0795ad4ddf8867231ddabc05115c0677b48d601b7b7ea28",
+      "metadata": "raw/test/goldens/ui_inventory/consultation-journey-current-summary-task-skipped-393.png.json",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "normal_route": true
+    },
+    {
+      "id": "08-expert-service/consultation-journey-current-summary-task-uncertain",
+      "source": "test/goldens/ui_inventory/consultation-journey-current-summary-task-uncertain-393.png",
+      "image": "../raw/test/goldens/ui_inventory/consultation-journey-current-summary-task-uncertain-393.png",
+      "sha256": "1c625a9468afebec52749561eb6bfc6b5baba72d70ecf50c3daec5260fd467f9",
+      "metadata": "raw/test/goldens/ui_inventory/consultation-journey-current-summary-task-uncertain-393.png.json",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "normal_route": true
+    },
+    {
+      "id": "08-expert-service/consultation-journey-current-summary-to-progress",
+      "source": "test/goldens/ui_inventory/consultation-journey-current-summary-to-progress-393.png",
+      "image": "../raw/test/goldens/ui_inventory/consultation-journey-current-summary-to-progress-393.long.png",
+      "sha256": "4fc4dd2f7e443346778d4433a15650c758330b5449e27b89e5f80fa6449a338e",
+      "metadata": "raw/test/goldens/ui_inventory/consultation-journey-current-summary-to-progress-393.png.json",
+      "long_capture": {
+        "status": "complete-measured-scroll-stitch",
+        "file": "/Users/lute/project/momcozy-lab/app/docs/app-ui-inventory/raw/test/goldens/ui_inventory/consultation-journey-current-summary-to-progress-393.long.png",
+        "offsets": [
+          0.0,
+          120.0
+        ],
+        "scroll_bounds": [
+          0.0,
+          104.0,
+          393.0,
+          740.0
+        ],
+        "frame_scroll_bounds": [
+          [
+            0.0,
+            104.0,
+            393.0,
+            740.0
+          ],
+          [
+            0.0,
+            104.0,
+            393.0,
+            740.0
+          ]
+        ],
+        "content_height": 860.0,
+        "interior_strip_edge_guard": 70.0,
+        "fixed_bottom_overlay_bounds": [
+          [
+            273.5030059814453,
+            782.0,
+            103.49699401855469,
+            48.0
+          ]
+        ],
+        "original_scroll_offset": 120.0,
+        "tooltip_preserved_from_matched_viewport": false
+      },
+      "normal_route": true
+    },
+    {
+      "id": "08-expert-service/summary-empty",
+      "source": "test/goldens/design_system/summary-empty-390.png",
+      "image": "../raw/test/goldens/design_system/summary-empty-390.png",
+      "sha256": "eab9fae761230311404a87fe7e7eb091e82f2b17378b95d3184b55f8a225b3dc",
+      "metadata": "raw/test/goldens/design_system/summary-empty-390.png.json",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "normal_route": false
+    },
+    {
+      "id": "08-expert-service/summary-failed-320-2x-short",
+      "source": "test/goldens/design_system/summary-failed-320-2x-short.png",
+      "image": "../raw/test/goldens/design_system/summary-failed-320-2x-short.png",
+      "sha256": "6ccce525fcf9222d69f648f0f3c62dbc8454428564257a5562b5c451600171af",
+      "metadata": "raw/test/goldens/design_system/summary-failed-320-2x-short.png.json",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "normal_route": false
+    },
+    {
+      "id": "08-expert-service/summary-loading",
+      "source": "test/goldens/design_system/summary-loading-390.png",
+      "image": "../raw/test/goldens/design_system/summary-loading-390.png",
+      "sha256": "141edce8fac04cd592290eb6955a0abd43a403846bed58350a9922bb1b922eb7",
+      "metadata": "raw/test/goldens/design_system/summary-loading-390.png.json",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "normal_route": false
+    },
+    {
+      "id": "08-expert-service/summary-metadata",
+      "source": "test/goldens/design_system/summary-metadata-390.png",
+      "image": "../raw/test/goldens/design_system/summary-metadata-390.long.png",
+      "sha256": "2c572b7febca4fe15d84eeaa62e004575689d503245d8b5ac8fdc1beeee4353b",
+      "metadata": "raw/test/goldens/design_system/summary-metadata-390.png.json",
+      "long_capture": {
+        "status": "complete-measured-scroll-stitch",
+        "file": "/Users/lute/project/momcozy-lab/app/docs/app-ui-inventory/raw/test/goldens/design_system/summary-metadata-390.long.png",
+        "offsets": [
+          0.0,
+          358.0,
+          578.0
+        ],
+        "scroll_bounds": [
+          0.0,
+          64.0,
+          390.0,
+          780.0
+        ],
+        "frame_scroll_bounds": [
+          [
+            0.0,
+            64.0,
+            390.0,
+            780.0
+          ],
+          [
+            0.0,
+            64.0,
+            390.0,
+            780.0
+          ],
+          [
+            0.0,
+            64.0,
+            390.0,
+            780.0
+          ]
+        ],
+        "content_height": 1358.0,
+        "interior_strip_edge_guard": 64.0,
+        "fixed_bottom_overlay_bounds": [],
+        "original_scroll_offset": 578.0,
+        "tooltip_preserved_from_matched_viewport": false
+      },
+      "normal_route": false
+    },
+    {
+      "id": "08-expert-service/summary-no-actions-information-320-2x-short",
+      "source": "test/goldens/design_system/summary-no-actions-information-320-2x-short.png",
+      "image": "../raw/test/goldens/design_system/summary-no-actions-information-320-2x-short.long.png",
+      "sha256": "ba1ad8e0dc5bac24d9a3191d79e28e1b68e9ffb67868380904705ca7f7347fce",
+      "metadata": "raw/test/goldens/design_system/summary-no-actions-information-320-2x-short.png.json",
+      "long_capture": {
+        "status": "complete-measured-scroll-stitch",
+        "file": "/Users/lute/project/momcozy-lab/app/docs/app-ui-inventory/raw/test/goldens/design_system/summary-no-actions-information-320-2x-short.long.png",
+        "offsets": [
+          0.0,
+          216.0,
+          432.0,
+          648.0,
+          864.0,
+          1080.0,
+          1296.0,
+          1411.0
+        ],
+        "scroll_bounds": [
+          0.0,
+          72.0,
+          320.0,
+          496.0
+        ],
+        "frame_scroll_bounds": [
+          [
+            0.0,
+            72.0,
+            320.0,
+            496.0
+          ],
+          [
+            0.0,
+            72.0,
+            320.0,
+            496.0
+          ],
+          [
+            0.0,
+            72.0,
+            320.0,
+            496.0
+          ],
+          [
+            0.0,
+            72.0,
+            320.0,
+            496.0
+          ],
+          [
+            0.0,
+            72.0,
+            320.0,
+            496.0
+          ],
+          [
+            0.0,
+            72.0,
+            320.0,
+            496.0
+          ],
+          [
+            0.0,
+            72.0,
+            320.0,
+            496.0
+          ],
+          [
+            0.0,
+            72.0,
+            320.0,
+            496.0
+          ]
+        ],
+        "content_height": 1907.0,
+        "interior_strip_edge_guard": 64.0,
+        "fixed_bottom_overlay_bounds": [],
+        "original_scroll_offset": 1411.0,
+        "tooltip_preserved_from_matched_viewport": false
+      },
+      "normal_route": false
+    },
+    {
+      "id": "08-expert-service/summary-offline",
+      "source": "test/goldens/design_system/summary-offline-390.png",
+      "image": "../raw/test/goldens/design_system/summary-offline-390.png",
+      "sha256": "719a1c429e3684c890401ae6a90f58fc25d61728cad290450e01fb0380caec28",
+      "metadata": "raw/test/goldens/design_system/summary-offline-390.png.json",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "normal_route": false
+    },
+    {
+      "id": "08-expert-service/summary-pending",
+      "source": "test/goldens/design_system/summary-pending-390.png",
+      "image": "../raw/test/goldens/design_system/summary-pending-390.png",
+      "sha256": "04147120eb1051759e276be26775a827925d44a12bde0c9086c0eed8d9fc5877",
+      "metadata": "raw/test/goldens/design_system/summary-pending-390.png.json",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "normal_route": false
+    },
+    {
+      "id": "08-expert-service/summary-published",
+      "source": "test/goldens/design_system/summary-published-390.png",
+      "image": "../raw/test/goldens/design_system/summary-published-390.long.png",
+      "sha256": "9e578d899b959bfc70b08dbe3a54984356cd501cdc345679253267e9a024d05e",
+      "metadata": "raw/test/goldens/design_system/summary-published-390.png.json",
+      "long_capture": {
+        "status": "complete-measured-scroll-stitch",
+        "file": "/Users/lute/project/momcozy-lab/app/docs/app-ui-inventory/raw/test/goldens/design_system/summary-published-390.long.png",
+        "offsets": [
+          0.0,
+          358.0,
+          395.0
+        ],
+        "scroll_bounds": [
+          0.0,
+          64.0,
+          390.0,
+          780.0
+        ],
+        "frame_scroll_bounds": [
+          [
+            0.0,
+            64.0,
+            390.0,
+            780.0
+          ],
+          [
+            0.0,
+            64.0,
+            390.0,
+            780.0
+          ],
+          [
+            0.0,
+            64.0,
+            390.0,
+            780.0
+          ]
+        ],
+        "content_height": 1175.0,
+        "interior_strip_edge_guard": 64.0,
+        "fixed_bottom_overlay_bounds": [],
+        "original_scroll_offset": 0.0,
+        "tooltip_preserved_from_matched_viewport": false
+      },
+      "normal_route": false
+    },
+    {
+      "id": "08-expert-service/summary-refresh-error",
+      "source": "test/goldens/design_system/summary-refresh-error-390.png",
+      "image": "../raw/test/goldens/design_system/summary-refresh-error-390.long.png",
+      "sha256": "a5821db97e33306cbf2d562bc08308742c90af01f81264aa22025b1a20c3a327",
+      "metadata": "raw/test/goldens/design_system/summary-refresh-error-390.png.json",
+      "long_capture": {
+        "status": "complete-measured-scroll-stitch",
+        "file": "/Users/lute/project/momcozy-lab/app/docs/app-ui-inventory/raw/test/goldens/design_system/summary-refresh-error-390.long.png",
+        "offsets": [
+          0.0,
+          358.0,
+          525.0
+        ],
+        "scroll_bounds": [
+          0.0,
+          64.0,
+          390.0,
+          780.0
+        ],
+        "frame_scroll_bounds": [
+          [
+            0.0,
+            64.0,
+            390.0,
+            780.0
+          ],
+          [
+            0.0,
+            64.0,
+            390.0,
+            780.0
+          ],
+          [
+            0.0,
+            64.0,
+            390.0,
+            780.0
+          ]
+        ],
+        "content_height": 1305.0,
+        "interior_strip_edge_guard": 64.0,
+        "fixed_bottom_overlay_bounds": [],
+        "original_scroll_offset": 0.0,
+        "tooltip_preserved_from_matched_viewport": false
+      },
+      "normal_route": false
+    },
+    {
+      "id": "08-expert-service/summary-removed-action",
+      "source": "test/goldens/design_system/summary-removed-action-320-2x.png",
+      "image": "../raw/test/goldens/design_system/summary-removed-action-320-2x.png",
+      "sha256": "e36877b9f37215715194c0537db5f9abe4bbb5c07ddef0f2736690b2d79e79c6",
+      "metadata": "raw/test/goldens/design_system/summary-removed-action-320-2x.png.json",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "normal_route": false
+    },
+    {
+      "id": "08-expert-service/summary-short-progress-320-2x-short",
+      "source": "test/goldens/design_system/summary-short-progress-320-2x-short.png",
+      "image": "../raw/test/goldens/design_system/summary-short-progress-320-2x-short.long.png",
+      "sha256": "9c8c548d3f7b3580ffd47346bcb6c6a9d2af07f0fe73c0e67fc9612117461d4b",
+      "metadata": "raw/test/goldens/design_system/summary-short-progress-320-2x-short.png.json",
+      "long_capture": {
+        "status": "complete-measured-scroll-stitch",
+        "file": "/Users/lute/project/momcozy-lab/app/docs/app-ui-inventory/raw/test/goldens/design_system/summary-short-progress-320-2x-short.long.png",
+        "offsets": [
+          0.0,
+          125.0,
+          250.0,
+          375.0,
+          384.43999999999994
+        ],
+        "scroll_bounds": [
+          18.0,
+          235.43999999999994,
+          284.0,
+          314.56000000000006
+        ],
+        "frame_scroll_bounds": [
+          [
+            18.0,
+            235.43999999999994,
+            284.0,
+            314.56000000000006
+          ],
+          [
+            18.0,
+            235.43999999999994,
+            284.0,
+            314.56000000000006
+          ],
+          [
+            18.0,
+            235.43999999999994,
+            284.0,
+            314.56000000000006
+          ],
+          [
+            18.0,
+            235.43999999999994,
+            284.0,
+            314.56000000000006
+          ],
+          [
+            18.0,
+            235.43999999999994,
+            284.0,
+            314.56000000000006
+          ]
+        ],
+        "content_height": 699.0,
+        "interior_strip_edge_guard": 64.0,
+        "fixed_bottom_overlay_bounds": [],
+        "original_scroll_offset": 384.43999999999994,
+        "tooltip_preserved_from_matched_viewport": false
+      },
+      "normal_route": false
+    },
+    {
+      "id": "08-expert-service/summary-short-uncertain-320-2x-short",
+      "source": "test/goldens/design_system/summary-short-uncertain-320-2x-short.png",
+      "image": "../raw/test/goldens/design_system/summary-short-uncertain-320-2x-short.long.png",
+      "sha256": "8c8dc2f377250c89d739878ab9c2ca3cafb30a4a94c74ea38c3d838b60490bca",
+      "metadata": "raw/test/goldens/design_system/summary-short-uncertain-320-2x-short.png.json",
+      "long_capture": {
+        "status": "complete-measured-scroll-stitch",
+        "file": "/Users/lute/project/momcozy-lab/app/docs/app-ui-inventory/raw/test/goldens/design_system/summary-short-uncertain-320-2x-short.long.png",
+        "offsets": [
+          0.0,
+          125.0,
+          250.0,
+          375.0,
+          500.0,
+          625.0,
+          680.4399999999999
+        ],
+        "scroll_bounds": [
+          18.0,
+          235.43999999999994,
+          284.0,
+          314.56000000000006
+        ],
+        "frame_scroll_bounds": [
+          [
+            18.0,
+            235.43999999999994,
+            284.0,
+            314.56000000000006
+          ],
+          [
+            18.0,
+            235.43999999999994,
+            284.0,
+            314.56000000000006
+          ],
+          [
+            18.0,
+            235.43999999999994,
+            284.0,
+            314.56000000000006
+          ],
+          [
+            18.0,
+            235.43999999999994,
+            284.0,
+            314.56000000000006
+          ],
+          [
+            18.0,
+            235.43999999999994,
+            284.0,
+            314.56000000000006
+          ],
+          [
+            18.0,
+            235.43999999999994,
+            284.0,
+            314.56000000000006
+          ],
+          [
+            18.0,
+            235.43999999999994,
+            284.0,
+            314.56000000000006
+          ]
+        ],
+        "content_height": 995.0,
+        "interior_strip_edge_guard": 64.0,
+        "fixed_bottom_overlay_bounds": [],
+        "original_scroll_offset": 680.4399999999999,
+        "tooltip_preserved_from_matched_viewport": false
+      },
+      "normal_route": false
+    },
+    {
+      "id": "08-expert-service/summary-short-updating-320-2x-short",
+      "source": "test/goldens/design_system/summary-short-updating-320-2x-short.png",
+      "image": "../raw/test/goldens/design_system/summary-short-updating-320-2x-short.long.png",
+      "sha256": "f0809d3b00290bdf66754a3da636269e4a56efab12299ca39277dd64edae5ad7",
+      "metadata": "raw/test/goldens/design_system/summary-short-updating-320-2x-short.png.json",
+      "long_capture": {
+        "status": "complete-measured-scroll-stitch",
+        "file": "/Users/lute/project/momcozy-lab/app/docs/app-ui-inventory/raw/test/goldens/design_system/summary-short-updating-320-2x-short.long.png",
+        "offsets": [
+          0.0,
+          125.0,
+          250.0,
+          375.0,
+          404.43999999999994
+        ],
+        "scroll_bounds": [
+          18.0,
+          235.43999999999994,
+          284.0,
+          314.56000000000006
+        ],
+        "frame_scroll_bounds": [
+          [
+            18.0,
+            235.43999999999994,
+            284.0,
+            314.56000000000006
+          ],
+          [
+            18.0,
+            235.43999999999994,
+            284.0,
+            314.56000000000006
+          ],
+          [
+            18.0,
+            235.43999999999994,
+            284.0,
+            314.56000000000006
+          ],
+          [
+            18.0,
+            235.43999999999994,
+            284.0,
+            314.56000000000006
+          ],
+          [
+            18.0,
+            235.43999999999994,
+            284.0,
+            314.56000000000006
+          ]
+        ],
+        "content_height": 719.0,
+        "interior_strip_edge_guard": 64.0,
+        "fixed_bottom_overlay_bounds": [],
+        "original_scroll_offset": 384.43999999999994,
+        "tooltip_preserved_from_matched_viewport": false
+      },
+      "normal_route": false
+    },
+    {
+      "id": "08-expert-service/summary-superseded",
+      "source": "test/goldens/design_system/summary-superseded-320-2x.png",
+      "image": "../raw/test/goldens/design_system/summary-superseded-320-2x.long.png",
+      "sha256": "1adefbc7a528e5fee87ca6003ef7fa9fa58c25a70d65e979aada2609e57194b0",
+      "metadata": "raw/test/goldens/design_system/summary-superseded-320-2x.png.json",
+      "long_capture": {
+        "status": "complete-measured-scroll-stitch",
+        "file": "/Users/lute/project/momcozy-lab/app/docs/app-ui-inventory/raw/test/goldens/design_system/summary-superseded-320-2x.long.png",
+        "offsets": [
+          0.0,
+          224.0,
+          347.0
+        ],
+        "scroll_bounds": [
+          18.0,
+          314.0,
+          284.0,
+          512.0
+        ],
+        "frame_scroll_bounds": [
+          [
+            18.0,
+            314.0,
+            284.0,
+            512.0
+          ],
+          [
+            18.0,
+            314.0,
+            284.0,
+            512.0
+          ],
+          [
+            18.0,
+            314.0,
+            284.0,
+            512.0
+          ]
+        ],
+        "content_height": 859.0,
+        "interior_strip_edge_guard": 64.0,
+        "fixed_bottom_overlay_bounds": [],
+        "original_scroll_offset": 347.0,
+        "tooltip_preserved_from_matched_viewport": false
+      },
+      "normal_route": false
+    },
+    {
+      "id": "08-expert-service/summary-task",
+      "source": "test/goldens/design_system/summary-task-390.png",
+      "image": "../raw/test/goldens/design_system/summary-task-390.png",
+      "sha256": "beab85b670c5b066e3cb3dc636fd942deaf02ba516192b80225db6a171cbb4fa",
+      "metadata": "raw/test/goldens/design_system/summary-task-390.png.json",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "normal_route": false
+    },
+    {
+      "id": "08-expert-service/summary-uncertain",
+      "source": "test/goldens/design_system/summary-uncertain-390.png",
+      "image": "../raw/test/goldens/design_system/summary-uncertain-390.png",
+      "sha256": "dd917c7ec0c6e11d424e2e32694ca934674746f25761fb470d960dd37ee06d8d",
+      "metadata": "raw/test/goldens/design_system/summary-uncertain-390.png.json",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "normal_route": false
+    }
+  ],
+  "visual_review": "26 full images reviewed, including complete page and modal long images. Only full-plan destination changed after adding existing schedule fixture; changed long image reviewed again. Other 25 full image hashes unchanged.",
+  "actual_route_chain": "More → Me → owned service → booking → consultation preparation/checks → room completion → summary → task progress/retry/skip → Schedule with same skipped task → system Back → summary service information → episode progress",
+  "boundaries": "Actual App router with isolated HTTP/native channels. Existing component fault/empty-state scenarios retained without upgrading mock callbacks into normal-route evidence. No deployment or native video acceptance."
+}

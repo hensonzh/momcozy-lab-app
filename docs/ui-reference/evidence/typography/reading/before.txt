@@ -1,0 +1,56 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/app/reading_typography_test.dart
+00:00 +0: reading leading is scoped to user paragraphs: workbench=false
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: <1.55>
+  Actual: <1.43>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/app/reading_typography_test.dart:16:7)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/app/reading_typography_test.dart line 16
+The test description was:
+  reading leading is scoped to user paragraphs: workbench=false
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +0 -1: reading leading is scoped to user paragraphs: workbench=false [E]
+  Test failed. See exception logs above.
+  The test description was: reading leading is scoped to user paragraphs: workbench=false
+  
+00:00 +0 -1: reading leading is scoped to user paragraphs: workbench=true
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: <1.43>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/app/reading_typography_test.dart:16:7)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/app/reading_typography_test.dart line 16
+The test description was:
+  reading leading is scoped to user paragraphs: workbench=true
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +0 -2: reading leading is scoped to user paragraphs: workbench=true [E]
+  Test failed. See exception logs above.
+  The test description was: reading leading is scoped to user paragraphs: workbench=true
+  
+00:00 +0 -2: Some tests failed.
+
+Failing tests:
+  /Users/lute/project/momcozy-lab/app/test/app/reading_typography_test.dart: reading leading is scoped to user paragraphs: workbench=false
+  /Users/lute/project/momcozy-lab/app/test/app/reading_typography_test.dart: reading leading is scoped to user paragraphs: workbench=true

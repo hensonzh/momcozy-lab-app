@@ -1,0 +1,518 @@
+[
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-delete-cancelled-393.png",
+    "sha256": "12fd9217a3ea8df75b6148541dc2a624d775a223f598f2dac127c5823ca31195",
+    "contact_sheet": "overview-1.png",
+    "position": 1
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-delete-confirm-393.png",
+    "sha256": "282b0aa0ce4ac960ee019633a1997ecc9ddaac671f5623cd1a1b24da66a9b6ef",
+    "contact_sheet": "overview-1.png",
+    "position": 2
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-development-editor-393.png",
+    "sha256": "b7313836dc28135f38513d8db952d88348ef24c3ff532bf6c77d059a673ae9b1",
+    "contact_sheet": "overview-1.png",
+    "position": 3
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-development-saved-393.png",
+    "sha256": "df3b115540945ec01650ccb618ac14702c5ae1d698829f92cb8b3810c7eb6045",
+    "contact_sheet": "overview-1.png",
+    "position": 4
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-development-unsure-393.png",
+    "sha256": "25120dd77fd1f53bf155c0c8dea86e1ef290a688d801f777c8b8e544041c2e61",
+    "contact_sheet": "overview-1.png",
+    "position": 5
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-empty-home-393.png",
+    "sha256": "f7c02c89b1acb7e0cd4ab4adc0593819b05f05ed599398d49ea569c924ea6a82",
+    "contact_sheet": "overview-1.png",
+    "position": 6
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-feeding-empty-393.png",
+    "sha256": "cbbf86f329ba9c1b8cf1d6a4ecf48ddb361a4b3b487b9863da117b7d46b6bea3",
+    "contact_sheet": "overview-1.png",
+    "position": 7
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-feeding-filled-393.png",
+    "sha256": "617b62dcfef846a79d142f98574ae589716704e62fca7564a21763e7f3de11b9",
+    "contact_sheet": "overview-1.png",
+    "position": 8
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-feeding-mode-menu-393.png",
+    "sha256": "a3b38ca963265904be39e734475ef7f460ab94cb016b20e3481d7e0e97140807",
+    "contact_sheet": "overview-1.png",
+    "position": 9
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-feeding-mode-selected-393.png",
+    "sha256": "e3f2895c44fa97cdf184dfdbc2634417887ba7b26875e3165458c5dbc4dfe0b9",
+    "contact_sheet": "overview-1.png",
+    "position": 10
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-feeding-nursing-left-393.png",
+    "sha256": "5506e06a0cd47f5952f6c15fcd4f692cce3541ecdf51208d735c59d5dc9011f7",
+    "contact_sheet": "overview-1.png",
+    "position": 11
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-feeding-save-error-393.png",
+    "sha256": "8db0164e8c130bfc72ce36c203596cb4d632c3544d68b59a4a79cfffbec7319c",
+    "contact_sheet": "overview-1.png",
+    "position": 12
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-feeding-saved-393.png",
+    "sha256": "72304b3ff5c5fb58f4289dba113527a142ccff6a32a62e561f36e4427582fcef",
+    "contact_sheet": "overview-1.png",
+    "position": 13
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-feeding-validation-393.png",
+    "sha256": "9123f80709a56aaf2e741c773cf90f1b7a8228fff0c06d9f63972cb2645e1c4a",
+    "contact_sheet": "overview-1.png",
+    "position": 14
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-first-profile-created-393.png",
+    "sha256": "a6cde496d41bcabbf042362a8d96df87cb5875eb7ce8558fd83cf8b30145d580",
+    "contact_sheet": "overview-1.png",
+    "position": 15
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-first-profile-form-393.png",
+    "sha256": "fe23521ea6a308b689c5a032e1a211a2cccf0d28e4207e78cc0c0e7001247c58",
+    "contact_sheet": "overview-2.png",
+    "position": 1
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-growth-batch-saved-393.png",
+    "sha256": "1320ab9e79c35119ad50e8817156549910b73de7c74519ee0cf01652709b2595",
+    "contact_sheet": "overview-2.png",
+    "position": 2
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-growth-batch-undone-393.png",
+    "sha256": "1f837bd17d42f6241a0e4e085aa964103b379a9ddd5a3bff88afc822c7a51574",
+    "contact_sheet": "overview-2.png",
+    "position": 3
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-growth-curve-head-393.png",
+    "sha256": "98d5d19df92c8d47a3d92ead277e5d3e5cbd0f812838bde6114f2d9da244432e",
+    "contact_sheet": "overview-2.png",
+    "position": 4
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-growth-curve-length-393.png",
+    "sha256": "e8d355060fac47fc975789b06b205a3cc81734d37b22101d150a64a4a47c6143",
+    "contact_sheet": "overview-2.png",
+    "position": 5
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-growth-curve-weight-393.png",
+    "sha256": "0552260cac10c59a93a7bd28ae0013e4a22aa53645c1a20a8cd5f9f12ef1787d",
+    "contact_sheet": "overview-2.png",
+    "position": 6
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-growth-date-calendar-393.png",
+    "sha256": "3706bdac0c882c88ecd31048daac539ec30d1ffbf7e94d3898a21730d6647fa5",
+    "contact_sheet": "overview-2.png",
+    "position": 7
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-growth-date-input-393.png",
+    "sha256": "a757405442c42054694932030a63948cf648177c6d63da5b38394468be76e091",
+    "contact_sheet": "overview-2.png",
+    "position": 8
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-growth-date-invalid-393.png",
+    "sha256": "2da0c6c32d45e029ab3de833b50663e3a940cdf556fc74cc0029970c12aa510b",
+    "contact_sheet": "overview-2.png",
+    "position": 9
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-growth-date-selected-393.png",
+    "sha256": "78e2823163d7b3d58041595202c77970e842ba6287724c6e8af2ffa7753af5cb",
+    "contact_sheet": "overview-2.png",
+    "position": 10
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-growth-empty-393.png",
+    "sha256": "a2adb7f3bdf8acf5afcb8e71112fbbfff6cca7aa74b089f06b4b5c4ac3c85c78",
+    "contact_sheet": "overview-2.png",
+    "position": 11
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-growth-empty-validation-393.png",
+    "sha256": "01931eb9001614a3e54bcf20ad8df64953cefa47b37665d95022217b8d47dee0",
+    "contact_sheet": "overview-2.png",
+    "position": 12
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-growth-feedback-dismissed-393.png",
+    "sha256": "3a531daf662d059480fcd7348600d8ca0d9feac2bb40bd598ec6d3d2742ac047",
+    "contact_sheet": "overview-2.png",
+    "position": 13
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-growth-invalid-value-393.png",
+    "sha256": "028bf5d3dfc2b4cf8bd0f499722379243a78a961febfaa1881b0795d5af3ea0b",
+    "contact_sheet": "overview-2.png",
+    "position": 14
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-growth-profile-entry-393.png",
+    "sha256": "7d4d44a1112093629641bca52e5a8f774edd2dfc87944a2e341b3cf4bf749451",
+    "contact_sheet": "overview-2.png",
+    "position": 15
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-growth-three-values-393.png",
+    "sha256": "50b312e0dae80c3031e5623a17a9934dca961d3e88fbdc53a0536491b275e504",
+    "contact_sheet": "overview-3.png",
+    "position": 1
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-growth-undo-error-393.png",
+    "sha256": "6c28356a0db1d0009c3321e248894f016f01a52a5df92745463df3c4a78c36de",
+    "contact_sheet": "overview-3.png",
+    "position": 2
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-history-all-pages-393.png",
+    "sha256": "8c10de33db307e586d51d65114501e085263c08359cf17982687a9e1fcb4a991",
+    "contact_sheet": "overview-3.png",
+    "position": 3
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-history-delete-error-393.png",
+    "sha256": "ba409aa2bf22939b9062ace8fd13077a45f3a22094cde6dbc6c53facb896fa0b",
+    "contact_sheet": "overview-3.png",
+    "position": 4
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-history-delete-retry-393.png",
+    "sha256": "5886aae97a897cb7cee67e356b8bc7e29256501e158bf601a4757d1a2865f721",
+    "contact_sheet": "overview-3.png",
+    "position": 5
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-history-deleted-393.png",
+    "sha256": "bf75814bfe3b7818356fba4bc9297c7d13358daeec8bcf93c8cd074c98db8383",
+    "contact_sheet": "overview-3.png",
+    "position": 6
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-history-development-empty-393.png",
+    "sha256": "8cfd694f53b5550060a1f05a16dda89b96b1f83c30e3f9e3cb1a8a1e88d9ac9c",
+    "contact_sheet": "overview-3.png",
+    "position": 7
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-history-diaper-empty-393.png",
+    "sha256": "5213dcf350abf6921a65778ed89b17114c8918b6a96c2e15089eb8276b8188b0",
+    "contact_sheet": "overview-3.png",
+    "position": 8
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-history-edit-393.png",
+    "sha256": "f35a82fe1b9099b6f6ff3df4f5129a5755606b2fb5fa00ff0d53339c77c7811f",
+    "contact_sheet": "overview-3.png",
+    "position": 9
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-history-edited-393.png",
+    "sha256": "12fd9217a3ea8df75b6148541dc2a624d775a223f598f2dac127c5823ca31195",
+    "contact_sheet": "overview-3.png",
+    "position": 10
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-history-feeding-393.png",
+    "sha256": "f8912d52dc98f9114bb21c388997fb29c69caa27ec3f6bb8d9673a1f95200879",
+    "contact_sheet": "overview-3.png",
+    "position": 11
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-history-first-page-393.png",
+    "sha256": "6d3ce826c3f7386b387971588815a9fe8cb8ca0d2e3395c4d035bf4e18518db5",
+    "contact_sheet": "overview-3.png",
+    "position": 12
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-history-formula-393.png",
+    "sha256": "7ff660139bbb133142a3a84c13b09de5ba30d0b9c5f71de53bc0c54440157fb2",
+    "contact_sheet": "overview-3.png",
+    "position": 13
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-history-growth-empty-393.png",
+    "sha256": "8b06aa02e9d0dc49da0a64bb9390b48f14c028c38b5275599ea6e1d75c0a4b7a",
+    "contact_sheet": "overview-3.png",
+    "position": 14
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-history-month-picker-393.png",
+    "sha256": "55a88bfaa90f78a4af41de4a363cb49d98afdc70f9b6b55bb3612cd40febeab3",
+    "contact_sheet": "overview-3.png",
+    "position": 15
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-history-more-error-393.png",
+    "sha256": "535fa266792da3522a39f277d64440e30518001ee75878714c3ab10e27d484a4",
+    "contact_sheet": "overview-4.png",
+    "position": 1
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-history-more-loading-393.png",
+    "sha256": "55cec7b30bb7101c58f5cc6d3f3e562cf5f98741655c5fe96b09d1cefd444a82",
+    "contact_sheet": "overview-4.png",
+    "position": 2
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-history-previous-month-393.png",
+    "sha256": "e730754f4b761ed6a64c0113bd126161e1a93bf7f6c5f4cb5fb1bca3c6798ea0",
+    "contact_sheet": "overview-4.png",
+    "position": 3
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-history-privacy-393.png",
+    "sha256": "ddda154bdcc23f533f95878fbb9e6ef68744c29bea7b69f68444deb3ef808e37",
+    "contact_sheet": "overview-4.png",
+    "position": 4
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-history-restore-error-393.png",
+    "sha256": "83969bbde74af44691a168ced979aa601c20e5d67b7fdb627f66d59a8536f20c",
+    "contact_sheet": "overview-4.png",
+    "position": 5
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-history-restore-retry-393.png",
+    "sha256": "7ff660139bbb133142a3a84c13b09de5ba30d0b9c5f71de53bc0c54440157fb2",
+    "contact_sheet": "overview-4.png",
+    "position": 6
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-history-restored-393.png",
+    "sha256": "65ac55fc78b9d135ef530f494f6275ff4d78a61441deb157594b11b6ba623a04",
+    "contact_sheet": "overview-4.png",
+    "position": 7
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-history-sleep-empty-393.png",
+    "sha256": "7f043d7103ea1133cdc201ef04ea54c043b69a6ce1a370edb01551a0e1be7c39",
+    "contact_sheet": "overview-4.png",
+    "position": 8
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-history-source-expanded-393.png",
+    "sha256": "ea5a896f72c2fc5ef3035c070a1485ab380f120971304faaa4faf9e79ba44f69",
+    "contact_sheet": "overview-4.png",
+    "position": 9
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-home-save-undone-393.png",
+    "sha256": "1f837bd17d42f6241a0e4e085aa964103b379a9ddd5a3bff88afc822c7a51574",
+    "contact_sheet": "overview-4.png",
+    "position": 10
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-knowledge-detail-393.png",
+    "sha256": "771cd264e23dc0c7bdd621c324bd41657a3000a6d5f6e9cf665b9ba57d2ec289",
+    "contact_sheet": "overview-4.png",
+    "position": 11
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-no-profile-393.png",
+    "sha256": "582995946e317ec6e521e47ced5d117de114c6295c9727609ceb20ea73de93bc",
+    "contact_sheet": "overview-4.png",
+    "position": 12
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-nursing-saved-393.png",
+    "sha256": "72304b3ff5c5fb58f4289dba113527a142ccff6a32a62e561f36e4427582fcef",
+    "contact_sheet": "overview-4.png",
+    "position": 13
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-privacy-return-history-393.png",
+    "sha256": "7ff660139bbb133142a3a84c13b09de5ba30d0b9c5f71de53bc0c54440157fb2",
+    "contact_sheet": "overview-4.png",
+    "position": 14
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-profile-change-discarded-393.png",
+    "sha256": "35ecd8b5685b694248e6c4036c138437cb566881bf51a5985ea6ae4227656d8c",
+    "contact_sheet": "overview-4.png",
+    "position": 15
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-profile-discard-confirm-393.png",
+    "sha256": "1dda3d54cdc30796cdf205f3fad75bc400d697bfd5e73cb9a6c03924d04af240",
+    "contact_sheet": "overview-5.png",
+    "position": 1
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-profile-draft-preserved-393.png",
+    "sha256": "3cc8cc807b2f397d595d688276c5fea87adb80e381b04af12c0d4703f63e8bc9",
+    "contact_sheet": "overview-5.png",
+    "position": 2
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-profile-existing-393.png",
+    "sha256": "15c4d597b01c8d74541a62628e78ba42d1ce9e50e0d90f8262e11e963ad8d3c4",
+    "contact_sheet": "overview-5.png",
+    "position": 3
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-profile-new-393.png",
+    "sha256": "c0bdae85a7856209c4c3219f50fae953503ef48f1332613cd211ac93e94123ad",
+    "contact_sheet": "overview-5.png",
+    "position": 4
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-profile-new-validation-393.png",
+    "sha256": "5ebca5ed989b05f867ac08e1470792d1339d27dbc4200f1cbcee1f0202b46662",
+    "contact_sheet": "overview-5.png",
+    "position": 5
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-profile-saved-393.png",
+    "sha256": "4eba5f1eb7d81315e1bd3ef552b77569029e1a2b12167d866ceeb97c93ffdf6c",
+    "contact_sheet": "overview-5.png",
+    "position": 6
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-record-discard-393.png",
+    "sha256": "5bfd805d06424252b06993fefb659913db7d252e8fd921d3612980651d96ae07",
+    "contact_sheet": "overview-5.png",
+    "position": 7
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-record-discarded-393.png",
+    "sha256": "fe9d4f4653af2af49a03ffac9383648877bd7c632f00447cb2ef1e5ebc9a0e2d",
+    "contact_sheet": "overview-5.png",
+    "position": 8
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-record-read-error-393.png",
+    "sha256": "57aeec4c0ba4b319b5d26b2b0bd110ac32c67d2ffeb5d46006689f83bb08a5f3",
+    "contact_sheet": "overview-5.png",
+    "position": 9
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-record-read-recovered-393.png",
+    "sha256": "f7c02c89b1acb7e0cd4ab4adc0593819b05f05ed599398d49ea569c924ea6a82",
+    "contact_sheet": "overview-5.png",
+    "position": 10
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-record-saving-393.png",
+    "sha256": "29d4de5baca17182251b4e136477b73af8046f4a3a219bf85c5319362f93f258",
+    "contact_sheet": "overview-5.png",
+    "position": 11
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-records-loaded-393.png",
+    "sha256": "f7c02c89b1acb7e0cd4ab4adc0593819b05f05ed599398d49ea569c924ea6a82",
+    "contact_sheet": "overview-5.png",
+    "position": 12
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-records-loading-393.png",
+    "sha256": "b9835ebb1ed47800df41e380b9d948d716ca7cb4909ec7dfa2ff1ce5391492f0",
+    "contact_sheet": "overview-5.png",
+    "position": 13
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-returned-home-393.png",
+    "sha256": "197d149196f99ea031c3e1d821a3ee2f677b48a55d8ea525a290e4cbdd7bbbe0",
+    "contact_sheet": "overview-5.png",
+    "position": 14
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-sleep-active-editor-393.png",
+    "sha256": "439796fc597be0f63de7f59c17c96a5ecfb12bf2fa873e105279ece3ec56cdc7",
+    "contact_sheet": "overview-5.png",
+    "position": 15
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-sleep-adjust-393.png",
+    "sha256": "ce834158ef5917c6ce4c6b00e2819fc4bbf143273f1f02362ebf734f3544b8a4",
+    "contact_sheet": "overview-6.png",
+    "position": 1
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-sleep-ended-393.png",
+    "sha256": "821b763b8893dd2632753f835b3ffc2b3957af1d2c229f8d9685d07e9356335c",
+    "contact_sheet": "overview-6.png",
+    "position": 2
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-sleep-note-393.png",
+    "sha256": "1bce4cdaab581cf5fda93d7945cb2938f86b02e1727e1dca1378ab572bbc0a15",
+    "contact_sheet": "overview-6.png",
+    "position": 3
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-sleep-start-editor-393.png",
+    "sha256": "fce931c8a72f1a20abba88135fbc5912e001198c5c50721aa4647fd566cd4622",
+    "contact_sheet": "overview-6.png",
+    "position": 4
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-sleep-started-393.png",
+    "sha256": "0d2edbe670723dfd3ec83434c4c2f2093de94149503754e6b5499c5cc27feba6",
+    "contact_sheet": "overview-6.png",
+    "position": 5
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-stool-blood-393.png",
+    "sha256": "7ef948782eeae6cc9b851c1ea1eff905b82b8f741fa43e2e0cc3facebc77db0f",
+    "contact_sheet": "overview-6.png",
+    "position": 6
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-stool-red-393.png",
+    "sha256": "edff5e1a5fecfa74e7f420e28382e78ad4f2cbea868d50805795a3b9f0caa8ed",
+    "contact_sheet": "overview-6.png",
+    "position": 7
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-stool-tab-393.png",
+    "sha256": "d27f81e8fad830f6533d94ac8b7501a97b537246894d199a86f666b99798d068",
+    "contact_sheet": "overview-6.png",
+    "position": 8
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-switched-leo-393.png",
+    "sha256": "e1139f97acdc185692a90af42d31d856968f864ec3cb6d4d8859604db6ba49b5",
+    "contact_sheet": "overview-6.png",
+    "position": 9
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-switcher-393.png",
+    "sha256": "28706b033623d9f65429b73a4bac588dbf70d0b233201509ed99f7bc733099b9",
+    "contact_sheet": "overview-6.png",
+    "position": 10
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/baby-journey-wet-tab-393.png",
+    "sha256": "f8015ef5debed12f88321d79aa49d9a65285549673e04a7663cee8b9856ae533",
+    "contact_sheet": "overview-6.png",
+    "position": 11
+  }
+]

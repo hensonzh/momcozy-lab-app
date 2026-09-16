@@ -1,0 +1,6 @@
+{
+  "lib/modules/consultation/presentation/consultation_preparation.dart": "942b93bbc38b6eb2c43e273fa4a2a0c292d1dde70acd862d39253f15ff383313",
+  "lib/modules/consultation/presentation/room_page.dart": "8162beedf70c32dbdc68d4dd5d929f05f24c8c89c360ad0f256762afeacbf998",
+  "test/modules/consultation/consultation_preparation_test.dart": "eea9234f141621a4f708ac1b860f24bb1e40110a415f7c44ffe04115d407783f",
+  "test/modules/consultation/home_consultation_dialog_test.dart": "43756dc177d0ef7789b3a96897ce22d949684dffa9b510f3948658e6f6d4cf59"
+}

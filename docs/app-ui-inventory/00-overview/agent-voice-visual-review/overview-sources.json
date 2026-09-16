@@ -1,0 +1,182 @@
+[
+  {
+    "state": "agent-voice-journey-active-audio-away",
+    "source": "05-agent/agent-voice-journey-active-audio-away/viewport.png",
+    "sha256": "6ac33e6dd952b54bfe0bbfa4209df0bf816602f324b0120ff7730cb4d19cfda7",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "agent-voice-journey-active-audio-return",
+    "source": "05-agent/agent-voice-journey-active-audio-return/viewport.png",
+    "sha256": "c7eaacff69d9c684abca8cf681445bf910ead1f9b50edb37ec14ea9825531d86",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "agent-voice-journey-completed-text-playing",
+    "source": "05-agent/agent-voice-journey-completed-text-playing/viewport.png",
+    "sha256": "f588eb979d3fcc21a6a9979541b9259e8d12bed6bd50aa0327817ce3b2138c35",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "agent-voice-journey-greeting-failed",
+    "source": "05-agent/agent-voice-journey-greeting-failed/viewport.png",
+    "sha256": "fac1d0522fcce2a1132419112b94b58207135111cb1196cf0ea7b199f3ac1158",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "agent-voice-journey-greeting-finished",
+    "source": "05-agent/agent-voice-journey-greeting-finished/viewport.png",
+    "sha256": "c6ea52c42a7d3b8cc151cb5ae038b22ff3b23712f2d9793bb8239756d72c5bb3",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "agent-voice-journey-greeting-finished-away",
+    "source": "05-agent/agent-voice-journey-greeting-finished-away/viewport.png",
+    "sha256": "6ac33e6dd952b54bfe0bbfa4209df0bf816602f324b0120ff7730cb4d19cfda7",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "agent-voice-journey-greeting-finished-return",
+    "source": "05-agent/agent-voice-journey-greeting-finished-return/viewport.png",
+    "sha256": "c6ea52c42a7d3b8cc151cb5ae038b22ff3b23712f2d9793bb8239756d72c5bb3",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "agent-voice-journey-greeting-playing",
+    "source": "05-agent/agent-voice-journey-greeting-playing/viewport.png",
+    "sha256": "6f2f2a7ea9127bb1cf02bb0e6f2e0ecb60d50309c6fd0aeda05b9fcaa42db13d",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "agent-voice-journey-greeting-replaying",
+    "source": "05-agent/agent-voice-journey-greeting-replaying/viewport.png",
+    "sha256": "6f2f2a7ea9127bb1cf02bb0e6f2e0ecb60d50309c6fd0aeda05b9fcaa42db13d",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "agent-voice-journey-keyboard-dismissed",
+    "source": "05-agent/agent-voice-journey-keyboard-dismissed/viewport.png",
+    "sha256": "8b08c2e4546db197f68927efa460908fe746e43b83cb6022b40faa719e1b0c84",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "agent-voice-journey-keyboard-failed",
+    "source": "05-agent/agent-voice-journey-keyboard-failed/viewport.png",
+    "sha256": "a99dc2f8347a33a802ac1b091960f35273bba20ad75bb56a0bdc46a9ea70b3c7",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "agent-voice-journey-later-text-failed",
+    "source": "05-agent/agent-voice-journey-later-text-failed/viewport.png",
+    "sha256": "7206515fe2c2ead0db9f51122732f0fe8195905eab445156d05b477f2f9ee6f0",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "agent-voice-journey-later-text-full-finished",
+    "source": "05-agent/agent-voice-journey-later-text-full-finished/viewport.png",
+    "sha256": "d092c6e0e0aa272d013e3a4a64a1e9d403e629cecb6f751d4f8c49baf3277dfd",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "agent-voice-journey-later-text-full-replay",
+    "source": "05-agent/agent-voice-journey-later-text-full-replay/viewport.png",
+    "sha256": "29cb8bd8e304d875a8b2e95c4e409f0992af6cd810735b7617e13153067cde56",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "agent-voice-journey-later-text-recovered",
+    "source": "05-agent/agent-voice-journey-later-text-recovered/viewport.png",
+    "sha256": "9341b7514e4a22984338760eb75b9f359c2c38bf504fed9db167b2b0f29a1c1f",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "agent-voice-journey-later-text-terminal-failed",
+    "source": "05-agent/agent-voice-journey-later-text-terminal-failed/viewport.png",
+    "sha256": "23395c94e17b364173f48b836de88fd71bc19437ebd01bf574c8773b1aa6ade6",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "agent-voice-journey-new-greeting-off",
+    "source": "05-agent/agent-voice-journey-new-greeting-off/viewport.png",
+    "sha256": "27028a8488a3d19e323920be48a5f490721a9fa40bb64973c6690319454009f1",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "agent-voice-journey-new-greeting-off-away",
+    "source": "05-agent/agent-voice-journey-new-greeting-off-away/viewport.png",
+    "sha256": "feee4d506ac1bef973428daf2906121e24ef6412509098c203c180d745777dd0",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "agent-voice-journey-new-greeting-off-return",
+    "source": "05-agent/agent-voice-journey-new-greeting-off-return/viewport.png",
+    "sha256": "27028a8488a3d19e323920be48a5f490721a9fa40bb64973c6690319454009f1",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "agent-voice-journey-new-greeting-playing",
+    "source": "05-agent/agent-voice-journey-new-greeting-playing/viewport.png",
+    "sha256": "d8e249243bdb3fb2a93a018808660471d37864308dcee1dfd0375e654b73e236",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "agent-voice-journey-reply-audio-completed",
+    "source": "05-agent/agent-voice-journey-reply-audio-completed/viewport.png",
+    "sha256": "d174148c5bd6f021d6232d48df20dbcf5364228a79770de2b41cf1c4c3abf903",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "agent-voice-journey-reply-ended-failed",
+    "source": "05-agent/agent-voice-journey-reply-ended-failed/viewport.png",
+    "sha256": "c5155e7db4539eaebd67905bceff526718b78bdf4eaaf488ae3b09b5619c12a8",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "agent-voice-journey-reply-off",
+    "source": "05-agent/agent-voice-journey-reply-off/viewport.png",
+    "sha256": "359d00dcb662bfc7244aada089fa07ee99c3e0f4e7215e2ed83404d80b03d167",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "agent-voice-journey-reply-on",
+    "source": "05-agent/agent-voice-journey-reply-on/viewport.png",
+    "sha256": "5c7941a8f4455c8e230074b263e5d8f5a6340eb05c0418645357f916fb08f08b",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "agent-voice-journey-reply-on-away",
+    "source": "05-agent/agent-voice-journey-reply-on-away/viewport.png",
+    "sha256": "6ac33e6dd952b54bfe0bbfa4209df0bf816602f324b0120ff7730cb4d19cfda7",
+    "sheet": "overview-3.jpg"
+  },
+  {
+    "state": "agent-voice-journey-reply-on-return",
+    "source": "05-agent/agent-voice-journey-reply-on-return/viewport.png",
+    "sha256": "5c7941a8f4455c8e230074b263e5d8f5a6340eb05c0418645357f916fb08f08b",
+    "sheet": "overview-3.jpg"
+  },
+  {
+    "state": "agent-voice-journey-reply-replaying",
+    "source": "05-agent/agent-voice-journey-reply-replaying/viewport.png",
+    "sha256": "7fc209c556ad66440eef695cbffb9d023c6bf1d8f696b7765295bf4c8d26169b",
+    "sheet": "overview-3.jpg"
+  },
+  {
+    "state": "agent-voice-journey-reply-stream-failed",
+    "source": "05-agent/agent-voice-journey-reply-stream-failed/viewport.png",
+    "sha256": "a221c01c5f2da640b736b130798331252a1f3780c92b7fb511576f9db54f1b49",
+    "sheet": "overview-3.jpg"
+  },
+  {
+    "state": "agent-voice-journey-reply-stream-playing",
+    "source": "05-agent/agent-voice-journey-reply-stream-playing/viewport.png",
+    "sha256": "0b55352912c825057045fce094dbcff5abc56a24af86ca5cc282119b840258f8",
+    "sheet": "overview-3.jpg"
+  },
+  {
+    "state": "agent-voice-journey-reply-waiting",
+    "source": "05-agent/agent-voice-journey-reply-waiting/viewport.png",
+    "sha256": "aeaf45c8831303427fadcbba68aa0a81f53eb68f6324d99f428ece18be52bb09",
+    "sheet": "overview-3.jpg"
+  }
+]

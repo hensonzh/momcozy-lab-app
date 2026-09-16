@@ -1,0 +1,512 @@
+{
+  "source": "test/goldens/design_system/agent-attachment-pending-image-320-1x.png",
+  "evidence": "current-widget-test-render; golden comparison passed",
+  "test_description": "attachment layout and draft actions 320.0/1.0",
+  "sequence": 1,
+  "sha256": "b0d57e92596911c3731cfc98b7e28089c3c8461ecef001b24e4ed004052c39ed",
+  "width": 320,
+  "height": 568,
+  "captured_at": "2026-09-13T13:37:23.203589Z",
+  "widget_types": [
+    "AbsorbPointer",
+    "Actions",
+    "AgentAttachmentMetadata",
+    "AgentAttachmentTile",
+    "AgentComposerBar",
+    "AgentComposerFileAttachment",
+    "AgentComposerImageAttachment",
+    "Align",
+    "AnimatedBuilder",
+    "AnimatedDefaultTextStyle",
+    "AnimatedOpacity",
+    "AnimatedPhysicalModel",
+    "AnimatedTheme",
+    "AnnotatedRegion<SystemUiOverlayStyle>",
+    "AppBar",
+    "BlockSemantics",
+    "Builder",
+    "Center",
+    "ClipRRect",
+    "ClipRect",
+    "ColoredBox",
+    "Column",
+    "CompositedTransformTarget",
+    "ConstrainedBox",
+    "Container",
+    "CupertinoTheme",
+    "CustomMultiChildLayout",
+    "CustomPaint",
+    "CustomSingleChildLayout",
+    "DecoratedBox",
+    "DefaultSelectionStyle",
+    "DefaultTextEditingShortcuts",
+    "DefaultTextStyle",
+    "Directionality",
+    "DualTransitionBuilder",
+    "EditableText",
+    "ExcludeSemantics",
+    "Expanded",
+    "FadeTransition",
+    "FittedBox",
+    "FlexibleSpaceBarSettings",
+    "Focus",
+    "FocusScope",
+    "FocusTraversalGroup",
+    "FractionalTranslation",
+    "GestureDetector",
+    "HeroControllerScope",
+    "Icon",
+    "IconButton",
+    "IconTheme",
+    "IgnorePointer",
+    "Image",
+    "InheritedCupertinoTheme",
+    "InkWell",
+    "InputDecorator",
+    "KeyedSubtree",
+    "LayoutBuilder",
+    "LayoutId",
+    "ListenableBuilder",
+    "Listener",
+    "Localizations",
+    "Material",
+    "MaterialApp",
+    "MediaQuery",
+    "MenuAnchor",
+    "ModalBarrier",
+    "MomCozyLineIcon",
+    "MouseRegion",
+    "NavigationToolbar",
+    "Navigator",
+    "NotificationListener<LayoutChangedNotification>",
+    "NotificationListener<NavigationNotification>",
+    "NotificationListener<ScrollMetricsNotification>",
+    "NotificationListener<ScrollNotification>",
+    "Offstage",
+    "Overlay",
+    "OverlayPortal",
+    "Padding",
+    "PageStorage",
+    "PhysicalModel",
+    "PhysicalShape",
+    "Positioned",
+    "PrimaryScrollController",
+    "RawGestureDetector",
+    "RawImage",
+    "RawMenuAnchor",
+    "RawTooltip",
+    "RawView",
+    "RepaintBoundary",
+    "RestorationScope",
+    "RichText",
+    "RootRestorationScope",
+    "RotationTransition",
+    "Row",
+    "SafeArea",
+    "Scaffold",
+    "ScaffoldMessenger",
+    "ScaleTransition",
+    "ScrollConfiguration",
+    "ScrollNotificationObserver",
+    "Scrollable",
+    "Semantics",
+    "SharedAppData",
+    "ShortcutRegistrar",
+    "Shortcuts",
+    "SingleChildScrollView",
+    "SizeChangedLayoutNotifier",
+    "SizedBox",
+    "SlideTransition",
+    "Stack",
+    "StatefulBuilder",
+    "StretchEffect",
+    "StretchingOverscrollIndicator",
+    "SvgPicture",
+    "TapRegion",
+    "TapRegionSurface",
+    "Text",
+    "TextField",
+    "TextFieldTapRegion",
+    "TextSelectionGestureDetector",
+    "Theme",
+    "TickerMode",
+    "Title",
+    "Tooltip",
+    "Transform",
+    "UndoHistory<TextEditingValue>",
+    "UnmanagedRestorationScope",
+    "ValueListenableBuilder<bool>",
+    "VectorGraphic",
+    "View",
+    "WidgetsApp",
+    "_ActionsScope",
+    "_AgentDataUrlImage",
+    "_AppBarTitleBox",
+    "_BodyBuilder",
+    "_BorderContainer",
+    "_CompositionCallback",
+    "_Decorator",
+    "_Editable",
+    "_EffectiveTickerMode",
+    "_ExclusiveMouseRegion",
+    "_FadeForwardsPageTransition",
+    "_FloatingActionButtonTransition",
+    "_FocusInheritedScope",
+    "_FocusScopeWithExternalFocusNode",
+    "_GestureSemantics",
+    "_HelperError",
+    "_IconButtonM3",
+    "_InheritedTheme",
+    "_InkFeatures",
+    "_InkResponseStateWidget",
+    "_InputPadding",
+    "_LocalizationsScope",
+    "_MaterialInterior",
+    "_MediaQueryFromView",
+    "_MenuAnchorScope",
+    "_MenuControllerScope",
+    "_ModalBarrierGestureDetector",
+    "_ModalScope<dynamic>",
+    "_ModalScopeStatus",
+    "_OverlayEntryWidget",
+    "_OverlayPortal",
+    "_PageTransitionsThemeTransitions<dynamic>",
+    "_ParentInkResponseProvider",
+    "_PipelineOwnerScope",
+    "_PredictiveBackGestureDetector",
+    "_RawPictureVectorGraphicWidget",
+    "_RawViewInternal",
+    "_RenderTheaterMarker",
+    "_ScaffoldMessengerScope",
+    "_ScaffoldScope",
+    "_ScribbleFocusable",
+    "_ScrollNotificationObserverScope",
+    "_ScrollSemantics",
+    "_ScrollableScope",
+    "_SelectableIconButton",
+    "_ShapeBorderPaint",
+    "_SharedAppModel",
+    "_ShortcutRegistrarScope",
+    "_SingleChildViewport",
+    "_Theater",
+    "_ViewScope"
+  ],
+  "texts": [
+    "Feeding notes and observations.png",
+    "2.0 KB",
+    "Care plan and feeding notes.pdf",
+    "4.0 KB",
+    "和 Cozymate 聊聊...",
+    "Cozymate"
+  ],
+  "scrolls": [
+    {
+      "foreground": true,
+      "axis": "horizontal",
+      "direction": "right",
+      "pixels": 0.0,
+      "min": 0.0,
+      "max": 160.0,
+      "viewport": 288.0
+    },
+    {
+      "foreground": true,
+      "axis": "vertical",
+      "direction": "down",
+      "pixels": 0.0,
+      "min": 0.0,
+      "max": 0.0,
+      "viewport": 26.0
+    }
+  ],
+  "controls": [
+    {
+      "widget": "IconButton",
+      "key": "[<'agent-remove-image-button'>]",
+      "labels": [
+        "移除图片 Feeding notes and observations.png"
+      ],
+      "enabled": true,
+      "bounds": [
+        185.0,
+        436.0,
+        44.0,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "_IconButtonM3",
+      "key": null,
+      "labels": [
+        "移除图片 Feeding notes and observations.png"
+      ],
+      "enabled": true,
+      "bounds": [
+        185.0,
+        436.0,
+        44.0,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [],
+      "enabled": true,
+      "bounds": [
+        185.0,
+        436.0,
+        44.0,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "IconButton",
+      "key": "[<'agent-remove-file-button'>]",
+      "labels": [
+        "移除文件 Care plan and feeding notes.pdf"
+      ],
+      "enabled": true,
+      "bounds": [
+        411.0,
+        436.0,
+        44.0,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "_IconButtonM3",
+      "key": null,
+      "labels": [
+        "移除文件 Care plan and feeding notes.pdf"
+      ],
+      "enabled": true,
+      "bounds": [
+        411.0,
+        436.0,
+        44.0,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [],
+      "enabled": true,
+      "bounds": [
+        411.0,
+        436.0,
+        44.0,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "IconButton",
+      "key": "[<'agent-attachment-button'>]",
+      "labels": [
+        "添加附件"
+      ],
+      "enabled": true,
+      "bounds": [
+        21.0,
+        502.0,
+        44.0,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "_IconButtonM3",
+      "key": null,
+      "labels": [
+        "添加附件"
+      ],
+      "enabled": true,
+      "bounds": [
+        21.0,
+        502.0,
+        44.0,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [],
+      "enabled": true,
+      "bounds": [
+        21.0,
+        502.0,
+        44.0,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "IconButton",
+      "key": "[<'agent-send-button'>]",
+      "labels": [
+        "发送"
+      ],
+      "enabled": true,
+      "bounds": [
+        255.0,
+        502.0,
+        44.0,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "_IconButtonM3",
+      "key": null,
+      "labels": [
+        "发送"
+      ],
+      "enabled": true,
+      "bounds": [
+        255.0,
+        502.0,
+        44.0,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [],
+      "enabled": true,
+      "bounds": [
+        255.0,
+        502.0,
+        44.0,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    }
+  ],
+  "needs_long_capture": false,
+  "interactions_since_previous_capture": [
+    {
+      "action": "tap",
+      "labels_at_start": [
+        "和 Cozymate 聊聊..."
+      ],
+      "from": [
+        160.0,
+        524.0
+      ],
+      "to": [
+        160.0,
+        524.0
+      ]
+    },
+    {
+      "action": "tap",
+      "labels_at_start": [],
+      "from": [
+        43.0,
+        524.0
+      ],
+      "to": [
+        43.0,
+        524.0
+      ]
+    },
+    {
+      "action": "tap",
+      "labels_at_start": [
+        "相机",
+        "拍摄一张照片"
+      ],
+      "from": [
+        122.0,
+        356.0
+      ],
+      "to": [
+        122.0,
+        356.0
+      ]
+    },
+    {
+      "action": "tap",
+      "labels_at_start": [],
+      "from": [
+        43.0,
+        524.0
+      ],
+      "to": [
+        43.0,
+        524.0
+      ]
+    },
+    {
+      "action": "tap",
+      "labels_at_start": [
+        "照片",
+        "JPG、PNG、WebP"
+      ],
+      "from": [
+        122.0,
+        408.0
+      ],
+      "to": [
+        122.0,
+        408.0
+      ]
+    },
+    {
+      "action": "tap",
+      "labels_at_start": [],
+      "from": [
+        43.0,
+        524.0
+      ],
+      "to": [
+        43.0,
+        524.0
+      ]
+    },
+    {
+      "action": "tap",
+      "labels_at_start": [
+        "Feeding notes and observations.png",
+        "2.0 KB",
+        "文件",
+        "PDF · 最大 10 MB"
+      ],
+      "from": [
+        122.0,
+        460.0
+      ],
+      "to": [
+        122.0,
+        460.0
+      ]
+    }
+  ],
+  "call_stack": "#0      _InventoryComparator._record (file:///Users/lute/project/momcozy-lab/app/test/support/ui_inventory_capture.dart:169:32)\n<asynchronous suspension>\n#1      _InventoryComparator.compare (file:///Users/lute/project/momcozy-lab/app/test/support/ui_inventory_capture.dart:96:17)\n<asynchronous suspension>\n#2      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)\n<asynchronous suspension>\n#3      _AsyncCompleter.complete (dart:async/future_impl.dart:96:3)\n<asynchronous suspension>\n#4      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)\n<asynchronous suspension>\n#5      StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)\n<asynchronous suspension>\n#6      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)\n<asynchronous suspension>\n#7      main.<anonymous closure>.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart:22:13)\n<asynchronous suspension>\n#8      verifyAgentAttachments (file:///Users/lute/project/momcozy-lab/app/test/support/agent_attachment_scenarios.dart:133:3)\n<asynchronous suspension>\n#9      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart:17:9)\n<asynchronous suspension>\n#10     testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)\n<asynchronous suspension>\n#11     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)\n<asynchronous suspension>\n#12     StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)\n<asynchronous suspension>\n",
+  "long_capture": {
+    "status": "no-active-vertical-overflow"
+  }
+}

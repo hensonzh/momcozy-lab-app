@@ -1,0 +1,18 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/modules/profile/more_current_inventory_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: inventory current More routes 393/1x
+00:02 +1: inventory current More pending 393/1x
+00:02 +2: inventory current More name-unavailable 393/1x
+00:02 +3: inventory current More email-unavailable 393/1x
+00:02 +4: inventory current More both-unavailable 393/1x
+00:02 +5: inventory current More long 393/1x
+00:03 +6: inventory current More remote signout error 393/1x
+00:03 +7: inventory current More routes 320/2x
+00:04 +8: inventory current More pending 320/2x
+00:04 +9: inventory current More name-unavailable 320/2x
+00:05 +10: inventory current More email-unavailable 320/2x
+00:05 +11: inventory current More both-unavailable 320/2x
+00:05 +12: inventory current More long 320/2x
+00:05 +13: inventory current More remote signout error 320/2x
+00:06 +14: (tearDownAll)
+00:06 +14: All tests passed!

@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/purchase-current-uncertain-catalog-320-2x.png",
+  "previous_source": "test/goldens/ui_inventory/purchase-current-uncertain-home-320-2x.png",
+  "route": "/services",
+  "trigger": "Home expert support → catalog",
+  "root_entry": "Authenticated More → tap Me bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/services/purchase_current_inventory_test.dart"
+}

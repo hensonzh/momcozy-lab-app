@@ -1,0 +1,9 @@
+{
+  "apk_sha256": "8395f439039d8f47aba0b0253942a3b875c1969f9ed9f570650420e558403d51",
+  "permission_before": "android.permission.POST_NOTIFICATIONS: granted=false, flags=[ USER_SENSITIVE_WHEN_GRANTED|USER_SENSITIVE_WHEN_DENIED]",
+  "permission_after": "android.permission.POST_NOTIFICATIONS: granted=false, flags=[ USER_SENSITIVE_WHEN_GRANTED|USER_SENSITIVE_WHEN_DENIED]",
+  "plugin_preferences_existed_before": false,
+  "plugin_preferences_exist_after": false,
+  "mia_visible": true,
+  "method": "install -r; no app data clear; restore only tested permission and plugin requested flag"
+}

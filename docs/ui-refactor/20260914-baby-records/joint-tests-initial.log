@@ -1,0 +1,1254 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart: (setUpAll)
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart: wet keeps its primary action visible at 320.0/1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/baby-wet-320.png": Pixel test failed, 78.78%, 212758px diff
+detected.
+Failure feedback can be found at /Users/lute/project/momcozy-lab/app/test/modules/baby/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart:94:13)
+<asynchronous suspension>
+#7      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#8      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +0 -1: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart: wet keeps its primary action visible at 320.0/1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: wet keeps its primary action visible at 320.0/1.0
+  
+00:00 +0 -1: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart: nursing keeps its primary action visible at 320.0/1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/baby-nursing-320.png": Pixel test failed, 78.78%, 212760px diff
+detected.
+Failure feedback can be found at /Users/lute/project/momcozy-lab/app/test/modules/baby/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart:94:13)
+<asynchronous suspension>
+#7      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#8      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +0 -2: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart: nursing keeps its primary action visible at 320.0/1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: nursing keeps its primary action visible at 320.0/1.0
+  
+00:00 +0 -2: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart: sleep-start keeps its primary action visible at 320.0/1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/baby-sleep-start-320.png": Pixel test failed, 78.78%, 212758px
+diff detected.
+Failure feedback can be found at /Users/lute/project/momcozy-lab/app/test/modules/baby/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart:94:13)
+<asynchronous suspension>
+#7      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#8      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +0 -3: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart: sleep-start keeps its primary action visible at 320.0/1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: sleep-start keeps its primary action visible at 320.0/1.0
+  
+00:00 +0 -3: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart: sleep-active keeps its primary action visible at 320.0/1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: FlutterError:<Golden "../../goldens/design_system/baby-sleep-active-320.png": Pixel test
+failed, 78.78%, 212760px diff detected.
+          Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/modules/baby/failures>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart:120:13)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart line 120
+The test description was:
+  sleep-active keeps its primary action visible at 320.0/1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +0 -4: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart: sleep-active keeps its primary action visible at 320.0/1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: sleep-active keeps its primary action visible at 320.0/1.0
+  
+00:01 +0 -4: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart: wet keeps its primary action visible at 320.0/2.0
+00:01 +1 -4: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart: nursing keeps its primary action visible at 320.0/2.0
+00:01 +2 -4: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart: sleep-start keeps its primary action visible at 320.0/2.0
+00:01 +3 -4: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart: sleep-active keeps its primary action visible at 320.0/2.0
+00:01 +4 -4: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart: wet keeps its primary action visible at 390.0/1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/baby-wet-390.png": Pixel test failed, 79.95%, 263158px diff
+detected.
+Failure feedback can be found at /Users/lute/project/momcozy-lab/app/test/modules/baby/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart:94:13)
+<asynchronous suspension>
+#7      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#8      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +4 -5: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart: wet keeps its primary action visible at 390.0/1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: wet keeps its primary action visible at 390.0/1.0
+  
+00:01 +4 -5: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart: nursing keeps its primary action visible at 390.0/1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/baby-nursing-390.png": Pixel test failed, 79.95%, 263160px diff
+detected.
+Failure feedback can be found at /Users/lute/project/momcozy-lab/app/test/modules/baby/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart:94:13)
+<asynchronous suspension>
+#7      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#8      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +4 -6: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart: nursing keeps its primary action visible at 390.0/1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: nursing keeps its primary action visible at 390.0/1.0
+  
+00:01 +4 -6: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart: sleep-start keeps its primary action visible at 390.0/1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/baby-sleep-start-390.png": Pixel test failed, 79.95%, 263158px
+diff detected.
+Failure feedback can be found at /Users/lute/project/momcozy-lab/app/test/modules/baby/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart:94:13)
+<asynchronous suspension>
+#7      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#8      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +4 -7: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart: sleep-start keeps its primary action visible at 390.0/1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: sleep-start keeps its primary action visible at 390.0/1.0
+  
+00:01 +4 -7: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart: sleep-active keeps its primary action visible at 390.0/1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: FlutterError:<Golden "../../goldens/design_system/baby-sleep-active-390.png": Pixel test
+failed, 79.95%, 263160px diff detected.
+          Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/modules/baby/failures>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart:120:13)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart line 120
+The test description was:
+  sleep-active keeps its primary action visible at 390.0/1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +4 -8: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart: sleep-active keeps its primary action visible at 390.0/1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: sleep-active keeps its primary action visible at 390.0/1.0
+  
+00:01 +4 -8: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart: wet keeps its primary action visible at 390.0/2.0
+00:01 +5 -8: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart: nursing keeps its primary action visible at 390.0/2.0
+00:01 +6 -8: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart: sleep-start keeps its primary action visible at 390.0/2.0
+00:01 +7 -8: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart: sleep-active keeps its primary action visible at 390.0/2.0
+00:01 +8 -8: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart: wet keeps its primary action visible at 430.0/1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/baby-wet-430.png": Pixel test failed, 80.45%, 291958px diff
+detected.
+Failure feedback can be found at /Users/lute/project/momcozy-lab/app/test/modules/baby/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart:94:13)
+<asynchronous suspension>
+#7      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#8      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +8 -9: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart: wet keeps its primary action visible at 430.0/1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: wet keeps its primary action visible at 430.0/1.0
+  
+00:01 +8 -9: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart: nursing keeps its primary action visible at 430.0/1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/baby-nursing-430.png": Pixel test failed, 80.45%, 291957px diff
+detected.
+Failure feedback can be found at /Users/lute/project/momcozy-lab/app/test/modules/baby/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart:94:13)
+<asynchronous suspension>
+#7      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#8      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:02 +8 -10: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart: nursing keeps its primary action visible at 430.0/1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: nursing keeps its primary action visible at 430.0/1.0
+  
+00:02 +8 -10: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart: sleep-start keeps its primary action visible at 430.0/1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/baby-sleep-start-430.png": Pixel test failed, 80.45%, 291958px
+diff detected.
+Failure feedback can be found at /Users/lute/project/momcozy-lab/app/test/modules/baby/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart:94:13)
+<asynchronous suspension>
+#7      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#8      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:02 +8 -11: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart: sleep-start keeps its primary action visible at 430.0/1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: sleep-start keeps its primary action visible at 430.0/1.0
+  
+00:02 +8 -11: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart: sleep-active keeps its primary action visible at 430.0/1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: FlutterError:<Golden "../../goldens/design_system/baby-sleep-active-430.png": Pixel test
+failed, 80.45%, 291960px diff detected.
+          Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/modules/baby/failures>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart:120:13)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart line 120
+The test description was:
+  sleep-active keeps its primary action visible at 430.0/1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:02 +8 -12: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart: sleep-active keeps its primary action visible at 430.0/1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: sleep-active keeps its primary action visible at 430.0/1.0
+  
+00:02 +8 -12: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart: wet keeps its primary action visible at 430.0/2.0
+00:02 +9 -12: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart: nursing keeps its primary action visible at 430.0/2.0
+00:02 +10 -12: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart: sleep-start keeps its primary action visible at 430.0/2.0
+00:02 +11 -12: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart: sleep-active keeps its primary action visible at 430.0/2.0
+00:02 +12 -12: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart: collapsed notes preserve the draft and uncertain save retries once
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/baby-save-uncertain-320.png": Pixel test failed, 74.82%,
+202081px diff detected.
+Failure feedback can be found at /Users/lute/project/momcozy-lab/app/test/modules/baby/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart:172:7)
+<asynchronous suspension>
+#7      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#8      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:02 +12 -13: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart: collapsed notes preserve the draft and uncertain save retries once [E]
+  Test failed. See exception logs above.
+  The test description was: collapsed notes preserve the draft and uncertain save retries once
+  
+00:02 +12 -13: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart: (tearDownAll)
+00:02 +12 -13: loading /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_growth_empty_state_test.dart
+00:02 +12 -13: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_growth_empty_state_test.dart: (setUpAll)
+00:03 +12 -13: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_growth_empty_state_test.dart: missing birth growth profile at 320.0/1.0 is actionable without fabricated reference
+00:03 +13 -13: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_growth_empty_state_test.dart: missing sex growth profile at 320.0/1.0 is actionable without fabricated reference
+00:03 +14 -13: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_growth_empty_state_test.dart: missing both growth profile at 320.0/1.0 is actionable without fabricated reference
+00:04 +15 -13: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_growth_empty_state_test.dart: missing birth growth profile at 320.0/2.0 is actionable without fabricated reference
+00:04 +16 -13: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_growth_empty_state_test.dart: missing sex growth profile at 320.0/2.0 is actionable without fabricated reference
+00:04 +17 -13: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_growth_empty_state_test.dart: missing both growth profile at 320.0/2.0 is actionable without fabricated reference
+00:04 +18 -13: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_growth_empty_state_test.dart: missing birth growth profile at 390.0/1.0 is actionable without fabricated reference
+00:04 +19 -13: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_growth_empty_state_test.dart: missing sex growth profile at 390.0/1.0 is actionable without fabricated reference
+00:04 +20 -13: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_growth_empty_state_test.dart: missing both growth profile at 390.0/1.0 is actionable without fabricated reference
+00:04 +21 -13: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_growth_empty_state_test.dart: missing birth growth profile at 390.0/2.0 is actionable without fabricated reference
+00:04 +22 -13: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_growth_empty_state_test.dart: missing sex growth profile at 390.0/2.0 is actionable without fabricated reference
+00:04 +23 -13: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_growth_empty_state_test.dart: missing both growth profile at 390.0/2.0 is actionable without fabricated reference
+00:04 +24 -13: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_growth_empty_state_test.dart: missing birth growth profile at 430.0/1.0 is actionable without fabricated reference
+00:04 +25 -13: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_growth_empty_state_test.dart: missing sex growth profile at 430.0/1.0 is actionable without fabricated reference
+00:05 +26 -13: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_growth_empty_state_test.dart: missing both growth profile at 430.0/1.0 is actionable without fabricated reference
+00:05 +27 -13: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_growth_empty_state_test.dart: missing birth growth profile at 430.0/2.0 is actionable without fabricated reference
+00:05 +28 -13: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_growth_empty_state_test.dart: missing sex growth profile at 430.0/2.0 is actionable without fabricated reference
+00:05 +29 -13: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_growth_empty_state_test.dart: missing both growth profile at 430.0/2.0 is actionable without fabricated reference
+00:05 +30 -13: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_growth_empty_state_test.dart: (tearDownAll)
+00:05 +30 -13: loading /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_home_controller_test.dart
+00:05 +30 -13: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_home_controller_test.dart: late response from previous baby cannot replace the selected baby or its record state
+00:05 +31 -13: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_home_controller_test.dart: an empty account does not request or invent a demo baby
+00:05 +32 -13: loading /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_knowledge_and_summary_test.dart
+00:05 +32 -13: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_knowledge_and_summary_test.dart: knowledge changes at local eight and ignores another baby and later events
+00:05 +33 -13: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_knowledge_and_summary_test.dart: dated measurements become eligible on the next completed date, without invented timestamps
+00:05 +34 -13: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_knowledge_and_summary_test.dart: daily sleep uses elapsed overlap while intake and nursing keep distinct known quantities
+00:05 +35 -13: loading /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart
+00:06 +35 -13: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: (setUpAll)
+00:06 +35 -13: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: baby home and knowledge scroll with double text at 320.0
+00:06 +36 -13: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: feeding editor remains usable at 320.0 / 1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: FlutterError:<Golden "../../goldens/design_system/baby-feeding-editor-320.png": Pixel test
+failed, 71.10%, 192040px diff detected.
+          Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/modules/baby/failures>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart:196:11)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart line 196
+The test description was:
+  feeding editor remains usable at 320.0 / 1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:07 +36 -14: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: feeding editor remains usable at 320.0 / 1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: feeding editor remains usable at 320.0 / 1.0
+  
+00:07 +36 -14: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: feeding editor remains usable at 320.0 / 2.0
+00:07 +37 -14: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: sleep editor remains usable at 320.0 / 1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: FlutterError:<Golden "../../goldens/design_system/baby-sleep-editor-320.png": Pixel test
+failed, 78.78%, 212758px diff detected.
+          Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/modules/baby/failures>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart:196:11)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart line 196
+The test description was:
+  sleep editor remains usable at 320.0 / 1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:07 +37 -15: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: sleep editor remains usable at 320.0 / 1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: sleep editor remains usable at 320.0 / 1.0
+  
+00:07 +37 -15: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: sleep editor remains usable at 320.0 / 2.0
+00:07 +38 -15: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: diaper editor remains usable at 320.0 / 1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: FlutterError:<Golden "../../goldens/design_system/baby-diaper-editor-320.png": Pixel test
+failed, 78.77%, 212737px diff detected.
+          Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/modules/baby/failures>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart:196:11)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart line 196
+The test description was:
+  diaper editor remains usable at 320.0 / 1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:07 +38 -16: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: diaper editor remains usable at 320.0 / 1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: diaper editor remains usable at 320.0 / 1.0
+  
+00:07 +38 -16: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: diaper editor remains usable at 320.0 / 2.0
+00:07 +39 -16: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: growth editor remains usable at 320.0 / 1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: FlutterError:<Golden "../../goldens/design_system/baby-growth-editor-320.png": Pixel test
+failed, 77.89%, 210364px diff detected.
+          Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/modules/baby/failures>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart:196:11)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart line 196
+The test description was:
+  growth editor remains usable at 320.0 / 1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:07 +39 -17: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: growth editor remains usable at 320.0 / 1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: growth editor remains usable at 320.0 / 1.0
+  
+00:07 +39 -17: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: growth editor remains usable at 320.0 / 2.0
+00:07 +40 -17: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: development editor remains usable at 320.0 / 1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: FlutterError:<Golden "../../goldens/design_system/baby-development-editor-320.png": Pixel
+test failed, 78.78%, 212760px diff detected.
+          Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/modules/baby/failures>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart:196:11)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart line 196
+The test description was:
+  development editor remains usable at 320.0 / 1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:07 +40 -18: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: development editor remains usable at 320.0 / 1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: development editor remains usable at 320.0 / 1.0
+  
+00:07 +40 -18: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: development editor remains usable at 320.0 / 2.0
+00:07 +41 -18: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: baby home and knowledge scroll with double text at 390.0
+00:07 +42 -18: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: feeding editor remains usable at 390.0 / 1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: FlutterError:<Golden "../../goldens/design_system/baby-feeding-editor-390.png": Pixel test
+failed, 72.17%, 237540px diff detected.
+          Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/modules/baby/failures>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart:196:11)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart line 196
+The test description was:
+  feeding editor remains usable at 390.0 / 1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:07 +42 -19: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: feeding editor remains usable at 390.0 / 1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: feeding editor remains usable at 390.0 / 1.0
+  
+00:07 +42 -19: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: feeding editor remains usable at 390.0 / 2.0
+00:08 +43 -19: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: sleep editor remains usable at 390.0 / 1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: FlutterError:<Golden "../../goldens/design_system/baby-sleep-editor-390.png": Pixel test
+failed, 79.95%, 263158px diff detected.
+          Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/modules/baby/failures>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart:196:11)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart line 196
+The test description was:
+  sleep editor remains usable at 390.0 / 1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:08 +43 -20: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: sleep editor remains usable at 390.0 / 1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: sleep editor remains usable at 390.0 / 1.0
+  
+00:08 +43 -20: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: sleep editor remains usable at 390.0 / 2.0
+00:08 +44 -20: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: diaper editor remains usable at 390.0 / 1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: FlutterError:<Golden "../../goldens/design_system/baby-diaper-editor-390.png": Pixel test
+failed, 79.79%, 262651px diff detected.
+          Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/modules/baby/failures>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart:196:11)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart line 196
+The test description was:
+  diaper editor remains usable at 390.0 / 1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:08 +44 -21: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: diaper editor remains usable at 390.0 / 1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: diaper editor remains usable at 390.0 / 1.0
+  
+00:08 +44 -21: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: diaper editor remains usable at 390.0 / 2.0
+00:08 +45 -21: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: growth editor remains usable at 390.0 / 1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: FlutterError:<Golden "../../goldens/design_system/baby-growth-editor-390.png": Pixel test
+failed, 77.06%, 253642px diff detected.
+          Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/modules/baby/failures>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart:196:11)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart line 196
+The test description was:
+  growth editor remains usable at 390.0 / 1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:08 +45 -22: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: growth editor remains usable at 390.0 / 1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: growth editor remains usable at 390.0 / 1.0
+  
+00:08 +45 -22: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: growth editor remains usable at 390.0 / 2.0
+00:08 +46 -22: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: development editor remains usable at 390.0 / 1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: FlutterError:<Golden "../../goldens/design_system/baby-development-editor-390.png": Pixel
+test failed, 79.95%, 263160px diff detected.
+          Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/modules/baby/failures>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart:196:11)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart line 196
+The test description was:
+  development editor remains usable at 390.0 / 1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:08 +46 -23: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: development editor remains usable at 390.0 / 1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: development editor remains usable at 390.0 / 1.0
+  
+00:08 +46 -23: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: development editor remains usable at 390.0 / 2.0
+00:08 +47 -23: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: baby home and knowledge scroll with double text at 430.0
+00:08 +48 -23: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: feeding editor remains usable at 430.0 / 1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: FlutterError:<Golden "../../goldens/design_system/baby-feeding-editor-430.png": Pixel test
+failed, 72.62%, 263535px diff detected.
+          Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/modules/baby/failures>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart:196:11)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart line 196
+The test description was:
+  feeding editor remains usable at 430.0 / 1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:08 +48 -24: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: feeding editor remains usable at 430.0 / 1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: feeding editor remains usable at 430.0 / 1.0
+  
+00:08 +48 -24: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: feeding editor remains usable at 430.0 / 2.0
+00:08 +49 -24: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: sleep editor remains usable at 430.0 / 1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: FlutterError:<Golden "../../goldens/design_system/baby-sleep-editor-430.png": Pixel test
+failed, 80.45%, 291958px diff detected.
+          Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/modules/baby/failures>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart:196:11)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart line 196
+The test description was:
+  sleep editor remains usable at 430.0 / 1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:08 +49 -25: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: sleep editor remains usable at 430.0 / 1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: sleep editor remains usable at 430.0 / 1.0
+  
+00:08 +49 -25: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: sleep editor remains usable at 430.0 / 2.0
+00:08 +50 -25: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: diaper editor remains usable at 430.0 / 1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: FlutterError:<Golden "../../goldens/design_system/baby-diaper-editor-430.png": Pixel test
+failed, 80.31%, 291451px diff detected.
+          Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/modules/baby/failures>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart:196:11)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart line 196
+The test description was:
+  diaper editor remains usable at 430.0 / 1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:09 +50 -26: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: diaper editor remains usable at 430.0 / 1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: diaper editor remains usable at 430.0 / 1.0
+  
+00:09 +50 -26: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: diaper editor remains usable at 430.0 / 2.0
+00:09 +51 -26: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: growth editor remains usable at 430.0 / 1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: FlutterError:<Golden "../../goldens/design_system/baby-growth-editor-430.png": Pixel test
+failed, 77.54%, 281402px diff detected.
+          Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/modules/baby/failures>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart:196:11)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart line 196
+The test description was:
+  growth editor remains usable at 430.0 / 1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:09 +51 -27: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: growth editor remains usable at 430.0 / 1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: growth editor remains usable at 430.0 / 1.0
+  
+00:09 +51 -27: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: growth editor remains usable at 430.0 / 2.0
+00:09 +52 -27: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: development editor remains usable at 430.0 / 1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: FlutterError:<Golden "../../goldens/design_system/baby-development-editor-430.png": Pixel
+test failed, 80.45%, 291960px diff detected.
+          Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/modules/baby/failures>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart:196:11)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart line 196
+The test description was:
+  development editor remains usable at 430.0 / 1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:09 +52 -28: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: development editor remains usable at 430.0 / 1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: development editor remains usable at 430.0 / 1.0
+  
+00:09 +52 -28: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: development editor remains usable at 430.0 / 2.0
+00:09 +53 -28: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: history edits and restores the same baby record at 320.0 / 1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: FlutterError:<Golden "../../goldens/design_system/baby-history-320.png": Pixel test
+failed, 100.00%, 270068px diff detected.
+          Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/modules/baby/failures>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart:286:11)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart line 286
+The test description was:
+  history edits and restores the same baby record at 320.0 / 1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:09 +53 -29: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: history edits and restores the same baby record at 320.0 / 1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: history edits and restores the same baby record at 320.0 / 1.0
+  
+00:09 +53 -29: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: history edits and restores the same baby record at 320.0 / 2.0
+00:09 +54 -29: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: history edits and restores the same baby record at 390.0 / 1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/baby-history-390.png": Pixel test failed, 100.00%, 329146px diff
+detected.
+Failure feedback can be found at /Users/lute/project/momcozy-lab/app/test/modules/baby/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart:227:13)
+<asynchronous suspension>
+#7      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#8      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/baby-history-source-390.png": Pixel test failed, 100.00%,
+329148px diff detected.
+Failure feedback can be found at /Users/lute/project/momcozy-lab/app/test/modules/baby/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart:247:13)
+<asynchronous suspension>
+#7      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#8      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: 'Multiple exceptions (2) were detected during the running of the current test, and at
+least one was unexpected.'
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart:286:11)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart line 286
+The test description was:
+  history edits and restores the same baby record at 390.0 / 1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:10 +54 -30: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: history edits and restores the same baby record at 390.0 / 1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: history edits and restores the same baby record at 390.0 / 1.0
+  
+00:10 +54 -30: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: history edits and restores the same baby record at 390.0 / 2.0
+00:10 +55 -30: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: history edits and restores the same baby record at 430.0 / 1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: FlutterError:<Golden "../../goldens/design_system/baby-history-430.png": Pixel test
+failed, 100.00%, 362905px diff detected.
+          Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/modules/baby/failures>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart:286:11)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart line 286
+The test description was:
+  history edits and restores the same baby record at 430.0 / 1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:10 +55 -31: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: history edits and restores the same baby record at 430.0 / 1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: history edits and restores the same baby record at 430.0 / 1.0
+  
+00:10 +55 -31: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: history edits and restores the same baby record at 430.0 / 2.0
+00:10 +56 -31: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: a record URL cannot load a baby outside the owned profiles
+00:10 +57 -31: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: a failed home request is not presented as no records
+00:10 +58 -31: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: baby overview matches the current product design at 320.0
+00:10 +59 -31: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: baby overview matches the current product design at 390.0
+00:10 +60 -31: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: baby overview matches the current product design at 430.0
+00:10 +61 -31: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: (tearDownAll)
+00:10 +61 -31: loading /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_controller_test.dart
+00:11 +61 -31: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_controller_test.dart: uncertain creation freezes the exact draft and retries with the same key
+00:11 +62 -31: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_controller_test.dart: version conflict keeps the draft until the user reloads the current profile
+00:11 +63 -31: loading /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart
+00:11 +63 -31: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart: (setUpAll)
+00:11 +63 -31: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart: profile dialog scrolls and saves at 320.0 / 1.0 / long=false
+00:11 +64 -31: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart: profile dialog scrolls and saves at 320.0 / 1.0 / long=true
+00:12 +65 -31: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart: profile dialog scrolls and saves at 320.0 / 2.0 / long=false
+00:12 +66 -31: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart: profile dialog scrolls and saves at 320.0 / 2.0 / long=true
+00:12 +67 -31: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart: profile dialog scrolls and saves at 390.0 / 1.0 / long=false
+00:12 +68 -31: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart: profile dialog scrolls and saves at 390.0 / 1.0 / long=true
+00:12 +69 -31: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart: profile dialog scrolls and saves at 390.0 / 2.0 / long=false
+00:12 +70 -31: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart: profile dialog scrolls and saves at 390.0 / 2.0 / long=true
+00:12 +71 -31: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart: profile dialog scrolls and saves at 430.0 / 1.0 / long=false
+00:12 +72 -31: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart: profile dialog scrolls and saves at 430.0 / 1.0 / long=true
+00:12 +73 -31: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart: profile dialog scrolls and saves at 430.0 / 2.0 / long=false
+00:12 +74 -31: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart: profile dialog scrolls and saves at 430.0 / 2.0 / long=true
+00:12 +75 -31: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart: (tearDownAll)
+00:12 +75 -31: loading /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_redesign_test.dart
+00:12 +75 -31: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_redesign_test.dart: (setUpAll)
+00:12 +75 -31: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_redesign_test.dart: profile draft, conflict reload and removed profile 320.0/1.0
+00:13 +76 -31: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_redesign_test.dart: profile choices and uncertain save preserve exact request 320.0/1.0
+00:14 +77 -31: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_redesign_test.dart: profile draft, conflict reload and removed profile 320.0/2.0
+00:14 +78 -31: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_redesign_test.dart: profile choices and uncertain save preserve exact request 320.0/2.0
+00:14 +79 -31: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_redesign_test.dart: profile draft, conflict reload and removed profile 390.0/1.0
+00:14 +80 -31: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_redesign_test.dart: profile choices and uncertain save preserve exact request 390.0/1.0
+00:15 +81 -31: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_redesign_test.dart: profile draft, conflict reload and removed profile 390.0/2.0
+00:15 +82 -31: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_redesign_test.dart: profile choices and uncertain save preserve exact request 390.0/2.0
+00:15 +83 -31: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_redesign_test.dart: profile draft, conflict reload and removed profile 430.0/1.0
+00:15 +84 -31: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_redesign_test.dart: profile choices and uncertain save preserve exact request 430.0/1.0
+00:15 +85 -31: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_redesign_test.dart: profile draft, conflict reload and removed profile 430.0/2.0
+00:16 +86 -31: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_redesign_test.dart: profile choices and uncertain save preserve exact request 430.0/2.0
+00:16 +87 -31: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_redesign_test.dart: (tearDownAll)
+00:16 +87 -31: loading /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profiles_test.dart
+00:16 +87 -31: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profiles_test.dart: canonical profile uses actual date and rejects retired profile facts
+00:16 +88 -31: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profiles_test.dart: create and edit use the canonical endpoint, idempotency and current version
+00:16 +89 -31: loading /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_record_editor_controller_test.dart
+00:16 +89 -31: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_record_editor_controller_test.dart: feeding requires method and breast side, and changing method cannot invent an intake amount
+00:16 +90 -31: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_record_editor_controller_test.dart: uncertain growth batch keeps the same measurements and key until confirmed
+00:16 +91 -31: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_record_editor_controller_test.dart: waking an existing sleep retries its original end time and version
+00:16 +92 -31: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_record_editor_controller_test.dart: observations keep calendar dates and cannot precede birth
+00:16 +93 -31: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_record_editor_controller_test.dart: delete and undo recover uncertain responses using the exact receipt versions
+00:16 +94 -31: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_record_editor_controller_test.dart: local clock rejects the DST gap and distinguishes both repeated times
+00:16 +95 -31: loading /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_records_test.dart
+00:17 +95 -31: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_records_test.dart: five persisted record types retain dates, units and concrete observations
+00:17 +96 -31: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_records_test.dart: unknown intake stays empty and feeding types cannot carry old measurements
+00:17 +97 -31: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_records_test.dart: repository preserves scope, version and idempotency on mutations
+00:17 +98 -31: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_records_test.dart: foreign baby in a response is rejected before reaching page state
+00:17 +99 -31: loading /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart
+00:17 +99 -31: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart: (setUpAll)
+00:17 +99 -31: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart: partial batch undo retries only unconfirmed records and never another baby
+00:17 +100 -31: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart: busy undo is single flight and a baby switch cannot reuse its feedback
+00:17 +101 -31: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart: conflict and an existing sleep update cannot be undone as new records
+00:17 +102 -31: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart: feeding validation, save, uncertain undo and feedback at 320.0/1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: FlutterError:<Golden "../../goldens/design_system/baby-feeding-validation-320.png": Pixel
+test failed, 65.92%, 178050px diff detected.
+          Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/modules/baby/failures>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart:216:11)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart line 216
+The test description was:
+  feeding validation, save, uncertain undo and feedback at 320.0/1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:18 +102 -32: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart: feeding validation, save, uncertain undo and feedback at 320.0/1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: feeding validation, save, uncertain undo and feedback at 320.0/1.0
+  
+00:18 +102 -32: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart: feeding validation, save, uncertain undo and feedback at 320.0/2.0
+00:18 +103 -32: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart: feeding validation, save, uncertain undo and feedback at 390.0/1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: FlutterError:<Golden "../../goldens/design_system/baby-feeding-validation-390.png": Pixel
+test failed, 66.79%, 219840px diff detected.
+          Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/modules/baby/failures>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart:216:11)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart line 216
+The test description was:
+  feeding validation, save, uncertain undo and feedback at 390.0/1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:19 +103 -33: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart: feeding validation, save, uncertain undo and feedback at 390.0/1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: feeding validation, save, uncertain undo and feedback at 390.0/1.0
+  
+00:19 +103 -33: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart: feeding validation, save, uncertain undo and feedback at 390.0/2.0
+00:19 +104 -33: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart: feeding validation, save, uncertain undo and feedback at 430.0/1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: FlutterError:<Golden "../../goldens/design_system/baby-feeding-validation-430.png": Pixel
+test failed, 67.80%, 246046px diff detected.
+          Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/modules/baby/failures>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart:216:11)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart line 216
+The test description was:
+  feeding validation, save, uncertain undo and feedback at 430.0/1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:19 +104 -34: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart: feeding validation, save, uncertain undo and feedback at 430.0/1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: feeding validation, save, uncertain undo and feedback at 430.0/1.0
+  
+00:19 +104 -34: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart: feeding validation, save, uncertain undo and feedback at 430.0/2.0
+00:19 +105 -34: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart: (tearDownAll)
+00:19 +105 -34: loading /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_switcher_design_test.dart
+00:20 +105 -34: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_switcher_design_test.dart: (setUpAll)
+00:20 +105 -34: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_switcher_design_test.dart: switcher changes the selected baby and opens its profile at 320.0/1.0
+00:20 +106 -34: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_switcher_design_test.dart: switcher changes the selected baby and opens its profile at 320.0/2.0
+00:20 +107 -34: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_switcher_design_test.dart: switcher changes the selected baby and opens its profile at 390.0/1.0
+00:21 +108 -34: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_switcher_design_test.dart: switcher changes the selected baby and opens its profile at 390.0/2.0
+00:21 +109 -34: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_switcher_design_test.dart: switcher changes the selected baby and opens its profile at 430.0/1.0
+00:21 +110 -34: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_switcher_design_test.dart: switcher changes the selected baby and opens its profile at 430.0/2.0
+00:21 +111 -34: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_switcher_design_test.dart: (tearDownAll)
+00:21 +111 -34: loading /Users/lute/project/momcozy-lab/app/test/modules/baby/growth_reference_test.dart
+00:21 +111 -34: /Users/lute/project/momcozy-lab/app/test/modules/baby/growth_reference_test.dart: WHO weekly and monthly points use actual calendar months through leap day
+00:21 +112 -34: /Users/lute/project/momcozy-lab/app/test/modules/baby/growth_reference_test.dart: age uses completed calendar months and a missing date stays unknown
+00:21 +113 -34: /Users/lute/project/momcozy-lab/app/test/modules/baby/growth_reference_test.dart: record values outside the default chart range remain visible
+00:21 +114 -34: loading /Users/lute/project/momcozy-lab/app/test/shared/choice_field_test.dart
+00:21 +114 -34: /Users/lute/project/momcozy-lab/app/test/shared/choice_field_test.dart: exclusive selection and toggling work with chips
+00:22 +115 -34: /Users/lute/project/momcozy-lab/app/test/shared/choice_field_test.dart: exclusive selection and toggling work with warmTiles
+00:22 +116 -34: /Users/lute/project/momcozy-lab/app/test/shared/choice_field_test.dart: exclusive selection and toggling work with warmSegmented
+00:22 +117 -34: /Users/lute/project/momcozy-lab/app/test/shared/choice_field_test.dart: exclusive selection and toggling work with momTiles
+00:22 +118 -34: /Users/lute/project/momcozy-lab/app/test/shared/choice_field_test.dart: exclusive selection and toggling work with momSegmented
+00:22 +119 -34: loading /Users/lute/project/momcozy-lab/app/test/shared/date_time_picker_test.dart
+00:23 +119 -34: /Users/lute/project/momcozy-lab/app/test/shared/date_time_picker_test.dart: large 12-hour picker preserves midnight and noon
+00:23 +120 -34: /Users/lute/project/momcozy-lab/app/test/shared/date_time_picker_test.dart: large picker bounds, locale and time validation en_US
+00:23 +121 -34: /Users/lute/project/momcozy-lab/app/test/shared/date_time_picker_test.dart: large picker bounds, locale and time validation zh_CN
+00:23 +122 -34: /Users/lute/project/momcozy-lab/app/test/shared/date_time_picker_test.dart: date and time dialogs settle without elapsed motion
+00:23 +123 -34: loading /Users/lute/project/momcozy-lab/app/test/domain/health_records_test.dart
+00:24 +123 -34: /Users/lute/project/momcozy-lab/app/test/domain/health_records_test.dart: calendar dates reject overflow and count days without DST arithmetic
+00:24 +124 -34: /Users/lute/project/momcozy-lab/app/test/domain/health_records_test.dart: milk summary is owner scoped, counts only measured pump volume
+00:24 +125 -34: /Users/lute/project/momcozy-lab/app/test/domain/health_records_test.dart: unrecorded milk and a measured zero are distinguishable
+00:24 +126 -34: /Users/lute/project/momcozy-lab/app/test/domain/health_records_test.dart: lactation rejects future times and invalid measurements but allows unknown
+00:24 +127 -34: /Users/lute/project/momcozy-lab/app/test/domain/health_records_test.dart: daily diary groups retain partial self reports without fake completion
+00:24 +128 -34: /Users/lute/project/momcozy-lab/app/test/domain/health_records_test.dart: baby records are isolated, nursing duration never increases intake
+00:24 +129 -34: /Users/lute/project/momcozy-lab/app/test/domain/health_records_test.dart: sleep overlaps are counted once and bounded by the selected day
+00:24 +130 -34: loading /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_home_redesign_test.dart
+00:24 +130 -34: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_home_redesign_test.dart: (setUpAll)
+00:24 +130 -34: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_home_redesign_test.dart: home redesign layout and original navigation 390.0/1.0
+00:25 +131 -34: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_home_redesign_test.dart: home redesign empty loading and error recover 390.0/1.0
+00:25 +132 -34: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_home_redesign_test.dart: home redesign saved undo failure and recovery 390.0/1.0
+00:25 +133 -34: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_home_redesign_test.dart: home redesign layout and original navigation 320.0/2.0
+00:26 +134 -34: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_home_redesign_test.dart: home redesign empty loading and error recover 320.0/2.0
+00:26 +135 -34: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_home_redesign_test.dart: home redesign saved undo failure and recovery 320.0/2.0
+00:26 +136 -34: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_home_redesign_test.dart: (tearDownAll)
+00:26 +136 -34: loading /Users/lute/project/momcozy-lab/app/test/shared/knowledge_article_design_test.dart
+00:26 +136 -34: /Users/lute/project/momcozy-lab/app/test/shared/knowledge_article_design_test.dart: (setUpAll)
+00:27 +136 -34: /Users/lute/project/momcozy-lab/app/test/shared/knowledge_article_design_test.dart: knowledge mom at 320.0 / 1.0
+00:27 +137 -34: /Users/lute/project/momcozy-lab/app/test/shared/knowledge_article_design_test.dart: knowledge mom at 320.0 / 2.0
+00:27 +138 -34: /Users/lute/project/momcozy-lab/app/test/shared/knowledge_article_design_test.dart: knowledge mom at 390.0 / 1.0
+00:27 +139 -34: /Users/lute/project/momcozy-lab/app/test/shared/knowledge_article_design_test.dart: knowledge mom at 390.0 / 2.0
+00:27 +140 -34: /Users/lute/project/momcozy-lab/app/test/shared/knowledge_article_design_test.dart: knowledge mom at 430.0 / 1.0
+00:27 +141 -34: /Users/lute/project/momcozy-lab/app/test/shared/knowledge_article_design_test.dart: knowledge mom at 430.0 / 2.0
+00:27 +142 -34: /Users/lute/project/momcozy-lab/app/test/shared/knowledge_article_design_test.dart: knowledge baby at 320.0 / 1.0
+00:27 +143 -34: /Users/lute/project/momcozy-lab/app/test/shared/knowledge_article_design_test.dart: knowledge baby at 320.0 / 2.0
+00:27 +144 -34: /Users/lute/project/momcozy-lab/app/test/shared/knowledge_article_design_test.dart: knowledge baby at 390.0 / 1.0
+00:27 +145 -34: /Users/lute/project/momcozy-lab/app/test/shared/knowledge_article_design_test.dart: knowledge baby at 390.0 / 2.0
+00:27 +146 -34: /Users/lute/project/momcozy-lab/app/test/shared/knowledge_article_design_test.dart: knowledge baby at 430.0 / 1.0
+00:27 +147 -34: /Users/lute/project/momcozy-lab/app/test/shared/knowledge_article_design_test.dart: knowledge baby at 430.0 / 2.0
+00:27 +148 -34: /Users/lute/project/momcozy-lab/app/test/shared/knowledge_article_design_test.dart: (tearDownAll)
+00:27 +148 -34: loading /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_records_redesign_test.dart
+00:28 +148 -34: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_records_redesign_test.dart: (setUpAll)
+00:28 +148 -34: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_records_redesign_test.dart: record redesign keeps paging recovery and filters 390.0/1.0
+00:29 +149 -34: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_records_redesign_test.dart: record redesign keeps paging recovery and filters 320.0/2.0
+00:29 +150 -34: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_records_redesign_test.dart: (tearDownAll)
+00:29 +150 -34: Some tests failed.
+
+Failing tests:
+  /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart: collapsed notes preserve the draft and uncertain save retries once
+  /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart: nursing keeps its primary action visible at 320.0/1.0
+  /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart: nursing keeps its primary action visible at 390.0/1.0
+  /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart: nursing keeps its primary action visible at 430.0/1.0
+  ... and 30 more

@@ -1,0 +1,303 @@
+[
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-attachment-journey-image-panned-320-2x.png",
+    "sha256": "9f2306ffc70dcfbaf34b6bd21335e99cf2557120385158ab5579c9be45887a70",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-1.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-attachment-journey-image-ready-320-2x.long.png",
+    "sha256": "916f2953a3e10ccbb740264e1837106fe98c82e6d77134e6fcc2e3ada0d1dc58",
+    "y_start": 0,
+    "y_end": 950,
+    "sheet": "narrow-1.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-attachment-journey-image-ready-320-2x.long.png",
+    "sha256": "916f2953a3e10ccbb740264e1837106fe98c82e6d77134e6fcc2e3ada0d1dc58",
+    "y_start": 950,
+    "y_end": 1252,
+    "sheet": "narrow-1.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-attachment-journey-image-ready-320-2x.png",
+    "sha256": "fe68d002c6c57726b2feec38882e4cbc977648c9648f8917a7e3d35247020b31",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-1.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-attachment-journey-image-remove-failed-320-2x.long.png",
+    "sha256": "97c468cc08dfc946e54885223df53f49ce8cc0e13ec4df18549aa517bfaa80a5",
+    "y_start": 0,
+    "y_end": 950,
+    "sheet": "narrow-1.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-attachment-journey-image-remove-failed-320-2x.long.png",
+    "sha256": "97c468cc08dfc946e54885223df53f49ce8cc0e13ec4df18549aa517bfaa80a5",
+    "y_start": 950,
+    "y_end": 1252,
+    "sheet": "narrow-1.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-attachment-journey-image-remove-failed-320-2x.png",
+    "sha256": "df4a6217e9c84ecb2af220577085f08aeeea3a2406296bfad6889902514e6308",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-1.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-attachment-journey-image-remove-notice-dismissed-320-2x.long.png",
+    "sha256": "916f2953a3e10ccbb740264e1837106fe98c82e6d77134e6fcc2e3ada0d1dc58",
+    "y_start": 0,
+    "y_end": 950,
+    "sheet": "narrow-1.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-attachment-journey-image-remove-notice-dismissed-320-2x.long.png",
+    "sha256": "916f2953a3e10ccbb740264e1837106fe98c82e6d77134e6fcc2e3ada0d1dc58",
+    "y_start": 950,
+    "y_end": 1252,
+    "sheet": "narrow-2.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-attachment-journey-image-remove-notice-dismissed-320-2x.png",
+    "sha256": "fe68d002c6c57726b2feec38882e4cbc977648c9648f8917a7e3d35247020b31",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-2.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-attachment-journey-image-remove-pending-320-2x.long.png",
+    "sha256": "9cd17472c8a6f75869ee141d59fbc64de4f1dabc40a94d9fe0500dd827a1a9e7",
+    "y_start": 0,
+    "y_end": 950,
+    "sheet": "narrow-2.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-attachment-journey-image-remove-pending-320-2x.long.png",
+    "sha256": "9cd17472c8a6f75869ee141d59fbc64de4f1dabc40a94d9fe0500dd827a1a9e7",
+    "y_start": 950,
+    "y_end": 1252,
+    "sheet": "narrow-2.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-attachment-journey-image-remove-pending-320-2x.png",
+    "sha256": "dba2ad5f184c2ab7479096d57557e1753cb9cecc46e9ce17643335ad3cb78ffe",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-2.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-attachment-journey-image-removed-320-2x.long.png",
+    "sha256": "09a87d9014299a90b61a389dc0c04525375dc6e5eb4bb81263d86c885207b261",
+    "y_start": 0,
+    "y_end": 950,
+    "sheet": "narrow-2.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-attachment-journey-image-removed-320-2x.long.png",
+    "sha256": "09a87d9014299a90b61a389dc0c04525375dc6e5eb4bb81263d86c885207b261",
+    "y_start": 950,
+    "y_end": 1173,
+    "sheet": "narrow-2.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-attachment-journey-image-removed-320-2x.png",
+    "sha256": "43298a73164b319cb1ff30493e077666b0c49540a3342d21dba92b7da9105774",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-2.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-attachment-journey-image-tab-away-320-2x.png",
+    "sha256": "feee4d506ac1bef973428daf2906121e24ef6412509098c203c180d745777dd0",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-3.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-attachment-journey-image-tab-return-320-2x.long.png",
+    "sha256": "916f2953a3e10ccbb740264e1837106fe98c82e6d77134e6fcc2e3ada0d1dc58",
+    "y_start": 0,
+    "y_end": 950,
+    "sheet": "narrow-3.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-attachment-journey-image-tab-return-320-2x.long.png",
+    "sha256": "916f2953a3e10ccbb740264e1837106fe98c82e6d77134e6fcc2e3ada0d1dc58",
+    "y_start": 950,
+    "y_end": 1252,
+    "sheet": "narrow-3.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-attachment-journey-image-tab-return-320-2x.png",
+    "sha256": "fe68d002c6c57726b2feec38882e4cbc977648c9648f8917a7e3d35247020b31",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-3.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-attachment-journey-image-uploading-320-2x.long.png",
+    "sha256": "dea150b6974fc3dd73c7f02a362067d529518893320d953af87ee024a1b6fc6e",
+    "y_start": 0,
+    "y_end": 950,
+    "sheet": "narrow-3.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-attachment-journey-image-uploading-320-2x.long.png",
+    "sha256": "dea150b6974fc3dd73c7f02a362067d529518893320d953af87ee024a1b6fc6e",
+    "y_start": 950,
+    "y_end": 1173,
+    "sheet": "narrow-3.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-attachment-journey-image-uploading-320-2x.png",
+    "sha256": "293867981d53bc03240a5743e0f918c392bcf373a100048eee2888dd1531f7e5",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-3.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-attachment-journey-image-viewer-320-2x.png",
+    "sha256": "4049472bffbadb259c4d9bcaad7725d0e70e6c3eec463944143399f201e5c624",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-3.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-attachment-journey-image-viewer-return-320-2x.long.png",
+    "sha256": "91af7e3d11ccd9dd011035f1895be68b61df9248f1164194fb0f07eda57958ae",
+    "y_start": 0,
+    "y_end": 950,
+    "sheet": "narrow-4.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-attachment-journey-image-viewer-return-320-2x.long.png",
+    "sha256": "91af7e3d11ccd9dd011035f1895be68b61df9248f1164194fb0f07eda57958ae",
+    "y_start": 950,
+    "y_end": 1786,
+    "sheet": "narrow-4.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-attachment-journey-image-viewer-return-320-2x.png",
+    "sha256": "599b82c93831e84d40d8bda4c5a5442b1ba9af5573e8849c4d7d6588ecbc47df",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-4.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-attachment-journey-image-zoomed-320-2x.png",
+    "sha256": "a20a9a4ef4b02dfdf712a96a2ea0aca8fffc127372df7c0933bb643ee0e5be54",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-4.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-attachment-journey-mixed-completed-320-2x.long.png",
+    "sha256": "91af7e3d11ccd9dd011035f1895be68b61df9248f1164194fb0f07eda57958ae",
+    "y_start": 0,
+    "y_end": 950,
+    "sheet": "narrow-4.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-attachment-journey-mixed-completed-320-2x.long.png",
+    "sha256": "91af7e3d11ccd9dd011035f1895be68b61df9248f1164194fb0f07eda57958ae",
+    "y_start": 950,
+    "y_end": 1786,
+    "sheet": "narrow-4.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-attachment-journey-mixed-completed-320-2x.png",
+    "sha256": "974ddf38f6ef82126160ac829eef19a63f963be6552e85c9e0a14af3cd6b118f",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-4.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-attachment-journey-mixed-ready-file-320-2x.long.png",
+    "sha256": "4cb39bb2ff4f4a39e2591a27b65a7d321055e96d7fa760247830d447cef6db13",
+    "y_start": 0,
+    "y_end": 950,
+    "sheet": "narrow-4.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-attachment-journey-mixed-ready-file-320-2x.long.png",
+    "sha256": "4cb39bb2ff4f4a39e2591a27b65a7d321055e96d7fa760247830d447cef6db13",
+    "y_start": 950,
+    "y_end": 1252,
+    "sheet": "narrow-5.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-attachment-journey-mixed-ready-file-320-2x.png",
+    "sha256": "11aacbef7db65b120079b44e49d34dfd144220db173fd44b6e30daa39c9714b4",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-5.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-attachment-journey-mixed-ready-image-320-2x.long.png",
+    "sha256": "86b01189f654a0da46afa49ca3662c4519a3429569bf5376d0b7aac656d4f4b6",
+    "y_start": 0,
+    "y_end": 950,
+    "sheet": "narrow-5.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-attachment-journey-mixed-ready-image-320-2x.long.png",
+    "sha256": "86b01189f654a0da46afa49ca3662c4519a3429569bf5376d0b7aac656d4f4b6",
+    "y_start": 950,
+    "y_end": 1252,
+    "sheet": "narrow-5.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-attachment-journey-mixed-ready-image-320-2x.png",
+    "sha256": "531846ace1de5020a99b98960fbdc60c955ff12ba7fe827fa6f8bb5514e6ae23",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-5.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-attachment-journey-mixed-sent-320-2x.long.png",
+    "sha256": "4f45fe9a56d0c45558f1962373e638870772c68efb0037b562532340fb36e1e4",
+    "y_start": 0,
+    "y_end": 950,
+    "sheet": "narrow-5.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-attachment-journey-mixed-sent-320-2x.long.png",
+    "sha256": "4f45fe9a56d0c45558f1962373e638870772c68efb0037b562532340fb36e1e4",
+    "y_start": 950,
+    "y_end": 1618,
+    "sheet": "narrow-5.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-attachment-journey-mixed-sent-320-2x.png",
+    "sha256": "b53ad6bf368b8f7f32e58c4463dfd79087c3d187a83e035d59a1f27abb37805e",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-5.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-attachment-journey-pdf-metadata-tapped-320-2x.long.png",
+    "sha256": "91af7e3d11ccd9dd011035f1895be68b61df9248f1164194fb0f07eda57958ae",
+    "y_start": 0,
+    "y_end": 950,
+    "sheet": "narrow-6.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-attachment-journey-pdf-metadata-tapped-320-2x.long.png",
+    "sha256": "91af7e3d11ccd9dd011035f1895be68b61df9248f1164194fb0f07eda57958ae",
+    "y_start": 950,
+    "y_end": 1786,
+    "sheet": "narrow-6.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-attachment-journey-pdf-metadata-tapped-320-2x.png",
+    "sha256": "29fcf0e7e7f16e24679ecd51faf5339ef331fe28ec6b356dab3ff09adba3249b",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-6.jpg"
+  }
+]

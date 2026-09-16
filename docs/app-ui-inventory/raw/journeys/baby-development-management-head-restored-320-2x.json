@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/baby-development-management-head-restored-320-2x.png",
+  "previous_source": "test/goldens/ui_inventory/baby-development-management-head-deleted-320-2x.png",
+  "route": "/babies/inventory-baby/records",
+  "trigger": "Undo delete → same head record restored with version 3",
+  "root_entry": "Authenticated More → tap Baby bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/baby/baby_development_management_inventory_test.dart"
+}

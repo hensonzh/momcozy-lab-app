@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/mom-journey-milk-history-restored-393.png",
+  "previous_source": "test/goldens/ui_inventory/mom-journey-milk-restore-error-393.png",
+  "route": "/me/lactation",
+  "trigger": "Retry undo → record restored",
+  "root_entry": "Authenticated More → tap Me bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/mom/mom_inventory_journey_test.dart"
+}

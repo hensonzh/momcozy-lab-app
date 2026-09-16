@@ -1,0 +1,49 @@
+.modal.milk-modal{position:relative;isolation:isolate;display:block;width:min(100%,440px);height:auto;max-height:calc(100dvh - 24px);padding:0;overflow:auto;border-radius:24px;background:#f8f3ed;color:#3d3028;scrollbar-width:thin;scrollbar-color:#bca594 transparent}
+.milk-modal .modal-header{position:absolute;z-index:2;top:0;left:0;right:0;margin:0;padding:22px 22px 12px;background:linear-gradient(#faf5edd9,transparent);border:0}
+.milk-modal .modal-header h3{font-size:20px;color:#392b24}
+.milk-modal .modal-header button{color:#4e3b30}
+.milk-hero{height:218px;background:linear-gradient(0deg,#3b2c23 0%,transparent 40%),url('../assets/me_baby_overview/milk-hero.png') center 48%/cover no-repeat}
+.modal.milk-modal .mom-status-editor{display:block;max-height:none;height:auto;min-height:0;padding:0;gap:0;overflow:visible}
+.modal.milk-modal .diary-panel,.modal.milk-modal .lactation-tab-content{display:block;min-height:0;max-height:none;height:auto;padding:0;gap:0;overflow:visible}
+.milk-trend{padding:18px 20px 16px;background:#3b2c23;color:#fff8f1}
+.milk-trend-heading{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.milk-trend-heading h4{display:flex;align-items:center;gap:7px;margin:0;font-size:17px;font-weight:500}
+.milk-trend-heading svg{width:24px;height:27px}
+.milk-range{display:flex;border:1px solid #9d8877;border-radius:8px;overflow:hidden}
+.milk-range button{padding:7px 13px;background:none;border:0;color:#c3b5a9;font:inherit;font-size:12px;cursor:pointer}
+.milk-range button+button{border-left:1px solid #9d8877}
+.milk-range button[aria-pressed=true]{color:#fff7ee;background:#fff4e512}
+.milk-total{display:flex;align-items:baseline;gap:7px;margin-top:18px}
+.milk-total strong{font-size:54px;line-height:1.1;letter-spacing:-2px;font-weight:400;font-variant-numeric:tabular-nums}
+.milk-total>span{color:#d1c1b3;font-size:17px}
+.milk-total-label{margin:6px 0 0;color:#cfc0b4;font-size:13px}
+.milk-line-chart{display:block;width:100%;height:auto;overflow:visible}
+.milk-chart-note{margin:0;color:#cdbbae;font-size:10px;line-height:1.7}
+.milk-modal .lactation-day-summary{display:flex;flex-direction:column-reverse;gap:20px;border:0;border-radius:0;padding:18px 18px 8px;background:transparent;margin:0}
+.milk-modal .lactation-summary-grid{gap:8px;border:0;padding:0;grid-template-columns:1fr 1fr}
+.milk-modal .lactation-summary-grid>div{padding:14px 12px;border:1px solid #e4d6c8;border-radius:13px;min-width:0;gap:6px;background:#fffaf64d}
+.milk-modal .lactation-summary-grid>div+div{border-left:1px solid #e4d6c8}
+.milk-modal .lactation-summary-grid span{color:#897565;font-size:12px}
+.milk-modal .lactation-summary-grid strong{font-size:15px;font-weight:500;color:#453328;white-space:normal}
+.milk-modal .lactation-summary-heading{padding:0;border:0}
+.milk-modal .lactation-summary-heading>div>strong{font-size:0}
+.milk-modal .lactation-summary-heading>div>strong:after{content:'今日记录';font-size:16px;font-weight:600}
+.milk-modal .lactation-summary-heading>div>span{display:none}
+.modal.milk-modal .lactation-summary-heading button{border:1px solid #9d8471;background:transparent;color:#614735;border-radius:8px;box-shadow:none;font-size:12px;min-height:34px}
+.milk-modal .lactation-timeline{padding:0 18px 20px;gap:0}
+.milk-modal .lactation-record-row{grid-template-columns:35px 30px minmax(0,1fr) auto;gap:8px;padding:15px 0;border-color:#e3d6ca}
+.milk-modal .lactation-record-row time{font-size:10px;color:#6c5747}
+.milk-modal .lactation-record-icon{width:29px;height:32px;color:#9b775b;background:#ede3d8;border-radius:10px}
+.milk-modal .lactation-record-icon.nurse{color:#75634f;background:#e9e4dc}
+.milk-modal .lactation-record-copy strong{font-size:12px;color:#49392f}
+.milk-modal .lactation-record-copy span{font-size:10px;color:#8b7969}
+.milk-modal .lactation-record-actions{gap:10px}
+.milk-modal .lactation-record-actions button{font-size:10px;color:#826f5e;padding:8px 0}
+.milk-modal .lactation-record-actions button.danger{color:#94645a}
+.milk-modal .lactation-feedback,.milk-modal .lactation-empty{margin:10px 18px}
+.milk-modal.milk-is-editing .milk-hero{display:none}
+.milk-modal.milk-is-editing .milk-trend{display:none}
+.milk-modal.milk-is-editing .modal-header{position:sticky;background:#f8f3ed;padding-bottom:16px}
+.modal.milk-modal.milk-is-editing .mom-status-editor{padding:8px 20px 24px}
+.milk-modal button:focus-visible{outline:2px solid #b6855f;outline-offset:3px}
+@media(max-width:359px){.modal.milk-modal{border-radius:18px}.milk-modal .modal-header{padding:18px}.milk-hero{height:190px}.milk-trend{padding:16px}.milk-modal .lactation-day-summary{padding:16px 12px 8px}.milk-modal .lactation-timeline{padding:0 12px 18px}.milk-modal .lactation-record-row{gap:5px;grid-template-columns:32px 25px minmax(0,1fr) auto}.milk-modal .lactation-record-icon{width:25px}.milk-modal .lactation-record-actions{gap:8px}.milk-modal .lactation-summary-grid>div{padding:12px 9px}.milk-modal .lactation-summary-grid strong{font-size:13px}}

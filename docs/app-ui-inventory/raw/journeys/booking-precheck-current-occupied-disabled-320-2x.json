@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/booking-precheck-current-occupied-disabled-320-2x.png",
+  "previous_source": "test/goldens/ui_inventory/booking-precheck-current-availability-restored-320-2x.png",
+  "route": "/services/episodes/service-episode/booking",
+  "trigger": "Tap occupied time → no hold request and unchanged picker",
+  "root_entry": "Authenticated More → tap Me bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/services/booking_precheck_current_inventory_test.dart"
+}

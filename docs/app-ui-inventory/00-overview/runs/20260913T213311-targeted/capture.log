@@ -1,0 +1,35 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_inventory_journey_test.dart
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_inventory_journey_test.dart: (setUpAll)
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_entry_inventory_journey_test.dart: (setUpAll)
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: inventory schedule calendar create edit delete
+00:01 +1: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: inventory schedule calendar create edit delete
+00:01 +2: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: inventory schedule calendar create edit delete
+00:01 +3: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: inventory schedule calendar create edit delete
+00:01 +4: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_entry_inventory_journey_test.dart: inventory artifact external link failure and retry 393/1
+00:02 +5: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_inventory_journey_test.dart: inventory attachment mixed send and image viewer 393.0
+00:02 +6: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_inventory_journey_test.dart: inventory attachment mixed send and image viewer 393.0
+00:02 +7: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_inventory_journey_test.dart: inventory attachment mixed send and image viewer 393.0
+00:02 +8: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_inventory_journey_test.dart: inventory attachment mixed send and image viewer 393.0
+00:02 +9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_entry_inventory_journey_test.dart: inventory artifact motion dead end posture_screen 320/2
+00:02 +10: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_entry_inventory_journey_test.dart: inventory artifact motion dead end posture_screen 320/2
+00:03 +11: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_inventory_journey_test.dart: inventory attachment upload removal and tab retention 320.0
+00:03 +12: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_inventory_journey_test.dart: inventory attachment upload removal and tab retention 320.0
+00:04 +13: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_entry_inventory_journey_test.dart: inventory artifact external link failure and retry 320/2
+00:04 +14: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_entry_inventory_journey_test.dart: inventory artifact external link failure and retry 320/2
+00:04 +15: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_inventory_journey_test.dart: inventory attachment mixed send and image viewer 320.0
+00:04 +16: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_inventory_journey_test.dart: inventory attachment mixed send and image viewer 320.0
+00:05 +17: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_inventory_journey_test.dart: inventory attachment mixed send and image viewer 320.0
+00:05 +18: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_inventory_journey_test.dart: inventory attachment mixed send and image viewer 320.0
+00:05 +19: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: inventory schedule calendar year and tooltips
+00:05 +20: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_inventory_journey_test.dart: inventory attachment picker cancellation and failure
+00:06 +21: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_inventory_journey_test.dart: inventory attachment picker cancellation and failure
+00:06 +22: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: inventory schedule confirmed appointment entry and return
+00:06 +23: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_inventory_journey_test.dart: inventory attachment PDF validation upload retry and file only send
+00:06 +24: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: inventory schedule first page limit has no continuation control
+00:07 +25: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_inventory_journey_test.dart: inventory attachment new session cleanup retry
+00:07 +26: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: inventory schedule appointment held entry
+00:07 +27: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_inventory_journey_test.dart: inventory attachment image upload failure and preview retry
+00:07 +28: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_inventory_journey_test.dart: inventory attachment image upload failure and preview retry
+00:07 +29: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_inventory_journey_test.dart: inventory attachment image upload failure and preview retry
+00:07 +30: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_inventory_journey_test.dart: (tearDownAll)
+00:07 +30: All tests passed!

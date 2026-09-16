@@ -1,0 +1,218 @@
+[
+  {
+    "tag": "DIV",
+    "text": "今天的记录这是一段用于核对排版的文字。重点内容与普通文字使用一致的阅读行高，换行后仍然清晰。查看已经保存的记录按自己的节奏继续查看排版说明最后一段说明：链接、列表和段落保留各自的作用，正文不因格式标记而变得拥挤。",
+    "rect": {
+      "x": 83,
+      "y": 117,
+      "width": 274,
+      "height": 315.015625,
+      "top": 117,
+      "right": 357,
+      "bottom": 432.015625,
+      "left": 83
+    },
+    "style": {
+      "color": "rgb(53, 45, 64)",
+      "fontFamily": "-apple-system, \"system-ui\", \"Segoe UI\", \"Microsoft YaHei\", \"PingFang SC\", \"Noto Sans CJK SC\", sans-serif",
+      "fontSize": "16px",
+      "lineHeight": "26.4px",
+      "fontWeight": "400",
+      "margin": "0px",
+      "padding": "0px",
+      "textDecoration": "none"
+    }
+  },
+  {
+    "tag": "H3",
+    "text": "今天的记录",
+    "rect": {
+      "x": 83,
+      "y": 117,
+      "width": 274,
+      "height": 25.5,
+      "top": 117,
+      "right": 357,
+      "bottom": 142.5,
+      "left": 83
+    },
+    "style": {
+      "color": "rgb(53, 45, 64)",
+      "fontFamily": "Manrope, \"DM Sans\", sans-serif",
+      "fontSize": "17px",
+      "lineHeight": "25.5px",
+      "fontWeight": "700",
+      "margin": "0px 0px 7px",
+      "padding": "0px",
+      "textDecoration": "none"
+    }
+  },
+  {
+    "tag": "P",
+    "text": "这是一段用于核对排版的文字。重点内容与普通文字使用一致的阅读行高，换行后仍然清晰。",
+    "rect": {
+      "x": 83,
+      "y": 149.5,
+      "width": 274,
+      "height": 79.171875,
+      "top": 149.5,
+      "right": 357,
+      "bottom": 228.671875,
+      "left": 83
+    },
+    "style": {
+      "color": "rgb(53, 45, 64)",
+      "fontFamily": "-apple-system, \"system-ui\", \"Segoe UI\", \"Microsoft YaHei\", \"PingFang SC\", \"Noto Sans CJK SC\", sans-serif",
+      "fontSize": "16px",
+      "lineHeight": "26.4px",
+      "fontWeight": "400",
+      "margin": "0px 0px 14px",
+      "padding": "0px",
+      "textDecoration": "none"
+    }
+  },
+  {
+    "tag": "STRONG",
+    "text": "重点内容",
+    "rect": {
+      "x": 83,
+      "y": 151.5,
+      "width": 272,
+      "height": 48.390625,
+      "top": 151.5,
+      "right": 355,
+      "bottom": 199.890625,
+      "left": 83
+    },
+    "style": {
+      "color": "rgb(53, 45, 64)",
+      "fontFamily": "Manrope, \"DM Sans\", sans-serif",
+      "fontSize": "16px",
+      "lineHeight": "26.4px",
+      "fontWeight": "700",
+      "margin": "0px",
+      "padding": "0px",
+      "textDecoration": "none"
+    }
+  },
+  {
+    "tag": "LI",
+    "text": "查看已经保存的记录",
+    "rect": {
+      "x": 105,
+      "y": 242.671875,
+      "width": 252,
+      "height": 26.390625,
+      "top": 242.671875,
+      "right": 357,
+      "bottom": 269.0625,
+      "left": 105
+    },
+    "style": {
+      "color": "rgb(53, 45, 64)",
+      "fontFamily": "-apple-system, \"system-ui\", \"Segoe UI\", \"Microsoft YaHei\", \"PingFang SC\", \"Noto Sans CJK SC\", sans-serif",
+      "fontSize": "16px",
+      "lineHeight": "26.4px",
+      "fontWeight": "400",
+      "margin": "0px",
+      "padding": "0px",
+      "textDecoration": "none"
+    }
+  },
+  {
+    "tag": "LI",
+    "text": "按自己的节奏继续",
+    "rect": {
+      "x": 105,
+      "y": 274.0625,
+      "width": 252,
+      "height": 26.390625,
+      "top": 274.0625,
+      "right": 357,
+      "bottom": 300.453125,
+      "left": 105
+    },
+    "style": {
+      "color": "rgb(53, 45, 64)",
+      "fontFamily": "-apple-system, \"system-ui\", \"Segoe UI\", \"Microsoft YaHei\", \"PingFang SC\", \"Noto Sans CJK SC\", sans-serif",
+      "fontSize": "16px",
+      "lineHeight": "26.4px",
+      "fontWeight": "400",
+      "margin": "5px 0px 0px",
+      "padding": "0px",
+      "textDecoration": "none"
+    }
+  },
+  {
+    "tag": "P",
+    "text": "查看排版说明",
+    "rect": {
+      "x": 83,
+      "y": 312.453125,
+      "width": 274,
+      "height": 26.390625,
+      "top": 312.453125,
+      "right": 357,
+      "bottom": 338.84375,
+      "left": 83
+    },
+    "style": {
+      "color": "rgb(53, 45, 64)",
+      "fontFamily": "-apple-system, \"system-ui\", \"Segoe UI\", \"Microsoft YaHei\", \"PingFang SC\", \"Noto Sans CJK SC\", sans-serif",
+      "fontSize": "16px",
+      "lineHeight": "26.4px",
+      "fontWeight": "400",
+      "margin": "0px 0px 14px",
+      "padding": "0px",
+      "textDecoration": "none"
+    }
+  },
+  {
+    "tag": "A",
+    "text": "查看排版说明",
+    "rect": {
+      "x": 83,
+      "y": 316.453125,
+      "width": 96,
+      "height": 18,
+      "top": 316.453125,
+      "right": 179,
+      "bottom": 334.453125,
+      "left": 83
+    },
+    "style": {
+      "color": "rgb(121, 67, 181)",
+      "fontFamily": "-apple-system, \"system-ui\", \"Segoe UI\", \"Microsoft YaHei\", \"PingFang SC\", \"Noto Sans CJK SC\", sans-serif",
+      "fontSize": "16px",
+      "lineHeight": "26.4px",
+      "fontWeight": "400",
+      "margin": "0px",
+      "padding": "0px",
+      "textDecoration": "underline color(srgb 0.580392 0.392157 0.8 / 0.42)"
+    }
+  },
+  {
+    "tag": "P",
+    "text": "最后一段说明：链接、列表和段落保留各自的作用，正文不因格式标记而变得拥挤。",
+    "rect": {
+      "x": 83,
+      "y": 352.84375,
+      "width": 274,
+      "height": 79.171875,
+      "top": 352.84375,
+      "right": 357,
+      "bottom": 432.015625,
+      "left": 83
+    },
+    "style": {
+      "color": "rgb(53, 45, 64)",
+      "fontFamily": "-apple-system, \"system-ui\", \"Segoe UI\", \"Microsoft YaHei\", \"PingFang SC\", \"Noto Sans CJK SC\", sans-serif",
+      "fontSize": "16px",
+      "lineHeight": "26.4px",
+      "fontWeight": "400",
+      "margin": "0px",
+      "padding": "0px",
+      "textDecoration": "none"
+    }
+  }
+]

@@ -1,0 +1,5 @@
+Analyzing app...                                                
+
+   info • Use the null-aware marker '?' rather than a null check via an 'if'. Try using '?' • test/modules/services/service_package_redesign_test.dart:23:16 • use_null_aware_elements
+
+1 issue found. (ran in 4.2s)

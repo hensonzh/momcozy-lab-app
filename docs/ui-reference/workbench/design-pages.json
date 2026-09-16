@@ -1,0 +1,250 @@
+[
+  {
+    "component": "assignedProviderName",
+    "line": 34
+  },
+  {
+    "component": "CozymateSource",
+    "line": 42
+  },
+  {
+    "component": "providerShortName",
+    "line": 46
+  },
+  {
+    "component": "useWorkbenchState",
+    "line": 50
+  },
+  {
+    "component": "primaryConsultationPrepProfile",
+    "line": 277
+  },
+  {
+    "component": "primaryCaseIntelligenceProfile",
+    "line": 287
+  },
+  {
+    "component": "riskTone",
+    "line": 327
+  },
+  {
+    "component": "riskLabel",
+    "line": 333
+  },
+  {
+    "component": "getCaseStage",
+    "line": 337
+  },
+  {
+    "component": "getCaseQueue",
+    "line": 375
+  },
+  {
+    "component": "getProviderServicePackages",
+    "line": 444
+  },
+  {
+    "component": "getWorkbenchNotifications",
+    "line": 492
+  },
+  {
+    "component": "dateKey",
+    "line": 498
+  },
+  {
+    "component": "appointmentDateKey",
+    "line": 505
+  },
+  {
+    "component": "formatDayLabel",
+    "line": 516
+  },
+  {
+    "component": "parseLocalDate",
+    "line": 522
+  },
+  {
+    "component": "startOfWeek",
+    "line": 526
+  },
+  {
+    "component": "addDays",
+    "line": 534
+  },
+  {
+    "component": "addMonths",
+    "line": 540
+  },
+  {
+    "component": "formatCalendarDate",
+    "line": 550
+  },
+  {
+    "component": "formatCalendarRange",
+    "line": 554
+  },
+  {
+    "component": "formatCalendarWeekday",
+    "line": 561
+  },
+  {
+    "component": "formatMonthHeading",
+    "line": 565
+  },
+  {
+    "component": "calendarMonthDays",
+    "line": 569
+  },
+  {
+    "component": "minutesSinceMidnight",
+    "line": 575
+  },
+  {
+    "component": "appointmentStatus",
+    "line": 580
+  },
+  {
+    "component": "workbenchSection",
+    "line": 592
+  },
+  {
+    "component": "goToCaseTab",
+    "line": 602
+  },
+  {
+    "component": "WorkbenchAuthPage",
+    "line": 610
+  },
+  {
+    "component": "WorkbenchShell",
+    "line": 629
+  },
+  {
+    "component": "TodayAppointmentsPage",
+    "line": 666
+  },
+  {
+    "component": "LiveConsultationAssistDemo",
+    "line": 729
+  },
+  {
+    "component": "WorkbenchConsultationRoomPage",
+    "line": 754
+  },
+  {
+    "component": "getDailyFollowupStatus",
+    "line": 941
+  },
+  {
+    "component": "dailyFollowupDate",
+    "line": 947
+  },
+  {
+    "component": "DailyFollowupsPage",
+    "line": 953
+  },
+  {
+    "component": "ServerClientsPage",
+    "line": 1005
+  },
+  {
+    "component": "ServerClientPage",
+    "line": 1023
+  },
+  {
+    "component": "CasesPage",
+    "line": 1043
+  },
+  {
+    "component": "DemoCasesPage",
+    "line": 1048
+  },
+  {
+    "component": "ClientProfileCard",
+    "line": 1087
+  },
+  {
+    "component": "ClientDetailProfile",
+    "line": 1096
+  },
+  {
+    "component": "ConsultationPrepCards",
+    "line": 1116
+  },
+  {
+    "component": "CaseIntelligenceModules",
+    "line": 1123
+  },
+  {
+    "component": "ServiceCycleOverview",
+    "line": 1174
+  },
+  {
+    "component": "DailyFollowupPanel",
+    "line": 1214
+  },
+  {
+    "component": "OnlineConsultationPanel",
+    "line": 1264
+  },
+  {
+    "component": "DemoCaseOverview",
+    "line": 1285
+  },
+  {
+    "component": "AppointmentPrepOverview",
+    "line": 1302
+  },
+  {
+    "component": "CasePage",
+    "line": 1324
+  },
+  {
+    "component": "NotePanel",
+    "line": 1460
+  },
+  {
+    "component": "CarePlanPanel",
+    "line": 1466
+  },
+  {
+    "component": "blankDocumentationNote",
+    "line": 1485
+  },
+  {
+    "component": "blankPlanTask",
+    "line": 1498
+  },
+  {
+    "component": "blankDocumentationPlan",
+    "line": 1510
+  },
+  {
+    "component": "AppointmentDocumentationPage",
+    "line": 1522
+  },
+  {
+    "component": "FollowupPanel",
+    "line": 1641
+  },
+  {
+    "component": "PreConsultPage",
+    "line": 1647
+  },
+  {
+    "component": "SchedulePage",
+    "line": 1654
+  },
+  {
+    "component": "NotificationsPage",
+    "line": 1758
+  },
+  {
+    "component": "SettingsPage",
+    "line": 1769
+  },
+  {
+    "component": "Workbench",
+    "line": 1776
+  }
+]

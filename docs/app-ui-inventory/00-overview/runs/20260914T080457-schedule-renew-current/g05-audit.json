@@ -1,0 +1,1145 @@
+{
+  "gap": "G05",
+  "completion": "CLOSED_FOR_RECORDED_SOURCE",
+  "scope": "Current existing design-state images and measured long image archive, not revalidation of every historical route or shared state",
+  "images": [
+    {
+      "id": "06-schedule/schedule",
+      "image": "../raw/test/goldens/product_baseline/schedule-390.png",
+      "sha256": "d39348368a2cc967bb158cbe238140db1436ca7d0b26aa18abe8ef097153b23f",
+      "metadata": "raw/test/goldens/product_baseline/schedule-390.png.json",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "test": "schedule month and selected day agenda at 390.0 / 1.0",
+      "normal_route": false
+    },
+    {
+      "id": "06-schedule/schedule-care",
+      "image": "../raw/test/goldens/design_system/schedule-care-390.long.png",
+      "sha256": "921ea2924669f4a87dc5ef1878e13e7d8644b15bc49ccdcc910a60051bf96800",
+      "metadata": "raw/test/goldens/design_system/schedule-care-390.png.json",
+      "long_capture": {
+        "status": "complete-measured-scroll-stitch",
+        "file": "/Users/lute/project/momcozy-lab/app/docs/app-ui-inventory/raw/test/goldens/design_system/schedule-care-390.long.png",
+        "offsets": [
+          0.0,
+          352.0,
+          464.0
+        ],
+        "scroll_bounds": [
+          0.0,
+          0.0,
+          390.0,
+          768.0
+        ],
+        "frame_scroll_bounds": [
+          [
+            0.0,
+            0.0,
+            390.0,
+            768.0
+          ],
+          [
+            0.0,
+            0.0,
+            390.0,
+            768.0
+          ],
+          [
+            0.0,
+            0.0,
+            390.0,
+            768.0
+          ]
+        ],
+        "content_height": 1232.0,
+        "interior_strip_edge_guard": 64.0,
+        "fixed_bottom_overlay_bounds": [],
+        "original_scroll_offset": 464.0,
+        "tooltip_preserved_from_matched_viewport": false
+      },
+      "test": "published care plan and appointment at 390.0 / 1.0",
+      "normal_route": false
+    },
+    {
+      "id": "06-schedule/schedule-create",
+      "image": "../raw/test/goldens/design_system/schedule-create-390.png",
+      "sha256": "2fe2010190870f406006141d18fdf2795a94b13460748369ec35e10bb4a1cc50",
+      "metadata": "raw/test/goldens/design_system/schedule-create-390.png.json",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "test": "personal schedule create edit delete at 390.0/1.0",
+      "normal_route": false
+    },
+    {
+      "id": "06-schedule/schedule-date-picker",
+      "image": "../raw/test/goldens/design_system/schedule-date-picker.png",
+      "sha256": "f919d5ab8bca7596d958775e33207b6d52e5d12664f9333fb1a1b7f9e24b0462",
+      "metadata": "raw/test/goldens/design_system/schedule-date-picker.png.json",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "test": "personal schedule create edit delete at 390.0/1.0",
+      "normal_route": false
+    },
+    {
+      "id": "06-schedule/schedule-date-range-error-320-2x-short",
+      "image": "../raw/test/goldens/design_system/schedule-date-range-error-320-2x-short.png",
+      "sha256": "3a465e1e4b891eb657e64c71f2047b1638ccb7f5873fe22c2fb13c73958c5d91",
+      "metadata": "raw/test/goldens/design_system/schedule-date-range-error-320-2x-short.png.json",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "test": "large editor date and time validation retain draft and accepted values",
+      "normal_route": false
+    },
+    {
+      "id": "06-schedule/schedule-delete",
+      "image": "../raw/test/goldens/design_system/schedule-delete-390.png",
+      "sha256": "2d592a2b4e7262055b4b34910ac37456ab321fb1bb81a3c7009d6c957de03f5e",
+      "metadata": "raw/test/goldens/design_system/schedule-delete-390.png.json",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "test": "personal schedule create edit delete at 390.0/1.0",
+      "normal_route": false
+    },
+    {
+      "id": "06-schedule/schedule-edit",
+      "image": "../raw/test/goldens/design_system/schedule-edit-390.png",
+      "sha256": "cc481fc9f26b5b32df0e4c75ea5889140ab380fd2217644d68a10c85b2ad1bc2",
+      "metadata": "raw/test/goldens/design_system/schedule-edit-390.png.json",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "test": "personal schedule create edit delete at 390.0/1.0",
+      "normal_route": false
+    },
+    {
+      "id": "06-schedule/schedule-long-agenda-end",
+      "image": "../raw/test/goldens/design_system/schedule-long-agenda-end.long.png",
+      "sha256": "5d9781664017f54aa8b417eba5524eb297ad7339e9d162f1095523724c4a4da7",
+      "metadata": "raw/test/goldens/design_system/schedule-long-agenda-end.png.json",
+      "long_capture": {
+        "status": "complete-measured-scroll-stitch",
+        "file": "/Users/lute/project/momcozy-lab/app/docs/app-ui-inventory/raw/test/goldens/design_system/schedule-long-agenda-end.long.png",
+        "offsets": [
+          0.0,
+          214.0,
+          428.0,
+          642.0,
+          856.0,
+          1070.0,
+          1284.0,
+          1498.0,
+          1712.0,
+          1926.0,
+          2140.0,
+          2354.0,
+          2568.0,
+          2782.0,
+          2996.0,
+          3210.0,
+          3424.0,
+          3638.0,
+          3852.0,
+          4066.0,
+          4280.0,
+          4494.0,
+          4708.0,
+          4922.0,
+          5136.0,
+          5350.0,
+          5564.0,
+          5778.0,
+          5992.0,
+          6206.0,
+          6420.0,
+          6634.0,
+          6848.0,
+          7062.0,
+          7276.0,
+          7490.0,
+          7704.0,
+          7918.0,
+          8132.0,
+          8346.0,
+          8560.0,
+          8774.0,
+          8988.0,
+          9202.0,
+          9416.0,
+          9630.0,
+          9844.0,
+          10058.0,
+          10272.0,
+          10486.0,
+          10700.0,
+          10914.0,
+          11128.0,
+          11342.0,
+          11556.0,
+          11770.0,
+          11984.0,
+          12198.0,
+          12412.0,
+          12626.0,
+          12840.0,
+          13054.0,
+          13268.0,
+          13482.0,
+          13696.0,
+          13910.0,
+          14124.0,
+          14338.0,
+          14552.0,
+          14766.0,
+          14980.0,
+          15194.0,
+          15408.0,
+          15622.0,
+          15836.0,
+          16050.0,
+          16264.0,
+          16478.0,
+          16692.0,
+          16906.0,
+          17120.0,
+          17334.0,
+          17548.0,
+          17762.0,
+          17976.0,
+          18190.0,
+          18404.0,
+          18618.0,
+          18832.0,
+          19046.0,
+          19260.0,
+          19474.0,
+          19688.0,
+          19902.0,
+          20116.0,
+          20330.0,
+          20544.0,
+          20758.0,
+          20972.0,
+          21186.0,
+          21220.0
+        ],
+        "scroll_bounds": [
+          0.0,
+          0.0,
+          320.0,
+          492.0
+        ],
+        "frame_scroll_bounds": [
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ]
+        ],
+        "content_height": 21712.0,
+        "interior_strip_edge_guard": 64.0,
+        "fixed_bottom_overlay_bounds": [],
+        "original_scroll_offset": 21220.0,
+        "tooltip_preserved_from_matched_viewport": false
+      },
+      "test": "hundred loaded entries scroll to final action on short large display",
+      "normal_route": false
+    },
+    {
+      "id": "06-schedule/schedule-overview",
+      "image": "../raw/test/goldens/design_system/schedule-overview-390-1x.long.png",
+      "sha256": "921ea2924669f4a87dc5ef1878e13e7d8644b15bc49ccdcc910a60051bf96800",
+      "metadata": "raw/test/goldens/design_system/schedule-overview-390-1x.png.json",
+      "long_capture": {
+        "status": "complete-measured-scroll-stitch",
+        "file": "/Users/lute/project/momcozy-lab/app/docs/app-ui-inventory/raw/test/goldens/design_system/schedule-overview-390-1x.long.png",
+        "offsets": [
+          0.0,
+          352.0,
+          464.0
+        ],
+        "scroll_bounds": [
+          0.0,
+          0.0,
+          390.0,
+          768.0
+        ],
+        "frame_scroll_bounds": [
+          [
+            0.0,
+            0.0,
+            390.0,
+            768.0
+          ],
+          [
+            0.0,
+            0.0,
+            390.0,
+            768.0
+          ],
+          [
+            0.0,
+            0.0,
+            390.0,
+            768.0
+          ]
+        ],
+        "content_height": 1232.0,
+        "interior_strip_edge_guard": 64.0,
+        "fixed_bottom_overlay_bounds": [],
+        "original_scroll_offset": 0.0,
+        "tooltip_preserved_from_matched_viewport": false
+      },
+      "test": "published care plan and appointment at 390.0 / 1.0",
+      "normal_route": false
+    },
+    {
+      "id": "06-schedule/schedule-plan",
+      "image": "../raw/test/goldens/design_system/schedule-plan-390.long.png",
+      "sha256": "b4a115d2bd7558b13f44e15f2ab23be2aee19a05fc86b2b0016f6328a9718a75",
+      "metadata": "raw/test/goldens/design_system/schedule-plan-390.png.json",
+      "long_capture": {
+        "status": "complete-measured-scroll-stitch",
+        "file": "/Users/lute/project/momcozy-lab/app/docs/app-ui-inventory/raw/test/goldens/design_system/schedule-plan-390.long.png",
+        "offsets": [
+          0.0,
+          352.0,
+          664.0
+        ],
+        "scroll_bounds": [
+          0.0,
+          0.0,
+          390.0,
+          768.0
+        ],
+        "frame_scroll_bounds": [
+          [
+            0.0,
+            0.0,
+            390.0,
+            768.0
+          ],
+          [
+            0.0,
+            0.0,
+            390.0,
+            768.0
+          ],
+          [
+            0.0,
+            0.0,
+            390.0,
+            768.0
+          ]
+        ],
+        "content_height": 1432.0,
+        "interior_strip_edge_guard": 64.0,
+        "fixed_bottom_overlay_bounds": [],
+        "original_scroll_offset": 664.0,
+        "tooltip_preserved_from_matched_viewport": false
+      },
+      "test": "published care plan and appointment at 390.0 / 1.0",
+      "normal_route": false
+    },
+    {
+      "id": "06-schedule/schedule-save-busy",
+      "image": "../raw/test/goldens/design_system/schedule-save-busy-320-2x.long.png",
+      "sha256": "c6c4df21420f39459491d0339c45ebeefe4febf1ce2da1645918524b399d1f2f",
+      "metadata": "raw/test/goldens/design_system/schedule-save-busy-320-2x.png.json",
+      "long_capture": {
+        "status": "complete-measured-scroll-stitch",
+        "file": "/Users/lute/project/momcozy-lab/app/docs/app-ui-inventory/raw/test/goldens/design_system/schedule-save-busy-320-2x.long.png",
+        "offsets": [
+          0.0,
+          24.0
+        ],
+        "scroll_bounds": [
+          18.0,
+          202.0,
+          284.0,
+          624.0
+        ],
+        "frame_scroll_bounds": [
+          [
+            18.0,
+            202.0,
+            284.0,
+            624.0
+          ],
+          [
+            18.0,
+            202.0,
+            284.0,
+            624.0
+          ]
+        ],
+        "content_height": 648.0,
+        "interior_strip_edge_guard": 64.0,
+        "fixed_bottom_overlay_bounds": [],
+        "original_scroll_offset": 21.0,
+        "tooltip_preserved_from_matched_viewport": false
+      },
+      "test": "pending personal save locks edits and close then creates once",
+      "normal_route": false
+    },
+    {
+      "id": "06-schedule/schedule-save-uncertain",
+      "image": "../raw/test/goldens/design_system/schedule-save-uncertain-390.png",
+      "sha256": "fa2e0b201889cf76cac768778ae4f52e2333901b55cdee37d48b1b17d5bc5820",
+      "metadata": "raw/test/goldens/design_system/schedule-save-uncertain-390.png.json",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "test": "failed save preserves the draft and retries the same creation",
+      "normal_route": false
+    },
+    {
+      "id": "06-schedule/schedule-short-loading",
+      "image": "../raw/test/goldens/design_system/schedule-short-loading.png",
+      "sha256": "af39b42c522f0178e16995a771e3c34e18886ecd14ebd140fbc62facf2a6af63",
+      "metadata": "raw/test/goldens/design_system/schedule-short-loading.png.json",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "test": "short large initial load error retries and cached refresh retains agenda",
+      "normal_route": false
+    },
+    {
+      "id": "06-schedule/schedule-short-offline",
+      "image": "../raw/test/goldens/design_system/schedule-short-offline.png",
+      "sha256": "16683e6210e0a0432991337b6dc0360e2cbf44e78bf5a735734531020ddbd6a8",
+      "metadata": "raw/test/goldens/design_system/schedule-short-offline.png.json",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "test": "short large initial load error retries and cached refresh retains agenda",
+      "normal_route": false
+    },
+    {
+      "id": "06-schedule/schedule-short-refresh-error",
+      "image": "../raw/test/goldens/design_system/schedule-short-refresh-error.long.png",
+      "sha256": "14ab9214e564f2e32abb1d24e61bf5d6cd764333854c5cde46f5725fc2cb8087",
+      "metadata": "raw/test/goldens/design_system/schedule-short-refresh-error.png.json",
+      "long_capture": {
+        "status": "complete-measured-scroll-stitch",
+        "file": "/Users/lute/project/momcozy-lab/app/docs/app-ui-inventory/raw/test/goldens/design_system/schedule-short-refresh-error.long.png",
+        "offsets": [
+          0.0,
+          214.0,
+          428.0,
+          642.0,
+          731.0
+        ],
+        "scroll_bounds": [
+          0.0,
+          0.0,
+          320.0,
+          492.0
+        ],
+        "frame_scroll_bounds": [
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            492.0
+          ]
+        ],
+        "content_height": 1223.0,
+        "interior_strip_edge_guard": 64.0,
+        "fixed_bottom_overlay_bounds": [],
+        "original_scroll_offset": 731.0,
+        "tooltip_preserved_from_matched_viewport": false
+      },
+      "test": "short large initial load error retries and cached refresh retains agenda",
+      "normal_route": false
+    },
+    {
+      "id": "06-schedule/schedule-task-busy",
+      "image": "../raw/test/goldens/design_system/schedule-task-busy.png",
+      "sha256": "7d7fa12f38968b71856098396d6a85636dd6683b640f9b3c5ef1d9173891976b",
+      "metadata": "raw/test/goldens/design_system/schedule-task-busy.png.json",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "test": "task write disables competing changes and keeps server version",
+      "normal_route": false
+    },
+    {
+      "id": "06-schedule/schedule-task-menu",
+      "image": "../raw/test/goldens/design_system/schedule-task-menu-390.png",
+      "sha256": "5ed1d3e4856e237eb4b078da55e55dfb97870f4826ea46bfe654e7f7fb19ab7f",
+      "metadata": "raw/test/goldens/design_system/schedule-task-menu-390.png.json",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "test": "task menu writes progress with the current version at 390.0/1.0",
+      "normal_route": false
+    },
+    {
+      "id": "06-schedule/schedule-time-error-320-2x-short",
+      "image": "../raw/test/goldens/design_system/schedule-time-error-320-2x-short.png",
+      "sha256": "53a1ad3af2091317246ca10147fa5b792dd76b7c198758812f31ef91c3cafe8e",
+      "metadata": "raw/test/goldens/design_system/schedule-time-error-320-2x-short.png.json",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "test": "large editor date and time validation retain draft and accepted values",
+      "normal_route": false
+    },
+    {
+      "id": "06-schedule/schedule-time-picker",
+      "image": "../raw/test/goldens/design_system/schedule-time-picker.png",
+      "sha256": "3cf27f1f0a4cedb31274b51800c7223af5f03ee011f10e5d17d92adfa04b4a96",
+      "metadata": "raw/test/goldens/design_system/schedule-time-picker.png.json",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "test": "personal schedule create edit delete at 390.0/1.0",
+      "normal_route": false
+    }
+  ],
+  "source_hashes": {
+    "lib/modules/schedule/presentation/personal_schedule_editor.dart": "bd11ff86a30046974ba188131c6f4ca46d2c59c2977c06386d662f71d6200c7f",
+    "lib/shared/widgets/date_time_picker.dart": "6ee6f91496b6d825e8926544657dc2b4195da9cc92360bd3a19745eb419a0a80",
+    "lib/shared/widgets/mom_settings_widgets.dart": "271b022cb619641d956e92a5600e5f5585d2a5b469446132d53d402987403025",
+    "test/modules/schedule/schedule_page_golden_test.dart": "741032fc9f11192e3cf446823d3374c784e2c02f2d0955e5cf94655e5c0b15fb",
+    "test/modules/schedule/personal_schedule_editor_test.dart": "df868fd49b7ae19f50b83acd0f843aae2ea5972772c4b366c78e7e8887f93ddc",
+    "lib/shared/widgets/momcozy_line_icon.dart": "5d4442b930359144e47316073efd7b99e8779abdadf1df6c965fe061d9de6eb6",
+    "lib/modules/schedule/presentation/schedule_page.dart": "87f06c1ea10cfb6ee6b503f7f709015a761f58965d7715bdb93423df33db20ba",
+    "lib/shared/widgets/mom_companion_widgets.dart": "93c5cc4e022ac56ee5ca31dc5208f6c3a8df03d08e39ace0d761b101e04571ab",
+    "lib/shared/widgets/product_feedback.dart": "f0e9384b049cfc0e3c0db31f4f751723d3b7faa587a136caee1d0db75b004af1"
+  },
+  "source_drift": [],
+  "implementation_handoff": "docs/ui-refactor/20260914-schedule/implementation-hashes.json",
+  "visual_review": "All full images reviewed in nine sheets; 100-entry document checked from header through 0–99 and final add control. No new test cases, viewports or baseline updates."
+}

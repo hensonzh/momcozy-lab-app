@@ -1,0 +1,7 @@
+{
+  "lib/features/agent_hub/agent_hub_page.dart": "74d225d0e209a2fc6e772ccd9407d61ff5a5950238a99fecde9f317249af1ee1",
+  "test/features/agent_hub/agent_hub_page_test.dart": "2b2970fc32bfc4f55f5aa59a02838af7a7794d9f6890c17ab2b8b1fa9d194522",
+  "test/features/agent_hub/agent_markdown_design_test.dart": "2dd530e7c9488d71df5a12178ae174e568bf114d43e78e06559fd8e5ddb5a31b",
+  "test/support/agent_markdown_scenarios.dart": "23807115f3efeef2b85de24b6a71a56f12667e6cc16a2d83aa53c8f2cdded2fd",
+  "integration_test/agent_markdown_design_test.dart": "59e9c7544e736f536c9e10043fd9b729695fb05e3b6a94cf85563510abdfd36a"
+}

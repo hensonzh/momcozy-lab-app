@@ -1,0 +1,499 @@
+[
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-workflow-journey-diary-history-320-2x.long.png",
+    "sha256": "ced7bd874a68ce72f2ffbe711d52ae919a8b6bb4a68d36a223342512d0718355",
+    "y_start": 0,
+    "y_end": 950,
+    "sheet": "narrow-1.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-workflow-journey-diary-history-320-2x.long.png",
+    "sha256": "ced7bd874a68ce72f2ffbe711d52ae919a8b6bb4a68d36a223342512d0718355",
+    "y_start": 950,
+    "y_end": 1243,
+    "sheet": "narrow-1.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-workflow-journey-diary-history-320-2x.png",
+    "sha256": "043c8472bc386fac601fac315c20ca95158befaffd124e18fb9d68130d3a6728",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-1.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-workflow-journey-diary-return-320-2x.long.png",
+    "sha256": "56df31d57880ad099473aa22355dd08d2c9f3dc3fdb3f21b8e64b677eaa12a74",
+    "y_start": 0,
+    "y_end": 950,
+    "sheet": "narrow-1.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-workflow-journey-diary-return-320-2x.long.png",
+    "sha256": "56df31d57880ad099473aa22355dd08d2c9f3dc3fdb3f21b8e64b677eaa12a74",
+    "y_start": 950,
+    "y_end": 1900,
+    "sheet": "narrow-1.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-workflow-journey-diary-return-320-2x.long.png",
+    "sha256": "56df31d57880ad099473aa22355dd08d2c9f3dc3fdb3f21b8e64b677eaa12a74",
+    "y_start": 1900,
+    "y_end": 2068,
+    "sheet": "narrow-1.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-workflow-journey-diary-return-320-2x.png",
+    "sha256": "ab4fb06747d5d8335988e84f020033d0372dd9c97cd4d31856ddadcf39a512ac",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-1.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-workflow-journey-intake-accepted-320-2x.long.png",
+    "sha256": "cc9abdb9b11023fb30b988530160a351a76b156f64af22cabd8548a912c0b3d3",
+    "y_start": 0,
+    "y_end": 950,
+    "sheet": "narrow-1.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-workflow-journey-intake-accepted-320-2x.long.png",
+    "sha256": "cc9abdb9b11023fb30b988530160a351a76b156f64af22cabd8548a912c0b3d3",
+    "y_start": 950,
+    "y_end": 1900,
+    "sheet": "narrow-2.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-workflow-journey-intake-accepted-320-2x.long.png",
+    "sha256": "cc9abdb9b11023fb30b988530160a351a76b156f64af22cabd8548a912c0b3d3",
+    "y_start": 1900,
+    "y_end": 2135,
+    "sheet": "narrow-2.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-workflow-journey-intake-accepted-320-2x.png",
+    "sha256": "19b70de9511442f4e54e4916e12e6dd8ac4b1177a213a120a0a4d7f984b75581",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-2.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-workflow-journey-intake-auto-loading-320-2x.long.png",
+    "sha256": "87e283dd40f5e6bafd5d20736c636c51e9cf9a432271b8e345da251ccfc728d5",
+    "y_start": 0,
+    "y_end": 950,
+    "sheet": "narrow-2.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-workflow-journey-intake-auto-loading-320-2x.long.png",
+    "sha256": "87e283dd40f5e6bafd5d20736c636c51e9cf9a432271b8e345da251ccfc728d5",
+    "y_start": 950,
+    "y_end": 1861,
+    "sheet": "narrow-2.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-workflow-journey-intake-auto-loading-320-2x.png",
+    "sha256": "99928b9f8f91e628a53a4108adcc27c30322b128253df9d66d468ec6b40bff68",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-2.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-workflow-journey-intake-auto-open-320-2x.long.png",
+    "sha256": "4c7741e7e761e395e4d0a2c51c619f0d789e54d75850cff417e79edf455849fd",
+    "y_start": 0,
+    "y_end": 950,
+    "sheet": "narrow-2.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-workflow-journey-intake-auto-open-320-2x.long.png",
+    "sha256": "4c7741e7e761e395e4d0a2c51c619f0d789e54d75850cff417e79edf455849fd",
+    "y_start": 950,
+    "y_end": 1414,
+    "sheet": "narrow-2.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-workflow-journey-intake-auto-open-320-2x.png",
+    "sha256": "c2f339a6cbc4c8f9a17086c93c844b83244b5121abbb2be1918350fc1d3e1dda",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-3.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-workflow-journey-intake-cancelled-320-2x.long.png",
+    "sha256": "4fe6501856b74473e2181f8753894009dc517340512786667dcc872db1c11752",
+    "y_start": 0,
+    "y_end": 950,
+    "sheet": "narrow-3.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-workflow-journey-intake-cancelled-320-2x.long.png",
+    "sha256": "4fe6501856b74473e2181f8753894009dc517340512786667dcc872db1c11752",
+    "y_start": 950,
+    "y_end": 1893,
+    "sheet": "narrow-3.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-workflow-journey-intake-cancelled-320-2x.png",
+    "sha256": "e39e01ef5338599ade26588484dda944e41743d66602521239ca7e5e34ec1b4b",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-3.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-workflow-journey-intake-date-picker-320-2x.png",
+    "sha256": "d291df63a1d1de0b77f5e7c0984dd83cdae0d11094407c2000b8cd53a345f563",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-3.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-workflow-journey-intake-date-selected-320-2x.png",
+    "sha256": "f394fa01406b6accd4901e32d19138a15124d8d3e6dacd1a96c78e93b426a14b",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-3.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-workflow-journey-intake-draft-return-320-2x.long.png",
+    "sha256": "5c401b6736f4a42f0ae6256879ccbcf06966ff6b85c4bad945cb1b9b61225805",
+    "y_start": 0,
+    "y_end": 950,
+    "sheet": "narrow-3.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-workflow-journey-intake-draft-return-320-2x.long.png",
+    "sha256": "5c401b6736f4a42f0ae6256879ccbcf06966ff6b85c4bad945cb1b9b61225805",
+    "y_start": 950,
+    "y_end": 1534,
+    "sheet": "narrow-3.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-workflow-journey-intake-draft-return-320-2x.png",
+    "sha256": "52f0fbd991da24cc52014b52ce28567e16d7c57a6ea27d88e949221cc9057de9",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-4.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-workflow-journey-intake-dropdown-320-2x.png",
+    "sha256": "b6f6608f87c07507e78dac8848deae7f8ee7215189c4f23b1de41ed8cfdbe751",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-4.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-workflow-journey-intake-filled-320-2x.long.png",
+    "sha256": "8b854f3ff26520999c56b386befcc6b94c5bde81310e2e78a63c578c99d79c36",
+    "y_start": 0,
+    "y_end": 950,
+    "sheet": "narrow-4.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-workflow-journey-intake-filled-320-2x.long.png",
+    "sha256": "8b854f3ff26520999c56b386befcc6b94c5bde81310e2e78a63c578c99d79c36",
+    "y_start": 950,
+    "y_end": 1534,
+    "sheet": "narrow-4.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-workflow-journey-intake-filled-320-2x.png",
+    "sha256": "0d63f2f3c65cdcce2e4168a7baa14f7afb6927f5e36f60e29969a6b1e48377d6",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-4.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-workflow-journey-intake-readonly-320-2x.long.png",
+    "sha256": "2c9590af6b725ff3cc7f9bdbba830c9ec74b23c2e1dadcc5656892fb4505371f",
+    "y_start": 0,
+    "y_end": 950,
+    "sheet": "narrow-4.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-workflow-journey-intake-readonly-320-2x.long.png",
+    "sha256": "2c9590af6b725ff3cc7f9bdbba830c9ec74b23c2e1dadcc5656892fb4505371f",
+    "y_start": 950,
+    "y_end": 1478,
+    "sheet": "narrow-4.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-workflow-journey-intake-readonly-320-2x.png",
+    "sha256": "f0cf14f3bfbdb8a511783e86b3920711ed2e11da6561fdf1a8ae50ff44785539",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-4.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-workflow-journey-intake-readonly-return-320-2x.long.png",
+    "sha256": "5baaae75a23478fb8c797d4e01d29143ccfff37947343fb1fdaf312cca35c0f5",
+    "y_start": 0,
+    "y_end": 950,
+    "sheet": "narrow-5.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-workflow-journey-intake-readonly-return-320-2x.long.png",
+    "sha256": "5baaae75a23478fb8c797d4e01d29143ccfff37947343fb1fdaf312cca35c0f5",
+    "y_start": 950,
+    "y_end": 1900,
+    "sheet": "narrow-5.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-workflow-journey-intake-readonly-return-320-2x.long.png",
+    "sha256": "5baaae75a23478fb8c797d4e01d29143ccfff37947343fb1fdaf312cca35c0f5",
+    "y_start": 1900,
+    "y_end": 2250,
+    "sheet": "narrow-5.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-workflow-journey-intake-readonly-return-320-2x.png",
+    "sha256": "fbff10f1eea97ad28ec5c86cc1b39e63e4f307617bd92abe46d374fa0d2403fe",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-5.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-workflow-journey-intake-reply-320-2x.long.png",
+    "sha256": "5baaae75a23478fb8c797d4e01d29143ccfff37947343fb1fdaf312cca35c0f5",
+    "y_start": 0,
+    "y_end": 950,
+    "sheet": "narrow-5.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-workflow-journey-intake-reply-320-2x.long.png",
+    "sha256": "5baaae75a23478fb8c797d4e01d29143ccfff37947343fb1fdaf312cca35c0f5",
+    "y_start": 950,
+    "y_end": 1900,
+    "sheet": "narrow-5.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-workflow-journey-intake-reply-320-2x.long.png",
+    "sha256": "5baaae75a23478fb8c797d4e01d29143ccfff37947343fb1fdaf312cca35c0f5",
+    "y_start": 1900,
+    "y_end": 2250,
+    "sheet": "narrow-5.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-workflow-journey-intake-reply-320-2x.png",
+    "sha256": "55695381ba7c174ccbc12cfa872b320589847e6cd50701bab35422c676b1d8ec",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-5.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-workflow-journey-intake-request-320-2x.long.png",
+    "sha256": "4931a4eac0900b10add8231be3ea9f5cecec3f711d99cacb6469a398211ef08c",
+    "y_start": 0,
+    "y_end": 950,
+    "sheet": "narrow-6.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-workflow-journey-intake-request-320-2x.long.png",
+    "sha256": "4931a4eac0900b10add8231be3ea9f5cecec3f711d99cacb6469a398211ef08c",
+    "y_start": 950,
+    "y_end": 1574,
+    "sheet": "narrow-6.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-workflow-journey-intake-request-320-2x.png",
+    "sha256": "32edd041591b69972976cef1a3434f5d29f94663cfd0d7a62e8f95d05581133c",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-6.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-workflow-journey-intake-submitting-320-2x.long.png",
+    "sha256": "331765dd2b29bcdc9b75b4da06576ac288c363d71012f9db8b5468fab1aaf3db",
+    "y_start": 0,
+    "y_end": 950,
+    "sheet": "narrow-6.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-workflow-journey-intake-submitting-320-2x.long.png",
+    "sha256": "331765dd2b29bcdc9b75b4da06576ac288c363d71012f9db8b5468fab1aaf3db",
+    "y_start": 950,
+    "y_end": 1534,
+    "sheet": "narrow-6.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-workflow-journey-intake-submitting-320-2x.png",
+    "sha256": "cc47045c304882a7ececd2ee8c166b1e8fc8a8845456be01281a0ccaa743b820",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-6.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-workflow-journey-intake-validation-320-2x.long.png",
+    "sha256": "c42eded39647cc731052e5d8d8c31de6907916da6630c46e7fdcac31e5443ba1",
+    "y_start": 0,
+    "y_end": 950,
+    "sheet": "narrow-6.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-workflow-journey-intake-validation-320-2x.long.png",
+    "sha256": "c42eded39647cc731052e5d8d8c31de6907916da6630c46e7fdcac31e5443ba1",
+    "y_start": 950,
+    "y_end": 1458,
+    "sheet": "narrow-6.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-workflow-journey-intake-validation-320-2x.png",
+    "sha256": "3c9ff476dd4e0d4e1ca6762f21ab05f5ef2531416860a2ccfa8820a03441ac0f",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-7.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-workflow-journey-latest-off-bottom-320-2x.long.png",
+    "sha256": "56df31d57880ad099473aa22355dd08d2c9f3dc3fdb3f21b8e64b677eaa12a74",
+    "y_start": 0,
+    "y_end": 950,
+    "sheet": "narrow-7.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-workflow-journey-latest-off-bottom-320-2x.long.png",
+    "sha256": "56df31d57880ad099473aa22355dd08d2c9f3dc3fdb3f21b8e64b677eaa12a74",
+    "y_start": 950,
+    "y_end": 1900,
+    "sheet": "narrow-7.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-workflow-journey-latest-off-bottom-320-2x.long.png",
+    "sha256": "56df31d57880ad099473aa22355dd08d2c9f3dc3fdb3f21b8e64b677eaa12a74",
+    "y_start": 1900,
+    "y_end": 2068,
+    "sheet": "narrow-7.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-workflow-journey-latest-off-bottom-320-2x.png",
+    "sha256": "3de83e81e62f041792025bd9d58bb680a69e032b54888f61f4174a9aef569195",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-7.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-workflow-journey-latest-returned-320-2x.long.png",
+    "sha256": "56df31d57880ad099473aa22355dd08d2c9f3dc3fdb3f21b8e64b677eaa12a74",
+    "y_start": 0,
+    "y_end": 950,
+    "sheet": "narrow-7.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-workflow-journey-latest-returned-320-2x.long.png",
+    "sha256": "56df31d57880ad099473aa22355dd08d2c9f3dc3fdb3f21b8e64b677eaa12a74",
+    "y_start": 950,
+    "y_end": 1900,
+    "sheet": "narrow-7.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-workflow-journey-latest-returned-320-2x.long.png",
+    "sha256": "56df31d57880ad099473aa22355dd08d2c9f3dc3fdb3f21b8e64b677eaa12a74",
+    "y_start": 1900,
+    "y_end": 2068,
+    "sheet": "narrow-7.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-workflow-journey-latest-returned-320-2x.png",
+    "sha256": "443f88e48b78a55f6b2d8646ff7b404b1e39a2f2cb6acafc54942ebb6334b340",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-8.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-workflow-journey-milk-history-320-2x.long.png",
+    "sha256": "2489f20d91eea180858aadbb2ec71c6c7035618d2f0b8f509b6f9fc69b1cc5d1",
+    "y_start": 0,
+    "y_end": 950,
+    "sheet": "narrow-8.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-workflow-journey-milk-history-320-2x.long.png",
+    "sha256": "2489f20d91eea180858aadbb2ec71c6c7035618d2f0b8f509b6f9fc69b1cc5d1",
+    "y_start": 950,
+    "y_end": 1056,
+    "sheet": "narrow-8.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-workflow-journey-milk-history-320-2x.png",
+    "sha256": "d4f5758a03dc70182ec6513c5be39e861f28934a53b1e9064413a7a3acae8f3b",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-8.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-workflow-journey-milk-request-320-2x.long.png",
+    "sha256": "3f8efa01d3d53c03c6f8062553d29926c04954ef015d2fa5a7f3b166d04079e9",
+    "y_start": 0,
+    "y_end": 950,
+    "sheet": "narrow-8.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-workflow-journey-milk-request-320-2x.long.png",
+    "sha256": "3f8efa01d3d53c03c6f8062553d29926c04954ef015d2fa5a7f3b166d04079e9",
+    "y_start": 950,
+    "y_end": 1574,
+    "sheet": "narrow-8.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-workflow-journey-milk-request-320-2x.png",
+    "sha256": "e76b16caf7ffdb413dbdaae29d5c67926c39192668f6db0cf12ed3a45d761eb3",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-8.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-workflow-journey-milk-result-320-2x.long.png",
+    "sha256": "56df31d57880ad099473aa22355dd08d2c9f3dc3fdb3f21b8e64b677eaa12a74",
+    "y_start": 0,
+    "y_end": 950,
+    "sheet": "narrow-8.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-workflow-journey-milk-result-320-2x.long.png",
+    "sha256": "56df31d57880ad099473aa22355dd08d2c9f3dc3fdb3f21b8e64b677eaa12a74",
+    "y_start": 950,
+    "y_end": 1900,
+    "sheet": "narrow-9.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-workflow-journey-milk-result-320-2x.long.png",
+    "sha256": "56df31d57880ad099473aa22355dd08d2c9f3dc3fdb3f21b8e64b677eaa12a74",
+    "y_start": 1900,
+    "y_end": 2068,
+    "sheet": "narrow-9.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-workflow-journey-milk-result-320-2x.png",
+    "sha256": "c685e53ee7e6364cb499ec76c878a27e0e5da4708db79cbf8780bc2d96206cbd",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-9.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-workflow-journey-milk-return-320-2x.long.png",
+    "sha256": "56df31d57880ad099473aa22355dd08d2c9f3dc3fdb3f21b8e64b677eaa12a74",
+    "y_start": 0,
+    "y_end": 950,
+    "sheet": "narrow-9.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-workflow-journey-milk-return-320-2x.long.png",
+    "sha256": "56df31d57880ad099473aa22355dd08d2c9f3dc3fdb3f21b8e64b677eaa12a74",
+    "y_start": 950,
+    "y_end": 1900,
+    "sheet": "narrow-9.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-workflow-journey-milk-return-320-2x.long.png",
+    "sha256": "56df31d57880ad099473aa22355dd08d2c9f3dc3fdb3f21b8e64b677eaa12a74",
+    "y_start": 1900,
+    "y_end": 2068,
+    "sheet": "narrow-9.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-workflow-journey-milk-return-320-2x.png",
+    "sha256": "ab4fb06747d5d8335988e84f020033d0372dd9c97cd4d31856ddadcf39a512ac",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-9.jpg"
+  }
+]

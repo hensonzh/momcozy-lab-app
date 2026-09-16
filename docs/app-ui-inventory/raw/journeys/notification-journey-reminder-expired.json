@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/notification-journey-reminder-expired-393.png",
+  "previous_source": "test/goldens/ui_inventory/notification-journey-notification-preference-disabled-393.png",
+  "route": "/services/episodes/service-episode/booking",
+  "trigger": "Reminder rejected by server: reminder_expired",
+  "root_entry": "Authenticated More page",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production notification coordinator/repository/controller; isolated HTTP, push gateway and permission platform; real router.go and ScaffoldMessenger callbacks, no native OS dialog or remote push",
+  "test": "test/features/notifications/notification_inventory_journey_test.dart"
+}

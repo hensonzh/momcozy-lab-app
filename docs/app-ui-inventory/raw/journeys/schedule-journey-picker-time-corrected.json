@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/schedule-journey-picker-time-corrected-393.png",
+  "previous_source": "test/goldens/ui_inventory/schedule-journey-picker-time-invalid-393.png",
+  "route": "/schedule",
+  "trigger": "Correct time to 10:45 → editor",
+  "root_entry": "Authenticated More → tap Schedule bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/schedule/schedule_inventory_journey_test.dart"
+}

@@ -1,0 +1,73 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/modules/profile/privacy_test.dart
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/modules/profile/privacy_test.dart: partial save retries same identity/version, then resumes remaining changes
+00:00 +1: /Users/lute/project/momcozy-lab/app/test/modules/profile/privacy_test.dart: acknowledged partial save never repeats an already completed scope
+00:00 +2: /Users/lute/project/momcozy-lab/app/test/modules/profile/privacy_test.dart: conflict requires reload and picks current version before new write
+00:00 +3: /Users/lute/project/momcozy-lab/app/test/modules/profile/privacy_test.dart: reloading an uncertain operation resolves authoritative state without more writes
+00:00 +4: /Users/lute/project/momcozy-lab/app/test/modules/profile/privacy_test.dart: privacy scopes, revoke confirmation and notifications 320.0/1.0
+00:00 +5: /Users/lute/project/momcozy-lab/app/test/modules/profile/privacy_test.dart: privacy scopes, revoke confirmation and notifications 320.0/1.0
+00:00 +6: /Users/lute/project/momcozy-lab/app/test/features/auth/account_redesign_states_test.dart: account loading, retry and long identity 393-1x
+00:01 +7: /Users/lute/project/momcozy-lab/app/test/features/auth/account_redesign_states_test.dart: account loading, retry and long identity 393-1x
+00:01 +8: /Users/lute/project/momcozy-lab/app/test/features/auth/account_redesign_states_test.dart: account loading, retry and long identity 393-1x
+00:01 +9: /Users/lute/project/momcozy-lab/app/test/features/auth/account_page_test.dart: account route requires login and returns to the intended page
+00:01 +10: /Users/lute/project/momcozy-lab/app/test/features/notifications/notification_design_test.dart: inbox and retained-content error at 320.0 / 1.0
+00:01 +11: /Users/lute/project/momcozy-lab/app/test/features/notifications/notification_design_test.dart: inbox and retained-content error at 320.0 / 1.0
+00:01 +12: /Users/lute/project/momcozy-lab/app/test/features/notifications/notification_design_test.dart: inbox and retained-content error at 320.0 / 1.0
+00:01 +13: /Users/lute/project/momcozy-lab/app/test/features/notifications/notification_design_test.dart: inbox and retained-content error at 320.0 / 1.0
+00:01 +14: /Users/lute/project/momcozy-lab/app/test/features/notifications/notification_design_test.dart: inbox and retained-content error at 320.0 / 1.0
+00:01 +15: /Users/lute/project/momcozy-lab/app/test/features/notifications/notification_redesign_states_test.dart: notification initial loading retry and read-all 393-1x
+00:01 +16: /Users/lute/project/momcozy-lab/app/test/features/notifications/notification_redesign_states_test.dart: notification initial loading retry and read-all 393-1x
+00:01 +17: /Users/lute/project/momcozy-lab/app/test/features/auth/account_redesign_states_test.dart: account link pending, success and delete error 393-1x
+00:01 +18: /Users/lute/project/momcozy-lab/app/test/features/auth/account_redesign_states_test.dart: account link pending, success and delete error 393-1x
+00:01 +19: /Users/lute/project/momcozy-lab/app/test/features/auth/account_redesign_states_test.dart: account link pending, success and delete error 393-1x
+00:01 +20: /Users/lute/project/momcozy-lab/app/test/features/auth/account_page_test.dart: account read retry and password-confirmed Google linking
+00:01 +21: /Users/lute/project/momcozy-lab/app/test/features/notifications/notification_design_test.dart: notification settings and consent at 320.0 / 1.0
+00:01 +22: /Users/lute/project/momcozy-lab/app/test/features/notifications/notification_design_test.dart: notification settings and consent at 320.0 / 1.0
+00:01 +23: /Users/lute/project/momcozy-lab/app/test/features/notifications/notification_redesign_states_test.dart: notification pagination and archive failures retain content 393-1x
+00:01 +24: /Users/lute/project/momcozy-lab/app/test/features/notifications/notification_redesign_states_test.dart: notification pagination and archive failures retain content 393-1x
+00:01 +25: /Users/lute/project/momcozy-lab/app/test/features/notifications/notification_redesign_states_test.dart: notification pagination and archive failures retain content 393-1x
+00:01 +26: /Users/lute/project/momcozy-lab/app/test/modules/profile/privacy_test.dart: privacy scopes, revoke confirmation and notifications 390.0/2.0
+00:01 +27: /Users/lute/project/momcozy-lab/app/test/features/notifications/notification_design_test.dart: inbox and retained-content error at 320.0 / 2.0
+00:02 +28: /Users/lute/project/momcozy-lab/app/test/features/auth/account_redesign_states_test.dart: account loading, retry and long identity 320-2x
+00:02 +29: /Users/lute/project/momcozy-lab/app/test/modules/profile/privacy_redesign_states_test.dart: pending uncertain and conflict keep recovery actions usable (393.0, 1.0)
+00:02 +30: /Users/lute/project/momcozy-lab/app/test/modules/profile/privacy_redesign_states_test.dart: pending uncertain and conflict keep recovery actions usable (393.0, 1.0)
+00:02 +31: /Users/lute/project/momcozy-lab/app/test/modules/profile/privacy_redesign_states_test.dart: pending uncertain and conflict keep recovery actions usable (393.0, 1.0)
+00:02 +32: /Users/lute/project/momcozy-lab/app/test/features/notifications/notification_redesign_states_test.dart: notification permission denial and restoration 393-1x
+00:02 +33: /Users/lute/project/momcozy-lab/app/test/features/auth/account_redesign_states_test.dart: account link pending, success and delete error 320-2x
+00:02 +34: /Users/lute/project/momcozy-lab/app/test/modules/profile/privacy_test.dart: privacy scopes, revoke confirmation and notifications 430.0/2.0
+00:02 +35: /Users/lute/project/momcozy-lab/app/test/modules/profile/privacy_test.dart: privacy scopes, revoke confirmation and notifications 430.0/2.0
+00:02 +36: /Users/lute/project/momcozy-lab/app/test/modules/profile/privacy_redesign_states_test.dart: overview and consent loads never show editable defaults (320.0, 2.0)
+00:02 +37: /Users/lute/project/momcozy-lab/app/test/modules/profile/privacy_redesign_states_test.dart: overview and consent loads never show editable defaults (320.0, 2.0)
+00:02 +38: /Users/lute/project/momcozy-lab/app/test/features/notifications/notification_redesign_states_test.dart: notification preference loading error and unavailable device 393-1x
+00:02 +39: /Users/lute/project/momcozy-lab/app/test/features/notifications/notification_redesign_states_test.dart: notification preference loading error and unavailable device 393-1x
+00:02 +40: /Users/lute/project/momcozy-lab/app/test/features/notifications/notification_design_test.dart: notification settings and consent at 390.0 / 1.0
+00:02 +41: /Users/lute/project/momcozy-lab/app/test/modules/profile/privacy_test.dart: no service and failed read never expose editable fake defaults
+00:02 +42: /Users/lute/project/momcozy-lab/app/test/features/notifications/notifications_page_test.dart: shows the real inbox and supports read and archive actions
+00:02 +43: /Users/lute/project/momcozy-lab/app/test/features/notifications/notifications_page_test.dart: shows the real inbox and supports read and archive actions
+00:02 +44: /Users/lute/project/momcozy-lab/app/test/features/notifications/notifications_page_test.dart: shows the real inbox and supports read and archive actions
+00:02 +45: /Users/lute/project/momcozy-lab/app/test/features/notifications/notifications_page_test.dart: shows the real inbox and supports read and archive actions
+00:02 +46: /Users/lute/project/momcozy-lab/app/test/features/notifications/notifications_page_test.dart: shows the real inbox and supports read and archive actions
+00:02 +47: /Users/lute/project/momcozy-lab/app/test/features/notifications/notifications_page_test.dart: shows the real inbox and supports read and archive actions
+00:03 +48: /Users/lute/project/momcozy-lab/app/test/features/notifications/notifications_page_test.dart: shows the real inbox and supports read and archive actions
+00:03 +49: /Users/lute/project/momcozy-lab/app/test/features/notifications/notifications_page_test.dart: shows the real inbox and supports read and archive actions
+00:03 +50: /Users/lute/project/momcozy-lab/app/test/features/notifications/notifications_page_test.dart: shows the real inbox and supports read and archive actions
+00:03 +51: /Users/lute/project/momcozy-lab/app/test/features/notifications/notifications_page_test.dart: shows the real inbox and supports read and archive actions
+00:03 +52: /Users/lute/project/momcozy-lab/app/test/features/notifications/notifications_page_test.dart: shows the real inbox and supports read and archive actions
+00:03 +53: /Users/lute/project/momcozy-lab/app/test/app/more_design_test.dart: More navigation and privacy at 320.0 / 1.0
+00:03 +54: /Users/lute/project/momcozy-lab/app/test/app/more_design_test.dart: More navigation and privacy at 320.0 / 1.0
+00:03 +55: /Users/lute/project/momcozy-lab/app/test/app/more_design_test.dart: More navigation and privacy at 320.0 / 1.0
+00:03 +56: /Users/lute/project/momcozy-lab/app/test/app/more_design_test.dart: More navigation and privacy at 320.0 / 1.0
+00:03 +57: /Users/lute/project/momcozy-lab/app/test/app/more_design_test.dart: More navigation and privacy at 320.0 / 1.0
+00:03 +58: /Users/lute/project/momcozy-lab/app/test/app/more_design_test.dart: More navigation and privacy at 320.0 / 1.0
+00:03 +59: /Users/lute/project/momcozy-lab/app/test/features/notifications/notification_redesign_states_test.dart: notification preference loading error and unavailable device 320-2x
+00:03 +60: /Users/lute/project/momcozy-lab/app/test/features/notifications/notification_design_test.dart: notification settings and consent at 430.0 / 2.0
+00:03 +61: /Users/lute/project/momcozy-lab/app/test/app/more_design_test.dart: More navigation and privacy at 320.0 / 2.0
+00:03 +62: /Users/lute/project/momcozy-lab/app/test/app/more_redesign_states_test.dart: More pending and failed identity 393.0/1.0
+00:03 +63: /Users/lute/project/momcozy-lab/app/test/app/more_redesign_states_test.dart: More pending and failed identity 393.0/1.0
+00:03 +64: /Users/lute/project/momcozy-lab/app/test/app/more_redesign_states_test.dart: More pending and failed identity 393.0/1.0
+00:04 +65: /Users/lute/project/momcozy-lab/app/test/app/more_redesign_states_test.dart: More pending and failed identity 393.0/1.0
+00:04 +66: /Users/lute/project/momcozy-lab/app/test/app/more_redesign_states_test.dart: More pending and failed identity 393.0/1.0
+00:04 +67: /Users/lute/project/momcozy-lab/app/test/app/more_redesign_states_test.dart: More long identity and sign out 393.0/1.0
+00:04 +68: /Users/lute/project/momcozy-lab/app/test/app/more_redesign_states_test.dart: More pending and failed identity 320.0/2.0
+00:04 +69: /Users/lute/project/momcozy-lab/app/test/app/more_redesign_states_test.dart: More long identity and sign out 320.0/2.0
+00:04 +70: /Users/lute/project/momcozy-lab/app/test/app/more_redesign_states_test.dart: (tearDownAll)
+00:04 +70: All tests passed!

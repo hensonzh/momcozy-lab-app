@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_auth_device_id.dart';
@@ -32,6 +33,23 @@ void main() {
             home: page,
           ),
         );
+        await tester.runAsync(() async {
+          final context = tester.element(find.byType(MaterialApp));
+          await Future.wait([
+            precacheImage(
+              const AssetImage('assets/images/auth_mother_baby.png'),
+              context,
+            ),
+            precacheImage(
+              const AssetImage('assets/images/momcozy_logo.png'),
+              context,
+            ),
+            precacheImage(
+              const AssetImage('assets/images/google_sign_in.png'),
+              context,
+            ),
+          ]);
+        });
         await tester.pumpAndSettle();
       }
 
@@ -45,11 +63,11 @@ void main() {
 
       Future<void> capture(WidgetTester tester, String name) async {
         expect(tester.takeException(), isNull);
-        if (scale == 1) {
+        if (scale == 1 || name.startsWith('auth-')) {
           await expectLater(
             find.byType(MaterialApp),
             matchesGoldenFile(
-              '../../goldens/design_system/$name-${width.toInt()}.png',
+              '../../goldens/design_system/$name-${width.toInt()}${scale == 1 ? '' : '-2x'}.png',
             ),
           );
         }
@@ -75,6 +93,18 @@ void main() {
           ),
         );
         await capture(tester, 'auth-login');
+        await tap(tester, find.byKey(const ValueKey('auth-language-button')));
+        expect(
+          tester
+              .widget<ListTile>(find.widgetWithText(ListTile, 'English'))
+              .selected,
+          isTrue,
+        );
+        await capture(tester, 'auth-language');
+        await tap(tester, find.widgetWithText(ListTile, 'English'));
+        await tester.ensureVisible(find.text('Privacy Policy.'));
+        await tester.pumpAndSettle();
+        await capture(tester, 'auth-legal');
         await tap(tester, find.text('Create an account'));
         await tester.ensureVisible(find.text('Create your account'));
         await tester.pumpAndSettle();
@@ -89,6 +119,7 @@ void main() {
         );
         await tap(tester, find.byKey(const ValueKey('auth-submit-button')));
         expect(transport.postedBodies, isEmpty);
+        await capture(tester, 'auth-register-validation');
         await tester.enterText(
           find.byKey(const ValueKey('auth-password-field')),
           'secret123',
@@ -97,6 +128,9 @@ void main() {
         expect(transport.lastPath, '/v1/auth/register');
         expect(find.byKey(const ValueKey('auth-code-field')), findsOneWidget);
         expect(runtime.currentSession.isAuthenticated, isFalse);
+        await tester.ensureVisible(find.text('Verify your email'));
+        await tester.pumpAndSettle();
+        await capture(tester, 'auth-verify');
       });
       testWidgets('reset form with keyboard at $width / $scale', (
         tester,
@@ -117,6 +151,9 @@ void main() {
           ),
         );
         await tap(tester, find.text('Forgot password?'));
+        await tester.ensureVisible(find.text('Forgot password?'));
+        await tester.pumpAndSettle();
+        await capture(tester, 'auth-forgot');
         await tester.enterText(
           find.byKey(const ValueKey('auth-email-field')),
           'mia@example.com',
@@ -138,6 +175,9 @@ void main() {
         await tap(tester, find.byKey(const ValueKey('auth-submit-button')));
         expect(transport.lastPath, '/v1/auth/reset-password');
         expect(transport.lastBody?['new_password'], 'new-secret123');
+        tester.view.resetViewInsets();
+        await tester.pumpAndSettle();
+        await capture(tester, 'auth-reset-complete');
       });
       testWidgets(
         'invite entry with short keyboard viewport at $width / $scale',
@@ -168,6 +208,7 @@ void main() {
           );
           expect(find.byKey(const ValueKey('auth-error-text')), findsOneWidget);
           expect(transport.postedBodies, isEmpty);
+          await capture(tester, 'auth-invite-validation');
         },
       );
       testWidgets('account and confirmations at $width / $scale', (
@@ -192,6 +233,7 @@ void main() {
         );
         await capture(tester, 'account');
         await tap(tester, find.byKey(const ValueKey('account-link-google')));
+        await capture(tester, 'account-link-password');
         tester.view.viewInsets = const FakeViewPadding(bottom: 300);
         addTearDown(tester.view.resetViewInsets);
         await tester.enterText(
@@ -200,12 +242,23 @@ void main() {
         );
         await tester.pumpAndSettle();
         expect(tester.takeException(), isNull);
+        await capture(tester, 'account-link-password-keyboard');
         await tap(tester, find.text('Cancel'));
         tester.view.resetViewInsets();
         await tester.pumpAndSettle();
         await tester.scrollUntilVisible(
           find.byKey(const ValueKey('account-delete')),
           300,
+        );
+        expect(
+          tester
+              .renderObject<RenderParagraph>(
+                find.textContaining('Your access will end immediately.'),
+              )
+              .text
+              .style!
+              .height,
+          1.55,
         );
         await tap(tester, find.byKey(const ValueKey('account-delete')));
         await capture(tester, 'account-delete');

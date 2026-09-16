@@ -1,0 +1,164 @@
+[
+  {
+    "id": "183:1108",
+    "name": "Preflight / device-checking",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "183:1153",
+    "name": "Preflight / device-ready",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "183:1200",
+    "name": "Preflight / device-done",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "183:1247",
+    "name": "Preflight / device-error",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "183:1294",
+    "name": "Preflight / large-device-error",
+    "width": 320,
+    "height": 844
+  },
+  {
+    "id": "183:1341",
+    "name": "Preflight / large-device-ready",
+    "width": 320,
+    "height": 844
+  },
+  {
+    "id": "183:1388",
+    "name": "Preflight / location-ready",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "183:1433",
+    "name": "Preflight / location-rejected",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "183:1480",
+    "name": "Preflight / location-consent-required",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "183:1529",
+    "name": "Preflight / location-busy",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "183:1574",
+    "name": "Preflight / location-error",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "183:1621",
+    "name": "Preflight / room-preparing",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "183:1667",
+    "name": "Preflight / intake-required",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "183:1716",
+    "name": "Preflight / video-disabled",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "183:1763",
+    "name": "Preflight / early",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "183:1810",
+    "name": "Preflight / expired",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "183:1857",
+    "name": "Preflight / consent-empty",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "183:1900",
+    "name": "Preflight / consent-accepted",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "183:1943",
+    "name": "Preflight / consent-busy",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "183:1986",
+    "name": "Preflight / consent-error",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "183:2031",
+    "name": "Preflight / large-location",
+    "width": 320,
+    "height": 844
+  },
+  {
+    "id": "183:2076",
+    "name": "Preflight / large-consent-required",
+    "width": 320,
+    "height": 844
+  },
+  {
+    "id": "183:2125",
+    "name": "Preflight / large-consent",
+    "width": 320,
+    "height": 844
+  },
+  {
+    "id": "183:2168",
+    "name": "Preflight / large-consent-error",
+    "width": 320,
+    "height": 844
+  },
+  {
+    "id": "183:2213",
+    "name": "Preflight / large-rejected",
+    "width": 320,
+    "height": 844
+  },
+  {
+    "id": "184:1108",
+    "name": "Preflight / short-device-ready",
+    "width": 320,
+    "height": 568
+  },
+  {
+    "id": "184:1156",
+    "name": "Preflight / location-menu",
+    "width": 393,
+    "height": 844
+  }
+]

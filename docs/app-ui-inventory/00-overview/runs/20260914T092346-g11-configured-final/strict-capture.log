@@ -1,0 +1,8 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/features/onboarding/configured_submission_inventory_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: inventory configured invite submission pending
+00:00 +1: inventory configured invitation failure outcomes
+00:00 +2: inventory configured avatar failure feedback
+00:01 +3: inventory configured avatar upload and handoff
+00:01 +4: (tearDownAll)
+00:01 +4: All tests passed!

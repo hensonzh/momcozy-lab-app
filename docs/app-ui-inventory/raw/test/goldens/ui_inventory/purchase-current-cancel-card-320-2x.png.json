@@ -1,0 +1,546 @@
+{
+  "source": "test/goldens/ui_inventory/purchase-current-cancel-card-320-2x.png",
+  "evidence": "current-widget-test-render; golden comparison passed",
+  "test_description": "current purchase plain cancellation and reconciliation completion true",
+  "sequence": 3,
+  "sha256": "dab334e2152387f98780fcf7371e35dc30a8829e37f8fe60fceb5f69f4628c79",
+  "width": 320,
+  "height": 844,
+  "captured_at": "2026-09-14T01:08:15.149201Z",
+  "widget_types": [
+    "AbsorbPointer",
+    "Actions",
+    "Align",
+    "AnimatedBuilder",
+    "AnimatedDefaultTextStyle",
+    "AnimatedModalBarrier",
+    "AnimatedPadding",
+    "AnimatedPhysicalModel",
+    "AnimatedTheme",
+    "AnnotatedRegion<SystemUiOverlayStyle>",
+    "AppBar",
+    "AutomaticKeepAlive",
+    "BlockSemantics",
+    "Builder",
+    "Center",
+    "ClipRRect",
+    "ClipRect",
+    "ColoredBox",
+    "Column",
+    "CompositedTransformTarget",
+    "ConstrainedBox",
+    "Container",
+    "CupertinoTheme",
+    "CustomMultiChildLayout",
+    "CustomPaint",
+    "CustomSingleChildLayout",
+    "DecoratedBox",
+    "DefaultSelectionStyle",
+    "DefaultTextEditingShortcuts",
+    "DefaultTextStyle",
+    "Dialog",
+    "Directionality",
+    "DisplayFeatureSubScreen",
+    "Divider",
+    "DualTransitionBuilder",
+    "EditableText",
+    "ExcludeSemantics",
+    "Expanded",
+    "FadeTransition",
+    "FilledButton",
+    "FittedBox",
+    "Flexible",
+    "FlexibleSpaceBarSettings",
+    "Focus",
+    "FocusTraversalGroup",
+    "Form",
+    "FractionalTranslation",
+    "GestureDetector",
+    "GoRouterStateRegistryScope",
+    "HeroControllerScope",
+    "Icon",
+    "IconButton",
+    "IconButtonTheme",
+    "IconTheme",
+    "IgnorePointer",
+    "Image",
+    "IndexedSemantics",
+    "InheritedCupertinoTheme",
+    "InheritedGoRouter",
+    "Ink",
+    "InkWell",
+    "InputDecorator",
+    "KeepAlive",
+    "KeyedSubtree",
+    "LayoutBuilder",
+    "LayoutId",
+    "LimitedBox",
+    "ListView",
+    "ListenableBuilder",
+    "Listener",
+    "Localizations",
+    "Material",
+    "MaterialApp",
+    "MediaQuery",
+    "ModalBarrier",
+    "MomCozyFlutterApp",
+    "MomCozyLineIcon",
+    "MomCozyPageBody",
+    "MomCozyRuntimeScope",
+    "MomHomeSurface",
+    "MomProviderTeamCard",
+    "MomServicePackageFacts",
+    "MomServicePrice",
+    "MomSettingsCard",
+    "MomSettingsFlowDialog",
+    "MouseRegion",
+    "NavigationToolbar",
+    "Navigator",
+    "NotificationListener<KeepAliveNotification>",
+    "NotificationListener<LayoutChangedNotification>",
+    "NotificationListener<NavigationNotification>",
+    "NotificationListener<ScrollMetricsNotification>",
+    "NotificationListener<ScrollNotification>",
+    "Offstage",
+    "Overlay",
+    "OverlayPortal",
+    "Padding",
+    "PageStorage",
+    "PhysicalModel",
+    "PhysicalShape",
+    "PopScope<dynamic>",
+    "PrimaryScrollController",
+    "RawGestureDetector",
+    "RawImage",
+    "RawTooltip",
+    "RawView",
+    "RepaintBoundary",
+    "RestorationScope",
+    "RichText",
+    "RootRestorationScope",
+    "RotationTransition",
+    "Router<Object>",
+    "Row",
+    "SafeArea",
+    "Scaffold",
+    "ScaffoldMessenger",
+    "ScaleTransition",
+    "ScrollConfiguration",
+    "ScrollNotificationObserver",
+    "Scrollable",
+    "Semantics",
+    "ServicePackagePage",
+    "ServicePurchaseDialog",
+    "SharedAppData",
+    "ShortcutRegistrar",
+    "Shortcuts",
+    "SingleChildScrollView",
+    "SizeChangedLayoutNotifier",
+    "SizedBox",
+    "SlideTransition",
+    "SliverList",
+    "SliverPadding",
+    "Stack",
+    "StretchEffect",
+    "StretchingOverscrollIndicator",
+    "SvgPicture",
+    "TapRegionSurface",
+    "Text",
+    "TextButton",
+    "TextField",
+    "TextFieldTapRegion",
+    "TextFormField",
+    "TextSelectionGestureDetector",
+    "Theme",
+    "TickerMode",
+    "Title",
+    "Tooltip",
+    "Transform",
+    "UndoHistory<TextEditingValue>",
+    "UnmanagedRestorationScope",
+    "ValueListenableBuilder<bool>",
+    "VectorGraphic",
+    "View",
+    "Viewport",
+    "WidgetsApp",
+    "WillPopScope",
+    "Wrap",
+    "_ActionsScope",
+    "_AppBarTitleBox",
+    "_BodyBuilder",
+    "_BorderContainer",
+    "_CaptureAll",
+    "_CompositionCallback",
+    "_CustomNavigator",
+    "_Decorator",
+    "_Editable",
+    "_EffectiveTickerMode",
+    "_ExclusiveMouseRegion",
+    "_FadeForwardsPageTransition",
+    "_FloatingActionButtonTransition",
+    "_FocusInheritedScope",
+    "_FocusScopeWithExternalFocusNode",
+    "_FormScope",
+    "_GestureSemantics",
+    "_HelperError",
+    "_IconButtonM3",
+    "_InheritedTheme",
+    "_InkFeatures",
+    "_InkResponseStateWidget",
+    "_InputPadding",
+    "_LocalizationsScope",
+    "_MaterialInterior",
+    "_MediaQueryFromView",
+    "_ModalBarrierGestureDetector",
+    "_ModalScope<CareEpisode>",
+    "_ModalScope<void>",
+    "_ModalScopeStatus",
+    "_OverlayEntryWidget",
+    "_OverlayPortal",
+    "_PageTransitionsThemeTransitions<void>",
+    "_ParentInkResponseProvider",
+    "_PipelineOwnerScope",
+    "_PredictiveBackGestureDetector",
+    "_RawPictureVectorGraphicWidget",
+    "_RawViewInternal",
+    "_RenderTheaterMarker",
+    "_RouterScope",
+    "_ScaffoldMessengerScope",
+    "_ScaffoldScope",
+    "_ScribbleFocusable",
+    "_ScrollNotificationObserverScope",
+    "_ScrollSemantics",
+    "_ScrollableScope",
+    "_SelectableIconButton",
+    "_SelectionKeepAlive",
+    "_ShapeBorderPaint",
+    "_SharedAppModel",
+    "_ShortcutRegistrarScope",
+    "_SingleChildViewport",
+    "_Theater",
+    "_ViewScope"
+  ],
+  "texts": [
+    "喂养安心服务包",
+    "Feeding Confidence",
+    "判断宝宝当前是否吃够，明确是否需要调整喂养，并形成 Feeding Plan。",
+    "2 次 IBCLC 在线咨询",
+    "7 天持续陪伴",
+    "IBCLC 专家团队服务",
+    "真人专家 + AI 持续陪伴",
+    "了解团队",
+    "$219 USD",
+    "正在打开…",
+    "返回",
+    "专家支持方案",
+    "安全支付",
+    "测试模式 · 模拟支付，不会产生真实扣款",
+    "购买方案",
+    "喂养安心服务包",
+    "$219",
+    "银行卡",
+    "仅模拟验证，不发送卡信息",
+    "测试卡号",
+    "有效期",
+    "安全码",
+    "账单邮编",
+    "支付 $219",
+    "取消付款",
+    "仅用于本地测试，不会产生真实扣款。"
+  ],
+  "scrolls": [
+    {
+      "foreground": false,
+      "axis": "vertical",
+      "direction": "down",
+      "pixels": 0.0,
+      "min": 0.0,
+      "max": 1540.0,
+      "viewport": 585.0
+    },
+    {
+      "foreground": true,
+      "axis": "vertical",
+      "direction": "down",
+      "pixels": 0.0,
+      "min": 0.0,
+      "max": 645.0,
+      "viewport": 624.0
+    },
+    {
+      "foreground": true,
+      "axis": "horizontal",
+      "direction": "right",
+      "pixels": 0.0,
+      "min": 0.0,
+      "max": 98.85214233398438,
+      "viewport": 162.0
+    },
+    {
+      "foreground": true,
+      "axis": "horizontal",
+      "direction": "right",
+      "pixels": 0.0,
+      "min": 0.0,
+      "max": 0.0,
+      "viewport": 162.0
+    },
+    {
+      "foreground": true,
+      "axis": "horizontal",
+      "direction": "right",
+      "pixels": 0.0,
+      "min": 0.0,
+      "max": 0.0,
+      "viewport": 162.0
+    },
+    {
+      "foreground": true,
+      "axis": "horizontal",
+      "direction": "right",
+      "pixels": 0.0,
+      "min": 0.0,
+      "max": 0.0,
+      "viewport": 162.0
+    }
+  ],
+  "controls": [
+    {
+      "widget": "IconButton",
+      "key": null,
+      "labels": [
+        "关闭购买"
+      ],
+      "enabled": true,
+      "bounds": [
+        230.0,
+        134.0,
+        48.0,
+        48.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "_IconButtonM3",
+      "key": null,
+      "labels": [
+        "关闭购买"
+      ],
+      "enabled": true,
+      "bounds": [
+        230.0,
+        134.0,
+        48.0,
+        48.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [],
+      "enabled": true,
+      "bounds": [
+        232.0,
+        136.0,
+        44.0,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "FilledButton",
+      "key": null,
+      "labels": [
+        "支付 $219"
+      ],
+      "enabled": true,
+      "bounds": [
+        42.0,
+        1239.0,
+        236.0,
+        60.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [
+        "支付 $219"
+      ],
+      "enabled": true,
+      "bounds": [
+        42.0,
+        1239.0,
+        236.0,
+        60.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "TextButton",
+      "key": null,
+      "labels": [
+        "取消付款"
+      ],
+      "enabled": true,
+      "bounds": [
+        42.0,
+        1313.0,
+        236.0,
+        60.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [
+        "取消付款"
+      ],
+      "enabled": true,
+      "bounds": [
+        42.0,
+        1313.0,
+        236.0,
+        60.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    }
+  ],
+  "needs_long_capture": true,
+  "interactions_since_previous_capture": [
+    {
+      "action": "tap",
+      "labels_at_start": [
+        "真人专家 + AI 持续陪伴",
+        "购买"
+      ],
+      "from": [
+        160.0,
+        798.0
+      ],
+      "to": [
+        160.0,
+        798.0
+      ]
+    },
+    {
+      "action": "tap",
+      "labels_at_start": [
+        "2 次 IBCLC 在线咨询",
+        "请选择当前所在州"
+      ],
+      "from": [
+        160.0,
+        519.8000000000001
+      ],
+      "to": [
+        160.0,
+        519.8000000000001
+      ]
+    },
+    {
+      "action": "tap",
+      "labels_at_start": [
+        "2 次 IBCLC 在线咨询",
+        "请选择当前所在州",
+        "California (CA)"
+      ],
+      "from": [
+        128.60598754882812,
+        519.8
+      ],
+      "to": [
+        128.60598754882812,
+        519.8
+      ]
+    },
+    {
+      "action": "tap",
+      "labels_at_start": [
+        "我确认所在州正确，并了解这不是紧急医疗服务。"
+      ],
+      "from": [
+        160.0,
+        648.0
+      ],
+      "to": [
+        160.0,
+        648.0
+      ]
+    },
+    {
+      "action": "tap",
+      "labels_at_start": [
+        "IBCLC 专家团队服务",
+        "正在打开…",
+        "确认并继续"
+      ],
+      "from": [
+        160.0,
+        772.0
+      ],
+      "to": [
+        160.0,
+        772.0
+      ]
+    }
+  ],
+  "call_stack": "#0      _InventoryComparator._record (file:///Users/lute/project/momcozy-lab/app/test/support/ui_inventory_capture.dart:169:32)\n<asynchronous suspension>\n#1      _InventoryComparator.compare (file:///Users/lute/project/momcozy-lab/app/test/support/ui_inventory_capture.dart:96:17)\n<asynchronous suspension>\n#2      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)\n<asynchronous suspension>\n#3      _AsyncCompleter.complete (dart:async/future_impl.dart:96:3)\n<asynchronous suspension>\n#4      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)\n<asynchronous suspension>\n#5      StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)\n<asynchronous suspension>\n#6      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)\n<asynchronous suspension>\n#7      main.capture (file:///Users/lute/project/momcozy-lab/app/test/modules/services/purchase_current_inventory_test.dart:161:5)\n<asynchronous suspension>\n#8      main.card (file:///Users/lute/project/momcozy-lab/app/test/modules/services/purchase_current_inventory_test.dart:228:5)\n<asynchronous suspension>\n#9      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/services/purchase_current_inventory_test.dart:586:9)\n<asynchronous suspension>\n#10     testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)\n<asynchronous suspension>\n#11     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)\n<asynchronous suspension>\n#12     StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)\n<asynchronous suspension>\n",
+  "long_capture": {
+    "status": "complete-measured-scroll-stitch",
+    "file": "/Users/lute/project/momcozy-lab/app/docs/app-ui-inventory/raw/test/goldens/ui_inventory/purchase-current-cancel-card-320-2x.long.png",
+    "offsets": [
+      0.0,
+      280.0,
+      560.0,
+      645.0
+    ],
+    "scroll_bounds": [
+      18.0,
+      202.0,
+      284.0,
+      624.0
+    ],
+    "frame_scroll_bounds": [
+      [
+        18.0,
+        202.0,
+        284.0,
+        624.0
+      ],
+      [
+        18.0,
+        202.0,
+        284.0,
+        624.0
+      ],
+      [
+        18.0,
+        202.0,
+        284.0,
+        624.0
+      ],
+      [
+        18.0,
+        202.0,
+        284.0,
+        624.0
+      ]
+    ],
+    "content_height": 1269.0,
+    "interior_strip_edge_guard": 64.0,
+    "fixed_bottom_overlay_bounds": [],
+    "original_scroll_offset": 0.0,
+    "tooltip_preserved_from_matched_viewport": false
+  }
+}

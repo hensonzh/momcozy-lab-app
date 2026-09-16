@@ -1,0 +1,191 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_switcher_design_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: switcher changes the selected baby and opens its profile at 320.0/1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: '当前宝宝 Luna，女宝宝，切换宝宝'
+  Actual: '当前宝宝 Luna，女宝宝，切换宝宝\n'
+            'Luna\n'
+            '女宝宝\n'
+            '3 周'
+   Which: is different. Both strings start the same, but the actual value also has the following
+trailing characters: \nLuna\n女宝 ...
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_switcher_design_test.dart:57:11)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_switcher_design_test.dart line 57
+The test description was:
+  switcher changes the selected baby and opens its profile at 320.0/1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +0 -1: switcher changes the selected baby and opens its profile at 320.0/1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: switcher changes the selected baby and opens its profile at 320.0/1.0
+  
+00:00 +0 -1: switcher changes the selected baby and opens its profile at 320.0/2.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: '当前宝宝 Luna，女宝宝，切换宝宝'
+  Actual: '当前宝宝 Luna，女宝宝，切换宝宝\n'
+            'Luna\n'
+            '女宝宝\n'
+            '3 周'
+   Which: is different. Both strings start the same, but the actual value also has the following
+trailing characters: \nLuna\n女宝 ...
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_switcher_design_test.dart:57:11)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_switcher_design_test.dart line 57
+The test description was:
+  switcher changes the selected baby and opens its profile at 320.0/2.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +0 -2: switcher changes the selected baby and opens its profile at 320.0/2.0 [E]
+  Test failed. See exception logs above.
+  The test description was: switcher changes the selected baby and opens its profile at 320.0/2.0
+  
+00:00 +0 -2: switcher changes the selected baby and opens its profile at 390.0/1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: '当前宝宝 Luna，女宝宝，切换宝宝'
+  Actual: '当前宝宝 Luna，女宝宝，切换宝宝\n'
+            'Luna\n'
+            '女宝宝\n'
+            '3 周'
+   Which: is different. Both strings start the same, but the actual value also has the following
+trailing characters: \nLuna\n女宝 ...
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_switcher_design_test.dart:57:11)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_switcher_design_test.dart line 57
+The test description was:
+  switcher changes the selected baby and opens its profile at 390.0/1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +0 -3: switcher changes the selected baby and opens its profile at 390.0/1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: switcher changes the selected baby and opens its profile at 390.0/1.0
+  
+00:00 +0 -3: switcher changes the selected baby and opens its profile at 390.0/2.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: '当前宝宝 Luna，女宝宝，切换宝宝'
+  Actual: '当前宝宝 Luna，女宝宝，切换宝宝\n'
+            'Luna\n'
+            '女宝宝\n'
+            '3 周'
+   Which: is different. Both strings start the same, but the actual value also has the following
+trailing characters: \nLuna\n女宝 ...
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_switcher_design_test.dart:57:11)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_switcher_design_test.dart line 57
+The test description was:
+  switcher changes the selected baby and opens its profile at 390.0/2.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +0 -4: switcher changes the selected baby and opens its profile at 390.0/2.0 [E]
+  Test failed. See exception logs above.
+  The test description was: switcher changes the selected baby and opens its profile at 390.0/2.0
+  
+00:00 +0 -4: switcher changes the selected baby and opens its profile at 430.0/1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: '当前宝宝 Luna，女宝宝，切换宝宝'
+  Actual: '当前宝宝 Luna，女宝宝，切换宝宝\n'
+            'Luna\n'
+            '女宝宝\n'
+            '3 周'
+   Which: is different. Both strings start the same, but the actual value also has the following
+trailing characters: \nLuna\n女宝 ...
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_switcher_design_test.dart:57:11)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_switcher_design_test.dart line 57
+The test description was:
+  switcher changes the selected baby and opens its profile at 430.0/1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +0 -5: switcher changes the selected baby and opens its profile at 430.0/1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: switcher changes the selected baby and opens its profile at 430.0/1.0
+  
+00:00 +0 -5: switcher changes the selected baby and opens its profile at 430.0/2.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: '当前宝宝 Luna，女宝宝，切换宝宝'
+  Actual: '当前宝宝 Luna，女宝宝，切换宝宝\n'
+            'Luna\n'
+            '女宝宝\n'
+            '3 周'
+   Which: is different. Both strings start the same, but the actual value also has the following
+trailing characters: \nLuna\n女宝 ...
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_switcher_design_test.dart:57:11)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_switcher_design_test.dart line 57
+The test description was:
+  switcher changes the selected baby and opens its profile at 430.0/2.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +0 -6: switcher changes the selected baby and opens its profile at 430.0/2.0 [E]
+  Test failed. See exception logs above.
+  The test description was: switcher changes the selected baby and opens its profile at 430.0/2.0
+  
+00:00 +0 -6: (tearDownAll)
+00:00 +0 -6: Some tests failed.
+
+Failing tests:
+  /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_switcher_design_test.dart: switcher changes the selected baby and opens its profile at 320.0/1.0
+  /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_switcher_design_test.dart: switcher changes the selected baby and opens its profile at 320.0/2.0
+  /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_switcher_design_test.dart: switcher changes the selected baby and opens its profile at 390.0/1.0
+  /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_switcher_design_test.dart: switcher changes the selected baby and opens its profile at 390.0/2.0
+  ... and 2 more

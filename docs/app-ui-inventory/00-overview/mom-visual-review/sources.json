@@ -1,0 +1,512 @@
+[
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-ai-context-draft-393.png",
+    "sha256": "53958339361a5e4769d4721ba53fd78cf6b6efa7bf39524c154b540f1c2ad73f",
+    "sheet": "overview-1.png",
+    "cell": 0
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-body-discomfort-expanded-393.png",
+    "sha256": "e9eb7365611d1d874438223b948cbbbb6033bf7b58ab2df19fa9a910b20be1c7",
+    "sheet": "overview-1.png",
+    "cell": 1
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-body-note-393.png",
+    "sha256": "6a371152ebb07254e718bb4b10da65761d228ff020b42355985e2c950be7ee82",
+    "sheet": "overview-1.png",
+    "cell": 2
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-body-optional-expanded-393.png",
+    "sha256": "6a371152ebb07254e718bb4b10da65761d228ff020b42355985e2c950be7ee82",
+    "sheet": "overview-1.png",
+    "cell": 3
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-diary-body-empty-393.png",
+    "sha256": "cf77a1b1107535c94edcb2c86544040e665ea93d87070d49b48a9c0269edc1ba",
+    "sheet": "overview-1.png",
+    "cell": 4
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-diary-conflict-393.png",
+    "sha256": "02f1a80584f3783b88903dfee5e13249ebc51b9eee3e5eb500367e58d6bb34ce",
+    "sheet": "overview-1.png",
+    "cell": 5
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-diary-conflict-reload-confirm-393.png",
+    "sha256": "088839a367f9e2467e21fca820cf841c225606a27f6b0812c118e2b0d920e4a8",
+    "sheet": "overview-1.png",
+    "cell": 6
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-diary-conflict-reloaded-393.png",
+    "sha256": "a7756dd335f470e7585f3f1aee7c51b74972c5d9e102326b3809dc24a412ff4a",
+    "sheet": "overview-1.png",
+    "cell": 7
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-diary-conflict-resolved-393.png",
+    "sha256": "86850d113baaaf3237e3d0125f17e739b062885d3dad52249987170aa8750eda",
+    "sheet": "overview-1.png",
+    "cell": 8
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-diary-conflict-retained-393.png",
+    "sha256": "02f1a80584f3783b88903dfee5e13249ebc51b9eee3e5eb500367e58d6bb34ce",
+    "sheet": "overview-1.png",
+    "cell": 9
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-diary-conflict-return-home-393.png",
+    "sha256": "62a79d1733823bb792f08f5f292ec5c880c88b58fa95ec6f977308818af4df03",
+    "sheet": "overview-1.png",
+    "cell": 10
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-diary-detail-body-393.png",
+    "sha256": "59cc58e22d20fc4a8d1a6c6831a93f65c0cd7fe0f271051c651d937972c9f2bd",
+    "sheet": "overview-1.png",
+    "cell": 11
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-diary-detail-mood-393.png",
+    "sha256": "069d317979a363b6b8490c3c9473943b04b4cdc8e53904f61de5568339344a47",
+    "sheet": "overview-2.png",
+    "cell": 0
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-diary-detail-rest-393.png",
+    "sha256": "979edf213bf2e58e483440b14b96d18e032840150c24186f577effaf5610ff7a",
+    "sheet": "overview-2.png",
+    "cell": 1
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-diary-detail-updated-393.png",
+    "sha256": "eb75bc7c355111b2b2942cff4460874cf95232d88938ed9a612bbe6307dd0058",
+    "sheet": "overview-2.png",
+    "cell": 2
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-diary-discard-confirm-393.png",
+    "sha256": "970ecdfd61ef7da2ed0fec63d38f12344f2a322e27f7bff3ddc31721c7291b7a",
+    "sheet": "overview-2.png",
+    "cell": 3
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-diary-discarded-home-393.png",
+    "sha256": "32785da9dbd7820cb89380d16be927a03c8c72ff4820b7fefeb674edc6c4eb13",
+    "sheet": "overview-2.png",
+    "cell": 4
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-diary-draft-retained-393.png",
+    "sha256": "a065a6e765b2a1ad2714c099919b932624431231b727b53f327f41464b21e932",
+    "sheet": "overview-2.png",
+    "cell": 5
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-diary-empty-validation-393.png",
+    "sha256": "c4cb4f959c1e92a61cc8d884a3239532140516059302162669634b20ac382840",
+    "sheet": "overview-2.png",
+    "cell": 6
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-diary-home-complete-393.png",
+    "sha256": "cb5847889d107b554394d0f3135883bf8dcbe2d2b70f256f08222c62d8a904fb",
+    "sheet": "overview-2.png",
+    "cell": 7
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-diary-modal-saved-393.png",
+    "sha256": "0cfc1a06b70a3d030f80adb797d6bcb447c59afe938fce61db4fee9eecfcf52d",
+    "sheet": "overview-2.png",
+    "cell": 8
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-diary-mood-empty-393.png",
+    "sha256": "5c18bb53804dc5f44e7b54d3d8ebb7e32a0a5e38820fb0ebe18bc35b5b3646ec",
+    "sheet": "overview-2.png",
+    "cell": 9
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-diary-optional-discard-confirm-393.png",
+    "sha256": "958a526676a4055dc0b17cbfbe997ba0639b8fc48215cb56ee12beb96af86ab1",
+    "sheet": "overview-2.png",
+    "cell": 10
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-diary-read-error-393.png",
+    "sha256": "0062d057d0e05d5aacbe1ac6a91c1d153cdf81d93ed7b1c9049d8a3b3ad1fc97",
+    "sheet": "overview-2.png",
+    "cell": 11
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-diary-read-recovered-393.png",
+    "sha256": "cf77a1b1107535c94edcb2c86544040e665ea93d87070d49b48a9c0269edc1ba",
+    "sheet": "overview-3.png",
+    "cell": 0
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-diary-rest-empty-393.png",
+    "sha256": "54dbaac6aef6b44f86191056eea9a965eedaf268678fa7a27b8d72516c5f98fd",
+    "sheet": "overview-3.png",
+    "cell": 1
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-diary-return-home-393.png",
+    "sha256": "38c164d6541fe6cd6630e05174a64c65f0c3b74294d7491fdb5e17b81a26ab1e",
+    "sheet": "overview-3.png",
+    "cell": 2
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-diary-save-error-393.png",
+    "sha256": "952c64a8c963eb770b5a1eafd9a74de4adcc23fb1f03d3b6229e5895287095cd",
+    "sheet": "overview-3.png",
+    "cell": 3
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-diary-saving-393.png",
+    "sha256": "b3b642553efb8be09054d43a987f83654df23aa113ff299cfb373251b0af3bad",
+    "sheet": "overview-3.png",
+    "cell": 4
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-home-diary-partial-error-393.png",
+    "sha256": "02a7857a6d30a13106a2231df153e7e0e8c3ad5c2d005d951287f9283ebd7f72",
+    "sheet": "overview-3.png",
+    "cell": 5
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-home-loaded-empty-393.png",
+    "sha256": "be291808401e7f353b8f14552b0df4a698f3edd191e5e2d770c66c2e129fc145",
+    "sheet": "overview-3.png",
+    "cell": 6
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-home-loading-393.png",
+    "sha256": "df7e0316fa865e2c793543dbeb5aa65b478a3a1c2b82a868635089b31a0fded8",
+    "sheet": "overview-3.png",
+    "cell": 7
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-home-partial-recovered-393.png",
+    "sha256": "32785da9dbd7820cb89380d16be927a03c8c72ff4820b7fefeb674edc6c4eb13",
+    "sheet": "overview-3.png",
+    "cell": 8
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-initial-home-393.png",
+    "sha256": "be291808401e7f353b8f14552b0df4a698f3edd191e5e2d770c66c2e129fc145",
+    "sheet": "overview-3.png",
+    "cell": 9
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-milk-conflict-393.png",
+    "sha256": "bec28cbd4c8431c3246899d31cfe200d9cfbf50d4ef0f52b9c52248520da7bff",
+    "sheet": "overview-3.png",
+    "cell": 10
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-milk-conflict-reload-confirm-393.png",
+    "sha256": "f40fc1269660d8d216c999fad4335edfb5c798d2bf4121f6f8a40ceff765041b",
+    "sheet": "overview-3.png",
+    "cell": 11
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-milk-conflict-reloaded-393.png",
+    "sha256": "c95120bfd5b696187fd6a6ebe75520392c482584f0829367f35f2548d2703c4a",
+    "sheet": "overview-4.png",
+    "cell": 0
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-milk-delete-failed-393.png",
+    "sha256": "3b078baa67e04227a575184ec55a14616d14853402f19b69e910ff116ccaedab",
+    "sheet": "overview-4.png",
+    "cell": 1
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-milk-filled-393.png",
+    "sha256": "910a4b101cec0b8ccdb9e6738f21d27e901b0abcce220c40ef20d8540f5777e7",
+    "sheet": "overview-4.png",
+    "cell": 2
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-milk-history-393.png",
+    "sha256": "bd1d5e461112ba2555df75f84fc0104d5be901befec956be50ff89f58beee250",
+    "sheet": "overview-4.png",
+    "cell": 3
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-milk-history-deleted-393.png",
+    "sha256": "e29df3a456458226611370425eab6d1891d9196416caeb29ca5aebad87db2768",
+    "sheet": "overview-4.png",
+    "cell": 4
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-milk-history-edit-393.png",
+    "sha256": "91dc377998166b4466ac0774b4fc78cf88726383b0f408df2ec4ba0db0162282",
+    "sheet": "overview-4.png",
+    "cell": 5
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-milk-history-empty-393.png",
+    "sha256": "ccddcd5e1f9fd695bf9c39934e9b424f708d1c4e2eba87d410af8370ebdb34dd",
+    "sheet": "overview-4.png",
+    "cell": 6
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-milk-history-read-error-393.png",
+    "sha256": "f57b79b4beca8b45b8682045179929827dfb29b02ed9d26dd71f5d8808020de8",
+    "sheet": "overview-4.png",
+    "cell": 7
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-milk-history-read-recovered-393.png",
+    "sha256": "ccddcd5e1f9fd695bf9c39934e9b424f708d1c4e2eba87d410af8370ebdb34dd",
+    "sheet": "overview-4.png",
+    "cell": 8
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-milk-history-restored-393.png",
+    "sha256": "dab257db2b8ae3250680de3a04077c443b2c59ff42c6da3b796b14e0f1753ce7",
+    "sheet": "overview-4.png",
+    "cell": 9
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-milk-history-updated-393.png",
+    "sha256": "fc04cd1a7af41a414d09a2e31b3aa9c303bf5a288bce07fdedfbb41758f4eeed",
+    "sheet": "overview-4.png",
+    "cell": 10
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-milk-home-refreshed-393.png",
+    "sha256": "1d599b396b7d7c43a3a33ef521214975cf0316be10950b1f9f76e257d127ca19",
+    "sheet": "overview-4.png",
+    "cell": 11
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-milk-invalid-volume-393.png",
+    "sha256": "a0479773f2ea2f7111a097b98b18916a64af40e13c91a0b92177a4fe943462aa",
+    "sheet": "overview-5.png",
+    "cell": 0
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-milk-modal-saved-393.png",
+    "sha256": "128b9d0485f26761f337697962cb597c5d3e8b0c2ba1bab8dc152dd80b0abb9f",
+    "sheet": "overview-5.png",
+    "cell": 1
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-milk-new-pump-393.png",
+    "sha256": "d8ba6bcbdf9e615b1a956def2c09f4ae205ddd78448886d2259b013d2d4fbe8a",
+    "sheet": "overview-5.png",
+    "cell": 2
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-milk-restore-error-393.png",
+    "sha256": "9f18e54347d2e7cffb06c19a05e1bf618ee9b49100b2e64a704216a2295c48a1",
+    "sheet": "overview-5.png",
+    "cell": 3
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-milk-return-home-393.png",
+    "sha256": "e8770274d5c4dbf2080c2aa5ec40ff9a07b488154bd702fed43e25404ae5c2b0",
+    "sheet": "overview-5.png",
+    "cell": 4
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-milk-save-error-393.png",
+    "sha256": "7ace65fcd4b0ccbfbe60609308b4e78896186af07724b241f4bfe383a26f15a0",
+    "sheet": "overview-5.png",
+    "cell": 5
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-milk-uncertain-leave-confirm-393.png",
+    "sha256": "158782e658a707009afb853a1e60f69c89239c802298223779e15a7ebbc39a4b",
+    "sheet": "overview-5.png",
+    "cell": 6
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-milk-uncertain-retried-393.png",
+    "sha256": "d6cc2d52308c4ed4b3b15fcd923d995700f49c47f6247699d8413be06cf3bbdd",
+    "sheet": "overview-5.png",
+    "cell": 7
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-milk-uncertain-return-home-393.png",
+    "sha256": "fed8442b435bd681567545514056b7910a47c17e6750b1225dfe27ba1e9a0799",
+    "sheet": "overview-5.png",
+    "cell": 8
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-milk-uncertain-save-393.png",
+    "sha256": "33229da76082201fcdf0c3742ef925708757f9a0f1220e6425694e7800bc997c",
+    "sheet": "overview-5.png",
+    "cell": 9
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-mood-exclusive-pressure-393.png",
+    "sha256": "69f4f6eea7ea591f2e4edf1277640bd346a9019f5448d20518604c83d026e31e",
+    "sheet": "overview-5.png",
+    "cell": 10
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-mood-multiple-pressures-393.png",
+    "sha256": "38bd59347eb810456d96b26daac8bede0ea529e872d83659569a9498ffb2de63",
+    "sheet": "overview-5.png",
+    "cell": 11
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-mood-quick-prefilled-393.png",
+    "sha256": "c8494c510c507930d406963dc685d5119d146a15d94179365277bf263fae58d9",
+    "sheet": "overview-6.png",
+    "cell": 0
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-nursing-cancel-confirm-393.png",
+    "sha256": "29832cd9fd1a52fce0afceef2758ae0dcacdf75f3f7df66a179349199f74d214",
+    "sheet": "overview-6.png",
+    "cell": 1
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-nursing-cancel-retained-393.png",
+    "sha256": "69ed15ca00d64b7d9f88c46a0956f7f936aa79912742f4672343eebbc24bfc09",
+    "sheet": "overview-6.png",
+    "cell": 2
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-nursing-duration-invalid-393.png",
+    "sha256": "ef178db497910957ac3609a331f8faf7e809624aa71e434d8c7c6f1d4419f3f6",
+    "sheet": "overview-6.png",
+    "cell": 3
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-nursing-empty-393.png",
+    "sha256": "4e73b5db70f72a43692848c0a8380709b9ef9e0820cf9337904aa21e02a06bd8",
+    "sheet": "overview-6.png",
+    "cell": 4
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-nursing-new-discarded-393.png",
+    "sha256": "f2de96787decaa8347ccba97ba6c616154724be54478d5d492f1af80481e73bf",
+    "sheet": "overview-6.png",
+    "cell": 5
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-nursing-optional-filled-393.png",
+    "sha256": "7d32fd06122fe0f6525f5be38123ec00ad2ca744cf67ea0cb5b1cc87f4552696",
+    "sheet": "overview-6.png",
+    "cell": 6
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-nursing-saved-393.png",
+    "sha256": "bc1fb3c4f5927610b4e8d2313481c0c174d52029abf586a20fe4023be3f612a8",
+    "sheet": "overview-6.png",
+    "cell": 7
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-nursing-saving-393.png",
+    "sha256": "7dedb95e3d00a8e29f4693761d6376e6da850a33fd3b896589dd9b135eb211cb",
+    "sheet": "overview-6.png",
+    "cell": 8
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-nursing-time-input-393.png",
+    "sha256": "f9dee77b1a8c99d4d3e5094317285ded59dd7a2b7103769bebf170c94a520523",
+    "sheet": "overview-6.png",
+    "cell": 9
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-nursing-time-invalid-393.png",
+    "sha256": "ab3ce51605c662f2cc3ff836a0c19d0bf737de1e18b13cfc08fea30a6047594c",
+    "sheet": "overview-6.png",
+    "cell": 10
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-nursing-time-picker-393.png",
+    "sha256": "9cff7e4bd3e83d9cc2b2aaa0acc5328f2ff6be2c7800b434dfc4062d5291803a",
+    "sheet": "overview-6.png",
+    "cell": 11
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-purchased-booking-cancel-precheck-393.png",
+    "sha256": "8209af1029fcae3f37edf28b1bf6fd10e991de52c45d0ab99b33ab636525d4dd",
+    "sheet": "overview-7.png",
+    "cell": 0
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-purchased-booking-precheck-393.png",
+    "sha256": "15ba20e272414d373a432186af649c7b3c638d1ca16c7f5cfd7814bf2b04a537",
+    "sheet": "overview-7.png",
+    "cell": 1
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-purchased-booking-return-393.png",
+    "sha256": "be291808401e7f353b8f14552b0df4a698f3edd191e5e2d770c66c2e129fc145",
+    "sheet": "overview-7.png",
+    "cell": 2
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-purchased-home-393.png",
+    "sha256": "ead5ac8a293816f7bd516f46098b4572a10e0c1c7f25f275ba75259d025c8ca8",
+    "sheet": "overview-7.png",
+    "cell": 3
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-purchased-progress-393.png",
+    "sha256": "54f84ac57d4f4398b423358dd4d712526ff24d4da0e20283a8615d4d84c4961c",
+    "sheet": "overview-7.png",
+    "cell": 4
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-purchased-progress-return-393.png",
+    "sha256": "be291808401e7f353b8f14552b0df4a698f3edd191e5e2d770c66c2e129fc145",
+    "sheet": "overview-7.png",
+    "cell": 5
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-rest-optional-expanded-393.png",
+    "sha256": "8b78704cadb09514cd920b5fa89ce29498259b59c74f731583681a475bb6c665",
+    "sheet": "overview-7.png",
+    "cell": 6
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-service-catalog-393.png",
+    "sha256": "6897cf7692efd2862014e721ad4bf55ef346da703a1600c5e0f62926b17c469f",
+    "sheet": "overview-7.png",
+    "cell": 7
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-service-return-home-393.png",
+    "sha256": "be291808401e7f353b8f14552b0df4a698f3edd191e5e2d770c66c2e129fc145",
+    "sheet": "overview-7.png",
+    "cell": 8
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-trend-return-home-393.png",
+    "sha256": "a1158deb2a0aaaaee3ef6ed8f42b7c48a4371db1074d1c9f36860012ded8ae84",
+    "sheet": "overview-7.png",
+    "cell": 9
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-trend-seven-days-393.png",
+    "sha256": "7df96b2928fd7536a4b97cdaee6e4847ea92067be866c652754fabe907474b0c",
+    "sheet": "overview-7.png",
+    "cell": 10
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-trend-seven-days-return-393.png",
+    "sha256": "fe2db0489f2f19598d9bcac2ac5245be4254176c99955fbc44f162d2b5fa5493",
+    "sheet": "overview-7.png",
+    "cell": 11
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/mom-journey-trend-thirty-days-393.png",
+    "sha256": "a9897556e969f90a94f2abbf151c8a41e3ae48f408b7005664d8466ee3958458",
+    "sheet": "overview-8.png",
+    "cell": 0
+  }
+]

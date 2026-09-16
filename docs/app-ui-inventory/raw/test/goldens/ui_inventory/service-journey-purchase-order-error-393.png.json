@@ -1,0 +1,540 @@
+{
+  "source": "test/goldens/ui_inventory/service-journey-purchase-order-error-393.png",
+  "evidence": "current-widget-test-render; golden comparison passed",
+  "test_description": "inventory Services create order retry pending payment and resume",
+  "sequence": 0,
+  "sha256": "8d7d8b9ae39e3258b80dff25962d5c0912d4aa0e34301b81f6da8be4a53b9d7e",
+  "width": 393,
+  "height": 844,
+  "captured_at": "2026-09-13T13:38:19.146946Z",
+  "widget_types": [
+    "AbsorbPointer",
+    "Actions",
+    "Align",
+    "AnimatedBuilder",
+    "AnimatedContainer",
+    "AnimatedDefaultTextStyle",
+    "AnimatedModalBarrier",
+    "AnimatedPadding",
+    "AnimatedPhysicalModel",
+    "AnimatedTheme",
+    "AnnotatedRegion<SystemUiOverlayStyle>",
+    "AppBar",
+    "AutomaticKeepAlive",
+    "BlockSemantics",
+    "Builder",
+    "Card",
+    "Center",
+    "Checkbox",
+    "CheckboxListTile",
+    "CircleAvatar",
+    "ClipPath",
+    "ClipRect",
+    "ColoredBox",
+    "Column",
+    "ConstrainedBox",
+    "Container",
+    "CupertinoTheme",
+    "CustomMultiChildLayout",
+    "CustomPaint",
+    "CustomSingleChildLayout",
+    "DecoratedBox",
+    "DefaultSelectionStyle",
+    "DefaultTextEditingShortcuts",
+    "DefaultTextStyle",
+    "Dialog",
+    "Directionality",
+    "DisplayFeatureSubScreen",
+    "Divider",
+    "DropdownButton<String>",
+    "DropdownButtonFormField<String>",
+    "DropdownButtonHideUnderline",
+    "DropdownMenuItem<String>",
+    "DualTransitionBuilder",
+    "ExcludeFocus",
+    "ExcludeSemantics",
+    "Expanded",
+    "FadeTransition",
+    "FilledButton",
+    "FittedBox",
+    "Flexible",
+    "FlexibleSpaceBarSettings",
+    "Focus",
+    "FocusTraversalGroup",
+    "FocusableActionDetector",
+    "FractionalTranslation",
+    "GestureDetector",
+    "GoRouterStateRegistryScope",
+    "HeroControllerScope",
+    "Icon",
+    "IconButtonTheme",
+    "IconTheme",
+    "IgnorePointer",
+    "IndexedSemantics",
+    "IndexedStack",
+    "InheritedCupertinoTheme",
+    "InheritedGoRouter",
+    "Ink",
+    "InkWell",
+    "InputDecorator",
+    "KeepAlive",
+    "KeyedSubtree",
+    "LayoutBuilder",
+    "LayoutId",
+    "LimitedBox",
+    "ListTile",
+    "ListView",
+    "ListenableBuilder",
+    "Listener",
+    "Localizations",
+    "Material",
+    "MaterialApp",
+    "MediaQuery",
+    "MergeSemantics",
+    "ModalBarrier",
+    "MomCozyFlutterApp",
+    "MomCozyLineIcon",
+    "MomCozyPageBody",
+    "MomCozyRuntimeScope",
+    "MomCozySurface",
+    "MouseRegion",
+    "NavigationToolbar",
+    "Navigator",
+    "NotificationListener<KeepAliveNotification>",
+    "NotificationListener<LayoutChangedNotification>",
+    "NotificationListener<NavigationNotification>",
+    "NotificationListener<ScrollMetricsNotification>",
+    "NotificationListener<ScrollNotification>",
+    "Offstage",
+    "Overlay",
+    "OverlayPortal",
+    "Padding",
+    "PageStorage",
+    "PhysicalModel",
+    "PhysicalShape",
+    "PopScope<dynamic>",
+    "PreferredSize",
+    "PrimaryScrollController",
+    "ProductFlowDialog",
+    "ProviderTeamTile",
+    "RawGestureDetector",
+    "RawTooltip",
+    "RawView",
+    "RepaintBoundary",
+    "RestorationScope",
+    "RichText",
+    "RootRestorationScope",
+    "RotationTransition",
+    "Router<Object>",
+    "Row",
+    "SafeArea",
+    "Scaffold",
+    "ScaffoldMessenger",
+    "ScaleTransition",
+    "ScrollConfiguration",
+    "ScrollNotificationObserver",
+    "Scrollable",
+    "Semantics",
+    "ServicePackageFacts",
+    "ServicePackagePage",
+    "ServicePrice",
+    "ServicePurchaseDialog",
+    "SharedAppData",
+    "ShortcutRegistrar",
+    "Shortcuts",
+    "SingleChildScrollView",
+    "SizedBox",
+    "SlideTransition",
+    "SliverList",
+    "SliverPadding",
+    "Stack",
+    "StretchEffect",
+    "StretchingOverscrollIndicator",
+    "SvgPicture",
+    "TapRegionSurface",
+    "Text",
+    "TextButton",
+    "Theme",
+    "TickerMode",
+    "Title",
+    "Tooltip",
+    "Transform",
+    "UnmanagedRestorationScope",
+    "ValueListenableBuilder<bool>",
+    "VectorGraphic",
+    "View",
+    "Viewport",
+    "Visibility",
+    "WidgetsApp",
+    "_ActionsScope",
+    "_AppBarTitleBox",
+    "_BodyBuilder",
+    "_BorderContainer",
+    "_CaptureAll",
+    "_CustomNavigator",
+    "_Decorator",
+    "_DeliveryList",
+    "_EffectiveTickerMode",
+    "_ExclusiveMouseRegion",
+    "_FadeForwardsPageTransition",
+    "_FloatingActionButtonTransition",
+    "_FocusInheritedScope",
+    "_FocusScopeWithExternalFocusNode",
+    "_GestureSemantics",
+    "_HelperError",
+    "_InheritedTheme",
+    "_InkFeatures",
+    "_InkResponseStateWidget",
+    "_InputPadding",
+    "_ListTile",
+    "_LocalizationsScope",
+    "_MaterialInterior",
+    "_MediaQueryFromView",
+    "_ModalBarrierGestureDetector",
+    "_ModalScope<CareEpisode>",
+    "_ModalScope<void>",
+    "_ModalScopeStatus",
+    "_OverlayEntryWidget",
+    "_OverlayPortal",
+    "_PageTransitionsThemeTransitions<void>",
+    "_ParentInkResponseProvider",
+    "_PipelineOwnerScope",
+    "_PredictiveBackGestureDetector",
+    "_RawIndexedStack",
+    "_RawPictureVectorGraphicWidget",
+    "_RawViewInternal",
+    "_RenderTheaterMarker",
+    "_RouterScope",
+    "_ScaffoldMessengerScope",
+    "_ScaffoldScope",
+    "_ScrollNotificationObserverScope",
+    "_ScrollSemantics",
+    "_ScrollableScope",
+    "_SelectionKeepAlive",
+    "_ShapeBorderPaint",
+    "_SharedAppModel",
+    "_ShortcutRegistrarScope",
+    "_SingleChildViewport",
+    "_Theater",
+    "_ViewScope",
+    "_Visibility",
+    "_VisibilityScope"
+  ],
+  "texts": [
+    "IBCLC 专家团队服务",
+    "了解团队",
+    "判断宝宝当前是否吃够，明确是否需要调整喂养，并形成 Feeding Plan。",
+    "真人 IBCLC 专家支持  |  2 次 IBCLC 在线咨询",
+    "7 天  |  AI 与 App 持续陪伴和跟进",
+    "IBCLC 服务",
+    "1 次首次视频咨询（60 分钟）",
+    "1 次 IBCLC 跟进（20–30 分钟）",
+    "AI / App 持续服务",
+    "跟踪 feeding、pumping、奶量及宝宝关键记录",
+    "按 Care Plan 提醒执行与记录",
+    "收集喂养反馈",
+    "生成阶段总结供 IBCLC 复核",
+    "$219 USD",
+    "正在打开…",
+    "返回",
+    "喂养安心服务包",
+    "购买前确认",
+    "关闭",
+    "当前方案",
+    "喂养安心服务包 · $219",
+    "当前所在州",
+    "California (CA)",
+    "我确认所在州正确，并了解这不是紧急医疗服务。",
+    "确认并继续",
+    "暂时无法确认订单",
+    "请检查网络后重试。已有订单会继续保留。",
+    "重试"
+  ],
+  "scrolls": [
+    {
+      "foreground": false,
+      "axis": "vertical",
+      "direction": "down",
+      "pixels": 0.0,
+      "min": 0.0,
+      "max": 0.0,
+      "viewport": 703.0
+    },
+    {
+      "foreground": true,
+      "axis": "vertical",
+      "direction": "down",
+      "pixels": 0.0,
+      "min": 0.0,
+      "max": 0.0,
+      "viewport": 439.0
+    }
+  ],
+  "controls": [
+    {
+      "widget": "TextButton",
+      "key": null,
+      "labels": [
+        "关闭"
+      ],
+      "enabled": true,
+      "bounds": [
+        314.79999923706055,
+        327.0,
+        48.20000076293945,
+        48.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [
+        "关闭"
+      ],
+      "enabled": true,
+      "bounds": [
+        314.79999923706055,
+        329.0,
+        48.20000076293945,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "ListTile",
+      "key": null,
+      "labels": [
+        "我确认所在州正确，并了解这不是紧急医疗服务。"
+      ],
+      "enabled": true,
+      "bounds": [
+        38.0,
+        560.0,
+        317.0,
+        56.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [
+        "我确认所在州正确，并了解这不是紧急医疗服务。"
+      ],
+      "enabled": true,
+      "bounds": [
+        38.0,
+        560.0,
+        317.0,
+        56.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "Checkbox",
+      "key": null,
+      "labels": [],
+      "enabled": true,
+      "bounds": [
+        38.0,
+        568.0,
+        40.0,
+        40.0
+      ],
+      "selected": true,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "FilledButton",
+      "key": null,
+      "labels": [
+        "确认并继续"
+      ],
+      "enabled": true,
+      "bounds": [
+        38.0,
+        629.0,
+        317.0,
+        48.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [
+        "确认并继续"
+      ],
+      "enabled": true,
+      "bounds": [
+        38.0,
+        629.0,
+        317.0,
+        48.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "TextButton",
+      "key": null,
+      "labels": [
+        "重试"
+      ],
+      "enabled": true,
+      "bounds": [
+        79.0,
+        745.0,
+        263.0,
+        48.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [
+        "重试"
+      ],
+      "enabled": true,
+      "bounds": [
+        79.0,
+        747.0,
+        263.0,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    }
+  ],
+  "needs_long_capture": false,
+  "interactions_since_previous_capture": [
+    {
+      "action": "tap",
+      "labels_at_start": [
+        "Me"
+      ],
+      "from": [
+        45.7,
+        829.0
+      ],
+      "to": [
+        45.7,
+        829.0
+      ]
+    },
+    {
+      "action": "tap",
+      "labels_at_start": [
+        "让专业的人，陪你把问题解决",
+        "专家 + AI 持续服务，从分析问题到跟进改善，全程有人陪"
+      ],
+      "from": [
+        196.5,
+        693.0
+      ],
+      "to": [
+        196.5,
+        693.0
+      ]
+    },
+    {
+      "action": "tap",
+      "labels_at_start": [
+        "查看方案 →"
+      ],
+      "from": [
+        305.0,
+        162.0
+      ],
+      "to": [
+        305.0,
+        162.0
+      ]
+    },
+    {
+      "action": "tap",
+      "labels_at_start": [
+        "购买"
+      ],
+      "from": [
+        235.21808624267578,
+        794.0
+      ],
+      "to": [
+        235.21808624267578,
+        794.0
+      ]
+    },
+    {
+      "action": "tap",
+      "labels_at_start": [
+        "生成阶段总结供 IBCLC 复核"
+      ],
+      "from": [
+        196.5,
+        650.0
+      ],
+      "to": [
+        196.5,
+        650.0
+      ]
+    },
+    {
+      "action": "tap",
+      "labels_at_start": [
+        "生成阶段总结供 IBCLC 复核",
+        "请选择当前所在州",
+        "California (CA)"
+      ],
+      "from": [
+        83.03500366210938,
+        650.0
+      ],
+      "to": [
+        83.03500366210938,
+        650.0
+      ]
+    },
+    {
+      "action": "tap",
+      "labels_at_start": [
+        "我确认所在州正确，并了解这不是紧急医疗服务。"
+      ],
+      "from": [
+        196.5,
+        717.0
+      ],
+      "to": [
+        196.5,
+        717.0
+      ]
+    },
+    {
+      "action": "tap",
+      "labels_at_start": [
+        "正在打开…",
+        "确认并继续"
+      ],
+      "from": [
+        196.5,
+        782.0
+      ],
+      "to": [
+        196.5,
+        782.0
+      ]
+    }
+  ],
+  "call_stack": "#0      _InventoryComparator._record (file:///Users/lute/project/momcozy-lab/app/test/support/ui_inventory_capture.dart:169:32)\n<asynchronous suspension>\n#1      _InventoryComparator.compare (file:///Users/lute/project/momcozy-lab/app/test/support/ui_inventory_capture.dart:96:17)\n<asynchronous suspension>\n#2      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)\n<asynchronous suspension>\n#3      _AsyncCompleter.complete (dart:async/future_impl.dart:96:3)\n<asynchronous suspension>\n#4      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)\n<asynchronous suspension>\n#5      StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)\n<asynchronous suspension>\n#6      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)\n<asynchronous suspension>\n#7      main.capture (file:///Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart:150:5)\n<asynchronous suspension>\n#8      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart:547:7)\n<asynchronous suspension>\n#9      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)\n<asynchronous suspension>\n#10     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)\n<asynchronous suspension>\n#11     StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)\n<asynchronous suspension>\n",
+  "long_capture": {
+    "status": "no-active-vertical-overflow"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/progress-current-events-refresh-error-393-1x.png",
+  "previous_source": "test/goldens/ui_inventory/progress-current-events-refresh-pending-393-1x.png",
+  "route": "/services/episodes/service-episode",
+  "trigger": "Appointment context 503 → retained old events and retry",
+  "root_entry": "Authenticated More → tap Me bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/services/progress_current_inventory_test.dart"
+}

@@ -125,7 +125,9 @@ class AgentStreamRunState {
     }
 
     final type = event.type;
-    if (type == 'message.withdrawn' && hasCompletedAssistantMessage) return this;
+    if (type == 'message.withdrawn' && hasCompletedAssistantMessage) {
+      return this;
+    }
     if (withdrawnMessageId != null && type == 'message.delta') return this;
     final nextEvents = _nextRetainedEvents(events, event);
     final textUpdate = _nextTextStream(event);
@@ -517,7 +519,8 @@ class AgentStreamRunState {
       if (_hasValue(errorMessage)) 'errorMessage': errorMessage,
       if (cancelAcknowledged) 'cancelAcknowledged': cancelAcknowledged,
       if (cancelStatusCode != null) 'cancelStatusCode': cancelStatusCode,
-      if (_hasValue(withdrawnMessageId)) 'withdrawnMessageId': withdrawnMessageId,
+      if (_hasValue(withdrawnMessageId))
+        'withdrawnMessageId': withdrawnMessageId,
     };
   }
 
@@ -576,7 +579,9 @@ class AgentStreamRunState {
       cancelAcknowledged: map['cancelAcknowledged'] == true,
       cancelStatusCode:
           _int(map['cancelStatusCode']) ?? _int(map['cancel_status_code']),
-      withdrawnMessageId: _string(map['withdrawnMessageId']) ?? _string(map['withdrawn_message_id']),
+      withdrawnMessageId:
+          _string(map['withdrawnMessageId']) ??
+          _string(map['withdrawn_message_id']),
     );
   }
 }

@@ -1,6 +1,10 @@
+import 'package:momcozy_flutter_app/shared/design_system/mom_settings_theme.dart';
+import 'package:momcozy_flutter_app/shared/design_system/mom_home_tokens.dart';
 import 'dart:async';
+import '../cards/agent_result_card.dart';
 
 import 'package:flutter/material.dart';
+import 'package:momcozy_flutter_app/shared/design_system/momcozy_motion.dart';
 import 'package:momcozy_flutter_app/shared/design_system/momcozy_design_system.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_model.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/forms/agent_artifact_form.dart';
@@ -173,6 +177,7 @@ class _AgentArtifactFormEntryState extends State<AgentArtifactFormEntry> {
     try {
       await showDialog<void>(
         context: context,
+        animationStyle: MomCozyMotion.animationStyle(context),
         barrierDismissible: true,
         builder: (context) => ListenableBuilder(
           listenable: Listenable.merge([
@@ -233,111 +238,35 @@ class _AgentArtifactFormEntryState extends State<AgentArtifactFormEntry> {
     return Semantics(
       button: true,
       enabled: !_loading && !isSubmitting,
+      excludeSemantics: true,
       label: '${widget.card.title}，$subtitle',
       child: Material(
         color: Colors.transparent,
         child: InkWell(
           key: ValueKey('agent-artifact-form-entry-${widget.card.id}'),
           onTap: _loading || isSubmitting ? null : _openDialog,
-          borderRadius: BorderRadius.circular(MomCozyRadii.card),
-          child: Ink(
-            decoration: BoxDecoration(
-              color: MomCozyColors.card,
-              borderRadius: BorderRadius.circular(MomCozyRadii.card),
-              border: Border.all(color: MomCozyColors.border),
-            ),
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(minHeight: 84),
-              child: Row(
-                children: [
-                  Container(
-                    width: 62,
-                    height: 84,
-                    decoration: const BoxDecoration(
-                      color: MomCozyColors.violetSoft,
-                      borderRadius: BorderRadius.horizontal(
-                        left: Radius.circular(MomCozyRadii.card),
-                      ),
+          borderRadius: BorderRadius.circular(22),
+          child: AgentResultCard(
+            title: widget.card.title,
+            description: subtitle,
+            icon: _loading || isSubmitting
+                ? SizedBox.square(
+                    key: ValueKey(
+                      'agent-artifact-form-entry-loading-${widget.card.id}',
                     ),
-                    alignment: Alignment.center,
-                    child: const Icon(
-                      Icons.assignment_outlined,
-                      size: 28,
-                      color: MomCozyColors.primary,
+                    dimension: 18,
+                    child: const CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: MomHomeTokens.teal,
                     ),
+                  )
+                : Icon(
+                    isSubmitted
+                        ? Icons.check_circle_outline_rounded
+                        : Icons.assignment_outlined,
+                    size: 22,
+                    color: MomHomeTokens.teal,
                   ),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 10,
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            '信息采集',
-                            style: Theme.of(context).textTheme.labelSmall
-                                ?.copyWith(
-                                  color: MomCozyColors.mutedForeground,
-                                  fontSize: MomCozyTypography.microSize,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                          ),
-                          const SizedBox(height: 3),
-                          Text(
-                            widget.card.title,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: Theme.of(context).textTheme.labelLarge
-                                ?.copyWith(
-                                  color: MomCozyColors.foreground,
-                                  fontSize: MomCozyTypography.secondarySize,
-                                  fontWeight: FontWeight.w700,
-                                  height: 1.25,
-                                ),
-                          ),
-                          const SizedBox(height: MomCozySpacing.xs),
-                          Text(
-                            subtitle,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: Theme.of(context).textTheme.labelSmall
-                                ?.copyWith(
-                                  color: MomCozyColors.mutedForeground,
-                                  fontSize: MomCozyTypography.labelSize,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(right: 12),
-                    child: _loading || isSubmitting
-                        ? SizedBox.square(
-                            key: ValueKey(
-                              'agent-artifact-form-entry-loading-${widget.card.id}',
-                            ),
-                            dimension: 18,
-                            child: const CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: MomCozyColors.primary,
-                            ),
-                          )
-                        : Icon(
-                            isSubmitted
-                                ? Icons.check_circle_outline_rounded
-                                : Icons.chevron_right_rounded,
-                            size: 19,
-                            color: MomCozyColors.primary,
-                          ),
-                  ),
-                ],
-              ),
-            ),
           ),
         ),
       ),
@@ -393,10 +322,8 @@ class _AgentArtifactFormDialogState extends State<AgentArtifactFormDialog> {
     }
     setState(() => _submitting = false);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted || !_scrollController.hasClients) return;
-      final position = _scrollController.position;
-      if (position.maxScrollExtent <= position.minScrollExtent) return;
-      _scrollController.jumpTo(position.maxScrollExtent);
+      if (!mounted) return;
+      _formKey.currentState?.revealError();
     });
     WidgetsBinding.instance.ensureVisualUpdate();
   }
@@ -408,9 +335,7 @@ class _AgentArtifactFormDialogState extends State<AgentArtifactFormDialog> {
     return OutlinedButton(
       key: ValueKey('agent-artifact-form-cancel-${widget.card.id}'),
       onPressed: isSubmitting ? null : () => Navigator.of(context).pop(),
-      style: OutlinedButton.styleFrom(
-        minimumSize: const Size(82, MomCozyLayout.buttonHeight),
-      ),
+      style: OutlinedButton.styleFrom(minimumSize: const Size(82, 44)),
       child: Text(isSubmitted ? '关闭' : '取消'),
     );
   }
@@ -423,21 +348,21 @@ class _AgentArtifactFormDialogState extends State<AgentArtifactFormDialog> {
       key: ValueKey('agent-artifact-form-submit-${widget.card.id}'),
       onPressed: !canSubmit || isSubmitting ? null : _submit,
       style: FilledButton.styleFrom(
-        minimumSize: const Size(96, MomCozyLayout.buttonHeight),
+        minimumSize: const Size(96, 44),
+        disabledBackgroundColor: MomHomeTokens.neutralSurface,
+        disabledForegroundColor: MomHomeTokens.secondary,
       ),
       icon: isSubmitting
           ? const SizedBox.square(
               dimension: 16,
               child: CircularProgressIndicator(
                 strokeWidth: 2,
-                color: MomCozyColors.card,
+                color: MomHomeTokens.secondary,
               ),
             )
           : const Icon(Icons.check_rounded, size: 18),
       label: Text(
         isSubmitting ? '提交中' : widget.card.formSubmitLabel ?? '提交',
-        maxLines: 2,
-        overflow: TextOverflow.ellipsis,
         textAlign: TextAlign.center,
       ),
     );
@@ -497,105 +422,133 @@ class _AgentArtifactFormDialogState extends State<AgentArtifactFormDialog> {
     final isSubmitted = widget.submission?.isSubmitted == true;
     final isSubmitting = _submitting || widget.submission?.isSubmitting == true;
     final canSubmit = widget.onSubmit != null || widget.onAction != null;
-    return PopScope(
-      canPop: !isSubmitting,
-      child: Dialog(
-        key: ValueKey('agent-artifact-form-dialog-${widget.card.id}'),
-        insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-        clipBehavior: Clip.antiAlias,
-        child: ConstrainedBox(
-          constraints: BoxConstraints(
-            maxWidth: MomCozyLayout.maxAppWidth,
-            maxHeight: mediaQuery.size.height * 0.8,
-          ),
-          child: Padding(
-            padding: EdgeInsets.zero,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(MomCozyRadii.dialog),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 14, 10, 12),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          width: 34,
-                          height: 34,
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            color: MomCozyColors.violetSoft,
-                            borderRadius: BorderRadius.circular(
-                              MomCozyRadii.badge,
-                            ),
-                          ),
-                          child: const Icon(
-                            Icons.assignment_outlined,
-                            size: 19,
-                            color: MomCozyColors.primary,
-                          ),
-                        ),
-                        const SizedBox(width: MomCozySpacing.statusGap),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                widget.card.title,
-                                style: Theme.of(context).textTheme.titleMedium
-                                    ?.copyWith(
-                                      color: MomCozyColors.foreground,
-                                      fontSize: MomCozyTypography.headingSize,
-                                      fontWeight: FontWeight.w700,
-                                      height: 1.3,
-                                    ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        IconButton(
-                          tooltip: '取消',
-                          onPressed: isSubmitting
-                              ? null
-                              : () => Navigator.of(context).pop(),
-                          icon: const Icon(Icons.close_rounded, size: 20),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const Divider(height: 1, color: MomCozyColors.border),
-                  Flexible(
-                    child: SingleChildScrollView(
-                      key: ValueKey(
-                        'agent-artifact-form-scroll-${widget.card.id}',
-                      ),
-                      controller: _scrollController,
-                      padding: const EdgeInsets.all(MomCozySpacing.page),
-                      child: AgentArtifactForm(
-                        key: _formKey,
-                        card: widget.card,
-                        onAction: widget.onAction,
-                        onSubmit: widget.onSubmit,
-                        submission: widget.submission,
-                        initialDraftValues: widget.initialDraftValues,
-                        onDraftChanged: widget.onDraftChanged,
-                        onSubmitted: widget.onSubmitted,
-                        dialogMode: true,
-                      ),
-                    ),
-                  ),
-                  const Divider(height: 1, color: MomCozyColors.border),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 10, 16, 12),
-                    child: _buildFooterActions(
-                      isSubmitted: isSubmitted,
-                      isSubmitting: isSubmitting,
-                      canSubmit: canSubmit,
-                    ),
-                  ),
-                ],
+    final header = ColoredBox(
+      color: MomHomeTokens.surface,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.only(top: 9),
+                child: Text(
+                  widget.card.title,
+                  style: MomHomeTokens.text(18, weight: FontWeight.w700),
+                ),
               ),
+            ),
+            IconButton(
+              tooltip: isSubmitted ? '关闭' : '取消',
+              style: IconButton.styleFrom(
+                foregroundColor: MomHomeTokens.rose,
+                minimumSize: const Size(44, 44),
+              ),
+              onPressed: isSubmitting
+                  ? null
+                  : () => Navigator.of(context).pop(),
+              icon: const Icon(Icons.close_rounded, size: 20),
+            ),
+          ],
+        ),
+      ),
+    );
+    final form = Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (widget.card.description?.trim().isNotEmpty == true) ...[
+            Text(
+              widget.card.description!,
+              style: MomHomeTokens.text(14, color: MomHomeTokens.secondary),
+            ),
+            const SizedBox(height: 24),
+          ],
+          AgentArtifactForm(
+            key: _formKey,
+            card: widget.card,
+            onAction: widget.onAction,
+            onSubmit: widget.onSubmit,
+            submission: widget.submission,
+            initialDraftValues: widget.initialDraftValues,
+            onDraftChanged: widget.onDraftChanged,
+            onSubmitted: widget.onSubmitted,
+          ),
+        ],
+      ),
+    );
+    final footer = ColoredBox(
+      color: MomHomeTokens.surface,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: _buildFooterActions(
+          isSubmitted: isSubmitted,
+          isSubmitting: isSubmitting,
+          canSubmit: canSubmit,
+        ),
+      ),
+    );
+    const divider = Divider(height: 1, color: MomHomeTokens.border);
+    return Theme(
+      data: momSettingsTheme(Theme.of(context)),
+      child: PopScope(
+        canPop: !isSubmitting,
+        child: Dialog(
+          key: ValueKey('agent-artifact-form-dialog-${widget.card.id}'),
+          backgroundColor: MomHomeTokens.background,
+          insetPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 24,
+          ),
+          clipBehavior: Clip.antiAlias,
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxWidth: MomCozyLayout.maxAppWidth,
+              maxHeight: mediaQuery.size.height * .8,
+            ),
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                // A keyboard or large text must not leave a fixed header/footer taller
+                // than the remaining dialog. Keep the whole form reachable by scrolling.
+                final scrollAll =
+                    constraints.maxHeight < 400 ||
+                    MediaQuery.textScalerOf(context).scale(14) > 17.5;
+                if (scrollAll) {
+                  return SingleChildScrollView(
+                    key: ValueKey(
+                      'agent-artifact-form-scroll-${widget.card.id}',
+                    ),
+                    controller: _scrollController,
+                    keyboardDismissBehavior:
+                        ScrollViewKeyboardDismissBehavior.onDrag,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [header, divider, form, divider, footer],
+                    ),
+                  );
+                }
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    header,
+                    divider,
+                    Flexible(
+                      child: SingleChildScrollView(
+                        key: ValueKey(
+                          'agent-artifact-form-scroll-${widget.card.id}',
+                        ),
+                        controller: _scrollController,
+                        keyboardDismissBehavior:
+                            ScrollViewKeyboardDismissBehavior.onDrag,
+                        child: form,
+                      ),
+                    ),
+                    divider,
+                    footer,
+                  ],
+                );
+              },
             ),
           ),
         ),

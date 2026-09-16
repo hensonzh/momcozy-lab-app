@@ -1,0 +1,26 @@
+{
+  "screenshot_entries": 2837,
+  "render_variants": 5275,
+  "user_screenshot_entries": 2818,
+  "workbench_reference_entries": 19,
+  "primary_long_images": 1134,
+  "long_review_entries": 0,
+  "unobserved_widget_or_overlay_files": 6,
+  "observed_transition_steps": 5337,
+  "verified_normal_entry_states": 2367,
+  "states_with_control_observations": 2764,
+  "modules": {
+    "登录与首次使用": 104,
+    "妈妈": 492,
+    "宝宝": 562,
+    "Cozymate": 308,
+    "日程": 122,
+    "账号与隐私": 419,
+    "专家服务与咨询": 732,
+    "动作评估": 2,
+    "通用界面与浮层": 38,
+    "媒体": 39,
+    "IBCLC 工作台（单列）": 19
+  },
+  "completion": "INCOMPLETE: normal entries, missing states and visual QA pending"
+}

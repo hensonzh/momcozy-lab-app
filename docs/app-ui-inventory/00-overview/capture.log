@@ -1,0 +1,1027 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/app/mom_navigation_test.dart
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/app/not_found_design_test.dart: (setUpAll)
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/app/not_found_design_test.dart: unknown route shows a recoverable page at 320.0/1.0
+00:00 +1: /Users/lute/project/momcozy-lab/app/test/app/more_design_test.dart: More navigation and privacy at 320.0 / 1.0
+00:00 +2: /Users/lute/project/momcozy-lab/app/test/app/more_design_test.dart: More navigation and privacy at 320.0 / 1.0
+00:00 +3: /Users/lute/project/momcozy-lab/app/test/app/more_design_test.dart: More navigation and privacy at 320.0 / 1.0
+00:00 +4: /Users/lute/project/momcozy-lab/app/test/app/more_design_test.dart: More navigation and privacy at 320.0 / 1.0
+00:01 +5: /Users/lute/project/momcozy-lab/app/test/app/more_design_test.dart: More navigation and privacy at 320.0 / 1.0
+00:01 +6: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:01 +7: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:01 +8: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:01 +9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:01 +10: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:01 +11: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:01 +12: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:01 +13: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:01 +14: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:01 +15: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:01 +16: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:01 +17: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:01 +18: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:01 +19: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:01 +20: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:01 +21: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_inventory_journey_test.dart: inventory attachment upload removal and tab retention 393.0
+00:01 +22: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_inventory_journey_test.dart: inventory attachment upload removal and tab retention 393.0
+00:01 +23: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_inventory_journey_test.dart: inventory attachment upload removal and tab retention 393.0
+00:01 +24: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_inventory_journey_test.dart: inventory attachment upload removal and tab retention 393.0
+00:01 +25: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_inventory_journey_test.dart: inventory attachment upload removal and tab retention 393.0
+00:01 +26: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_inventory_journey_test.dart: inventory attachment upload removal and tab retention 393.0
+00:01 +27: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_inventory_journey_test.dart: inventory attachment upload removal and tab retention 393.0
+00:02 +28: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_inventory_journey_test.dart: inventory attachment upload removal and tab retention 393.0
+00:02 +29: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_inventory_journey_test.dart: inventory attachment upload removal and tab retention 393.0
+00:02 +30: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 390.0/2.0
+00:02 +31: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: form state rejects duplicate and completed submissions
+00:02 +32: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_history_design_test.dart: history states 320.0/1.0
+00:02 +33: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_history_design_test.dart: history states 320.0/1.0
+00:03 +34: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_history_design_test.dart: history states 320.0/1.0
+00:03 +35: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_history_design_test.dart: history states 320.0/1.0
+00:03 +36: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_history_design_test.dart: history states 320.0/1.0
+00:03 +37: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 320.0/2.0
+00:04 +38: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 320.0/2.0
+00:04 +39: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 320.0/2.0
+00:04 +40: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 320.0/2.0
+00:04 +41: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 320.0/2.0
+00:04 +42: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_markdown_design_test.dart: markdown reading 320.0/1.0
+00:04 +43: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_markdown_design_test.dart: markdown reading 320.0/1.0
+00:04 +44: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_history_design_test.dart: history states 320.0/2.0
+00:04 +45: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_inventory_journey_test.dart: inventory attachment upload removal and tab retention 320.0
+00:04 +46: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_inventory_journey_test.dart: inventory attachment upload removal and tab retention 320.0
+00:05 +47: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_inventory_journey_test.dart: inventory attachment upload removal and tab retention 320.0
+00:05 +48: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_inventory_journey_test.dart: inventory attachment upload removal and tab retention 320.0
+00:05 +49: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_inventory_journey_test.dart: inventory attachment upload removal and tab retention 320.0
+00:05 +50: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_inventory_journey_test.dart: inventory attachment upload removal and tab retention 320.0
+00:05 +51: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_inventory_journey_test.dart: inventory attachment upload removal and tab retention 320.0
+00:05 +52: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_inventory_journey_test.dart: inventory attachment upload removal and tab retention 320.0
+00:05 +53: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_history_design_test.dart: history states 390.0/1.0
+00:05 +54: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: form states 390.0/1.0
+00:05 +55: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: form states 390.0/1.0
+00:05 +56: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: form states 390.0/1.0
+00:06 +57: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: form states 390.0/1.0
+00:06 +58: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 390.0/2.0
+00:06 +59: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 390.0/2.0
+00:06 +60: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 390.0/2.0
+00:06 +61: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 390.0/2.0
+00:06 +62: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 390.0/2.0
+00:06 +63: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 390.0/2.0
+00:06 +64: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_inventory_journey_test.dart: inventory attachment mixed send and image viewer 320.0
+00:06 +65: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_inventory_journey_test.dart: inventory attachment mixed send and image viewer 320.0
+00:06 +66: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_inventory_journey_test.dart: inventory attachment mixed send and image viewer 320.0
+00:07 +67: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_inventory_journey_test.dart: inventory attachment mixed send and image viewer 320.0
+00:07 +68: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_inventory_journey_test.dart: inventory attachment mixed send and image viewer 320.0
+00:07 +69: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_inventory_journey_test.dart: inventory attachment mixed send and image viewer 320.0
+00:07 +70: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_inventory_journey_test.dart: inventory attachment mixed send and image viewer 320.0
+00:07 +71: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_inventory_journey_test.dart: inventory attachment mixed send and image viewer 320.0
+00:07 +72: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_inventory_journey_test.dart: inventory attachment mixed send and image viewer 320.0
+00:07 +73: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/1.0
+00:07 +74: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/1.0
+00:07 +75: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/1.0
+00:07 +76: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/1.0
+00:07 +77: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 320.0/1.0
+00:07 +78: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 320.0/1.0
+00:07 +79: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_history_design_test.dart: history states 430.0/2.0
+00:07 +80: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_inventory_journey_test.dart: inventory agent long response and manual follow-up 393.0
+00:07 +81: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_inventory_journey_test.dart: inventory agent long response and manual follow-up 393.0
+00:07 +82: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_inventory_journey_test.dart: inventory agent long response and manual follow-up 393.0
+00:07 +83: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_inventory_journey_test.dart: inventory attachment picker cancellation and failure
+00:08 +84: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_inventory_journey_test.dart: inventory attachment picker cancellation and failure
+00:08 +85: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_inventory_journey_test.dart: inventory attachment picker cancellation and failure
+00:08 +86: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_inventory_journey_test.dart: inventory attachment picker cancellation and failure
+00:08 +87: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_inventory_journey_test.dart: inventory attachment picker cancellation and failure
+00:08 +88: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_inventory_journey_test.dart: inventory attachment picker cancellation and failure
+00:08 +89: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: form states 430.0/2.0
+00:08 +90: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: form states 430.0/2.0
+00:08 +91: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/2.0
+00:08 +92: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/2.0
+00:08 +93: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/2.0
+00:08 +94: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/2.0
+00:08 +95: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/2.0
+00:08 +96: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/2.0
+00:08 +97: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/2.0
+00:08 +98: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/2.0
+00:08 +99: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/2.0
+00:09 +100: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/2.0
+00:09 +101: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/2.0
+00:09 +102: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_design_test.dart: conversation recovery 430.0/2.0
+00:09 +103: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_inventory_journey_test.dart: inventory agent long response and manual follow-up 320.0
+00:09 +104: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_inventory_journey_test.dart: inventory agent long response and manual follow-up 320.0
+00:09 +105: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_inventory_journey_test.dart: inventory agent long response and manual follow-up 320.0
+00:09 +106: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_result_design_test.dart: result cards 320.0/1.0
+00:09 +107: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_result_design_test.dart: result cards 320.0/1.0
+00:10 +108: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 320.0/1.0
+00:10 +109: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 320.0/1.0
+00:10 +110: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 320.0/1.0
+00:10 +111: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_inventory_journey_test.dart: inventory voice greeting recovery 393/1
+00:10 +112: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_inventory_journey_test.dart: inventory voice greeting recovery 393/1
+00:10 +113: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_inventory_journey_test.dart: inventory voice greeting recovery 393/1
+00:10 +114: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow intake controls and accepted submission 393.0
+00:11 +115: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow intake controls and accepted submission 393.0
+00:11 +116: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow intake controls and accepted submission 393.0
+00:11 +117: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow intake controls and accepted submission 393.0
+00:11 +118: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow intake controls and accepted submission 393.0
+00:11 +119: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow intake controls and accepted submission 393.0
+00:11 +120: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow intake controls and accepted submission 393.0
+00:11 +121: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow intake controls and accepted submission 393.0
+00:11 +122: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow intake controls and accepted submission 393.0
+00:11 +123: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow intake controls and accepted submission 393.0
+00:11 +124: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow intake controls and accepted submission 393.0
+00:11 +125: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow intake controls and accepted submission 393.0
+00:11 +126: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow intake controls and accepted submission 393.0
+00:11 +127: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow intake controls and accepted submission 393.0
+00:11 +128: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow intake controls and accepted submission 393.0
+00:11 +129: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow intake controls and accepted submission 393.0
+00:11 +130: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow intake controls and accepted submission 393.0
+00:12 +131: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow intake controls and accepted submission 393.0
+00:12 +132: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow intake controls and accepted submission 393.0
+00:12 +133: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow intake controls and accepted submission 393.0
+00:12 +134: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow intake controls and accepted submission 393.0
+00:12 +135: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow intake controls and accepted submission 393.0
+00:12 +136: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow intake controls and accepted submission 393.0
+00:12 +137: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow intake controls and accepted submission 393.0
+00:12 +138: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow intake controls and accepted submission 393.0
+00:12 +139: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow intake controls and accepted submission 393.0
+00:12 +140: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow intake controls and accepted submission 393.0
+00:12 +141: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow intake controls and accepted submission 393.0
+00:12 +142: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow intake controls and accepted submission 393.0
+00:12 +143: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow intake controls and accepted submission 393.0
+00:12 +144: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow intake controls and accepted submission 393.0
+00:12 +145: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow intake controls and accepted submission 393.0
+00:12 +146: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow intake controls and accepted submission 393.0
+00:12 +147: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow intake controls and accepted submission 393.0
+00:12 +148: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow intake controls and accepted submission 393.0
+00:12 +149: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow intake controls and accepted submission 393.0
+00:12 +150: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow intake controls and accepted submission 393.0
+00:12 +151: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow intake controls and accepted submission 393.0
+00:12 +152: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow intake controls and accepted submission 393.0
+00:12 +153: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow intake controls and accepted submission 393.0
+00:12 +154: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow intake controls and accepted submission 393.0
+00:13 +155: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow intake controls and accepted submission 393.0
+00:13 +156: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow intake controls and accepted submission 393.0
+00:13 +157: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow intake controls and accepted submission 393.0
+00:13 +158: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow intake controls and accepted submission 393.0
+00:13 +159: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow intake controls and accepted submission 393.0
+00:13 +160: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow intake controls and accepted submission 393.0
+00:13 +161: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow intake controls and accepted submission 393.0
+00:13 +162: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 390.0/2.0
+00:13 +163: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 390.0/2.0
+00:13 +164: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 390.0/2.0
+00:13 +165: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 390.0/2.0
+00:13 +166: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 390.0/2.0
+00:13 +167: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 390.0/2.0
+00:13 +168: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 390.0/2.0
+00:13 +169: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: voice states 390.0/2.0
+00:13 +170: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_inventory_journey_test.dart: inventory voice stream error replay and disable 320/2
+00:13 +171: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_inventory_journey_test.dart: inventory voice stream error replay and disable 320/2
+00:13 +172: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_inventory_journey_test.dart: inventory voice stream error replay and disable 320/2
+00:13 +173: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_inventory_journey_test.dart: inventory voice stream error replay and disable 320/2
+00:13 +174: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_inventory_journey_test.dart: inventory voice stream error replay and disable 320/2
+00:13 +175: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_inventory_journey_test.dart: inventory voice stream error replay and disable 320/2
+00:13 +176: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_inventory_journey_test.dart: inventory voice stream error replay and disable 320/2
+00:14 +177: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_inventory_journey_test.dart: inventory voice stream error replay and disable 320/2
+00:14 +178: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_inventory_journey_test.dart: inventory voice stream error replay and disable 320/2
+00:14 +179: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_inventory_journey_test.dart: inventory voice stream error replay and disable 320/2
+00:14 +180: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_inventory_journey_test.dart: inventory voice stream error replay and disable 320/2
+00:14 +181: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_inventory_journey_test.dart: inventory voice stream error replay and disable 320/2
+00:14 +182: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_inventory_journey_test.dart: inventory voice stream error replay and disable 320/2
+00:14 +183: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_inventory_journey_test.dart: inventory voice stream error replay and disable 320/2
+00:14 +184: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_inventory_journey_test.dart: inventory voice stream error replay and disable 320/2
+00:14 +185: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_inventory_journey_test.dart: inventory voice stream error replay and disable 320/2
+00:14 +186: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_inventory_journey_test.dart: inventory voice stream error replay and disable 320/2
+00:14 +187: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_inventory_journey_test.dart: inventory voice stream error replay and disable 320/2
+00:14 +188: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_inventory_journey_test.dart: inventory voice stream error replay and disable 320/2
+00:14 +189: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_inventory_journey_test.dart: inventory voice stream error replay and disable 320/2
+00:14 +190: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_inventory_journey_test.dart: inventory voice stream error replay and disable 320/2
+00:14 +191: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_inventory_journey_test.dart: inventory voice stream error replay and disable 320/2
+00:14 +192: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_inventory_journey_test.dart: inventory voice stream error replay and disable 320/2
+00:14 +193: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_inventory_journey_test.dart: inventory voice stream error replay and disable 320/2
+00:14 +194: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_inventory_journey_test.dart: inventory voice stream error replay and disable 320/2
+00:14 +195: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_inventory_journey_test.dart: inventory voice stream error replay and disable 320/2
+00:14 +196: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_inventory_journey_test.dart: inventory voice stream error replay and disable 320/2
+00:14 +197: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_inventory_journey_test.dart: inventory voice stream error replay and disable 320/2
+00:14 +198: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_inventory_journey_test.dart: inventory voice stream error replay and disable 320/2
+00:14 +199: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_inventory_journey_test.dart: inventory voice stream error replay and disable 320/2
+00:14 +200: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_inventory_journey_test.dart: inventory voice stream error replay and disable 320/2
+00:14 +201: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_inventory_journey_test.dart: inventory voice stream error replay and disable 320/2
+00:14 +202: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_inventory_journey_test.dart: inventory voice stream error replay and disable 320/2
+00:14 +203: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_inventory_journey_test.dart: inventory voice stream error replay and disable 320/2
+00:14 +204: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_inventory_journey_test.dart: inventory voice stream error replay and disable 320/2
+00:14 +205: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_inventory_journey_test.dart: inventory voice stream error replay and disable 320/2
+00:14 +206: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_inventory_journey_test.dart: inventory voice stream error replay and disable 320/2
+00:14 +207: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_inventory_journey_test.dart: inventory voice stream error replay and disable 320/2
+00:14 +208: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_inventory_journey_test.dart: inventory voice stream error replay and disable 320/2
+00:14 +209: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_inventory_journey_test.dart: inventory voice stream error replay and disable 320/2
+00:14 +210: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_inventory_journey_test.dart: inventory voice stream error replay and disable 320/2
+00:14 +211: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_inventory_journey_test.dart: inventory voice stream error replay and disable 320/2
+00:14 +212: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_inventory_journey_test.dart: inventory voice stream error replay and disable 320/2
+00:14 +213: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_inventory_journey_test.dart: inventory voice stream error replay and disable 320/2
+00:14 +214: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_inventory_journey_test.dart: inventory voice stream error replay and disable 320/2
+00:14 +215: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_inventory_journey_test.dart: inventory voice stream error replay and disable 320/2
+00:14 +216: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_inventory_journey_test.dart: inventory voice stream error replay and disable 320/2
+00:14 +217: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_inventory_journey_test.dart: inventory voice stream error replay and disable 320/2
+00:14 +217: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/presentation/motion_assessment_controller_test.dart: stops the local camera when native pose inference fails
+Motion pose stream failed: PlatformException(pose_inference_failed, MediaPipe execution failed, null, null)
+00:14 +218: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_inventory_journey_test.dart: inventory voice stream error replay and disable 320/2
+00:14 +219: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_inventory_journey_test.dart: inventory voice stream error replay and disable 320/2
+00:14 +220: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_inventory_journey_test.dart: inventory voice stream error replay and disable 320/2
+00:14 +221: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_inventory_journey_test.dart: inventory voice stream error replay and disable 320/2
+00:14 +222: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_inventory_journey_test.dart: inventory voice stream error replay and disable 320/2
+00:14 +223: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_inventory_journey_test.dart: inventory voice stream error replay and disable 320/2
+00:14 +224: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_inventory_journey_test.dart: inventory voice stream error replay and disable 320/2
+00:14 +225: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_inventory_journey_test.dart: inventory voice stream error replay and disable 320/2
+00:14 +226: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_inventory_journey_test.dart: inventory voice stream error replay and disable 320/2
+00:14 +227: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_inventory_journey_test.dart: inventory voice stream error replay and disable 320/2
+00:14 +228: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_inventory_journey_test.dart: inventory voice stream error replay and disable 320/2
+00:14 +229: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_inventory_journey_test.dart: inventory voice stream error replay and disable 320/2
+00:15 +230: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow intake controls and accepted submission 320.0
+00:15 +231: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow intake controls and accepted submission 320.0
+00:15 +232: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow intake controls and accepted submission 320.0
+00:15 +233: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow intake controls and accepted submission 320.0
+00:15 +234: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow intake controls and accepted submission 320.0
+00:15 +235: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow intake controls and accepted submission 320.0
+00:15 +236: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow intake controls and accepted submission 320.0
+00:15 +237: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow intake controls and accepted submission 320.0
+00:15 +238: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow intake controls and accepted submission 320.0
+00:15 +238: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/presentation/motion_assessment_controller_test.dart: motion responsive failure retry and exit 320.0 / 1.0
+Motion pose stream failed: PlatformException(pose_model_initialization_failed, null, null, null)
+00:15 +239: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow intake controls and accepted submission 320.0
+00:15 +239: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/presentation/motion_assessment_controller_test.dart: motion responsive failure retry and exit 320.0 / 2.0
+Motion pose stream failed: PlatformException(pose_model_initialization_failed, null, null, null)
+00:15 +240: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow intake controls and accepted submission 320.0
+00:15 +240: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/presentation/motion_assessment_controller_test.dart: motion responsive failure retry and exit 390.0 / 1.0
+Motion pose stream failed: PlatformException(pose_model_initialization_failed, null, null, null)
+00:15 +241: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow intake controls and accepted submission 320.0
+00:15 +241: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/presentation/motion_assessment_controller_test.dart: motion responsive failure retry and exit 390.0 / 2.0
+Motion pose stream failed: PlatformException(pose_model_initialization_failed, null, null, null)
+00:15 +242: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow intake controls and accepted submission 320.0
+00:15 +242: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/presentation/motion_assessment_controller_test.dart: motion responsive failure retry and exit 430.0 / 1.0
+Motion pose stream failed: PlatformException(pose_model_initialization_failed, null, null, null)
+00:15 +243: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow intake controls and accepted submission 320.0
+00:15 +243: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/presentation/motion_assessment_controller_test.dart: motion responsive failure retry and exit 430.0 / 2.0
+Motion pose stream failed: PlatformException(pose_model_initialization_failed, null, null, null)
+00:15 +244: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow intake controls and accepted submission 320.0
+00:15 +245: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow intake controls and accepted submission 320.0
+00:15 +246: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow intake controls and accepted submission 320.0
+00:15 +247: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow intake controls and accepted submission 320.0
+00:15 +248: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow intake controls and accepted submission 320.0
+00:16 +249: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow intake controls and accepted submission 320.0
+00:16 +250: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_inventory_journey_test.dart: inventory voice notice keyboard dismiss and new conversation
+00:16 +251: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_inventory_journey_test.dart: inventory voice notice keyboard dismiss and new conversation
+00:16 +252: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_inventory_journey_test.dart: inventory voice notice keyboard dismiss and new conversation
+00:16 +253: /Users/lute/project/momcozy-lab/app/test/features/notifications/notification_inventory_journey_test.dart: inventory notification reminder education grant toggle settings
+00:16 +254: /Users/lute/project/momcozy-lab/app/test/features/notifications/notification_inventory_journey_test.dart: inventory notification reminder education grant toggle settings
+00:16 +255: /Users/lute/project/momcozy-lab/app/test/features/notifications/notification_inventory_journey_test.dart: inventory notification reminder education grant toggle settings
+00:16 +256: /Users/lute/project/momcozy-lab/app/test/features/notifications/notification_inventory_journey_test.dart: inventory notification reminder education grant toggle settings
+00:16 +257: /Users/lute/project/momcozy-lab/app/test/features/notifications/notification_inventory_journey_test.dart: inventory notification reminder education grant toggle settings
+00:17 +258: /Users/lute/project/momcozy-lab/app/test/features/notifications/notification_inventory_journey_test.dart: inventory notification reminder education grant toggle settings
+00:17 +259: /Users/lute/project/momcozy-lab/app/test/features/notifications/notification_inventory_journey_test.dart: inventory notification reminder education grant toggle settings
+00:17 +260: /Users/lute/project/momcozy-lab/app/test/features/notifications/notification_inventory_journey_test.dart: inventory notification reminder education grant toggle settings
+00:17 +261: /Users/lute/project/momcozy-lab/app/test/features/notifications/notification_inventory_journey_test.dart: inventory notification reminder education grant toggle settings
+00:17 +262: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart: wet keeps its primary action visible at 320.0/1.0
+00:17 +263: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart: wet keeps its primary action visible at 320.0/1.0
+00:17 +264: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_reading_test.dart: onboarding reading 320.0/1.0
+00:17 +265: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_reading_test.dart: onboarding reading 320.0/1.0
+00:17 +266: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_reading_test.dart: onboarding reading 320.0/1.0
+00:17 +267: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow milk shortcut artifact routes and latest button
+00:17 +268: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow milk shortcut artifact routes and latest button
+00:17 +269: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow milk shortcut artifact routes and latest button
+00:17 +270: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow milk shortcut artifact routes and latest button
+00:17 +271: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow milk shortcut artifact routes and latest button
+00:17 +272: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow milk shortcut artifact routes and latest button
+00:17 +273: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow milk shortcut artifact routes and latest button
+00:17 +274: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow milk shortcut artifact routes and latest button
+00:17 +275: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow milk shortcut artifact routes and latest button
+00:17 +276: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow milk shortcut artifact routes and latest button
+00:17 +277: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow milk shortcut artifact routes and latest button
+00:17 +278: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow milk shortcut artifact routes and latest button
+00:17 +279: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow milk shortcut artifact routes and latest button
+00:18 +280: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow milk shortcut artifact routes and latest button
+00:18 +281: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow milk shortcut artifact routes and latest button
+00:18 +282: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow milk shortcut artifact routes and latest button
+00:18 +283: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow milk shortcut artifact routes and latest button
+00:18 +284: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow milk shortcut artifact routes and latest button
+00:18 +285: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow milk shortcut artifact routes and latest button
+00:18 +286: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow milk shortcut artifact routes and latest button
+00:18 +287: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow milk shortcut artifact routes and latest button
+00:18 +288: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow milk shortcut artifact routes and latest button
+00:18 +289: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow milk shortcut artifact routes and latest button
+00:18 +290: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow milk shortcut artifact routes and latest button
+00:18 +291: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow milk shortcut artifact routes and latest button
+00:18 +292: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow milk shortcut artifact routes and latest button
+00:18 +293: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow milk shortcut artifact routes and latest button
+00:18 +294: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow milk shortcut artifact routes and latest button
+00:18 +295: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow milk shortcut artifact routes and latest button
+00:18 +296: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow milk shortcut artifact routes and latest button
+00:18 +297: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow milk shortcut artifact routes and latest button
+00:18 +298: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow milk shortcut artifact routes and latest button
+00:18 +299: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow milk shortcut artifact routes and latest button
+00:18 +300: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow milk shortcut artifact routes and latest button
+00:18 +301: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow milk shortcut artifact routes and latest button
+00:18 +302: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow milk shortcut artifact routes and latest button
+00:19 +303: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow milk shortcut artifact routes and latest button
+00:19 +304: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow milk shortcut artifact routes and latest button
+00:19 +305: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow milk shortcut artifact routes and latest button
+00:19 +306: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_growth_empty_state_test.dart: missing birth growth profile at 320.0/1.0 is actionable without fabricated reference
+00:19 +307: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_growth_empty_state_test.dart: missing birth growth profile at 320.0/1.0 is actionable without fabricated reference
+00:19 +308: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_growth_empty_state_test.dart: missing birth growth profile at 320.0/1.0 is actionable without fabricated reference
+00:19 +309: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_growth_empty_state_test.dart: missing birth growth profile at 320.0/1.0 is actionable without fabricated reference
+00:19 +310: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_growth_empty_state_test.dart: missing birth growth profile at 320.0/1.0 is actionable without fabricated reference
+00:19 +311: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby feeding save edit delete restore and history filters
+00:19 +312: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby feeding save edit delete restore and history filters
+00:19 +313: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby feeding save edit delete restore and history filters
+00:19 +314: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby feeding save edit delete restore and history filters
+00:19 +315: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby feeding save edit delete restore and history filters
+00:19 +316: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby feeding save edit delete restore and history filters
+00:19 +317: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby feeding save edit delete restore and history filters
+00:19 +318: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby feeding save edit delete restore and history filters
+00:19 +319: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby feeding save edit delete restore and history filters
+00:19 +320: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby feeding save edit delete restore and history filters
+00:19 +321: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby feeding save edit delete restore and history filters
+00:19 +322: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby feeding save edit delete restore and history filters
+00:20 +323: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby feeding save edit delete restore and history filters
+00:20 +324: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby feeding save edit delete restore and history filters
+00:20 +325: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby feeding save edit delete restore and history filters
+00:20 +326: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby feeding save edit delete restore and history filters
+00:20 +327: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby feeding save edit delete restore and history filters
+00:20 +328: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby feeding save edit delete restore and history filters
+00:20 +329: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby feeding save edit delete restore and history filters
+00:20 +330: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby feeding save edit delete restore and history filters
+00:20 +331: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby feeding save edit delete restore and history filters
+00:20 +332: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby feeding save edit delete restore and history filters
+00:20 +333: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby feeding save edit delete restore and history filters
+00:20 +334: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby feeding save edit delete restore and history filters
+00:20 +335: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby feeding save edit delete restore and history filters
+00:20 +336: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby feeding save edit delete restore and history filters
+00:20 +337: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby feeding save edit delete restore and history filters
+00:20 +338: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby feeding save edit delete restore and history filters
+00:20 +339: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby feeding save edit delete restore and history filters
+00:20 +340: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby feeding save edit delete restore and history filters
+00:20 +341: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby feeding save edit delete restore and history filters
+00:20 +342: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby feeding save edit delete restore and history filters
+00:20 +343: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby feeding save edit delete restore and history filters
+00:20 +344: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby feeding save edit delete restore and history filters
+00:20 +345: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby feeding save edit delete restore and history filters
+00:20 +346: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby feeding save edit delete restore and history filters
+00:20 +347: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby feeding save edit delete restore and history filters
+00:20 +348: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby feeding save edit delete restore and history filters
+00:21 +349: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby feeding save edit delete restore and history filters
+00:21 +350: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby feeding save edit delete restore and history filters
+00:21 +351: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby feeding save edit delete restore and history filters
+00:21 +352: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby feeding save edit delete restore and history filters
+00:21 +353: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby feeding save edit delete restore and history filters
+00:21 +354: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby feeding save edit delete restore and history filters
+00:21 +355: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby feeding save edit delete restore and history filters
+00:21 +356: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby feeding save edit delete restore and history filters
+00:21 +357: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby feeding save edit delete restore and history filters
+00:21 +358: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby feeding save edit delete restore and history filters
+00:21 +359: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby feeding save edit delete restore and history filters
+00:21 +360: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow action false failure true
+00:21 +361: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow action false failure true
+00:21 +362: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow action false failure true
+00:21 +363: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow action false failure true
+00:21 +364: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_workflow_inventory_journey_test.dart: inventory workflow action false failure true
+00:21 +365: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_growth_empty_state_test.dart: missing birth growth profile at 390.0/2.0 is actionable without fabricated reference
+00:21 +366: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby profile switch editing and discard
+00:21 +367: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby profile switch editing and discard
+00:21 +368: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby profile switch editing and discard
+00:21 +369: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby profile switch editing and discard
+00:21 +370: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby profile switch editing and discard
+00:21 +371: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby profile switch editing and discard
+00:21 +372: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby profile switch editing and discard
+00:21 +373: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby profile switch editing and discard
+00:21 +374: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby profile switch editing and discard
+00:21 +375: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby profile switch editing and discard
+00:21 +376: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby profile switch editing and discard
+00:21 +377: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby profile switch editing and discard
+00:21 +378: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby profile switch editing and discard
+00:21 +379: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby profile switch editing and discard
+00:21 +380: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby profile switch editing and discard
+00:22 +381: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby profile switch editing and discard
+00:22 +382: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby profile switch editing and discard
+00:22 +383: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby profile switch editing and discard
+00:22 +384: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby profile switch editing and discard
+00:22 +385: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby profile switch editing and discard
+00:22 +386: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby profile switch editing and discard
+00:22 +387: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby profile switch editing and discard
+00:22 +388: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby profile switch editing and discard
+00:22 +389: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby profile switch editing and discard
+00:22 +390: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby profile switch editing and discard
+00:22 +391: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby profile switch editing and discard
+00:22 +392: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby profile switch editing and discard
+00:22 +393: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby profile switch editing and discard
+00:22 +394: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby profile switch editing and discard
+00:22 +395: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby profile switch editing and discard
+00:22 +396: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby profile switch editing and discard
+00:22 +397: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby profile switch editing and discard
+00:22 +398: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby profile switch editing and discard
+00:22 +399: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby profile switch editing and discard
+00:22 +400: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby profile switch editing and discard
+00:22 +401: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart: feeding validation, save, uncertain undo and feedback at 320.0/1.0
+00:22 +402: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart: feeding validation, save, uncertain undo and feedback at 320.0/1.0
+00:22 +403: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart: feeding validation, save, uncertain undo and feedback at 320.0/1.0
+00:22 +404: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart: feeding validation, save, uncertain undo and feedback at 320.0/1.0
+00:22 +405: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart: feeding validation, save, uncertain undo and feedback at 320.0/1.0
+00:22 +406: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart: feeding validation, save, uncertain undo and feedback at 320.0/1.0
+00:22 +407: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart: feeding validation, save, uncertain undo and feedback at 320.0/1.0
+00:22 +408: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart: feeding validation, save, uncertain undo and feedback at 320.0/1.0
+00:22 +409: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart: feeding validation, save, uncertain undo and feedback at 320.0/1.0
+00:22 +410: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart: feeding validation, save, uncertain undo and feedback at 320.0/1.0
+00:22 +411: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart: feeding validation, save, uncertain undo and feedback at 320.0/1.0
+00:22 +412: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart: feeding validation, save, uncertain undo and feedback at 320.0/1.0
+00:22 +413: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart: feeding validation, save, uncertain undo and feedback at 320.0/1.0
+00:22 +414: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart: feeding validation, save, uncertain undo and feedback at 320.0/1.0
+00:22 +415: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart: feeding validation, save, uncertain undo and feedback at 320.0/1.0
+00:22 +416: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart: feeding validation, save, uncertain undo and feedback at 320.0/1.0
+00:23 +417: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart: feeding validation, save, uncertain undo and feedback at 320.0/1.0
+00:23 +418: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart: feeding validation, save, uncertain undo and feedback at 320.0/1.0
+00:23 +419: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart: feeding validation, save, uncertain undo and feedback at 320.0/1.0
+00:23 +420: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart: feeding validation, save, uncertain undo and feedback at 320.0/1.0
+00:23 +421: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart: feeding validation, save, uncertain undo and feedback at 320.0/1.0
+00:23 +422: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart: feeding validation, save, uncertain undo and feedback at 320.0/1.0
+00:23 +423: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart: feeding validation, save, uncertain undo and feedback at 320.0/1.0
+00:23 +424: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart: feeding validation, save, uncertain undo and feedback at 320.0/1.0
+00:23 +425: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby sleep stool knowledge and growth interactions
+00:23 +426: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby sleep stool knowledge and growth interactions
+00:23 +427: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby sleep stool knowledge and growth interactions
+00:23 +428: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby sleep stool knowledge and growth interactions
+00:24 +429: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby sleep stool knowledge and growth interactions
+00:24 +430: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby sleep stool knowledge and growth interactions
+00:24 +431: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby sleep stool knowledge and growth interactions
+00:24 +432: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby sleep stool knowledge and growth interactions
+00:24 +433: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby sleep stool knowledge and growth interactions
+00:24 +434: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby sleep stool knowledge and growth interactions
+00:24 +435: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby sleep stool knowledge and growth interactions
+00:24 +436: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby sleep stool knowledge and growth interactions
+00:24 +437: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby sleep stool knowledge and growth interactions
+00:24 +438: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby sleep stool knowledge and growth interactions
+00:24 +439: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby sleep stool knowledge and growth interactions
+00:25 +440: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby sleep stool knowledge and growth interactions
+00:25 +441: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby sleep stool knowledge and growth interactions
+00:25 +442: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby sleep stool knowledge and growth interactions
+00:25 +443: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby sleep stool knowledge and growth interactions
+00:25 +444: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby sleep stool knowledge and growth interactions
+00:25 +445: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_inventory_journey_test.dart: inventory consultation preparation gates and intake route
+00:25 +446: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_inventory_journey_test.dart: inventory consultation preparation gates and intake route
+00:25 +447: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_inventory_journey_test.dart: inventory consultation preparation gates and intake route
+00:25 +448: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_inventory_journey_test.dart: inventory consultation preparation gates and intake route
+00:25 +449: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_inventory_journey_test.dart: inventory consultation preparation gates and intake route
+00:25 +450: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_inventory_journey_test.dart: inventory consultation preparation gates and intake route
+00:25 +451: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_inventory_journey_test.dart: inventory consultation preparation gates and intake route
+00:25 +452: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_inventory_journey_test.dart: inventory consultation preparation gates and intake route
+00:25 +453: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_inventory_journey_test.dart: inventory consultation preparation gates and intake route
+00:26 +454: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_inventory_journey_test.dart: inventory consultation preparation gates and intake route
+00:26 +455: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_inventory_journey_test.dart: inventory consultation preparation gates and intake route
+00:26 +456: /Users/lute/project/momcozy-lab/app/test/modules/consultation/device_check_design_test.dart: preflight continues only after readiness and an explicit tap
+00:26 +457: /Users/lute/project/momcozy-lab/app/test/modules/consultation/device_check_design_test.dart: preflight continues only after readiness and an explicit tap
+00:26 +458: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby local record failure and pull refresh recovery
+00:26 +459: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_start_test.dart: device consent region and enter 390.0 / 2.0
+00:26 +460: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_inventory_journey_test.dart: inventory consultation device failure retry consent and room entry
+00:26 +461: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_inventory_journey_test.dart: inventory consultation device failure retry consent and room entry
+00:26 +462: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_inventory_journey_test.dart: inventory consultation device failure retry consent and room entry
+00:26 +463: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_inventory_journey_test.dart: inventory consultation device failure retry consent and room entry
+00:26 +464: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_inventory_journey_test.dart: inventory consultation device failure retry consent and room entry
+00:27 +465: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_inventory_journey_test.dart: inventory consultation device failure retry consent and room entry
+00:27 +466: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_inventory_journey_test.dart: inventory consultation device failure retry consent and room entry
+00:27 +467: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_inventory_journey_test.dart: inventory consultation device failure retry consent and room entry
+00:27 +468: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_inventory_journey_test.dart: inventory consultation device failure retry consent and room entry
+00:27 +469: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_inventory_journey_test.dart: inventory consultation device failure retry consent and room entry
+00:27 +470: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_inventory_journey_test.dart: inventory consultation device failure retry consent and room entry
+00:27 +471: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_inventory_journey_test.dart: inventory consultation device failure retry consent and room entry
+00:27 +472: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_inventory_journey_test.dart: inventory consultation device failure retry consent and room entry
+00:27 +473: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_inventory_journey_test.dart: inventory consultation device failure retry consent and room entry
+00:27 +474: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_inventory_journey_test.dart: inventory consultation device failure retry consent and room entry
+00:27 +475: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_inventory_journey_test.dart: inventory consultation device failure retry consent and room entry
+00:27 +476: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby growth batch date validation and undo recovery
+00:27 +477: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby growth batch date validation and undo recovery
+00:27 +478: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby growth batch date validation and undo recovery
+00:27 +479: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby growth batch date validation and undo recovery
+00:27 +480: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby growth batch date validation and undo recovery
+00:27 +481: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby growth batch date validation and undo recovery
+00:27 +482: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby growth batch date validation and undo recovery
+00:28 +483: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby growth batch date validation and undo recovery
+00:28 +484: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby growth batch date validation and undo recovery
+00:28 +485: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby growth batch date validation and undo recovery
+00:28 +486: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby growth batch date validation and undo recovery
+00:28 +487: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby growth batch date validation and undo recovery
+00:28 +488: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby growth batch date validation and undo recovery
+00:28 +489: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby growth batch date validation and undo recovery
+00:28 +490: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby growth batch date validation and undo recovery
+00:28 +491: /Users/lute/project/momcozy-lab/app/test/modules/consultation/home_consultation_dialog_test.dart: home preparation closes, cancels and enters through existing checks 320.0/1.0
+00:28 +492: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_inventory_journey_test.dart: inventory consultation ended summary publication task updates and routes
+00:28 +493: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_inventory_journey_test.dart: inventory consultation ended summary publication task updates and routes
+00:28 +494: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_inventory_journey_test.dart: inventory consultation ended summary publication task updates and routes
+00:28 +495: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_inventory_journey_test.dart: inventory consultation ended summary publication task updates and routes
+00:28 +496: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_inventory_journey_test.dart: inventory consultation ended summary publication task updates and routes
+00:28 +497: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_inventory_journey_test.dart: inventory consultation ended summary publication task updates and routes
+00:28 +498: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_inventory_journey_test.dart: inventory consultation ended summary publication task updates and routes
+00:29 +499: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_inventory_journey_test.dart: inventory consultation ended summary publication task updates and routes
+00:29 +500: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_inventory_journey_test.dart: inventory consultation ended summary publication task updates and routes
+00:29 +501: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_inventory_journey_test.dart: inventory consultation ended summary publication task updates and routes
+00:29 +502: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_inventory_journey_test.dart: inventory consultation ended summary publication task updates and routes
+00:29 +503: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_inventory_journey_test.dart: inventory consultation ended summary publication task updates and routes
+00:29 +504: /Users/lute/project/momcozy-lab/app/test/modules/consultation/home_consultation_dialog_test.dart: home preparation closes, cancels and enters through existing checks 320.0/2.0
+00:29 +505: /Users/lute/project/momcozy-lab/app/test/modules/consultation/home_consultation_dialog_test.dart: home preparation closes, cancels and enters through existing checks 320.0/2.0
+00:29 +506: /Users/lute/project/momcozy-lab/app/test/modules/consultation/room_leave_recovery_test.dart: leave recovery 320.0 / 1.0
+00:29 +507: /Users/lute/project/momcozy-lab/app/test/modules/consultation/room_leave_recovery_test.dart: leave recovery 320.0 / 1.0
+00:29 +508: /Users/lute/project/momcozy-lab/app/test/modules/consultation/room_leave_recovery_test.dart: leave recovery 320.0 / 1.0
+00:29 +509: /Users/lute/project/momcozy-lab/app/test/modules/consultation/room_leave_recovery_test.dart: leave recovery 320.0 / 1.0
+00:29 +510: /Users/lute/project/momcozy-lab/app/test/modules/consultation/room_leave_recovery_test.dart: leave recovery 320.0 / 1.0
+00:29 +511: /Users/lute/project/momcozy-lab/app/test/modules/consultation/room_leave_recovery_test.dart: leave recovery 320.0 / 1.0
+00:29 +512: /Users/lute/project/momcozy-lab/app/test/modules/consultation/room_outcome_design_test.dart: unsuccessful room outcomes 320.0 / 1.0
+00:29 +513: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby history pagination loading failure recovery
+00:29 +514: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby history pagination loading failure recovery
+00:29 +515: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby history pagination loading failure recovery
+00:29 +516: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby history pagination loading failure recovery
+00:30 +517: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby history pagination loading failure recovery
+00:30 +518: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby history pagination loading failure recovery
+00:30 +519: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby history pagination loading failure recovery
+00:30 +520: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby history pagination loading failure recovery
+00:30 +521: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby history pagination loading failure recovery
+00:30 +522: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby history pagination loading failure recovery
+00:30 +523: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby history pagination loading failure recovery
+00:30 +524: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby history pagination loading failure recovery
+00:30 +525: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby history pagination loading failure recovery
+00:30 +526: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby history pagination loading failure recovery
+00:30 +527: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby history pagination loading failure recovery
+00:30 +528: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby history pagination loading failure recovery
+00:30 +529: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby history pagination loading failure recovery
+00:30 +530: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby history pagination loading failure recovery
+00:30 +531: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby history pagination loading failure recovery
+00:30 +532: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby history pagination loading failure recovery
+00:30 +533: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby history pagination loading failure recovery
+00:30 +534: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby history pagination loading failure recovery
+00:30 +535: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby history pagination loading failure recovery
+00:30 +536: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby history pagination loading failure recovery
+00:30 +537: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby history pagination loading failure recovery
+00:30 +538: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby history pagination loading failure recovery
+00:30 +539: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby history pagination loading failure recovery
+00:30 +540: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby history pagination loading failure recovery
+00:30 +541: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby history pagination loading failure recovery
+00:31 +542: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby history pagination loading failure recovery
+00:31 +543: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby history pagination loading failure recovery
+00:31 +544: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby history pagination loading failure recovery
+00:31 +545: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby history pagination loading failure recovery
+00:31 +546: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby history pagination loading failure recovery
+00:31 +547: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby history pagination loading failure recovery
+00:31 +548: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby history pagination loading failure recovery
+00:31 +549: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby history pagination loading failure recovery
+00:31 +550: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby history pagination loading failure recovery
+00:31 +551: /Users/lute/project/momcozy-lab/app/test/modules/consultation/user_video_test.dart: user waiting media controls and leave 320.0 / 1.0
+00:32 +552: /Users/lute/project/momcozy-lab/app/test/modules/consultation/user_video_test.dart: user waiting media controls and leave 320.0 / 1.0
+00:32 +553: /Users/lute/project/momcozy-lab/app/test/modules/consultation/user_video_test.dart: user waiting media controls and leave 320.0 / 1.0
+00:32 +554: /Users/lute/project/momcozy-lab/app/test/modules/ibclc/reports_page_test.dart: report detail at 1024.0
+00:32 +555: /Users/lute/project/momcozy-lab/app/test/modules/ibclc/reports_page_test.dart: report detail at 1024.0
+00:32 +556: /Users/lute/project/momcozy-lab/app/test/modules/ibclc/reports_page_test.dart: report detail at 1024.0
+00:32 +557: /Users/lute/project/momcozy-lab/app/test/modules/ibclc/reports_page_test.dart: report detail at 1024.0
+00:32 +558: /Users/lute/project/momcozy-lab/app/test/modules/ibclc/reports_page_test.dart: report detail at 1024.0
+00:32 +559: /Users/lute/project/momcozy-lab/app/test/modules/ibclc/reports_page_test.dart: report detail at 1024.0
+00:32 +560: /Users/lute/project/momcozy-lab/app/test/modules/ibclc/reports_page_test.dart: report detail at 1024.0
+00:32 +561: /Users/lute/project/momcozy-lab/app/test/modules/ibclc/reports_page_test.dart: report detail at 1024.0
+00:32 +562: /Users/lute/project/momcozy-lab/app/test/modules/ibclc/reports_page_test.dart: report detail at 1024.0
+00:32 +563: /Users/lute/project/momcozy-lab/app/test/modules/ibclc/workbench_page_test.dart: independent workbench appointments at 1024.0
+00:33 +564: /Users/lute/project/momcozy-lab/app/test/modules/ibclc/workbench_page_test.dart: independent workbench appointments at 1024.0
+00:33 +565: /Users/lute/project/momcozy-lab/app/test/modules/ibclc/workbench_page_test.dart: independent workbench appointments at 1024.0
+00:33 +566: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart: single record editor saves a real observation, then delete and undo change the list
+00:33 +567: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart: single record editor saves a real observation, then delete and undo change the list
+00:33 +568: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart: single record editor saves a real observation, then delete and undo change the list
+00:33 +569: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/1.0
+00:33 +570: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/1.0
+00:33 +571: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/1.0
+00:33 +572: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/1.0
+00:33 +573: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/1.0
+00:33 +574: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/1.0
+00:33 +575: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/1.0
+00:33 +576: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/1.0
+00:33 +577: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/1.0
+00:33 +578: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/1.0
+00:34 +579: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/1.0
+00:34 +580: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/1.0
+00:34 +581: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/1.0
+00:34 +582: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/1.0
+00:34 +583: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/1.0
+00:34 +584: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/1.0
+00:34 +585: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/1.0
+00:34 +586: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/1.0
+00:34 +587: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/1.0
+00:34 +588: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/1.0
+00:34 +589: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/1.0
+00:34 +590: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: quick mood starts a draft; save preserves other groups and refreshes home
+00:34 +591: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: quick mood starts a draft; save preserves other groups and refreshes home
+00:34 +592: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: quick mood starts a draft; save preserves other groups and refreshes home
+00:34 +593: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: quick mood starts a draft; save preserves other groups and refreshes home
+00:34 +594: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: quick mood starts a draft; save preserves other groups and refreshes home
+00:35 +595: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/2.0
+00:35 +596: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/2.0
+00:35 +597: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/2.0
+00:35 +598: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/2.0
+00:35 +599: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/2.0
+00:35 +600: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/2.0
+00:35 +601: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/2.0
+00:35 +602: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/2.0
+00:35 +603: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/2.0
+00:35 +604: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/2.0
+00:35 +605: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/2.0
+00:35 +606: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/2.0
+00:35 +607: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/2.0
+00:35 +608: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/2.0
+00:35 +609: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/2.0
+00:35 +610: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/2.0
+00:35 +611: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/2.0
+00:35 +612: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/2.0
+00:35 +613: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/2.0
+00:35 +614: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/2.0
+00:35 +615: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/2.0
+00:35 +616: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/2.0
+00:35 +617: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/2.0
+00:35 +618: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_inventory_journey_test.dart: inventory Mom lactation create edit delete restore and home refresh
+00:35 +619: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_inventory_journey_test.dart: inventory Mom lactation create edit delete restore and home refresh
+00:35 +620: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_inventory_journey_test.dart: inventory Mom lactation create edit delete restore and home refresh
+00:35 +621: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_inventory_journey_test.dart: inventory Mom lactation create edit delete restore and home refresh
+00:35 +622: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_inventory_journey_test.dart: inventory Mom lactation create edit delete restore and home refresh
+00:35 +623: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_inventory_journey_test.dart: inventory Mom lactation create edit delete restore and home refresh
+00:35 +624: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_inventory_journey_test.dart: inventory Mom lactation create edit delete restore and home refresh
+00:36 +625: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_inventory_journey_test.dart: inventory Mom lactation create edit delete restore and home refresh
+00:36 +626: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_inventory_journey_test.dart: inventory Mom lactation create edit delete restore and home refresh
+00:36 +627: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_inventory_journey_test.dart: inventory Mom lactation create edit delete restore and home refresh
+00:36 +628: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_inventory_journey_test.dart: inventory Mom lactation create edit delete restore and home refresh
+00:36 +629: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_inventory_journey_test.dart: inventory Mom lactation create edit delete restore and home refresh
+00:36 +630: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_inventory_journey_test.dart: inventory Mom lactation create edit delete restore and home refresh
+00:36 +631: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_inventory_journey_test.dart: inventory Mom lactation create edit delete restore and home refresh
+00:36 +632: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_inventory_journey_test.dart: inventory Mom lactation create edit delete restore and home refresh
+00:36 +633: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_inventory_journey_test.dart: inventory Mom lactation create edit delete restore and home refresh
+00:36 +634: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_inventory_journey_test.dart: inventory Mom lactation create edit delete restore and home refresh
+00:36 +635: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_inventory_journey_test.dart: inventory Mom lactation create edit delete restore and home refresh
+00:36 +636: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_inventory_journey_test.dart: inventory Mom lactation create edit delete restore and home refresh
+00:36 +637: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_inventory_journey_test.dart: inventory Mom lactation create edit delete restore and home refresh
+00:36 +638: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_inventory_journey_test.dart: inventory Mom lactation create edit delete restore and home refresh
+00:36 +639: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_inventory_journey_test.dart: inventory Mom lactation create edit delete restore and home refresh
+00:36 +640: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_inventory_journey_test.dart: inventory Mom lactation create edit delete restore and home refresh
+00:36 +641: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_inventory_journey_test.dart: inventory Mom lactation create edit delete restore and home refresh
+00:36 +642: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_inventory_journey_test.dart: inventory Mom lactation create edit delete restore and home refresh
+00:36 +643: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_inventory_journey_test.dart: inventory Mom lactation create edit delete restore and home refresh
+00:36 +644: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_inventory_journey_test.dart: inventory Mom lactation create edit delete restore and home refresh
+00:37 +645: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_inventory_journey_test.dart: inventory Mom lactation create edit delete restore and home refresh
+00:37 +646: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_inventory_journey_test.dart: inventory Mom lactation create edit delete restore and home refresh
+00:37 +647: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_inventory_journey_test.dart: inventory Mom lactation create edit delete restore and home refresh
+00:37 +648: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_inventory_journey_test.dart: inventory Mom lactation create edit delete restore and home refresh
+00:37 +649: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_inventory_journey_test.dart: inventory Mom lactation create edit delete restore and home refresh
+00:37 +650: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_inventory_journey_test.dart: inventory Mom lactation create edit delete restore and home refresh
+00:37 +651: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_inventory_journey_test.dart: inventory Mom lactation create edit delete restore and home refresh
+00:37 +652: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_inventory_journey_test.dart: inventory Mom lactation create edit delete restore and home refresh
+00:37 +653: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 390.0/2.0
+00:37 +654: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 320.0/1.0
+00:37 +655: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 320.0/1.0
+00:38 +656: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 320.0/1.0
+00:38 +657: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 320.0/1.0
+00:38 +658: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 320.0/1.0
+00:38 +659: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 320.0/1.0
+00:38 +660: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 320.0/1.0
+00:38 +661: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 320.0/1.0
+00:38 +662: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 320.0/1.0
+00:38 +663: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 320.0/1.0
+00:38 +664: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 320.0/1.0
+00:38 +665: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 320.0/1.0
+00:39 +666: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 320.0/1.0
+00:39 +667: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 320.0/1.0
+00:39 +668: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 320.0/1.0
+00:39 +669: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 320.0/1.0
+00:39 +670: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 320.0/1.0
+00:39 +671: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 320.0/1.0
+00:39 +672: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_inventory_journey_test.dart: inventory Mom diary quick record tabs save and standalone details
+00:39 +673: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_inventory_journey_test.dart: inventory Mom diary quick record tabs save and standalone details
+00:39 +674: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_inventory_journey_test.dart: inventory Mom diary quick record tabs save and standalone details
+00:39 +675: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 430.0/2.0
+00:39 +676: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 430.0/2.0
+00:39 +677: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 430.0/2.0
+00:40 +678: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 430.0/2.0
+00:40 +679: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 430.0/2.0
+00:40 +680: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 320.0/2.0
+00:40 +681: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 320.0/2.0
+00:40 +682: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 320.0/2.0
+00:40 +683: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 320.0/2.0
+00:40 +684: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 320.0/2.0
+00:40 +685: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 320.0/2.0
+00:40 +686: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 320.0/2.0
+00:40 +687: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 320.0/2.0
+00:40 +688: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 320.0/2.0
+00:40 +689: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 320.0/2.0
+00:40 +690: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 320.0/2.0
+00:40 +691: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 320.0/2.0
+00:41 +692: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 320.0/2.0
+00:41 +693: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 320.0/2.0
+00:41 +694: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 320.0/2.0
+00:41 +695: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 320.0/2.0
+00:41 +696: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 320.0/2.0
+00:41 +697: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_inventory_journey_test.dart: inventory Mom nursing optional fields time picker and discard
+00:41 +698: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_inventory_journey_test.dart: inventory Mom nursing optional fields time picker and discard
+00:41 +699: /Users/lute/project/momcozy-lab/app/test/modules/profile/privacy_test.dart: privacy scopes, revoke confirmation and notifications 320.0/1.0
+00:41 +700: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_forms_design_test.dart: diary body dialog at 390.0 / 1.0
+00:41 +701: /Users/lute/project/momcozy-lab/app/test/modules/schedule/personal_schedule_editor_test.dart: personal schedule create edit delete at 320.0/1.0
+00:41 +702: /Users/lute/project/momcozy-lab/app/test/modules/schedule/personal_schedule_editor_test.dart: personal schedule create edit delete at 320.0/1.0
+00:42 +703: /Users/lute/project/momcozy-lab/app/test/modules/schedule/personal_schedule_editor_test.dart: personal schedule create edit delete at 320.0/1.0
+00:42 +704: /Users/lute/project/momcozy-lab/app/test/modules/schedule/personal_schedule_editor_test.dart: personal schedule create edit delete at 320.0/1.0
+00:42 +705: /Users/lute/project/momcozy-lab/app/test/modules/schedule/personal_schedule_editor_test.dart: personal schedule create edit delete at 320.0/1.0
+00:42 +706: /Users/lute/project/momcozy-lab/app/test/modules/schedule/personal_schedule_editor_test.dart: personal schedule create edit delete at 320.0/1.0
+00:42 +707: /Users/lute/project/momcozy-lab/app/test/modules/schedule/personal_schedule_editor_test.dart: personal schedule create edit delete at 320.0/1.0
+00:42 +708: /Users/lute/project/momcozy-lab/app/test/modules/schedule/personal_schedule_editor_test.dart: personal schedule create edit delete at 320.0/1.0
+00:42 +709: /Users/lute/project/momcozy-lab/app/test/modules/schedule/personal_schedule_editor_test.dart: personal schedule create edit delete at 320.0/1.0
+00:42 +710: /Users/lute/project/momcozy-lab/app/test/modules/schedule/personal_schedule_editor_test.dart: personal schedule create edit delete at 320.0/1.0
+00:42 +711: /Users/lute/project/momcozy-lab/app/test/modules/schedule/personal_schedule_editor_test.dart: personal schedule create edit delete at 320.0/1.0
+00:42 +712: /Users/lute/project/momcozy-lab/app/test/modules/schedule/personal_schedule_editor_test.dart: personal schedule create edit delete at 320.0/1.0
+00:42 +713: /Users/lute/project/momcozy-lab/app/test/modules/schedule/personal_schedule_editor_test.dart: personal schedule create edit delete at 320.0/1.0
+00:42 +714: /Users/lute/project/momcozy-lab/app/test/modules/schedule/personal_schedule_editor_test.dart: personal schedule create edit delete at 320.0/1.0
+00:43 +715: /Users/lute/project/momcozy-lab/app/test/modules/schedule/personal_schedule_editor_test.dart: personal schedule create edit delete at 320.0/1.0
+00:43 +716: /Users/lute/project/momcozy-lab/app/test/modules/schedule/personal_schedule_editor_test.dart: personal schedule create edit delete at 320.0/1.0
+00:43 +717: /Users/lute/project/momcozy-lab/app/test/modules/schedule/personal_schedule_editor_test.dart: personal schedule create edit delete at 320.0/1.0
+00:43 +718: /Users/lute/project/momcozy-lab/app/test/modules/schedule/personal_schedule_editor_test.dart: personal schedule create edit delete at 320.0/1.0
+00:43 +719: /Users/lute/project/momcozy-lab/app/test/modules/schedule/personal_schedule_editor_test.dart: personal schedule create edit delete at 320.0/1.0
+00:43 +720: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: inventory schedule calendar create edit delete
+00:43 +721: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: inventory schedule calendar create edit delete
+00:43 +722: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: inventory schedule calendar create edit delete
+00:43 +723: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: inventory schedule calendar create edit delete
+00:43 +724: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: inventory schedule calendar create edit delete
+00:43 +725: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: inventory schedule calendar create edit delete
+00:43 +726: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: inventory schedule calendar create edit delete
+00:44 +727: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: inventory schedule calendar create edit delete
+00:44 +728: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: inventory schedule calendar create edit delete
+00:44 +729: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: inventory schedule calendar create edit delete
+00:44 +730: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: inventory schedule calendar create edit delete
+00:44 +731: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: inventory schedule calendar create edit delete
+00:44 +732: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: inventory schedule calendar create edit delete
+00:44 +733: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: inventory schedule calendar create edit delete
+00:44 +734: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_page_golden_test.dart: task menu writes progress with the current version at 320.0/1.0
+00:44 +735: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_page_golden_test.dart: task menu writes progress with the current version at 320.0/1.0
+00:45 +736: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_page_golden_test.dart: task menu writes progress with the current version at 320.0/1.0
+00:45 +737: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_inventory_journey_test.dart: inventory Mom milk conflict uncertain close and failed delete
+00:45 +738: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_inventory_journey_test.dart: inventory Mom milk conflict uncertain close and failed delete
+00:45 +739: /Users/lute/project/momcozy-lab/app/test/modules/services/appointment_detail_test.dart: short screen and safe areas keep cancellation actions reachable
+00:45 +740: /Users/lute/project/momcozy-lab/app/test/modules/services/appointment_detail_test.dart: short screen and safe areas keep cancellation actions reachable
+00:45 +741: /Users/lute/project/momcozy-lab/app/test/modules/services/booking_test.dart: precheck waits for availability without allowing a second submit or back
+00:45 +742: /Users/lute/project/momcozy-lab/app/test/modules/services/booking_test.dart: precheck waits for availability without allowing a second submit or back
+00:45 +743: /Users/lute/project/momcozy-lab/app/test/modules/services/booking_test.dart: precheck waits for availability without allowing a second submit or back
+00:46 +744: /Users/lute/project/momcozy-lab/app/test/modules/services/booking_test.dart: precheck waits for availability without allowing a second submit or back
+00:46 +745: /Users/lute/project/momcozy-lab/app/test/modules/services/booking_test.dart: precheck waits for availability without allowing a second submit or back
+00:46 +746: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 430.0/2.0
+00:46 +747: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 430.0/2.0
+00:46 +748: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 430.0/2.0
+00:46 +749: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 430.0/2.0
+00:46 +750: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 430.0/2.0
+00:46 +751: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 430.0/2.0
+00:46 +752: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 430.0/2.0
+00:46 +753: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 430.0/2.0
+00:46 +754: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 430.0/2.0
+00:46 +755: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 430.0/2.0
+00:46 +756: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 430.0/2.0
+00:46 +757: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 430.0/2.0
+00:46 +758: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_inventory_journey_test.dart: inventory Mom independent loading failures and retry
+00:46 +759: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_inventory_journey_test.dart: inventory Mom independent loading failures and retry
+00:47 +760: /Users/lute/project/momcozy-lab/app/test/modules/services/booking_test.dart: booking precheck and held dialog flow at 320.0 / 1.0
+00:47 +761: /Users/lute/project/momcozy-lab/app/test/modules/services/booking_test.dart: booking precheck and held dialog flow at 320.0 / 1.0
+00:47 +762: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: inventory schedule care task statuses and plan
+00:47 +763: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: inventory schedule care task statuses and plan
+00:47 +764: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: inventory schedule care task statuses and plan
+00:47 +765: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: inventory schedule care task statuses and plan
+00:47 +766: /Users/lute/project/momcozy-lab/app/test/modules/services/booking_test.dart: booking precheck and held dialog flow at 320.0 / 2.0
+00:47 +767: /Users/lute/project/momcozy-lab/app/test/modules/services/booking_test.dart: booking precheck and held dialog flow at 320.0 / 2.0
+00:47 +768: /Users/lute/project/momcozy-lab/app/test/modules/services/booking_test.dart: booking precheck and held dialog flow at 320.0 / 2.0
+00:47 +769: /Users/lute/project/momcozy-lab/app/test/modules/services/booking_test.dart: booking precheck and held dialog flow at 320.0 / 2.0
+00:47 +770: /Users/lute/project/momcozy-lab/app/test/modules/services/booking_test.dart: booking precheck and held dialog flow at 320.0 / 2.0
+00:47 +771: /Users/lute/project/momcozy-lab/app/test/modules/services/booking_test.dart: booking precheck and held dialog flow at 320.0 / 2.0
+00:47 +772: /Users/lute/project/momcozy-lab/app/test/modules/services/booking_test.dart: booking precheck and held dialog flow at 320.0 / 2.0
+00:47 +773: /Users/lute/project/momcozy-lab/app/test/modules/services/booking_test.dart: booking precheck and held dialog flow at 320.0 / 2.0
+00:47 +774: /Users/lute/project/momcozy-lab/app/test/modules/services/booking_test.dart: booking precheck and held dialog flow at 320.0 / 2.0
+00:47 +775: /Users/lute/project/momcozy-lab/app/test/modules/services/booking_test.dart: booking precheck and held dialog flow at 320.0 / 2.0
+00:47 +776: /Users/lute/project/momcozy-lab/app/test/modules/services/booking_test.dart: booking precheck and held dialog flow at 320.0 / 2.0
+00:48 +777: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: inventory schedule service filters and appointment summary
+00:48 +778: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: inventory schedule service filters and appointment summary
+00:48 +779: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: inventory schedule service filters and appointment summary
+00:48 +780: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: inventory schedule service filters and appointment summary
+00:48 +781: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 320.0 / 1.0
+00:48 +782: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 320.0 / 1.0
+00:48 +783: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 320.0 / 1.0
+00:48 +784: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 320.0 / 1.0
+00:48 +785: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 320.0 / 1.0
+00:48 +786: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 320.0 / 1.0
+00:48 +787: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 320.0 / 1.0
+00:48 +788: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 320.0 / 1.0
+00:48 +789: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 320.0 / 1.0
+00:48 +790: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 320.0 / 1.0
+00:49 +791: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 320.0 / 1.0
+00:49 +792: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 320.0 / 1.0
+00:49 +793: /Users/lute/project/momcozy-lab/app/test/modules/services/intake_test.dart: intake design disclosures consent and save at 320.0 / 1.0
+00:49 +794: /Users/lute/project/momcozy-lab/app/test/modules/services/intake_test.dart: intake design disclosures consent and save at 320.0 / 1.0
+00:49 +795: /Users/lute/project/momcozy-lab/app/test/modules/services/intake_test.dart: intake design disclosures consent and save at 320.0 / 1.0
+00:49 +796: /Users/lute/project/momcozy-lab/app/test/modules/services/intake_test.dart: intake design disclosures consent and save at 320.0 / 1.0
+00:49 +797: /Users/lute/project/momcozy-lab/app/test/modules/services/intake_test.dart: intake design disclosures consent and save at 320.0 / 1.0
+00:49 +798: /Users/lute/project/momcozy-lab/app/test/modules/services/intake_test.dart: intake design disclosures consent and save at 320.0 / 1.0
+00:49 +799: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 320.0/1.0
+00:49 +800: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 320.0/1.0
+00:49 +801: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 320.0/1.0
+00:49 +802: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 320.0/1.0
+00:49 +803: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 320.0/1.0
+00:50 +804: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 320.0/1.0
+00:50 +805: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 320.0/1.0
+00:50 +806: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 320.0/1.0
+00:50 +807: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 320.0/1.0
+00:50 +808: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 320.0/1.0
+00:50 +809: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 320.0/1.0
+00:50 +810: /Users/lute/project/momcozy-lab/app/test/modules/services/intake_test.dart: intake design disclosures consent and save at 320.0 / 2.0
+00:50 +811: /Users/lute/project/momcozy-lab/app/test/modules/services/intake_test.dart: intake design disclosures consent and save at 320.0 / 2.0
+00:50 +812: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: inventory schedule calendar year and tooltips
+00:50 +813: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: inventory schedule calendar year and tooltips
+00:50 +814: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: inventory schedule calendar year and tooltips
+00:50 +815: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: inventory schedule calendar year and tooltips
+00:50 +816: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: inventory schedule calendar year and tooltips
+00:50 +817: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: inventory schedule calendar year and tooltips
+00:50 +818: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 390.0 / 2.0
+00:50 +819: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 390.0 / 2.0
+00:50 +820: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 390.0 / 2.0
+00:50 +821: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 320.0/2.0
+00:50 +822: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 320.0/2.0
+00:51 +823: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 320.0/2.0
+00:51 +824: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 320.0/2.0
+00:51 +825: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 320.0/2.0
+00:51 +826: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 320.0/2.0
+00:51 +827: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 320.0/2.0
+00:51 +828: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 320.0/2.0
+00:51 +829: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 320.0/2.0
+00:51 +830: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 320.0/2.0
+00:51 +831: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 320.0/2.0
+00:51 +832: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 320.0/2.0
+00:51 +833: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 320.0/2.0
+00:51 +834: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services catalog team and every package detail
+00:51 +835: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services catalog team and every package detail
+00:51 +836: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services catalog team and every package detail
+00:51 +837: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services catalog team and every package detail
+00:51 +838: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services catalog team and every package detail
+00:51 +839: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services catalog team and every package detail
+00:52 +840: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services catalog team and every package detail
+00:52 +841: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services catalog team and every package detail
+00:52 +842: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services catalog team and every package detail
+00:52 +843: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services catalog team and every package detail
+00:52 +844: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services catalog team and every package detail
+00:52 +845: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services catalog team and every package detail
+00:52 +846: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services catalog team and every package detail
+00:52 +847: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services catalog team and every package detail
+00:52 +848: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services catalog team and every package detail
+00:52 +849: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services catalog team and every package detail
+00:52 +850: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services catalog team and every package detail
+00:52 +851: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services catalog team and every package detail
+00:52 +852: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services catalog team and every package detail
+00:52 +853: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services catalog team and every package detail
+00:52 +854: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services catalog team and every package detail
+00:52 +855: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services catalog team and every package detail
+00:52 +856: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services catalog team and every package detail
+00:52 +857: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services catalog team and every package detail
+00:52 +858: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services catalog team and every package detail
+00:52 +859: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services catalog team and every package detail
+00:53 +860: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services catalog team and every package detail
+00:53 +861: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services catalog team and every package detail
+00:53 +862: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services catalog team and every package detail
+00:53 +863: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services catalog team and every package detail
+00:53 +864: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services catalog team and every package detail
+00:53 +865: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services catalog team and every package detail
+00:53 +866: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services catalog team and every package detail
+00:53 +867: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services catalog team and every package detail
+00:53 +868: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services catalog team and every package detail
+00:53 +869: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services catalog team and every package detail
+00:53 +870: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services catalog team and every package detail
+00:53 +871: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services catalog team and every package detail
+00:53 +872: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services catalog team and every package detail
+00:53 +873: /Users/lute/project/momcozy-lab/app/test/modules/services/service_purchase_test.dart: purchase states and booking result at 320.0 / 1.0
+00:53 +874: /Users/lute/project/momcozy-lab/app/test/modules/services/service_purchase_test.dart: purchase states and booking result at 320.0 / 1.0
+00:53 +875: /Users/lute/project/momcozy-lab/app/test/modules/services/service_purchase_test.dart: purchase states and booking result at 320.0 / 1.0
+00:53 +876: /Users/lute/project/momcozy-lab/app/test/modules/services/service_purchase_test.dart: purchase states and booking result at 320.0 / 1.0
+00:53 +877: /Users/lute/project/momcozy-lab/app/test/modules/services/service_purchase_test.dart: purchase states and booking result at 320.0 / 1.0
+00:53 +878: /Users/lute/project/momcozy-lab/app/test/modules/services/service_purchase_test.dart: purchase states and booking result at 320.0 / 1.0
+00:53 +879: /Users/lute/project/momcozy-lab/app/test/modules/services/service_purchase_test.dart: purchase states and booking result at 320.0 / 1.0
+00:53 +880: /Users/lute/project/momcozy-lab/app/test/modules/services/service_purchase_test.dart: purchase states and booking result at 320.0 / 1.0
+00:53 +881: /Users/lute/project/momcozy-lab/app/test/modules/services/service_purchase_test.dart: purchase states and booking result at 320.0 / 1.0
+00:53 +882: /Users/lute/project/momcozy-lab/app/test/modules/services/service_purchase_test.dart: purchase states and booking result at 320.0 / 1.0
+00:53 +883: /Users/lute/project/momcozy-lab/app/test/modules/services/service_purchase_test.dart: purchase states and booking result at 320.0 / 1.0
+00:53 +884: /Users/lute/project/momcozy-lab/app/test/modules/services/service_purchase_test.dart: purchase states and booking result at 320.0 / 1.0
+00:53 +885: /Users/lute/project/momcozy-lab/app/test/modules/services/service_purchase_test.dart: purchase states and booking result at 320.0 / 1.0
+00:53 +886: /Users/lute/project/momcozy-lab/app/test/modules/services/service_purchase_test.dart: purchase states and booking result at 320.0 / 1.0
+00:54 +887: /Users/lute/project/momcozy-lab/app/test/modules/services/service_purchase_test.dart: purchase states and booking result at 320.0 / 1.0
+00:54 +888: /Users/lute/project/momcozy-lab/app/test/modules/services/service_purchase_test.dart: purchase states and booking result at 320.0 / 1.0
+00:54 +889: /Users/lute/project/momcozy-lab/app/test/modules/services/service_purchase_test.dart: purchase states and booking result at 320.0 / 1.0
+00:54 +890: /Users/lute/project/momcozy-lab/app/test/modules/services/service_purchase_test.dart: purchase states and booking result at 320.0 / 1.0
+00:54 +891: /Users/lute/project/momcozy-lab/app/test/modules/services/service_purchase_test.dart: purchase states and booking result at 320.0 / 1.0
+00:54 +892: /Users/lute/project/momcozy-lab/app/test/modules/services/service_purchase_test.dart: purchase states and booking result at 320.0 / 1.0
+00:54 +893: /Users/lute/project/momcozy-lab/app/test/modules/services/service_purchase_test.dart: purchase states and booking result at 320.0 / 1.0
+00:54 +894: /Users/lute/project/momcozy-lab/app/test/modules/services/service_purchase_test.dart: purchase states and booking result at 320.0 / 1.0
+00:54 +895: /Users/lute/project/momcozy-lab/app/test/modules/services/service_purchase_test.dart: purchase states and booking result at 320.0 / 1.0
+00:54 +896: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services purchase validation decline challenge success and booking
+00:54 +897: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services purchase validation decline challenge success and booking
+00:54 +898: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services purchase validation decline challenge success and booking
+00:54 +899: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services purchase validation decline challenge success and booking
+00:54 +900: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services purchase validation decline challenge success and booking
+00:54 +901: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services purchase validation decline challenge success and booking
+00:54 +902: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services purchase validation decline challenge success and booking
+00:54 +903: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services purchase validation decline challenge success and booking
+00:54 +904: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services purchase validation decline challenge success and booking
+00:54 +905: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services purchase validation decline challenge success and booking
+00:54 +906: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services purchase validation decline challenge success and booking
+00:54 +907: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services purchase validation decline challenge success and booking
+00:54 +908: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services purchase validation decline challenge success and booking
+00:54 +909: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services purchase validation decline challenge success and booking
+00:54 +910: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services purchase validation decline challenge success and booking
+00:54 +911: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services purchase validation decline challenge success and booking
+00:54 +912: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services purchase validation decline challenge success and booking
+00:54 +913: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services purchase validation decline challenge success and booking
+00:55 +914: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services purchase validation decline challenge success and booking
+00:55 +915: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services purchase validation decline challenge success and booking
+00:55 +916: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services purchase validation decline challenge success and booking
+00:55 +917: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services purchase validation decline challenge success and booking
+00:55 +918: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services purchase validation decline challenge success and booking
+00:55 +919: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services purchase validation decline challenge success and booking
+00:55 +920: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services purchase validation decline challenge success and booking
+00:55 +921: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services purchase validation decline challenge success and booking
+00:55 +922: /Users/lute/project/momcozy-lab/app/test/modules/services/service_renew_test.dart: renew selection opens existing eligibility flow 320.0/1.0
+00:55 +923: /Users/lute/project/momcozy-lab/app/test/modules/services/service_renew_test.dart: renew selection opens existing eligibility flow 320.0/1.0
+00:55 +924: /Users/lute/project/momcozy-lab/app/test/modules/services/service_purchase_test.dart: purchase states and booking result at 390.0 / 1.0
+00:55 +925: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services booking eligibility hold confirm intake and cancellation
+00:55 +926: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services booking eligibility hold confirm intake and cancellation
+00:55 +927: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services booking eligibility hold confirm intake and cancellation
+00:55 +927 ~1: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services booking eligibility hold confirm intake and cancellation
+00:55 +927 ~2: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services booking eligibility hold confirm intake and cancellation
+00:55 +927 ~3: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services booking eligibility hold confirm intake and cancellation
+00:55 +927 ~4: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services booking eligibility hold confirm intake and cancellation
+00:55 +927 ~5: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services booking eligibility hold confirm intake and cancellation
+00:55 +927 ~6: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services booking eligibility hold confirm intake and cancellation
+00:55 +928 ~6: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services booking eligibility hold confirm intake and cancellation
+00:56 +929 ~6: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services booking eligibility hold confirm intake and cancellation
+00:56 +930 ~6: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services booking eligibility hold confirm intake and cancellation
+00:56 +931 ~6: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services booking eligibility hold confirm intake and cancellation
+00:56 +932 ~6: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services booking eligibility hold confirm intake and cancellation
+00:56 +933 ~6: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services booking eligibility hold confirm intake and cancellation
+00:56 +934 ~6: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services booking eligibility hold confirm intake and cancellation
+00:56 +935 ~6: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services booking eligibility hold confirm intake and cancellation
+00:56 +936 ~6: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services booking eligibility hold confirm intake and cancellation
+00:56 +937 ~6: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services booking eligibility hold confirm intake and cancellation
+00:56 +938 ~6: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services booking eligibility hold confirm intake and cancellation
+00:56 +939 ~6: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services booking eligibility hold confirm intake and cancellation
+00:56 +940 ~6: /Users/lute/project/momcozy-lab/app/test/shared/input_confirmation_test.dart: large input and confirmation remain usable above a keyboard
+00:56 +941 ~6: /Users/lute/project/momcozy-lab/app/test/shared/input_confirmation_test.dart: large input and confirmation remain usable above a keyboard
+00:57 +942 ~6: /Users/lute/project/momcozy-lab/app/test/shared/input_confirmation_test.dart: large input and confirmation remain usable above a keyboard
+00:57 +943 ~6: /Users/lute/project/momcozy-lab/app/test/shared/input_confirmation_test.dart: large input and confirmation remain usable above a keyboard
+00:57 +944 ~6: /Users/lute/project/momcozy-lab/app/test/shared/input_confirmation_test.dart: large input and confirmation remain usable above a keyboard
+00:57 +945 ~6: /Users/lute/project/momcozy-lab/app/test/shared/input_confirmation_test.dart: large input and confirmation remain usable above a keyboard
+00:57 +946 ~6: /Users/lute/project/momcozy-lab/app/test/shared/input_confirmation_test.dart: large input and confirmation remain usable above a keyboard
+00:57 +947 ~6: /Users/lute/project/momcozy-lab/app/test/shared/input_confirmation_test.dart: large input and confirmation remain usable above a keyboard
+00:57 +948 ~6: /Users/lute/project/momcozy-lab/app/test/shared/input_confirmation_test.dart: large input and confirmation remain usable above a keyboard
+00:57 +949 ~6: /Users/lute/project/momcozy-lab/app/test/shared/input_confirmation_test.dart: large input and confirmation remain usable above a keyboard
+00:57 +950 ~6: /Users/lute/project/momcozy-lab/app/test/shared/input_confirmation_test.dart: large input and confirmation remain usable above a keyboard
+00:57 +951 ~6: /Users/lute/project/momcozy-lab/app/test/shared/input_confirmation_test.dart: large input and confirmation remain usable above a keyboard
+00:57 +952 ~6: /Users/lute/project/momcozy-lab/app/test/shared/input_confirmation_test.dart: large input and confirmation remain usable above a keyboard
+00:57 +953 ~6: /Users/lute/project/momcozy-lab/app/test/shared/input_confirmation_test.dart: large input and confirmation remain usable above a keyboard
+00:57 +954 ~6: /Users/lute/project/momcozy-lab/app/test/shared/input_confirmation_test.dart: large input and confirmation remain usable above a keyboard
+00:57 +955 ~6: /Users/lute/project/momcozy-lab/app/test/shared/input_confirmation_test.dart: large input and confirmation remain usable above a keyboard
+00:57 +956 ~6: /Users/lute/project/momcozy-lab/app/test/shared/input_confirmation_test.dart: large input and confirmation remain usable above a keyboard
+00:57 +957 ~6: /Users/lute/project/momcozy-lab/app/test/shared/input_confirmation_test.dart: large input and confirmation remain usable above a keyboard
+00:57 +958 ~6: /Users/lute/project/momcozy-lab/app/test/shared/input_confirmation_test.dart: large input and confirmation remain usable above a keyboard
+00:57 +959 ~6: /Users/lute/project/momcozy-lab/app/test/shared/input_confirmation_test.dart: large input and confirmation remain usable above a keyboard
+00:57 +960 ~6: /Users/lute/project/momcozy-lab/app/test/shared/input_confirmation_test.dart: large input and confirmation remain usable above a keyboard
+00:57 +961 ~6: /Users/lute/project/momcozy-lab/app/test/shared/input_confirmation_test.dart: large input and confirmation remain usable above a keyboard
+00:57 +962 ~6: /Users/lute/project/momcozy-lab/app/test/shared/input_confirmation_test.dart: large input and confirmation remain usable above a keyboard
+00:57 +963 ~6: /Users/lute/project/momcozy-lab/app/test/shared/input_confirmation_test.dart: large input and confirmation remain usable above a keyboard
+00:57 +964 ~6: /Users/lute/project/momcozy-lab/app/test/shared/input_confirmation_test.dart: large input and confirmation remain usable above a keyboard
+00:57 +965 ~6: /Users/lute/project/momcozy-lab/app/test/shared/input_confirmation_test.dart: large input and confirmation remain usable above a keyboard
+00:57 +966 ~6: /Users/lute/project/momcozy-lab/app/test/shared/input_confirmation_test.dart: large input and confirmation remain usable above a keyboard
+00:57 +967 ~6: /Users/lute/project/momcozy-lab/app/test/shared/input_confirmation_test.dart: large input and confirmation remain usable above a keyboard
+00:57 +968 ~6: /Users/lute/project/momcozy-lab/app/test/shared/input_confirmation_test.dart: large input and confirmation remain usable above a keyboard
+00:57 +969 ~6: /Users/lute/project/momcozy-lab/app/test/shared/input_confirmation_test.dart: large input and confirmation remain usable above a keyboard
+00:57 +970 ~6: /Users/lute/project/momcozy-lab/app/test/shared/input_confirmation_test.dart: large input and confirmation remain usable above a keyboard
+00:57 +971 ~6: /Users/lute/project/momcozy-lab/app/test/shared/input_confirmation_test.dart: large input and confirmation remain usable above a keyboard
+00:57 +972 ~6: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services create order retry pending payment and resume
+00:57 +973 ~6: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services create order retry pending payment and resume
+00:57 +974 ~6: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services create order retry pending payment and resume
+00:57 +975 ~6: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services create order retry pending payment and resume
+00:57 +976 ~6: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services create order retry pending payment and resume
+00:57 +977 ~6: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services create order retry pending payment and resume
+00:57 +978 ~6: /Users/lute/project/momcozy-lab/app/test/shared/momcozy_motion_test.dart: reduced motion flows 390.0 / 1.0
+00:57 +979 ~6: /Users/lute/project/momcozy-lab/app/test/shared/input_confirmation_test.dart: inputs and discard 320 at 1.0x
+00:57 +980 ~6: /Users/lute/project/momcozy-lab/app/test/shared/input_confirmation_test.dart: inputs and discard 320 at 1.0x
+00:58 +981 ~6: /Users/lute/project/momcozy-lab/app/test/shared/input_confirmation_test.dart: inputs and discard 320 at 1.0x
+00:58 +982 ~6: /Users/lute/project/momcozy-lab/app/test/shared/input_confirmation_test.dart: inputs and discard 320 at 1.0x
+00:58 +983 ~6: /Users/lute/project/momcozy-lab/app/test/shared/input_confirmation_test.dart: inputs and discard 320 at 1.0x
+00:58 +984 ~6: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services cancelled challenge and reconciling payment
+00:58 +985 ~6: /Users/lute/project/momcozy-lab/app/test/shared/product_feedback_test.dart: loading remains readable in a short region at 2x
+00:58 +986 ~6: /Users/lute/project/momcozy-lab/app/test/shared/momcozy_motion_test.dart: reduced motion flows 430.0 / 2.0
+00:58 +987 ~6: /Users/lute/project/momcozy-lab/app/test/shared/input_confirmation_test.dart: inputs and discard 320 at 2.0x
+00:58 +988 ~6: /Users/lute/project/momcozy-lab/app/test/shared/input_confirmation_test.dart: inputs and discard 320 at 2.0x
+00:59 +989 ~6: /Users/lute/project/momcozy-lab/app/test/shared/input_confirmation_test.dart: inputs and discard 320 at 2.0x
+00:59 +990 ~6: /Users/lute/project/momcozy-lab/app/test/shared/input_confirmation_test.dart: inputs and discard 320 at 2.0x
+00:59 +991 ~6: /Users/lute/project/momcozy-lab/app/test/shared/product_feedback_test.dart: feedback layout and retry callbacks 320.0/2.0
+00:59 +992 ~6: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services booking availability error empty picker and hold recovery
+00:59 +993 ~6: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services booking availability error empty picker and hold recovery
+00:59 +994 ~6: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services booking availability error empty picker and hold recovery
+00:59 +995 ~6: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services booking availability error empty picker and hold recovery
+00:59 +996 ~6: /Users/lute/project/momcozy-lab/app/test/shared/product_feedback_test.dart: feedback layout and retry callbacks 430.0/1.0
+00:59 +997 ~6: /Users/lute/project/momcozy-lab/app/test/shared/input_confirmation_test.dart: inputs and discard 390 at 2.0x
+00:59 +998 ~6: /Users/lute/project/momcozy-lab/app/test/shared/input_confirmation_test.dart: inputs and discard 390 at 2.0x
+01:00 +999 ~6: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services intake fields consent uncertain save and update
+01:00 +1000 ~6: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services intake fields consent uncertain save and update
+01:00 +1001 ~6: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services intake fields consent uncertain save and update
+01:00 +1002 ~6: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: inventory Services date pickers intake retry profile and preconsult
+01:01 +1003 ~6: /Users/lute/project/momcozy-lab/app/test/modules/services/service_inventory_journey_test.dart: (tearDownAll)
+01:01 +1003 ~6: All tests passed!

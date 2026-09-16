@@ -1,0 +1,16 @@
+{
+  "command": [
+    "/Users/lute/.local/share/momcozy-toolchains/flutter/bin/flutter",
+    "--suppress-analytics",
+    "test",
+    "--no-pub",
+    "test/modules/consultation/consultation_inventory_journey_test.dart",
+    "test/modules/consultation/user_video_test.dart",
+    "test/modules/consultation/room_leave_recovery_test.dart",
+    "--name",
+    "inventory consultation current live leave route|user waiting media controls and leave 390\\.0 x 844\\.0 / 1\\.0|leave recovery 390\\.0 / 1\\.0",
+    "--reporter",
+    "expanded"
+  ],
+  "scope": "G02: one current normal entry/leave/re-entry route; reuse existing media and leave-failure goldens at one viewport only"
+}

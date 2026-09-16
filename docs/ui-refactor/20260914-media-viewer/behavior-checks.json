@@ -1,0 +1,6 @@
+{
+  "Media routing PDF paging image zoom and video configuration unchanged except documented retry listener": true,
+  "Return navigation unchanged": true,
+  "Product image loading variants caching and builders unchanged except documented retry listener": true,
+  "Attachment image implementation and gestures unchanged": true
+}

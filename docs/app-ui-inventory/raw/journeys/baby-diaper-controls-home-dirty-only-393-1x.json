@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/baby-diaper-controls-home-dirty-only-393-1x.png",
+  "previous_source": "test/goldens/ui_inventory/baby-diaper-controls-dirty-optional-reopened-393-1x.png",
+  "route": "/baby",
+  "trigger": "Return Baby → dirty count updated, wet count removed",
+  "root_entry": "Authenticated More → tap Baby bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/baby/baby_diaper_control_inventory_test.dart"
+}

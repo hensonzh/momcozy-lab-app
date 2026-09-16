@@ -1,0 +1,23 @@
+{
+  "observed_states": 2737,
+  "added": [
+    "08-expert-service/booking-resume-current-configured-reminder-enabled",
+    "10-global-modals/notification-conversation"
+  ],
+  "changed": [
+    "05-agent/agent-history-empty",
+    "05-agent/agent-history-list",
+    "05-agent/agent-history-list-end",
+    "05-agent/agent-history-load-error",
+    "05-agent/agent-history-loading",
+    "05-agent/agent-history-locked",
+    "05-agent/agent-history-switch-error",
+    "05-agent/agent-history-switching",
+    "08-expert-service/intake-consent",
+    "08-expert-service/intake-form",
+    "08-expert-service/intake-optional",
+    "08-expert-service/intake-profile",
+    "08-expert-service/intake-saved"
+  ],
+  "removed": []
+}

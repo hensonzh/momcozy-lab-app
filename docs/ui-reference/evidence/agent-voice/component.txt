@@ -1,0 +1,13 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: voice states 320.0/1.0
+00:00 +1: voice states 320.0/2.0
+00:01 +2: voice states 390.0/1.0
+00:01 +3: voice states 390.0/2.0
+00:01 +4: voice states 430.0/1.0
+00:02 +5: voice states 430.0/2.0
+00:02 +6: voice error remains usable above a keyboard at 2x
+00:02 +7: synchronous player setup failure is recoverable
+00:02 +8: failed greeting exposes a recoverable voice notice
+00:02 +9: (tearDownAll)
+00:02 +9: All tests passed!

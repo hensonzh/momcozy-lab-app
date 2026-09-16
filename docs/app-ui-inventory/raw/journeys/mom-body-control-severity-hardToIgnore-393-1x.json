@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/mom-body-control-severity-hardToIgnore-393-1x.png",
+  "previous_source": "test/goldens/ui_inventory/mom-body-control-severity-noticeable-393-1x.png",
+  "route": "/me",
+  "trigger": "Body / 这种不适有多难受？ → select 很难忽略",
+  "root_entry": "Authenticated More → tap Me bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/mom/mom_body_control_inventory_test.dart"
+}

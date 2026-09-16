@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/booking-precheck-current-accepted-slots-320-2x.png",
+  "previous_source": "test/goldens/ui_inventory/booking-precheck-current-server-region_not_supported-320-2x.png",
+  "route": "/services/episodes/service-episode/booking",
+  "trigger": "Retry accepted → provider, date and available/occupied times",
+  "root_entry": "Authenticated More → tap Me bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/services/booking_precheck_current_inventory_test.dart"
+}

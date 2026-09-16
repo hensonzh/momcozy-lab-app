@@ -1,0 +1,38 @@
+{
+  "observed_states": 2772,
+  "added": [
+    "01-auth/auth-followup-register-email-unavailable",
+    "01-auth/auth-followup-register-pending",
+    "01-auth/auth-followup-verify-submit-pending",
+    "06-schedule/schedule-journey-current-add-tooltip",
+    "06-schedule/schedule-journey-current-create-conflict",
+    "06-schedule/schedule-journey-current-create-invalid",
+    "06-schedule/schedule-journey-current-delete-error",
+    "06-schedule/schedule-journey-current-edit-conflict",
+    "06-schedule/schedule-journey-current-next-tooltip",
+    "06-schedule/schedule-journey-current-task-error",
+    "08-expert-service/consultation-journey-current-join-request-error",
+    "08-expert-service/consultation-journey-current-location-request-error",
+    "08-expert-service/consultation-journey-current-room-load-error",
+    "08-expert-service/consultation-journey-current-room-loading",
+    "08-expert-service/consultation-journey-current-video-consent-error",
+    "08-expert-service/intake-birth-picker",
+    "08-expert-service/intake-discard",
+    "08-expert-service/intake-feeding-menu",
+    "08-expert-service/intake-load-error",
+    "08-expert-service/intake-loading",
+    "08-expert-service/intake-region-menu",
+    "08-expert-service/intake-sex-menu",
+    "08-expert-service/intake-uncertain-leave",
+    "08-expert-service/renew-order-loading",
+    "08-expert-service/renew-pending-listed",
+    "08-expert-service/room-entry-modal-error",
+    "08-expert-service/room-entry-modal-loading",
+    "08-expert-service/room-entry-page-error",
+    "08-expert-service/room-entry-page-loading"
+  ],
+  "changed": [
+    "08-expert-service/intake-uncertain"
+  ],
+  "removed": []
+}

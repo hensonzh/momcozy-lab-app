@@ -1,0 +1,141 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/data/motion_pose_platform_test.dart
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/data/motion_realtime_playback_tracker_test.dart: follows the unified WebRTC output audio buffer lifecycle
+00:00 +1: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/data/motion_realtime_playback_tracker_test.dart: keeps compatibility with data-channel audio delta events
+00:00 +2: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/data/motion_voice_signaling_test.dart: visual context is fail-closed unless the session header enables it
+00:00 +3: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/data/motion_pose_platform_test.dart: retains native input dimensions for geometry and preview transforms
+00:00 +4: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/data/motion_pose_platform_test.dart: does not turn an omitted optional presence score into a rejection
+00:00 +5: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/data/motion_pose_platform_test.dart: waits for the native model-ready event before start completes
+00:00 +6: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/data/motion_realtime_session_gate_test.dart: is not ready until transport, peer, remote audio and session are ready
+00:00 +7: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/data/motion_realtime_session_gate_test.dart: is not ready until transport, peer, remote audio and session are ready
+00:00 +8: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/data/motion_realtime_session_gate_test.dart: is not ready until transport, peer, remote audio and session are ready
+00:00 +9: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/data/motion_realtime_session_gate_test.dart: also becomes ready when session.created arrives before open
+00:00 +10: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/data/motion_realtime_session_gate_test.dart: ignores unrelated lifecycle events while connecting
+00:00 +11: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/data/motion_realtime_session_gate_test.dart: surfaces a server error before the model session becomes ready
+00:00 +12: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/data/motion_visual_context_test.dart: captures only consented visual events with fresh single-person context
+00:00 +13: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/data/motion_visual_context_test.dart: serializes concurrent captures and applies a visual cooldown
+00:00 +14: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/data/motion_visual_context_test.dart: runs automatic visual capture outside the voice critical path
+00:00 +15: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/data/motion_visual_context_test.dart: capture failures and oversized images degrade without throwing
+00:00 +16: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/data/motion_visual_context_test.dart: builds a bounded official Realtime input_image conversation item
+00:00 +17: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/data/motion_visual_context_test.dart: parses only bounded visual snapshot tool requests
+00:00 +18: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/data/motion_visual_context_test.dart: correlates image errors without swallowing unrelated voice errors
+00:00 +19: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/domain/motion_assessment_event_test.dart: builds a versioned bounded semantic event envelope
+00:00 +20: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/data/motion_assessment_api_repository_test.dart: persists only the explicit per-session key frame consent
+00:00 +21: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/data/motion_assessment_api_repository_test.dart: persists only the explicit per-session key frame consent
+00:00 +22: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/data/motion_assessment_api_repository_test.dart: updates a voice-selected plan with optimistic concurrency
+00:00 +23: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/data/motion_realtime_response_queue_test.dart: bounds routine assessment guidance to short spoken turns
+00:00 +24: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/data/motion_realtime_response_queue_test.dart: bounds routine assessment guidance to short spoken turns
+00:00 +25: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/data/motion_realtime_response_queue_test.dart: bounds routine assessment guidance to short spoken turns
+00:00 +26: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/data/motion_realtime_response_queue_test.dart: waits for response.done before creating the next default response
+00:00 +27: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/data/motion_realtime_response_queue_test.dart: interrupt cancels once and waits for cancelled response.done
+00:00 +28: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/data/motion_realtime_response_queue_test.dart: observes an already-active server response before local guidance
+00:00 +29: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/data/motion_realtime_response_queue_test.dart: creates a model turn with the latest semantic snapshot
+00:00 +30: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/data/motion_realtime_response_queue_test.dart: keeps every Realtime response in the CozyMate identity
+00:00 +31: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/data/motion_realtime_response_queue_test.dart: keeps each model turn bound to its triggering user audio item
+00:00 +32: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/data/motion_realtime_response_queue_test.dart: coalesces stale pending guidance and keeps the newest state
+00:00 +33: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/data/motion_realtime_response_queue_test.dart: a newer state can cancel active guidance in the same lane
+00:00 +34: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/data/motion_realtime_response_queue_test.dart: user speech cancels the active response without adding speech
+00:00 +35: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/data/motion_realtime_response_queue_test.dart: normal guidance is phrased naturally instead of exact TTS
+00:00 +36: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/data/motion_realtime_response_queue_test.dart: releases the active slot when response.create cannot be sent
+00:00 +37: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/data/motion_realtime_response_queue_test.dart: continues after a stale response.cancel receives a safe server error
+00:01 +38: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/domain/motion_quality_gate_test.dart: emits one enter-frame directive until a person returns
+00:01 +39: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/domain/motion_quality_gate_test.dart: requires one stable person before accepting assessment frames
+00:01 +40: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/domain/motion_quality_gate_test.dart: accepts every matching frame after calibration without repeating a directive
+00:01 +41: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/domain/motion_quality_gate_test.dart: accepts head, shoulder and hip framing without legs or feet
+00:01 +42: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/domain/frontal_posture_analyzer_test.dart: measures shoulder asymmetry and trunk lateral lean from a front view
+00:01 +43: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/domain/frontal_posture_analyzer_test.dart: measures shoulder asymmetry and trunk lateral lean from a front view
+00:01 +44: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/domain/frontal_posture_analyzer_test.dart: measures shoulder asymmetry and trunk lateral lean from a front view
+00:01 +45: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/domain/frontal_posture_analyzer_test.dart: measures shoulder asymmetry and trunk lateral lean from a front view
+00:01 +46: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/domain/frontal_posture_analyzer_test.dart: measures shoulder asymmetry and trunk lateral lean from a front view
+00:01 +47: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/domain/frontal_posture_analyzer_test.dart: measures shoulder asymmetry and trunk lateral lean from a front view
+00:01 +48: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/domain/frontal_posture_analyzer_test.dart: measures shoulder asymmetry and trunk lateral lean from a front view
+00:01 +49: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/domain/frontal_posture_analyzer_test.dart: measures shoulder asymmetry and trunk lateral lean from a front view
+00:01 +50: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/domain/frontal_posture_analyzer_test.dart: measures shoulder asymmetry and trunk lateral lean from a front view
+00:01 +51: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/domain/frontal_posture_analyzer_test.dart: rejects a side view for frontal measurements
+00:01 +52: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/domain/frontal_posture_analyzer_test.dart: returns reference classifications for a level centered pose
+00:01 +53: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/domain/frontal_posture_analyzer_test.dart: production sampling tolerates realistic confidence and brief landmark loss
+00:01 +54: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/domain/frontal_posture_analyzer_test.dart: reports the exact frontal regions that prevent capture
+00:01 +55: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/domain/frontal_posture_analyzer_test.dart: shoulder-only screening remains measurable when hips are unavailable
+00:01 +56: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/domain/forward_head_analyzer_test.dart: returns a stable side-view craniovertebral angle without diagnosing
+00:01 +57: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/domain/forward_head_analyzer_test.dart: uses the reliable right side when the left side is occluded
+00:01 +58: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/domain/forward_head_analyzer_test.dart: accepts a reliable near side when far-side landmarks are absent
+00:01 +59: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/domain/forward_head_analyzer_test.dart: measures forward head posture without making hips a hard dependency
+00:01 +60: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/domain/forward_head_analyzer_test.dart: rejects frames when side landmarks are not sufficiently visible
+00:01 +61: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/domain/forward_head_analyzer_test.dart: uses input dimensions so the angle is independent of frame aspect ratio
+00:01 +62: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/domain/forward_head_analyzer_test.dart: rejects a front-facing pose until the shoulders indicate a side view
+00:01 +63: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/domain/forward_head_analyzer_test.dart: keeps useful samples across a brief rejected frame
+00:01 +64: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/domain/forward_head_analyzer_test.dart: restarts only after an interruption persists beyond the grace period
+00:01 +65: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/domain/forward_head_analyzer_test.dart: sampling progress never moves backwards during one rolling window
+00:01 +66: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/domain/forward_head_analyzer_test.dart: production sampling tolerates realistic side confidence and brief dropouts
+00:01 +67: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/domain/forward_head_analyzer_test.dart: a short two-second loss pauses instead of erasing useful samples
+00:01 +68: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/domain/forward_head_analyzer_test.dart: reports the exact side region that prevents capture
+00:01 +69: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/domain/motion_assessment_workflow_test.dart: two stable segments reach review but never complete automatically
+00:01 +70: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/domain/motion_assessment_workflow_test.dart: validation segment must come from the opposite side
+00:01 +71: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/domain/motion_assessment_workflow_test.dart: finish requires prompt playback followed by a new user audio item
+00:01 +72: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/domain/motion_assessment_workflow_test.dart: continue confirmation starts a fresh two-segment capture cycle
+00:01 +73: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/domain/motion_assessment_workflow_test.dart: a safety stop bypasses the normal finish confirmation handshake
+00:01 +74: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/domain/motion_assessment_plan_test.dart: registry exposes only validated targets as available
+00:01 +75: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/domain/motion_assessment_plan_test.dart: plan groups two frontal targets into one capture step
+00:01 +76: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/domain/motion_assessment_plan_test.dart: every available project produces a complete capture path
+00:01 +77: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/domain/motion_assessment_plan_test.dart: plan rejects unavailable targets and stale mutations
+00:01 +78: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/domain/motion_voice_command_test.dart: parses bounded client commands from the official response.done shape
+00:01 +79: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/domain/motion_assessment_context_test.dart: serializes bounded strong semantics without raw pose data
+00:01 +80: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/domain/motion_assessment_context_test.dart: serializes bounded strong semantics without raw pose data
+00:01 +81: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/domain/motion_voice_command_test.dart: parses a revision-bound voice assessment plan mutation
+00:01 +82: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/domain/motion_assessment_context_test.dart: selection context carries the current voice plan revision
+00:01 +83: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/domain/motion_voice_command_test.dart: recognizes a completed user audio item for manual model response
+00:01 +84: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/artifacts/agent_motion_assessment_card_test.dart: maps the motion assessment artifact to a dedicated card contract
+00:01 +85: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/artifacts/agent_motion_assessment_card_test.dart: does not expose a legacy target without an implemented evaluator
+00:01 +86: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/artifacts/agent_motion_assessment_card_test.dart: maps the generic posture screen entry without narrowing it to neck
+00:01 +87: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/artifacts/agent_motion_assessment_card_test.dart: motion assessment card emits only its dedicated route action
+00:01 +88: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/artifacts/agent_motion_assessment_card_test.dart: motion assessment card emits only its dedicated route action
+00:01 +89: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/artifacts/agent_motion_assessment_card_test.dart: motion assessment card emits only its dedicated route action
+00:01 +90: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/artifacts/agent_motion_assessment_card_test.dart: motion assessment card emits only its dedicated route action
+00:01 +91: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/artifacts/agent_motion_assessment_card_test.dart: motion assessment card emits only its dedicated route action
+00:01 +92: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/artifacts/agent_motion_assessment_card_test.dart: motion assessment card emits only its dedicated route action
+00:01 +93: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/artifacts/agent_motion_assessment_card_test.dart: motion assessment card emits only its dedicated route action
+00:02 +94: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/presentation/motion_assessment_controller_test.dart: keeps a posture screen in voice selection until a versioned plan is confirmed
+00:02 +95: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/presentation/motion_assessment_controller_test.dart: completes one grouped frontal step for shoulder and trunk screening
+00:02 +96: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/presentation/motion_assessment_controller_test.dart: uses a project-specific guide for each frontal assessment
+00:02 +97: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/presentation/motion_assessment_controller_test.dart: announces every transition across two side views and one front view
+00:02 +98: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/presentation/motion_assessment_controller_test.dart: starts local camera before session creation completes and never starts voice after close
+00:02 +99: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/presentation/motion_assessment_controller_test.dart: closes the camera when cloud session creation fails because voice is required
+00:02 +100: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/presentation/motion_assessment_controller_test.dart: stops a native camera start that completes after the page was closed
+00:02 +101: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/presentation/motion_assessment_controller_test.dart: retries then closes the camera when required realtime voice fails
+00:02 +102: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/presentation/motion_assessment_controller_test.dart: drains normal agent audio before opening realtime voice
+00:02 +103: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/presentation/motion_assessment_controller_test.dart: does not sample pose frames until first Realtime guidance completes
+00:02 +104: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/presentation/motion_assessment_controller_test.dart: starts sampling only after the spoken capture countdown completes
+00:02 +105: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/presentation/motion_assessment_controller_test.dart: starts forward-head capture after a brief final countdown dropout
+00:02 +106: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/presentation/motion_assessment_controller_test.dart: starts shoulder capture after a brief final countdown dropout
+00:02 +107: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/presentation/motion_assessment_controller_test.dart: retries capture guidance without failing a healthy Realtime session
+00:02 +108: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/presentation/motion_assessment_controller_test.dart: converts live pose changes into Realtime-owned guidance turns
+00:02 +109: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/presentation/motion_assessment_controller_test.dart: reports a persistently missing side ear instead of silently restarting capture
+00:02 +110: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/presentation/motion_assessment_controller_test.dart: keeps shoulder-height capture active across a brief landmark dropout
+00:02 +111: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/presentation/motion_assessment_controller_test.dart: surfaces a native pose model startup failure with a useful cause
+00:02 +112: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/presentation/motion_assessment_controller_test.dart: stops the local camera when native pose inference fails
+Motion pose stream failed: PlatformException(pose_inference_failed, MediaPipe execution failed, null, null)
+00:02 +113: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/presentation/motion_assessment_controller_test.dart: requires two segments and a fresh voice confirmation before durable completion
+00:02 +114: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/presentation/motion_assessment_controller_test.dart: safety voice command bypasses finish confirmation and cancels
+00:02 +115: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/presentation/motion_assessment_controller_test.dart: the explicit end action safely cancels an in-progress assessment
+00:02 +116: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/presentation/motion_assessment_controller_test.dart: does not replace an ambiguously staged completion with a failed finalization
+00:02 +117: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/presentation/motion_assessment_controller_test.dart: gives a standing person a full-height guide on a portrait phone
+00:02 +118: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/presentation/motion_assessment_controller_test.dart: keeps Realtime guidance hands-free with only one explicit end control
+00:02 +119: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/presentation/motion_assessment_controller_test.dart: enables sparse visual assistance by default when it is supported
+00:02 +120: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/presentation/motion_assessment_controller_test.dart: local-only consent choice keeps key-frame upload disabled
+00:02 +121: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/presentation/motion_assessment_controller_test.dart: shows retry and exit controls only after terminal failure
+00:02 +122: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/presentation/motion_assessment_controller_test.dart: permission denial stops before camera or session creation
+00:02 +123: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/presentation/motion_assessment_controller_test.dart: keeps live guidance focused without technical keypoint labels
+00:02 +124: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/presentation/motion_assessment_controller_test.dart: replaces and disposes the controller when runtime identity changes
+00:02 +125: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/presentation/motion_assessment_controller_test.dart: motion responsive failure retry and exit 320.0 / 1.0
+Motion pose stream failed: PlatformException(pose_model_initialization_failed, null, null, null)
+00:02 +126: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/presentation/motion_assessment_controller_test.dart: motion responsive failure retry and exit 320.0 / 2.0
+Motion pose stream failed: PlatformException(pose_model_initialization_failed, null, null, null)
+00:02 +127: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/presentation/motion_assessment_controller_test.dart: motion responsive failure retry and exit 390.0 / 1.0
+Motion pose stream failed: PlatformException(pose_model_initialization_failed, null, null, null)
+00:02 +128: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/presentation/motion_assessment_controller_test.dart: motion responsive failure retry and exit 390.0 / 2.0
+Motion pose stream failed: PlatformException(pose_model_initialization_failed, null, null, null)
+00:02 +129: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/presentation/motion_assessment_controller_test.dart: motion responsive failure retry and exit 430.0 / 1.0
+Motion pose stream failed: PlatformException(pose_model_initialization_failed, null, null, null)
+00:02 +130: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/presentation/motion_assessment_controller_test.dart: motion responsive failure retry and exit 430.0 / 2.0
+Motion pose stream failed: PlatformException(pose_model_initialization_failed, null, null, null)
+00:02 +131: /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/presentation/motion_assessment_controller_test.dart: (tearDownAll)
+00:02 +131: All tests passed!

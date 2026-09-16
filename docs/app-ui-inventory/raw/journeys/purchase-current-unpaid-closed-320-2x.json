@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/purchase-current-unpaid-closed-320-2x.png",
+  "previous_source": "test/goldens/ui_inventory/purchase-current-create-recovered-320-2x.png",
+  "route": "/services/feeding-confidence",
+  "trigger": "Close card form → resumable package",
+  "root_entry": "Authenticated More → tap Me bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/services/purchase_current_inventory_test.dart"
+}

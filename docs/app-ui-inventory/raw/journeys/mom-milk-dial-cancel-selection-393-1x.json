@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/mom-milk-dial-cancel-selection-393-1x.png",
+  "previous_source": "test/goldens/ui_inventory/mom-milk-dial-noon-saved-393-1x.png",
+  "route": "/me",
+  "trigger": "Reopen noon and select hour 3 → unsaved picker value 15:00",
+  "root_entry": "Authenticated More → tap Me bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/mom/mom_milk_dial_inventory_test.dart"
+}

@@ -1,0 +1,8 @@
+{
+  "calendar_previews_only": [
+    "agent-form-date-picker-320-1x.png",
+    "agent-form-date-picker-390-1x.png",
+    "agent-form-date-picker-430-1x.png"
+  ],
+  "note": "Current-date calendar previews remain in verified/ for visual review; intentionally excluded from recurring golden assertions. All calendar interactions remain exercised."
+}

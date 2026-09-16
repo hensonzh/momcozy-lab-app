@@ -28,6 +28,7 @@ const orderStatusWire = EnumWire<CareOrderStatus>({
 });
 const paymentModeWire = EnumWire<PaymentMode>({
   PaymentMode.sandbox: 'sandbox',
+  PaymentMode.stripe: 'stripe',
   PaymentMode.disabled: 'disabled',
 });
 const paymentOutcomeWire = EnumWire<SandboxPaymentOutcome>({

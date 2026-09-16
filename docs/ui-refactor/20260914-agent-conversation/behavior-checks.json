@@ -1,0 +1,10 @@
+{
+  "state_fields_and_lifecycle_and_actions_unchanged": true,
+  "assistant_copy_for_each_phase_unchanged": true,
+  "stream_request_helpers_unchanged": true,
+  "history_model_and_sliver_unchanged": true,
+  "transcript_state_priority_and_retry_supporting_copy_unchanged": true,
+  "markdown_parsing_and_citations_unchanged": true,
+  "avatar_voice_and_animation_unchanged": true,
+  "runtime_helper_tail_unchanged": true
+}

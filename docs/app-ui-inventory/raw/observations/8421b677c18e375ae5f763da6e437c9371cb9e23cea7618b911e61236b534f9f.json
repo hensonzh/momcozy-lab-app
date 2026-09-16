@@ -1,0 +1,433 @@
+{
+  "source": "test/goldens/design_system/agent-history-switch-error-390-1x.png",
+  "evidence": "current-widget-test-render; golden comparison passed",
+  "test_description": "history states 390.0/1.0",
+  "sequence": 6,
+  "sha256": "8e2e0b8090d0a0b5b6227094e958e194e624441de9112f3b1467cd648fff5560",
+  "width": 390,
+  "height": 568,
+  "captured_at": "2026-09-14T08:17:49.071001Z",
+  "widget_types": [
+    "AbsorbPointer",
+    "Actions",
+    "Align",
+    "AnimatedBuilder",
+    "AnimatedDefaultTextStyle",
+    "AnimatedModalBarrier",
+    "AnimatedPhysicalModel",
+    "AnimatedTheme",
+    "AnnotatedRegion<SystemUiOverlayStyle>",
+    "AppBar",
+    "AutomaticKeepAlive",
+    "BlockSemantics",
+    "Builder",
+    "Center",
+    "ClipRect",
+    "ColoredBox",
+    "Column",
+    "ConstrainedBox",
+    "Container",
+    "CupertinoTheme",
+    "CustomMultiChildLayout",
+    "CustomPaint",
+    "CustomSingleChildLayout",
+    "DecoratedBox",
+    "DefaultSelectionStyle",
+    "DefaultTextEditingShortcuts",
+    "DefaultTextStyle",
+    "Directionality",
+    "DisplayFeatureSubScreen",
+    "DualTransitionBuilder",
+    "ExcludeSemantics",
+    "Expanded",
+    "FadeTransition",
+    "FlexibleSpaceBarSettings",
+    "Focus",
+    "FocusScope",
+    "FocusTraversalGroup",
+    "FractionalTranslation",
+    "GestureDetector",
+    "HeroControllerScope",
+    "Icon",
+    "IconButton",
+    "IconTheme",
+    "IgnorePointer",
+    "IndexedSemantics",
+    "InheritedCupertinoTheme",
+    "InkWell",
+    "KeepAlive",
+    "KeyedSubtree",
+    "LayoutId",
+    "ListView",
+    "ListenableBuilder",
+    "Listener",
+    "Localizations",
+    "Material",
+    "MaterialApp",
+    "MediaQuery",
+    "ModalBarrier",
+    "MouseRegion",
+    "NavigationToolbar",
+    "Navigator",
+    "NotificationListener<KeepAliveNotification>",
+    "NotificationListener<LayoutChangedNotification>",
+    "NotificationListener<NavigationNotification>",
+    "NotificationListener<ScrollMetricsNotification>",
+    "NotificationListener<ScrollNotification>",
+    "Offstage",
+    "Overlay",
+    "OverlayPortal",
+    "Padding",
+    "PageStorage",
+    "PhysicalModel",
+    "PhysicalShape",
+    "PopScope<Object>",
+    "PrimaryScrollController",
+    "RawGestureDetector",
+    "RawTooltip",
+    "RawView",
+    "RepaintBoundary",
+    "RestorationScope",
+    "RichText",
+    "RootRestorationScope",
+    "RotationTransition",
+    "Row",
+    "SafeArea",
+    "Scaffold",
+    "ScaffoldMessenger",
+    "ScaleTransition",
+    "ScrollConfiguration",
+    "ScrollNotificationObserver",
+    "Scrollable",
+    "Semantics",
+    "SharedAppData",
+    "ShortcutRegistrar",
+    "Shortcuts",
+    "SizedBox",
+    "SlideTransition",
+    "SliverList",
+    "SliverPadding",
+    "Stack",
+    "StretchEffect",
+    "StretchingOverscrollIndicator",
+    "TapRegionSurface",
+    "Text",
+    "TextButton",
+    "Theme",
+    "TickerMode",
+    "Title",
+    "Tooltip",
+    "Transform",
+    "UnmanagedRestorationScope",
+    "ValueListenableBuilder<bool>",
+    "View",
+    "Viewport",
+    "WidgetsApp",
+    "_ActionsScope",
+    "_AgentConversationPanel",
+    "_AppBarTitleBox",
+    "_BodyBuilder",
+    "_ConversationCard",
+    "_EffectiveTickerMode",
+    "_ExclusiveMouseRegion",
+    "_FadeForwardsPageTransition",
+    "_FloatingActionButtonTransition",
+    "_FocusInheritedScope",
+    "_FocusScopeWithExternalFocusNode",
+    "_GestureSemantics",
+    "_IconButtonM3",
+    "_InheritedTheme",
+    "_InkFeatures",
+    "_InkResponseStateWidget",
+    "_InputPadding",
+    "_LocalizationsScope",
+    "_MaterialInterior",
+    "_MediaQueryFromView",
+    "_ModalBarrierGestureDetector",
+    "_ModalScope<dynamic>",
+    "_ModalScope<void>",
+    "_ModalScopeStatus",
+    "_OverlayEntryWidget",
+    "_OverlayPortal",
+    "_PageTransitionsThemeTransitions<dynamic>",
+    "_ParentInkResponseProvider",
+    "_PipelineOwnerScope",
+    "_PredictiveBackGestureDetector",
+    "_RawViewInternal",
+    "_RenderTheaterMarker",
+    "_ScaffoldMessengerScope",
+    "_ScaffoldScope",
+    "_ScrollNotificationObserverScope",
+    "_ScrollSemantics",
+    "_ScrollableScope",
+    "_SelectableIconButton",
+    "_SelectionKeepAlive",
+    "_ShapeBorderPaint",
+    "_SharedAppModel",
+    "_ShortcutRegistrarScope",
+    "_Theater",
+    "_ViewScope"
+  ],
+  "texts": [
+    "Open history",
+    "Cozymate",
+    "会话历史",
+    "无法打开该会话，请重试",
+    "Reviewing today’s feeding notes together",
+    "9/12 09:30",
+    "✓ 当前会话",
+    "Recovery and a little support",
+    "9/12 09:30",
+    "Earlier conversation 1",
+    "9/12 09:30",
+    "Earlier conversation 2",
+    "9/12 09:30",
+    "Earlier conversation 3",
+    "9/12 09:30"
+  ],
+  "scrolls": [
+    {
+      "foreground": true,
+      "axis": "vertical",
+      "direction": "down",
+      "pixels": 16.0,
+      "min": 0.0,
+      "max": 1567.7058823529414,
+      "viewport": 492.0
+    }
+  ],
+  "controls": [
+    {
+      "widget": "IconButton",
+      "key": "[<'agent-conversation-close-button'>]",
+      "labels": [
+        "关闭会话历史"
+      ],
+      "enabled": true,
+      "bounds": [
+        308.0,
+        16.0,
+        44.0,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "_IconButtonM3",
+      "key": null,
+      "labels": [
+        "关闭会话历史"
+      ],
+      "enabled": true,
+      "bounds": [
+        308.0,
+        16.0,
+        44.0,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [],
+      "enabled": true,
+      "bounds": [
+        308.0,
+        16.0,
+        44.0,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": "[<'agent-conversation-current'>]",
+      "labels": [
+        "Reviewing today’s feeding notes together",
+        "9/12 09:30",
+        "✓ 当前会话"
+      ],
+      "enabled": true,
+      "bounds": [
+        16.0,
+        134.0,
+        328.0,
+        96.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": "[<'agent-conversation-earlier'>]",
+      "labels": [
+        "Recovery and a little support",
+        "9/12 09:30"
+      ],
+      "enabled": true,
+      "bounds": [
+        16.0,
+        244.0,
+        328.0,
+        73.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": "[<'agent-conversation-older-0'>]",
+      "labels": [
+        "Earlier conversation 1",
+        "9/12 09:30"
+      ],
+      "enabled": true,
+      "bounds": [
+        16.0,
+        331.0,
+        328.0,
+        73.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": "[<'agent-conversation-older-1'>]",
+      "labels": [
+        "Earlier conversation 2",
+        "9/12 09:30"
+      ],
+      "enabled": true,
+      "bounds": [
+        16.0,
+        418.0,
+        328.0,
+        73.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": "[<'agent-conversation-older-2'>]",
+      "labels": [
+        "Earlier conversation 3",
+        "9/12 09:30"
+      ],
+      "enabled": true,
+      "bounds": [
+        16.0,
+        505.0,
+        328.0,
+        73.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    }
+  ],
+  "needs_long_capture": true,
+  "interactions_since_previous_capture": [
+    {
+      "action": "tap",
+      "labels_at_start": [
+        "9/12 09:30"
+      ],
+      "from": [
+        180.0,
+        124.0
+      ],
+      "to": [
+        180.0,
+        124.0
+      ]
+    }
+  ],
+  "call_stack": "#0      _InventoryComparator._record (file:///Users/lute/project/momcozy-lab/app/test/support/ui_inventory_capture.dart:169:32)\n<asynchronous suspension>\n#1      _InventoryComparator.compare (file:///Users/lute/project/momcozy-lab/app/test/support/ui_inventory_capture.dart:96:17)\n<asynchronous suspension>\n#2      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)\n<asynchronous suspension>\n#3      _AsyncCompleter.complete (dart:async/future_impl.dart:96:3)\n<asynchronous suspension>\n#4      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)\n<asynchronous suspension>\n#5      StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)\n<asynchronous suspension>\n#6      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)\n<asynchronous suspension>\n#7      main.<anonymous closure>.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_history_design_test.dart:99:13)\n<asynchronous suspension>\n#8      verifyAgentHistory (file:///Users/lute/project/momcozy-lab/app/test/support/agent_history_scenarios.dart:113:3)\n<asynchronous suspension>\n#9      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_history_design_test.dart:95:9)\n<asynchronous suspension>\n#10     testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)\n<asynchronous suspension>\n#11     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)\n<asynchronous suspension>\n#12     StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)\n<asynchronous suspension>\n",
+  "long_capture": {
+    "status": "complete-measured-scroll-stitch",
+    "file": "/Users/lute/project/momcozy-lab/app/docs/app-ui-inventory/raw/test/goldens/design_system/agent-history-switch-error-390-1x.long.png",
+    "offsets": [
+      0.0,
+      214.0,
+      428.0,
+      642.0,
+      856.0,
+      1070.0,
+      1284.0,
+      1498.0,
+      1529.0
+    ],
+    "scroll_bounds": [
+      0.0,
+      76.0,
+      360.0,
+      492.0
+    ],
+    "frame_scroll_bounds": [
+      [
+        0.0,
+        76.0,
+        360.0,
+        492.0
+      ],
+      [
+        0.0,
+        76.0,
+        360.0,
+        492.0
+      ],
+      [
+        0.0,
+        76.0,
+        360.0,
+        492.0
+      ],
+      [
+        0.0,
+        76.0,
+        360.0,
+        492.0
+      ],
+      [
+        0.0,
+        76.0,
+        360.0,
+        492.0
+      ],
+      [
+        0.0,
+        76.0,
+        360.0,
+        492.0
+      ],
+      [
+        0.0,
+        76.0,
+        360.0,
+        492.0
+      ],
+      [
+        0.0,
+        76.0,
+        360.0,
+        492.0
+      ],
+      [
+        0.0,
+        76.0,
+        360.0,
+        492.0
+      ]
+    ],
+    "content_height": 2021.0,
+    "interior_strip_edge_guard": 64.0,
+    "fixed_bottom_overlay_bounds": [],
+    "original_scroll_offset": 16.0,
+    "tooltip_preserved_from_matched_viewport": false
+  }
+}

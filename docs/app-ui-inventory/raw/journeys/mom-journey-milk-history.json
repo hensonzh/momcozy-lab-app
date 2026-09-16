@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/mom-journey-milk-history-393.png",
+  "previous_source": "test/goldens/ui_inventory/mom-journey-milk-home-refreshed-393.png",
+  "route": "/me/lactation",
+  "trigger": "Home View records → standalone lactation history/trend",
+  "root_entry": "Authenticated More → tap Me bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/mom/mom_inventory_journey_test.dart"
+}

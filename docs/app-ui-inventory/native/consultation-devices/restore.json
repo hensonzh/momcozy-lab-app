@@ -1,0 +1,13 @@
+{
+  "apk_sha256": "8395f439039d8f47aba0b0253942a3b875c1969f9ed9f570650420e558403d51",
+  "permission_before": {
+    "android.permission.CAMERA": "android.permission.CAMERA: granted=false, flags=[ USER_SENSITIVE_WHEN_GRANTED|USER_SENSITIVE_WHEN_DENIED]",
+    "android.permission.RECORD_AUDIO": "android.permission.RECORD_AUDIO: granted=false, flags=[ USER_SENSITIVE_WHEN_GRANTED|USER_SENSITIVE_WHEN_DENIED]"
+  },
+  "permission_after": {
+    "android.permission.CAMERA": "android.permission.CAMERA: granted=false, flags=[ USER_SENSITIVE_WHEN_GRANTED|USER_SENSITIVE_WHEN_DENIED]",
+    "android.permission.RECORD_AUDIO": "android.permission.RECORD_AUDIO: granted=false, flags=[ USER_SENSITIVE_WHEN_GRANTED|USER_SENSITIVE_WHEN_DENIED]"
+  },
+  "mia_visible": true,
+  "method": "restore original APK with install -r; no uninstall/data clear; camera and microphone revoked and original flags verified"
+}

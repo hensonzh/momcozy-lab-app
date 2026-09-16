@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/agent-journey-stop-before-run-id-393.png",
+  "previous_source": "test/goldens/ui_inventory/agent-journey-profile-fallback-393.png",
+  "route": "/",
+  "trigger": "Stop before server run identifier → local stop",
+  "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage via public agentHubBuilder; production SSE parser, runner with default retries, cancel client and profile repository; isolated SSE/control HTTP/voice dependencies. History disabled as in default local build; no remote model request.",
+  "test": "test/features/agent_hub/agent_inventory_journey_test.dart"
+}

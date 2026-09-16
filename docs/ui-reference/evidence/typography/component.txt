@@ -1,0 +1,15 @@
+Component lines extracted from the final regression.txt; see the full log for suite coverage.
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/app/typography_design_test.dart
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/app/me_theme_test.dart: workbench retains its existing typography
+00:00 +1: /Users/lute/project/momcozy-lab/app/test/app/me_theme_test.dart: all native control families inherit the current Me visual language
+00:00 +2: /Users/lute/project/momcozy-lab/app/test/app/me_theme_test.dart: Me-themed form remains usable at 320.0 with large text and keyboard
+00:00 +3: /Users/lute/project/momcozy-lab/app/test/app/me_theme_test.dart: Me-themed form remains usable at 320.0 with large text and keyboard
+00:00 +4: /Users/lute/project/momcozy-lab/app/test/app/me_theme_test.dart: Me-themed form remains usable at 320.0 with large text and keyboard
+00:00 +5: /Users/lute/project/momcozy-lab/app/test/app/me_theme_test.dart: Me-themed form remains usable at 320.0 with large text and keyboard
+00:00 +6: /Users/lute/project/momcozy-lab/app/test/app/me_theme_test.dart: Me-themed form remains usable at 320.0 with large text and keyboard
+00:00 +8: /Users/lute/project/momcozy-lab/app/test/app/typography_design_test.dart: title hierarchy at 320.0 / 1.0
+00:00 +9: /Users/lute/project/momcozy-lab/app/test/app/typography_design_test.dart: title hierarchy at 320.0 / 1.0
+00:00 +10: /Users/lute/project/momcozy-lab/app/test/app/typography_design_test.dart: title hierarchy at 320.0 / 1.0
+00:00 +11: /Users/lute/project/momcozy-lab/app/test/app/typography_design_test.dart: title hierarchy at 320.0 / 1.0
+00:00 +12: /Users/lute/project/momcozy-lab/app/test/app/typography_design_test.dart: title hierarchy at 320.0 / 1.0
+00:39 +1313: All tests passed!

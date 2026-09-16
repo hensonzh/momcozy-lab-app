@@ -1,0 +1,14 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/modules/services/service_renew_test.dart
+lib/modules/services/presentation/service_renew_page.dart:152:50: Error: Member not found: 'amberSoft'.
+                            color: MomHomeTokens.amberSoft,
+                                                 ^^^^^^^^^
+00:00 +0 -1: loading /Users/lute/project/momcozy-lab/app/test/modules/services/service_renew_test.dart [E]
+  Failed to load "/Users/lute/project/momcozy-lab/app/test/modules/services/service_renew_test.dart":
+  Compilation failed for testPath=/Users/lute/project/momcozy-lab/app/test/modules/services/service_renew_test.dart: lib/modules/services/presentation/service_renew_page.dart:152:50: Error: Member not found: 'amberSoft'.
+                              color: MomHomeTokens.amberSoft,
+                                                   ^^^^^^^^^
+  .
+00:00 +0 -1: Some tests failed.
+
+Failing tests:
+  /Users/lute/project/momcozy-lab/app/test/modules/services/service_renew_test.dart: loading /Users/lute/project/momcozy-lab/app/test/modules/services/service_renew_test.dart

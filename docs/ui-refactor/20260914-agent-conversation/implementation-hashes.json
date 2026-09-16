@@ -1,0 +1,5 @@
+{
+  "lib/features/agent_hub/agent_hub_page.dart": "5e85204a5b07e094746251d76538afb464dc6c83ed803252015e2d76fc876318",
+  "test/features/agent_hub/agent_conversation_design_test.dart": "53cd4d5980121cd178dbeb99e999917ff1d2ddca4d2a0dcfa2bddc596fde10c7",
+  "test/support/agent_conversation_scenarios.dart": "095421e7cedb82d5f6ebe1f0f54d358fce429c746f81db458bd8457231363265"
+}

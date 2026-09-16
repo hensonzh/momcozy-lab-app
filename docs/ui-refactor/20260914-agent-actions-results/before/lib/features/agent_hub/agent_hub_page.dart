@@ -1,0 +1,7212 @@
+import 'package:momcozy_flutter_app/shared/design_system/mom_home_tokens.dart';
+import 'package:momcozy_flutter_app/shared/widgets/mom_settings_widgets.dart';
+import 'presentation/agent_voice_notice.dart';
+import 'dart:async';
+import 'presentation/agent_message_menu.dart';
+import 'package:momcozy_flutter_app/shared/widgets/momcozy_line_icon.dart';
+import 'dart:convert';
+import 'dart:math' as math;
+
+import 'package:crypto/crypto.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:momcozy_flutter_app/shared/design_system/momcozy_motion.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
+import 'package:momcozy_flutter_app/shared/design_system/momcozy_design_system.dart';
+import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_client.dart';
+import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
+import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_io_transport.dart';
+import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_run_state.dart';
+import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_runner.dart';
+import 'package:momcozy_flutter_app/core/agent_stream/agent_work_status_projection.dart';
+import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
+import 'package:momcozy_flutter_app/core/routing/safe_link_target.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_interaction_store.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_runtime.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_mapper.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_model.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_panel.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_voice.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/artifacts/forms/agent_artifact_form_dialog.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/citations/agent_citation.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/data/support_ticket_api_repository.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_document_input.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_hub_greeting.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_conversation.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_media_voice.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_image_input.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/presentation/agent_file_previews.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/presentation/agent_image_previews.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/presentation/agent_conversation_panel.dart';
+import 'package:momcozy_flutter_app/features/media/data/product_asset_repository.dart';
+import 'package:momcozy_flutter_app/features/media/domain/media_upload.dart';
+import 'package:momcozy_flutter_app/features/media/domain/product_asset.dart';
+import 'package:momcozy_flutter_app/features/media/presentation/product_asset_image.dart';
+import 'package:video_player/video_player.dart';
+
+export 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_model.dart';
+export 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_panel.dart';
+
+typedef AgentHubRequestBuilder = AgentStreamRequest Function(String message);
+typedef AgentArtifactActionHandler =
+    void Function(AgentArtifactActionView action);
+typedef AgentHubApplicationEventHandler = void Function(AgentStreamEvent event);
+
+const _agentDefaultGreetingPlaybackId = 'agent-default-greeting';
+const _agentActiveRunPersistentWriteInterval = Duration(milliseconds: 750);
+const _completedReplyRunSettlementTimeout = Duration(seconds: 2);
+const _completedReplyCancelTimeout = Duration(seconds: 2);
+const _agentRunAttachmentLimit = 20;
+const _supportTicketSubmittedReply =
+    '已经帮你提交工单啦，我们的人工客服团队会在 24 小时内主动联系你，陪你一起跟进这个问题。很抱歉这次没能直接帮你解决，给你添麻烦了。接下来还请稍微耐心等待一下，我们会尽力协助你把问题处理好。';
+
+String _agentAssistantTextForState(
+  AgentStreamRunState state, {
+  required String greeting,
+}) {
+  final text = state.textContent.trim();
+  if (text.isNotEmpty) return text;
+
+  return switch (state.phase) {
+    AgentStreamRunPhase.idle => greeting,
+    AgentStreamRunPhase.streaming => '我已经收到你的消息啦～',
+    AgentStreamRunPhase.cancelRequested => '我正在停止这次回复。',
+    AgentStreamRunPhase.cancelled =>
+      state.cancelAcknowledged ? '已停止本次回复。' : '本地已停止，服务端取消未确认。',
+    AgentStreamRunPhase.waitingForConfirmation => '需要你确认后继续。',
+    AgentStreamRunPhase.finished => '我已经处理完成，但这次没有返回可见内容。',
+    AgentStreamRunPhase.error ||
+    AgentStreamRunPhase.disconnected => '这次没有拿到回复。',
+  };
+}
+
+String _formSubmitRequestMessage(AgentArtifactActionView action) {
+  final extra = action.routeExtra;
+  final extraMap = extra is Map ? Map<String, Object?>.from(extra) : const {};
+  final formId = extraMap['formId']?.toString().trim();
+  return [
+    '我已提交信息采集表单，请基于确认后的表单数据继续完成对应服务。',
+    if (formId != null && formId.isNotEmpty) 'form_id: $formId',
+  ].join('\n');
+}
+
+({String artifactId, String? formId, Map<String, Object?> values})?
+_formSubmissionFromAction(AgentArtifactActionView action) {
+  final extra = action.routeExtra;
+  if (extra is! Map) return null;
+  final artifactId = extra['artifactId']?.toString().trim();
+  final rawValues = extra['values'];
+  if (artifactId == null || artifactId.isEmpty || rawValues is! Map) {
+    return null;
+  }
+  final values = <String, Object?>{};
+  for (final entry in rawValues.entries) {
+    final key = entry.key;
+    if (key is String && key.trim().isNotEmpty) values[key] = entry.value;
+  }
+  final rawFormId = extra['formId']?.toString().trim();
+  return (
+    artifactId: artifactId,
+    formId: rawFormId == null || rawFormId.isEmpty ? null : rawFormId,
+    values: Map<String, Object?>.unmodifiable(values),
+  );
+}
+
+Map<String, Object?> _formSubmissionMetadata(AgentArtifactActionView action) {
+  final submission = _formSubmissionFromAction(action);
+  final formId = submission?.formId;
+  if (submission == null || formId == null) return const {};
+  return {
+    'form_submission': {
+      'artifact_id': submission.artifactId,
+      'form_id': formId,
+      'values': submission.values,
+    },
+  };
+}
+
+String _formSubmissionIdempotencyKey({
+  required String artifactId,
+  required String? formId,
+  required String? threadId,
+  required Map<String, Object?> values,
+}) {
+  final canonicalPayload = jsonEncode(
+    _canonicalJsonValue({
+      'artifact_id': artifactId,
+      'form_id': formId ?? '',
+      'thread_id': threadId?.trim() ?? '',
+      'values': values,
+    }),
+  );
+  return 'agent-form-submit-${sha256.convert(utf8.encode(canonicalPayload))}';
+}
+
+String _newAgentRunIdempotencyKey() {
+  return 'agent-run-${DateTime.now().microsecondsSinceEpoch}';
+}
+
+Object? _canonicalJsonValue(Object? value) {
+  if (value is Map) {
+    final entries =
+        value.entries
+            .where((entry) => entry.key is String)
+            .map((entry) => MapEntry(entry.key as String, entry.value))
+            .toList(growable: false)
+          ..sort((left, right) => left.key.compareTo(right.key));
+    return {
+      for (final entry in entries) entry.key: _canonicalJsonValue(entry.value),
+    };
+  }
+  if (value is List) {
+    return value.map(_canonicalJsonValue).toList(growable: false);
+  }
+  return value;
+}
+
+class _PendingAutoVoiceReplay {
+  const _PendingAutoVoiceReplay({required this.state, this.attempts = 0});
+
+  final AgentStreamRunState state;
+  final int attempts;
+
+  _PendingAutoVoiceReplay incrementAttempts() {
+    return _PendingAutoVoiceReplay(state: state, attempts: attempts + 1);
+  }
+}
+
+final _agentHubInteractionStates = Expando<_AgentHubInteractionState>(
+  'momcozy-agent-hub-interaction-state',
+);
+
+class _AgentHubInteractionState {
+  AgentStreamRunState runState = const AgentStreamRunState();
+  List<AgentHubHistoryMessage>? historyMessages;
+  String composerText = '';
+  List<AgentStreamImageInput> attachedImages = const <AgentStreamImageInput>[];
+  List<AgentStreamFileInput> attachedFiles = const <AgentStreamFileInput>[];
+  bool autoVoiceEnabled = true;
+  AgentStreamRequest? activeRequest;
+  Map<String, String> localActionStatuses = const <String, String>{};
+  Map<String, AgentArtifactFormSubmission> formSubmissions =
+      const <String, AgentArtifactFormSubmission>{};
+}
+
+class AgentHubAutoRunRequest {
+  const AgentHubAutoRunRequest({
+    required this.requestMessage,
+    required this.idempotencyKey,
+    this.metadata = const <String, Object?>{},
+  });
+
+  final String requestMessage;
+  final String idempotencyKey;
+  final Map<String, Object?> metadata;
+}
+
+class AgentHubPage extends StatefulWidget {
+  const AgentHubPage({
+    super.key,
+    this.stateCacheKey,
+    this.state = const AgentStreamRunState(),
+    this.historyMessages = const <AgentHubHistoryMessage>[],
+    this.runner,
+    this.cancelClient,
+    this.actionClient,
+    this.clientEventClient,
+    this.conversationRepository,
+    this.initialConversationId,
+    this.interactionStateStore,
+    this.greetingProfileLoader,
+    this.requestBuilder = buildDefaultAgentHubRequest,
+    this.pickImage,
+    this.pickDocument,
+    this.mediaRepository,
+    this.loadImageThumbnail,
+    this.loadImageContent,
+    this.voicePlaybackCoordinator,
+    this.voicePlaybackPlayer,
+    this.productAssetRepository,
+    this.supportTicketSubmitter,
+    this.onArtifactAction,
+    this.onApplicationEvent,
+    this.initialComposerText,
+    this.initialAutoSend = false,
+    this.initialAutoRunRequest,
+    this.externalConversationRefreshKey,
+    this.externalConversationRefreshInterval = const Duration(
+      milliseconds: 750,
+    ),
+    this.externalConversationRefreshAttempts = 20,
+    this.externalConversationRefreshUntilFound = false,
+  });
+
+  final Object? stateCacheKey;
+  final AgentStreamRunState state;
+  final List<AgentHubHistoryMessage> historyMessages;
+  final AgentStreamRunner? runner;
+  final AgentStreamCancelClient? cancelClient;
+  final AgentStreamActionClient? actionClient;
+  final AgentStreamClientEventClient? clientEventClient;
+  final AgentConversationRepository? conversationRepository;
+  final String? initialConversationId;
+  final AgentHubInteractionStateStore? interactionStateStore;
+  final AgentHubGreetingProfileLoader? greetingProfileLoader;
+  final AgentHubRequestBuilder requestBuilder;
+  final AgentHubImagePicker? pickImage;
+  final AgentHubDocumentPicker? pickDocument;
+  final MediaRepository? mediaRepository;
+  final AgentImageContentLoader? loadImageThumbnail;
+  final AgentImageContentLoader? loadImageContent;
+  final AgentVoicePlaybackCoordinator? voicePlaybackCoordinator;
+  final AgentVoicePlaybackPlayer? voicePlaybackPlayer;
+  final ProductAssetRepository? productAssetRepository;
+  final SupportTicketSubmitter? supportTicketSubmitter;
+  final AgentArtifactActionHandler? onArtifactAction;
+  final AgentHubApplicationEventHandler? onApplicationEvent;
+  final String? initialComposerText;
+  final bool initialAutoSend;
+  final AgentHubAutoRunRequest? initialAutoRunRequest;
+  final String? externalConversationRefreshKey;
+  final Duration externalConversationRefreshInterval;
+  final int externalConversationRefreshAttempts;
+  final bool externalConversationRefreshUntilFound;
+
+  @override
+  State<AgentHubPage> createState() => _AgentHubPageState();
+}
+
+class _AgentHubPageState extends State<AgentHubPage> {
+  late AgentStreamRunState _state;
+  late List<AgentHubHistoryMessage> _historyMessages;
+  late final TextEditingController _composerController;
+  final FocusNode _composerFocusNode = FocusNode();
+  _AgentHubInteractionState? _interactionState;
+  StreamSubscription<AgentStreamRunState>? _runSubscription;
+  Completer<bool>? _runAcceptanceCompleter;
+  Completer<void>? _runSettlementCompleter;
+  Future<void>? _pendingServerCancel;
+  bool _followUpStartPending = false;
+  bool _newSessionStartPending = false;
+  bool _supportTicketSubmitPending = false;
+  bool _conversationSwitchPending = false;
+  int _sessionOperationGeneration = 0;
+  int? _conversationHistoryBeforeSequence;
+  bool _olderConversationHistoryLoading = false;
+  bool _olderConversationHistoryLoadArmed = false;
+  Object? _olderConversationHistoryError;
+  AgentStreamRequest? _activeRequest;
+  String? _submittedComposerText;
+  AgentVoiceState _voiceState = const AgentVoiceState();
+  final _voiceStateNotifier = ValueNotifier<AgentVoiceState>(
+    const AgentVoiceState(),
+  );
+  final List<AgentStreamImageInput> _attachedImages = <AgentStreamImageInput>[];
+  final List<AgentStreamFileInput> _attachedFiles = <AgentStreamFileInput>[];
+  final Set<String> _pendingActionIds = <String>{};
+  final Map<String, String> _localActionStatuses = <String, String>{};
+  final ScrollController _chatScrollController = ScrollController();
+  final GlobalKey _activeArtifactPanelKey = GlobalKey();
+  final ValueNotifier<AgentStreamRunState> _runStateNotifier =
+      ValueNotifier<AgentStreamRunState>(const AgentStreamRunState());
+  final ValueNotifier<bool> _visibleReplyRunningNotifier = ValueNotifier<bool>(
+    false,
+  );
+  final ValueNotifier<bool> _composerLockedNotifier = ValueNotifier<bool>(
+    false,
+  );
+  final ValueNotifier<bool> _sessionMutationPendingNotifier =
+      ValueNotifier<bool>(false);
+  final ValueNotifier<bool> _conversationSwitchEnabledNotifier =
+      ValueNotifier<bool>(true);
+  final ValueNotifier<_AgentResponseLightRailMode>
+  _responseLightRailModeNotifier = ValueNotifier<_AgentResponseLightRailMode>(
+    _AgentResponseLightRailMode.idle,
+  );
+  final ValueNotifier<String?> _activeVoicePlaybackIdNotifier =
+      ValueNotifier<String?>(null);
+  final ValueNotifier<int> _actionStateRevisionNotifier = ValueNotifier<int>(0);
+  final ValueNotifier<Map<String, AgentArtifactFormSubmission>>
+  _formSubmissionsNotifier =
+      ValueNotifier<Map<String, AgentArtifactFormSubmission>>(
+        const <String, AgentArtifactFormSubmission>{},
+      );
+  final AgentArtifactFormPresentationSession _formPresentationSession =
+      AgentArtifactFormPresentationSession();
+  bool _autoVoiceEnabled = true;
+  bool _interactionRestoreResolved = false;
+  bool _showLatestButton = false;
+  bool _attachmentUploadPending = false;
+  bool _attachmentDiscardPending = false;
+  double? _attachmentUploadProgress;
+  Timer? _persistentWriteTimer;
+  Timer? _activeRunPersistentWriteTimer;
+  AgentHubInteractionSnapshot? _pendingPersistentSnapshot;
+  bool _scrollToLatestFrameScheduled = false;
+  bool _scheduledScrollToLatestSmooth = false;
+  int _scheduledScrollToLatestIntentVersion = 0;
+  bool _artifactFocusFrameScheduled = false;
+  bool _preserveArtifactFocus = false;
+  int _scrollIntentVersion = 0;
+  _PendingAutoVoiceReplay? _pendingAutoVoiceReplay;
+  String? _activeAutoVoicePlaybackId;
+  String _autoVoiceAppendedText = '';
+  bool _autoVoiceHasSubmittedContent = false;
+  AgentVoiceRealtimePlaybackSession? _autoVoiceSession;
+  bool _autoVoiceSessionFinished = false;
+  final Set<String> _autoVoiceSubmittedArtifactTexts = <String>{};
+  final Set<String> _autoVoiceSubmittedMediaNarrations = <String>{};
+  Object? _mediaVoiceEventIdentity;
+  AgentMediaVoiceNarrationIndex _mediaVoiceNarrationIndex =
+      AgentMediaVoiceNarrationIndex.fromEvents(const []);
+  VoidCallback? _unsubscribeVoicePlaybackIdle;
+  bool _consumedInitialAutoSend = false;
+  String? _consumedInitialAutoRunKey;
+  bool _initialAutoRunInFlight = false;
+  bool _dismissComposerKeyboardOnRunAccepted = false;
+  String _greeting = agentHubDefaultGreeting;
+  int _greetingRefreshGeneration = 0;
+  int _externalConversationRefreshGeneration = 0;
+  String? _consumedExternalConversationRefreshKey;
+  String? _consumedInitialConversationId;
+  bool _externalConversationRefreshPending = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _restoreCachedInteractionState();
+    _seedExistingFormPresentations();
+    _publishRunState(_state);
+    _composerController.addListener(_persistInteractionState);
+    _chatScrollController.addListener(_handleChatScroll);
+    _syncVoicePlaybackIdleSubscription();
+    _initializeInteractionState();
+  }
+
+  @override
+  void didUpdateWidget(covariant AgentHubPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.initialConversationId != widget.initialConversationId &&
+        _interactionRestoreResolved) {
+      _scheduleInitialConversation();
+    }
+    if (_interactionState == null &&
+        oldWidget.state != widget.state &&
+        (widget.runner == null || !_state.isActive)) {
+      _setRunState(widget.state);
+    }
+    if (_interactionState == null &&
+        oldWidget.historyMessages != widget.historyMessages &&
+        !_state.isActive) {
+      _historyMessages = _visibleAgentHubHistoryMessages(
+        widget.historyMessages,
+      );
+      _persistInteractionState();
+    }
+    if (oldWidget.initialComposerText != widget.initialComposerText) {
+      _consumedInitialAutoSend = false;
+      if (_interactionRestoreResolved) {
+        _applyInitialComposerText();
+        _scheduleInitialAutoSendIfNeeded();
+      }
+    } else if (oldWidget.initialAutoSend != widget.initialAutoSend &&
+        _interactionRestoreResolved) {
+      _scheduleInitialAutoSendIfNeeded();
+    }
+    if (oldWidget.initialAutoRunRequest?.idempotencyKey !=
+            widget.initialAutoRunRequest?.idempotencyKey &&
+        _interactionRestoreResolved) {
+      _scheduleInitialAutoRunIfNeeded();
+    }
+    if (oldWidget.externalConversationRefreshKey !=
+            widget.externalConversationRefreshKey &&
+        _interactionRestoreResolved) {
+      _scheduleExternalConversationRefreshIfNeeded();
+    }
+    if (oldWidget.voicePlaybackCoordinator != widget.voicePlaybackCoordinator) {
+      _syncVoicePlaybackIdleSubscription();
+    }
+  }
+
+  @override
+  void dispose() {
+    _externalConversationRefreshGeneration += 1;
+    _cancelRunSubscription();
+    _unsubscribeVoicePlaybackIdle?.call();
+    _persistInteractionState();
+    _flushPersistentInteractionState();
+    _composerController.removeListener(_persistInteractionState);
+    _chatScrollController
+      ..removeListener(_handleChatScroll)
+      ..dispose();
+    _composerController.dispose();
+    _composerFocusNode.dispose();
+    _runStateNotifier.dispose();
+    _visibleReplyRunningNotifier.dispose();
+    _composerLockedNotifier.dispose();
+    _sessionMutationPendingNotifier.dispose();
+    _conversationSwitchEnabledNotifier.dispose();
+    _responseLightRailModeNotifier.dispose();
+    _activeVoicePlaybackIdNotifier.dispose();
+    _voiceStateNotifier.dispose();
+    _actionStateRevisionNotifier.dispose();
+    _formSubmissionsNotifier.dispose();
+    _formPresentationSession.clear();
+    super.dispose();
+  }
+
+  void _syncVoicePlaybackIdleSubscription() {
+    _unsubscribeVoicePlaybackIdle?.call();
+    _unsubscribeVoicePlaybackIdle = null;
+
+    final coordinator = widget.voicePlaybackCoordinator;
+    if (coordinator == null) return;
+    _unsubscribeVoicePlaybackIdle = coordinator.subscribeIdle(() {
+      scheduleMicrotask(() {
+        if (!mounted) return;
+        if (coordinator.isSuspended) {
+          _pendingAutoVoiceReplay = null;
+          if (_voiceState.isPlaybackActive) {
+            _setVoiceState(_voiceState.cancelPlayback());
+          }
+          return;
+        }
+        _tryRunPendingAutoVoiceReplay();
+      });
+    });
+  }
+
+  void _setRunState(AgentStreamRunState nextState) {
+    _state = nextState;
+    _publishRunState(nextState);
+  }
+
+  void _publishRunState(AgentStreamRunState state) {
+    _runStateNotifier.value = state;
+    _setNotifierValue(
+      _visibleReplyRunningNotifier,
+      _isVisibleReplyRunningForState(state),
+    );
+    _setNotifierValue(_composerLockedNotifier, _isComposerLocked);
+    _syncConversationSwitchEnabled();
+    _setNotifierValue(
+      _responseLightRailModeNotifier,
+      _agentResponseLightRailModeForState(state),
+    );
+  }
+
+  void _setVoiceState(AgentVoiceState nextState) {
+    _voiceState = nextState;
+    _voiceStateNotifier.value = nextState;
+    _setNotifierValue(
+      _activeVoicePlaybackIdNotifier,
+      nextState.isPlaybackActive ? nextState.playbackId : null,
+    );
+  }
+
+  void _notifyActionStateChanged() {
+    _actionStateRevisionNotifier.value += 1;
+  }
+
+  void _setNotifierValue<T>(ValueNotifier<T> notifier, T value) {
+    if (notifier.value == value) return;
+    notifier.value = value;
+  }
+
+  void _restoreCachedInteractionState() {
+    final stateCacheKey = widget.stateCacheKey;
+    if (stateCacheKey == null) {
+      _state = widget.state;
+      _historyMessages = _visibleAgentHubHistoryMessages(
+        widget.historyMessages,
+      );
+      _composerController = TextEditingController();
+      return;
+    }
+
+    final interactionState = _agentHubInteractionStates[stateCacheKey] ??=
+        _AgentHubInteractionState();
+    _interactionState = interactionState;
+    final restoredRunState = interactionState.historyMessages == null
+        ? widget.state
+        : interactionState.runState;
+    _state = _restoreInterruptedRunState(
+      restoredRunState,
+      disconnectedMessage: '连接中断，请重试',
+    );
+    _historyMessages = _visibleAgentHubHistoryMessages(
+      interactionState.historyMessages ?? widget.historyMessages,
+    );
+    _composerController = TextEditingController(
+      text: interactionState.composerText,
+    );
+    _attachedImages.addAll(interactionState.attachedImages);
+    _attachedFiles.addAll(interactionState.attachedFiles);
+    _autoVoiceEnabled = interactionState.autoVoiceEnabled;
+    _activeRequest = interactionState.activeRequest;
+    _localActionStatuses.addAll(interactionState.localActionStatuses);
+    _formSubmissionsNotifier.value =
+        Map<String, AgentArtifactFormSubmission>.of(
+          interactionState.formSubmissions,
+        );
+    interactionState.runState = _state;
+  }
+
+  void _persistInteractionState() {
+    if (!_interactionRestoreResolved) return;
+    _updateCachedInteractionState();
+    _activeRunPersistentWriteTimer?.cancel();
+    _activeRunPersistentWriteTimer = null;
+    _schedulePersistentInteractionStateWrite(_buildInteractionSnapshot());
+  }
+
+  void _persistActiveInteractionStateThrottled() {
+    if (!_interactionRestoreResolved) return;
+    _updateCachedActiveRunState();
+    if (widget.interactionStateStore == null ||
+        _activeRunPersistentWriteTimer != null) {
+      return;
+    }
+    _activeRunPersistentWriteTimer = Timer(
+      _agentActiveRunPersistentWriteInterval,
+      () {
+        _activeRunPersistentWriteTimer = null;
+        _updateCachedInteractionState();
+        _schedulePersistentInteractionStateWrite(_buildInteractionSnapshot());
+      },
+    );
+  }
+
+  void _updateCachedInteractionState() {
+    final interactionState = _interactionState;
+    if (interactionState != null) {
+      interactionState
+        ..runState = _state
+        ..historyMessages = [..._historyMessages]
+        ..composerText = _composerController.text
+        ..attachedImages = [..._attachedImages]
+        ..attachedFiles = [..._attachedFiles]
+        ..autoVoiceEnabled = _autoVoiceEnabled
+        ..activeRequest = _activeRequest
+        ..localActionStatuses = {..._localActionStatuses}
+        ..formSubmissions = _completedFormSubmissions();
+    }
+  }
+
+  void _updateCachedActiveRunState() {
+    final interactionState = _interactionState;
+    if (interactionState == null) return;
+    interactionState
+      ..runState = _state
+      ..autoVoiceEnabled = _autoVoiceEnabled
+      ..activeRequest = _activeRequest;
+  }
+
+  void _initializeInteractionState() {
+    if (widget.interactionStateStore == null || _hasLocalInteraction()) {
+      _interactionRestoreResolved = true;
+      _applyInitialComposerText();
+      _scheduleInitialAutoSendIfNeeded();
+      _scheduleInitialAutoRunIfNeeded();
+      _scheduleExternalConversationRefreshIfNeeded();
+      _scheduleInitialInteractionPostFrame();
+      return;
+    }
+    unawaited(_restorePersistedInteractionState());
+  }
+
+  Future<void> _restorePersistedInteractionState() async {
+    final store = widget.interactionStateStore;
+    AgentHubInteractionSnapshot? snapshot;
+    try {
+      snapshot = await store?.read();
+    } catch (_) {
+      snapshot = null;
+    }
+    if (!mounted) return;
+    final shouldRestore =
+        snapshot?.hasConversationHistory == true && !_hasLocalInteraction();
+    setState(() {
+      if (shouldRestore) _applyInteractionSnapshot(snapshot!);
+      _interactionRestoreResolved = true;
+    });
+    _applyInitialComposerText();
+    _scheduleInitialAutoSendIfNeeded();
+    _scheduleInitialAutoRunIfNeeded();
+    _scheduleExternalConversationRefreshIfNeeded();
+    if (shouldRestore) _persistInteractionState();
+    _scheduleInitialInteractionPostFrame(scrollToLatest: shouldRestore);
+  }
+
+  void _scheduleInitialConversation() {
+    final id = widget.initialConversationId?.trim();
+    if (id == null || id.isEmpty || id == _consumedInitialConversationId) {
+      return;
+    }
+    _consumedInitialConversationId = id;
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!mounted) return;
+      final opened = await _switchConversation(id);
+      if (!opened && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Could not open this conversation.'),
+            action: SnackBarAction(
+              label: 'Retry',
+              onPressed: () {
+                _consumedInitialConversationId = null;
+                _scheduleInitialConversation();
+              },
+            ),
+          ),
+        );
+      }
+    });
+  }
+
+  void _scheduleInitialInteractionPostFrame({bool scrollToLatest = false}) {
+    _scheduleInitialConversation();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || !_interactionRestoreResolved) return;
+      _updateLatestButtonVisibility();
+      if (scrollToLatest) {
+        _scheduleScrollToLatest();
+      }
+      unawaited(_refreshGreetingAndMaybePlayVoice());
+    });
+  }
+
+  bool _hasLocalInteraction() {
+    return _state.events.isNotEmpty ||
+        _state.textContent.trim().isNotEmpty ||
+        _state.provisionalTextContent.trim().isNotEmpty ||
+        _state.threadId?.trim().isNotEmpty == true ||
+        _state.runId?.trim().isNotEmpty == true ||
+        _historyMessages.isNotEmpty ||
+        _composerController.text.trim().isNotEmpty ||
+        _attachedImages.isNotEmpty ||
+        _attachedFiles.isNotEmpty ||
+        _activeRequest != null ||
+        _localActionStatuses.isNotEmpty ||
+        _formSubmissionsNotifier.value.isNotEmpty;
+  }
+
+  void _applyInteractionSnapshot(AgentHubInteractionSnapshot snapshot) {
+    _setRunState(
+      _restoreInterruptedRunState(
+        snapshot.runState,
+        disconnectedMessage: '连接已中断，可继续接收。',
+      ),
+    );
+    _historyMessages = _visibleAgentHubHistoryMessages(
+      snapshot.historyMessages.map(_historyMessageFromSnapshot),
+    );
+    _composerController
+      ..text = snapshot.composerText
+      ..selection = TextSelection.collapsed(
+        offset: snapshot.composerText.length,
+      );
+    _attachedImages
+      ..clear()
+      ..addAll(snapshot.attachedImages);
+    _attachedFiles
+      ..clear()
+      ..addAll(snapshot.attachedFiles);
+    _autoVoiceEnabled = snapshot.autoVoiceEnabled;
+    _activeRequest = snapshot.activeRequest;
+    _localActionStatuses
+      ..clear()
+      ..addAll(snapshot.localActionStatuses);
+    _formSubmissionsNotifier.value =
+        Map<String, AgentArtifactFormSubmission>.of(snapshot.formSubmissions);
+    _seedExistingFormPresentations();
+  }
+
+  void _seedExistingFormPresentations() {
+    _formPresentationSession.seedExistingFormIds([
+      ..._formArtifactIdsForState(_state),
+      for (final message in _historyMessages)
+        if (message.runState case final runState?)
+          ..._formArtifactIdsForState(runState),
+    ]);
+  }
+
+  AgentStreamRunState _restoreInterruptedRunState(
+    AgentStreamRunState state, {
+    required String disconnectedMessage,
+  }) {
+    if (!state.isActive) return state;
+    if (state.hasCompletedAssistantMessage) return state.finishVisibleReply();
+    return state.markDisconnected(disconnectedMessage);
+  }
+
+  AgentHubInteractionSnapshot _buildInteractionSnapshot() {
+    return AgentHubInteractionSnapshot(
+      runState: _state,
+      historyMessages: _historyMessages
+          .map(_historySnapshotFromMessage)
+          .toList(growable: false),
+      composerText: _composerController.text,
+      attachedImages: [..._attachedImages],
+      attachedFiles: [..._attachedFiles],
+      autoVoiceEnabled: _autoVoiceEnabled,
+      activeRequest: _activeRequest,
+      localActionStatuses: {..._localActionStatuses},
+      formSubmissions: _completedFormSubmissions(),
+    );
+  }
+
+  Map<String, AgentArtifactFormSubmission> _completedFormSubmissions() {
+    return {
+      for (final entry in _formSubmissionsNotifier.value.entries)
+        if (entry.value.isSubmitted) entry.key: entry.value,
+    };
+  }
+
+  void _schedulePersistentInteractionStateWrite(
+    AgentHubInteractionSnapshot snapshot,
+  ) {
+    if (widget.interactionStateStore == null) return;
+    _pendingPersistentSnapshot = snapshot;
+    _persistentWriteTimer?.cancel();
+    _persistentWriteTimer = Timer(
+      const Duration(milliseconds: 250),
+      _flushPersistentInteractionState,
+    );
+  }
+
+  void _flushPersistentInteractionState() {
+    final store = widget.interactionStateStore;
+    final snapshot = _pendingPersistentSnapshot;
+    _persistentWriteTimer?.cancel();
+    _persistentWriteTimer = null;
+    _pendingPersistentSnapshot = null;
+    if (store == null || snapshot == null) return;
+    final operation = snapshot.hasContent
+        ? store.write(snapshot)
+        : store.clear();
+    unawaited(_ignorePersistentWriteError(operation));
+  }
+
+  Future<void> _ignorePersistentWriteError(Future<void> operation) async {
+    try {
+      await operation;
+    } catch (_) {
+      // State persistence is recoverability aid; UI should not fail on it.
+    }
+  }
+
+  void _applyInitialComposerText() {
+    final text = widget.initialComposerText?.trim();
+    if (text == null || text.isEmpty || _isVisibleReplyRunning) return;
+    _composerController
+      ..text = text
+      ..selection = TextSelection.collapsed(offset: text.length);
+    _persistInteractionState();
+  }
+
+  void _scheduleInitialAutoSendIfNeeded() {
+    if (_consumedInitialAutoSend ||
+        !widget.initialAutoSend ||
+        widget.runner == null ||
+        _isVisibleReplyRunning ||
+        widget.initialComposerText?.trim().isNotEmpty != true) {
+      return;
+    }
+    _consumedInitialAutoSend = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted ||
+          _isComposerLocked ||
+          _composerController.text.trim().isEmpty) {
+        return;
+      }
+      unawaited(_sendMessage());
+    });
+  }
+
+  void _scheduleInitialAutoRunIfNeeded() {
+    final request = widget.initialAutoRunRequest;
+    final key = request?.idempotencyKey.trim() ?? '';
+    if (request == null ||
+        key.isEmpty ||
+        request.requestMessage.trim().isEmpty ||
+        widget.runner == null ||
+        _initialAutoRunInFlight ||
+        _consumedInitialAutoRunKey == key) {
+      return;
+    }
+    _initialAutoRunInFlight = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!mounted) return;
+      final accepted = await _sendSyntheticUserMessage(
+        requestMessage: request.requestMessage,
+        optimisticContent: '',
+        metadata: request.metadata,
+        idempotencyKey: key,
+        awaitServerRunSignal: true,
+      );
+      if (!mounted) return;
+      _initialAutoRunInFlight = false;
+      if (accepted) _consumedInitialAutoRunKey = key;
+    });
+  }
+
+  void _scheduleExternalConversationRefreshIfNeeded() {
+    final key = widget.externalConversationRefreshKey?.trim() ?? '';
+    if (key.isEmpty ||
+        widget.conversationRepository == null ||
+        (!widget.externalConversationRefreshUntilFound &&
+            widget.externalConversationRefreshAttempts <= 0) ||
+        _consumedExternalConversationRefreshKey == key) {
+      return;
+    }
+    _consumedExternalConversationRefreshKey = key;
+    final generation = ++_externalConversationRefreshGeneration;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || generation != _externalConversationRefreshGeneration) {
+        return;
+      }
+      setState(() => _externalConversationRefreshPending = true);
+      unawaited(_pollForExternalConversationUpdate(generation));
+    });
+  }
+
+  Future<void> _pollForExternalConversationUpdate(int generation) async {
+    final repository = widget.conversationRepository;
+    final sourceThreadId = (_state.threadId ?? _activeRequest?.threadId)
+        ?.trim();
+    final sourceRunId = _state.runId?.trim() ?? '';
+    if (repository == null ||
+        sourceThreadId == null ||
+        sourceThreadId.isEmpty) {
+      _setExternalConversationRefreshPending(false);
+      return;
+    }
+    var attempt = 0;
+    while (widget.externalConversationRefreshUntilFound ||
+        attempt < widget.externalConversationRefreshAttempts) {
+      if (attempt > 0 &&
+          widget.externalConversationRefreshInterval > Duration.zero) {
+        final multiplier = 1 << (attempt - 1).clamp(0, 5);
+        await Future<void>.delayed(
+          widget.externalConversationRefreshInterval * multiplier,
+        );
+      } else if (attempt > 0) {
+        await Future<void>.delayed(Duration.zero);
+      }
+      if (!mounted || generation != _externalConversationRefreshGeneration) {
+        return;
+      }
+      final activeThreadId = (_state.threadId ?? _activeRequest?.threadId)
+          ?.trim();
+      final activeRunId = _state.runId?.trim() ?? '';
+      if (activeThreadId != sourceThreadId || activeRunId != sourceRunId) {
+        _setExternalConversationRefreshPending(false);
+        return;
+      }
+      try {
+        final history = await repository.loadConversation(sourceThreadId);
+        if (!mounted || generation != _externalConversationRefreshGeneration) {
+          return;
+        }
+        final nextRunId = history.currentState.runId?.trim() ?? '';
+        if (history.thread.id != sourceThreadId ||
+            nextRunId.isEmpty ||
+            nextRunId == sourceRunId) {
+          attempt += 1;
+          continue;
+        }
+        final adopted = await _adoptExternalConversationHistory(history);
+        if (adopted) return;
+      } catch (_) {
+        // The durable backend job may not have created its Agent run yet.
+      }
+      attempt += 1;
+    }
+    _setExternalConversationRefreshPending(false);
+  }
+
+  void _setExternalConversationRefreshPending(bool value) {
+    if (!mounted || _externalConversationRefreshPending == value) return;
+    setState(() => _externalConversationRefreshPending = value);
+  }
+
+  Future<bool> _adoptExternalConversationHistory(
+    AgentConversationHistory history,
+  ) async {
+    if (!mounted || _isVisibleReplyRunning || _isSessionMutationPending) {
+      return false;
+    }
+    widget.voicePlaybackCoordinator?.cancel();
+    _cancelRunSubscription();
+    setState(() {
+      _externalConversationRefreshPending = false;
+      _historyMessages = history.messages
+          .map(_historyMessageFromConversation)
+          .toList(growable: true);
+      _conversationHistoryBeforeSequence = history.nextBeforeSequence;
+      _olderConversationHistoryLoading = false;
+      _olderConversationHistoryLoadArmed = false;
+      _olderConversationHistoryError = null;
+      _setRunState(history.currentState);
+      _activeRequest = null;
+      _pendingAutoVoiceReplay = null;
+      _resetAutoVoiceProgress();
+    });
+    _seedExistingFormPresentations();
+    _notifyActionStateChanged();
+    _persistInteractionState();
+    _flushPersistentInteractionState();
+    _scheduleScrollToLatest();
+    _armOlderConversationHistoryLoading();
+
+    if (history.currentState.isActive &&
+        history.currentState.runId?.trim().isNotEmpty == true &&
+        widget.runner != null) {
+      await _resumeCurrentRun(preserveActionState: true);
+      return true;
+    }
+    _maybeStartAutoVoicePlayback(history.currentState);
+    return true;
+  }
+
+  void _updateLatestButtonVisibility() {
+    if (!_chatScrollController.hasClients) return;
+    final position = _chatScrollController.position;
+    if (_preserveArtifactFocus &&
+        position.maxScrollExtent - position.pixels <= 20) {
+      _preserveArtifactFocus = false;
+    }
+    final shouldShow =
+        position.maxScrollExtent > 160 &&
+        position.pixels < position.maxScrollExtent - 40;
+    if (shouldShow == _showLatestButton) return;
+    setState(() {
+      _showLatestButton = shouldShow;
+    });
+  }
+
+  void _handleChatScroll() {
+    _updateLatestButtonVisibility();
+    if (!_olderConversationHistoryLoadArmed ||
+        _olderConversationHistoryLoading ||
+        _olderConversationHistoryError != null ||
+        _conversationHistoryBeforeSequence == null ||
+        !_chatScrollController.hasClients ||
+        _chatScrollController.position.pixels > 120) {
+      return;
+    }
+    unawaited(_loadOlderConversationHistory());
+  }
+
+  void _armOlderConversationHistoryLoading() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _olderConversationHistoryLoadArmed = true;
+    });
+  }
+
+  Future<void> _loadOlderConversationHistory() async {
+    final repository = widget.conversationRepository;
+    final threadId = (_state.threadId ?? _activeRequest?.threadId)?.trim();
+    final beforeSequence = _conversationHistoryBeforeSequence;
+    if (repository == null ||
+        threadId == null ||
+        threadId.isEmpty ||
+        beforeSequence == null ||
+        _olderConversationHistoryLoading) {
+      return;
+    }
+
+    final operationGeneration = _sessionOperationGeneration;
+    final oldExtent = _chatScrollController.hasClients
+        ? _chatScrollController.position.maxScrollExtent
+        : 0.0;
+    final oldPixels = _chatScrollController.hasClients
+        ? _chatScrollController.position.pixels
+        : 0.0;
+    setState(() {
+      _olderConversationHistoryLoading = true;
+      _olderConversationHistoryError = null;
+    });
+    try {
+      final page = await repository.loadConversation(
+        threadId,
+        beforeSequence: beforeSequence,
+      );
+      if (!mounted ||
+          operationGeneration != _sessionOperationGeneration ||
+          threadId != (_state.threadId ?? _activeRequest?.threadId) ||
+          beforeSequence != _conversationHistoryBeforeSequence) {
+        return;
+      }
+      final olderMessages = _historyMessagesFromOlderConversationPage(page);
+      setState(() {
+        _historyMessages.insertAll(0, olderMessages);
+        _conversationHistoryBeforeSequence = page.nextBeforeSequence;
+        _olderConversationHistoryLoading = false;
+        _olderConversationHistoryError = null;
+      });
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted || !_chatScrollController.hasClients) return;
+        final position = _chatScrollController.position;
+        final target = (oldPixels + position.maxScrollExtent - oldExtent)
+            .clamp(position.minScrollExtent, position.maxScrollExtent)
+            .toDouble();
+        position.jumpTo(target);
+        _updateLatestButtonVisibility();
+      });
+    } catch (error) {
+      if (!mounted || operationGeneration != _sessionOperationGeneration) {
+        return;
+      }
+      setState(() {
+        _olderConversationHistoryLoading = false;
+        _olderConversationHistoryError = error;
+      });
+    } finally {
+      if (mounted &&
+          operationGeneration == _sessionOperationGeneration &&
+          _olderConversationHistoryLoading) {
+        setState(() => _olderConversationHistoryLoading = false);
+      }
+    }
+  }
+
+  bool _isNearLatest([double threshold = 80]) {
+    if (!_chatScrollController.hasClients) return true;
+    final position = _chatScrollController.position;
+    return position.maxScrollExtent - position.pixels <= threshold;
+  }
+
+  void _scheduleScrollToLatest({bool smooth = false}) {
+    final intentVersion = ++_scrollIntentVersion;
+    _scheduledScrollToLatestIntentVersion = intentVersion;
+    _scheduledScrollToLatestSmooth = _scheduledScrollToLatestSmooth || smooth;
+    if (_scrollToLatestFrameScheduled) return;
+    _scrollToLatestFrameScheduled = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final shouldSmooth = _scheduledScrollToLatestSmooth;
+      final intentVersion = _scheduledScrollToLatestIntentVersion;
+      _scrollToLatestFrameScheduled = false;
+      _scheduledScrollToLatestSmooth = false;
+      _scheduledScrollToLatestIntentVersion = 0;
+      if (!mounted) return;
+      if (intentVersion != _scrollIntentVersion) return;
+      unawaited(
+        _scrollToLatest(smooth: shouldSmooth).then((_) {
+          if (!shouldSmooth) {
+            _scheduleScrollToLatestCorrection(intentVersion);
+          }
+        }),
+      );
+    });
+  }
+
+  void _scheduleScrollToLatestCorrection(int intentVersion) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted ||
+          intentVersion != _scrollIntentVersion ||
+          !_chatScrollController.hasClients) {
+        return;
+      }
+      final position = _chatScrollController.position;
+      if (position.maxScrollExtent - position.pixels > 1) {
+        _chatScrollController.jumpTo(position.maxScrollExtent);
+      }
+      _updateLatestButtonVisibility();
+    });
+  }
+
+  Future<void> _scrollToLatest({bool smooth = true}) async {
+    if (!_chatScrollController.hasClients) return;
+    if (smooth) {
+      await MomCozyMotion.scrollTo(
+        context,
+        _chatScrollController,
+        _chatScrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 220),
+        curve: Curves.easeOutCubic,
+      );
+    } else {
+      _chatScrollController.jumpTo(
+        _chatScrollController.position.maxScrollExtent,
+      );
+    }
+    if (!_chatScrollController.hasClients) return;
+    final position = _chatScrollController.position;
+    if (position.pixels > position.maxScrollExtent) {
+      _chatScrollController.jumpTo(position.maxScrollExtent);
+    }
+    _updateLatestButtonVisibility();
+  }
+
+  Future<void> _scrollToLatestFromUser() {
+    _preserveArtifactFocus = false;
+    _scrollIntentVersion += 1;
+    return _scrollToLatest();
+  }
+
+  void _scheduleArtifactFocus({int attempt = 0, int? intentVersion}) {
+    if (_artifactFocusFrameScheduled) return;
+    final focusIntentVersion = intentVersion ?? ++_scrollIntentVersion;
+    _artifactFocusFrameScheduled = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _artifactFocusFrameScheduled = false;
+      if (!mounted || focusIntentVersion != _scrollIntentVersion) return;
+      final artifactContext = _activeArtifactPanelKey.currentContext;
+      if (artifactContext == null) {
+        if (attempt < 2) {
+          _scheduleArtifactFocus(
+            attempt: attempt + 1,
+            intentVersion: focusIntentVersion,
+          );
+        }
+        return;
+      }
+      final renderObject = artifactContext.findRenderObject();
+      final viewport = RenderAbstractViewport.maybeOf(renderObject);
+      if (renderObject == null ||
+          viewport == null ||
+          !_chatScrollController.hasClients) {
+        if (attempt < 2) {
+          _scheduleArtifactFocus(
+            attempt: attempt + 1,
+            intentVersion: focusIntentVersion,
+          );
+        }
+        return;
+      }
+      final position = _chatScrollController.position;
+      final artifactLeadingOffset = viewport
+          .getOffsetToReveal(renderObject, 0)
+          .offset;
+      final targetOffset =
+          (artifactLeadingOffset - position.viewportDimension * 0.25).clamp(
+            position.minScrollExtent,
+            position.maxScrollExtent,
+          );
+      unawaited(
+        MomCozyMotion.scrollTo(
+          context,
+          _chatScrollController,
+          targetOffset,
+          duration: const Duration(milliseconds: 220),
+          curve: Curves.easeOutCubic,
+        ).then((_) => _updateLatestButtonVisibility()),
+      );
+    });
+  }
+
+  bool _isComposerLockedForState(AgentStreamRunState state) =>
+      state.phase == AgentStreamRunPhase.waitingForConfirmation;
+
+  bool _isVisibleReplyRunningForState(AgentStreamRunState state) =>
+      state.isAwaitingVisibleReply;
+
+  bool _canRetryForState(AgentStreamRunState state) =>
+      widget.runner != null && state.canRetry && _activeRequest != null;
+
+  bool get _isComposerLocked =>
+      _followUpStartPending ||
+      _newSessionStartPending ||
+      _supportTicketSubmitPending ||
+      _conversationSwitchPending ||
+      _attachmentUploadPending ||
+      _attachmentDiscardPending ||
+      _isComposerLockedForState(_state);
+
+  bool get _isVisibleReplyRunning => _isVisibleReplyRunningForState(_state);
+
+  Future<void> _waitForCompletedReplyRunSettlement() async {
+    final settlement = _runSettlementCompleter;
+    final waitingState = _state;
+    if (!waitingState.isActive ||
+        !waitingState.hasCompletedAssistantMessage ||
+        settlement == null ||
+        settlement.isCompleted) {
+      return;
+    }
+
+    _setFollowUpStartPending(true);
+    try {
+      await settlement.future.timeout(_completedReplyRunSettlementTimeout);
+    } on TimeoutException {
+      if (!mounted ||
+          !identical(_runSettlementCompleter, settlement) ||
+          !_state.isActive ||
+          !_state.hasCompletedAssistantMessage ||
+          _state.runId != waitingState.runId) {
+        return;
+      }
+      final activeRequest = _activeRequest;
+      _cancelRunSubscription();
+      await _cancelServerRun(
+        waitingState,
+        activeRequest,
+      ).timeout(_completedReplyCancelTimeout, onTimeout: () => null);
+      if (!mounted || !_state.isActive || _state.runId != waitingState.runId) {
+        return;
+      }
+      _setRunState(_state.finishVisibleReply());
+      _persistInteractionState();
+    } finally {
+      if (mounted) {
+        _setFollowUpStartPending(false);
+      } else {
+        _followUpStartPending = false;
+      }
+    }
+  }
+
+  void _setFollowUpStartPending(bool value) {
+    if (_followUpStartPending == value) return;
+    _followUpStartPending = value;
+    _setNotifierValue(_composerLockedNotifier, _isComposerLocked);
+  }
+
+  Future<void> _sendMessage() async {
+    final runner = widget.runner;
+    final message = _composerController.text.trim();
+    if (runner == null ||
+        (message.isEmpty &&
+            _attachedImages.isEmpty &&
+            _attachedFiles.isEmpty) ||
+        _isComposerLocked) {
+      return;
+    }
+
+    _cancelCurrentBubblePlaybackForNewTurn();
+    await _waitForCompletedReplyRunSettlement();
+    await _waitForPendingServerCancel();
+    if (!mounted || _isComposerLocked) return;
+
+    final requestMessage = message.isNotEmpty
+        ? message
+        : (_attachedFiles.isNotEmpty && _attachedImages.isEmpty
+              ? '请查看这个文件'
+              : '请看这张图片');
+    final sentImages = List<AgentStreamImageInput>.unmodifiable(
+      _attachedImages,
+    );
+    final requestImages = List<AgentStreamImageInput>.unmodifiable(
+      _attachedImages.map(
+        (image) =>
+            image.fileId.trim().isEmpty ? image : image.copyWith(dataUrl: ''),
+      ),
+    );
+    final sentFiles = List<AgentStreamFileInput>.unmodifiable(_attachedFiles);
+    final interruptedState = _state.isActive ? _state : null;
+    final interruptedRequest = _state.isActive ? _activeRequest : null;
+    final request = _requestWithWorkflowReply(
+      _requestWithFiles(
+        _requestWithImages(
+          widget.requestBuilder(requestMessage),
+          requestImages,
+        ),
+        sentFiles,
+      ),
+      _state.workflowReply,
+    );
+    final archivedAssistantMessage = _currentAssistantHistoryMessage();
+    if (interruptedState != null) {
+      _cancelRunSubscription();
+      _sendBestEffortServerCancel(interruptedState, interruptedRequest);
+    }
+    _composerController.clear();
+    setState(() {
+      if (archivedAssistantMessage != null) {
+        _historyMessages.add(archivedAssistantMessage);
+      }
+      _historyMessages.add(
+        AgentHubHistoryMessage(
+          role: AgentHubHistoryRole.user,
+          content: message,
+          images: sentImages,
+          files: sentFiles,
+        ),
+      );
+      _attachedImages.clear();
+      _attachedFiles.clear();
+      _pendingAutoVoiceReplay = null;
+    });
+    _persistInteractionState();
+    _scheduleScrollToLatest();
+    _dismissComposerKeyboardOnRunAccepted = true;
+    await _startRun(request, submittedComposerText: message);
+  }
+
+  Future<bool> _sendSyntheticUserMessage({
+    required String requestMessage,
+    required String optimisticContent,
+    Map<String, Object?> metadata = const {},
+    String? idempotencyKey,
+    bool awaitServerRunSignal = false,
+  }) async {
+    final runner = widget.runner;
+    if (runner == null || requestMessage.trim().isEmpty || _isComposerLocked) {
+      return false;
+    }
+
+    _cancelCurrentBubblePlaybackForNewTurn();
+    await _waitForCompletedReplyRunSettlement();
+    await _waitForPendingServerCancel();
+    if (!mounted || _isComposerLocked) return false;
+    final request = _requestWithIdempotencyKey(
+      _requestWithWorkflowReply(
+        _requestWithMetadata(
+          widget.requestBuilder(requestMessage.trim()),
+          metadata,
+        ),
+        _state.workflowReply,
+      ),
+      idempotencyKey,
+    );
+    final abandonedAttachmentIds = _attachedFileIds().toList(growable: false);
+    if (abandonedAttachmentIds.isNotEmpty) {
+      _setAttachmentDiscardPending(true);
+      final deleted = await _deleteAbandonedAttachments(abandonedAttachmentIds);
+      _setAttachmentDiscardPending(false);
+      if (!mounted) return false;
+      if (!deleted) {
+        _showAttachmentCleanupFailure();
+        return false;
+      }
+    }
+    final interruptedState = _state.isActive ? _state : null;
+    final interruptedRequest = _state.isActive ? _activeRequest : null;
+    final archivedAssistantMessage = _currentAssistantHistoryMessage();
+    if (interruptedState != null) {
+      _cancelRunSubscription();
+      _sendBestEffortServerCancel(interruptedState, interruptedRequest);
+    }
+    _composerController.clear();
+    setState(() {
+      if (archivedAssistantMessage != null) {
+        _historyMessages.add(archivedAssistantMessage);
+      }
+      if (optimisticContent.trim().isNotEmpty) {
+        _historyMessages.add(
+          AgentHubHistoryMessage(
+            role: AgentHubHistoryRole.user,
+            content: optimisticContent,
+          ),
+        );
+      }
+      _attachedImages.clear();
+      _attachedFiles.clear();
+      _pendingAutoVoiceReplay = null;
+    });
+    _persistInteractionState();
+    _scheduleScrollToLatest();
+    return _startRun(request, awaitServerRunSignal: awaitServerRunSignal);
+  }
+
+  void _handleArtifactAction(AgentArtifactActionView action) {
+    if (action.kind == 'form.submit') {
+      unawaited(_handleArtifactFormSubmit(action));
+      return;
+    }
+    if (action.routePath == '/media-viewer' &&
+        !_isStableProductAssetAction(action)) {
+      return;
+    }
+    widget.onArtifactAction?.call(action);
+  }
+
+  Future<bool> _handleArtifactFormSubmit(AgentArtifactActionView action) async {
+    final submission = _formSubmissionFromAction(action);
+    if (submission == null) return false;
+    final artifactId = submission.artifactId;
+    final existing = _formSubmissionsNotifier.value[artifactId];
+    if (existing?.isSubmitted == true) return true;
+    if (existing?.isSubmitting == true) return false;
+
+    _setFormSubmission(
+      artifactId,
+      AgentArtifactFormSubmission.submitting(values: submission.values),
+    );
+    final idempotencyKey = _formSubmissionIdempotencyKey(
+      artifactId: artifactId,
+      formId: submission.formId,
+      threadId: _state.threadId ?? _activeRequest?.threadId,
+      values: submission.values,
+    );
+
+    var accepted = false;
+    try {
+      accepted = submission.formId == 'support_ticket'
+          ? await _submitSupportTicket(
+              artifactId: artifactId,
+              values: submission.values,
+              idempotencyKey: idempotencyKey,
+            )
+          : await _sendSyntheticUserMessage(
+              requestMessage: _formSubmitRequestMessage(action),
+              optimisticContent: '已提交信息采集表单',
+              metadata: _formSubmissionMetadata(action),
+              idempotencyKey: idempotencyKey,
+              awaitServerRunSignal: true,
+            );
+    } catch (_) {
+      accepted = false;
+    }
+    if (!mounted) return accepted;
+
+    if (accepted) {
+      _setFormSubmission(
+        artifactId,
+        AgentArtifactFormSubmission.submitted(values: submission.values),
+      );
+    } else {
+      _removeFormSubmission(artifactId);
+    }
+    _persistInteractionState();
+    return accepted;
+  }
+
+  Future<bool> _submitSupportTicket({
+    required String artifactId,
+    required Map<String, Object?> values,
+    required String idempotencyKey,
+  }) async {
+    final submitter = widget.supportTicketSubmitter;
+    if (submitter == null) return false;
+    _supportTicketSubmitPending = true;
+    _setNotifierValue(_composerLockedNotifier, _isComposerLocked);
+    try {
+      await submitter(
+        SupportTicketSubmitRequest(
+          artifactId: artifactId,
+          values: values,
+          idempotencyKey: idempotencyKey,
+          threadId: _state.threadId ?? _activeRequest?.threadId,
+          locale: _activeRequest?.locale,
+        ),
+      );
+      if (!mounted) return true;
+
+      _cancelCurrentBubblePlaybackForNewTurn();
+      final archivedAssistantMessage = _currentAssistantHistoryMessage();
+      final threadId = _state.threadId ?? _activeRequest?.threadId;
+      setState(() {
+        if (archivedAssistantMessage != null) {
+          _historyMessages.add(archivedAssistantMessage);
+        }
+        _historyMessages.add(
+          const AgentHubHistoryMessage(
+            role: AgentHubHistoryRole.user,
+            content: '已提交售后工单',
+          ),
+        );
+        _setRunState(
+          AgentStreamRunState(
+            phase: AgentStreamRunPhase.finished,
+            threadId: threadId,
+            textContent: _supportTicketSubmittedReply,
+            completedAssistantMessageReceived: true,
+          ),
+        );
+        _pendingAutoVoiceReplay = null;
+      });
+      _persistInteractionState();
+      _scheduleScrollToLatest();
+      return true;
+    } catch (_) {
+      return false;
+    } finally {
+      _supportTicketSubmitPending = false;
+      if (mounted) {
+        _setNotifierValue(_composerLockedNotifier, _isComposerLocked);
+      }
+    }
+  }
+
+  void _setFormSubmission(
+    String artifactId,
+    AgentArtifactFormSubmission submission,
+  ) {
+    _formSubmissionsNotifier.value = {
+      ..._formSubmissionsNotifier.value,
+      artifactId: submission,
+    };
+  }
+
+  void _removeFormSubmission(String artifactId) {
+    if (!_formSubmissionsNotifier.value.containsKey(artifactId)) return;
+    final next = Map<String, AgentArtifactFormSubmission>.of(
+      _formSubmissionsNotifier.value,
+    )..remove(artifactId);
+    _formSubmissionsNotifier.value = next;
+  }
+
+  AgentHubHistoryMessage? _currentAssistantHistoryMessage() {
+    final state = _state;
+    final text = _agentAssistantTextForState(state, greeting: _greeting).trim();
+    if (text.isEmpty) return null;
+    return AgentHubHistoryMessage(
+      role: AgentHubHistoryRole.assistant,
+      content: text,
+      runState: state.phase == AgentStreamRunPhase.idle ? null : state,
+    );
+  }
+
+  Future<void> _attachImage(AgentImageInputSource source) async {
+    final pickImage = widget.pickImage;
+    if (pickImage == null ||
+        _isComposerLocked ||
+        _attachmentUploadPending ||
+        !_canAddAttachment) {
+      return;
+    }
+    _setAttachmentUploadPending(true);
+    AgentStreamImageInput? image;
+    Object? failure;
+    try {
+      image = await pickImage(source);
+      final mediaRepository = widget.mediaRepository;
+      if (image != null &&
+          mediaRepository != null &&
+          image.fileId.trim().isEmpty) {
+        final bytes = image.localBytes ?? _decodeAgentImageBytes(image.dataUrl);
+        final uploaded = await mediaRepository.uploadFile(
+          file: ApiUploadFile(
+            name: image.name.trim().isEmpty ? 'image.png' : image.name.trim(),
+            mimeType: image.mimeType.trim().isEmpty
+                ? 'image/png'
+                : image.mimeType.trim(),
+            sizeBytes: bytes.length,
+            bytes: bytes,
+            openRead: image.openRead,
+            onProgress: _handleAttachmentUploadProgress,
+          ),
+        );
+        final fileId = uploaded.id.trim();
+        if (fileId.isEmpty) {
+          throw StateError('Image upload did not return a file id.');
+        }
+        image = image.copyWith(fileId: fileId, size: bytes.length);
+      }
+    } catch (error) {
+      failure = error;
+    }
+    if (!mounted) {
+      await _deleteAbandonedAttachments([image?.fileId ?? '']);
+      return;
+    }
+    setState(() {
+      _attachmentUploadPending = false;
+      _attachmentUploadProgress = null;
+      if (image != null && failure == null) {
+        _attachedImages.add(image);
+      }
+    });
+    _publishAttachmentUploadState();
+    if (failure != null) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(_attachmentFeedback('图片上传失败，请重试。'));
+      return;
+    }
+    if (image == null) return;
+    _persistInteractionState();
+  }
+
+  Future<void> _attachDocument() async {
+    final pickDocument = widget.pickDocument;
+    final mediaRepository = widget.mediaRepository;
+    if (pickDocument == null ||
+        mediaRepository == null ||
+        _isComposerLocked ||
+        _attachmentUploadPending ||
+        !_canAddAttachment) {
+      return;
+    }
+    _setAttachmentUploadPending(true);
+
+    AgentStreamFileInput? file;
+    Object? failure;
+    try {
+      final document = await pickDocument();
+      if (document != null) {
+        final uploaded = await mediaRepository.uploadFile(
+          file: ApiUploadFile(
+            name: document.name.trim().isEmpty
+                ? 'document.pdf'
+                : document.name.trim(),
+            mimeType: 'application/pdf',
+            sizeBytes: document.size,
+            bytes: document.bytes,
+            onProgress: _handleAttachmentUploadProgress,
+          ),
+        );
+        final fileId = uploaded.id.trim();
+        if (fileId.isEmpty) {
+          throw StateError('Document upload did not return a file id.');
+        }
+        file = AgentStreamFileInput(
+          fileId: fileId,
+          mimeType: 'application/pdf',
+          name: document.name,
+          size: document.size,
+        );
+      }
+    } catch (error) {
+      failure = error;
+    }
+    if (!mounted) {
+      await _deleteAbandonedAttachments([file?.fileId ?? '']);
+      return;
+    }
+    setState(() {
+      _attachmentUploadPending = false;
+      _attachmentUploadProgress = null;
+      if (file != null && failure == null) {
+        _attachedFiles.add(file);
+      }
+    });
+    _publishAttachmentUploadState();
+    if (failure != null) {
+      final message = switch (failure) {
+        AgentDocumentInputException(code: 'file_too_large') => '文件不能超过 10MB。',
+        AgentDocumentInputException(code: 'unsupported_file_type') =>
+          '暂仅支持 PDF 文件。',
+        _ => '文件上传失败，请重试。',
+      };
+      ScaffoldMessenger.of(context).showSnackBar(_attachmentFeedback(message));
+      return;
+    }
+    if (file == null) return;
+    _persistInteractionState();
+  }
+
+  void _setAttachmentUploadPending(bool value) {
+    if (_attachmentUploadPending == value) return;
+    setState(() {
+      _attachmentUploadPending = value;
+      _attachmentUploadProgress = null;
+    });
+    _publishAttachmentUploadState();
+  }
+
+  void _handleAttachmentUploadProgress(int sentBytes, int totalBytes) {
+    if (!mounted || !_attachmentUploadPending || totalBytes <= 0) return;
+    final next = (sentBytes / totalBytes).clamp(0.0, 1.0);
+    final current = _attachmentUploadProgress;
+    if (current != null && next < 1 && (next - current).abs() < 0.01) return;
+    setState(() {
+      _attachmentUploadProgress = next;
+    });
+  }
+
+  void _publishAttachmentUploadState() {
+    _setNotifierValue(_composerLockedNotifier, _isComposerLocked);
+    _syncConversationSwitchEnabled();
+  }
+
+  void _setAttachmentDiscardPending(bool value) {
+    if (_attachmentDiscardPending == value) return;
+    if (!mounted) {
+      _attachmentDiscardPending = value;
+      return;
+    }
+    setState(() => _attachmentDiscardPending = value);
+    _publishAttachmentUploadState();
+  }
+
+  bool get _canAddAttachment =>
+      _attachedImages.length + _attachedFiles.length < _agentRunAttachmentLimit;
+
+  void _removeAttachedImage(int index) {
+    if (index < 0 || index >= _attachedImages.length) return;
+    final removed = _attachedImages[index];
+    unawaited(_removeAttachedImageAfterDelete(removed));
+  }
+
+  Future<void> _removeAttachedImageAfterDelete(
+    AgentStreamImageInput removed,
+  ) async {
+    _setAttachmentDiscardPending(true);
+    final deleted = await _deleteAbandonedAttachments([removed.fileId]);
+    _setAttachmentDiscardPending(false);
+    if (!mounted) return;
+    if (!deleted) {
+      _showAttachmentCleanupFailure();
+      return;
+    }
+    setState(() => _attachedImages.remove(removed));
+    _persistInteractionState();
+  }
+
+  void _removeAttachedFile(int index) {
+    if (index < 0 || index >= _attachedFiles.length) return;
+    final removed = _attachedFiles[index];
+    unawaited(_removeAttachedFileAfterDelete(removed));
+  }
+
+  Future<void> _removeAttachedFileAfterDelete(
+    AgentStreamFileInput removed,
+  ) async {
+    _setAttachmentDiscardPending(true);
+    final deleted = await _deleteAbandonedAttachments([removed.fileId]);
+    _setAttachmentDiscardPending(false);
+    if (!mounted) return;
+    if (!deleted) {
+      _showAttachmentCleanupFailure();
+      return;
+    }
+    setState(() => _attachedFiles.remove(removed));
+    _persistInteractionState();
+  }
+
+  Iterable<String> _attachedFileIds() sync* {
+    for (final image in _attachedImages) {
+      yield image.fileId;
+    }
+    for (final file in _attachedFiles) {
+      yield file.fileId;
+    }
+  }
+
+  Future<bool> _deleteAbandonedAttachments(Iterable<String> fileIds) async {
+    final normalizedIds = fileIds
+        .map((fileId) => fileId.trim())
+        .where((fileId) => fileId.isNotEmpty)
+        .toSet();
+    if (normalizedIds.isEmpty) return true;
+    final repository = widget.mediaRepository;
+    if (repository == null) return false;
+    final results = await Future.wait(
+      normalizedIds.map((fileId) async {
+        try {
+          await repository.deleteFile(
+            fileId: fileId,
+            idempotencyKey: 'agent-draft-discard:$fileId',
+          );
+          return true;
+        } on ApiHttpException catch (error) {
+          return error.statusCode == 404;
+        } catch (_) {
+          return false;
+        }
+      }),
+    );
+    return results.every((deleted) => deleted);
+  }
+
+  SnackBar _attachmentFeedback(String message) => SnackBar(
+    elevation: 0,
+    backgroundColor: MomHomeTokens.ink,
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+    content: Text(
+      message,
+      style: MomHomeTokens.text(14, color: MomHomeTokens.surface),
+    ),
+  );
+
+  void _showAttachmentCleanupFailure() {
+    if (!mounted) return;
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(_attachmentFeedback('附件清理失败，已保留草稿，请重试。'));
+  }
+
+  Future<void> _openConversationHistory() async {
+    final repository = widget.conversationRepository;
+    if (repository == null ||
+        _isSessionMutationPending ||
+        _attachmentUploadPending) {
+      return;
+    }
+    FocusManager.instance.primaryFocus?.unfocus();
+    await showAgentConversationPanel(
+      context: context,
+      repository: repository,
+      activeThreadId: _state.threadId ?? _activeRequest?.threadId,
+      canSwitchListenable: _conversationSwitchEnabledNotifier,
+      onSelected: _switchConversation,
+      onDismissed: _cancelPendingConversationSwitch,
+    );
+  }
+
+  Future<bool> _switchConversation(String threadId) async {
+    final repository = widget.conversationRepository;
+    final normalizedThreadId = threadId.trim();
+    if (repository == null ||
+        normalizedThreadId.isEmpty ||
+        _isVisibleReplyRunning ||
+        _attachmentUploadPending ||
+        _conversationSwitchPending ||
+        _newSessionStartPending) {
+      return false;
+    }
+    if (normalizedThreadId == (_state.threadId ?? _activeRequest?.threadId)) {
+      return true;
+    }
+
+    final operationGeneration = ++_sessionOperationGeneration;
+    _setConversationSwitchPending(true);
+    try {
+      final history = await repository.loadConversation(normalizedThreadId);
+      if (!mounted ||
+          operationGeneration != _sessionOperationGeneration ||
+          !_conversationSwitchPending) {
+        return false;
+      }
+
+      final abandonedAttachmentIds = _attachedFileIds().toList();
+      if (abandonedAttachmentIds.isNotEmpty) {
+        _setAttachmentDiscardPending(true);
+        final deleted = await _deleteAbandonedAttachments(
+          abandonedAttachmentIds,
+        );
+        _setAttachmentDiscardPending(false);
+        if (!mounted ||
+            operationGeneration != _sessionOperationGeneration ||
+            !_conversationSwitchPending) {
+          return false;
+        }
+        if (!deleted) {
+          _showAttachmentCleanupFailure();
+          return false;
+        }
+      }
+
+      widget.voicePlaybackCoordinator?.cancel();
+      _cancelRunSubscription();
+      _composerController.clear();
+      _formPresentationSession.clear();
+      _formSubmissionsNotifier.value =
+          const <String, AgentArtifactFormSubmission>{};
+      setState(() {
+        _historyMessages = history.messages
+            .map(_historyMessageFromConversation)
+            .toList(growable: true);
+        _conversationHistoryBeforeSequence = history.nextBeforeSequence;
+        _olderConversationHistoryLoading = false;
+        _olderConversationHistoryLoadArmed = false;
+        _olderConversationHistoryError = null;
+        _setRunState(history.currentState);
+        _attachedImages.clear();
+        _attachedFiles.clear();
+        _pendingActionIds.clear();
+        _localActionStatuses.clear();
+        _activeRequest = null;
+        _setVoiceState(const AgentVoiceState());
+        _pendingAutoVoiceReplay = null;
+        _resetAutoVoiceProgress();
+      });
+      _seedExistingFormPresentations();
+      _notifyActionStateChanged();
+      _persistInteractionState();
+      _flushPersistentInteractionState();
+      _scheduleScrollToLatest();
+      _armOlderConversationHistoryLoading();
+
+      if (history.currentState.isActive &&
+          history.currentState.runId?.trim().isNotEmpty == true &&
+          widget.runner != null) {
+        await _resumeCurrentRun(preserveActionState: true);
+      }
+      return true;
+    } catch (_) {
+      return false;
+    } finally {
+      if (operationGeneration == _sessionOperationGeneration) {
+        _setConversationSwitchPending(false);
+      }
+    }
+  }
+
+  void _cancelPendingConversationSwitch() {
+    if (!_conversationSwitchPending) return;
+    _sessionOperationGeneration += 1;
+    _setConversationSwitchPending(false);
+  }
+
+  void _setConversationSwitchPending(bool value) {
+    if (_conversationSwitchPending == value) return;
+    _conversationSwitchPending = value;
+    _publishSessionMutationState();
+  }
+
+  Future<void> _startNewSession() async {
+    if (_isVisibleReplyRunning ||
+        _attachmentUploadPending ||
+        _newSessionStartPending ||
+        _conversationSwitchPending) {
+      return;
+    }
+    final operationGeneration = ++_sessionOperationGeneration;
+    _setNewSessionStartPending(true);
+    try {
+      final abandonedAttachmentIds = _attachedFileIds().toList();
+      if (abandonedAttachmentIds.isNotEmpty) {
+        _setAttachmentDiscardPending(true);
+        final deleted = await _deleteAbandonedAttachments(
+          abandonedAttachmentIds,
+        );
+        _setAttachmentDiscardPending(false);
+        if (!mounted || operationGeneration != _sessionOperationGeneration) {
+          return;
+        }
+        if (!deleted) {
+          _showAttachmentCleanupFailure();
+          return;
+        }
+        _forgetDeletedDraftAttachments(abandonedAttachmentIds);
+      }
+      if (_state.isActive) {
+        _sendBestEffortServerCancel(_state, _activeRequest);
+      }
+      widget.voicePlaybackCoordinator?.cancel();
+      _dismissComposerKeyboardOnRunAccepted = false;
+      _cancelRunSubscription();
+      _composerController.clear();
+      _formSubmissionsNotifier.value =
+          const <String, AgentArtifactFormSubmission>{};
+      _formPresentationSession.clear();
+      setState(() {
+        _setRunState(const AgentStreamRunState());
+        _historyMessages.clear();
+        _conversationHistoryBeforeSequence = null;
+        _olderConversationHistoryLoading = false;
+        _olderConversationHistoryLoadArmed = false;
+        _olderConversationHistoryError = null;
+        _attachedImages.clear();
+        _attachedFiles.clear();
+        _pendingActionIds.clear();
+        _localActionStatuses.clear();
+        _activeRequest = null;
+        _setVoiceState(const AgentVoiceState());
+        _pendingAutoVoiceReplay = null;
+        _resetAutoVoiceProgress();
+      });
+      _notifyActionStateChanged();
+      _persistInteractionState();
+      _flushPersistentInteractionState();
+      unawaited(_refreshGreetingAndMaybePlayVoice());
+    } catch (_) {
+      // Keep the current session visible when cleanup fails.
+    } finally {
+      if (operationGeneration == _sessionOperationGeneration) {
+        if (mounted) {
+          _setNewSessionStartPending(false);
+        } else {
+          _newSessionStartPending = false;
+        }
+      }
+    }
+  }
+
+  void _setNewSessionStartPending(bool value) {
+    if (_newSessionStartPending == value) return;
+    _newSessionStartPending = value;
+    _publishSessionMutationState();
+  }
+
+  void _forgetDeletedDraftAttachments(Iterable<String> fileIds) {
+    final deletedIds = fileIds.map((fileId) => fileId.trim()).toSet();
+    if (deletedIds.isEmpty || !mounted) return;
+    setState(() {
+      _attachedImages.removeWhere(
+        (image) => deletedIds.contains(image.fileId.trim()),
+      );
+      _attachedFiles.removeWhere(
+        (file) => deletedIds.contains(file.fileId.trim()),
+      );
+    });
+    _persistInteractionState();
+  }
+
+  bool get _isSessionMutationPending =>
+      _newSessionStartPending || _conversationSwitchPending;
+
+  void _publishSessionMutationState() {
+    _setNotifierValue(
+      _sessionMutationPendingNotifier,
+      _isSessionMutationPending,
+    );
+    _setNotifierValue(_composerLockedNotifier, _isComposerLocked);
+    _syncConversationSwitchEnabled();
+  }
+
+  void _syncConversationSwitchEnabled() {
+    if (SchedulerBinding.instance.schedulerPhase ==
+        SchedulerPhase.persistentCallbacks) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _syncConversationSwitchEnabled();
+      });
+      return;
+    }
+    _setNotifierValue(
+      _conversationSwitchEnabledNotifier,
+      !_isVisibleReplyRunning &&
+          !_isSessionMutationPending &&
+          !_attachmentUploadPending &&
+          !_attachmentDiscardPending,
+    );
+  }
+
+  void _cancelCurrentBubblePlaybackForNewTurn() {
+    const preservedSources = <AgentVoicePlaybackSource>{
+      AgentVoicePlaybackSource.notification,
+    };
+    final coordinator = widget.voicePlaybackCoordinator;
+    final activeSource = coordinator?.activeSource;
+    final isPreservedPlayback =
+        activeSource != null && preservedSources.contains(activeSource);
+    final didCancel =
+        coordinator?.cancel(preserveSources: preservedSources) ?? false;
+
+    if (!_voiceState.isPlaybackActive) return;
+    if (coordinator != null && isPreservedPlayback && !didCancel) return;
+
+    _setVoiceState(_voiceState.cancelPlayback());
+  }
+
+  Future<void> _refreshGreetingAndMaybePlayVoice() async {
+    final loader = widget.greetingProfileLoader;
+    if (loader == null) {
+      _maybeStartGreetingVoicePlayback();
+      return;
+    }
+
+    final generation = ++_greetingRefreshGeneration;
+    AgentHubGreetingProfile? profile;
+    var loaded = false;
+    try {
+      profile = await loader();
+      loaded = true;
+    } catch (_) {
+      // Greeting personalization is best effort; the default stays available.
+    }
+    if (!mounted || generation != _greetingRefreshGeneration) return;
+    final isShowingFreshGreeting = _isShowingFreshGreeting;
+    if (loaded) {
+      final nextGreeting = agentHubGreetingForProfile(profile);
+      setState(() {
+        if (isShowingFreshGreeting) _greeting = nextGreeting;
+      });
+    }
+    if (!isShowingFreshGreeting) return;
+    _maybeStartGreetingVoicePlayback();
+  }
+
+  bool get _isShowingFreshGreeting =>
+      _state.phase == AgentStreamRunPhase.idle &&
+      _state.textContent.trim().isEmpty &&
+      _state.provisionalTextContent.trim().isEmpty &&
+      _historyMessages.isEmpty &&
+      _activeRequest == null;
+
+  void _maybeStartGreetingVoicePlayback() {
+    final coordinator = widget.voicePlaybackCoordinator;
+    final player = widget.voicePlaybackPlayer;
+    if (!_interactionRestoreResolved ||
+        !_isShowingFreshGreeting ||
+        coordinator == null ||
+        coordinator.isSuspended ||
+        player == null ||
+        !_autoVoiceEnabled) {
+      return;
+    }
+
+    final result = coordinator.request(
+      id: _agentDefaultGreetingPlaybackId,
+      source: AgentVoicePlaybackSource.greeting,
+      cancel: () => player.stop().catchError((Object _) {}),
+    );
+    final handle = result.handle;
+    if (!mounted ||
+        result.status != AgentVoicePlaybackRequestStatus.started ||
+        handle == null) {
+      return;
+    }
+    _startVoicePlayback(handle: handle, text: _greeting);
+  }
+
+  Future<void> _retryRun() async {
+    final request = _activeRequest;
+    if (request == null || widget.runner == null || !_state.canRetry) return;
+    final submittedText = _submittedComposerText;
+    if (submittedText != null && _composerController.text == submittedText) {
+      _composerController.clear();
+    }
+    final runId = _state.runId?.trim();
+    if (runId != null && runId.isNotEmpty) {
+      await _startRun(
+        request.resume(
+          runId: runId,
+          threadId: _state.threadId,
+          afterSequence: _state.lastSequence ?? 0,
+          afterTransientCursor: _state.lastTransientCursor,
+        ),
+        initialState: _state.copyWith(phase: AgentStreamRunPhase.streaming),
+        preserveActionState: true,
+        submittedComposerText: submittedText,
+      );
+      return;
+    }
+    await _startRun(request, submittedComposerText: submittedText);
+  }
+
+  Future<void> _resumeCurrentRun({bool preserveActionState = false}) async {
+    if (widget.runner == null) return;
+    final runId = _state.runId?.trim();
+    if (runId == null || runId.isEmpty) return;
+    final baseRequest =
+        _activeRequest ??
+        AgentStreamRequest(message: '', threadId: _state.threadId);
+    await _startRun(
+      baseRequest.resume(
+        runId: runId,
+        threadId: _state.threadId,
+        afterSequence: _state.lastSequence ?? 0,
+        afterTransientCursor: _state.lastTransientCursor,
+      ),
+      initialState: _state.copyWith(phase: AgentStreamRunPhase.streaming),
+      preserveActionState: preserveActionState,
+    );
+  }
+
+  void _handleRunStateUpdate(AgentStreamRunState nextState) {
+    if (!mounted || !_state.isActive) return;
+    final submittedText = _submittedComposerText;
+    if ((nextState.phase == AgentStreamRunPhase.error ||
+            nextState.phase == AgentStreamRunPhase.disconnected) &&
+        _composerController.text.isEmpty &&
+        submittedText != null &&
+        submittedText.isNotEmpty &&
+        _activeRequest?.message == submittedText) {
+      _composerController.value = TextEditingValue(
+        text: submittedText,
+        selection: TextSelection.collapsed(offset: submittedText.length),
+      );
+    }
+    _forwardNewApplicationEvents(_state, nextState);
+    _updateComposerFocusForRun(nextState);
+    final shouldFollowLatest = _isNearLatest() || nextState.isActive;
+    _formPresentationSession.registerLiveFormIds(
+      _formArtifactIdsForState(nextState),
+    );
+    final previousArtifactId = _latestVisibleArtifactId(_state);
+    final nextArtifactId = _latestVisibleArtifactId(nextState);
+    final shouldFocusArtifact =
+        nextArtifactId != null && nextArtifactId != previousArtifactId;
+    final activeRequest = _activeRequest;
+    if (activeRequest != null) {
+      _activeRequest = _requestWithThreadId(activeRequest, nextState.threadId);
+    }
+    _applyRunStateUpdate(
+      nextState,
+      shouldFollowLatest: shouldFollowLatest,
+      shouldFocusArtifact: shouldFocusArtifact,
+    );
+  }
+
+  void _updateComposerFocusForRun(AgentStreamRunState nextState) {
+    if (!_dismissComposerKeyboardOnRunAccepted) return;
+    if (nextState.phase == AgentStreamRunPhase.error ||
+        nextState.phase == AgentStreamRunPhase.disconnected ||
+        nextState.phase == AgentStreamRunPhase.cancelled) {
+      _dismissComposerKeyboardOnRunAccepted = false;
+      return;
+    }
+
+    if (!_hasServerRunSignal(nextState)) return;
+
+    _dismissComposerKeyboardOnRunAccepted = false;
+    if (_composerFocusNode.hasFocus) _composerFocusNode.unfocus();
+  }
+
+  void _applyRunStateUpdate(
+    AgentStreamRunState nextState, {
+    required bool shouldFollowLatest,
+    bool shouldFocusArtifact = false,
+  }) {
+    if (!mounted) return;
+    _setRunState(nextState);
+    if (nextState.isActive) {
+      _persistActiveInteractionStateThrottled();
+    } else {
+      _persistInteractionState();
+    }
+    _maybeStartAutoVoicePlayback(nextState);
+    if (shouldFocusArtifact) {
+      _preserveArtifactFocus = true;
+      _scheduleArtifactFocus();
+    } else if (shouldFollowLatest && !_preserveArtifactFocus) {
+      _scheduleScrollToLatest();
+    }
+  }
+
+  Future<bool> _startRun(
+    AgentStreamRequest request, {
+    String? submittedComposerText,
+    AgentStreamRunState? initialState,
+    bool preserveActionState = false,
+    bool awaitServerRunSignal = false,
+  }) async {
+    final runner = widget.runner;
+    if (runner == null || (initialState == null && _isComposerLocked)) {
+      return false;
+    }
+    final requestWithIdempotency =
+        request.runId?.trim().isNotEmpty == true ||
+            request.idempotencyKey?.trim().isNotEmpty == true
+        ? request
+        : _requestWithIdempotencyKey(request, _newAgentRunIdempotencyKey());
+    final requestWithThread = _requestWithConversationThread(
+      requestWithIdempotency,
+    );
+    _submittedComposerText = submittedComposerText;
+
+    _cancelRunSubscription();
+    final acceptance = awaitServerRunSignal ? Completer<bool>() : null;
+    final settlement = Completer<void>();
+    _runAcceptanceCompleter = acceptance;
+    _runSettlementCompleter = settlement;
+    _preserveArtifactFocus = false;
+    _activeRequest = requestWithThread;
+    setState(() {
+      _setRunState(initialState ?? const AgentStreamRunState().start());
+      if (initialState == null) {
+        _pendingAutoVoiceReplay = null;
+        _resetAutoVoiceProgress();
+      }
+      if (!preserveActionState) {
+        _pendingActionIds.clear();
+        _localActionStatuses.clear();
+      }
+    });
+    if (!preserveActionState) _notifyActionStateChanged();
+    _persistInteractionState();
+    _scheduleScrollToLatest();
+
+    _runSubscription = runner
+        .run(requestWithThread, initialState: initialState)
+        .listen(
+          (nextState) {
+            _handleRunStateUpdate(nextState);
+            if (!nextState.isActive) {
+              _completeRunSettlement(settlement);
+            }
+            if (_hasServerRunSignal(nextState)) {
+              _completeRunAcceptance(acceptance, true);
+            } else if (!nextState.isActive) {
+              _completeRunAcceptance(acceptance, false);
+            }
+          },
+          onError: (Object error) {
+            _completeRunAcceptance(acceptance, false);
+            _completeRunSettlement(settlement);
+            if (!mounted || !_state.isActive) return;
+            _dismissComposerKeyboardOnRunAccepted = false;
+            final shouldFollowLatest = _isNearLatest();
+            _setRunState(_state.markDisconnected(error));
+            _persistInteractionState();
+            if (shouldFollowLatest) _scheduleScrollToLatest();
+          },
+          onDone: () {
+            _completeRunAcceptance(acceptance, false);
+            _completeRunSettlement(settlement);
+          },
+        );
+    return acceptance == null ? true : acceptance.future;
+  }
+
+  void _completeRunAcceptance(Completer<bool>? completer, bool accepted) {
+    if (completer == null || completer.isCompleted) return;
+    if (identical(_runAcceptanceCompleter, completer)) {
+      _runAcceptanceCompleter = null;
+    }
+    completer.complete(accepted);
+  }
+
+  void _completeRunSettlement(Completer<void>? completer) {
+    if (completer == null || completer.isCompleted) return;
+    if (identical(_runSettlementCompleter, completer)) {
+      _runSettlementCompleter = null;
+    }
+    completer.complete();
+  }
+
+  AgentStreamRequest _requestWithConversationThread(
+    AgentStreamRequest request,
+  ) {
+    return _requestWithThreadId(
+      request,
+      request.threadId ?? _state.threadId ?? _activeRequest?.threadId,
+    );
+  }
+
+  void _maybeStartAutoVoicePlayback(AgentStreamRunState nextState) {
+    final coordinator = widget.voicePlaybackCoordinator;
+    final player = widget.voicePlaybackPlayer;
+    final text = nextState.textContent.trim();
+    final artifactText = _autoVoiceArtifactTextForState(nextState);
+    final mediaNarrations = _autoVoiceMediaNarrationsForState(nextState);
+    if (coordinator?.isSuspended ?? false) {
+      _pendingAutoVoiceReplay = null;
+      return;
+    }
+    if (coordinator == null ||
+        player == null ||
+        !_autoVoiceEnabled ||
+        !_canAutoVoicePlayback(nextState.phase) ||
+        (text.isEmpty && artifactText == null && mediaNarrations.isEmpty)) {
+      return;
+    }
+
+    final playbackId = _autoVoicePlaybackId(nextState);
+    final isNewPlayback = _activeAutoVoicePlaybackId != playbackId;
+    if (isNewPlayback) {
+      unawaited(_cancelActiveAutoVoiceSession());
+      _activeAutoVoicePlaybackId = playbackId;
+      _autoVoiceAppendedText = '';
+      _autoVoiceHasSubmittedContent = false;
+      _autoVoiceSessionFinished = false;
+      _autoVoiceSubmittedArtifactTexts.clear();
+      _autoVoiceSubmittedMediaNarrations.clear();
+    }
+
+    final textToAppend = _nextAutoVoiceTextToAppend(text);
+    final hasUnsubmittedArtifact =
+        artifactText != null &&
+        !_autoVoiceSubmittedArtifactTexts.contains(artifactText);
+    final hasUnsubmittedMedia = mediaNarrations.any(
+      (narration) =>
+          !_autoVoiceSubmittedMediaNarrations.contains(narration.trim()),
+    );
+    if (_autoVoiceSession == null &&
+        textToAppend.trim().isEmpty &&
+        !hasUnsubmittedArtifact &&
+        !hasUnsubmittedMedia) {
+      return;
+    }
+
+    final session = _autoVoiceSession ?? _startAutoVoiceSession(playbackId);
+    if (session == null) {
+      if (_voiceState.phase == AgentVoicePhase.error) return;
+      if (coordinator.activeSource != AgentVoicePlaybackSource.autoReply ||
+          coordinator.activeId != playbackId) {
+        _queueBlockedAutoVoiceReplay(nextState);
+      }
+      return;
+    }
+
+    _pendingAutoVoiceReplay = null;
+    if (textToAppend.trim().isNotEmpty) {
+      session.append(textToAppend);
+      _autoVoiceAppendedText = text;
+      _autoVoiceHasSubmittedContent = true;
+    }
+    if (mediaNarrations.isNotEmpty &&
+        _shouldFinishAutoVoicePlayback(nextState)) {
+      session.flush();
+    }
+    final supplementalTexts = <String>[
+      if (artifactText != null &&
+          _autoVoiceSubmittedArtifactTexts.add(artifactText))
+        artifactText,
+      ...mediaNarrations.map(_claimAutoVoiceMediaNarration).whereType<String>(),
+    ];
+    if (supplementalTexts.isNotEmpty) {
+      final separator = _autoVoiceAppendedText.isEmpty ? '' : '\n';
+      session.append('$separator${supplementalTexts.join(' ')}');
+      _autoVoiceHasSubmittedContent = true;
+    }
+    if (_shouldFinishAutoVoicePlayback(nextState)) {
+      _finishActiveAutoVoiceSession();
+    }
+  }
+
+  AgentVoiceRealtimePlaybackSession? _startAutoVoiceSession(String playbackId) {
+    final coordinator = widget.voicePlaybackCoordinator;
+    final player = widget.voicePlaybackPlayer;
+    if (coordinator == null || player == null) return null;
+
+    final result = coordinator.request(
+      id: playbackId,
+      source: AgentVoicePlaybackSource.autoReply,
+      cancel: _cancelActiveAutoVoiceSession,
+    );
+    if (result.status == AgentVoicePlaybackRequestStatus.blocked) return null;
+    final handle = result.handle;
+    if (!mounted ||
+        result.status != AgentVoicePlaybackRequestStatus.started ||
+        handle == null) {
+      return null;
+    }
+
+    final AgentVoiceRealtimePlaybackSession session;
+    try {
+      session = player.startRealtimeSession(
+        mediaNarrationResolver: ({required url, required alt}) =>
+            _resolveMediaVoiceNarration(url: url),
+      );
+    } catch (error) {
+      handle.finish();
+      _setVoiceState(_voiceState.fail(error));
+      return null;
+    }
+    _autoVoiceSession = session;
+    _autoVoiceSessionFinished = false;
+    _setVoiceState(_voiceState.startPlayback(handle.id));
+    unawaited(
+      session.done
+          .then((_) {
+            if (!mounted || !handle.isCurrent || _autoVoiceSession != session) {
+              return;
+            }
+            _autoVoiceSession = null;
+            handle.finish();
+            _setVoiceState(const AgentVoiceState());
+          })
+          .catchError((Object error) {
+            if (!mounted || !handle.isCurrent || _autoVoiceSession != session) {
+              return;
+            }
+            _autoVoiceSession = null;
+            handle.finish();
+            _setVoiceState(_voiceState.fail(error));
+          }),
+    );
+    return session;
+  }
+
+  String? _resolveMediaVoiceNarration({required String url}) {
+    final narration = _mediaVoiceNarrationIndexForState(
+      _state,
+    ).resolve(url)?.trim();
+    if (narration == null || narration.isEmpty) return null;
+    _autoVoiceSubmittedMediaNarrations.add(narration);
+    return narration;
+  }
+
+  AgentMediaVoiceNarrationIndex _mediaVoiceNarrationIndexForState(
+    AgentStreamRunState state,
+  ) {
+    final identity = state.events;
+    if (!identical(identity, _mediaVoiceEventIdentity)) {
+      _mediaVoiceEventIdentity = identity;
+      _mediaVoiceNarrationIndex = AgentMediaVoiceNarrationIndex.fromEvents(
+        state.events,
+      );
+    }
+    return _mediaVoiceNarrationIndex;
+  }
+
+  List<String> _autoVoiceMediaNarrationsForState(AgentStreamRunState state) {
+    if (!_shouldFinishAutoVoicePlayback(state)) return const <String>[];
+    return _mediaVoiceNarrationIndexForState(state).autoSpeakableTexts;
+  }
+
+  String? _autoVoiceArtifactTextForState(AgentStreamRunState state) {
+    if (state.textContent.trim().isNotEmpty ||
+        !_shouldFinishAutoVoicePlayback(state) ||
+        !state.canPublishArtifactEvents) {
+      return null;
+    }
+    return agentArtifactVoiceFallbackText(
+      _artifactCardsFromEvents(_artifactEventsForState(state)),
+    );
+  }
+
+  String? _claimAutoVoiceMediaNarration(String? narration) {
+    final text = narration?.trim();
+    if (text == null ||
+        text.isEmpty ||
+        !_autoVoiceSubmittedMediaNarrations.add(text)) {
+      return null;
+    }
+    return text;
+  }
+
+  void _startVoicePlayback({
+    required AgentVoicePlaybackHandle handle,
+    required String text,
+    VoidCallback? onFinished,
+  }) {
+    _setVoiceState(_voiceState.startPlayback(handle.id));
+    final player = widget.voicePlaybackPlayer;
+    if (player == null) return;
+
+    unawaited(
+      Future<void>.sync(() => player.playText(text))
+          .then((_) {
+            if (!mounted || !handle.isCurrent) return;
+            handle.finish();
+            _setVoiceState(const AgentVoiceState());
+            onFinished?.call();
+          })
+          .catchError((Object error) {
+            if (!mounted || !handle.isCurrent) return;
+            handle.finish();
+            _setVoiceState(_voiceState.fail(error));
+          }),
+    );
+  }
+
+  String _autoVoicePlaybackId(AgentStreamRunState state) {
+    final activePlaybackId = _activeAutoVoicePlaybackId?.trim();
+    if (activePlaybackId != null &&
+        activePlaybackId.isNotEmpty &&
+        (state.isActive ||
+            _pendingAutoVoiceReplay != null ||
+            _autoVoiceHasSubmittedContent)) {
+      return activePlaybackId;
+    }
+    return _firstNonEmpty([state.messageId, state.runId, state.threadId]) ?? '';
+  }
+
+  bool _canAutoVoicePlayback(AgentStreamRunPhase phase) {
+    return phase == AgentStreamRunPhase.streaming ||
+        phase == AgentStreamRunPhase.waitingForConfirmation ||
+        phase == AgentStreamRunPhase.finished;
+  }
+
+  String _nextAutoVoiceTextToAppend(String text) {
+    if (_autoVoiceAppendedText.isEmpty) return text;
+    if (text.startsWith(_autoVoiceAppendedText)) {
+      return text.substring(_autoVoiceAppendedText.length);
+    }
+    if (_autoVoiceAppendedText.length >= text.length) return '';
+    return text.substring(_autoVoiceAppendedText.length);
+  }
+
+  bool _shouldFinishAutoVoicePlayback(AgentStreamRunState state) {
+    return state.hasCompletedAssistantMessage ||
+        state.phase == AgentStreamRunPhase.finished ||
+        state.phase == AgentStreamRunPhase.waitingForConfirmation;
+  }
+
+  void _finishActiveAutoVoiceSession() {
+    if (_autoVoiceSessionFinished) return;
+    _autoVoiceSessionFinished = true;
+    _autoVoiceSession?.finish();
+  }
+
+  Future<void> _cancelActiveAutoVoiceSession() async {
+    final session = _autoVoiceSession;
+    _autoVoiceSession = null;
+    _autoVoiceSessionFinished = false;
+    if (session != null) {
+      await session.cancel().catchError((Object _) {});
+    }
+    if (mounted &&
+        _voiceState.isPlaybackActive &&
+        _voiceState.playbackId == _activeAutoVoicePlaybackId) {
+      _setVoiceState(_voiceState.cancelPlayback());
+    }
+  }
+
+  void _resetAutoVoiceProgress() {
+    if (_voiceState.phase == AgentVoicePhase.error) {
+      _setVoiceState(const AgentVoiceState());
+    }
+    unawaited(_cancelActiveAutoVoiceSession());
+    _activeAutoVoicePlaybackId = null;
+    _autoVoiceAppendedText = '';
+    _autoVoiceHasSubmittedContent = false;
+    _autoVoiceSubmittedArtifactTexts.clear();
+    _autoVoiceSubmittedMediaNarrations.clear();
+  }
+
+  void _queueBlockedAutoVoiceReplay(AgentStreamRunState state) {
+    final current = _pendingAutoVoiceReplay;
+    final currentId = current == null
+        ? null
+        : _autoVoicePlaybackId(current.state);
+    final nextId = _autoVoicePlaybackId(state);
+    _pendingAutoVoiceReplay = _PendingAutoVoiceReplay(
+      state: state,
+      attempts: current != null && currentId == nextId ? current.attempts : 0,
+    );
+  }
+
+  void _tryRunPendingAutoVoiceReplay() {
+    if (!mounted || !_autoVoiceEnabled) return;
+    final pending = _pendingAutoVoiceReplay;
+    if (pending == null) return;
+    if (pending.attempts >= 3 || !_hasAutoVoicePlaybackContent(pending.state)) {
+      _pendingAutoVoiceReplay = null;
+      return;
+    }
+
+    _pendingAutoVoiceReplay = pending.incrementAttempts();
+    _maybeStartAutoVoicePlayback(pending.state);
+  }
+
+  bool _hasAutoVoicePlaybackContent(AgentStreamRunState state) {
+    return state.textContent.trim().isNotEmpty ||
+        _autoVoiceArtifactTextForState(state) != null ||
+        _autoVoiceMediaNarrationsForState(state).isNotEmpty;
+  }
+
+  void _cancelRun() {
+    if (!_state.isActive) return;
+    final activeState = _state;
+    final activeRequest = _activeRequest;
+    widget.voicePlaybackCoordinator?.cancel();
+    _dismissComposerKeyboardOnRunAccepted = false;
+    _pendingAutoVoiceReplay = null;
+    _resetAutoVoiceProgress();
+    _setRunState(activeState.requestCancel());
+    _persistInteractionState();
+    _cancelRunSubscription();
+    final hasServerRun =
+        widget.cancelClient != null &&
+        activeState.runId?.trim().isNotEmpty == true;
+    if (hasServerRun) {
+      _sendBestEffortServerCancel(activeState, activeRequest);
+    } else {
+      _setRunState(_state.applyCancelResult(acknowledged: true));
+      _persistInteractionState();
+    }
+  }
+
+  bool get _canReplayVoice =>
+      _autoVoiceEnabled &&
+      !_state.isActive &&
+      !_isComposerLocked &&
+      !_attachmentUploadPending &&
+      widget.voicePlaybackCoordinator != null &&
+      widget.voicePlaybackPlayer != null &&
+      !widget.voicePlaybackCoordinator!.isSuspended &&
+      (_isShowingFreshGreeting ||
+          (_canAutoVoicePlayback(_state.phase) &&
+              _hasAutoVoicePlaybackContent(_state)));
+
+  void _replayVoice() {
+    if (!_canReplayVoice) return;
+    _pendingAutoVoiceReplay = null;
+    _resetAutoVoiceProgress();
+    if (_isShowingFreshGreeting) {
+      _maybeStartGreetingVoicePlayback();
+    } else {
+      _maybeStartAutoVoicePlayback(_state);
+    }
+  }
+
+  void _toggleAutoVoice() {
+    setState(() {
+      final nextEnabled = !_autoVoiceEnabled;
+      if (!nextEnabled) {
+        widget.voicePlaybackCoordinator?.cancel();
+        _pendingAutoVoiceReplay = null;
+        _resetAutoVoiceProgress();
+        if (_voiceState.isPlaybackActive) {
+          _setVoiceState(_voiceState.cancelPlayback());
+        }
+      }
+      _autoVoiceEnabled = nextEnabled;
+    });
+    _persistInteractionState();
+  }
+
+  void _cancelRunSubscription() {
+    final acceptance = _runAcceptanceCompleter;
+    _runAcceptanceCompleter = null;
+    _completeRunAcceptance(acceptance, false);
+    final settlement = _runSettlementCompleter;
+    _runSettlementCompleter = null;
+    _completeRunSettlement(settlement);
+    final subscription = _runSubscription;
+    _runSubscription = null;
+    if (subscription == null) return;
+    unawaited(subscription.cancel().catchError((Object _) {}));
+  }
+
+  void _sendBestEffortServerCancel(
+    AgentStreamRunState activeState,
+    AgentStreamRequest? activeRequest,
+  ) {
+    final operation = _settleServerCancel(activeState, activeRequest);
+    _pendingServerCancel = operation;
+    unawaited(
+      operation.whenComplete(() {
+        if (identical(_pendingServerCancel, operation)) {
+          _pendingServerCancel = null;
+        }
+      }),
+    );
+  }
+
+  Future<void> _settleServerCancel(
+    AgentStreamRunState activeState,
+    AgentStreamRequest? activeRequest,
+  ) async {
+    AgentStreamCancelResult? result;
+    try {
+      result = await _cancelServerRun(
+        activeState,
+        activeRequest,
+      ).timeout(_completedReplyCancelTimeout);
+    } catch (error) {
+      result = AgentStreamCancelResult(acknowledged: false, error: error);
+    }
+    if (!mounted || result == null) return;
+    if (_state.phase != AgentStreamRunPhase.cancelRequested ||
+        _state.runId != activeState.runId) {
+      return;
+    }
+    final failure = result.acknowledged
+        ? null
+        : result.error ??
+              result.body ??
+              'Server cancellation was not acknowledged.';
+    _setRunState(
+      _state.applyCancelResult(
+        acknowledged: result.acknowledged,
+        statusCode: result.statusCode,
+        error: failure,
+      ),
+    );
+    _persistInteractionState();
+  }
+
+  Future<void> _waitForPendingServerCancel() async {
+    final pending = _pendingServerCancel;
+    if (pending == null) return;
+    _setFollowUpStartPending(true);
+    try {
+      await pending;
+    } finally {
+      if (mounted) {
+        _setFollowUpStartPending(false);
+      } else {
+        _followUpStartPending = false;
+      }
+    }
+  }
+
+  Future<AgentStreamCancelResult?> _cancelServerRun(
+    AgentStreamRunState activeState,
+    AgentStreamRequest? activeRequest,
+  ) async {
+    final cancelClient = widget.cancelClient;
+    if (cancelClient == null) return null;
+
+    final runId = activeState.runId;
+    if (runId == null || runId.trim().isEmpty) return null;
+
+    return cancelClient.cancel(
+      AgentStreamCancelRequest(
+        threadId: activeState.threadId ?? activeRequest?.threadId ?? '',
+        runId: runId,
+        reason: 'user_cancelled',
+      ),
+    );
+  }
+
+  Future<void> _confirmAction(AgentActionCardView action) async {
+    final actionClient = widget.actionClient;
+    if (actionClient == null || _pendingActionIds.contains(action.id)) return;
+    _pendingActionIds.add(action.id);
+    _localActionStatuses[action.id] = 'confirming';
+    _notifyActionStateChanged();
+
+    final result = await actionClient.confirm(
+      AgentStreamActionConfirmRequest(actionId: action.id),
+    );
+    if (!mounted) return;
+    _pendingActionIds.remove(action.id);
+    _localActionStatuses[action.id] = result.accepted
+        ? _acceptedConfirmStatus(result.actionStatus)
+        : 'failed';
+    _applyActionResultEvents(result.events);
+    _notifyActionStateChanged();
+    _persistInteractionState();
+    if (result.accepted && _shouldResumeAfterActionResult()) {
+      await _resumeCurrentRun(preserveActionState: true);
+    }
+  }
+
+  String _acceptedConfirmStatus(String? actionStatus) {
+    final normalized = actionStatus?.trim();
+    if (normalized == null || normalized.isEmpty || normalized == 'confirmed') {
+      return 'queued';
+    }
+    return normalized;
+  }
+
+  Future<void> _rejectAction(AgentActionCardView action) async {
+    final actionClient = widget.actionClient;
+    if (actionClient == null || _pendingActionIds.contains(action.id)) return;
+    _pendingActionIds.add(action.id);
+    _localActionStatuses[action.id] = 'rejecting';
+    _notifyActionStateChanged();
+
+    final result = await actionClient.reject(
+      AgentStreamActionRejectRequest(
+        actionId: action.id,
+        reason: 'user_rejected',
+      ),
+    );
+    if (!mounted) return;
+    _pendingActionIds.remove(action.id);
+    _localActionStatuses[action.id] = result.accepted
+        ? result.actionStatus ?? 'rejected'
+        : 'failed';
+    _applyActionResultEvents(result.events);
+    _notifyActionStateChanged();
+    _persistInteractionState();
+    if (result.accepted && _shouldResumeAfterActionResult()) {
+      await _resumeCurrentRun(preserveActionState: true);
+    }
+  }
+
+  bool _shouldResumeAfterActionResult() {
+    return switch (_state.phase) {
+      AgentStreamRunPhase.finished ||
+      AgentStreamRunPhase.cancelled ||
+      AgentStreamRunPhase.error => false,
+      _ => true,
+    };
+  }
+
+  void _applyActionResultEvents(List<AgentStreamEvent> events) {
+    if (events.isEmpty) return;
+    final previousState = _state;
+    var nextState = _state.phase == AgentStreamRunPhase.waitingForConfirmation
+        ? _state.copyWith(phase: AgentStreamRunPhase.streaming)
+        : _state;
+    for (final event in events) {
+      nextState = nextState.applyEvent(event);
+    }
+    _forwardNewApplicationEvents(previousState, nextState);
+    _setRunState(nextState);
+  }
+
+  void _forwardNewApplicationEvents(
+    AgentStreamRunState previous,
+    AgentStreamRunState next,
+  ) {
+    final handler = widget.onApplicationEvent;
+    if (handler == null || next.events.length <= previous.events.length) return;
+    for (final event in next.events.skip(previous.events.length)) {
+      handler(event);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) => LayoutBuilder(
+    builder: (context, pageConstraints) {
+      final page = ColoredBox(
+        key: const ValueKey('agent-hub-page'),
+        color: MomHomeTokens.background,
+        child: Stack(
+          children: [
+            const Positioned.fill(child: _AgentPageBackground()),
+            ValueListenableBuilder<_AgentResponseLightRailMode>(
+              valueListenable: _responseLightRailModeNotifier,
+              builder: (context, mode, child) {
+                if (mode == _AgentResponseLightRailMode.idle) {
+                  return const SizedBox.shrink();
+                }
+                return Positioned.fill(
+                  child: _AgentResponseLightRail(mode: mode),
+                );
+              },
+            ),
+            Column(
+              children: [
+                ListenableBuilder(
+                  listenable: Listenable.merge([
+                    _visibleReplyRunningNotifier,
+                    _sessionMutationPendingNotifier,
+                  ]),
+                  builder: (context, child) {
+                    final isVisibleReplyRunning =
+                        _visibleReplyRunningNotifier.value;
+                    final isSessionMutationPending =
+                        _sessionMutationPendingNotifier.value;
+                    return AgentHubTopBar(
+                      showControls: _interactionRestoreResolved,
+                      autoVoiceEnabled: _autoVoiceEnabled,
+                      isRunning:
+                          isVisibleReplyRunning ||
+                          isSessionMutationPending ||
+                          _attachmentUploadPending,
+                      onOpenConversations:
+                          widget.conversationRepository == null ||
+                              isSessionMutationPending ||
+                              _attachmentUploadPending
+                          ? null
+                          : _openConversationHistory,
+                      onToggleAutoVoice: _toggleAutoVoice,
+                      onNewSession: _startNewSession,
+                    );
+                  },
+                ),
+                if (_externalConversationRefreshPending)
+                  Container(
+                    key: const ValueKey('motion-feedback-pending'),
+                    width: double.infinity,
+                    margin: const EdgeInsets.fromLTRB(12, 0, 12, 8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 10,
+                    ),
+                    decoration: BoxDecoration(
+                      color: MomCozyColors.roseSoft,
+                      borderRadius: BorderRadius.circular(MomCozyRadii.card),
+                      border: Border.all(color: MomCozyColors.border),
+                    ),
+                    child: const Row(
+                      children: [
+                        SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: MomCozyColors.primary,
+                          ),
+                        ),
+                        SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            '正在生成本次体态评估反馈…',
+                            style: TextStyle(
+                              color: MomCozyColors.foreground,
+                              fontSize: MomCozyTypography.secondarySize,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                Expanded(
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      const verticalTranscriptPadding = 22.0 + 28.0;
+                      final transcriptMinHeight =
+                          constraints.maxHeight > verticalTranscriptPadding
+                          ? constraints.maxHeight - verticalTranscriptPadding
+                          : 0.0;
+
+                      return Stack(
+                        children: [
+                          CustomScrollView(
+                            key: const ValueKey('agent-chat-scroll-view'),
+                            controller: _chatScrollController,
+                            slivers: [
+                              if (_conversationHistoryBeforeSequence != null ||
+                                  _olderConversationHistoryLoading ||
+                                  _olderConversationHistoryError != null)
+                                SliverToBoxAdapter(
+                                  child: _AgentOlderConversationHistoryControl(
+                                    loading: _olderConversationHistoryLoading,
+                                    failed:
+                                        _olderConversationHistoryError != null,
+                                    onLoad: _loadOlderConversationHistory,
+                                  ),
+                                ),
+                              if (_historyMessages.isNotEmpty)
+                                SliverPadding(
+                                  padding: const EdgeInsets.fromLTRB(
+                                    16,
+                                    22,
+                                    16,
+                                    0,
+                                  ),
+                                  sliver: AgentHubHistorySliver(
+                                    messages: _historyMessages,
+                                    loadImageThumbnail:
+                                        widget.loadImageThumbnail,
+                                    loadImageContent: widget.loadImageContent,
+                                    productAssetRepository:
+                                        widget.productAssetRepository,
+                                    onArtifactAction: _handleArtifactAction,
+                                    onFormSubmit: _handleArtifactFormSubmit,
+                                    formSubmissionsListenable:
+                                        _formSubmissionsNotifier,
+                                    formPresentationSession:
+                                        _formPresentationSession,
+                                  ),
+                                ),
+                              if (_historyMessages.isNotEmpty)
+                                const SliverToBoxAdapter(
+                                  child: SizedBox(height: 18),
+                                ),
+                              if (_interactionRestoreResolved)
+                                SliverPadding(
+                                  padding: EdgeInsets.fromLTRB(
+                                    16,
+                                    _historyMessages.isEmpty ? 22 : 0,
+                                    16,
+                                    28,
+                                  ),
+                                  sliver: SliverToBoxAdapter(
+                                    child: ConstrainedBox(
+                                      constraints: BoxConstraints(
+                                        minHeight: _historyMessages.isEmpty
+                                            ? transcriptMinHeight
+                                            : 0,
+                                      ),
+                                      child: _AgentRunTranscriptListenable(
+                                        greeting: _greeting,
+                                        stateListenable: _runStateNotifier,
+                                        activeVoicePlaybackIdListenable:
+                                            _activeVoicePlaybackIdNotifier,
+                                        actionStateRevisionListenable:
+                                            _actionStateRevisionNotifier,
+                                        artifactPanelKey:
+                                            _activeArtifactPanelKey,
+                                        canRetryForState: _canRetryForState,
+                                        onRetry: _retryRun,
+                                        onArtifactAction: _handleArtifactAction,
+                                        onFormSubmit: _handleArtifactFormSubmit,
+                                        formSubmissionsListenable:
+                                            _formSubmissionsNotifier,
+                                        formPresentationSession:
+                                            _formPresentationSession,
+                                        // Generated quick replies are temporarily hidden
+                                        // while the follow-up interaction is redesigned.
+                                        onQuickReplySelected: null,
+                                        pendingActionIds: _pendingActionIds,
+                                        localActionStatuses:
+                                            _localActionStatuses,
+                                        productAssetRepository:
+                                            widget.productAssetRepository,
+                                        onConfirmAction:
+                                            widget.actionClient == null
+                                            ? null
+                                            : _confirmAction,
+                                        onRejectAction:
+                                            widget.actionClient == null
+                                            ? null
+                                            : _rejectAction,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              else
+                                SliverToBoxAdapter(
+                                  child: SizedBox(height: transcriptMinHeight),
+                                ),
+                            ],
+                          ),
+                          if (_showLatestButton)
+                            Positioned(
+                              right: 12,
+                              bottom: 12,
+                              child: FilledButton.tonalIcon(
+                                key: const ValueKey(
+                                  'agent-scroll-latest-button',
+                                ),
+                                onPressed: _scrollToLatestFromUser,
+                                icon: const Icon(
+                                  Icons.keyboard_arrow_down_rounded,
+                                ),
+                                label: const Text('回到最新消息'),
+                                style: FilledButton.styleFrom(
+                                  backgroundColor: MomHomeTokens.rose,
+                                  foregroundColor: Colors.white,
+                                  minimumSize: const Size(44, 44),
+                                  textStyle: MomHomeTokens.text(
+                                    13,
+                                    weight: FontWeight.w700,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                ),
+                              ),
+                            ),
+                        ],
+                      );
+                    },
+                  ),
+                ),
+                AnimatedBuilder(
+                  animation: Listenable.merge([
+                    _visibleReplyRunningNotifier,
+                    _composerLockedNotifier,
+                    _voiceStateNotifier,
+                  ]),
+                  builder: (context, child) {
+                    final isVisibleReplyRunning =
+                        _visibleReplyRunningNotifier.value;
+                    final isComposerLocked = _composerLockedNotifier.value;
+                    final isRestoring = !_interactionRestoreResolved;
+                    return Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Semantics(
+                          liveRegion: true,
+                          label: _voiceState.isPlaybackActive
+                              ? '\u8bed\u97f3\u64ad\u62a5\u5df2\u542f\u52a8\uff08AI \u5408\u6210\u8bed\u97f3\uff09'
+                              : '',
+                          child: const SizedBox.shrink(),
+                        ),
+                        if (_voiceState.phase == AgentVoicePhase.error)
+                          AgentVoiceNotice(
+                            onReplay: _canReplayVoice ? _replayVoice : null,
+                            onDismiss: () =>
+                                _setVoiceState(const AgentVoiceState()),
+                          ),
+                        if (_voiceState.phase != AgentVoicePhase.error ||
+                            pageConstraints.maxHeight >= 600)
+                          _AgentHomeShortcuts(
+                            onSelected:
+                                widget.runner == null ||
+                                    isComposerLocked ||
+                                    isRestoring ||
+                                    isVisibleReplyRunning ||
+                                    _attachmentUploadPending
+                                ? null
+                                : (prompt) {
+                                    _composerController.text = prompt;
+                                    unawaited(_sendMessage());
+                                  },
+                          ),
+                        AgentComposerBar(
+                          controller: _composerController,
+                          focusNode: _composerFocusNode,
+                          canSend:
+                              widget.runner != null &&
+                              !isComposerLocked &&
+                              !isRestoring,
+                          isRunning: isVisibleReplyRunning,
+                          isInputLocked: isComposerLocked || isRestoring,
+                          images: List<AgentStreamImageInput>.unmodifiable(
+                            _attachedImages,
+                          ),
+                          files: List<AgentStreamFileInput>.unmodifiable(
+                            _attachedFiles,
+                          ),
+                          canAttachImage:
+                              widget.pickImage != null &&
+                              !_attachmentUploadPending &&
+                              _canAddAttachment &&
+                              !isComposerLocked &&
+                              !isRestoring,
+                          canAttachFile:
+                              widget.pickDocument != null &&
+                              widget.mediaRepository != null &&
+                              !_attachmentUploadPending &&
+                              _canAddAttachment &&
+                              !isComposerLocked &&
+                              !isRestoring,
+                          isAttachmentPending: _attachmentUploadPending,
+                          attachmentUploadProgress: _attachmentUploadProgress,
+                          onChanged: (_) {},
+                          onSend: _sendMessage,
+                          onCancel: _cancelRun,
+                          onTakePhoto: () => unawaited(
+                            _attachImage(AgentImageInputSource.camera),
+                          ),
+                          onPickPhoto: () => unawaited(
+                            _attachImage(AgentImageInputSource.gallery),
+                          ),
+                          onPickFile: () => unawaited(_attachDocument()),
+                          onRemoveImage: _removeAttachedImage,
+                          onRemoveFile: _removeAttachedFile,
+                        ),
+                      ],
+                    );
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
+      );
+      return page;
+    },
+  );
+}
+
+class _AgentHomeShortcuts extends StatelessWidget {
+  const _AgentHomeShortcuts({required this.onSelected});
+  final ValueChanged<String>? onSelected;
+
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+    child: Align(
+      alignment: Alignment.centerLeft,
+      child: Wrap(
+        spacing: 8,
+        runSpacing: 4,
+        children: [
+          for (final action in const [
+            ('奶量分析', '帮我分析最近的奶量记录，告诉我可以先关注哪些变化。'),
+            ('产后康复评估', '我想做一次产后身体恢复评估，请先从最重要的问题开始问我。'),
+          ])
+            OutlinedButton(
+              onPressed: onSelected == null
+                  ? null
+                  : () => onSelected!(action.$2),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: MomHomeTokens.rose,
+                backgroundColor: MomHomeTokens.surface,
+                side: const BorderSide(color: MomHomeTokens.border),
+                minimumSize: const Size(0, 44),
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                textStyle: const TextStyle(
+                  fontFamily: 'NotoSansSCHome',
+                  fontFamilyFallback: MomCozyTypography.fontFamilyFallback,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              child: Text(action.$1),
+            ),
+        ],
+      ),
+    ),
+  );
+}
+
+class AgentHubTopBar extends StatelessWidget {
+  const AgentHubTopBar({
+    super.key,
+    required this.showControls,
+    required this.autoVoiceEnabled,
+    required this.isRunning,
+    this.onOpenConversations,
+    required this.onToggleAutoVoice,
+    required this.onNewSession,
+  });
+
+  final bool showControls;
+  final bool autoVoiceEnabled;
+  final bool isRunning;
+  final VoidCallback? onOpenConversations;
+  final VoidCallback onToggleAutoVoice;
+  final VoidCallback onNewSession;
+
+  @override
+  Widget build(BuildContext context) {
+    final largeText = MediaQuery.textScalerOf(context).scale(21) > 28;
+    final buttonStyle = IconButton.styleFrom(
+      foregroundColor: MomHomeTokens.rose,
+      backgroundColor: MomHomeTokens.surface,
+      side: BorderSide(color: MomHomeTokens.border),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      fixedSize: const Size.square(44),
+      padding: EdgeInsets.zero,
+    );
+    final controls = Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        if (showControls && onOpenConversations != null)
+          IconButton(
+            key: const ValueKey('agent-conversation-history-button'),
+            onPressed: onOpenConversations,
+            icon: const Icon(Icons.menu_rounded, size: 20),
+            tooltip: '打开会话历史',
+            style: buttonStyle,
+          )
+        else
+          const SizedBox.square(dimension: 44),
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (showControls) ...[
+              Semantics(
+                toggled: autoVoiceEnabled,
+                label: autoVoiceEnabled
+                    ? '\u5173\u95ed\u5b9e\u65f6\u8bed\u97f3\u64ad\u62a5'
+                    : '\u5f00\u542f\u5b9e\u65f6\u8bed\u97f3\u64ad\u62a5',
+                onTap: onToggleAutoVoice,
+                child: ExcludeSemantics(
+                  child: IconButton(
+                    key: const ValueKey('agent-auto-voice-button'),
+                    onPressed: onToggleAutoVoice,
+                    tooltip: autoVoiceEnabled ? '关闭实时语音播报' : '开启实时语音播报',
+                    isSelected: autoVoiceEnabled,
+                    style: IconButton.styleFrom(
+                      fixedSize: const Size.square(44),
+                      padding: EdgeInsets.zero,
+                    ),
+                    icon: Container(
+                      width: 40,
+                      height: 24,
+                      padding: const EdgeInsets.all(3),
+                      alignment: autoVoiceEnabled
+                          ? Alignment.centerRight
+                          : Alignment.centerLeft,
+                      decoration: BoxDecoration(
+                        color: autoVoiceEnabled
+                            ? MomHomeTokens.rose
+                            : MomHomeTokens.neutralSurface,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: DecoratedBox(
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                        ),
+                        child: SizedBox.square(
+                          dimension: 18,
+                          child: Icon(
+                            autoVoiceEnabled
+                                ? Icons.volume_up_outlined
+                                : Icons.volume_off_outlined,
+                            size: 12,
+                            color: MomHomeTokens.rose,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 6),
+              IconButton(
+                key: const ValueKey('agent-new-session-button'),
+                onPressed: isRunning ? null : onNewSession,
+                icon: const Icon(Icons.add_rounded, size: 20),
+                tooltip: '新建会话',
+                style: buttonStyle,
+              ),
+            ],
+          ],
+        ),
+      ],
+    );
+    final title = Text(
+      'Cozymate',
+      style: MomHomeTokens.text(22, weight: FontWeight.w700),
+    );
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: largeText
+          ? Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [title, const SizedBox(height: 8), controls],
+            )
+          : Row(
+              children: [
+                if (showControls && onOpenConversations != null) ...[
+                  IconButton(
+                    key: const ValueKey('agent-conversation-history-button'),
+                    onPressed: onOpenConversations,
+                    icon: const Icon(Icons.menu_rounded, size: 20),
+                    tooltip: '打开会话历史',
+                    style: buttonStyle,
+                  ),
+                  const SizedBox(width: 8),
+                ],
+                Expanded(child: title),
+                const SizedBox(width: 8),
+                controls.children.last,
+              ],
+            ),
+    );
+  }
+}
+
+class _AgentOlderConversationHistoryControl extends StatelessWidget {
+  const _AgentOlderConversationHistoryControl({
+    required this.loading,
+    required this.failed,
+    required this.onLoad,
+  });
+
+  final bool loading;
+  final bool failed;
+  final VoidCallback onLoad;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
+      child: Center(
+        child: loading
+            ? const SizedBox.square(
+                key: ValueKey('agent-conversation-older-loading'),
+                dimension: 20,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              )
+            : TextButton.icon(
+                key: ValueKey(
+                  failed
+                      ? 'agent-conversation-older-retry'
+                      : 'agent-conversation-older-load',
+                ),
+                onPressed: onLoad,
+                icon: Icon(
+                  failed
+                      ? Icons.refresh_rounded
+                      : Icons.keyboard_arrow_up_rounded,
+                  size: 18,
+                ),
+                label: Text(failed ? '加载失败，点击重试' : '加载更早消息'),
+              ),
+      ),
+    );
+  }
+}
+
+enum _AgentResponseLightRailMode { idle, loop, replying }
+
+_AgentResponseLightRailMode _agentResponseLightRailModeForState(
+  AgentStreamRunState state,
+) {
+  if (!state.isAwaitingVisibleReply) return _AgentResponseLightRailMode.idle;
+  final hasReplyText =
+      state.textContent.trim().isNotEmpty ||
+      state.provisionalTextContent.trim().isNotEmpty;
+  if (!hasReplyText) return _AgentResponseLightRailMode.loop;
+  if (_hasRunningToolWork(state)) {
+    return _AgentResponseLightRailMode.loop;
+  }
+  return _AgentResponseLightRailMode.replying;
+}
+
+bool _hasRunningToolWork(AgentStreamRunState state) {
+  return state.toolEvents.values.any(
+    (event) => event.type == 'tool.started' || event.type == 'tool.progress',
+  );
+}
+
+void _syncAgentDecoration(
+  BuildContext context,
+  AnimationController controller,
+) {
+  if (MediaQuery.disableAnimationsOf(context) ||
+      !TickerMode.valuesOf(context).enabled) {
+    controller.stop();
+    controller.value = 0;
+  } else if (!controller.isAnimating) {
+    controller.repeat();
+  }
+}
+
+class _AgentResponseLightRail extends StatefulWidget {
+  const _AgentResponseLightRail({required this.mode});
+
+  final _AgentResponseLightRailMode mode;
+
+  @override
+  State<_AgentResponseLightRail> createState() =>
+      _AgentResponseLightRailState();
+}
+
+class _AgentResponseLightRailState extends State<_AgentResponseLightRail>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: _durationForMode(widget.mode),
+    );
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _syncAgentDecoration(context, _controller);
+  }
+
+  @override
+  void didUpdateWidget(covariant _AgentResponseLightRail oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.mode == oldWidget.mode) return;
+    _controller.duration = _durationForMode(widget.mode);
+    _controller.stop();
+    _syncAgentDecoration(context, _controller);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return IgnorePointer(
+      key: const ValueKey('agent-response-light-rail'),
+      child: RepaintBoundary(
+        child: CustomPaint(
+          key: ValueKey('agent-response-light-rail-${widget.mode.name}'),
+          painter: _AgentResponseLightRailPainter(
+            mode: widget.mode,
+            animation: _controller,
+          ),
+          child: const SizedBox.expand(),
+        ),
+      ),
+    );
+  }
+
+  Duration _durationForMode(_AgentResponseLightRailMode mode) {
+    return switch (mode) {
+      _AgentResponseLightRailMode.loop => const Duration(milliseconds: 1050),
+      _AgentResponseLightRailMode.replying => const Duration(
+        milliseconds: 3200,
+      ),
+      _AgentResponseLightRailMode.idle => const Duration(milliseconds: 1600),
+    };
+  }
+}
+
+class _AgentResponseLightRailPainter extends CustomPainter {
+  const _AgentResponseLightRailPainter({
+    required this.mode,
+    required Animation<double> animation,
+  }) : _animation = animation,
+       super(repaint: animation);
+
+  final _AgentResponseLightRailMode mode;
+  final Animation<double> _animation;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    if (size.isEmpty) return;
+    final railWidth = math.min(size.width, MomCozyLayout.maxAppWidth);
+    final railRect = Rect.fromLTWH(
+      (size.width - railWidth) / 2,
+      0,
+      railWidth,
+      size.height,
+    );
+    final progress = _animation.value;
+    final modeStrength = mode == _AgentResponseLightRailMode.loop ? 1.0 : 0.62;
+
+    _paintPageGlow(canvas, railRect, progress, modeStrength);
+    _paintRailBorder(canvas, railRect, progress, modeStrength);
+  }
+
+  void _paintPageGlow(
+    Canvas canvas,
+    Rect rect,
+    double progress,
+    double modeStrength,
+  ) {
+    final breath = (math.sin(progress * math.pi * 2) + 1) / 2;
+    final opacity = (0.15 + breath * 0.12) * modeStrength;
+    final paint = Paint()
+      ..shader = RadialGradient(
+        center: const Alignment(0, -0.82),
+        radius: 1.15,
+        colors: [
+          MomCozyColors.violetSoft.withValues(alpha: opacity * 1.10),
+          MomCozyColors.violet.withValues(alpha: opacity * 0.44),
+          Colors.transparent,
+        ],
+        stops: const [0, 0.34, 1],
+      ).createShader(rect);
+    canvas.drawRect(rect, paint);
+
+    final lowerPaint = Paint()
+      ..shader = LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [
+          Colors.transparent,
+          MomCozyColors.violetSoft.withValues(alpha: opacity * 0.42),
+        ],
+      ).createShader(rect);
+    canvas.drawRect(rect, lowerPaint);
+  }
+
+  void _paintRailBorder(
+    Canvas canvas,
+    Rect rect,
+    double progress,
+    double modeStrength,
+  ) {
+    final borderWidth = mode == _AgentResponseLightRailMode.loop ? 2.5 : 2.0;
+    final outer = Path()..addRect(rect);
+    final inner = Path()..addRect(rect.deflate(borderWidth));
+    final border = Path.combine(PathOperation.difference, outer, inner);
+    final shader = SweepGradient(
+      transform: GradientRotation(progress * math.pi * 2),
+      colors: [
+        Colors.transparent,
+        MomCozyColors.violetSoft.withValues(alpha: 0.34 * modeStrength),
+        MomCozyColors.violet.withValues(alpha: 0.82 * modeStrength),
+        Colors.white.withValues(alpha: 0.92 * modeStrength),
+        MomCozyColors.warm.withValues(alpha: 0.54 * modeStrength),
+        Colors.transparent,
+        MomCozyColors.care.withValues(alpha: 0.42 * modeStrength),
+        Colors.white.withValues(alpha: 0.60 * modeStrength),
+        Colors.transparent,
+      ],
+      stops: const [0, 0.08, 0.13, 0.17, 0.23, 0.40, 0.55, 0.62, 1],
+    ).createShader(rect);
+    canvas.drawPath(border, Paint()..shader = shader);
+
+    final sideGlowPaint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = mode == _AgentResponseLightRailMode.loop ? 9 : 7
+      ..color = MomCozyColors.violet.withValues(
+        alpha: (mode == _AgentResponseLightRailMode.loop ? 0.14 : 0.08),
+      )
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8);
+    canvas.drawRect(rect.deflate(4), sideGlowPaint);
+  }
+
+  @override
+  bool shouldRepaint(covariant _AgentResponseLightRailPainter oldDelegate) {
+    return oldDelegate.mode != mode || oldDelegate._animation != _animation;
+  }
+}
+
+class _AgentPageBackground extends StatelessWidget {
+  const _AgentPageBackground();
+  @override
+  Widget build(BuildContext context) =>
+      const ColoredBox(color: MomHomeTokens.background);
+}
+
+class _AgentAssistantTurn extends StatelessWidget {
+  const _AgentAssistantTurn({
+    super.key,
+    required this.avatar,
+    required this.child,
+    this.fullWidth = false,
+  });
+  final Widget avatar;
+  final Widget child;
+  final bool fullWidth;
+  @override
+  Widget build(BuildContext context) {
+    if (fullWidth) return child;
+    if (MediaQuery.textScalerOf(context).scale(16) > 21) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            children: [
+              avatar,
+              const SizedBox(width: 8),
+              Text(
+                'Cozymate',
+                style: MomHomeTokens.text(12, color: MomHomeTokens.secondary),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          child,
+        ],
+      );
+    }
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        avatar,
+        const SizedBox(width: 10),
+        Expanded(child: child),
+      ],
+    );
+  }
+}
+
+class _AgentWelcomeCard extends StatelessWidget {
+  const _AgentWelcomeCard({required this.text, required this.avatar});
+  final String text;
+  final Widget avatar;
+  @override
+  Widget build(BuildContext context) {
+    final split = text.indexOf('\n');
+    final heading = split < 0 ? text : text.substring(0, split);
+    final body = split < 0 ? '' : text.substring(split).trim();
+    return MomSettingsCard(
+      gradient: MomHomeTokens.ai,
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Text(
+                heading,
+                style: MomHomeTokens.text(22, weight: FontWeight.w700),
+              ),
+            ),
+            const SizedBox(width: 12),
+            avatar,
+          ],
+        ),
+        if (body.isNotEmpty)
+          Text(body, style: MomHomeTokens.text(14, height: 1.55)),
+      ],
+    );
+  }
+}
+
+class _AgentAssistantBubble extends StatelessWidget {
+  const _AgentAssistantBubble({required this.child});
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => Container(
+    width: double.infinity,
+    padding: EdgeInsets.all(MediaQuery.sizeOf(context).width < 360 ? 13 : 16),
+    decoration: BoxDecoration(
+      color: MomHomeTokens.surface,
+      border: Border.all(color: MomHomeTokens.border),
+      borderRadius: const BorderRadius.only(
+        topLeft: Radius.circular(22),
+        topRight: Radius.circular(22),
+        bottomLeft: Radius.circular(22),
+        bottomRight: Radius.circular(22),
+      ),
+      boxShadow: const [
+        BoxShadow(
+          color: Color(0x032B2826),
+          blurRadius: 20,
+          offset: Offset(0, 5),
+        ),
+      ],
+    ),
+    child: child,
+  );
+}
+
+AgentStreamRequest _requestWithImages(
+  AgentStreamRequest request,
+  List<AgentStreamImageInput> images,
+) {
+  if (images.isEmpty) return request;
+  return AgentStreamRequest(
+    message: request.message,
+    threadId: request.threadId,
+    locale: request.locale,
+    images: [...request.images, ...images],
+    files: request.files,
+    metadata: request.metadata,
+    idempotencyKey: request.idempotencyKey,
+  );
+}
+
+AgentStreamRequest _requestWithFiles(
+  AgentStreamRequest request,
+  List<AgentStreamFileInput> files,
+) {
+  if (files.isEmpty) return request;
+  return AgentStreamRequest(
+    message: request.message,
+    threadId: request.threadId,
+    locale: request.locale,
+    images: request.images,
+    files: [...request.files, ...files],
+    metadata: request.metadata,
+    idempotencyKey: request.idempotencyKey,
+  );
+}
+
+List<int> _decodeAgentImageBytes(String dataUrl) {
+  final marker = dataUrl.indexOf(',');
+  if (marker < 0 || !dataUrl.substring(0, marker).contains(';base64')) {
+    throw const FormatException('Image input is not a Base64 data URL.');
+  }
+  final bytes = base64Decode(dataUrl.substring(marker + 1));
+  if (bytes.isEmpty) {
+    throw const FormatException('Image input is empty.');
+  }
+  return bytes;
+}
+
+AgentStreamRequest _requestWithIdempotencyKey(
+  AgentStreamRequest request,
+  String? idempotencyKey,
+) {
+  final normalized = idempotencyKey?.trim();
+  if (normalized == null || normalized.isEmpty) return request;
+  return AgentStreamRequest(
+    message: request.message,
+    threadId: request.threadId,
+    runId: request.runId,
+    afterSequence: request.afterSequence,
+    locale: request.locale,
+    images: request.images,
+    files: request.files,
+    metadata: request.metadata,
+    idempotencyKey: normalized,
+  );
+}
+
+AgentStreamRequest _requestWithMetadata(
+  AgentStreamRequest request,
+  Map<String, Object?> metadata,
+) {
+  if (metadata.isEmpty) return request;
+  return AgentStreamRequest(
+    message: request.message,
+    threadId: request.threadId,
+    runId: request.runId,
+    afterSequence: request.afterSequence,
+    locale: request.locale,
+    images: request.images,
+    files: request.files,
+    metadata: {...request.metadata, ...metadata},
+    idempotencyKey: request.idempotencyKey,
+  );
+}
+
+AgentStreamRequest _requestWithWorkflowReply(
+  AgentStreamRequest request,
+  Map<String, Object?>? workflowReply,
+) {
+  if (workflowReply == null || workflowReply.isEmpty) return request;
+  return _requestWithMetadata(request, {'workflow_reply': workflowReply});
+}
+
+AgentStreamRequest _requestWithThreadId(
+  AgentStreamRequest request,
+  String? threadId,
+) {
+  final normalizedThreadId = threadId?.trim();
+  if (request.threadId?.trim().isNotEmpty == true ||
+      normalizedThreadId == null ||
+      normalizedThreadId.isEmpty) {
+    return request;
+  }
+
+  return AgentStreamRequest(
+    message: request.message,
+    threadId: normalizedThreadId,
+    locale: request.locale,
+    images: request.images,
+    files: request.files,
+    metadata: request.metadata,
+    idempotencyKey: request.idempotencyKey,
+  );
+}
+
+enum AgentHubHistoryRole { user, assistant }
+
+class AgentHubHistoryMessage {
+  const AgentHubHistoryMessage({
+    required this.role,
+    required this.content,
+    this.runState,
+    this.images = const <AgentStreamImageInput>[],
+    this.files = const <AgentStreamFileInput>[],
+  });
+
+  final AgentHubHistoryRole role;
+  final String content;
+  final AgentStreamRunState? runState;
+  final List<AgentStreamImageInput> images;
+  final List<AgentStreamFileInput> files;
+
+  String get roleLabel {
+    return switch (role) {
+      AgentHubHistoryRole.user => '我',
+      AgentHubHistoryRole.assistant => '智能体',
+    };
+  }
+}
+
+AgentHubHistoryMessage _historyMessageFromSnapshot(
+  AgentHubHistorySnapshot snapshot,
+) {
+  return AgentHubHistoryMessage(
+    role: snapshot.role == 'user'
+        ? AgentHubHistoryRole.user
+        : AgentHubHistoryRole.assistant,
+    content: snapshot.content,
+    runState: snapshot.runState,
+    images: snapshot.images,
+    files: snapshot.files,
+  );
+}
+
+AgentHubHistoryMessage _historyMessageFromConversation(
+  AgentConversationMessage message,
+) {
+  return AgentHubHistoryMessage(
+    role: message.role == AgentConversationMessageRole.user
+        ? AgentHubHistoryRole.user
+        : AgentHubHistoryRole.assistant,
+    content: message.content,
+    runState: message.runState,
+    images: message.images,
+    files: message.files,
+  );
+}
+
+List<AgentHubHistoryMessage> _visibleAgentHubHistoryMessages(
+  Iterable<AgentHubHistoryMessage> messages,
+) {
+  return [
+    for (final message in messages)
+      if (message.role != AgentHubHistoryRole.user ||
+          !isMotionAssessmentCompletionPrompt(message.content))
+        message,
+  ];
+}
+
+List<AgentHubHistoryMessage> _historyMessagesFromOlderConversationPage(
+  AgentConversationHistory page,
+) {
+  final messages = page.messages
+      .map(_historyMessageFromConversation)
+      .toList(growable: true);
+  if (hasAgentConversationAssistantProjection(page.currentState)) {
+    messages.add(
+      AgentHubHistoryMessage(
+        role: AgentHubHistoryRole.assistant,
+        content: page.currentState.textContent,
+        runState: page.currentState,
+      ),
+    );
+  }
+  return messages;
+}
+
+AgentHubHistorySnapshot _historySnapshotFromMessage(
+  AgentHubHistoryMessage message,
+) {
+  return AgentHubHistorySnapshot(
+    role: message.role == AgentHubHistoryRole.user ? 'user' : 'assistant',
+    content: message.content,
+    runState: _historyRunStateForPersistence(message),
+    images: message.images,
+    files: message.files,
+  );
+}
+
+AgentStreamRunState? _historyRunStateForPersistence(
+  AgentHubHistoryMessage message,
+) {
+  final state = message.runState;
+  if (message.role != AgentHubHistoryRole.assistant || state == null) {
+    return null;
+  }
+
+  final structuredEvents = <String, AgentStreamEvent>{};
+  final artifactEvents = state.canPublishArtifactEvents
+      ? _artifactEventsForState(
+          state,
+        ).where((event) => event.type.startsWith('artifact.'))
+      : const <AgentStreamEvent>[];
+  for (final event in artifactEvents) {
+    final key = event.artifactId ?? event.eventId ?? event.mergeKey;
+    structuredEvents['artifact:$key'] = event;
+  }
+  final visibleActionTimeline = _actionEventsForState(
+    state,
+  ).toList(growable: false);
+  final finalActionIds = visibleActionTimeline
+      .where((event) => _isFinalActionStatus(_actionStatus(event)))
+      .map((event) => event.actionId?.trim())
+      .whereType<String>()
+      .where((actionId) => actionId.isNotEmpty)
+      .toSet();
+  for (var index = 0; index < visibleActionTimeline.length; index += 1) {
+    final event = visibleActionTimeline[index];
+    final actionId = event.actionId?.trim();
+    if (actionId == null || !finalActionIds.contains(actionId)) continue;
+    final eventKey = event.eventId ?? '$index:${event.type}';
+    structuredEvents['action:$actionId:$eventKey'] = event;
+  }
+  for (final event in state.events.where(AgentCitationMapper.isCitationEvent)) {
+    final key = event.messageId ?? event.eventId ?? event.mergeKey;
+    structuredEvents['citation:$key'] = event;
+  }
+  if (structuredEvents.isEmpty) return null;
+
+  final events = List<AgentStreamEvent>.unmodifiable(structuredEvents.values);
+  return AgentStreamRunState(
+    phase: AgentStreamRunPhase.finished,
+    events: events,
+    threadId: state.threadId,
+    runId: state.runId,
+    messageId: state.messageId,
+    textContent: message.content,
+    artifactEvents: {for (final event in events) ?event.artifactId: event},
+    actionEvents: {for (final event in events) ?event.actionId: event},
+    completedAssistantMessageReceived: true,
+  );
+}
+
+class AgentHubHistoryPanel extends StatelessWidget {
+  const AgentHubHistoryPanel({
+    super.key,
+    required this.messages,
+    this.productAssetRepository,
+    this.loadImageThumbnail,
+    this.loadImageContent,
+    this.onArtifactAction,
+    this.onFormSubmit,
+    this.formSubmissionsListenable,
+    this.formPresentationSession,
+  });
+
+  final List<AgentHubHistoryMessage> messages;
+  final ProductAssetRepository? productAssetRepository;
+  final AgentImageContentLoader? loadImageThumbnail;
+  final AgentImageContentLoader? loadImageContent;
+  final AgentArtifactActionHandler? onArtifactAction;
+  final AgentArtifactFormSubmitHandler? onFormSubmit;
+  final ValueListenable<Map<String, AgentArtifactFormSubmission>>?
+  formSubmissionsListenable;
+  final AgentArtifactFormPresentationSession? formPresentationSession;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      key: const ValueKey('agent-history-panel'),
+      children: [
+        for (var index = 0; index < messages.length; index++) ...[
+          _AgentHistoryBubble(
+            key: ValueKey('agent-history-$index'),
+            message: messages[index],
+            loadImageThumbnail: loadImageThumbnail,
+            loadImageContent: loadImageContent,
+            productAssetRepository: productAssetRepository,
+            onArtifactAction: onArtifactAction,
+            onFormSubmit: onFormSubmit,
+            formSubmissionsListenable: formSubmissionsListenable,
+            formPresentationSession: formPresentationSession,
+          ),
+          if (index != messages.length - 1) const SizedBox(height: 20),
+        ],
+      ],
+    );
+  }
+}
+
+class AgentHubHistorySliver extends StatelessWidget {
+  const AgentHubHistorySliver({
+    super.key,
+    required this.messages,
+    this.productAssetRepository,
+    this.loadImageThumbnail,
+    this.loadImageContent,
+    this.onArtifactAction,
+    this.onFormSubmit,
+    this.formSubmissionsListenable,
+    this.formPresentationSession,
+  });
+
+  final List<AgentHubHistoryMessage> messages;
+  final ProductAssetRepository? productAssetRepository;
+  final AgentImageContentLoader? loadImageThumbnail;
+  final AgentImageContentLoader? loadImageContent;
+  final AgentArtifactActionHandler? onArtifactAction;
+  final AgentArtifactFormSubmitHandler? onFormSubmit;
+  final ValueListenable<Map<String, AgentArtifactFormSubmission>>?
+  formSubmissionsListenable;
+  final AgentArtifactFormPresentationSession? formPresentationSession;
+
+  @override
+  Widget build(BuildContext context) {
+    final itemCount = messages.isEmpty ? 0 : messages.length * 2 - 1;
+    return SliverList(
+      key: const ValueKey('agent-history-panel'),
+      delegate: SliverChildBuilderDelegate((context, index) {
+        if (index.isOdd) return const SizedBox(height: 20);
+        final messageIndex = index ~/ 2;
+        return _AgentHistoryBubble(
+          key: ValueKey('agent-history-$messageIndex'),
+          message: messages[messageIndex],
+          loadImageThumbnail: loadImageThumbnail,
+          loadImageContent: loadImageContent,
+          productAssetRepository: productAssetRepository,
+          onArtifactAction: onArtifactAction,
+          onFormSubmit: onFormSubmit,
+          formSubmissionsListenable: formSubmissionsListenable,
+          formPresentationSession: formPresentationSession,
+        );
+      }, childCount: itemCount),
+    );
+  }
+}
+
+class _AgentHistoryBubble extends StatelessWidget {
+  const _AgentHistoryBubble({
+    super.key,
+    required this.message,
+    this.productAssetRepository,
+    this.loadImageThumbnail,
+    this.loadImageContent,
+    this.onArtifactAction,
+    this.onFormSubmit,
+    this.formSubmissionsListenable,
+    this.formPresentationSession,
+  });
+
+  final AgentHubHistoryMessage message;
+  final ProductAssetRepository? productAssetRepository;
+  final AgentImageContentLoader? loadImageThumbnail;
+  final AgentImageContentLoader? loadImageContent;
+  final AgentArtifactActionHandler? onArtifactAction;
+  final AgentArtifactFormSubmitHandler? onFormSubmit;
+  final ValueListenable<Map<String, AgentArtifactFormSubmission>>?
+  formSubmissionsListenable;
+  final AgentArtifactFormPresentationSession? formPresentationSession;
+
+  @override
+  Widget build(BuildContext context) {
+    final isUser = message.role == AgentHubHistoryRole.user;
+    final textStyle = MomHomeTokens.text(
+      16,
+      height: 1.65,
+      color: isUser ? Colors.white : MomHomeTokens.ink,
+    );
+
+    if (!isUser) {
+      final runState = message.runState;
+      if (runState != null) {
+        return AgentRunTranscript(
+          state: runState,
+          productAssetRepository: productAssetRepository,
+          onArtifactAction: onArtifactAction,
+          onFormSubmit: onFormSubmit,
+          formSubmissionsListenable: formSubmissionsListenable,
+          formPresentationSession: formPresentationSession,
+          allowFormAutoPresentation: false,
+        );
+      }
+
+      return _AgentAssistantTurn(
+        avatar: const _AgentAssistantAvatar(),
+        child: _AgentAssistantBubble(
+          child: AgentMessageMenu(
+            text: message.content,
+            child: AgentMarkdownText(
+              message.content,
+              style: textStyle,
+              onArtifactAction: onArtifactAction,
+              productAssetRepository: productAssetRepository,
+            ),
+          ),
+        ),
+      );
+    }
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        ConstrainedBox(
+          constraints: BoxConstraints(
+            maxWidth: math.min(
+              340,
+              MediaQuery.sizeOf(context).width -
+                  (MediaQuery.textScalerOf(context).scale(16) > 21 ? 32 : 78),
+            ),
+          ),
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              color: MomHomeTokens.rose,
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(22),
+                topRight: Radius.circular(22),
+                bottomLeft: Radius.circular(22),
+                bottomRight: Radius.circular(6),
+              ),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 17, vertical: 13),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  if (message.images.isNotEmpty)
+                    AgentSentImages(
+                      images: message.images,
+                      loadImageThumbnail: loadImageThumbnail,
+                      loadImageContent: loadImageContent,
+                    ),
+                  if (message.images.isNotEmpty && message.files.isNotEmpty)
+                    const SizedBox(height: 8),
+                  if (message.files.isNotEmpty)
+                    AgentSentFiles(files: message.files),
+                  if ((message.images.isNotEmpty || message.files.isNotEmpty) &&
+                      message.content.isNotEmpty)
+                    const SizedBox(height: 8),
+                  if (message.content.isNotEmpty)
+                    AgentMessageMenu(
+                      text: message.content,
+                      child: Text(message.content, style: textStyle),
+                    ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class AgentRunPhaseBadge extends StatelessWidget {
+  const AgentRunPhaseBadge({super.key, required this.phase});
+
+  final AgentStreamRunPhase phase;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final foreground = _phaseForeground(colorScheme);
+    final background = _phaseBackground(colorScheme);
+
+    return Semantics(
+      label: _phaseLabel,
+      child: Container(
+        key: const ValueKey('agent-run-phase-badge'),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        decoration: BoxDecoration(
+          color: background,
+          borderRadius: BorderRadius.circular(MomCozyRadii.pill),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(_phaseIcon, size: 16, color: foreground),
+            const SizedBox(width: 6),
+            Text(
+              _phaseLabel,
+              style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                color: foreground,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String get _phaseLabel {
+    return switch (phase) {
+      AgentStreamRunPhase.idle => '准备就绪',
+      AgentStreamRunPhase.streaming => '正在回复',
+      AgentStreamRunPhase.waitingForConfirmation => '待确认',
+      AgentStreamRunPhase.finished => '已完成',
+      AgentStreamRunPhase.error => '需要重试',
+      AgentStreamRunPhase.disconnected => '连接中断',
+      AgentStreamRunPhase.cancelRequested => '正在停止',
+      AgentStreamRunPhase.cancelled => '已停止',
+    };
+  }
+
+  IconData get _phaseIcon {
+    return switch (phase) {
+      AgentStreamRunPhase.idle => Icons.bolt_outlined,
+      AgentStreamRunPhase.streaming => Icons.sync_rounded,
+      AgentStreamRunPhase.waitingForConfirmation => Icons.fact_check_outlined,
+      AgentStreamRunPhase.finished => Icons.check_circle_outline_rounded,
+      AgentStreamRunPhase.error => Icons.error_outline_rounded,
+      AgentStreamRunPhase.disconnected => Icons.wifi_off_rounded,
+      AgentStreamRunPhase.cancelRequested => Icons.stop_circle_outlined,
+      AgentStreamRunPhase.cancelled => Icons.pause_circle_outline_rounded,
+    };
+  }
+
+  Color _phaseForeground(ColorScheme colorScheme) {
+    return switch (phase) {
+      AgentStreamRunPhase.error ||
+      AgentStreamRunPhase.disconnected => colorScheme.error,
+      AgentStreamRunPhase.finished => colorScheme.primary,
+      AgentStreamRunPhase.waitingForConfirmation => colorScheme.tertiary,
+      AgentStreamRunPhase.cancelRequested ||
+      AgentStreamRunPhase.cancelled => colorScheme.onSurfaceVariant,
+      _ => colorScheme.primary,
+    };
+  }
+
+  Color _phaseBackground(ColorScheme colorScheme) {
+    return switch (phase) {
+      AgentStreamRunPhase.error || AgentStreamRunPhase.disconnected =>
+        colorScheme.errorContainer.withValues(alpha: 0.5),
+      AgentStreamRunPhase.waitingForConfirmation =>
+        colorScheme.tertiaryContainer.withValues(alpha: 0.58),
+      AgentStreamRunPhase.cancelRequested ||
+      AgentStreamRunPhase.cancelled => MomCozyColors.muted,
+      _ => MomCozyColors.roseSoft.withValues(alpha: 0.86),
+    };
+  }
+}
+
+class _AgentRunTranscriptListenable extends StatefulWidget {
+  const _AgentRunTranscriptListenable({
+    required this.greeting,
+    required this.stateListenable,
+    required this.activeVoicePlaybackIdListenable,
+    required this.actionStateRevisionListenable,
+    this.artifactPanelKey,
+    required this.canRetryForState,
+    this.onRetry,
+    this.onArtifactAction,
+    this.onFormSubmit,
+    required this.formSubmissionsListenable,
+    required this.formPresentationSession,
+    this.onQuickReplySelected,
+    required this.pendingActionIds,
+    required this.localActionStatuses,
+    this.productAssetRepository,
+    this.onConfirmAction,
+    this.onRejectAction,
+  });
+
+  final String greeting;
+  final ValueListenable<AgentStreamRunState> stateListenable;
+  final ValueListenable<String?> activeVoicePlaybackIdListenable;
+  final ValueListenable<int> actionStateRevisionListenable;
+  final Key? artifactPanelKey;
+  final bool Function(AgentStreamRunState state) canRetryForState;
+  final VoidCallback? onRetry;
+  final AgentArtifactActionHandler? onArtifactAction;
+  final AgentArtifactFormSubmitHandler? onFormSubmit;
+  final ValueListenable<Map<String, AgentArtifactFormSubmission>>
+  formSubmissionsListenable;
+  final AgentArtifactFormPresentationSession formPresentationSession;
+  final ValueChanged<String>? onQuickReplySelected;
+  final Set<String> pendingActionIds;
+  final Map<String, String> localActionStatuses;
+  final ProductAssetRepository? productAssetRepository;
+  final ValueChanged<AgentActionCardView>? onConfirmAction;
+  final ValueChanged<AgentActionCardView>? onRejectAction;
+
+  @override
+  State<_AgentRunTranscriptListenable> createState() =>
+      _AgentRunTranscriptListenableState();
+}
+
+class _AgentRunTranscriptListenableState
+    extends State<_AgentRunTranscriptListenable> {
+  Object? _artifactSourceIdentity;
+  List<AgentArtifactCardView> _artifactCards = const <AgentArtifactCardView>[];
+  Object? _actionSourceIdentity;
+  int? _actionRevision;
+  List<AgentActionCardView> _actionCards = const <AgentActionCardView>[];
+  Object? _citationSourceIdentity;
+  String? _citationMessageId;
+  List<AgentCitationView> _citations = const <AgentCitationView>[];
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: Listenable.merge([
+        widget.stateListenable,
+        widget.activeVoicePlaybackIdListenable,
+        widget.actionStateRevisionListenable,
+      ]),
+      builder: (context, child) {
+        final state = widget.stateListenable.value;
+        final actionRevision = widget.actionStateRevisionListenable.value;
+        return AgentRunTranscript(
+          state: state,
+          greeting: widget.greeting,
+          activeVoicePlaybackId: widget.activeVoicePlaybackIdListenable.value,
+          canRetry: widget.canRetryForState(state),
+          onRetry: widget.onRetry,
+          onArtifactAction: widget.onArtifactAction,
+          onFormSubmit: widget.onFormSubmit,
+          formSubmissionsListenable: widget.formSubmissionsListenable,
+          formPresentationSession: widget.formPresentationSession,
+          allowFormAutoPresentation: true,
+          artifactPanelKey: widget.artifactPanelKey,
+          onQuickReplySelected: widget.onQuickReplySelected,
+          pendingActionIds: widget.pendingActionIds,
+          productAssetRepository: widget.productAssetRepository,
+          artifactCards: _artifactCardsForState(state),
+          actionCards: _actionCardsForState(state, actionRevision),
+          citations: _citationsForState(state),
+          onConfirmAction: widget.onConfirmAction,
+          onRejectAction: widget.onRejectAction,
+        );
+      },
+    );
+  }
+
+  List<AgentArtifactCardView> _artifactCardsForState(
+    AgentStreamRunState state,
+  ) {
+    if (!state.canPublishArtifactEvents) return const [];
+    final identity = state.artifactEvents.isNotEmpty
+        ? state.artifactEvents
+        : state.events;
+    if (identical(identity, _artifactSourceIdentity)) {
+      return _artifactCards;
+    }
+    _artifactSourceIdentity = identity;
+    _artifactCards = _artifactCardsFromEvents(_artifactEventsForState(state));
+    return _artifactCards;
+  }
+
+  List<AgentActionCardView> _actionCardsForState(
+    AgentStreamRunState state,
+    int actionRevision,
+  ) {
+    final identity = state.actionEvents.isNotEmpty
+        ? state.actionEvents
+        : state.events;
+    if (identical(identity, _actionSourceIdentity) &&
+        actionRevision == _actionRevision) {
+      return _actionCards;
+    }
+    _actionSourceIdentity = identity;
+    _actionRevision = actionRevision;
+    _actionCards = _actionCardsFromEvents(
+      _actionEventsForState(state),
+      widget.localActionStatuses,
+    );
+    return _actionCards;
+  }
+
+  List<AgentCitationView> _citationsForState(AgentStreamRunState state) {
+    if (identical(state.events, _citationSourceIdentity) &&
+        state.messageId == _citationMessageId) {
+      return _citations;
+    }
+    _citationSourceIdentity = state.events;
+    _citationMessageId = state.messageId;
+    _citations = AgentCitationMapper.citationsFromEvents(
+      state.events,
+      messageId: state.messageId,
+    );
+    return _citations;
+  }
+}
+
+class AgentRunTranscript extends StatelessWidget {
+  const AgentRunTranscript({
+    super.key,
+    required this.state,
+    this.greeting = agentHubDefaultGreeting,
+    this.activeVoicePlaybackId,
+    this.canRetry = false,
+    this.onRetry,
+    this.onArtifactAction,
+    this.onFormSubmit,
+    this.formSubmissionsListenable,
+    this.formPresentationSession,
+    this.allowFormAutoPresentation = false,
+    this.artifactPanelKey,
+    this.onQuickReplySelected,
+    this.pendingActionIds = const <String>{},
+    this.localActionStatuses = const <String, String>{},
+    this.productAssetRepository,
+    this.artifactCards,
+    this.actionCards,
+    this.citations,
+    this.onConfirmAction,
+    this.onRejectAction,
+  });
+
+  final AgentStreamRunState state;
+  final String greeting;
+  final String? activeVoicePlaybackId;
+  final bool canRetry;
+  final VoidCallback? onRetry;
+  final AgentArtifactActionHandler? onArtifactAction;
+  final AgentArtifactFormSubmitHandler? onFormSubmit;
+  final ValueListenable<Map<String, AgentArtifactFormSubmission>>?
+  formSubmissionsListenable;
+  final AgentArtifactFormPresentationSession? formPresentationSession;
+  final bool allowFormAutoPresentation;
+  final Key? artifactPanelKey;
+  final ValueChanged<String>? onQuickReplySelected;
+  final Set<String> pendingActionIds;
+  final Map<String, String> localActionStatuses;
+  final ProductAssetRepository? productAssetRepository;
+  final List<AgentArtifactCardView>? artifactCards;
+  final List<AgentActionCardView>? actionCards;
+  final List<AgentCitationView>? citations;
+  final ValueChanged<AgentActionCardView>? onConfirmAction;
+  final ValueChanged<AgentActionCardView>? onRejectAction;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+    final text = _primaryText;
+    final allowsSupplementaryContent =
+        state.phase != AgentStreamRunPhase.error &&
+        state.phase != AgentStreamRunPhase.cancelled;
+    final artifactCards =
+        allowsSupplementaryContent && state.canPublishArtifactEvents
+        ? this.artifactCards ??
+              _artifactCardsFromEvents(_artifactEventsForState(state))
+        : const <AgentArtifactCardView>[];
+    final canShowFormEntries =
+        state.hasCompletedAssistantMessage ||
+        (!state.isActive && state.textContent.trim().isNotEmpty);
+    final visibleArtifactCards = artifactCards
+        .where((card) => !card.isForm || canShowFormEntries)
+        .toList(growable: false);
+    final actionCards = allowsSupplementaryContent
+        ? this.actionCards ??
+              _actionCardsFromEvents(
+                _actionEventsForState(state),
+                localActionStatuses,
+              )
+        : const <AgentActionCardView>[];
+    final citations = allowsSupplementaryContent
+        ? this.citations ??
+              AgentCitationMapper.citationsFromEvents(
+                state.events,
+                messageId: state.messageId,
+              )
+        : const <AgentCitationView>[];
+    final quickReplies = state.quickReplies;
+    final artifactActionForState = onArtifactAction == null
+        ? null
+        : (AgentArtifactActionView action) {
+            onArtifactAction!(action);
+          };
+    final shouldRenderQuickReplies =
+        allowsSupplementaryContent &&
+        quickReplies.length == 3 &&
+        !state.isAwaitingVisibleReply &&
+        !artifactCards.any((card) => card.isForm) &&
+        onQuickReplySelected != null;
+    final avatarMode = _avatarMode;
+    final loopDecor = _loopDecorState;
+    final thinkingNoteTitle = loopDecor.thinkingTitle;
+    final statusLineTitle = loopDecor.statusTitle;
+    final shouldRenderPrimaryText = _shouldRenderPrimaryText;
+    final isFailure =
+        state.phase == AgentStreamRunPhase.error ||
+        state.phase == AgentStreamRunPhase.disconnected;
+    final showFailureFallback = isFailure && state.textContent.trim().isEmpty;
+    final primaryTextStyle = MomHomeTokens.text(16, height: 1.65);
+    final isGreeting =
+        state.phase == AgentStreamRunPhase.idle &&
+        state.textContent.trim().isEmpty;
+
+    return _AgentAssistantTurn(
+      key: const ValueKey('agent-run-transcript'),
+      avatar: _AgentAssistantAvatar(mode: avatarMode),
+      fullWidth: isGreeting,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (statusLineTitle != null) ...[
+            AgentRunStatusLine(title: statusLineTitle),
+            if (thinkingNoteTitle != null || shouldRenderPrimaryText)
+              const SizedBox(height: 5),
+          ],
+          if (thinkingNoteTitle != null) ...[
+            AgentThinkingNote(title: thinkingNoteTitle),
+            if (shouldRenderPrimaryText) const SizedBox(height: 8),
+          ],
+          if (showFailureFallback)
+            Semantics(
+              liveRegion: true,
+              child: const Text(
+                '这次没有拿到回复。',
+                key: ValueKey('agent-run-failure-fallback'),
+                style: TextStyle(
+                  fontSize: 14,
+                  height: 1.45,
+                  color: MomCozyColors.danger,
+                ),
+              ),
+            )
+          else if (shouldRenderPrimaryText)
+            Align(
+              alignment: Alignment.centerLeft,
+              child: isGreeting
+                  ? _AgentWelcomeCard(
+                      text: text,
+                      avatar: _AgentAssistantAvatar(mode: avatarMode),
+                    )
+                  : _AgentAssistantBubble(
+                      child: AgentMessageMenu(
+                        text: state.textContent,
+                        enabled:
+                            !state.isActive &&
+                            state.phase !=
+                                AgentStreamRunPhase.waitingForConfirmation,
+                        onRetry: allowsSupplementaryContent && canRetry
+                            ? onRetry
+                            : null,
+                        child: AgentMarkdownText(
+                          text,
+                          style: primaryTextStyle,
+                          onArtifactAction: onArtifactAction,
+                          productAssetRepository: productAssetRepository,
+                          citations: citations,
+                        ),
+                      ),
+                    ),
+            ),
+          if (_supportingText != null) ...[
+            const SizedBox(height: 9),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(
+                  _supportingIcon,
+                  size: 18,
+                  color: _supportingColor(colorScheme),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    _supportingText!,
+                    style: textTheme.bodySmall?.copyWith(
+                      fontSize: 12,
+                      height: 1.4,
+                      color: _supportingColor(colorScheme),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+          if (allowsSupplementaryContent && canRetry) ...[
+            const SizedBox(height: 12),
+            FilledButton.tonalIcon(
+              key: const ValueKey('agent-retry-button'),
+              onPressed: onRetry,
+              icon: const Icon(Icons.refresh_rounded),
+              label: const Text('重试'),
+              style: FilledButton.styleFrom(
+                backgroundColor: MomHomeTokens.surface,
+                foregroundColor: MomHomeTokens.rose,
+                minimumSize: const Size(44, 44),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 10,
+                ),
+                textStyle: const TextStyle(
+                  fontFamily: MomCozyTypography.fontFamily,
+                  fontFamilyFallback: MomCozyTypography.fontFamilyFallback,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+              ),
+            ),
+          ],
+          if (visibleArtifactCards.isNotEmpty) ...[
+            const SizedBox(height: 16),
+            AgentArtifactPanel(
+              key: artifactPanelKey,
+              cards: visibleArtifactCards,
+              onAction: artifactActionForState,
+              onFormSubmit: onFormSubmit,
+              formSubmissionsListenable: formSubmissionsListenable,
+              formPresentationSession: formPresentationSession,
+              autoPresentForms:
+                  allowFormAutoPresentation &&
+                  state.hasCompletedAssistantMessage,
+            ),
+          ],
+          if (actionCards.isNotEmpty) ...[
+            const SizedBox(height: 16),
+            AgentActionPanel(
+              actions: actionCards,
+              pendingActionIds: pendingActionIds,
+              onConfirm: onConfirmAction,
+              onReject: onRejectAction,
+            ),
+          ],
+          if (citations.isNotEmpty) ...[
+            const SizedBox(height: 16),
+            AgentCitationList(citations: citations, onAction: onArtifactAction),
+          ],
+          if (shouldRenderQuickReplies) ...[
+            SizedBox(height: citations.isNotEmpty ? 20 : 16),
+            AgentQuickRepliesBar(
+              replies: quickReplies,
+              onSelected: onQuickReplySelected!,
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  String get _primaryText {
+    return _agentAssistantTextForState(state, greeting: greeting);
+  }
+
+  bool get _shouldRenderPrimaryText {
+    if (state.phase == AgentStreamRunPhase.streaming &&
+        state.textContent.trim().isEmpty) {
+      return false;
+    }
+    return true;
+  }
+
+  _AgentLoopDecorState get _loopDecorState {
+    final supportsLoopDecor =
+        state.phase == AgentStreamRunPhase.streaming ||
+        state.phase == AgentStreamRunPhase.waitingForConfirmation ||
+        state.phase == AgentStreamRunPhase.error;
+    if (!supportsLoopDecor || state.hasCompletedAssistantMessage) {
+      return const _AgentLoopDecorState();
+    }
+    if (state.phase == AgentStreamRunPhase.streaming &&
+        state.textContent.trim().isNotEmpty) {
+      return const _AgentLoopDecorState(statusTitle: '正在组织答案～');
+    }
+    if (state.textContent.trim().isNotEmpty) {
+      return const _AgentLoopDecorState();
+    }
+    return _agentLoopDecorStateFromEvents(state.events);
+  }
+
+  String? get _supportingText {
+    if (state.phase == AgentStreamRunPhase.waitingForConfirmation) {
+      return '等待确认后继续';
+    }
+    if (state.phase == AgentStreamRunPhase.disconnected) {
+      return _safeAgentErrorText(state.errorMessage, fallback: '连接暂时中断，可重试') ??
+          '连接暂时中断，可重试';
+    }
+    if (state.phase == AgentStreamRunPhase.error) {
+      return _safeAgentErrorText(
+            state.errorMessage,
+            fallback: '服务执行失败，请稍后重试',
+          ) ??
+          '服务执行失败，请稍后重试';
+    }
+    if (state.phase == AgentStreamRunPhase.cancelRequested) {
+      return '正在请求服务端停止';
+    }
+    if (state.phase == AgentStreamRunPhase.cancelled) {
+      return state.cancelAcknowledged ? '已停止本次回复' : '本地已停止，服务端取消未确认';
+    }
+    return null;
+  }
+
+  IconData get _supportingIcon {
+    return switch (state.phase) {
+      AgentStreamRunPhase.streaming => Icons.more_horiz_rounded,
+      AgentStreamRunPhase.waitingForConfirmation => Icons.fact_check_outlined,
+      AgentStreamRunPhase.disconnected => Icons.wifi_off_rounded,
+      AgentStreamRunPhase.error => Icons.error_outline_rounded,
+      AgentStreamRunPhase.cancelled => Icons.pause_circle_outline_rounded,
+      _ => Icons.info_outline_rounded,
+    };
+  }
+
+  Color _supportingColor(ColorScheme colorScheme) {
+    return switch (state.phase) {
+      AgentStreamRunPhase.disconnected ||
+      AgentStreamRunPhase.error => colorScheme.error,
+      AgentStreamRunPhase.waitingForConfirmation => colorScheme.tertiary,
+      _ => colorScheme.primary,
+    };
+  }
+
+  _AgentAssistantAvatarMode? get _avatarMode {
+    final playbackId = activeVoicePlaybackId?.trim();
+    final isDefaultGreeting =
+        state.phase == AgentStreamRunPhase.idle &&
+        state.textContent.trim().isEmpty;
+    if (playbackId == _agentDefaultGreetingPlaybackId && isDefaultGreeting) {
+      return _AgentAssistantAvatarMode.speaking;
+    }
+    final statePlaybackIds = [
+      state.messageId,
+      state.runId,
+      state.threadId,
+    ].map((id) => id?.trim()).whereType<String>().where((id) => id.isNotEmpty);
+    if (playbackId != null &&
+        playbackId.isNotEmpty &&
+        statePlaybackIds.contains(playbackId)) {
+      return _AgentAssistantAvatarMode.speaking;
+    }
+    if (state.isAwaitingVisibleReply) {
+      return _AgentAssistantAvatarMode.thinking;
+    }
+    return null;
+  }
+}
+
+class AgentQuickRepliesBar extends StatelessWidget {
+  const AgentQuickRepliesBar({
+    super.key,
+    required this.replies,
+    required this.onSelected,
+  });
+
+  final List<String> replies;
+  final ValueChanged<String> onSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    if (replies.length != 3) return const SizedBox.shrink();
+
+    final textTheme = Theme.of(context).textTheme;
+    final labelStyle = textTheme.labelSmall?.copyWith(
+      color: MomCozyColors.mutedForeground,
+      fontWeight: FontWeight.w600,
+      height: 1,
+    );
+    final replyStyle = textTheme.bodySmall?.copyWith(
+      color: MomCozyColors.foreground,
+      fontSize: MomCozyTypography.secondarySize,
+      fontWeight: FontWeight.w600,
+      height: 1.22,
+    );
+
+    return Column(
+      key: const ValueKey('agent-quick-replies'),
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 2, bottom: 8),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                key: const ValueKey('agent-quick-replies-title-line'),
+                width: 16,
+                height: 1,
+                decoration: BoxDecoration(
+                  color: MomCozyColors.border,
+                  borderRadius: BorderRadius.circular(MomCozyRadii.pill),
+                ),
+              ),
+              const SizedBox(width: 6),
+              Text(
+                '猜你想说',
+                key: const ValueKey('agent-quick-replies-title'),
+                style: labelStyle,
+              ),
+            ],
+          ),
+        ),
+        Wrap(
+          spacing: 6,
+          runSpacing: 6,
+          children: [
+            for (var index = 0; index < replies.length; index++)
+              _AgentQuickReplyPill(
+                key: ValueKey('agent-quick-reply-$index'),
+                text: replies[index],
+                textStyle: replyStyle,
+                onSelected: onSelected,
+              ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _AgentQuickReplyPill extends StatelessWidget {
+  const _AgentQuickReplyPill({
+    super.key,
+    required this.text,
+    required this.textStyle,
+    required this.onSelected,
+  });
+
+  final String text;
+  final TextStyle? textStyle;
+  final ValueChanged<String> onSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () => onSelected(text),
+        borderRadius: BorderRadius.circular(MomCozyRadii.pill),
+        splashColor: MomCozyColors.roseSoft,
+        highlightColor: MomCozyColors.roseSoft.withValues(alpha: 0.58),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: 34, maxWidth: 260),
+          child: Ink(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+            decoration: BoxDecoration(
+              color: MomCozyColors.card,
+              borderRadius: BorderRadius.circular(MomCozyRadii.pill),
+              border: Border.all(color: MomCozyColors.border),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Flexible(
+                  child: Text(
+                    text,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: textStyle,
+                  ),
+                ),
+                const SizedBox(width: 6),
+                const Icon(
+                  Icons.chevron_right_rounded,
+                  key: ValueKey('agent-quick-reply-chevron'),
+                  size: 16,
+                  color: MomCozyColors.primary,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class AgentCitationList extends StatelessWidget {
+  const AgentCitationList({super.key, required this.citations, this.onAction});
+
+  final List<AgentCitationView> citations;
+  final AgentArtifactActionHandler? onAction;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    return Column(
+      key: const ValueKey('agent-citation-list'),
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            const SizedBox(
+              width: 16,
+              child: Divider(height: 1, color: MomCozyColors.border),
+            ),
+            const SizedBox(width: 6),
+            Text(
+              '专业信息源',
+              style: textTheme.labelSmall?.copyWith(
+                color: MomCozyColors.mutedForeground,
+                fontSize: MomCozyTypography.microSize,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 6),
+        for (var index = 0; index < citations.length; index++) ...[
+          _AgentCitationLink(
+            citation: citations[index],
+            onTap: onAction == null
+                ? null
+                : () => onAction!(
+                    AgentArtifactActionView(
+                      label: citations[index].title,
+                      icon: Icons.open_in_new_rounded,
+                      kind: 'citation',
+                      value: citations[index].url.toString(),
+                      externalUri: citations[index].url,
+                    ),
+                  ),
+          ),
+          if (index < citations.length - 1) const SizedBox(height: 4),
+        ],
+      ],
+    );
+  }
+}
+
+class _AgentCitationLink extends StatelessWidget {
+  const _AgentCitationLink({required this.citation, this.onTap});
+
+  final AgentCitationView citation;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(top: 2),
+          child: Text(
+            '[${citation.index}]',
+            style: textTheme.labelSmall?.copyWith(
+              color: MomCozyColors.mutedForeground,
+              fontSize: MomCozyTypography.labelSize,
+              height: 1.35,
+            ),
+          ),
+        ),
+        const SizedBox(width: 6),
+        Expanded(
+          child: InkWell(
+            key: ValueKey('agent-citation-link-${citation.index}'),
+            onTap: onTap,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 2),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    citation.displayText,
+                    overflow: TextOverflow.visible,
+                    style: textTheme.labelSmall?.copyWith(
+                      color: MomCozyColors.blue,
+                      fontSize: MomCozyTypography.labelSize,
+                      height: 1.35,
+                      decoration: TextDecoration.underline,
+                      decorationColor: MomCozyColors.border,
+                    ),
+                  ),
+                  if (_citationMetadata(citation) case final metadata?) ...[
+                    const SizedBox(height: 2),
+                    Text(
+                      metadata,
+                      style: textTheme.labelSmall?.copyWith(
+                        color: MomCozyColors.mutedForeground,
+                        fontSize: MomCozyTypography.microSize,
+                        height: 1.3,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+String? _citationMetadata(AgentCitationView citation) {
+  final source = citation.source?.trim();
+  final updatedAt = citation.updatedAt?.trim();
+  final parts = <String>[
+    if (source != null && source.isNotEmpty) source,
+    if (updatedAt != null && updatedAt.isNotEmpty) '更新 $updatedAt',
+  ];
+  return parts.isEmpty ? null : parts.join(' · ');
+}
+
+class AgentMarkdownText extends StatelessWidget {
+  const AgentMarkdownText(
+    this.text, {
+    super.key,
+    this.style,
+    this.onArtifactAction,
+    this.productAssetRepository,
+    this.citations = const <AgentCitationView>[],
+    this.parseMarkdown = true,
+  });
+
+  final String text;
+  final TextStyle? style;
+  final AgentArtifactActionHandler? onArtifactAction;
+  final ProductAssetRepository? productAssetRepository;
+  final List<AgentCitationView> citations;
+  final bool parseMarkdown;
+
+  @override
+  Widget build(BuildContext context) {
+    final normalized = text.trim();
+    final baseStyle = style ?? MomHomeTokens.text(16, height: 1.65);
+    if (!parseMarkdown) {
+      return Text(normalized, style: baseStyle);
+    }
+    final markdown = _prepareAgentMarkdown(
+      replaceCitationLinksWithIndexes(normalized, citations),
+    );
+    final markdownBody = markdown.trim().isEmpty
+        ? null
+        : !_containsMarkdown(markdown)
+        ? Text(markdown, style: baseStyle)
+        : MarkdownBody(
+            data: markdown,
+            fitContent: true,
+            shrinkWrap: true,
+            softLineBreak: true,
+            styleSheet: _momcozyMarkdownStyleSheet(context, baseStyle),
+            imageBuilder: (uri, title, alt) {
+              final url = uri.toString();
+              return _AgentMarkdownImage(
+                url: url,
+                title: alt?.trim().isNotEmpty == true ? alt!.trim() : title,
+                repository: productAssetRepository,
+                onTap: () => _openMarkdownMedia(url: url, title: alt ?? title),
+              );
+            },
+            onTapLink: (label, href, title) {
+              final url = href?.trim();
+              if (url == null || url.isEmpty) return;
+              if (_isRetiredSkillAssetReference(url)) return;
+              if (_openMarkdownMedia(url: url, title: label.trim())) return;
+              final target = SafeLinkTarget.tryParse(url);
+              if (target == null) return;
+              onArtifactAction?.call(
+                AgentArtifactActionView(
+                  label: label.trim().isEmpty ? '打开链接' : label.trim(),
+                  icon: Icons.open_in_new_rounded,
+                  kind: 'link',
+                  value: url,
+                  routePath: target.internalPath,
+                  externalUri: target.externalUri,
+                ),
+              );
+            },
+          );
+
+    return markdownBody ?? Text('', style: baseStyle);
+  }
+
+  bool _openMarkdownMedia({required String url, String? title}) {
+    final kind = _viewerKindForUrl(url);
+    if (kind == null) return false;
+    final normalizedTitle = title?.trim();
+    onArtifactAction?.call(
+      AgentArtifactActionView(
+        label: normalizedTitle?.isNotEmpty == true ? normalizedTitle! : '打开资源',
+        icon: _mediaIconForKind(kind),
+        kind: 'media',
+        value: url,
+        routePath: '/media-viewer',
+        routeExtra: {
+          'kind': kind,
+          'url': url,
+          if (normalizedTitle?.isNotEmpty == true) 'title': normalizedTitle!,
+        },
+      ),
+    );
+    return true;
+  }
+
+  MarkdownStyleSheet _momcozyMarkdownStyleSheet(
+    BuildContext context,
+    TextStyle? baseStyle,
+  ) {
+    final theme = Theme.of(context);
+    final paragraphStyle = theme.textTheme.bodyMedium?.merge(baseStyle);
+    final mutedStyle = paragraphStyle?.copyWith(
+      color: MomCozyColors.mutedForeground,
+    );
+    final headingBase = paragraphStyle?.copyWith(
+      fontFamily: 'NotoSansSCHome',
+      fontSize: 18,
+      height: 1.4,
+      fontWeight: FontWeight.w700,
+    );
+    final codeStyle = paragraphStyle?.copyWith(
+      color: MomCozyColors.foreground,
+      backgroundColor: MomCozyColors.muted.withValues(alpha: 0.52),
+      fontFamily: 'monospace',
+      fontSize: MomCozyTypography.secondarySize,
+      height: 1.36,
+    );
+
+    return MarkdownStyleSheet.fromTheme(theme).copyWith(
+      p: paragraphStyle,
+      pPadding: EdgeInsets.zero,
+      a: paragraphStyle?.copyWith(
+        color: MomHomeTokens.teal,
+        decoration: TextDecoration.underline,
+        decorationColor: MomHomeTokens.teal,
+      ),
+      strong: paragraphStyle?.copyWith(
+        fontFamily: 'NotoSansSCHome',
+        fontWeight: FontWeight.w700,
+      ),
+      em: paragraphStyle?.copyWith(fontStyle: FontStyle.italic),
+      del: mutedStyle?.copyWith(decoration: TextDecoration.lineThrough),
+      h1: headingBase,
+      h2: headingBase,
+      h3: headingBase,
+      h4: headingBase?.copyWith(fontSize: MomCozyTypography.bodySize),
+      h5: headingBase,
+      h6: headingBase,
+      h1Padding: EdgeInsets.zero,
+      h2Padding: EdgeInsets.zero,
+      h3Padding: EdgeInsets.zero,
+      h4Padding: const EdgeInsets.only(bottom: 4),
+      h5Padding: const EdgeInsets.only(bottom: 4),
+      h6Padding: const EdgeInsets.only(bottom: 4),
+      code: codeStyle,
+      codeblockPadding: const EdgeInsets.all(10),
+      codeblockDecoration: BoxDecoration(
+        color: MomCozyColors.muted.withValues(alpha: 0.55),
+        borderRadius: BorderRadius.circular(MomCozyRadii.thumbnail),
+        border: Border.all(color: MomCozyColors.border),
+      ),
+      blockSpacing: 10,
+      listIndent: 20,
+      listBullet: paragraphStyle,
+      listBulletPadding: const EdgeInsets.only(right: 6),
+      blockquote: mutedStyle,
+      blockquotePadding: const EdgeInsets.fromLTRB(12, 8, 10, 8),
+      blockquoteDecoration: BoxDecoration(
+        color: MomCozyColors.secondary.withValues(alpha: 0.28),
+        borderRadius: BorderRadius.circular(MomCozyRadii.thumbnail),
+        border: const Border(
+          left: BorderSide(color: MomCozyColors.primary, width: 3),
+        ),
+      ),
+      horizontalRuleDecoration: BoxDecoration(
+        border: Border(top: BorderSide(color: MomCozyColors.border, width: 1)),
+      ),
+      tableHead: paragraphStyle?.copyWith(
+        color: MomCozyColors.foreground,
+        fontWeight: FontWeight.w700,
+      ),
+      tableBody: paragraphStyle,
+      tableBorder: TableBorder.all(color: MomCozyColors.border),
+      tableCellsPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+      tableHeadAlign: TextAlign.left,
+      tableCellsDecoration: BoxDecoration(
+        color: MomCozyColors.card.withValues(alpha: 0.75),
+      ),
+    );
+  }
+
+  static bool _containsMarkdown(String value) {
+    return RegExp(
+      r'(^|\n)\s{0,3}#{1,6}\s+|(^|\n)\s*[-*]\s+|(^|\n)\s*\d+\.\s+|\*\*.+?\*\*|`{1,3}|(^|\n)\s{0,3}>\s+|\[[^\]]+\]\([^)]+\)|(^|\n)\|.+\|($|\n)|(^|\n)---($|\n)',
+      multiLine: true,
+    ).hasMatch(value);
+  }
+}
+
+class _AgentMarkdownImage extends StatelessWidget {
+  const _AgentMarkdownImage({
+    required this.url,
+    this.title,
+    this.repository,
+    this.onTap,
+  });
+
+  final String url;
+  final String? title;
+  final ProductAssetRepository? repository;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final label = title?.trim().isNotEmpty == true ? title!.trim() : '查看图片';
+    final cacheWidth = (360 * MediaQuery.devicePixelRatioOf(context))
+        .round()
+        .clamp(360, 720)
+        .toInt();
+    final productAsset = ProductAssetReference.tryParse(
+      url,
+      kind: ProductAssetKind.image.routeValue,
+      title: label,
+    );
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: InkWell(
+        key: ValueKey('agent-markdown-image-$url'),
+        onTap: productAsset == null ? null : onTap,
+        borderRadius: BorderRadius.circular(MomCozyRadii.thumbnail),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(MomCozyRadii.thumbnail),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(
+              minHeight: 112,
+              maxHeight: 220,
+              minWidth: 180,
+              maxWidth: 360,
+            ),
+            child: productAsset == null
+                ? const _AgentMarkdownImagePlaceholder(label: '图片暂不可用')
+                : ProductAssetImage(
+                    reference: productAsset,
+                    repository: repository,
+                    variant: ProductAssetVariant.display,
+                    fit: BoxFit.contain,
+                    cacheWidth: cacheWidth,
+                    semanticLabel: label,
+                    loadingBuilder: (context) {
+                      return _AgentMarkdownImagePlaceholder(
+                        label: label,
+                        loading: true,
+                      );
+                    },
+                    errorBuilder: (context, error, retry) {
+                      return _AgentMarkdownImagePlaceholder(
+                        label: label,
+                        onRetry: retry,
+                      );
+                    },
+                  ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _AgentMarkdownImagePlaceholder extends StatelessWidget {
+  const _AgentMarkdownImagePlaceholder({
+    required this.label,
+    this.loading = false,
+    this.onRetry,
+  });
+
+  final String label;
+  final bool loading;
+  final VoidCallback? onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: MomCozyColors.muted.withValues(alpha: 0.72),
+        border: Border.all(color: MomCozyColors.border),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(
+              Icons.image_outlined,
+              color: MomCozyColors.mutedForeground,
+              size: 28,
+            ),
+            const SizedBox(height: 6),
+            Text(
+              label,
+              textAlign: TextAlign.center,
+              style: textTheme.labelMedium?.copyWith(
+                color: MomCozyColors.foreground,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            const SizedBox(height: 6),
+            if (loading)
+              const SizedBox.square(
+                dimension: 18,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              )
+            else if (onRetry != null)
+              IconButton(
+                key: ValueKey('agent-markdown-image-retry-$label'),
+                tooltip: '重新加载',
+                onPressed: onRetry,
+                icon: const Icon(Icons.refresh_rounded, size: 20),
+                color: MomCozyColors.mutedForeground,
+                visualDensity: VisualDensity.compact,
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+String _prepareAgentMarkdown(String markdown) {
+  return _promoteImageLinksToMarkdownImages(markdown);
+}
+
+String _promoteImageLinksToMarkdownImages(String markdown) {
+  var inFence = false;
+  return markdown
+      .split('\n')
+      .map((line) {
+        if (RegExp(r'^\s*```').hasMatch(line)) {
+          inFence = !inFence;
+          return line;
+        }
+        if (inFence) return line;
+        return line.replaceAllMapped(_markdownLinkPattern, (match) {
+          final prefix = match.group(1) ?? '';
+          final label = match.group(2) ?? '';
+          final destination = match.group(3) ?? '';
+          final url = _markdownDestinationUrl(destination);
+          if (!_isImageUrl(url)) return match.group(0) ?? '';
+          return '$prefix![$label]($destination)';
+        });
+      })
+      .join('\n');
+}
+
+String _markdownDestinationUrl(String destination) {
+  return destination.trim().split(RegExp(r'\s+')).first;
+}
+
+String? _viewerKindForUrl(String url) {
+  final productAsset = ProductAssetReference.tryParse(url);
+  return productAsset?.kind.routeValue;
+}
+
+bool _isImageUrl(String url) => _viewerKindForUrl(url) == 'image';
+
+IconData _mediaIconForKind(String kind) {
+  return switch (kind) {
+    'pdf' => Icons.picture_as_pdf_outlined,
+    'video' => Icons.play_circle_outline_rounded,
+    _ => Icons.image_outlined,
+  };
+}
+
+bool _isRetiredSkillAssetReference(String url) {
+  final uri = Uri.tryParse(url.trim());
+  return uri?.path.startsWith('/skill-assets/') == true;
+}
+
+bool _isStableProductAssetAction(AgentArtifactActionView action) {
+  final extra = action.routeExtra;
+  final rawUrl = extra is Map && extra['url'] is String
+      ? extra['url']! as String
+      : action.value;
+  final rawKind = extra is Map && extra['kind'] is String
+      ? extra['kind']! as String
+      : null;
+  if (rawUrl == null) return false;
+  return ProductAssetReference.tryParse(rawUrl, kind: rawKind) != null;
+}
+
+final _markdownLinkPattern = RegExp(r'(^|[^!])\[([^\]\n]+)\]\(([^)\n]+)\)');
+
+class AgentRunStatusLine extends StatefulWidget {
+  const AgentRunStatusLine({super.key, required this.title});
+
+  final String title;
+
+  @override
+  State<AgentRunStatusLine> createState() => _AgentRunStatusLineState();
+}
+
+class _AgentRunStatusLineState extends State<AgentRunStatusLine>
+    with SingleTickerProviderStateMixin {
+  static const _sweepDuration = Duration(milliseconds: 640);
+
+  late final AnimationController _sweepController;
+
+  @override
+  void initState() {
+    super.initState();
+    _sweepController = AnimationController(
+      vsync: this,
+      duration: _sweepDuration,
+    );
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _syncAgentDecoration(context, _sweepController);
+  }
+
+  @override
+  void dispose() {
+    _sweepController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    final title = widget.title;
+
+    return Semantics(
+      label: title,
+      excludeSemantics: true,
+      child: Container(
+        key: const ValueKey('agent-run-status-line'),
+        constraints: const BoxConstraints(maxWidth: double.infinity),
+        padding: const EdgeInsets.symmetric(vertical: 4),
+        child: _AgentSweepText(
+          title,
+          sweepKey: const ValueKey('agent-run-status-title-sweep'),
+          animation: _sweepController,
+          colors: const [
+            MomCozyColors.violet,
+            MomCozyColors.primaryDark,
+            MomCozyColors.violet,
+          ],
+          style: textTheme.labelSmall?.copyWith(
+            height: 1.45,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _AgentSweepText extends StatelessWidget {
+  const _AgentSweepText(
+    this.text, {
+    required this.sweepKey,
+    required this.animation,
+    required this.colors,
+    this.style,
+  });
+
+  final String text;
+  final Key sweepKey;
+  final Animation<double> animation;
+  final List<Color> colors;
+  final TextStyle? style;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: animation,
+      builder: (context, child) {
+        final value = animation.value;
+        return ShaderMask(
+          key: sweepKey,
+          blendMode: BlendMode.srcIn,
+          shaderCallback: (bounds) {
+            return LinearGradient(
+              begin: Alignment(-1.2 + value * 2.4, 0),
+              end: Alignment(-0.2 + value * 2.4, 0),
+              colors: colors,
+              stops: const [0, 0.5, 1],
+            ).createShader(bounds);
+          },
+          child: child,
+        );
+      },
+      child: Text(text, style: style),
+    );
+  }
+}
+
+class AgentThinkingNote extends StatefulWidget {
+  const AgentThinkingNote({super.key, required this.title});
+
+  final String title;
+
+  @override
+  State<AgentThinkingNote> createState() => _AgentThinkingNoteState();
+}
+
+class _AgentThinkingNoteState extends State<AgentThinkingNote>
+    with SingleTickerProviderStateMixin {
+  static const _sweepDuration = Duration(milliseconds: 640);
+
+  late final AnimationController _sweepController;
+
+  @override
+  void initState() {
+    super.initState();
+    _sweepController = AnimationController(
+      vsync: this,
+      duration: _sweepDuration,
+    );
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _syncAgentDecoration(context, _sweepController);
+  }
+
+  @override
+  void dispose() {
+    _sweepController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    return Semantics(
+      label: widget.title,
+      excludeSemantics: true,
+      child: Padding(
+        padding: EdgeInsets.zero,
+        child: _AgentSweepText(
+          widget.title,
+          sweepKey: const ValueKey('agent-thinking-note'),
+          animation: _sweepController,
+          colors: const [
+            MomCozyColors.mutedForeground,
+            MomCozyColors.foreground,
+            MomCozyColors.mutedForeground,
+          ],
+          style: textTheme.labelSmall?.copyWith(
+            height: 1.45,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+enum _AgentAssistantAvatarMode { thinking, speaking }
+
+class _AgentAssistantAvatar extends StatefulWidget {
+  const _AgentAssistantAvatar({this.mode});
+
+  final _AgentAssistantAvatarMode? mode;
+
+  @override
+  State<_AgentAssistantAvatar> createState() => _AgentAssistantAvatarState();
+}
+
+class _AgentAssistantAvatarState extends State<_AgentAssistantAvatar>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _pulseController;
+  final Map<_AgentAssistantAvatarMode, VideoPlayerController>
+  _videoControllers = <_AgentAssistantAvatarMode, VideoPlayerController>{};
+  final Set<_AgentAssistantAvatarMode> _videoReadyModes =
+      <_AgentAssistantAvatarMode>{};
+  _AgentAssistantAvatarMode? _playingVideoMode;
+
+  @override
+  void initState() {
+    super.initState();
+    _pulseController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1180),
+    );
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _syncPulseController();
+    _syncVideoPlayback();
+  }
+
+  @override
+  void didUpdateWidget(covariant _AgentAssistantAvatar oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.mode != widget.mode) {
+      _syncPulseController();
+      _syncVideoPlayback();
+    }
+  }
+
+  @override
+  void dispose() {
+    _disposeVideoControllers();
+    _pulseController.dispose();
+    super.dispose();
+  }
+
+  void _syncPulseController() {
+    if (_activeAnimationMode() == null) {
+      _pulseController.stop();
+      _pulseController.value = 0;
+      return;
+    }
+    if (!_pulseController.isAnimating) _pulseController.repeat();
+  }
+
+  void _syncVideoPlayback() {
+    final activeMode = _activeAnimationMode();
+    final previousMode = _playingVideoMode;
+    if (previousMode != null && previousMode != activeMode) {
+      final previousController = _videoControllers[previousMode];
+      if (previousController != null &&
+          _videoReadyModes.contains(previousMode)) {
+        unawaited(_runVideoCommand(previousController.pause));
+      }
+      _playingVideoMode = null;
+    }
+
+    if (activeMode == null) return;
+    final controller = _ensureVideoController(activeMode);
+    if (!_videoReadyModes.contains(activeMode) ||
+        _playingVideoMode == activeMode) {
+      return;
+    }
+    _playingVideoMode = activeMode;
+    unawaited(_runVideoCommand(controller.play));
+  }
+
+  VideoPlayerController _ensureVideoController(_AgentAssistantAvatarMode mode) {
+    final existing = _videoControllers[mode];
+    if (existing != null) return existing;
+
+    final controller = VideoPlayerController.asset(_videoAssetForMode(mode));
+    _videoControllers[mode] = controller;
+    unawaited(_initializeVideoController(mode, controller));
+    return controller;
+  }
+
+  Future<void> _initializeVideoController(
+    _AgentAssistantAvatarMode mode,
+    VideoPlayerController controller,
+  ) async {
+    try {
+      await controller.initialize();
+      if (!mounted || _videoControllers[mode] != controller) return;
+      await controller.setLooping(true);
+      await controller.setVolume(0);
+      if (!mounted || _videoControllers[mode] != controller) return;
+      _videoReadyModes.add(mode);
+      _syncVideoPlayback();
+      setState(() {});
+    } catch (_) {
+      if (!mounted || _videoControllers[mode] != controller) return;
+      _videoControllers.remove(mode);
+      _videoReadyModes.remove(mode);
+      if (_playingVideoMode == mode) _playingVideoMode = null;
+      unawaited(_runVideoCommand(controller.dispose));
+      setState(() {});
+    }
+  }
+
+  Future<void> _runVideoCommand(Future<void> Function() command) async {
+    try {
+      await command();
+    } catch (_) {
+      // The static avatar remains visible when the platform player rejects.
+    }
+  }
+
+  void _disposeVideoControllers() {
+    final controllers = _videoControllers.values.toList(growable: false);
+    _videoControllers.clear();
+    _videoReadyModes.clear();
+    _playingVideoMode = null;
+    for (final controller in controllers) {
+      unawaited(_runVideoCommand(controller.dispose));
+    }
+  }
+
+  _AgentAssistantAvatarMode? _activeAnimationMode() {
+    if (!_shouldAnimateAvatar()) return null;
+    return widget.mode;
+  }
+
+  String _videoAssetForMode(_AgentAssistantAvatarMode mode) {
+    return switch (mode) {
+      _AgentAssistantAvatarMode.speaking => MomCozyAssets.agentSpeakingAvatar,
+      _AgentAssistantAvatarMode.thinking => MomCozyAssets.agentThinkingAvatar,
+    };
+  }
+
+  bool _shouldAnimateAvatar() {
+    final disableAnimations =
+        MediaQuery.maybeOf(context)?.disableAnimations ?? false;
+    return TickerMode.valuesOf(context).enabled && !disableAnimations;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final mode = widget.mode;
+    final shouldAnimate = _shouldAnimateAvatar();
+    final isSpeakingMode = mode == _AgentAssistantAvatarMode.speaking;
+    final isThinkingMode = mode == _AgentAssistantAvatarMode.thinking;
+    final isActiveMode = isSpeakingMode || isThinkingMode;
+    final showSpeakingVideo = shouldAnimate && isSpeakingMode;
+    final showThinkingVideo = shouldAnimate && isThinkingMode;
+    final ringColor = isSpeakingMode ? MomHomeTokens.rose : MomCozyColors.care;
+    final activeAvatarKey = showSpeakingVideo
+        ? 'agent-assistant-avatar-speaking-media'
+        : showThinkingVideo
+        ? 'agent-assistant-avatar-thinking-media'
+        : null;
+    final videoController = mode == null ? null : _videoControllers[mode];
+    final videoReady = mode != null && _videoReadyModes.contains(mode);
+
+    return SizedBox.square(
+      key: const ValueKey('agent-assistant-avatar'),
+      dimension: MediaQuery.sizeOf(context).width < 360 ? 36 : 40,
+      child: Stack(
+        clipBehavior: Clip.none,
+        alignment: Alignment.center,
+        children: [
+          if (isActiveMode)
+            Positioned(
+              left: -2,
+              right: -2,
+              top: -2,
+              bottom: -2,
+              child: AnimatedBuilder(
+                key: ValueKey('agent-avatar-pulse-$mode'),
+                animation: _pulseController,
+                builder: (context, child) {
+                  final pulse = Curves.easeOutCubic.transform(
+                    _pulseController.value,
+                  );
+                  return Transform.scale(
+                    scale: 1 + pulse * (isSpeakingMode ? 0.12 : 0.08),
+                    child: DecoratedBox(
+                      key: ValueKey(
+                        isSpeakingMode
+                            ? 'agent-assistant-avatar-speaking'
+                            : 'agent-assistant-avatar-thinking',
+                      ),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: ringColor.withValues(
+                            alpha: 0.42 + pulse * 0.18,
+                          ),
+                          width: isSpeakingMode ? 3 : 2,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: ringColor.withValues(
+                              alpha:
+                                  (isSpeakingMode ? 0.18 : 0.12) + pulse * 0.12,
+                            ),
+                            blurRadius: (isSpeakingMode ? 12 : 9) + pulse * 6,
+                            spreadRadius: (isSpeakingMode ? 1.4 : 0.8) + pulse,
+                          ),
+                        ],
+                      ),
+                      child: const SizedBox.expand(),
+                    ),
+                  );
+                },
+              ),
+            ),
+          DecoratedBox(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(color: Colors.white, width: 2),
+              boxShadow: const [
+                BoxShadow(color: Color(0xffdfcbed), spreadRadius: 1),
+              ],
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(2),
+              child: ClipOval(
+                child: Stack(
+                  fit: StackFit.passthrough,
+                  children: [
+                    Image.asset(
+                      MomCozyAssets.agentAvatar,
+                      key: const ValueKey('agent-assistant-avatar-static'),
+                      width: MediaQuery.sizeOf(context).width < 360 ? 32 : 36,
+                      height: MediaQuery.sizeOf(context).width < 360 ? 32 : 36,
+                      fit: BoxFit.cover,
+                    ),
+                    if (videoReady &&
+                        videoController != null &&
+                        activeAvatarKey != null)
+                      Positioned.fill(
+                        child: FittedBox(
+                          fit: BoxFit.cover,
+                          child: SizedBox(
+                            width: videoController.value.size.width,
+                            height: videoController.value.size.height,
+                            child: VideoPlayer(
+                              videoController,
+                              key: ValueKey(activeAvatarKey),
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class AgentActionPanel extends StatelessWidget {
+  const AgentActionPanel({
+    super.key,
+    required this.actions,
+    this.pendingActionIds = const <String>{},
+    this.onConfirm,
+    this.onReject,
+  });
+
+  final List<AgentActionCardView> actions;
+  final Set<String> pendingActionIds;
+  final ValueChanged<AgentActionCardView>? onConfirm;
+  final ValueChanged<AgentActionCardView>? onReject;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
+    return Column(
+      key: const ValueKey('agent-action-panel'),
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          '待处理动作',
+          style: textTheme.labelLarge?.copyWith(
+            color: colorScheme.onSurface,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        const SizedBox(height: 8),
+        for (final action in actions) ...[
+          DecoratedBox(
+            key: ValueKey('agent-action-card-${action.id}'),
+            decoration: BoxDecoration(
+              color: colorScheme.tertiaryContainer.withValues(alpha: 0.38),
+              borderRadius: BorderRadius.circular(MomCozyRadii.thumbnail),
+              border: Border.all(color: colorScheme.outlineVariant),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Icon(
+                        action.icon,
+                        size: 18,
+                        color: action.color(colorScheme),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          action.title,
+                          style: textTheme.titleSmall?.copyWith(
+                            color: colorScheme.onSurface,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        action.statusLabel,
+                        style: textTheme.labelSmall?.copyWith(
+                          color: action.color(colorScheme),
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ],
+                  ),
+                  if (action.actionTypeLabel != null) ...[
+                    const SizedBox(height: 8),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          color: MomCozyColors.roseSoft,
+                          borderRadius: BorderRadius.circular(
+                            MomCozyRadii.pill,
+                          ),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 5,
+                          ),
+                          child: Text(
+                            action.actionTypeLabel!,
+                            style: const TextStyle(
+                              color: MomCozyColors.primaryDark,
+                              fontSize: MomCozyTypography.labelSize,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                  if (action.subtitle != null) ...[
+                    const SizedBox(height: 8),
+                    Text(
+                      action.subtitle!,
+                      style: textTheme.bodySmall?.copyWith(
+                        height: 1.35,
+                        color: colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                  if (action.previewRows.isNotEmpty) ...[
+                    const SizedBox(height: 10),
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: MomCozyColors.raised,
+                        borderRadius: BorderRadius.circular(
+                          MomCozyRadii.control,
+                        ),
+                        border: Border.all(color: MomCozyColors.roseSoft),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          for (
+                            var index = 0;
+                            index < action.previewRows.length;
+                            index++
+                          ) ...[
+                            Text(
+                              action.previewRows[index],
+                              style: textTheme.bodySmall?.copyWith(
+                                color: MomCozyColors.foreground,
+                                height: 1.4,
+                              ),
+                            ),
+                            if (index < action.previewRows.length - 1)
+                              const SizedBox(height: 4),
+                          ],
+                        ],
+                      ),
+                    ),
+                  ],
+                  if (action.canConfirm) ...[
+                    const SizedBox(height: 10),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [
+                        FilledButton.icon(
+                          key: ValueKey('agent-action-confirm-${action.id}'),
+                          onPressed:
+                              pendingActionIds.contains(action.id) ||
+                                  onConfirm == null
+                              ? null
+                              : () => onConfirm?.call(action),
+                          icon: const Icon(Icons.check_rounded),
+                          label: const Text('确认'),
+                        ),
+                        OutlinedButton.icon(
+                          key: ValueKey('agent-action-reject-${action.id}'),
+                          onPressed:
+                              pendingActionIds.contains(action.id) ||
+                                  onReject == null
+                              ? null
+                              : () => onReject?.call(action),
+                          icon: const Icon(Icons.close_rounded),
+                          label: const Text('拒绝'),
+                        ),
+                      ],
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ),
+          if (action != actions.last) const SizedBox(height: 10),
+        ],
+      ],
+    );
+  }
+}
+
+class AgentActionCardView {
+  const AgentActionCardView({
+    required this.id,
+    required this.title,
+    required this.status,
+    this.subtitle,
+    this.actionType,
+    this.previewRows = const <String>[],
+  });
+
+  final String id;
+  final String title;
+  final String status;
+  final String? subtitle;
+  final String? actionType;
+  final List<String> previewRows;
+
+  String? get actionTypeLabel => _agentActionTypeLabel(actionType);
+
+  bool get canConfirm {
+    return status == 'proposed' || status == 'confirmation_required';
+  }
+
+  String get statusLabel {
+    return switch (status) {
+      'confirming' => '确认中',
+      'rejecting' => '拒绝中',
+      'proposed' => '待确认',
+      'confirmation_required' => '待确认',
+      'confirmed' => '已确认',
+      'queued' => '已提交',
+      'applied' => '已应用',
+      'rejected' => '已拒绝',
+      'failed' => '失败',
+      _ => status,
+    };
+  }
+
+  IconData get icon {
+    return switch (status) {
+      'applied' => Icons.check_circle_outline_rounded,
+      'rejected' => Icons.block_rounded,
+      'failed' => Icons.error_outline_rounded,
+      'confirming' || 'rejecting' || 'queued' => Icons.sync_rounded,
+      _ => Icons.fact_check_outlined,
+    };
+  }
+
+  Color color(ColorScheme colorScheme) {
+    return switch (status) {
+      'failed' => colorScheme.error,
+      'applied' || 'confirmed' || 'queued' => colorScheme.primary,
+      'rejected' => colorScheme.onSurfaceVariant,
+      _ => colorScheme.tertiary,
+    };
+  }
+}
+
+class AgentComposerBar extends StatefulWidget {
+  const AgentComposerBar({
+    super.key,
+    required this.controller,
+    this.focusNode,
+    required this.canSend,
+    required this.isRunning,
+    required this.isInputLocked,
+    required this.images,
+    required this.files,
+    required this.canAttachImage,
+    required this.canAttachFile,
+    required this.isAttachmentPending,
+    this.attachmentUploadProgress,
+    required this.onChanged,
+    required this.onSend,
+    required this.onCancel,
+    required this.onTakePhoto,
+    required this.onPickPhoto,
+    required this.onPickFile,
+    required this.onRemoveImage,
+    required this.onRemoveFile,
+  });
+
+  final TextEditingController controller;
+  final FocusNode? focusNode;
+  final bool canSend;
+  final bool isRunning;
+  final bool isInputLocked;
+  final List<AgentStreamImageInput> images;
+  final List<AgentStreamFileInput> files;
+  final bool canAttachImage;
+  final bool canAttachFile;
+  final bool isAttachmentPending;
+  final double? attachmentUploadProgress;
+  final ValueChanged<String> onChanged;
+  final VoidCallback onSend;
+  final VoidCallback onCancel;
+  final VoidCallback onTakePhoto;
+  final VoidCallback onPickPhoto;
+  final VoidCallback onPickFile;
+  final ValueChanged<int> onRemoveImage;
+  final ValueChanged<int> onRemoveFile;
+
+  @override
+  State<AgentComposerBar> createState() => _AgentComposerBarState();
+}
+
+class _AgentComposerBarState extends State<AgentComposerBar> {
+  static const double _controlSize = 44;
+  static const double _attachmentControlSize = 44;
+  static const double _surfaceMinHeight = 56;
+  static const double _surfaceHorizontalInset = 5;
+  static const double _surfaceVerticalInset = 5;
+  static const double _controlGap = 6;
+  static const double _inputLeftInset =
+      _surfaceHorizontalInset + _attachmentControlSize + _controlGap;
+  static const double _expandedInputHorizontalInset = 20;
+  static const double _expandedInputTopInset = 14;
+  static const double _expandedInputBottomInset =
+      _surfaceVerticalInset + _controlSize + 18;
+  static const double _lineWrapGuard = 10;
+  final MenuController _attachmentMenuController = MenuController();
+
+  @override
+  void initState() {
+    super.initState();
+    widget.controller.addListener(_handleControllerChanged);
+  }
+
+  @override
+  void didUpdateWidget(covariant AgentComposerBar oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.controller != widget.controller) {
+      oldWidget.controller.removeListener(_handleControllerChanged);
+      widget.controller.addListener(_handleControllerChanged);
+    }
+    if (!widget.canAttachImage &&
+        !widget.canAttachFile &&
+        _attachmentMenuController.isOpen) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _attachmentMenuController.close();
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    widget.controller.removeListener(_handleControllerChanged);
+    super.dispose();
+  }
+
+  void _handleControllerChanged() {
+    if (!mounted) return;
+    setState(() {});
+  }
+
+  Widget _attachmentMenuItem({
+    required Key key,
+    required String label,
+    required String description,
+    required MomCozyLineGlyph glyph,
+    required VoidCallback? onPressed,
+  }) {
+    return MenuItemButton(
+      key: key,
+      onPressed: onPressed == null
+          ? null
+          : () {
+              _attachmentMenuController.close();
+              onPressed();
+            },
+      style: MenuItemButton.styleFrom(
+        minimumSize: const Size(0, 56),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+      ),
+      child: Row(
+        children: [
+          DecoratedBox(
+            decoration: const BoxDecoration(
+              color: MomHomeTokens.mint,
+              borderRadius: BorderRadius.all(Radius.circular(12)),
+            ),
+            child: SizedBox.square(
+              dimension: 40,
+              child: Center(
+                child: MomCozyLineIcon(
+                  glyph,
+                  size: 22,
+                  color: onPressed == null
+                      ? MomHomeTokens.muted
+                      : MomHomeTokens.teal,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  label,
+                  style: MomHomeTokens.text(
+                    15,
+                    weight: FontWeight.w600,
+                    color: onPressed == null
+                        ? MomHomeTokens.muted
+                        : MomHomeTokens.ink,
+                  ),
+                ),
+                const SizedBox(height: 3),
+                Text(
+                  description,
+                  style: MomHomeTokens.text(12, color: MomHomeTokens.secondary),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final controller = widget.controller;
+    final isRunning = widget.isRunning;
+    final isInputLocked = widget.isInputLocked;
+    final images = widget.images;
+    final imageCount = images.length;
+    final files = widget.files;
+    final fileCount = files.length;
+    final canSend =
+        widget.canSend &&
+        (controller.text.trim().isNotEmpty || imageCount > 0 || fileCount > 0);
+    final canAttachImage = widget.canAttachImage;
+    final canAttachFile = widget.canAttachFile;
+    final onChanged = widget.onChanged;
+    final onSend = widget.onSend;
+    final onCancel = widget.onCancel;
+    final sendIsStop = isRunning && !canSend;
+    final sendLooksActive = canSend || sendIsStop;
+    const inputTextStyle = TextStyle(
+      fontFamily: 'NotoSansSCHome',
+      fontFamilyFallback: MomCozyTypography.fontFamilyFallback,
+      fontSize: 16,
+      height: 1.6,
+    );
+
+    return Padding(
+      key: const ValueKey('agent-composer-bar'),
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+      child: DecoratedBox(
+        decoration: const BoxDecoration(),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (imageCount + fileCount > 0) ...[
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  final largeText =
+                      MediaQuery.textScalerOf(context).scale(14) > 20;
+                  final width = math.min(
+                    largeText ? 320.0 : 252.0,
+                    constraints.maxWidth * .92,
+                  );
+                  return SingleChildScrollView(
+                    key: const ValueKey('agent-pending-attachments'),
+                    scrollDirection: Axis.horizontal,
+                    padding: const EdgeInsets.all(2),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (imageCount > 0)
+                          Row(
+                            key: const ValueKey('agent-image-attachment-chip'),
+                            children: [
+                              for (var index = 0; index < imageCount; index++)
+                                Padding(
+                                  padding: const EdgeInsets.only(right: 8),
+                                  child: SizedBox(
+                                    width: width,
+                                    child: AgentComposerImageAttachment(
+                                      key: ValueKey(
+                                        'agent-image-attachment-$index',
+                                      ),
+                                      image: images[index],
+                                      removeButtonKey: ValueKey(
+                                        index == 0
+                                            ? 'agent-remove-image-button'
+                                            : 'agent-remove-image-$index',
+                                      ),
+                                      onRemove: isInputLocked
+                                          ? null
+                                          : () => widget.onRemoveImage(index),
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ),
+                        if (fileCount > 0)
+                          Row(
+                            key: const ValueKey('agent-file-attachment-chip'),
+                            children: [
+                              for (var index = 0; index < fileCount; index++)
+                                Padding(
+                                  padding: EdgeInsets.only(
+                                    right: index == fileCount - 1 ? 0 : 8,
+                                  ),
+                                  child: SizedBox(
+                                    width: width,
+                                    child: AgentComposerFileAttachment(
+                                      key: ValueKey(
+                                        'agent-file-attachment-$index',
+                                      ),
+                                      file: files[index],
+                                      removeButtonKey: ValueKey(
+                                        index == 0
+                                            ? 'agent-remove-file-button'
+                                            : 'agent-remove-file-$index',
+                                      ),
+                                      onRemove: isInputLocked
+                                          ? null
+                                          : () => widget.onRemoveFile(index),
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(height: 7),
+            ],
+            LayoutBuilder(
+              builder: (context, constraints) {
+                final expandedTextLayout = _shouldUseExpandedTextLayout(
+                  context,
+                  constraints.maxWidth,
+                  inputTextStyle,
+                );
+                final inputPadding = expandedTextLayout
+                    ? const EdgeInsets.fromLTRB(
+                        _expandedInputHorizontalInset,
+                        _expandedInputTopInset,
+                        _expandedInputHorizontalInset,
+                        _expandedInputBottomInset,
+                      )
+                    : EdgeInsets.fromLTRB(
+                        _inputLeftInset,
+                        _surfaceVerticalInset,
+                        _inputRightInset,
+                        _surfaceVerticalInset,
+                      );
+                Widget positionControl({
+                  required Widget child,
+                  double? left,
+                  double? right,
+                }) {
+                  assert((left == null) != (right == null));
+
+                  if (expandedTextLayout) {
+                    return Positioned(
+                      left: left,
+                      right: right,
+                      bottom: _surfaceVerticalInset,
+                      child: child,
+                    );
+                  }
+
+                  return Positioned.fill(
+                    child: Padding(
+                      padding: EdgeInsets.only(
+                        left: left ?? 0,
+                        right: right ?? 0,
+                      ),
+                      child: Align(
+                        alignment: left == null
+                            ? Alignment.centerRight
+                            : Alignment.centerLeft,
+                        child: child,
+                      ),
+                    ),
+                  );
+                }
+
+                final composerInput = TextField(
+                  key: const ValueKey('agent-composer-input'),
+                  onTap: _attachmentMenuController.close,
+                  controller: controller,
+                  focusNode: widget.focusNode,
+                  minLines: 1,
+                  maxLines: 5,
+                  keyboardType: TextInputType.multiline,
+                  textInputAction: TextInputAction.newline,
+                  enabled: !isInputLocked,
+                  style: inputTextStyle,
+                  onChanged: onChanged,
+                  scrollPadding: const EdgeInsets.only(bottom: 96),
+                  decoration: InputDecoration(
+                    hintText: '和 Cozymate 聊聊...',
+                    border: InputBorder.none,
+                    enabledBorder: InputBorder.none,
+                    focusedBorder: InputBorder.none,
+                    filled: false,
+                    isDense: true,
+                    isCollapsed: true,
+                    contentPadding: EdgeInsets.zero,
+                    hintStyle: TextStyle(
+                      fontFamily: 'NotoSansSCHome',
+                      fontFamilyFallback: MomCozyTypography.fontFamilyFallback,
+                      fontSize: 16,
+                      height: 1.6,
+                      color: MomHomeTokens.secondary,
+                    ),
+                  ),
+                );
+                final inputFrame = Padding(
+                  key: const ValueKey('agent-composer-input-frame'),
+                  padding: inputPadding,
+                  child: composerInput,
+                );
+
+                return MenuAnchor(
+                  controller: _attachmentMenuController,
+                  consumeOutsideTap: true,
+                  alignmentOffset: const Offset(4, 4),
+                  style: MenuStyle(
+                    backgroundColor: const WidgetStatePropertyAll(
+                      MomHomeTokens.surface,
+                    ),
+                    padding: const WidgetStatePropertyAll(EdgeInsets.all(8)),
+                    shape: WidgetStatePropertyAll(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(22),
+                        side: const BorderSide(color: MomHomeTokens.border),
+                      ),
+                    ),
+                    elevation: const WidgetStatePropertyAll(4),
+                    shadowColor: WidgetStatePropertyAll(
+                      MomHomeTokens.ink.withValues(alpha: 0.12),
+                    ),
+                  ),
+                  menuChildren: [
+                    SizedBox(
+                      key: const ValueKey('agent-attachment-menu'),
+                      width:
+                          math.min(
+                            MediaQuery.sizeOf(context).width - 32,
+                            260 *
+                                (MediaQuery.textScalerOf(context).scale(15) /
+                                        15)
+                                    .clamp(1, 1.2),
+                          ) -
+                          16,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          _attachmentMenuItem(
+                            key: const ValueKey(
+                              'agent-attachment-camera-button',
+                            ),
+                            label: '相机',
+                            description: '拍摄一张照片',
+                            glyph: MomCozyLineGlyph.camera,
+                            onPressed: canAttachImage
+                                ? widget.onTakePhoto
+                                : null,
+                          ),
+                          _attachmentMenuItem(
+                            key: const ValueKey(
+                              'agent-attachment-photo-button',
+                            ),
+                            label: '照片',
+                            description: 'JPG、PNG、WebP',
+                            glyph: MomCozyLineGlyph.image,
+                            onPressed: canAttachImage
+                                ? widget.onPickPhoto
+                                : null,
+                          ),
+                          _attachmentMenuItem(
+                            key: const ValueKey('agent-attachment-file-button'),
+                            label: '文件',
+                            description: 'PDF · 最大 10 MB',
+                            glyph: MomCozyLineGlyph.file,
+                            onPressed: canAttachFile ? widget.onPickFile : null,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                  child: DecoratedBox(
+                    key: const ValueKey('agent-composer-surface'),
+                    decoration: BoxDecoration(
+                      color: MomHomeTokens.surface,
+                      borderRadius: BorderRadius.circular(24),
+                      border: Border.all(color: MomHomeTokens.border),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Color(0x052B2826),
+                          blurRadius: 24,
+                          offset: Offset(0, 5),
+                        ),
+                      ],
+                    ),
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(
+                        minHeight: _surfaceMinHeight,
+                      ),
+                      child: Stack(
+                        alignment: Alignment.centerLeft,
+                        clipBehavior: Clip.none,
+                        children: [
+                          inputFrame,
+                          positionControl(
+                            left: _surfaceHorizontalInset,
+                            child: Builder(
+                              builder: (context) {
+                                final menuController =
+                                    _attachmentMenuController;
+                                final canOpenMenu =
+                                    canAttachImage || canAttachFile;
+                                return IconButton(
+                                  key: const ValueKey(
+                                    'agent-attachment-button',
+                                  ),
+                                  onPressed:
+                                      canOpenMenu && !widget.isAttachmentPending
+                                      ? () {
+                                          if (menuController.isOpen) {
+                                            menuController.close();
+                                          } else {
+                                            FocusManager.instance.primaryFocus
+                                                ?.unfocus();
+                                            menuController.open();
+                                          }
+                                        }
+                                      : null,
+                                  icon: widget.isAttachmentPending
+                                      ? SizedBox.square(
+                                          dimension: 18,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                            value:
+                                                widget.attachmentUploadProgress,
+                                          ),
+                                        )
+                                      : const Icon(Icons.add_rounded, size: 28),
+                                  tooltip: '添加附件',
+                                  color: MomHomeTokens.secondary,
+                                  visualDensity: VisualDensity.compact,
+                                  constraints: const BoxConstraints.tightFor(
+                                    width: _attachmentControlSize,
+                                    height: _attachmentControlSize,
+                                  ),
+                                  padding: EdgeInsets.zero,
+                                  style: IconButton.styleFrom(
+                                    fixedSize: const Size.square(
+                                      _attachmentControlSize,
+                                    ),
+                                    minimumSize: const Size.square(
+                                      _attachmentControlSize,
+                                    ),
+                                    maximumSize: const Size.square(
+                                      _attachmentControlSize,
+                                    ),
+                                    tapTargetSize:
+                                        MaterialTapTargetSize.shrinkWrap,
+                                    padding: EdgeInsets.zero,
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                          positionControl(
+                            right: _surfaceHorizontalInset,
+                            child: IconButton(
+                              key: ValueKey(
+                                sendIsStop
+                                    ? 'agent-stop-button'
+                                    : 'agent-send-button',
+                              ),
+                              onPressed: sendIsStop
+                                  ? onCancel
+                                  : (canSend ? onSend : null),
+                              icon: DecoratedBox(
+                                key: const ValueKey('agent-send-button-visual'),
+                                decoration: BoxDecoration(
+                                  color: sendLooksActive
+                                      ? MomHomeTokens.rose
+                                      : MomHomeTokens.neutralSurface,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: SizedBox.square(
+                                  dimension: _controlSize,
+                                  child: Center(
+                                    child: Icon(
+                                      sendIsStop
+                                          ? Icons.stop_rounded
+                                          : Icons.send_outlined,
+                                      size: sendIsStop ? 18 : 16,
+                                      color: sendLooksActive
+                                          ? colorScheme.onPrimary
+                                          : MomCozyColors.mutedForeground,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              tooltip: sendIsStop ? '停止' : '发送',
+                              visualDensity: VisualDensity.compact,
+                              constraints: const BoxConstraints.tightFor(
+                                width: _controlSize,
+                                height: _controlSize,
+                              ),
+                              padding: EdgeInsets.zero,
+                              style: IconButton.styleFrom(
+                                backgroundColor: Colors.transparent,
+                                disabledBackgroundColor: Colors.transparent,
+                                overlayColor: colorScheme.primary.withValues(
+                                  alpha: 0.08,
+                                ),
+                                fixedSize: const Size.square(_controlSize),
+                                minimumSize: const Size.square(_controlSize),
+                                maximumSize: const Size.square(_controlSize),
+                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                padding: EdgeInsets.zero,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  bool _shouldUseExpandedTextLayout(
+    BuildContext context,
+    double surfaceWidth,
+    TextStyle style,
+  ) {
+    final text = widget.controller.text;
+    if (text.contains('\n')) return true;
+    return _visualLineCountForWidth(
+          context,
+          _compactInputTextWidth(surfaceWidth),
+          style,
+        ) >
+        1;
+  }
+
+  double _compactInputTextWidth(double surfaceWidth) {
+    return surfaceWidth - _inputLeftInset - _inputRightInset - _lineWrapGuard;
+  }
+
+  static const double _inputRightInset =
+      _surfaceHorizontalInset + _controlSize + _controlGap;
+
+  int _visualLineCountForWidth(
+    BuildContext context,
+    double maxWidth,
+    TextStyle style,
+  ) {
+    final text = widget.controller.text.isEmpty
+        ? '和 Cozymate 聊聊...'
+        : widget.controller.text;
+    final painter = TextPainter(
+      text: TextSpan(text: text, style: style),
+      textDirection: Directionality.of(context),
+      textScaler: MediaQuery.textScalerOf(context),
+      maxLines: 100,
+    )..layout(maxWidth: maxWidth.clamp(1.0, double.infinity));
+    return painter.computeLineMetrics().length.clamp(1, 100);
+  }
+}
+
+bool _hasServerRunSignal(AgentStreamRunState state) {
+  return state.runId?.trim().isNotEmpty == true ||
+      state.lastSequence != null ||
+      state.events.isNotEmpty ||
+      state.textContent.isNotEmpty ||
+      state.provisionalTextContent.isNotEmpty;
+}
+
+Iterable<AgentStreamEvent> _artifactEventsForState(AgentStreamRunState state) {
+  return state.artifactEvents.isNotEmpty
+      ? state.artifactEvents.values
+      : state.events;
+}
+
+Set<String> _formArtifactIdsForState(AgentStreamRunState state) {
+  return _artifactCardsFromEvents(
+    _artifactEventsForState(state),
+  ).where((card) => card.isForm).map((card) => card.id).toSet();
+}
+
+String? _latestVisibleArtifactId(AgentStreamRunState state) {
+  if (!state.canPublishArtifactEvents) return null;
+  final canShowForms =
+      state.hasCompletedAssistantMessage ||
+      (!state.isActive && state.textContent.trim().isNotEmpty);
+  for (final card in _artifactCardsFromEvents(
+    _artifactEventsForState(state),
+  ).reversed) {
+    if (!card.isForm || canShowForms) return card.id;
+  }
+  return null;
+}
+
+Iterable<AgentStreamEvent> _actionEventsForState(AgentStreamRunState state) {
+  final timeline = state.events
+      .where((event) => event.type.startsWith('action.'))
+      .toList(growable: false);
+  return userVisibleAgentActionEvents(
+    timeline.isNotEmpty ? timeline : state.actionEvents.values,
+  );
+}
+
+List<AgentArtifactCardView> _artifactCardsFromEvents(
+  Iterable<AgentStreamEvent> events,
+) {
+  return AgentArtifactMapper.cardsFromEvents(events);
+}
+
+List<AgentActionCardView> _actionCardsFromEvents(
+  Iterable<AgentStreamEvent> events,
+  Map<String, String> localStatuses,
+) {
+  final cards = <String, AgentActionCardView>{};
+  for (final event in userVisibleAgentActionEvents(events)) {
+    final card = _actionCardFromEvent(event);
+    if (card != null) cards[card.id] = card;
+  }
+
+  for (final entry in localStatuses.entries) {
+    final existing = cards[entry.key];
+    if (existing == null) continue;
+    if (_isFinalActionStatus(existing.status)) continue;
+    cards[entry.key] = AgentActionCardView(
+      id: existing.id,
+      title: existing.title,
+      status: entry.value,
+      subtitle: existing.subtitle,
+      actionType: existing.actionType,
+      previewRows: existing.previewRows,
+    );
+  }
+
+  return List<AgentActionCardView>.unmodifiable(cards.values);
+}
+
+bool _isFinalActionStatus(String status) {
+  return status == 'applied' || status == 'failed' || status == 'rejected';
+}
+
+AgentActionCardView? _actionCardFromEvent(AgentStreamEvent event) {
+  if (!event.type.startsWith('action.')) return null;
+
+  final actionId =
+      stringField(event.raw, 'action_id') ??
+      stringField(event.raw, 'actionId') ??
+      stringField(event.payload, 'action_id') ??
+      stringField(event.payload, 'actionId');
+  if (actionId == null || actionId.trim().isEmpty) return null;
+
+  final preview = _mapField(event.payload, 'preview_payload', 'previewPayload');
+  final actionType = _firstNonEmpty([
+    _stringField(event.payload, 'action_type', 'actionType'),
+    stringField(event.raw, 'action_type') ??
+        stringField(event.raw, 'actionType'),
+  ]);
+  final title =
+      _firstNonEmpty([
+        _stringField(event.payload, 'title'),
+        _stringField(preview, 'title'),
+        _stringField(preview, 'summary'),
+        actionType,
+        '需要确认后继续',
+      ]) ??
+      '需要确认后继续';
+  final subtitle = _firstNonEmpty([
+    _stringField(event.payload, 'summary'),
+    _stringField(preview, 'description'),
+    _stringField(preview, 'message'),
+    _stringField(event.payload, 'target_type', 'targetType'),
+  ]);
+
+  return AgentActionCardView(
+    id: actionId.trim(),
+    title: title,
+    status: _actionStatus(event),
+    subtitle: subtitle,
+    actionType: actionType,
+    previewRows: _agentActionPreviewRows(preview),
+  );
+}
+
+String? _agentActionTypeLabel(String? actionType) {
+  final normalized = actionType?.trim().toLowerCase();
+  if (normalized == null || normalized.isEmpty) return null;
+  if (normalized.contains('schedule') || normalized.contains('task')) {
+    if (normalized.contains('delete') || normalized.contains('remove')) {
+      return '日程删除';
+    }
+    if (normalized.contains('create') || normalized.contains('add')) {
+      return '日程新增';
+    }
+    if (normalized.contains('update') || normalized.contains('edit')) {
+      return '日程修改';
+    }
+    return '日程操作';
+  }
+  return null;
+}
+
+List<String> _agentActionPreviewRows(Map<String, Object?> preview) {
+  if (preview.isEmpty) return const <String>[];
+  final specs = <({String label, List<String> keys})>[
+    (label: '对象', keys: const ['target', 'object', 'task_title']),
+    (
+      label: '原值',
+      keys: const ['before', 'old_value', 'from', 'current_status'],
+    ),
+    (label: '变更后', keys: const ['after', 'new_value', 'to', 'next_status']),
+    (label: '日期', keys: const ['date', 'task_date']),
+    (label: '时间', keys: const ['time', 'task_time']),
+    (label: '时区', keys: const ['timezone', 'time_zone']),
+    (label: '影响范围', keys: const ['impact_scope', 'scope', 'impact_range']),
+  ];
+  final rows = <String>[];
+  for (final spec in specs) {
+    Object? value;
+    for (final key in spec.keys) {
+      final candidate = preview[key];
+      if (candidate != null) {
+        value = candidate;
+        break;
+      }
+    }
+    final displayValue = _agentActionPreviewValue(value);
+    if (displayValue != null) rows.add('${spec.label}：$displayValue');
+  }
+  return List<String>.unmodifiable(rows);
+}
+
+String? _agentActionPreviewValue(Object? value) {
+  if (value is String) {
+    final normalized = value.trim();
+    return normalized.isEmpty ? null : normalized;
+  }
+  if (value is num || value is bool) return value.toString();
+  return null;
+}
+
+String _actionStatus(AgentStreamEvent event) {
+  final statusFromType = switch (event.type) {
+    'action.proposed' => 'proposed',
+    'action.confirmation_required' => 'confirmation_required',
+    'action.queued' => 'queued',
+    'action.applied' => 'applied',
+    'action.failed' => 'failed',
+    'action.rejected' => 'rejected',
+    _ => null,
+  };
+  if (statusFromType != null) return statusFromType;
+
+  final explicit = _firstNonEmpty([
+    _stringField(event.payload, 'action_status', 'actionStatus'),
+    _stringField(event.payload, 'status'),
+    stringField(event.raw, 'status'),
+  ]);
+  if (explicit != null) return explicit;
+
+  return 'proposed';
+}
+
+Map<String, Object?> _mapField(
+  Map<String, Object?> map,
+  String key, [
+  String? alias,
+]) {
+  final value = map[key] ?? (alias == null ? null : map[alias]);
+  return value is Map ? Map<String, Object?>.from(value) : const {};
+}
+
+String? _stringField(Map<String, Object?> map, String key, [String? alias]) {
+  return stringField(map, key) ??
+      (alias == null ? null : stringField(map, alias));
+}
+
+String? _firstNonEmpty(List<String?> values) {
+  for (final value in values) {
+    final normalized = value?.trim();
+    if (normalized != null && normalized.isNotEmpty) return normalized;
+  }
+  return null;
+}
+
+String? _safeAgentErrorText(String? errorMessage, {String? fallback}) {
+  final normalized = errorMessage?.trim();
+  if (normalized == null || normalized.isEmpty) return null;
+  final lower = normalized.toLowerCase();
+  if (lower.contains('timeoutexception') || lower.contains('timeout')) {
+    return '请求超时，请稍后重试';
+  }
+  if (lower.contains('socketexception') ||
+      lower.contains('failed host lookup') ||
+      lower.contains('network is unreachable') ||
+      lower.contains('offline')) {
+    return '网络不可用，请检查连接后重试';
+  }
+  return fallback ?? normalized;
+}
+
+class _AgentLoopDecorState {
+  const _AgentLoopDecorState({this.statusTitle, this.thinkingTitle});
+
+  final String? statusTitle;
+  final String? thinkingTitle;
+}
+
+_AgentLoopDecorState _agentLoopDecorStateFromEvents(
+  List<AgentStreamEvent> events,
+) {
+  return _AgentLoopDecorState(
+    statusTitle: _activeAgentStatusTitle(events),
+    thinkingTitle: _activeAgentThinkingTitle(events),
+  );
+}
+
+String? _activeAgentStatusTitle(List<AgentStreamEvent> events) {
+  final projection = projectAgentWorkStatus(events);
+  if (projection.isTerminal) return null;
+  final projectedEvent = projection.statusEvent;
+  if (projectedEvent != null) {
+    final projectedTitle = _semanticStatusTitle(projectedEvent);
+    if (projectedTitle != null) return projectedTitle;
+  }
+
+  for (final event in events.reversed) {
+    if (event.semantic.isNotEmpty) continue;
+    if (_eventStopsAgentLoopDecor(event)) return null;
+
+    switch (event.type) {
+      case 'run.queued':
+      case 'run.started':
+        return '我已经收到你的消息啦～';
+      case 'run.progress':
+        if (_isThinkingProgressEvent(event)) continue;
+        final title = _visibleAgentStatusTitle(
+          _firstNonEmpty([
+            _stringField(event.payload, 'label'),
+            _stringField(event.payload, 'message'),
+            _runProgressStatusTitle(event),
+          ]),
+        );
+        if (title != null) return title;
+        continue;
+      default:
+        continue;
+    }
+  }
+  return '我已经收到你的消息啦～';
+}
+
+String? _activeAgentThinkingTitle(List<AgentStreamEvent> events) {
+  for (final event in events.reversed) {
+    if (event.semantic.isNotEmpty) {
+      final semanticThinkingTitle = _semanticThinkingTitle(event);
+      if (semanticThinkingTitle != null) return semanticThinkingTitle;
+      if (_semanticClearsAgentThinking(event) ||
+          _eventStopsAgentLoopDecor(event)) {
+        return null;
+      }
+      continue;
+    }
+
+    if (event.type == 'run.progress') {
+      final phase = _stringField(event.payload, 'phase')?.trim();
+      if (phase == 'model_reasoning') {
+        return _visibleAgentStatusTitle(
+              _firstNonEmpty([
+                _stringField(event.payload, 'label'),
+                _stringField(event.payload, 'message'),
+              ]),
+            ) ??
+            '我想一下';
+      }
+      if (phase == 'model_reasoning_after_tool') {
+        return _visibleAgentStatusTitle(
+              _firstNonEmpty([
+                _stringField(event.payload, 'label'),
+                _stringField(event.payload, 'message'),
+              ]),
+            ) ??
+            '我想一下';
+      }
+      if (_runProgressClearsAgentThinking(event, phase)) return null;
+    }
+
+    if (_eventStopsAgentLoopDecor(event)) return null;
+  }
+  return null;
+}
+
+bool _eventStopsAgentLoopDecor(AgentStreamEvent event) {
+  return (event.type == 'message.completed' && event.role != 'user') ||
+      event.type == 'run.completed' ||
+      event.type == 'run.failed' ||
+      event.type == 'run.cancelled';
+}
+
+bool _isThinkingProgressEvent(AgentStreamEvent event) {
+  if (event.semanticSurface == 'thinking_note') return true;
+  if (event.type != 'run.progress') return false;
+  final phase = _stringField(event.payload, 'phase')?.trim();
+  return phase == 'model_reasoning' || phase == 'model_reasoning_after_tool';
+}
+
+bool _runProgressClearsAgentThinking(AgentStreamEvent event, String? phase) {
+  if (phase != null && phase.isNotEmpty) {
+    return phase != 'model_reasoning' && phase != 'model_reasoning_after_tool';
+  }
+  final statusCandidates = [
+    _semanticStatusTitle(event),
+    _stringField(event.payload, 'label'),
+    _stringField(event.payload, 'message'),
+  ];
+  return statusCandidates.any(
+    (candidate) => _visibleAgentStatusTitle(candidate) != null,
+  );
+}
+
+bool _semanticClearsAgentThinking(AgentStreamEvent event) {
+  final semantic = event.semantic;
+  if (semantic.isEmpty) return false;
+  final surface = _stringField(semantic, 'surface')?.trim();
+  if (surface == 'thinking_note') return false;
+  if (_semanticTargetsAgentStatus(semantic)) {
+    return _semanticDisplayTitle(semantic) != null;
+  }
+  final lifecycle = _stringField(semantic, 'lifecycle')?.trim();
+  return lifecycle == 'completed' || lifecycle == 'failed';
+}
+
+String? _semanticStatusTitle(AgentStreamEvent event) {
+  final semantic = event.semantic;
+  if (semantic.isEmpty) return null;
+  if (event.semanticLifecycle == 'failed') return null;
+  final surface = _stringField(semantic, 'surface')?.trim();
+  if (surface == 'thinking_note' || surface == 'hidden') return null;
+  if (_semanticTargetsAgentStatus(semantic)) {
+    return _semanticDisplayTitle(semantic);
+  }
+  return null;
+}
+
+bool _semanticTargetsAgentStatus(Map<String, Object?> semantic) {
+  const visibleTargets = {'status_bar', 'work_item', 'artifact', 'action'};
+  final surface = _stringField(semantic, 'surface')?.trim();
+  if (surface == 'thinking_note' || surface == 'hidden') return false;
+  return visibleTargets.contains(surface);
+}
+
+String? _semanticThinkingTitle(AgentStreamEvent event) {
+  final semantic = event.semantic;
+  if (semantic.isEmpty) return null;
+  final surface = _stringField(semantic, 'surface')?.trim();
+  if (surface != 'thinking_note') return null;
+  return _semanticDisplayTitle(semantic);
+}
+
+String? _semanticDisplayTitle(Map<String, Object?> semantic) {
+  return _visibleAgentStatusTitle(
+    _firstNonEmpty([
+      _stringField(semantic, 'label'),
+      _stringField(semantic, 'title'),
+    ]),
+  );
+}
+
+String? _runProgressStatusTitle(AgentStreamEvent event) {
+  final phase = _stringField(event.payload, 'phase')?.trim();
+  return switch (phase) {
+    'context_loading' => '我已经收到你的消息啦～',
+    'context_ready' => '我先理解一下你的需求～',
+    'model_followup' => '我接着处理下一步',
+    'response_finalizing' => '我在组织回复～',
+    'quick_replies_preparing' => '我在帮你准备下一轮的快捷输入～',
+    _ => null,
+  };
+}
+
+String? _visibleAgentStatusTitle(String? value) {
+  final normalized = value?.trim();
+  if (normalized == null || normalized.isEmpty) return null;
+  const hidden = {
+    '开始处理请求。',
+    '正在处理请求。',
+    '正在处理请求',
+    'Agent loop started.',
+    'Requesting model response.',
+    'Requesting model response with tool outputs.',
+  };
+  if (hidden.contains(normalized)) return null;
+  return switch (normalized) {
+    'Cozymate 正在进入对话' => '我已经收到你的消息啦～',
+    '正在整理对话上下文' => '我已经收到你的消息啦～',
+    '已整理好相关信息' => '我先理解一下你的需求～',
+    'Cozymate 正在思考怎么帮你' => '我想一下',
+    '正在整理回复' => '我在组织回复～',
+    _ => normalized,
+  };
+}

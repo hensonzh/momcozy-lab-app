@@ -1,0 +1,3182 @@
+{
+  "base": "http://127.0.0.1:4181",
+  "design": "/Users/lute/project/momcozy-lab产品设计",
+  "captures": [
+    {
+      "id": "mom/home",
+      "route": "/app/home",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "metrics": {
+        ":root": {
+          "fontFamily": "\"DM Sans\", -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+          "fontSize": "16px",
+          "fontWeight": "400",
+          "lineHeight": "normal",
+          "letterSpacing": "normal",
+          "color": "rgb(48, 43, 44)",
+          "backgroundColor": "rgb(247, 242, 240)",
+          "padding": "0px",
+          "gap": "normal",
+          "borderRadius": "0px",
+          "borderTop": "0px none rgb(48, 43, 44)",
+          "boxShadow": "none",
+          "height": "844px",
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 390,
+            "height": 844,
+            "top": 0,
+            "right": 390,
+            "bottom": 844,
+            "left": 0
+          }
+        },
+        "body": {
+          "fontFamily": "\"DM Sans\", -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+          "fontSize": "16px",
+          "fontWeight": "400",
+          "lineHeight": "normal",
+          "letterSpacing": "normal",
+          "color": "rgb(48, 42, 41)",
+          "backgroundColor": "rgb(245, 241, 237)",
+          "padding": "0px",
+          "gap": "normal",
+          "borderRadius": "0px",
+          "borderTop": "0px none rgb(48, 42, 41)",
+          "boxShadow": "none",
+          "height": "844px",
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 390,
+            "height": 844,
+            "top": 0,
+            "right": 390,
+            "bottom": 844,
+            "left": 0
+          }
+        },
+        ".user-shell": {
+          "fontFamily": "\"DM Sans\", -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+          "fontSize": "16px",
+          "fontWeight": "400",
+          "lineHeight": "normal",
+          "letterSpacing": "normal",
+          "color": "rgb(48, 42, 41)",
+          "backgroundColor": "rgb(250, 247, 243)",
+          "padding": "0px",
+          "gap": "normal",
+          "borderRadius": "0px",
+          "borderTop": "0px none rgba(213, 199, 192, 0.78)",
+          "boxShadow": "rgba(73, 52, 48, 0.11) 0px 24px 64px 0px",
+          "height": "844px",
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 390,
+            "height": 844,
+            "top": 0,
+            "right": 390,
+            "bottom": 844,
+            "left": 0
+          }
+        },
+        ".user-content": {
+          "fontFamily": "\"DM Sans\", -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+          "fontSize": "16px",
+          "fontWeight": "400",
+          "lineHeight": "normal",
+          "letterSpacing": "normal",
+          "color": "rgb(48, 42, 41)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "padding": "27px 8px 32px",
+          "gap": "normal",
+          "borderRadius": "0px",
+          "borderTop": "0px none rgb(48, 42, 41)",
+          "boxShadow": "none",
+          "height": "766px",
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 390,
+            "height": 766,
+            "top": 0,
+            "right": 390,
+            "bottom": 766,
+            "left": 0
+          }
+        },
+        ".page": null,
+        ".bottom-nav": {
+          "fontFamily": "-apple-system, \"system-ui\", \"Segoe UI\", \"Microsoft YaHei\", \"PingFang SC\", \"Noto Sans CJK SC\", sans-serif",
+          "fontSize": "16px",
+          "fontWeight": "400",
+          "lineHeight": "normal",
+          "letterSpacing": "normal",
+          "color": "rgb(48, 42, 41)",
+          "backgroundColor": "rgb(255, 252, 255)",
+          "padding": "6px 8px",
+          "gap": "normal",
+          "borderRadius": "0px",
+          "borderTop": "1px solid rgb(234, 224, 241)",
+          "boxShadow": "rgba(121, 84, 139, 0.024) 0px -4px 20px 0px",
+          "height": "78px",
+          "bounds": {
+            "x": 0,
+            "y": 766,
+            "width": 390,
+            "height": 78,
+            "top": 766,
+            "right": 390,
+            "bottom": 844,
+            "left": 0
+          }
+        },
+        ".nav-item": {
+          "fontFamily": "-apple-system, \"system-ui\", \"Segoe UI\", \"Microsoft YaHei\", \"PingFang SC\", \"Noto Sans CJK SC\", sans-serif",
+          "fontSize": "11px",
+          "fontWeight": "650",
+          "lineHeight": "14px",
+          "letterSpacing": "normal",
+          "color": "rgb(135, 82, 199)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "padding": "0px 0px 2px",
+          "gap": "5px",
+          "borderRadius": "16px",
+          "borderTop": "0px none rgb(135, 82, 199)",
+          "boxShadow": "none",
+          "height": "65px",
+          "bounds": {
+            "x": 8,
+            "y": 773,
+            "width": 74.796875,
+            "height": 65,
+            "top": 773,
+            "right": 82.796875,
+            "bottom": 838,
+            "left": 8
+          }
+        },
+        ".nav-item.active": {
+          "fontFamily": "-apple-system, \"system-ui\", \"Segoe UI\", \"Microsoft YaHei\", \"PingFang SC\", \"Noto Sans CJK SC\", sans-serif",
+          "fontSize": "11px",
+          "fontWeight": "650",
+          "lineHeight": "14px",
+          "letterSpacing": "normal",
+          "color": "rgb(135, 82, 199)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "padding": "0px 0px 2px",
+          "gap": "5px",
+          "borderRadius": "16px",
+          "borderTop": "0px none rgb(135, 82, 199)",
+          "boxShadow": "none",
+          "height": "65px",
+          "bounds": {
+            "x": 8,
+            "y": 773,
+            "width": 74.796875,
+            "height": 65,
+            "top": 773,
+            "right": 82.796875,
+            "bottom": 838,
+            "left": 8
+          }
+        },
+        ".nav-asset": {
+          "fontFamily": "-apple-system, \"system-ui\", \"Segoe UI\", \"Microsoft YaHei\", \"PingFang SC\", \"Noto Sans CJK SC\", sans-serif",
+          "fontSize": "11px",
+          "fontWeight": "650",
+          "lineHeight": "14px",
+          "letterSpacing": "normal",
+          "color": "rgb(135, 82, 199)",
+          "backgroundColor": "rgb(135, 82, 199)",
+          "padding": "0px",
+          "gap": "normal",
+          "borderRadius": "0px",
+          "borderTop": "0px none rgb(135, 82, 199)",
+          "boxShadow": "none",
+          "height": "24px",
+          "bounds": {
+            "x": 33.390625,
+            "y": 788,
+            "width": 24,
+            "height": 24,
+            "top": 788,
+            "right": 57.390625,
+            "bottom": 812,
+            "left": 33.390625
+          }
+        },
+        ".nav-agent-avatar": {
+          "fontFamily": "-apple-system, \"system-ui\", \"Segoe UI\", \"Microsoft YaHei\", \"PingFang SC\", \"Noto Sans CJK SC\", sans-serif",
+          "fontSize": "11px",
+          "fontWeight": "500",
+          "lineHeight": "14px",
+          "letterSpacing": "normal",
+          "color": "rgb(142, 128, 137)",
+          "backgroundColor": "rgb(240, 231, 246)",
+          "padding": "0px",
+          "gap": "normal",
+          "borderRadius": "50%",
+          "borderTop": "2px solid rgb(255, 255, 255)",
+          "boxShadow": "rgb(232, 216, 247) 0px 0px 0px 2px, rgba(135, 82, 199, 0.1) 0px 3px 12px 0px",
+          "height": "42px",
+          "bounds": {
+            "x": 173.984375,
+            "y": 775,
+            "width": 42,
+            "height": 42,
+            "top": 775,
+            "right": 215.984375,
+            "bottom": 817,
+            "left": 173.984375
+          }
+        },
+        ".home-greeting": null,
+        ".baby-knowledge-banner": {
+          "fontFamily": "\"DM Sans\", -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+          "fontSize": "16px",
+          "fontWeight": "400",
+          "lineHeight": "normal",
+          "letterSpacing": "normal",
+          "color": "rgb(53, 45, 64)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "padding": "25px 22px 27px",
+          "gap": "normal",
+          "borderRadius": "18px",
+          "borderTop": "0px none rgb(53, 45, 64)",
+          "boxShadow": "none",
+          "height": "224px",
+          "bounds": {
+            "x": 8,
+            "y": 85.59375,
+            "width": 374,
+            "height": 224,
+            "top": 85.59375,
+            "right": 382,
+            "bottom": 309.59375,
+            "left": 8
+          }
+        },
+        ".my-status-card": {
+          "fontFamily": "\"DM Sans\", -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+          "fontSize": "16px",
+          "fontWeight": "400",
+          "lineHeight": "normal",
+          "letterSpacing": "normal",
+          "color": "rgb(57, 50, 44)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "padding": "16px 14px 15px",
+          "gap": "normal",
+          "borderRadius": "22px",
+          "borderTop": "0px none rgb(57, 50, 44)",
+          "boxShadow": "none",
+          "height": "148px",
+          "bounds": {
+            "x": 8,
+            "y": 386.59375,
+            "width": 182,
+            "height": 148,
+            "top": 386.59375,
+            "right": 190,
+            "bottom": 534.59375,
+            "left": 8
+          }
+        },
+        ".btn": null,
+        ".card": null,
+        "h1": {
+          "fontFamily": "Manrope, \"DM Sans\", sans-serif",
+          "fontSize": "28px",
+          "fontWeight": "700",
+          "lineHeight": "30.8px",
+          "letterSpacing": "-1.12px",
+          "color": "rgb(48, 42, 41)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "padding": "0px",
+          "gap": "normal",
+          "borderRadius": "0px",
+          "borderTop": "0px none rgb(48, 42, 41)",
+          "boxShadow": "none",
+          "height": "auto",
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          }
+        },
+        "h2": {
+          "fontFamily": "Manrope, \"DM Sans\", sans-serif",
+          "fontSize": "19px",
+          "fontWeight": "700",
+          "lineHeight": "26.6px",
+          "letterSpacing": "-0.475px",
+          "color": "rgb(64, 54, 46)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "padding": "0px",
+          "gap": "8px",
+          "borderRadius": "0px",
+          "borderTop": "0px none rgb(64, 54, 46)",
+          "boxShadow": "none",
+          "height": "26.5938px",
+          "bounds": {
+            "x": 12,
+            "y": 341.296875,
+            "width": 107.109375,
+            "height": 26.59375,
+            "top": 341.296875,
+            "right": 119.109375,
+            "bottom": 367.890625,
+            "left": 12
+          }
+        },
+        "h3": {
+          "fontFamily": "Manrope, \"DM Sans\", sans-serif",
+          "fontSize": "23px",
+          "fontWeight": "700",
+          "lineHeight": "29.9px",
+          "letterSpacing": "-0.805px",
+          "color": "rgb(48, 53, 54)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "padding": "0px",
+          "gap": "normal",
+          "borderRadius": "0px",
+          "borderTop": "0px none rgb(48, 53, 54)",
+          "boxShadow": "none",
+          "height": "29.8906px",
+          "bounds": {
+            "x": 27,
+            "y": 812.328125,
+            "width": 336,
+            "height": 29.890625,
+            "top": 812.328125,
+            "right": 363,
+            "bottom": 842.21875,
+            "left": 27
+          }
+        }
+      },
+      "fullPageMethod": "Expand scroll frame only; original viewport retained",
+      "capturedAt": "2026-09-12T02:52:48.546Z"
+    },
+    {
+      "id": "baby/home",
+      "route": "/app/baby",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "metrics": {
+        ":root": {
+          "fontFamily": "\"DM Sans\", -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+          "fontSize": "16px",
+          "fontWeight": "400",
+          "lineHeight": "normal",
+          "letterSpacing": "normal",
+          "color": "rgb(48, 43, 44)",
+          "backgroundColor": "rgb(247, 242, 240)",
+          "padding": "0px",
+          "gap": "normal",
+          "borderRadius": "0px",
+          "borderTop": "0px none rgb(48, 43, 44)",
+          "boxShadow": "none",
+          "height": "844px",
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 390,
+            "height": 844,
+            "top": 0,
+            "right": 390,
+            "bottom": 844,
+            "left": 0
+          }
+        },
+        "body": {
+          "fontFamily": "\"DM Sans\", -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+          "fontSize": "16px",
+          "fontWeight": "400",
+          "lineHeight": "normal",
+          "letterSpacing": "normal",
+          "color": "rgb(48, 42, 41)",
+          "backgroundColor": "rgb(245, 241, 237)",
+          "padding": "0px",
+          "gap": "normal",
+          "borderRadius": "0px",
+          "borderTop": "0px none rgb(48, 42, 41)",
+          "boxShadow": "none",
+          "height": "844px",
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 390,
+            "height": 844,
+            "top": 0,
+            "right": 390,
+            "bottom": 844,
+            "left": 0
+          }
+        },
+        ".user-shell": {
+          "fontFamily": "\"DM Sans\", -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+          "fontSize": "16px",
+          "fontWeight": "400",
+          "lineHeight": "normal",
+          "letterSpacing": "normal",
+          "color": "rgb(48, 42, 41)",
+          "backgroundColor": "rgb(250, 247, 243)",
+          "padding": "0px",
+          "gap": "normal",
+          "borderRadius": "0px",
+          "borderTop": "0px none rgba(213, 199, 192, 0.78)",
+          "boxShadow": "rgba(73, 52, 48, 0.11) 0px 24px 64px 0px",
+          "height": "844px",
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 390,
+            "height": 844,
+            "top": 0,
+            "right": 390,
+            "bottom": 844,
+            "left": 0
+          }
+        },
+        ".user-content": {
+          "fontFamily": "\"DM Sans\", -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+          "fontSize": "16px",
+          "fontWeight": "400",
+          "lineHeight": "normal",
+          "letterSpacing": "normal",
+          "color": "rgb(48, 42, 41)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "padding": "27px 8px 32px",
+          "gap": "normal",
+          "borderRadius": "0px",
+          "borderTop": "0px none rgb(48, 42, 41)",
+          "boxShadow": "none",
+          "height": "766px",
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 390,
+            "height": 766,
+            "top": 0,
+            "right": 390,
+            "bottom": 766,
+            "left": 0
+          }
+        },
+        ".page": null,
+        ".bottom-nav": {
+          "fontFamily": "-apple-system, \"system-ui\", \"Segoe UI\", \"Microsoft YaHei\", \"PingFang SC\", \"Noto Sans CJK SC\", sans-serif",
+          "fontSize": "16px",
+          "fontWeight": "400",
+          "lineHeight": "normal",
+          "letterSpacing": "normal",
+          "color": "rgb(48, 42, 41)",
+          "backgroundColor": "rgb(255, 252, 255)",
+          "padding": "6px 8px",
+          "gap": "normal",
+          "borderRadius": "0px",
+          "borderTop": "1px solid rgb(234, 224, 241)",
+          "boxShadow": "rgba(121, 84, 139, 0.024) 0px -4px 20px 0px",
+          "height": "78px",
+          "bounds": {
+            "x": 0,
+            "y": 766,
+            "width": 390,
+            "height": 78,
+            "top": 766,
+            "right": 390,
+            "bottom": 844,
+            "left": 0
+          }
+        },
+        ".nav-item": {
+          "fontFamily": "-apple-system, \"system-ui\", \"Segoe UI\", \"Microsoft YaHei\", \"PingFang SC\", \"Noto Sans CJK SC\", sans-serif",
+          "fontSize": "11px",
+          "fontWeight": "500",
+          "lineHeight": "14px",
+          "letterSpacing": "normal",
+          "color": "rgb(142, 128, 137)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "padding": "0px 0px 2px",
+          "gap": "5px",
+          "borderRadius": "16px",
+          "borderTop": "0px none rgb(142, 128, 137)",
+          "boxShadow": "none",
+          "height": "65px",
+          "bounds": {
+            "x": 8,
+            "y": 773,
+            "width": 74.796875,
+            "height": 65,
+            "top": 773,
+            "right": 82.796875,
+            "bottom": 838,
+            "left": 8
+          }
+        },
+        ".nav-item.active": {
+          "fontFamily": "-apple-system, \"system-ui\", \"Segoe UI\", \"Microsoft YaHei\", \"PingFang SC\", \"Noto Sans CJK SC\", sans-serif",
+          "fontSize": "11px",
+          "fontWeight": "650",
+          "lineHeight": "14px",
+          "letterSpacing": "normal",
+          "color": "rgb(135, 82, 199)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "padding": "0px 0px 2px",
+          "gap": "5px",
+          "borderRadius": "16px",
+          "borderTop": "0px none rgb(135, 82, 199)",
+          "boxShadow": "none",
+          "height": "65px",
+          "bounds": {
+            "x": 82.796875,
+            "y": 773,
+            "width": 74.796875,
+            "height": 65,
+            "top": 773,
+            "right": 157.59375,
+            "bottom": 838,
+            "left": 82.796875
+          }
+        },
+        ".nav-asset": {
+          "fontFamily": "-apple-system, \"system-ui\", \"Segoe UI\", \"Microsoft YaHei\", \"PingFang SC\", \"Noto Sans CJK SC\", sans-serif",
+          "fontSize": "11px",
+          "fontWeight": "500",
+          "lineHeight": "14px",
+          "letterSpacing": "normal",
+          "color": "rgb(142, 128, 137)",
+          "backgroundColor": "rgb(142, 128, 137)",
+          "padding": "0px",
+          "gap": "normal",
+          "borderRadius": "0px",
+          "borderTop": "0px none rgb(142, 128, 137)",
+          "boxShadow": "none",
+          "height": "24px",
+          "bounds": {
+            "x": 33.390625,
+            "y": 788,
+            "width": 24,
+            "height": 24,
+            "top": 788,
+            "right": 57.390625,
+            "bottom": 812,
+            "left": 33.390625
+          }
+        },
+        ".nav-agent-avatar": {
+          "fontFamily": "-apple-system, \"system-ui\", \"Segoe UI\", \"Microsoft YaHei\", \"PingFang SC\", \"Noto Sans CJK SC\", sans-serif",
+          "fontSize": "11px",
+          "fontWeight": "500",
+          "lineHeight": "14px",
+          "letterSpacing": "normal",
+          "color": "rgb(142, 128, 137)",
+          "backgroundColor": "rgb(240, 231, 246)",
+          "padding": "0px",
+          "gap": "normal",
+          "borderRadius": "50%",
+          "borderTop": "2px solid rgb(255, 255, 255)",
+          "boxShadow": "rgb(232, 216, 247) 0px 0px 0px 2px, rgba(135, 82, 199, 0.1) 0px 3px 12px 0px",
+          "height": "42px",
+          "bounds": {
+            "x": 173.984375,
+            "y": 775,
+            "width": 42,
+            "height": 42,
+            "top": 775,
+            "right": 215.984375,
+            "bottom": 817,
+            "left": 173.984375
+          }
+        },
+        ".home-greeting": null,
+        ".baby-knowledge-banner": {
+          "fontFamily": "\"DM Sans\", -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+          "fontSize": "16px",
+          "fontWeight": "400",
+          "lineHeight": "normal",
+          "letterSpacing": "normal",
+          "color": "rgb(53, 45, 64)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "padding": "25px 22px 27px",
+          "gap": "normal",
+          "borderRadius": "18px",
+          "borderTop": "0px none rgb(53, 45, 64)",
+          "boxShadow": "none",
+          "height": "224px",
+          "bounds": {
+            "x": 8,
+            "y": 85.59375,
+            "width": 374,
+            "height": 224,
+            "top": 85.59375,
+            "right": 382,
+            "bottom": 309.59375,
+            "left": 8
+          }
+        },
+        ".my-status-card": null,
+        ".btn": null,
+        ".card": null,
+        "h1": {
+          "fontFamily": "Manrope, \"DM Sans\", sans-serif",
+          "fontSize": "28px",
+          "fontWeight": "700",
+          "lineHeight": "30.8px",
+          "letterSpacing": "-1.12px",
+          "color": "rgb(48, 42, 41)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "padding": "0px",
+          "gap": "normal",
+          "borderRadius": "0px",
+          "borderTop": "0px none rgb(48, 42, 41)",
+          "boxShadow": "none",
+          "height": "auto",
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          }
+        },
+        "h2": {
+          "fontFamily": "Manrope, \"DM Sans\", sans-serif",
+          "fontSize": "19px",
+          "fontWeight": "700",
+          "lineHeight": "26.6px",
+          "letterSpacing": "-0.475px",
+          "color": "rgb(64, 54, 46)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "padding": "0px",
+          "gap": "8px",
+          "borderRadius": "0px",
+          "borderTop": "0px none rgb(64, 54, 46)",
+          "boxShadow": "none",
+          "height": "26.5938px",
+          "bounds": {
+            "x": 12,
+            "y": 341.296875,
+            "width": 107.109375,
+            "height": 26.59375,
+            "top": 341.296875,
+            "right": 119.109375,
+            "bottom": 367.890625,
+            "left": 12
+          }
+        },
+        "h3": null
+      },
+      "fullPageMethod": "Expand scroll frame only; original viewport retained",
+      "capturedAt": "2026-09-12T02:52:48.967Z"
+    },
+    {
+      "id": "agent/home",
+      "route": "/app/agent",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "metrics": {
+        ":root": {
+          "fontFamily": "\"DM Sans\", -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+          "fontSize": "16px",
+          "fontWeight": "400",
+          "lineHeight": "normal",
+          "letterSpacing": "normal",
+          "color": "rgb(48, 43, 44)",
+          "backgroundColor": "rgb(247, 242, 240)",
+          "padding": "0px",
+          "gap": "normal",
+          "borderRadius": "0px",
+          "borderTop": "0px none rgb(48, 43, 44)",
+          "boxShadow": "none",
+          "height": "844px",
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 390,
+            "height": 844,
+            "top": 0,
+            "right": 390,
+            "bottom": 844,
+            "left": 0
+          }
+        },
+        "body": {
+          "fontFamily": "\"DM Sans\", -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+          "fontSize": "16px",
+          "fontWeight": "400",
+          "lineHeight": "normal",
+          "letterSpacing": "normal",
+          "color": "rgb(48, 42, 41)",
+          "backgroundColor": "rgb(245, 241, 237)",
+          "padding": "0px",
+          "gap": "normal",
+          "borderRadius": "0px",
+          "borderTop": "0px none rgb(48, 42, 41)",
+          "boxShadow": "none",
+          "height": "844px",
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 390,
+            "height": 844,
+            "top": 0,
+            "right": 390,
+            "bottom": 844,
+            "left": 0
+          }
+        },
+        ".user-shell": {
+          "fontFamily": "-apple-system, \"system-ui\", \"Segoe UI\", \"Microsoft YaHei\", \"PingFang SC\", \"Noto Sans CJK SC\", sans-serif",
+          "fontSize": "16px",
+          "fontWeight": "400",
+          "lineHeight": "normal",
+          "letterSpacing": "normal",
+          "color": "rgb(48, 42, 41)",
+          "backgroundColor": "rgb(252, 249, 252)",
+          "padding": "0px",
+          "gap": "normal",
+          "borderRadius": "0px",
+          "borderTop": "0px none rgba(213, 199, 192, 0.78)",
+          "boxShadow": "rgba(73, 52, 48, 0.11) 0px 24px 64px 0px",
+          "height": "844px",
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 390,
+            "height": 844,
+            "top": 0,
+            "right": 390,
+            "bottom": 844,
+            "left": 0
+          }
+        },
+        ".user-content": {
+          "fontFamily": "-apple-system, \"system-ui\", \"Segoe UI\", \"Microsoft YaHei\", \"PingFang SC\", \"Noto Sans CJK SC\", sans-serif",
+          "fontSize": "16px",
+          "fontWeight": "400",
+          "lineHeight": "normal",
+          "letterSpacing": "normal",
+          "color": "rgb(48, 42, 41)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "padding": "0px",
+          "gap": "normal",
+          "borderRadius": "0px",
+          "borderTop": "0px none rgb(48, 42, 41)",
+          "boxShadow": "none",
+          "height": "766px",
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 390,
+            "height": 766,
+            "top": 0,
+            "right": 390,
+            "bottom": 766,
+            "left": 0
+          }
+        },
+        ".page": null,
+        ".bottom-nav": {
+          "fontFamily": "-apple-system, \"system-ui\", \"Segoe UI\", \"Microsoft YaHei\", \"PingFang SC\", \"Noto Sans CJK SC\", sans-serif",
+          "fontSize": "16px",
+          "fontWeight": "400",
+          "lineHeight": "normal",
+          "letterSpacing": "normal",
+          "color": "rgb(48, 42, 41)",
+          "backgroundColor": "rgb(255, 252, 255)",
+          "padding": "6px 8px",
+          "gap": "normal",
+          "borderRadius": "0px",
+          "borderTop": "1px solid rgb(234, 224, 241)",
+          "boxShadow": "rgba(121, 84, 139, 0.024) 0px -4px 20px 0px",
+          "height": "78px",
+          "bounds": {
+            "x": 0,
+            "y": 766,
+            "width": 390,
+            "height": 78,
+            "top": 766,
+            "right": 390,
+            "bottom": 844,
+            "left": 0
+          }
+        },
+        ".nav-item": {
+          "fontFamily": "-apple-system, \"system-ui\", \"Segoe UI\", \"Microsoft YaHei\", \"PingFang SC\", \"Noto Sans CJK SC\", sans-serif",
+          "fontSize": "11px",
+          "fontWeight": "500",
+          "lineHeight": "14px",
+          "letterSpacing": "normal",
+          "color": "rgb(142, 128, 137)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "padding": "0px 0px 2px",
+          "gap": "5px",
+          "borderRadius": "16px",
+          "borderTop": "0px none rgb(142, 128, 137)",
+          "boxShadow": "none",
+          "height": "65px",
+          "bounds": {
+            "x": 8,
+            "y": 773,
+            "width": 74.796875,
+            "height": 65,
+            "top": 773,
+            "right": 82.796875,
+            "bottom": 838,
+            "left": 8
+          }
+        },
+        ".nav-item.active": {
+          "fontFamily": "-apple-system, \"system-ui\", \"Segoe UI\", \"Microsoft YaHei\", \"PingFang SC\", \"Noto Sans CJK SC\", sans-serif",
+          "fontSize": "11px",
+          "fontWeight": "650",
+          "lineHeight": "14px",
+          "letterSpacing": "normal",
+          "color": "rgb(135, 82, 199)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "padding": "0px 0px 2px",
+          "gap": "5px",
+          "borderRadius": "16px",
+          "borderTop": "0px none rgb(135, 82, 199)",
+          "boxShadow": "none",
+          "height": "65px",
+          "bounds": {
+            "x": 157.59375,
+            "y": 773,
+            "width": 74.796875,
+            "height": 65,
+            "top": 773,
+            "right": 232.390625,
+            "bottom": 838,
+            "left": 157.59375
+          }
+        },
+        ".nav-asset": {
+          "fontFamily": "-apple-system, \"system-ui\", \"Segoe UI\", \"Microsoft YaHei\", \"PingFang SC\", \"Noto Sans CJK SC\", sans-serif",
+          "fontSize": "11px",
+          "fontWeight": "500",
+          "lineHeight": "14px",
+          "letterSpacing": "normal",
+          "color": "rgb(142, 128, 137)",
+          "backgroundColor": "rgb(142, 128, 137)",
+          "padding": "0px",
+          "gap": "normal",
+          "borderRadius": "0px",
+          "borderTop": "0px none rgb(142, 128, 137)",
+          "boxShadow": "none",
+          "height": "24px",
+          "bounds": {
+            "x": 33.390625,
+            "y": 788,
+            "width": 24,
+            "height": 24,
+            "top": 788,
+            "right": 57.390625,
+            "bottom": 812,
+            "left": 33.390625
+          }
+        },
+        ".nav-agent-avatar": {
+          "fontFamily": "-apple-system, \"system-ui\", \"Segoe UI\", \"Microsoft YaHei\", \"PingFang SC\", \"Noto Sans CJK SC\", sans-serif",
+          "fontSize": "11px",
+          "fontWeight": "650",
+          "lineHeight": "14px",
+          "letterSpacing": "normal",
+          "color": "rgb(135, 82, 199)",
+          "backgroundColor": "rgb(240, 231, 246)",
+          "padding": "0px",
+          "gap": "normal",
+          "borderRadius": "50%",
+          "borderTop": "2px solid rgb(255, 255, 255)",
+          "boxShadow": "rgb(191, 157, 225) 0px 0px 0px 2px, rgba(135, 82, 199, 0.15) 0px 3px 14px 0px",
+          "height": "42px",
+          "bounds": {
+            "x": 173.984375,
+            "y": 775,
+            "width": 42,
+            "height": 42,
+            "top": 775,
+            "right": 215.984375,
+            "bottom": 817,
+            "left": 173.984375
+          }
+        },
+        ".home-greeting": null,
+        ".baby-knowledge-banner": null,
+        ".my-status-card": null,
+        ".btn": null,
+        ".card": null,
+        "h1": {
+          "fontFamily": "Manrope, \"DM Sans\", sans-serif",
+          "fontSize": "21px",
+          "fontWeight": "700",
+          "lineHeight": "25.2px",
+          "letterSpacing": "-0.6px",
+          "color": "rgb(53, 45, 64)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "padding": "0px",
+          "gap": "normal",
+          "borderRadius": "0px",
+          "borderTop": "0px none rgb(53, 45, 64)",
+          "boxShadow": "none",
+          "height": "25.1875px",
+          "bounds": {
+            "x": 145.9375,
+            "y": 29.40625,
+            "width": 98.125,
+            "height": 25.1875,
+            "top": 29.40625,
+            "right": 244.0625,
+            "bottom": 54.59375,
+            "left": 145.9375
+          }
+        },
+        "h2": null,
+        "h3": null
+      },
+      "fullPageMethod": "Expand scroll frame only; original viewport retained",
+      "capturedAt": "2026-09-12T02:52:49.571Z"
+    },
+    {
+      "id": "schedule/home",
+      "route": "/app/plan",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "metrics": {
+        ":root": {
+          "fontFamily": "\"DM Sans\", -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+          "fontSize": "16px",
+          "fontWeight": "400",
+          "lineHeight": "normal",
+          "letterSpacing": "normal",
+          "color": "rgb(48, 43, 44)",
+          "backgroundColor": "rgb(247, 242, 240)",
+          "padding": "0px",
+          "gap": "normal",
+          "borderRadius": "0px",
+          "borderTop": "0px none rgb(48, 43, 44)",
+          "boxShadow": "none",
+          "height": "844px",
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 390,
+            "height": 844,
+            "top": 0,
+            "right": 390,
+            "bottom": 844,
+            "left": 0
+          }
+        },
+        "body": {
+          "fontFamily": "\"DM Sans\", -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+          "fontSize": "16px",
+          "fontWeight": "400",
+          "lineHeight": "normal",
+          "letterSpacing": "normal",
+          "color": "rgb(48, 42, 41)",
+          "backgroundColor": "rgb(245, 241, 237)",
+          "padding": "0px",
+          "gap": "normal",
+          "borderRadius": "0px",
+          "borderTop": "0px none rgb(48, 42, 41)",
+          "boxShadow": "none",
+          "height": "844px",
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 390,
+            "height": 844,
+            "top": 0,
+            "right": 390,
+            "bottom": 844,
+            "left": 0
+          }
+        },
+        ".user-shell": {
+          "fontFamily": "\"DM Sans\", -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+          "fontSize": "16px",
+          "fontWeight": "400",
+          "lineHeight": "normal",
+          "letterSpacing": "normal",
+          "color": "rgb(48, 42, 41)",
+          "backgroundColor": "rgb(250, 247, 243)",
+          "padding": "0px",
+          "gap": "normal",
+          "borderRadius": "0px",
+          "borderTop": "0px none rgba(213, 199, 192, 0.78)",
+          "boxShadow": "rgba(73, 52, 48, 0.11) 0px 24px 64px 0px",
+          "height": "844px",
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 390,
+            "height": 844,
+            "top": 0,
+            "right": 390,
+            "bottom": 844,
+            "left": 0
+          }
+        },
+        ".user-content": {
+          "fontFamily": "\"DM Sans\", -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+          "fontSize": "16px",
+          "fontWeight": "400",
+          "lineHeight": "normal",
+          "letterSpacing": "normal",
+          "color": "rgb(48, 42, 41)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "padding": "27px 16px 32px",
+          "gap": "normal",
+          "borderRadius": "0px",
+          "borderTop": "0px none rgb(48, 42, 41)",
+          "boxShadow": "none",
+          "height": "766px",
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 390,
+            "height": 766,
+            "top": 0,
+            "right": 390,
+            "bottom": 766,
+            "left": 0
+          }
+        },
+        ".page": null,
+        ".bottom-nav": {
+          "fontFamily": "-apple-system, \"system-ui\", \"Segoe UI\", \"Microsoft YaHei\", \"PingFang SC\", \"Noto Sans CJK SC\", sans-serif",
+          "fontSize": "16px",
+          "fontWeight": "400",
+          "lineHeight": "normal",
+          "letterSpacing": "normal",
+          "color": "rgb(48, 42, 41)",
+          "backgroundColor": "rgb(255, 252, 255)",
+          "padding": "6px 8px",
+          "gap": "normal",
+          "borderRadius": "0px",
+          "borderTop": "1px solid rgb(234, 224, 241)",
+          "boxShadow": "rgba(121, 84, 139, 0.024) 0px -4px 20px 0px",
+          "height": "78px",
+          "bounds": {
+            "x": 0,
+            "y": 766,
+            "width": 390,
+            "height": 78,
+            "top": 766,
+            "right": 390,
+            "bottom": 844,
+            "left": 0
+          }
+        },
+        ".nav-item": {
+          "fontFamily": "-apple-system, \"system-ui\", \"Segoe UI\", \"Microsoft YaHei\", \"PingFang SC\", \"Noto Sans CJK SC\", sans-serif",
+          "fontSize": "11px",
+          "fontWeight": "500",
+          "lineHeight": "14px",
+          "letterSpacing": "normal",
+          "color": "rgb(142, 128, 137)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "padding": "0px 0px 2px",
+          "gap": "5px",
+          "borderRadius": "16px",
+          "borderTop": "0px none rgb(142, 128, 137)",
+          "boxShadow": "none",
+          "height": "65px",
+          "bounds": {
+            "x": 8,
+            "y": 773,
+            "width": 74.796875,
+            "height": 65,
+            "top": 773,
+            "right": 82.796875,
+            "bottom": 838,
+            "left": 8
+          }
+        },
+        ".nav-item.active": {
+          "fontFamily": "-apple-system, \"system-ui\", \"Segoe UI\", \"Microsoft YaHei\", \"PingFang SC\", \"Noto Sans CJK SC\", sans-serif",
+          "fontSize": "11px",
+          "fontWeight": "650",
+          "lineHeight": "14px",
+          "letterSpacing": "normal",
+          "color": "rgb(135, 82, 199)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "padding": "0px 0px 2px",
+          "gap": "5px",
+          "borderRadius": "16px",
+          "borderTop": "0px none rgb(135, 82, 199)",
+          "boxShadow": "none",
+          "height": "65px",
+          "bounds": {
+            "x": 232.390625,
+            "y": 773,
+            "width": 74.796875,
+            "height": 65,
+            "top": 773,
+            "right": 307.1875,
+            "bottom": 838,
+            "left": 232.390625
+          }
+        },
+        ".nav-asset": {
+          "fontFamily": "-apple-system, \"system-ui\", \"Segoe UI\", \"Microsoft YaHei\", \"PingFang SC\", \"Noto Sans CJK SC\", sans-serif",
+          "fontSize": "11px",
+          "fontWeight": "500",
+          "lineHeight": "14px",
+          "letterSpacing": "normal",
+          "color": "rgb(142, 128, 137)",
+          "backgroundColor": "rgb(142, 128, 137)",
+          "padding": "0px",
+          "gap": "normal",
+          "borderRadius": "0px",
+          "borderTop": "0px none rgb(142, 128, 137)",
+          "boxShadow": "none",
+          "height": "24px",
+          "bounds": {
+            "x": 33.390625,
+            "y": 788,
+            "width": 24,
+            "height": 24,
+            "top": 788,
+            "right": 57.390625,
+            "bottom": 812,
+            "left": 33.390625
+          }
+        },
+        ".nav-agent-avatar": {
+          "fontFamily": "-apple-system, \"system-ui\", \"Segoe UI\", \"Microsoft YaHei\", \"PingFang SC\", \"Noto Sans CJK SC\", sans-serif",
+          "fontSize": "11px",
+          "fontWeight": "500",
+          "lineHeight": "14px",
+          "letterSpacing": "normal",
+          "color": "rgb(142, 128, 137)",
+          "backgroundColor": "rgb(240, 231, 246)",
+          "padding": "0px",
+          "gap": "normal",
+          "borderRadius": "50%",
+          "borderTop": "2px solid rgb(255, 255, 255)",
+          "boxShadow": "rgb(232, 216, 247) 0px 0px 0px 2px, rgba(135, 82, 199, 0.1) 0px 3px 12px 0px",
+          "height": "42px",
+          "bounds": {
+            "x": 173.984375,
+            "y": 775,
+            "width": 42,
+            "height": 42,
+            "top": 775,
+            "right": 215.984375,
+            "bottom": 817,
+            "left": 173.984375
+          }
+        },
+        ".home-greeting": null,
+        ".baby-knowledge-banner": null,
+        ".my-status-card": null,
+        ".btn": null,
+        ".card": null,
+        "h1": {
+          "fontFamily": "Manrope, \"DM Sans\", sans-serif",
+          "fontSize": "28px",
+          "fontWeight": "700",
+          "lineHeight": "30.8px",
+          "letterSpacing": "-1.12px",
+          "color": "rgb(48, 42, 41)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "padding": "0px",
+          "gap": "normal",
+          "borderRadius": "0px",
+          "borderTop": "0px none rgb(48, 42, 41)",
+          "boxShadow": "none",
+          "height": "auto",
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          }
+        },
+        "h2": {
+          "fontFamily": "Manrope, \"DM Sans\", sans-serif",
+          "fontSize": "17px",
+          "fontWeight": "700",
+          "lineHeight": "20.4px",
+          "letterSpacing": "-0.425px",
+          "color": "rgb(0, 0, 0)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "padding": "0px",
+          "gap": "normal",
+          "borderRadius": "0px",
+          "borderTop": "0px none rgb(0, 0, 0)",
+          "boxShadow": "none",
+          "height": "20.3906px",
+          "bounds": {
+            "x": 61,
+            "y": 31.296875,
+            "width": 268,
+            "height": 20.390625,
+            "top": 31.296875,
+            "right": 329,
+            "bottom": 51.6875,
+            "left": 61
+          }
+        },
+        "h3": {
+          "fontFamily": "Manrope, \"DM Sans\", sans-serif",
+          "fontSize": "14px",
+          "fontWeight": "700",
+          "lineHeight": "18.2px",
+          "letterSpacing": "normal",
+          "color": "rgb(0, 0, 0)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "padding": "0px",
+          "gap": "normal",
+          "borderRadius": "0px",
+          "borderTop": "0px none rgb(0, 0, 0)",
+          "boxShadow": "none",
+          "height": "18.1875px",
+          "bounds": {
+            "x": 71,
+            "y": 433,
+            "width": 251,
+            "height": 18.1875,
+            "top": 433,
+            "right": 322,
+            "bottom": 451.1875,
+            "left": 71
+          }
+        }
+      },
+      "fullPageMethod": "Expand scroll frame only; original viewport retained",
+      "capturedAt": "2026-09-12T02:52:49.830Z"
+    },
+    {
+      "id": "profile/more",
+      "route": "/app/more",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "metrics": {
+        ":root": {
+          "fontFamily": "\"DM Sans\", -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+          "fontSize": "16px",
+          "fontWeight": "400",
+          "lineHeight": "normal",
+          "letterSpacing": "normal",
+          "color": "rgb(48, 43, 44)",
+          "backgroundColor": "rgb(247, 242, 240)",
+          "padding": "0px",
+          "gap": "normal",
+          "borderRadius": "0px",
+          "borderTop": "0px none rgb(48, 43, 44)",
+          "boxShadow": "none",
+          "height": "844px",
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 390,
+            "height": 844,
+            "top": 0,
+            "right": 390,
+            "bottom": 844,
+            "left": 0
+          }
+        },
+        "body": {
+          "fontFamily": "\"DM Sans\", -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+          "fontSize": "16px",
+          "fontWeight": "400",
+          "lineHeight": "normal",
+          "letterSpacing": "normal",
+          "color": "rgb(48, 42, 41)",
+          "backgroundColor": "rgb(245, 241, 237)",
+          "padding": "0px",
+          "gap": "normal",
+          "borderRadius": "0px",
+          "borderTop": "0px none rgb(48, 42, 41)",
+          "boxShadow": "none",
+          "height": "844px",
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 390,
+            "height": 844,
+            "top": 0,
+            "right": 390,
+            "bottom": 844,
+            "left": 0
+          }
+        },
+        ".user-shell": {
+          "fontFamily": "\"DM Sans\", -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+          "fontSize": "16px",
+          "fontWeight": "400",
+          "lineHeight": "normal",
+          "letterSpacing": "normal",
+          "color": "rgb(48, 42, 41)",
+          "backgroundColor": "rgb(250, 247, 243)",
+          "padding": "0px",
+          "gap": "normal",
+          "borderRadius": "0px",
+          "borderTop": "0px none rgba(213, 199, 192, 0.78)",
+          "boxShadow": "rgba(73, 52, 48, 0.11) 0px 24px 64px 0px",
+          "height": "844px",
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 390,
+            "height": 844,
+            "top": 0,
+            "right": 390,
+            "bottom": 844,
+            "left": 0
+          }
+        },
+        ".user-content": {
+          "fontFamily": "\"DM Sans\", -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+          "fontSize": "16px",
+          "fontWeight": "400",
+          "lineHeight": "normal",
+          "letterSpacing": "normal",
+          "color": "rgb(48, 42, 41)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "padding": "27px 16px 32px",
+          "gap": "normal",
+          "borderRadius": "0px",
+          "borderTop": "0px none rgb(48, 42, 41)",
+          "boxShadow": "none",
+          "height": "766px",
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 390,
+            "height": 766,
+            "top": 0,
+            "right": 390,
+            "bottom": 766,
+            "left": 0
+          }
+        },
+        ".page": null,
+        ".bottom-nav": {
+          "fontFamily": "-apple-system, \"system-ui\", \"Segoe UI\", \"Microsoft YaHei\", \"PingFang SC\", \"Noto Sans CJK SC\", sans-serif",
+          "fontSize": "16px",
+          "fontWeight": "400",
+          "lineHeight": "normal",
+          "letterSpacing": "normal",
+          "color": "rgb(48, 42, 41)",
+          "backgroundColor": "rgb(255, 252, 255)",
+          "padding": "6px 8px",
+          "gap": "normal",
+          "borderRadius": "0px",
+          "borderTop": "1px solid rgb(234, 224, 241)",
+          "boxShadow": "rgba(121, 84, 139, 0.024) 0px -4px 20px 0px",
+          "height": "78px",
+          "bounds": {
+            "x": 0,
+            "y": 766,
+            "width": 390,
+            "height": 78,
+            "top": 766,
+            "right": 390,
+            "bottom": 844,
+            "left": 0
+          }
+        },
+        ".nav-item": {
+          "fontFamily": "-apple-system, \"system-ui\", \"Segoe UI\", \"Microsoft YaHei\", \"PingFang SC\", \"Noto Sans CJK SC\", sans-serif",
+          "fontSize": "11px",
+          "fontWeight": "500",
+          "lineHeight": "14px",
+          "letterSpacing": "normal",
+          "color": "rgb(142, 128, 137)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "padding": "0px 0px 2px",
+          "gap": "5px",
+          "borderRadius": "16px",
+          "borderTop": "0px none rgb(142, 128, 137)",
+          "boxShadow": "none",
+          "height": "65px",
+          "bounds": {
+            "x": 8,
+            "y": 773,
+            "width": 74.796875,
+            "height": 65,
+            "top": 773,
+            "right": 82.796875,
+            "bottom": 838,
+            "left": 8
+          }
+        },
+        ".nav-item.active": {
+          "fontFamily": "-apple-system, \"system-ui\", \"Segoe UI\", \"Microsoft YaHei\", \"PingFang SC\", \"Noto Sans CJK SC\", sans-serif",
+          "fontSize": "11px",
+          "fontWeight": "650",
+          "lineHeight": "14px",
+          "letterSpacing": "normal",
+          "color": "rgb(135, 82, 199)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "padding": "0px 0px 2px",
+          "gap": "5px",
+          "borderRadius": "16px",
+          "borderTop": "0px none rgb(135, 82, 199)",
+          "boxShadow": "none",
+          "height": "65px",
+          "bounds": {
+            "x": 307.1875,
+            "y": 773,
+            "width": 74.8125,
+            "height": 65,
+            "top": 773,
+            "right": 382,
+            "bottom": 838,
+            "left": 307.1875
+          }
+        },
+        ".nav-asset": {
+          "fontFamily": "-apple-system, \"system-ui\", \"Segoe UI\", \"Microsoft YaHei\", \"PingFang SC\", \"Noto Sans CJK SC\", sans-serif",
+          "fontSize": "11px",
+          "fontWeight": "500",
+          "lineHeight": "14px",
+          "letterSpacing": "normal",
+          "color": "rgb(142, 128, 137)",
+          "backgroundColor": "rgb(142, 128, 137)",
+          "padding": "0px",
+          "gap": "normal",
+          "borderRadius": "0px",
+          "borderTop": "0px none rgb(142, 128, 137)",
+          "boxShadow": "none",
+          "height": "24px",
+          "bounds": {
+            "x": 33.390625,
+            "y": 788,
+            "width": 24,
+            "height": 24,
+            "top": 788,
+            "right": 57.390625,
+            "bottom": 812,
+            "left": 33.390625
+          }
+        },
+        ".nav-agent-avatar": {
+          "fontFamily": "-apple-system, \"system-ui\", \"Segoe UI\", \"Microsoft YaHei\", \"PingFang SC\", \"Noto Sans CJK SC\", sans-serif",
+          "fontSize": "11px",
+          "fontWeight": "500",
+          "lineHeight": "14px",
+          "letterSpacing": "normal",
+          "color": "rgb(142, 128, 137)",
+          "backgroundColor": "rgb(240, 231, 246)",
+          "padding": "0px",
+          "gap": "normal",
+          "borderRadius": "50%",
+          "borderTop": "2px solid rgb(255, 255, 255)",
+          "boxShadow": "rgb(232, 216, 247) 0px 0px 0px 2px, rgba(135, 82, 199, 0.1) 0px 3px 12px 0px",
+          "height": "42px",
+          "bounds": {
+            "x": 173.984375,
+            "y": 775,
+            "width": 42,
+            "height": 42,
+            "top": 775,
+            "right": 215.984375,
+            "bottom": 817,
+            "left": 173.984375
+          }
+        },
+        ".home-greeting": null,
+        ".baby-knowledge-banner": null,
+        ".my-status-card": null,
+        ".btn": {
+          "fontFamily": "\"DM Sans\", -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+          "fontSize": "11px",
+          "fontWeight": "700",
+          "lineHeight": "normal",
+          "letterSpacing": "normal",
+          "color": "rgb(120, 111, 108)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "padding": "0px 8px",
+          "gap": "8px",
+          "borderRadius": "12px",
+          "borderTop": "1px solid rgba(0, 0, 0, 0)",
+          "boxShadow": "none",
+          "height": "44px",
+          "bounds": {
+            "x": 317,
+            "y": 38,
+            "width": 44,
+            "height": 44,
+            "top": 38,
+            "right": 361,
+            "bottom": 82,
+            "left": 317
+          }
+        },
+        ".card": {
+          "fontFamily": "\"DM Sans\", -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+          "fontSize": "16px",
+          "fontWeight": "400",
+          "lineHeight": "normal",
+          "letterSpacing": "normal",
+          "color": "rgb(0, 0, 0)",
+          "backgroundColor": "rgba(255, 254, 252, 0.94)",
+          "padding": "10px 12px",
+          "gap": "11px",
+          "borderRadius": "16px",
+          "borderTop": "1px solid rgba(229, 218, 212, 0.92)",
+          "boxShadow": "rgba(73, 52, 48, 0.043) 0px 6px 18px 0px",
+          "height": "66px",
+          "bounds": {
+            "x": 16,
+            "y": 27,
+            "width": 358,
+            "height": 66,
+            "top": 27,
+            "right": 374,
+            "bottom": 93,
+            "left": 16
+          }
+        },
+        "h1": {
+          "fontFamily": "Manrope, \"DM Sans\", sans-serif",
+          "fontSize": "28px",
+          "fontWeight": "700",
+          "lineHeight": "30.8px",
+          "letterSpacing": "-1.12px",
+          "color": "rgb(48, 42, 41)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "padding": "0px",
+          "gap": "normal",
+          "borderRadius": "0px",
+          "borderTop": "0px none rgb(48, 42, 41)",
+          "boxShadow": "none",
+          "height": "auto",
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          }
+        },
+        "h2": {
+          "fontFamily": "Manrope, \"DM Sans\", sans-serif",
+          "fontSize": "17px",
+          "fontWeight": "700",
+          "lineHeight": "20.4px",
+          "letterSpacing": "-0.425px",
+          "color": "rgb(0, 0, 0)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "padding": "0px",
+          "gap": "normal",
+          "borderRadius": "0px",
+          "borderTop": "0px none rgb(0, 0, 0)",
+          "boxShadow": "none",
+          "height": "20.3906px",
+          "bounds": {
+            "x": 84,
+            "y": 40.78125,
+            "width": 222,
+            "height": 20.390625,
+            "top": 40.78125,
+            "right": 306,
+            "bottom": 61.171875,
+            "left": 84
+          }
+        },
+        "h3": null
+      },
+      "fullPageMethod": "Expand scroll frame only; original viewport retained",
+      "capturedAt": "2026-09-12T02:52:50.012Z"
+    },
+    {
+      "id": "profile/privacy",
+      "route": "/app/privacy",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "metrics": {
+        ":root": {
+          "fontFamily": "\"DM Sans\", -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+          "fontSize": "16px",
+          "fontWeight": "400",
+          "lineHeight": "normal",
+          "letterSpacing": "normal",
+          "color": "rgb(48, 43, 44)",
+          "backgroundColor": "rgb(247, 242, 240)",
+          "padding": "0px",
+          "gap": "normal",
+          "borderRadius": "0px",
+          "borderTop": "0px none rgb(48, 43, 44)",
+          "boxShadow": "none",
+          "height": "844px",
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 390,
+            "height": 844,
+            "top": 0,
+            "right": 390,
+            "bottom": 844,
+            "left": 0
+          }
+        },
+        "body": {
+          "fontFamily": "\"DM Sans\", -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+          "fontSize": "16px",
+          "fontWeight": "400",
+          "lineHeight": "normal",
+          "letterSpacing": "normal",
+          "color": "rgb(48, 42, 41)",
+          "backgroundColor": "rgb(245, 241, 237)",
+          "padding": "0px",
+          "gap": "normal",
+          "borderRadius": "0px",
+          "borderTop": "0px none rgb(48, 42, 41)",
+          "boxShadow": "none",
+          "height": "844px",
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 390,
+            "height": 844,
+            "top": 0,
+            "right": 390,
+            "bottom": 844,
+            "left": 0
+          }
+        },
+        ".user-shell": {
+          "fontFamily": "\"DM Sans\", -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+          "fontSize": "16px",
+          "fontWeight": "400",
+          "lineHeight": "normal",
+          "letterSpacing": "normal",
+          "color": "rgb(48, 42, 41)",
+          "backgroundColor": "rgb(250, 247, 243)",
+          "padding": "0px",
+          "gap": "normal",
+          "borderRadius": "0px",
+          "borderTop": "0px none rgba(213, 199, 192, 0.78)",
+          "boxShadow": "rgba(73, 52, 48, 0.11) 0px 24px 64px 0px",
+          "height": "844px",
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 390,
+            "height": 844,
+            "top": 0,
+            "right": 390,
+            "bottom": 844,
+            "left": 0
+          }
+        },
+        ".user-content": {
+          "fontFamily": "\"DM Sans\", -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+          "fontSize": "16px",
+          "fontWeight": "400",
+          "lineHeight": "normal",
+          "letterSpacing": "normal",
+          "color": "rgb(0, 0, 0)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "padding": "27px 16px 28px",
+          "gap": "normal",
+          "borderRadius": "0px",
+          "borderTop": "0px none rgb(0, 0, 0)",
+          "boxShadow": "none",
+          "height": "844px",
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 390,
+            "height": 844,
+            "top": 0,
+            "right": 390,
+            "bottom": 844,
+            "left": 0
+          }
+        },
+        ".page": null,
+        ".bottom-nav": null,
+        ".nav-item": null,
+        ".nav-item.active": null,
+        ".nav-asset": null,
+        ".nav-agent-avatar": null,
+        ".home-greeting": null,
+        ".baby-knowledge-banner": null,
+        ".my-status-card": null,
+        ".btn": null,
+        ".card": null,
+        "h1": {
+          "fontFamily": "Manrope, \"DM Sans\", sans-serif",
+          "fontSize": "28px",
+          "fontWeight": "700",
+          "lineHeight": "30.8px",
+          "letterSpacing": "-1.12px",
+          "color": "rgb(0, 0, 0)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "padding": "0px",
+          "gap": "normal",
+          "borderRadius": "0px",
+          "borderTop": "0px none rgb(0, 0, 0)",
+          "boxShadow": "none",
+          "height": "auto",
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          }
+        },
+        "h2": {
+          "fontFamily": "Manrope, \"DM Sans\", sans-serif",
+          "fontSize": "17px",
+          "fontWeight": "700",
+          "lineHeight": "20.4px",
+          "letterSpacing": "-0.425px",
+          "color": "rgb(0, 0, 0)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "padding": "0px",
+          "gap": "normal",
+          "borderRadius": "0px",
+          "borderTop": "0px none rgb(0, 0, 0)",
+          "boxShadow": "none",
+          "height": "20.3906px",
+          "bounds": {
+            "x": 16,
+            "y": 129.09375,
+            "width": 358,
+            "height": 20.390625,
+            "top": 129.09375,
+            "right": 374,
+            "bottom": 149.484375,
+            "left": 16
+          }
+        },
+        "h3": null
+      },
+      "fullPageMethod": "Expand scroll frame only; original viewport retained",
+      "capturedAt": "2026-09-12T02:52:50.184Z"
+    },
+    {
+      "id": "mom/records",
+      "route": "/app/records",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "metrics": {
+        ":root": {
+          "fontFamily": "\"DM Sans\", -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+          "fontSize": "16px",
+          "fontWeight": "400",
+          "lineHeight": "normal",
+          "letterSpacing": "normal",
+          "color": "rgb(48, 43, 44)",
+          "backgroundColor": "rgb(247, 242, 240)",
+          "padding": "0px",
+          "gap": "normal",
+          "borderRadius": "0px",
+          "borderTop": "0px none rgb(48, 43, 44)",
+          "boxShadow": "none",
+          "height": "844px",
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 390,
+            "height": 844,
+            "top": 0,
+            "right": 390,
+            "bottom": 844,
+            "left": 0
+          }
+        },
+        "body": {
+          "fontFamily": "\"DM Sans\", -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+          "fontSize": "16px",
+          "fontWeight": "400",
+          "lineHeight": "normal",
+          "letterSpacing": "normal",
+          "color": "rgb(48, 42, 41)",
+          "backgroundColor": "rgb(245, 241, 237)",
+          "padding": "0px",
+          "gap": "normal",
+          "borderRadius": "0px",
+          "borderTop": "0px none rgb(48, 42, 41)",
+          "boxShadow": "none",
+          "height": "844px",
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 390,
+            "height": 844,
+            "top": 0,
+            "right": 390,
+            "bottom": 844,
+            "left": 0
+          }
+        },
+        ".user-shell": {
+          "fontFamily": "\"DM Sans\", -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+          "fontSize": "16px",
+          "fontWeight": "400",
+          "lineHeight": "normal",
+          "letterSpacing": "normal",
+          "color": "rgb(48, 42, 41)",
+          "backgroundColor": "rgb(250, 247, 243)",
+          "padding": "0px",
+          "gap": "normal",
+          "borderRadius": "0px",
+          "borderTop": "0px none rgba(213, 199, 192, 0.78)",
+          "boxShadow": "rgba(73, 52, 48, 0.11) 0px 24px 64px 0px",
+          "height": "844px",
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 390,
+            "height": 844,
+            "top": 0,
+            "right": 390,
+            "bottom": 844,
+            "left": 0
+          }
+        },
+        ".user-content": {
+          "fontFamily": "\"DM Sans\", -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+          "fontSize": "16px",
+          "fontWeight": "400",
+          "lineHeight": "normal",
+          "letterSpacing": "normal",
+          "color": "rgb(48, 42, 41)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "padding": "27px 16px 28px",
+          "gap": "normal",
+          "borderRadius": "0px",
+          "borderTop": "0px none rgb(48, 42, 41)",
+          "boxShadow": "none",
+          "height": "844px",
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 390,
+            "height": 844,
+            "top": 0,
+            "right": 390,
+            "bottom": 844,
+            "left": 0
+          }
+        },
+        ".page": null,
+        ".bottom-nav": null,
+        ".nav-item": null,
+        ".nav-item.active": null,
+        ".nav-asset": null,
+        ".nav-agent-avatar": null,
+        ".home-greeting": null,
+        ".baby-knowledge-banner": null,
+        ".my-status-card": null,
+        ".btn": null,
+        ".card": {
+          "fontFamily": "\"DM Sans\", -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+          "fontSize": "16px",
+          "fontWeight": "400",
+          "lineHeight": "normal",
+          "letterSpacing": "normal",
+          "color": "rgb(48, 42, 41)",
+          "backgroundColor": "rgba(255, 254, 252, 0.94)",
+          "padding": "12px",
+          "gap": "10px",
+          "borderRadius": "18px",
+          "borderTop": "1px solid rgba(229, 218, 212, 0.92)",
+          "boxShadow": "rgba(73, 52, 48, 0.043) 0px 6px 18px 0px",
+          "height": "101.5px",
+          "bounds": {
+            "x": 16,
+            "y": 151.5,
+            "width": 358,
+            "height": 101.5,
+            "top": 151.5,
+            "right": 374,
+            "bottom": 253,
+            "left": 16
+          }
+        },
+        "h1": {
+          "fontFamily": "Manrope, \"DM Sans\", sans-serif",
+          "fontSize": "28px",
+          "fontWeight": "700",
+          "lineHeight": "30.8px",
+          "letterSpacing": "-1.12px",
+          "color": "rgb(48, 42, 41)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "padding": "0px",
+          "gap": "normal",
+          "borderRadius": "0px",
+          "borderTop": "0px none rgb(48, 42, 41)",
+          "boxShadow": "none",
+          "height": "auto",
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          }
+        },
+        "h2": null,
+        "h3": null
+      },
+      "fullPageMethod": "Expand scroll frame only; original viewport retained",
+      "capturedAt": "2026-09-12T02:52:50.529Z"
+    },
+    {
+      "id": "services/catalog",
+      "route": "/app/services",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "metrics": {
+        ":root": {
+          "fontFamily": "\"DM Sans\", -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+          "fontSize": "16px",
+          "fontWeight": "400",
+          "lineHeight": "normal",
+          "letterSpacing": "normal",
+          "color": "rgb(48, 43, 44)",
+          "backgroundColor": "rgb(247, 242, 240)",
+          "padding": "0px",
+          "gap": "normal",
+          "borderRadius": "0px",
+          "borderTop": "0px none rgb(48, 43, 44)",
+          "boxShadow": "none",
+          "height": "844px",
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 390,
+            "height": 844,
+            "top": 0,
+            "right": 390,
+            "bottom": 844,
+            "left": 0
+          }
+        },
+        "body": {
+          "fontFamily": "\"DM Sans\", -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+          "fontSize": "16px",
+          "fontWeight": "400",
+          "lineHeight": "normal",
+          "letterSpacing": "normal",
+          "color": "rgb(48, 42, 41)",
+          "backgroundColor": "rgb(245, 241, 237)",
+          "padding": "0px",
+          "gap": "normal",
+          "borderRadius": "0px",
+          "borderTop": "0px none rgb(48, 42, 41)",
+          "boxShadow": "none",
+          "height": "844px",
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 390,
+            "height": 844,
+            "top": 0,
+            "right": 390,
+            "bottom": 844,
+            "left": 0
+          }
+        },
+        ".user-shell": {
+          "fontFamily": "\"DM Sans\", -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+          "fontSize": "16px",
+          "fontWeight": "400",
+          "lineHeight": "normal",
+          "letterSpacing": "normal",
+          "color": "rgb(48, 42, 41)",
+          "backgroundColor": "rgb(250, 247, 243)",
+          "padding": "0px",
+          "gap": "normal",
+          "borderRadius": "0px",
+          "borderTop": "0px none rgba(213, 199, 192, 0.78)",
+          "boxShadow": "rgba(73, 52, 48, 0.11) 0px 24px 64px 0px",
+          "height": "844px",
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 390,
+            "height": 844,
+            "top": 0,
+            "right": 390,
+            "bottom": 844,
+            "left": 0
+          }
+        },
+        ".user-content": {
+          "fontFamily": "\"DM Sans\", -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+          "fontSize": "16px",
+          "fontWeight": "400",
+          "lineHeight": "normal",
+          "letterSpacing": "normal",
+          "color": "rgb(48, 42, 41)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "padding": "27px 16px 28px",
+          "gap": "normal",
+          "borderRadius": "0px",
+          "borderTop": "0px none rgb(48, 42, 41)",
+          "boxShadow": "none",
+          "height": "844px",
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 390,
+            "height": 844,
+            "top": 0,
+            "right": 390,
+            "bottom": 844,
+            "left": 0
+          }
+        },
+        ".page": null,
+        ".bottom-nav": null,
+        ".nav-item": null,
+        ".nav-item.active": null,
+        ".nav-asset": null,
+        ".nav-agent-avatar": null,
+        ".home-greeting": null,
+        ".baby-knowledge-banner": null,
+        ".my-status-card": null,
+        ".btn": {
+          "fontFamily": "\"DM Sans\", -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+          "fontSize": "12px",
+          "fontWeight": "700",
+          "lineHeight": "normal",
+          "letterSpacing": "normal",
+          "color": "rgb(57, 115, 95)",
+          "backgroundColor": "rgb(220, 238, 230)",
+          "padding": "0px 13px",
+          "gap": "8px",
+          "borderRadius": "12px",
+          "borderTop": "1px solid rgb(199, 223, 212)",
+          "boxShadow": "none",
+          "height": "34px",
+          "bounds": {
+            "x": 246,
+            "y": 344.09375,
+            "width": 112,
+            "height": 34,
+            "top": 344.09375,
+            "right": 358,
+            "bottom": 378.09375,
+            "left": 246
+          }
+        },
+        ".card": {
+          "fontFamily": "\"DM Sans\", -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+          "fontSize": "16px",
+          "fontWeight": "400",
+          "lineHeight": "normal",
+          "letterSpacing": "normal",
+          "color": "rgb(0, 0, 0)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "padding": "15px",
+          "gap": "normal",
+          "borderRadius": "18px",
+          "borderTop": "1px solid rgb(199, 223, 212)",
+          "boxShadow": "none",
+          "height": "195.094px",
+          "bounds": {
+            "x": 16,
+            "y": 199,
+            "width": 358,
+            "height": 195.09375,
+            "top": 199,
+            "right": 374,
+            "bottom": 394.09375,
+            "left": 16
+          }
+        },
+        "h1": {
+          "fontFamily": "Manrope, \"DM Sans\", sans-serif",
+          "fontSize": "28px",
+          "fontWeight": "700",
+          "lineHeight": "30.8px",
+          "letterSpacing": "-1.12px",
+          "color": "rgb(48, 42, 41)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "padding": "0px",
+          "gap": "normal",
+          "borderRadius": "0px",
+          "borderTop": "0px none rgb(48, 42, 41)",
+          "boxShadow": "none",
+          "height": "auto",
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          }
+        },
+        "h2": {
+          "fontFamily": "Manrope, \"DM Sans\", sans-serif",
+          "fontSize": "17px",
+          "fontWeight": "700",
+          "lineHeight": "20.4px",
+          "letterSpacing": "-0.425px",
+          "color": "rgb(66, 109, 94)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "padding": "0px",
+          "gap": "normal",
+          "borderRadius": "0px",
+          "borderTop": "0px none rgb(66, 109, 94)",
+          "boxShadow": "none",
+          "height": "20.3906px",
+          "bounds": {
+            "x": 32,
+            "y": 215,
+            "width": 66.3125,
+            "height": 20.390625,
+            "top": 215,
+            "right": 98.3125,
+            "bottom": 235.390625,
+            "left": 32
+          }
+        },
+        "h3": null
+      },
+      "fullPageMethod": "Expand scroll frame only; original viewport retained",
+      "capturedAt": "2026-09-12T02:52:50.858Z"
+    },
+    {
+      "id": "auth/design-login",
+      "route": "/auth",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "metrics": {
+        ":root": {
+          "fontFamily": "\"DM Sans\", -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+          "fontSize": "16px",
+          "fontWeight": "400",
+          "lineHeight": "normal",
+          "letterSpacing": "normal",
+          "color": "rgb(48, 43, 44)",
+          "backgroundColor": "rgb(247, 242, 240)",
+          "padding": "0px",
+          "gap": "normal",
+          "borderRadius": "0px",
+          "borderTop": "0px none rgb(48, 43, 44)",
+          "boxShadow": "none",
+          "height": "844px",
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 390,
+            "height": 844,
+            "top": 0,
+            "right": 390,
+            "bottom": 844,
+            "left": 0
+          }
+        },
+        "body": {
+          "fontFamily": "\"DM Sans\", -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+          "fontSize": "16px",
+          "fontWeight": "400",
+          "lineHeight": "normal",
+          "letterSpacing": "normal",
+          "color": "rgb(48, 42, 41)",
+          "backgroundColor": "rgb(245, 241, 237)",
+          "padding": "0px",
+          "gap": "normal",
+          "borderRadius": "0px",
+          "borderTop": "0px none rgb(48, 42, 41)",
+          "boxShadow": "none",
+          "height": "844px",
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 390,
+            "height": 844,
+            "top": 0,
+            "right": 390,
+            "bottom": 844,
+            "left": 0
+          }
+        },
+        ".user-shell": null,
+        ".user-content": null,
+        ".page": null,
+        ".bottom-nav": null,
+        ".nav-item": null,
+        ".nav-item.active": null,
+        ".nav-asset": null,
+        ".nav-agent-avatar": null,
+        ".home-greeting": null,
+        ".baby-knowledge-banner": null,
+        ".my-status-card": null,
+        ".btn": {
+          "fontFamily": "\"DM Sans\", -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+          "fontSize": "14px",
+          "fontWeight": "700",
+          "lineHeight": "normal",
+          "letterSpacing": "normal",
+          "color": "rgb(255, 255, 255)",
+          "backgroundColor": "rgb(48, 43, 42)",
+          "padding": "0px 21px",
+          "gap": "8px",
+          "borderRadius": "14px",
+          "borderTop": "1px solid rgba(0, 0, 0, 0)",
+          "boxShadow": "rgba(48, 43, 42, 0.13) 0px 7px 16px 0px",
+          "height": "50px",
+          "bounds": {
+            "x": 59,
+            "y": 504.859375,
+            "width": 272,
+            "height": 50,
+            "top": 504.859375,
+            "right": 331,
+            "bottom": 554.859375,
+            "left": 59
+          }
+        },
+        ".card": null,
+        "h1": {
+          "fontFamily": "Manrope, \"DM Sans\", sans-serif",
+          "fontSize": "31px",
+          "fontWeight": "700",
+          "lineHeight": "34.1px",
+          "letterSpacing": "-1.24px",
+          "color": "rgb(48, 42, 41)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "padding": "0px",
+          "gap": "normal",
+          "borderRadius": "0px",
+          "borderTop": "0px none rgb(48, 42, 41)",
+          "boxShadow": "none",
+          "height": "68.1875px",
+          "bounds": {
+            "x": 59,
+            "y": 325.671875,
+            "width": 272,
+            "height": 68.1875,
+            "top": 325.671875,
+            "right": 331,
+            "bottom": 393.859375,
+            "left": 59
+          }
+        },
+        "h2": null,
+        "h3": null
+      },
+      "fullPageMethod": "Expand scroll frame only; original viewport retained",
+      "capturedAt": "2026-09-12T02:52:51.099Z"
+    },
+    {
+      "id": "mom/knowledge",
+      "route": "/app/home",
+      "trigger": "click .baby-knowledge-banner",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "capturedAt": "2026-09-12T12:03:39.317828",
+      "file": "mom/knowledge-viewport.png",
+      "source": "source/src/pages/UserApp.tsx:DailyKnowledgeModal",
+      "network": "off-origin and /api blocked",
+      "capture_script_sha256": "f5a1a6c5cc410152980b7c7ac92fa4bb252e1217cf12710845d7809f464e8b6c"
+    },
+    {
+      "id": "baby/knowledge",
+      "route": "/app/baby",
+      "trigger": "click .baby-knowledge-banner",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "capturedAt": "2026-09-12T12:03:39.317982",
+      "file": "baby/knowledge-viewport.png",
+      "source": "source/src/pages/UserApp.tsx:DailyKnowledgeModal",
+      "network": "off-origin and /api blocked",
+      "capture_script_sha256": "f5a1a6c5cc410152980b7c7ac92fa4bb252e1217cf12710845d7809f464e8b6c"
+    },
+    {
+      "id": "services/package",
+      "route": "http://127.0.0.1:4181/app/services/milk-supply-care",
+      "trigger": "首个未购买方案",
+      "capturedAt": "2026-09-12T04:23:50.681Z",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    },
+    {
+      "id": "services/team",
+      "route": "http://127.0.0.1:4181/app/services/milk-supply-care",
+      "trigger": "了解团队",
+      "capturedAt": "2026-09-12T04:23:50.902Z",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    },
+    {
+      "id": "baby/records",
+      "route": "http://127.0.0.1:4181/app/records",
+      "capturedAt": "2026-09-12T04:58:19.410Z",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    },
+    {
+      "id": "schedule/create",
+      "route": "http://127.0.0.1:4181/app/plan",
+      "capturedAt": "2026-09-12T05:08:42.882Z",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    },
+    {
+      "id": "schedule/edit",
+      "route": "http://127.0.0.1:4181/app/plan",
+      "capturedAt": "2026-09-12T05:08:43.054Z",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    },
+    {
+      "id": "schedule/delete",
+      "route": "http://127.0.0.1:4181/app/plan",
+      "capturedAt": "2026-09-12T05:08:43.174Z",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    },
+    {
+      "id": "services/state-25",
+      "route": "http://127.0.0.1:4181/app/service-detail",
+      "capturedAt": "2026-09-12T05:47:14.048Z",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "note": "Local design sandbox; external requests blocked."
+    },
+    {
+      "id": "services/state-26",
+      "route": "http://127.0.0.1:4181/app/service-detail",
+      "capturedAt": "2026-09-12T05:47:14.086Z",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "note": "Local design sandbox; external requests blocked."
+    },
+    {
+      "id": "services/state-27",
+      "route": "http://127.0.0.1:4181/app/service-detail",
+      "capturedAt": "2026-09-12T05:47:14.188Z",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "note": "Local design sandbox; external requests blocked."
+    },
+    {
+      "id": "services/state-28",
+      "route": "http://127.0.0.1:4181/app/service-detail",
+      "capturedAt": "2026-09-12T05:47:15.034Z",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "note": "Local design sandbox; external requests blocked."
+    },
+    {
+      "id": "services/state-29",
+      "route": "http://127.0.0.1:4181/app/service-detail",
+      "capturedAt": "2026-09-12T05:47:15.886Z",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "note": "Local design sandbox; external requests blocked."
+    },
+    {
+      "id": "services/state-30",
+      "route": "http://127.0.0.1:4181/app/service-detail",
+      "capturedAt": "2026-09-12T05:47:17.765Z",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "note": "Local design sandbox; external requests blocked."
+    },
+    {
+      "id": "services/state-32",
+      "route": "http://127.0.0.1:4181/app/appointment",
+      "capturedAt": "2026-09-12T06:03:20.049Z",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "note": "Current design source; isolated browser demo state, all API and external requests blocked."
+    },
+    {
+      "id": "services/state-33",
+      "route": "http://127.0.0.1:4181/app/appointment",
+      "capturedAt": "2026-09-12T06:03:20.082Z",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "note": "Current design source; isolated browser demo state, all API and external requests blocked."
+    },
+    {
+      "id": "services/state-34",
+      "route": "http://127.0.0.1:4181/app/appointment",
+      "capturedAt": "2026-09-12T06:03:20.166Z",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "note": "Current design source; isolated browser demo state, all API and external requests blocked."
+    },
+    {
+      "id": "services/state-35",
+      "route": "http://127.0.0.1:4181/app/appointment",
+      "capturedAt": "2026-09-12T06:03:20.304Z",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "note": "Current design source; isolated browser demo state, all API and external requests blocked."
+    },
+    {
+      "id": "services/state-36",
+      "route": "http://127.0.0.1:4181/app/appointment",
+      "capturedAt": "2026-09-12T06:03:20.359Z",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "note": "Current design source; isolated browser demo state, all API and external requests blocked."
+    },
+    {
+      "id": "services/state-37",
+      "route": "http://127.0.0.1:4181/app/intake",
+      "capturedAt": "2026-09-12T06:03:20.425Z",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "note": "Current design source; isolated browser demo state, all API and external requests blocked."
+    },
+    {
+      "id": "services/state-32",
+      "route": "http://127.0.0.1:4181/app/appointment",
+      "capturedAt": "2026-09-12T06:06:10.764Z",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "note": "Current design source; isolated browser demo state, all API and external requests blocked."
+    },
+    {
+      "id": "services/state-33",
+      "route": "http://127.0.0.1:4181/app/appointment",
+      "capturedAt": "2026-09-12T06:06:10.783Z",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "note": "Current design source; isolated browser demo state, all API and external requests blocked."
+    },
+    {
+      "id": "services/state-34",
+      "route": "http://127.0.0.1:4181/app/appointment",
+      "capturedAt": "2026-09-12T06:06:10.845Z",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "note": "Current design source; isolated browser demo state, all API and external requests blocked."
+    },
+    {
+      "id": "services/state-35",
+      "route": "http://127.0.0.1:4181/app/appointment",
+      "capturedAt": "2026-09-12T06:06:10.983Z",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "note": "Current design source; isolated browser demo state, all API and external requests blocked."
+    },
+    {
+      "id": "services/state-36",
+      "route": "http://127.0.0.1:4181/app/appointment",
+      "capturedAt": "2026-09-12T06:06:11.037Z",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "note": "Current design source; isolated browser demo state, all API and external requests blocked."
+    },
+    {
+      "id": "services/state-37",
+      "route": "http://127.0.0.1:4181/app/intake",
+      "capturedAt": "2026-09-12T06:06:11.115Z",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "note": "Current design source; isolated browser demo state, all API and external requests blocked."
+    },
+    {
+      "id": "services/state-39",
+      "route": "http://127.0.0.1:4181/app/intake",
+      "capturedAt": "2026-09-12T06:20:03.776Z",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "note": "Current design source; isolated browser demo state, all API and external requests blocked."
+    },
+    {
+      "id": "services/state-40",
+      "route": "http://127.0.0.1:4181/app/intake",
+      "capturedAt": "2026-09-12T06:20:03.826Z",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "note": "Current design source; isolated browser demo state, all API and external requests blocked."
+    },
+    {
+      "id": "services/state-41",
+      "route": "http://127.0.0.1:4181/app/intake",
+      "capturedAt": "2026-09-12T06:20:03.911Z",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "note": "Current design source; isolated browser demo state, all API and external requests blocked."
+    },
+    {
+      "id": "services/state-42",
+      "route": "http://127.0.0.1:4181/app/intake",
+      "capturedAt": "2026-09-12T06:20:03.999Z",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "note": "Current design source; isolated browser demo state, all API and external requests blocked."
+    },
+    {
+      "id": "services/intake-saved",
+      "route": "http://127.0.0.1:4181/app/intake",
+      "capturedAt": "2026-09-12T06:20:04.134Z",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "note": "Current design source; isolated browser demo state, all API and external requests blocked."
+    },
+    {
+      "id": "services/state-51",
+      "route": "http://127.0.0.1:4181/app/appointments/apt-1789194327036",
+      "capturedAt": "2026-09-12T06:25:27.192Z",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "note": "Current design source; isolated browser demo state, all API and external requests blocked."
+    },
+    {
+      "id": "services/state-52",
+      "route": "http://127.0.0.1:4181/app/appointments/apt-1789194327036",
+      "capturedAt": "2026-09-12T06:25:27.247Z",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "note": "Current design source; isolated browser demo state, all API and external requests blocked."
+    },
+    {
+      "id": "services/state-44",
+      "route": "http://127.0.0.1:4181/app/home",
+      "capturedAt": "2026-09-12T06:36:32.382Z",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "note": "Current design source; isolated browser demo state, all API and external requests blocked; controlled getUserMedia promise for pending/denied/live-track render states."
+    },
+    {
+      "id": "services/state-45",
+      "route": "http://127.0.0.1:4181/app/home",
+      "capturedAt": "2026-09-12T06:36:32.428Z",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "note": "Current design source; isolated browser demo state, all API and external requests blocked; controlled getUserMedia promise for pending/denied/live-track render states."
+    },
+    {
+      "id": "services/state-46",
+      "route": "http://127.0.0.1:4181/app/home",
+      "capturedAt": "2026-09-12T06:36:32.497Z",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "note": "Current design source; isolated browser demo state, all API and external requests blocked; controlled getUserMedia promise for pending/denied/live-track render states."
+    },
+    {
+      "id": "services/state-44",
+      "route": "http://127.0.0.1:4181/app/home",
+      "capturedAt": "2026-09-12T06:39:20.118Z",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "note": "Current design source; isolated browser demo state, all API and external requests blocked; controlled getUserMedia promise for pending/denied/live-track render states."
+    },
+    {
+      "id": "services/state-45",
+      "route": "http://127.0.0.1:4181/app/home",
+      "capturedAt": "2026-09-12T06:39:20.448Z",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "note": "Current design source; isolated browser demo state, all API and external requests blocked; controlled getUserMedia promise for pending/denied/live-track render states."
+    },
+    {
+      "id": "services/state-46",
+      "route": "http://127.0.0.1:4181/app/home",
+      "capturedAt": "2026-09-12T06:39:20.848Z",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "note": "Current design source; isolated browser demo state, all API and external requests blocked; controlled getUserMedia promise for pending/denied/live-track render states."
+    },
+    {
+      "id": "services/state-47",
+      "route": "http://127.0.0.1:4181/app/home",
+      "capturedAt": "2026-09-12T06:59:08.255Z",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "note": "Current design source; isolated browser demo state, all API and external requests blocked; controlled getUserMedia promise for pending/denied/live-track render states."
+    },
+    {
+      "id": "services/state-48",
+      "route": "http://127.0.0.1:4181/app/home",
+      "capturedAt": "2026-09-12T06:59:08.584Z",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "note": "Current design source; isolated browser demo state, all API and external requests blocked; controlled getUserMedia promise for pending/denied/live-track render states."
+    },
+    {
+      "id": "services/state-49",
+      "route": "http://127.0.0.1:4181/app/home",
+      "capturedAt": "2026-09-12T06:59:09.136Z",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "note": "Current design source; isolated browser demo state, all API and external requests blocked; controlled getUserMedia promise for pending/denied/live-track render states."
+    },
+    {
+      "id": "services/state-50",
+      "route": "http://127.0.0.1:4181/app/privacy",
+      "capturedAt": "2026-09-12T06:59:09.498Z",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "note": "Current design source; isolated browser demo state, all API and external requests blocked; controlled getUserMedia promise for pending/denied/live-track render states."
+    },
+    {
+      "id": "services/preparation",
+      "route": "http://127.0.0.1:4181/app/home",
+      "capturedAt": "2026-09-12T07:02:37.841Z",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "note": "Current design source; isolated browser demo state, all API and external requests blocked; controlled getUserMedia promise for pending/denied/live-track render states."
+    },
+    {
+      "id": "services/state-53",
+      "route": "http://127.0.0.1:4181/app/consult/apt-1789196886950/room",
+      "capturedAt": "2026-09-12T07:08:07.993Z",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "note": "Current design source; isolated browser demo state, all API and external requests blocked; controlled getUserMedia promise for pending/denied/live-track render states."
+    },
+    {
+      "id": "services/room-leave",
+      "route": "http://127.0.0.1:4181/app/consult/apt-1789196886950/room",
+      "capturedAt": "2026-09-12T07:08:08.347Z",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "note": "Current design source; isolated browser demo state, all API and external requests blocked; controlled getUserMedia promise for pending/denied/live-track render states."
+    },
+    {
+      "id": "services/summary",
+      "route": "http://127.0.0.1:4181/app/consultations/apt-1789197384829/summary",
+      "capturedAt": "2026-09-12T07:16:25.784Z",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "note": "Current design source; isolated browser demo state, all API and external requests blocked; controlled getUserMedia promise for pending/denied/live-track render states."
+    },
+    {
+      "id": "services/summary-pending",
+      "route": "http://127.0.0.1:4181/app/consultations/apt-1789197384829/summary",
+      "capturedAt": "2026-09-12T07:16:26.551Z",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "note": "Current design source; isolated browser demo state, all API and external requests blocked; controlled getUserMedia promise for pending/denied/live-track render states."
+    },
+    {
+      "id": "services/summary",
+      "route": "http://127.0.0.1:4181/app/consultations/apt-1789197488143/summary",
+      "capturedAt": "2026-09-12T07:18:09.078Z",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "note": "Current design source; isolated browser demo state, all API and external requests blocked; controlled getUserMedia promise for pending/denied/live-track render states."
+    },
+    {
+      "id": "services/summary-full",
+      "route": "http://127.0.0.1:4181/app/consultations/apt-1789197488143/summary",
+      "capturedAt": "2026-09-12T07:18:09.776Z",
+      "note": "Current SummaryPage with expanded internal scroll frame; metadata open; isolated user-facing publication fixture, external/API blocked."
+    },
+    {
+      "id": "services/summary-pending",
+      "route": "http://127.0.0.1:4181/app/consultations/apt-1789197488143/summary",
+      "capturedAt": "2026-09-12T07:18:10.168Z",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "note": "Current design source; isolated browser demo state, all API and external requests blocked; controlled getUserMedia promise for pending/denied/live-track render states."
+    },
+    {
+      "id": "services/progress",
+      "route": "http://127.0.0.1:4181/app/care-episodes/episode-demo-mia/progress",
+      "capturedAt": "2026-09-12T07:26:52.246Z",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "note": "Current ServiceProgressPage and MeServiceTimeline DOM; isolated browser demo state; API and external requests blocked. Demo history is design evidence only."
+    },
+    {
+      "id": "services/progress-full",
+      "route": "http://127.0.0.1:4181/app/care-episodes/episode-demo-mia/progress",
+      "note": "Expanded user shell and care history scroll containers; current design full-page reference, isolated demo state."
+    },
+    {
+      "id": "services/renew",
+      "route": "http://127.0.0.1:4181/app/renew",
+      "capturedAt": "2026-09-12T07:31:37.649Z",
+      "note": "Current source DOM. Isolated design demo state; external and API requests blocked. No purchase or referral submitted. Expanded internal scroll frame for full image."
+    },
+    {
+      "id": "services/self-management",
+      "route": "http://127.0.0.1:4181/app/self-management",
+      "capturedAt": "2026-09-12T07:31:38.363Z",
+      "note": "Current source DOM. Isolated design demo state; external and API requests blocked. No purchase or referral submitted. Expanded internal scroll frame for full image."
+    },
+    {
+      "id": "services/referral",
+      "route": "http://127.0.0.1:4181/app/referral",
+      "capturedAt": "2026-09-12T07:31:39.092Z",
+      "note": "Current source DOM. Isolated design demo state; external and API requests blocked. No purchase or referral submitted. Expanded internal scroll frame for full image."
+    },
+    {
+      "id": "profile/privacy",
+      "route": "http://127.0.0.1:4181/app/privacy",
+      "capturedAt": "2026-09-12T07:42:24.805Z",
+      "note": "Current source DOM. Isolated design demo state; external and API requests blocked. No purchase or referral submitted. Expanded internal scroll frame for full image."
+    },
+    {
+      "id": "baby/records",
+      "route": "http://127.0.0.1:4181/app/records",
+      "capturedAt": "2026-09-12T07:42:25.563Z",
+      "note": "Current source DOM. Isolated design demo state; external and API requests blocked. No purchase or referral submitted. Expanded internal scroll frame for full image."
+    },
+    {
+      "id": "mom/diary-rest-expanded",
+      "route": "http://127.0.0.1:4181/app/home",
+      "capturedAt": "2026-09-12",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "note": "Latest HomePage diary state and me-diary.css; isolated browser demo with all API/external requests blocked; viewport and expanded scroll capture. Empty diary source reseeds sample records unconditionally, so no current empty browser capture claimed."
+    },
+    {
+      "id": "mom/diary-body-conditional",
+      "route": "http://127.0.0.1:4181/app/home",
+      "capturedAt": "2026-09-12",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "note": "Latest HomePage diary state and me-diary.css; isolated browser demo with all API/external requests blocked; viewport and expanded scroll capture. Empty diary source reseeds sample records unconditionally, so no current empty browser capture claimed."
+    },
+    {
+      "id": "mom/diary-body-pelvic",
+      "route": "http://127.0.0.1:4181/app/home",
+      "capturedAt": "2026-09-12",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "note": "Latest HomePage diary state and me-diary.css; isolated browser demo with all API/external requests blocked; viewport and expanded scroll capture. Empty diary source reseeds sample records unconditionally, so no current empty browser capture claimed."
+    },
+    {
+      "id": "mom/milk-empty",
+      "route": "http://127.0.0.1:4181/app/home",
+      "capturedAt": "2026-09-12",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "note": "Current UserApp HomePage and me-milk.css; API/external traffic blocked. Browser demo records cleared through its own delete buttons without reload, then local demo create/edit/delete/undo. Includes viewport/full expanded scroll captures."
+    },
+    {
+      "id": "mom/milk-pump",
+      "route": "http://127.0.0.1:4181/app/home",
+      "capturedAt": "2026-09-12",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "note": "Current UserApp HomePage and me-milk.css; API/external traffic blocked. Browser demo records cleared through its own delete buttons without reload, then local demo create/edit/delete/undo. Includes viewport/full expanded scroll captures."
+    },
+    {
+      "id": "mom/milk-nurse",
+      "route": "http://127.0.0.1:4181/app/home",
+      "capturedAt": "2026-09-12",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "note": "Current UserApp HomePage and me-milk.css; API/external traffic blocked. Browser demo records cleared through its own delete buttons without reload, then local demo create/edit/delete/undo. Includes viewport/full expanded scroll captures."
+    },
+    {
+      "id": "mom/milk-validation",
+      "route": "http://127.0.0.1:4181/app/home",
+      "capturedAt": "2026-09-12",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "note": "Current UserApp HomePage and me-milk.css; API/external traffic blocked. Browser demo records cleared through its own delete buttons without reload, then local demo create/edit/delete/undo. Includes viewport/full expanded scroll captures."
+    },
+    {
+      "id": "mom/milk-optional",
+      "route": "http://127.0.0.1:4181/app/home",
+      "capturedAt": "2026-09-12",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "note": "Current UserApp HomePage and me-milk.css; API/external traffic blocked. Browser demo records cleared through its own delete buttons without reload, then local demo create/edit/delete/undo. Includes viewport/full expanded scroll captures."
+    },
+    {
+      "id": "mom/milk-saved",
+      "route": "http://127.0.0.1:4181/app/home",
+      "capturedAt": "2026-09-12",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "note": "Current UserApp HomePage and me-milk.css; API/external traffic blocked. Browser demo records cleared through its own delete buttons without reload, then local demo create/edit/delete/undo. Includes viewport/full expanded scroll captures."
+    },
+    {
+      "id": "mom/milk-editing",
+      "route": "http://127.0.0.1:4181/app/home",
+      "capturedAt": "2026-09-12",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "note": "Current UserApp HomePage and me-milk.css; API/external traffic blocked. Browser demo records cleared through its own delete buttons without reload, then local demo create/edit/delete/undo. Includes viewport/full expanded scroll captures."
+    },
+    {
+      "id": "mom/milk-deleted",
+      "route": "http://127.0.0.1:4181/app/home",
+      "capturedAt": "2026-09-12",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "note": "Current UserApp HomePage and me-milk.css; API/external traffic blocked. Browser demo records cleared through its own delete buttons without reload, then local demo create/edit/delete/undo. Includes viewport/full expanded scroll captures."
+    },
+    {
+      "id": "mom/milk-restored",
+      "route": "http://127.0.0.1:4181/app/home",
+      "capturedAt": "2026-09-12",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "note": "Current UserApp HomePage and me-milk.css; API/external traffic blocked. Browser demo records cleared through its own delete buttons without reload, then local demo create/edit/delete/undo. Includes viewport/full expanded scroll captures."
+    },
+    {
+      "id": "services/catalog-current",
+      "capturedAt": "2026-09-12",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "note": "Current ServicesPage/ServiceDetailPage in isolated browser with all API and off-origin requests blocked; complete scroll plus viewport reference, no purchase actions."
+    },
+    {
+      "id": "services/package-feeding-confidence",
+      "capturedAt": "2026-09-12",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "note": "Current ServicesPage/ServiceDetailPage in isolated browser with all API and off-origin requests blocked; complete scroll plus viewport reference, no purchase actions."
+    },
+    {
+      "id": "services/package-better-breastfeeding",
+      "capturedAt": "2026-09-12",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "note": "Current ServicesPage/ServiceDetailPage in isolated browser with all API and off-origin requests blocked; complete scroll plus viewport reference, no purchase actions."
+    },
+    {
+      "id": "services/package-milk-supply-care",
+      "capturedAt": "2026-09-12",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "note": "Current ServicesPage/ServiceDetailPage in isolated browser with all API and off-origin requests blocked; complete scroll plus viewport reference, no purchase actions."
+    },
+    {
+      "id": "services/package-comfortable-feeding",
+      "capturedAt": "2026-09-12",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "note": "Current ServicesPage/ServiceDetailPage in isolated browser with all API and off-origin requests blocked; complete scroll plus viewport reference, no purchase actions."
+    },
+    {
+      "id": "mom/state-31",
+      "capturedAt": "2026-09-12",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "note": "Current HomePage/MeExpertServiceCard. API/off-origin blocked. Paid demo plus isolated confirmed future appointment fixture for intake/ready; see evidence/home-service-states/capture-design.mjs."
+    },
+    {
+      "id": "mom/state-38",
+      "capturedAt": "2026-09-12",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "note": "Current HomePage/MeExpertServiceCard. API/off-origin blocked. Paid demo plus isolated confirmed future appointment fixture for intake/ready; see evidence/home-service-states/capture-design.mjs."
+    },
+    {
+      "id": "mom/state-43",
+      "capturedAt": "2026-09-12",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "note": "Current HomeConsultPreparation overlay; API/off-origin blocked, isolated future confirmed fixture. See evidence/home-preparation/capture-design.mjs."
+    },
+    {
+      "id": "agent/history",
+      "route": "/app/agent",
+      "trigger": "Open conversation history; await panel animation",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "metrics": [
+        {
+          "selector": "agent-history-panel",
+          "text": "会话历史×还没有历史会话",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 319.796875,
+            "height": 844,
+            "top": 0,
+            "right": 319.796875,
+            "bottom": 844,
+            "left": 0
+          },
+          "style": {
+            "backgroundColor": "rgb(252, 249, 252)",
+            "color": "rgb(63, 48, 56)",
+            "fontFamily": "-apple-system, \"system-ui\", \"Segoe UI\", \"Microsoft YaHei\", \"PingFang SC\", \"Noto Sans CJK SC\", sans-serif",
+            "fontSize": "16px",
+            "fontWeight": "400",
+            "lineHeight": "normal",
+            "padding": "0px",
+            "borderRadius": "0px 22px 22px 0px",
+            "minHeight": "0px",
+            "gap": "normal"
+          }
+        },
+        {
+          "selector": "agent-history-header",
+          "text": "会话历史×",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 319.796875,
+            "height": 69,
+            "top": 0,
+            "right": 319.796875,
+            "bottom": 69,
+            "left": 0
+          },
+          "style": {
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(63, 48, 56)",
+            "fontFamily": "-apple-system, \"system-ui\", \"Segoe UI\", \"Microsoft YaHei\", \"PingFang SC\", \"Noto Sans CJK SC\", sans-serif",
+            "fontSize": "16px",
+            "fontWeight": "400",
+            "lineHeight": "normal",
+            "padding": "14px 10px 10px 20px",
+            "borderRadius": "0px",
+            "minHeight": "69px",
+            "gap": "normal"
+          }
+        },
+        {
+          "selector": "H2",
+          "text": "会话历史",
+          "rect": {
+            "x": 20,
+            "y": 25.203125,
+            "width": 70.203125,
+            "height": 21.59375,
+            "top": 25.203125,
+            "right": 90.203125,
+            "bottom": 46.796875,
+            "left": 20
+          },
+          "style": {
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(63, 48, 56)",
+            "fontFamily": "Manrope, \"DM Sans\", sans-serif",
+            "fontSize": "18px",
+            "fontWeight": "700",
+            "lineHeight": "21.6px",
+            "padding": "0px",
+            "borderRadius": "0px",
+            "minHeight": "auto",
+            "gap": "normal"
+          }
+        },
+        {
+          "selector": "agent-history-empty",
+          "text": "还没有历史会话",
+          "rect": {
+            "x": 0,
+            "y": 69,
+            "width": 319.796875,
+            "height": 775,
+            "top": 69,
+            "right": 319.796875,
+            "bottom": 844,
+            "left": 0
+          },
+          "style": {
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "color": "rgb(63, 48, 56)",
+            "fontFamily": "-apple-system, \"system-ui\", \"Segoe UI\", \"Microsoft YaHei\", \"PingFang SC\", \"Noto Sans CJK SC\", sans-serif",
+            "fontSize": "16px",
+            "fontWeight": "400",
+            "lineHeight": "normal",
+            "padding": "28px",
+            "borderRadius": "0px",
+            "minHeight": "auto",
+            "gap": "14px"
+          }
+        }
+      ],
+      "additional_reference": "evidence/agent-history/design-history-list.png",
+      "fixture_note": "List populated from isolated design-browser localStorage using the existing React state schema. All API/external requests blocked."
+    }
+  ],
+  "errors": [],
+  "blocked": []
+}

@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/baby-diaper-controls-color-black-393-1x.png",
+  "previous_source": "test/goldens/ui_inventory/baby-diaper-controls-color-brown-393-1x.png",
+  "route": "/baby",
+  "trigger": "Select stool color 黑色",
+  "root_entry": "Authenticated More → tap Baby bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/baby/baby_diaper_control_inventory_test.dart"
+}

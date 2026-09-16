@@ -1,0 +1,113 @@
+/* The three daily forms share the cream and dark-brown milk-page system.
+   Scope every rule so other dialogs and the existing milk editor stay intact. */
+.modal-backdrop:has(> .mom-diary-modal) {
+  align-items: center;
+  padding: 12px;
+  background: #30272355;
+  backdrop-filter: blur(2px);
+}
+.modal.mom-diary-modal {
+  --ink: #3d3028;
+  --muted: #826f5e;
+  --line: #e4d6c8;
+  width: min(100%, 440px);
+  height: min(800px, calc(100dvh - 24px));
+  max-height: calc(100dvh - 24px);
+  padding: 0;
+  border: 0;
+  border-radius: 24px;
+  color: #3d3028;
+  background: #f8f3ed;
+}
+.mom-diary-modal > .modal-header {
+  flex: none;
+  min-height: 70px;
+  margin: 0;
+  padding: 18px 22px 8px;
+  background: #3b2c23;
+}
+.mom-diary-modal .modal-header h3 { color: #fff8f1; font-size: 23px; font-weight: 600; letter-spacing: -.03em; }
+.mom-diary-modal .modal-header .btn {
+  width: 36px;
+  min-height: 36px;
+  padding: 0;
+  border: 1px solid #9d887766;
+  border-radius: 50%;
+  color: #fff8f1;
+  background: #ffffff0a;
+  font-size: 25px;
+  font-weight: 400;
+  box-shadow: none;
+}
+.me-diary-intro { position: relative; flex: none; padding: 2px 22px 23px; background: #3b2c23; }
+.mom-diary-modal .diary-editor-meta { gap: 10px; align-items: flex-start; color: #d1c1b3; font-size: 11px; line-height: 1.6; }
+.mom-diary-modal .diary-editor-meta strong { flex: none; color: #e7cab2; font-size: 10px; font-weight: 500; white-space: nowrap; }
+.me-diary-intro p { max-width: calc(100% - 62px); margin: 16px 0 0; color: #fff8f1; font-size: 14px; line-height: 1.7; text-wrap: balance; }
+.me-diary-illustration { position: absolute; right: 23px; bottom: 16px; color: #d2b89f; opacity: .7; pointer-events: none; }
+.me-diary-illustration .icon { width: 46px; height: 46px; }
+.me-diary-illustration svg { stroke-width: 1.2; }
+.mom-diary-modal .mom-status-editor { gap: 16px; padding: 18px 20px 20px; }
+.mom-diary-modal .diary-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  flex: none;
+  min-height: 48px;
+  gap: 4px;
+  padding: 4px;
+  border: 0;
+  border-radius: 13px;
+  background: #ece2d7;
+}
+.mom-diary-modal .diary-tabs button { min-width: 0; height: 40px; min-height: 40px; padding: 4px; color: #7a6452; font-size: 13px; font-weight: 500; }
+.mom-diary-modal .diary-tabs button.active { color: #fff8f1; background: #614735; box-shadow: none; }
+.mom-diary-modal .diary-tabs button i { background: #a99076; }
+.mom-diary-modal .diary-tabs button.active i { background: #e7cab2; }
+.mom-diary-modal .diary-panel { padding: 1px 4px 2px 1px; scrollbar-width: thin; scrollbar-color: #bca594 transparent; overscroll-behavior: contain; }
+.mom-diary-modal .diary-tab-content { gap: 20px; }
+.mom-diary-modal .diary-question { gap: 11px; }
+.mom-diary-modal .diary-question-heading { align-items: flex-start; }
+.mom-diary-modal .diary-question-heading strong { color: #49392f; font-size: 14px; font-weight: 600; line-height: 1.6; }
+.mom-diary-modal .diary-question-heading span { flex-shrink: 0; color: #897565; font-size: 11px; line-height: 1.8; }
+.mom-diary-modal :is(.rest-choice-grid, .tag-grid) { gap: 8px; }
+.mom-diary-modal :is(.rest-choice-grid, .tag-grid) button {
+  min-width: 0;
+  min-height: 44px;
+  padding: 9px 7px;
+  border: 1px solid #e4d6c8;
+  border-radius: 12px;
+  color: #746050;
+  background: #fffaf6;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.5;
+  white-space: normal;
+}
+.mom-diary-modal :is(.rest-choice-grid, .tag-grid) button.selected { border-color: #9d8471; color: #493426; background: #eadbcc; box-shadow: inset 0 0 0 1px #9d8471; font-weight: 600; }
+.mom-diary-modal .rest-interruption-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.mom-diary-modal :is(.body-energy-grid, .body-small-grid) { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.mom-diary-modal .body-tab-content > .diary-question > .tag-grid:not(.body-energy-grid):not(.body-small-grid) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.mom-diary-modal .segmented { min-height: 46px; padding: 4px; gap: 4px; border: 0; border-radius: 12px; background: #ece2d7; }
+.mom-diary-modal .segmented button { min-width: 0; min-height: 40px; padding: 7px 5px; color: #826f5e; font-size: 12px; font-weight: 400; white-space: normal; }
+.mom-diary-modal .segmented button.selected { color: #fff8f1; background: #614735; box-shadow: none; }
+.mom-diary-modal .rest-optional { border-color: #e4d6c8; border-radius: 14px; background: #f1e8de; }
+.mom-diary-modal .rest-optional > summary { min-height: 48px; padding: 10px 13px; font-size: 13px; }
+.mom-diary-modal .rest-optional > summary span:nth-child(2), .mom-diary-modal .details-chevron { color: #897565; }
+.mom-diary-modal .rest-optional-body { padding: 16px 13px; gap: 18px; }
+.mom-diary-modal .diary-text-field > span { color: #49392f; font-size: 13px; }
+.mom-diary-modal .diary-text-field textarea { min-height: 92px; border-color: #e4d6c8; border-radius: 12px; background: #fffaf6; color: #49392f; font-size: 13px; line-height: 1.6; }
+.mom-diary-modal .diary-text-field textarea:focus { border-color: #9d8471; box-shadow: 0 0 0 3px #9d847126; }
+.mom-diary-modal .mom-status-editor > .btn { flex: none; min-height: 48px; margin: 0; border: 1px solid #3b2c23; border-radius: 12px; background: #3b2c23; color: #fff8f1; font-size: 14px; font-weight: 500; box-shadow: none; }
+.mom-diary-modal button:focus-visible, .mom-diary-modal summary:focus-visible { outline: 2px solid #b6855f; outline-offset: 3px; }
+@media (hover: hover) {
+  .mom-diary-modal :is(.rest-choice-grid, .tag-grid) button:not(.selected):hover { background: #f1e8de; border-color: #bca594; color: #614735; }
+}
+@media (max-width: 359px) {
+  .modal.mom-diary-modal { border-radius: 18px; }
+  .mom-diary-modal > .modal-header { padding-inline: 17px; }
+  .me-diary-intro { padding-inline: 17px; }
+  .mom-diary-modal .diary-editor-meta { font-size: 10px; }
+  .mom-diary-modal .mom-status-editor { padding: 14px 14px 16px; gap: 14px; }
+  .mom-diary-modal :is(.rest-choice-grid, .tag-grid) button { padding-inline: 4px; font-size: 11px; }
+  .mom-diary-modal .mood-support-grid { grid-template-columns: 1fr; }
+  .mom-diary-modal .day-rest-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}

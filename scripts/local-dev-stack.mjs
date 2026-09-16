@@ -38,6 +38,7 @@ Commands:
   up                   Start Product Backend and Agent Runtime, then verify the stack
   start [flutter args] Start and verify services, then launch the Android app
   app [flutter args]   Verify services, then launch the Android app
+  account              Prepare the verified local email test account
   verify               Check readiness, JWT issuance, Product API, and Agent API
   status               Show both Docker Compose projects
   logs [backend|agent] Show recent service logs
@@ -323,6 +324,7 @@ async function up() {
   runRequired("make", ["backend-local-up"], backendRoot, {
     env: { MOMCOZY_BACKEND_API_BIND: "127.0.0.1:8769" },
   });
+  prepareTestAccount();
   runRequired(
     "docker",
     [
@@ -389,7 +391,12 @@ function launchApp(args) {
     "node",
     ["scripts/run-flutter-invite-dev.mjs", ...args],
     resolvedAppRoot,
+    { env: { MOMCOZY_RESET_INVITE_APP: process.env.MOMCOZY_RESET_INVITE_APP || "0" } },
   );
+}
+
+function prepareTestAccount() {
+  runRequired("make", ["backend-local-account"], backendRoot);
 }
 
 async function main() {
@@ -411,8 +418,12 @@ async function main() {
       launchApp(args);
       return;
     case "app":
+      prepareTestAccount();
       await verifyStack();
       launchApp(args);
+      return;
+    case "account":
+      prepareTestAccount();
       return;
     case "verify":
       await verifyStack();

@@ -1,0 +1,8 @@
+{
+  "07-me/notification-navigation-current-conversation-opened/default.png": "483d2f18b960a19364b6452478fe7b7756d31ef4eee51f679e256261ebe82b15",
+  "07-me/notification-navigation-current-conversation-opened/viewport.png": "483d2f18b960a19364b6452478fe7b7756d31ef4eee51f679e256261ebe82b15",
+  "raw/test/goldens/ui_inventory/notification-navigation-current-conversation-opened-320-2x.png": "f74bc7446f0492ad5ddaa52d14d9f4b854fd53dc6b4591431fb91fc0e45c4a05",
+  "raw/test/goldens/ui_inventory/notification-navigation-current-conversation-opened-320-2x.png.json": "5e2aad387ffc1d33c0a0d491bd2204c090c30ad74452de4d7c13c0b6aafc41ee",
+  "raw/test/goldens/ui_inventory/notification-navigation-current-conversation-opened-393-1x.png": "483d2f18b960a19364b6452478fe7b7756d31ef4eee51f679e256261ebe82b15",
+  "raw/test/goldens/ui_inventory/notification-navigation-current-conversation-opened-393-1x.png.json": "ed0beb5dace4da5609cd181d409a2c8c0dc97ef827bd5659261053560108e764"
+}

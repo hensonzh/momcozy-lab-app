@@ -1,0 +1,11 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: inventory schedule calendar create edit delete
+00:01 +1: inventory schedule discard and save retry
+00:02 +2: inventory schedule read and delete failure recovery
+00:02 +3: inventory schedule server validation and conflict
+00:02 +4: inventory schedule care task statuses and plan
+00:03 +5: inventory schedule service filters and appointment summary
+00:03 +6: inventory schedule picker cancel and task menu route
+00:04 +7: (tearDownAll)
+00:04 +7: All tests passed!

@@ -1,0 +1,139 @@
+[
+  {
+    "id": "259:1097",
+    "name": "Cozymate attachments / menu",
+    "width": 393,
+    "height": 568
+  },
+  {
+    "id": "259:1130",
+    "name": "Cozymate attachments / pending-image",
+    "width": 393,
+    "height": 568
+  },
+  {
+    "id": "259:1162",
+    "name": "Cozymate attachments / pending-file",
+    "width": 393,
+    "height": 568
+  },
+  {
+    "id": "259:1194",
+    "name": "Cozymate attachments / uploading",
+    "width": 393,
+    "height": 568
+  },
+  {
+    "id": "259:1226",
+    "name": "Cozymate attachments / sent-files",
+    "width": 393,
+    "height": 568
+  },
+  {
+    "id": "259:1253",
+    "name": "Cozymate attachments / user-menu",
+    "width": 393,
+    "height": 568
+  },
+  {
+    "id": "259:1270",
+    "name": "Cozymate attachments / assistant-menu",
+    "width": 393,
+    "height": 568
+  },
+  {
+    "id": "259:1287",
+    "name": "Cozymate attachments / retry-menu",
+    "width": 393,
+    "height": 568
+  },
+  {
+    "id": "259:1308",
+    "name": "Cozymate attachments / copy-success",
+    "width": 393,
+    "height": 568
+  },
+  {
+    "id": "259:1322",
+    "name": "Cozymate attachments / copy-failed",
+    "width": 393,
+    "height": 568
+  },
+  {
+    "id": "259:1336",
+    "name": "Cozymate attachments / menu large",
+    "width": 320,
+    "height": 568
+  },
+  {
+    "id": "259:1370",
+    "name": "Cozymate attachments / pending-image large",
+    "width": 320,
+    "height": 568
+  },
+  {
+    "id": "259:1405",
+    "name": "Cozymate attachments / pending-file large",
+    "width": 320,
+    "height": 568
+  },
+  {
+    "id": "259:1440",
+    "name": "Cozymate attachments / uploading large",
+    "width": 320,
+    "height": 568
+  },
+  {
+    "id": "259:1475",
+    "name": "Cozymate attachments / sent-files large",
+    "width": 320,
+    "height": 568
+  },
+  {
+    "id": "259:1502",
+    "name": "Cozymate attachments / user-menu large",
+    "width": 320,
+    "height": 568
+  },
+  {
+    "id": "259:1519",
+    "name": "Cozymate attachments / assistant-menu large",
+    "width": 320,
+    "height": 568
+  },
+  {
+    "id": "259:1536",
+    "name": "Cozymate attachments / retry-menu large",
+    "width": 320,
+    "height": 568
+  },
+  {
+    "id": "259:1557",
+    "name": "Cozymate attachments / copy-success large",
+    "width": 320,
+    "height": 568
+  },
+  {
+    "id": "259:1571",
+    "name": "Cozymate attachments / copy-failed large",
+    "width": 320,
+    "height": 568
+  },
+  {
+    "id": "262:1086",
+    "name": "sent-image",
+    "width": 393,
+    "height": 568
+  },
+  {
+    "id": "262:1115",
+    "name": "sent-image large",
+    "width": 320,
+    "height": 568
+  },
+  {
+    "id": "259:1096",
+    "name": "MomCozy/AttachmentDraft",
+    "type": "COMPONENT"
+  }
+]

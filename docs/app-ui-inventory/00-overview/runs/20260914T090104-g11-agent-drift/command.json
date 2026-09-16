@@ -1,0 +1,16 @@
+[
+  "/Users/lute/.local/share/momcozy-toolchains/flutter/bin/flutter",
+  "--suppress-analytics",
+  "test",
+  "--no-pub",
+  "test/features/agent_hub/agent_markdown_design_test.dart",
+  "test/features/agent_hub/agent_resource_card_design_test.dart",
+  "test/features/agent_hub/agent_me_design_test.dart",
+  "test/features/agent_hub/agent_attachment_notice_design_test.dart",
+  "test/features/agent_hub/agent_voice_design_test.dart",
+  "test/app/notification_conversation_route_test.dart",
+  "--name",
+  "markdown reading 390\\.0/1\\.0|resource card reading and original actions 390\\.0/1\\.0|Agent cards and dialog at 390\\.0 / 1\\.0|attachment .* 390\\.0/1\\.0|voice states 390\\.0/1\\.0|greeting playback and replay indicator 390\\.0/1\\.0|notification conversation opens.*393\\.0 / 1\\.0",
+  "--reporter",
+  "expanded"
+]

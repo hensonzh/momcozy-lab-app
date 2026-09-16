@@ -352,9 +352,17 @@ class IoApiJsonTransport implements ApiJsonTransport, ApiJsonMutationTransport {
     final basePath = baseUri.path.endsWith('/')
         ? baseUri.path
         : '${baseUri.path}/';
-    final nextPath = path.startsWith('/') ? path.substring(1) : path;
+    // Mutation callers may carry optimistic-lock parameters in the relative URL.
+    // Keep them in the query; Uri.replace(path: ...) would encode '?' as %3F.
+    final queryStart = path.indexOf('?');
+    final pathOnly = queryStart < 0 ? path : path.substring(0, queryStart);
+    final nextPath = pathOnly.startsWith('/')
+        ? pathOnly.substring(1)
+        : pathOnly;
     final nextQuery = <String, String>{
       ...baseUri.queryParameters,
+      if (queryStart >= 0)
+        ...Uri.splitQueryString(path.substring(queryStart + 1)),
       for (final entry in query.entries)
         if (entry.value != null) entry.key: entry.value.toString(),
     };

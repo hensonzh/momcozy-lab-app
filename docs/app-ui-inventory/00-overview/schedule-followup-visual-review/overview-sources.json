@@ -1,0 +1,260 @@
+[
+  {
+    "state": "schedule-journey-add-tooltip",
+    "source": "06-schedule/schedule-journey-add-tooltip/viewport.png",
+    "sha256": "d5b42867e168a0aa4a32d1d9e265a4e3ade6c28d216559b8f0ba6eeb4a6a2ecd",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "schedule-journey-appointment-cancelled",
+    "source": "06-schedule/schedule-journey-appointment-cancelled/viewport.png",
+    "sha256": "ce846bcac4134ae5573ddec001e3100f015c5d55be39f548c88c4f5f9acfb0c6",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "schedule-journey-appointment-cancelled-return",
+    "source": "06-schedule/schedule-journey-appointment-cancelled-return/viewport.png",
+    "sha256": "3e4be7adfee34670d2982d91d423aa0c2566c68e8de15c5e30a30fe2e51f0f99",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "schedule-journey-appointment-cancelled-route",
+    "source": "06-schedule/schedule-journey-appointment-cancelled-route/viewport.png",
+    "sha256": "d4f0180dc317012230c37d5ea83c11cf7ca9aa56b4ebef1495ac9ab6dab297c0",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "schedule-journey-appointment-entry",
+    "source": "06-schedule/schedule-journey-appointment-entry/viewport.png",
+    "sha256": "b69d35605618f3c8563045bea1ea463c31a14b0da5e7fbd6352c94ba782f34f4",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "schedule-journey-appointment-expired",
+    "source": "06-schedule/schedule-journey-appointment-expired/viewport.png",
+    "sha256": "a33713e6a7f3acd707c3129443271ac86599adc390ea30bf0607e00fcfa1ab63",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "schedule-journey-appointment-expired-intake",
+    "source": "06-schedule/schedule-journey-appointment-expired-intake/viewport.png",
+    "sha256": "48a94a3250533c8ab9b5053a1260185e17ffd11bc18858c9cb5a7fc4e353f631",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "schedule-journey-appointment-expired-intake-return",
+    "source": "06-schedule/schedule-journey-appointment-expired-intake-return/viewport.png",
+    "sha256": "b058e45b081696a6957e8fc40b1cd42bac316da0d5a367b573c418492741ab81",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "schedule-journey-appointment-expired-return",
+    "source": "06-schedule/schedule-journey-appointment-expired-return/viewport.png",
+    "sha256": "d9949a8e15ea23897f644bdb6602343e846aa243e2fe1d3e6fb8ff57d4a68395",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "schedule-journey-appointment-expired-route",
+    "source": "06-schedule/schedule-journey-appointment-expired-route/viewport.png",
+    "sha256": "b058e45b081696a6957e8fc40b1cd42bac316da0d5a367b573c418492741ab81",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "schedule-journey-appointment-held",
+    "source": "06-schedule/schedule-journey-appointment-held/viewport.png",
+    "sha256": "6402fd8d52a1f437d18c904ad91c5a4eb184370915790e78fb302e6475558699",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "schedule-journey-appointment-held-intake",
+    "source": "06-schedule/schedule-journey-appointment-held-intake/viewport.png",
+    "sha256": "48a94a3250533c8ab9b5053a1260185e17ffd11bc18858c9cb5a7fc4e353f631",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "schedule-journey-appointment-held-intake-return",
+    "source": "06-schedule/schedule-journey-appointment-held-intake-return/viewport.png",
+    "sha256": "b058e45b081696a6957e8fc40b1cd42bac316da0d5a367b573c418492741ab81",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "schedule-journey-appointment-held-return",
+    "source": "06-schedule/schedule-journey-appointment-held-return/viewport.png",
+    "sha256": "4d3c9b1c7a1879ed4d292c19a8e76ec30bb2a499a01117d095f0c1b4c0011a73",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "schedule-journey-appointment-held-route",
+    "source": "06-schedule/schedule-journey-appointment-held-route/viewport.png",
+    "sha256": "b058e45b081696a6957e8fc40b1cd42bac316da0d5a367b573c418492741ab81",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "schedule-journey-appointment-return",
+    "source": "06-schedule/schedule-journey-appointment-return/viewport.png",
+    "sha256": "a8396ec89b2f5f55d7c217f6f18b79c570ee7c1c5f30a1fb386c76d82c6be538",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "schedule-journey-appointment-room-route",
+    "source": "06-schedule/schedule-journey-appointment-room-route/viewport.png",
+    "sha256": "26847b4088efec9bdb3272daa7dabaddbf4ac1f0206f1192bd185e001e59dfc3",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "schedule-journey-delete-conflict",
+    "source": "06-schedule/schedule-journey-delete-conflict/viewport.png",
+    "sha256": "343db153c83bae29adea9fd9740c8c0d852e4d2dbf90a7724f50acc4a0caf1cf",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "schedule-journey-edit-conflict",
+    "source": "06-schedule/schedule-journey-edit-conflict/viewport.png",
+    "sha256": "615f9898a8d55ed737623448faefc6b235a3b1bf8c83b7f0e1fb3482bec951d1",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "schedule-journey-first-page-end",
+    "source": "06-schedule/schedule-journey-first-page-end/viewport.png",
+    "sha256": "7ea45b2a11d48d9abce6855542eb079322ddab681931e96c89a6b3d388c7b5f8",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "schedule-journey-first-page-overflow",
+    "source": "06-schedule/schedule-journey-first-page-overflow/viewport.png",
+    "sha256": "f0aa19f4cf4f9a3d603d56f3c30680663feb637b550b6a129876d009ffad908a",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "schedule-journey-large-picker-date-corrected",
+    "source": "06-schedule/schedule-journey-large-picker-date-corrected/viewport.png",
+    "sha256": "41e5e8ddd56c678257b68ad487b75704e28e64f6a611a06e71e760ded7e79614",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "schedule-journey-large-picker-date-invalid",
+    "source": "06-schedule/schedule-journey-large-picker-date-invalid/viewport.png",
+    "sha256": "eb6990735af94057f7974c4d61f328d68abf7e1dbcd528be0ba5f0a6eb0e9e06",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "schedule-journey-large-picker-date-out-of-range",
+    "source": "06-schedule/schedule-journey-large-picker-date-out-of-range/viewport.png",
+    "sha256": "a24afaf0f54a78c384270bafe995f6f9f7f39d96b8a8a96ed1a08d841d165eb1",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "schedule-journey-large-picker-editor",
+    "source": "06-schedule/schedule-journey-large-picker-editor/viewport.png",
+    "sha256": "8321287df1afeb93d04c618e0054edd66d0a4c9ac27a5d76c1ee929e9e359591",
+    "sheet": "overview-3.jpg"
+  },
+  {
+    "state": "schedule-journey-large-picker-saved",
+    "source": "06-schedule/schedule-journey-large-picker-saved/viewport.png",
+    "sha256": "6d90b4b02bc87b2e4127b67947552bff95a36693dbaa30c5f670bf406a738f1b",
+    "sheet": "overview-3.jpg"
+  },
+  {
+    "state": "schedule-journey-large-picker-time-corrected",
+    "source": "06-schedule/schedule-journey-large-picker-time-corrected/viewport.png",
+    "sha256": "3f446d2d5e1bbfae2b4f41a195ada7569101770e41f6b7b52d06266502ca7fbe",
+    "sheet": "overview-3.jpg"
+  },
+  {
+    "state": "schedule-journey-large-picker-time-invalid",
+    "source": "06-schedule/schedule-journey-large-picker-time-invalid/viewport.png",
+    "sha256": "76dc2e3018aca05b941fceba86319a49a61a24580d27633d04da7241f39ff112",
+    "sheet": "overview-3.jpg"
+  },
+  {
+    "state": "schedule-journey-next-tooltip",
+    "source": "06-schedule/schedule-journey-next-tooltip/viewport.png",
+    "sha256": "3d50b37f8907111c00be7349c8b7ad15dab0905984ff98c199f4015655031a8e",
+    "sheet": "overview-3.jpg"
+  },
+  {
+    "state": "schedule-journey-picker-date-corrected",
+    "source": "06-schedule/schedule-journey-picker-date-corrected/viewport.png",
+    "sha256": "59fdd96e5054966bbc3b7ad560378dfdda2128d58bcfb911770cc19ed9e38fbc",
+    "sheet": "overview-3.jpg"
+  },
+  {
+    "state": "schedule-journey-picker-date-invalid",
+    "source": "06-schedule/schedule-journey-picker-date-invalid/viewport.png",
+    "sha256": "404802b695feeea4f327555266497a889a6e9ec95e795156fe8283496cf37710",
+    "sheet": "overview-3.jpg"
+  },
+  {
+    "state": "schedule-journey-picker-date-out-of-range",
+    "source": "06-schedule/schedule-journey-picker-date-out-of-range/viewport.png",
+    "sha256": "addf87171a0c20f9d5eccc585459d598ec8cdb7b13436ba34128f9fe863e99e1",
+    "sheet": "overview-3.jpg"
+  },
+  {
+    "state": "schedule-journey-picker-editor",
+    "source": "06-schedule/schedule-journey-picker-editor/viewport.png",
+    "sha256": "4b5ddaf0b7b1813960301fd334472a7ee8b7726d711c48332237e0fe8957203c",
+    "sheet": "overview-3.jpg"
+  },
+  {
+    "state": "schedule-journey-picker-saved",
+    "source": "06-schedule/schedule-journey-picker-saved/viewport.png",
+    "sha256": "daec183fb9d3b7f8366dc3573fe65de706088f29288c20f3c102752b79df571f",
+    "sheet": "overview-3.jpg"
+  },
+  {
+    "state": "schedule-journey-picker-time-corrected",
+    "source": "06-schedule/schedule-journey-picker-time-corrected/viewport.png",
+    "sha256": "dfc1fdc234181a27a011d10b425eff8c1deb0298d73586e6b65094250a863a14",
+    "sheet": "overview-3.jpg"
+  },
+  {
+    "state": "schedule-journey-picker-time-invalid",
+    "source": "06-schedule/schedule-journey-picker-time-invalid/viewport.png",
+    "sha256": "6e7ec7aefa1c8026558fc5b0ef06ef3fa7e99296d9ca7dd794815b47f7e71b65",
+    "sheet": "overview-3.jpg"
+  },
+  {
+    "state": "schedule-journey-pull-refresh-reconciled",
+    "source": "06-schedule/schedule-journey-pull-refresh-reconciled/viewport.png",
+    "sha256": "b11facdd92b9aac52b9078c862388f3a8335edbc06b69c8f223a8af7bf45daa1",
+    "sheet": "overview-4.jpg"
+  },
+  {
+    "state": "schedule-journey-task-write-finished",
+    "source": "06-schedule/schedule-journey-task-write-finished/viewport.png",
+    "sha256": "2a134cadb9531570caccb802fa350da0cdc9d16ec8eca9cc0cdda5b0e8ae479c",
+    "sheet": "overview-4.jpg"
+  },
+  {
+    "state": "schedule-journey-task-write-pending",
+    "source": "06-schedule/schedule-journey-task-write-pending/viewport.png",
+    "sha256": "b69d35605618f3c8563045bea1ea463c31a14b0da5e7fbd6352c94ba782f34f4",
+    "sheet": "overview-4.jpg"
+  },
+  {
+    "state": "schedule-journey-unloaded-day-empty",
+    "source": "06-schedule/schedule-journey-unloaded-day-empty/viewport.png",
+    "sha256": "d37b6841680c98b931b3286b1c4f0648685ecd70f034512d3a57a59f8b2b3187",
+    "sheet": "overview-4.jpg"
+  },
+  {
+    "state": "schedule-journey-year-editor",
+    "source": "06-schedule/schedule-journey-year-editor/viewport.png",
+    "sha256": "0d67a76aeaee4698863078e9067fc53d48e5555b071a80164db9041596948fbb",
+    "sheet": "overview-4.jpg"
+  },
+  {
+    "state": "schedule-journey-year-selected",
+    "source": "06-schedule/schedule-journey-year-selected/viewport.png",
+    "sha256": "148a7859e09f9e92ca17f18c9adef2b37cf72f00654395173fcdfdf98cd18a98",
+    "sheet": "overview-4.jpg"
+  },
+  {
+    "state": "schedule-journey-year-selector",
+    "source": "06-schedule/schedule-journey-year-selector/viewport.png",
+    "sha256": "a7cfbe36ce3cc4928a3df0536b0a4787edd072f546aa67b1454fbbd883eaf883",
+    "sheet": "overview-4.jpg"
+  }
+]

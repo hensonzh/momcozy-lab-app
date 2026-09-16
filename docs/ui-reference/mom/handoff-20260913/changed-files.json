@@ -1,0 +1,662 @@
+[
+  {
+    "file": "lib/core/agent_stream/agent_stream_run_state.dart",
+    "change": "format-and-lint-only",
+    "sha256": "bba56d594377ea3f0caee5f3e1180e261caa2934317d12b1fdb99573b524af63"
+  },
+  {
+    "file": "lib/app/mom_module_routes.dart",
+    "change": "modified",
+    "sha256": "8808c92d097a16268bcff5ca793a8054b58ea110e68c339d8c7e0c920a50d1bc"
+  },
+  {
+    "file": "lib/app/momcozy_api_runtime.dart",
+    "change": "format-only",
+    "sha256": "668e726ffdb14bfa8fcc3f7bb17b70440bf606808b5d735c353593764f8da71c"
+  },
+  {
+    "file": "lib/app/momcozy_app.dart",
+    "change": "format-and-lint-only",
+    "sha256": "6eb60d764b5a70ab79e7215577c5af96df124802a3faa9a77e32781ce77b2f6f"
+  },
+  {
+    "file": "lib/features/motion_assessment/presentation/motion_assessment_page.dart",
+    "change": "format-only",
+    "sha256": "106f73f6db6af89ffae3437063cf83f8f4653ae6fe70404ee6bd0536de5a10a3"
+  },
+  {
+    "file": "lib/features/app_pages/momcozy_feature_pages.dart",
+    "change": "format-only",
+    "sha256": "10612b5c5641b2d02d6dbd7345feea933586a46fbf5690dda9774fb8fedb4c8f"
+  },
+  {
+    "file": "lib/shared/design_system/mom_home_tokens.dart",
+    "change": "new",
+    "sha256": "7c833081d7629bcc07e8cf741b8e34614aa5d369ffd890d0d6e2cba8ba48d2fd"
+  },
+  {
+    "file": "lib/shared/widgets/date_time_picker.dart",
+    "change": "modified",
+    "sha256": "0496a04eb4be7b9e587c672b8772ff52cc65d3268864c36f17143614838c1e05"
+  },
+  {
+    "file": "lib/shared/widgets/zoned_datetime_field.dart",
+    "change": "modified",
+    "sha256": "1e2c9704e49482ab1903b265f51cd70627e717a0950d0e04416688eb022d6600"
+  },
+  {
+    "file": "lib/modules/services/presentation/expert_support_section.dart",
+    "change": "modified",
+    "sha256": "563987b018dfa1f49e6acab183124287071a583c9fc6c80012eb96ffb70dd901"
+  },
+  {
+    "file": "lib/modules/mom/application/mother_home_controller.dart",
+    "change": "modified",
+    "sha256": "01026da2e22d4126dd375610543f536ba4f45c90e9359a98a31210ec3d971446"
+  },
+  {
+    "file": "lib/modules/mom/application/mom_home_view_data.dart",
+    "change": "new",
+    "sha256": "659721f5d1dd5b7d2588747712f60422a5578d5308f49eb4e54e21a3dac23ec3"
+  },
+  {
+    "file": "lib/modules/mom/presentation/mother_home_page.dart",
+    "change": "modified",
+    "sha256": "cb009de401d7aed7ab950a5638acf7e95c5cfb6c0711c78cf45d3abb7b88ca45"
+  },
+  {
+    "file": "lib/modules/mom/presentation/mother_diary_editor.dart",
+    "change": "modified",
+    "sha256": "b27713314588f40ef41dcf304e1abac0d9b9d162b201a4c35cb7d7a2dbe491f4"
+  },
+  {
+    "file": "lib/modules/mom/presentation/mom_home_sections.dart",
+    "change": "new",
+    "sha256": "3107b76be909c66d65c226a0572f21c1d0a40d19a4b82afecb34ffe51926915e"
+  },
+  {
+    "file": "lib/domain/care/care_order.dart",
+    "change": "format-only",
+    "sha256": "e3c2ee0004f4f7e5353c177aa1b234af0034748554fd790f11afd5009e3e34d4"
+  },
+  {
+    "file": "lib/services/care/care_api_repository.dart",
+    "change": "format-only",
+    "sha256": "55feabe11a8460130f5cb9e4e0da412cce5fb2d6d8e827e533ffbf60b498019f"
+  },
+  {
+    "file": "test/core/auth/momcozy_auth_api_test.dart",
+    "change": "format-only",
+    "sha256": "496b7694930133d7cbf442ba12ee4350b963e8909416ecae6549849d72ab61e5"
+  },
+  {
+    "file": "test/core/agent_stream/agent_stream_run_state_test.dart",
+    "change": "format-only",
+    "sha256": "ab8a9d43259411a6be53312fae6538e41669cd1eac4d22986c00d811fa8525fd"
+  },
+  {
+    "file": "test/app/more_design_test.dart",
+    "change": "format-only",
+    "sha256": "2fabd4b173a40e82c708c2d5b776e677a7343639f360bfd330fb4de00a0a4e60"
+  },
+  {
+    "file": "test/app/momcozy_api_runtime_test.dart",
+    "change": "format-only",
+    "sha256": "c769e55d8eb7689597af08a295b2c311ac11dd15547140a71bc6781272f9f363"
+  },
+  {
+    "file": "test/features/onboarding/onboarding_capability_gate_test.dart",
+    "change": "format-only",
+    "sha256": "bed2f0c451f83a7df8afb061aa9c28920ca73979e3a05060d4500205180fa1af"
+  },
+  {
+    "file": "test/support/input_confirmation_scenarios.dart",
+    "change": "modified",
+    "sha256": "61a2fa293e0f5989aa926cd5af0d91613787f74f3d506c2cc5cf0591c7ad7b84"
+  },
+  {
+    "file": "test/support/momcozy_test_fonts.dart",
+    "change": "modified",
+    "sha256": "286da500a89e196f2e5b1165a4041dbb94e7cf5f588e8ee8de2c8dc5c44c6bfa"
+  },
+  {
+    "file": "test/support/mom_home_handoff_scenarios.dart",
+    "change": "new",
+    "sha256": "72ca3cd7f455643f0b47a949f44cb98111ead36e3ac6763a35a7f963753354fd"
+  },
+  {
+    "file": "test/goldens/design_system/home-service-ready-320-2x.png",
+    "change": "modified",
+    "sha256": "c98a7c501f98ae5d9671c0cfa022ebddfe422b4482c587319668f0b0ae80803f"
+  },
+  {
+    "file": "test/goldens/design_system/expert-support-320.png",
+    "change": "modified",
+    "sha256": "c6f3e9098d9a77d65e969f4198aa3caa5314df722f058abab3a11a6d80df68f5"
+  },
+  {
+    "file": "test/goldens/design_system/home-service-paid-320.png",
+    "change": "modified",
+    "sha256": "3c3d32dbd0937fb0f01466d8f0a6b837332ec5e4355b7110fb705f93eeb30231"
+  },
+  {
+    "file": "test/goldens/design_system/home-service-intake-390-2x.png",
+    "change": "modified",
+    "sha256": "e308fff6d68f2ea8d850e8c75bc4754944119ac3e19d0bf04078f875c4e639a6"
+  },
+  {
+    "file": "test/goldens/design_system/mom-handoff-purchased-bottom-393-1x.png",
+    "change": "new",
+    "sha256": "b5bf7d259a9276a2ca97d57695192f282cfc4926b5ef5d3413ff55c91bd8260b"
+  },
+  {
+    "file": "test/goldens/design_system/home-service-paid-320-2x.png",
+    "change": "modified",
+    "sha256": "99613f1b0463fccbaefe877dfda9c0b96ac50826e43b5ffd608280090af4a217"
+  },
+  {
+    "file": "test/goldens/design_system/mom-handoff-initial-bottom-320-1x.png",
+    "change": "new",
+    "sha256": "9681eccf2845d5e44e4bc512d047da6b14914fac6936e6c2bb325992611cddef"
+  },
+  {
+    "file": "test/goldens/design_system/mom-handoff-recorded-top-320-2x.png",
+    "change": "new",
+    "sha256": "775dbb17f79f16911cd29c6c90f54d429de487ce2fe4b9a2dc40551f8d46e00a"
+  },
+  {
+    "file": "test/goldens/design_system/mom-handoff-purchased-bottom-360-1x.png",
+    "change": "new",
+    "sha256": "d67765378a06b216f320942db3b37ee4c087c9e7db455ac939ec28e9c5eafd6a"
+  },
+  {
+    "file": "test/goldens/design_system/mom-handoff-purchased-bottom-320-2x.png",
+    "change": "new",
+    "sha256": "1dbb9ebd23c31fce14779dc46acc7ae02303f57a4a2d116895f5267861effe6f"
+  },
+  {
+    "file": "test/goldens/design_system/mom-handoff-recorded-top-360-1x.png",
+    "change": "new",
+    "sha256": "83d29f16f9704348dcec466ecc3c543a0bb71abee55670561ebed7190c61640a"
+  },
+  {
+    "file": "test/goldens/design_system/mom-handoff-initial-bottom-360-2x.png",
+    "change": "new",
+    "sha256": "4dea86073c7c03825291b7f9a5aa23f4a81d324e0b12010ece25520642822ed4"
+  },
+  {
+    "file": "test/goldens/design_system/home-service-intake-430-2x.png",
+    "change": "modified",
+    "sha256": "e91cb9b7f32f3311484c26547107bd6cb4482782c964319c5eb57bd37b753c96"
+  },
+  {
+    "file": "test/goldens/design_system/mom-handoff-initial-bottom-393-2x.png",
+    "change": "new",
+    "sha256": "b2bfed0ff7139c4fae296a84ecd30500fe863b75080020d709682ab71018d156"
+  },
+  {
+    "file": "test/goldens/design_system/mom-handoff-recorded-top-393-1x.png",
+    "change": "new",
+    "sha256": "e360b8f383b7e9685ea7a59feb291b9eb0c6280cc4c235718631056b483f7581"
+  },
+  {
+    "file": "test/goldens/design_system/mom-handoff-recorded-bottom-320-2x.png",
+    "change": "new",
+    "sha256": "8fad05728e34d63f2daf1dc1efa9ea31b45d1f936795b2f1937e6f38ca26b406"
+  },
+  {
+    "file": "test/goldens/design_system/mom-handoff-purchased-top-320-2x.png",
+    "change": "new",
+    "sha256": "775dbb17f79f16911cd29c6c90f54d429de487ce2fe4b9a2dc40551f8d46e00a"
+  },
+  {
+    "file": "test/goldens/design_system/mom-handoff-initial-top-360-1x.png",
+    "change": "new",
+    "sha256": "f203c98d76e6f3fba37ac754b80d4aac893ddcd182dd924b7f040b9a92b0ed96"
+  },
+  {
+    "file": "test/goldens/design_system/home-service-paid-430.png",
+    "change": "modified",
+    "sha256": "102d1ec45b59b93f0fd21792bbd00fbed6cc25ef401346c8f575ad7aa921c7c5"
+  },
+  {
+    "file": "test/goldens/design_system/expert-support-430.png",
+    "change": "modified",
+    "sha256": "234b07174e49b7a678d389633a9455a1b8e3a4c8135b5d1ce80008b42bedd9d9"
+  },
+  {
+    "file": "test/goldens/design_system/home-service-ready-430-2x.png",
+    "change": "modified",
+    "sha256": "75e88f8b9ba170bed14e588944d3768334f38bed2e370d1aed8219c9914031fd"
+  },
+  {
+    "file": "test/goldens/design_system/mom-handoff-initial-top-393-1x.png",
+    "change": "new",
+    "sha256": "42a384680407cc3d219eda4540d27fa8a50f22cbfd70dcda27fb2ef5384bbd04"
+  },
+  {
+    "file": "test/goldens/design_system/home-service-paid-430-2x.png",
+    "change": "modified",
+    "sha256": "5cde7e1bb487c0f9f74ad19447de3373b5547a4968b01fdb36f54e6865d21526"
+  },
+  {
+    "file": "test/goldens/design_system/mom-handoff-purchased-top-393-1x.png",
+    "change": "new",
+    "sha256": "a5fd8c442ab80fc4ae5744be9ea1514999b9b3de2c65622b679e3bc1dae6974d"
+  },
+  {
+    "file": "test/goldens/design_system/mom-handoff-recorded-bottom-393-1x.png",
+    "change": "new",
+    "sha256": "e360b8f383b7e9685ea7a59feb291b9eb0c6280cc4c235718631056b483f7581"
+  },
+  {
+    "file": "test/goldens/design_system/home-service-ready-390-2x.png",
+    "change": "modified",
+    "sha256": "c859752d9b4855106a2e9a979c7df11748a105634a1c64b46bd64a65d50488d2"
+  },
+  {
+    "file": "test/goldens/design_system/mom-handoff-initial-top-320-2x.png",
+    "change": "new",
+    "sha256": "073ba38ec416aeb2badad57e1b79a0abe0b3cd2c5b5df92427c2299322b02831"
+  },
+  {
+    "file": "test/goldens/design_system/mom-handoff-purchased-top-360-1x.png",
+    "change": "new",
+    "sha256": "51ffb7fed721e72279c12f917082b38b91472033b9105231ec9b006fd1065ced"
+  },
+  {
+    "file": "test/goldens/design_system/home-service-intake-320-2x.png",
+    "change": "modified",
+    "sha256": "fa30731ad5c53ebbc2e557330973dddbb99f6b0b46da5d6198eea6feaf372154"
+  },
+  {
+    "file": "test/goldens/design_system/home-service-paid-390.png",
+    "change": "modified",
+    "sha256": "2562433619f2ecc65c2ab2c2415530761a486f8a5f3b507cb1a71adde72e3d8d"
+  },
+  {
+    "file": "test/goldens/design_system/mom-handoff-recorded-bottom-360-1x.png",
+    "change": "new",
+    "sha256": "83d29f16f9704348dcec466ecc3c543a0bb71abee55670561ebed7190c61640a"
+  },
+  {
+    "file": "test/goldens/design_system/home-service-paid-390-2x.png",
+    "change": "modified",
+    "sha256": "b8d27c94a2644f546c797102eb51ba1cc6deaaa0e415441c0204bc41a25b7bfb"
+  },
+  {
+    "file": "test/goldens/design_system/expert-support-390.png",
+    "change": "modified",
+    "sha256": "82eb8aaf3cc14ac8f0dc5e0967168553b45ccdb8888438fbe3a229a457b4022d"
+  },
+  {
+    "file": "test/goldens/design_system/mom-handoff-initial-top-320-1x.png",
+    "change": "new",
+    "sha256": "9681eccf2845d5e44e4bc512d047da6b14914fac6936e6c2bb325992611cddef"
+  },
+  {
+    "file": "test/goldens/design_system/mom-handoff-purchased-top-360-2x.png",
+    "change": "new",
+    "sha256": "c722bde709a77bb35bb188825c01a9eaf705e105c58ded257b5d359d25d9ee8a"
+  },
+  {
+    "file": "test/goldens/design_system/home-service-intake-430.png",
+    "change": "modified",
+    "sha256": "54379b92d4ce831b48461aa5b79172ea77ef0e32509a99b0c06754f3f372c6e5"
+  },
+  {
+    "file": "test/goldens/design_system/mom-handoff-recorded-bottom-360-2x.png",
+    "change": "new",
+    "sha256": "96a5d2fc68a173a9f79634bb3cbd3bebcd1f81e772adfa4ffac561249c1decbe"
+  },
+  {
+    "file": "test/goldens/design_system/mom-handoff-purchased-top-393-2x.png",
+    "change": "new",
+    "sha256": "ae21b7126fadebb288c553b7d671f4a4103d626c56eda731a6634d78f5b7a4b2"
+  },
+  {
+    "file": "test/goldens/design_system/mom-handoff-recorded-bottom-393-2x.png",
+    "change": "new",
+    "sha256": "d2af5f1e2d0d3d7f03bc2bc62d465a2b0298d68704eba3fe5177d26a82b635ba"
+  },
+  {
+    "file": "test/goldens/design_system/home-preparation-cancel-390.png",
+    "change": "modified",
+    "sha256": "c1eaa3e965864ceffafce852f13549726c8a2d542189c8c2c0fa820e18518b44"
+  },
+  {
+    "file": "test/goldens/design_system/expert-appointment-320.png",
+    "change": "modified",
+    "sha256": "d025265626c628321f21e55eb2105f572cac0e3f0d0f51afbca07539f83e5bb3"
+  },
+  {
+    "file": "test/goldens/design_system/home-preparation-ready-390.png",
+    "change": "modified",
+    "sha256": "943d05cce630d5ab695145d906ab4bfd25ecd94b78025d28137bbf04c0a28b78"
+  },
+  {
+    "file": "test/goldens/design_system/home-preparation-cancel-390-2x.png",
+    "change": "modified",
+    "sha256": "d664899f4071c721a243b886a4896f4780b8b60a30f8424de96a75e4b96f1b1d"
+  },
+  {
+    "file": "test/goldens/design_system/home-service-ready-390.png",
+    "change": "modified",
+    "sha256": "cbc140537cd187857b8598f7e50ae9bdf5cd1de008ee12c64174127a7d62c342"
+  },
+  {
+    "file": "test/goldens/design_system/home-preparation-ready-430.png",
+    "change": "modified",
+    "sha256": "b199e6f660be76c82795abe0e2e08f4329645df43e1ec3de3976db5b817cb646"
+  },
+  {
+    "file": "test/goldens/design_system/home-preparation-cancel-430.png",
+    "change": "modified",
+    "sha256": "999f4defc1ea4c5ba6029e02e514798f3d0df43cc20a70111b526955e96ff8ca"
+  },
+  {
+    "file": "test/goldens/design_system/home-service-ready-430.png",
+    "change": "modified",
+    "sha256": "873f04673262c1c940fbe7bfa5da582286f1c4a23de771203f8befb4c36b7462"
+  },
+  {
+    "file": "test/goldens/design_system/mom-handoff-initial-top-393-2x.png",
+    "change": "new",
+    "sha256": "f525a3d4738468b4bbad520306771ff2f3b72ed3267a8e084dcac149c948aafb"
+  },
+  {
+    "file": "test/goldens/design_system/home-preparation-ready-320-2x.png",
+    "change": "modified",
+    "sha256": "d8f891ce1df916f7b3ca154a4c2c24ce719c116649b4dbc6ea44af88d1c69d4a"
+  },
+  {
+    "file": "test/goldens/design_system/mom-handoff-recorded-bottom-320-1x.png",
+    "change": "new",
+    "sha256": "8ea2251975decabb438d5239e5ff09a10d4653394d604a6c3cfc3373beaee8ea"
+  },
+  {
+    "file": "test/goldens/design_system/mom-handoff-purchased-top-320-1x.png",
+    "change": "new",
+    "sha256": "f43ae3147a0d4990a680621b84b2ce937d73d3d7775bc9ea524c36c41af6e011"
+  },
+  {
+    "file": "test/goldens/design_system/mom-handoff-initial-top-360-2x.png",
+    "change": "new",
+    "sha256": "d700649f6403054edf75f525b4852be908d58a56f6ed3e8d08eb2801dc7e7e00"
+  },
+  {
+    "file": "test/goldens/design_system/home-service-intake-390.png",
+    "change": "modified",
+    "sha256": "fea1618c9bb9f2a6a992f6edc2d7112b23571876d4e7bfe66cb1b410e34157fd"
+  },
+  {
+    "file": "test/goldens/design_system/home-preparation-cancel-430-2x.png",
+    "change": "modified",
+    "sha256": "5c3a70b494fe5c39cbe6ca9cdac6f0c90daf12f3e05c2423de6e6db39d6a415e"
+  },
+  {
+    "file": "test/goldens/design_system/home-preparation-ready-390-2x.png",
+    "change": "modified",
+    "sha256": "df70f8f05d6e1726dd7d97cc82e1f1aa829a62b6aa1ee4ac39d269fa6b5d92d5"
+  },
+  {
+    "file": "test/goldens/design_system/mom-handoff-initial-bottom-393-1x.png",
+    "change": "new",
+    "sha256": "42a384680407cc3d219eda4540d27fa8a50f22cbfd70dcda27fb2ef5384bbd04"
+  },
+  {
+    "file": "test/goldens/design_system/mom-handoff-recorded-top-393-2x.png",
+    "change": "new",
+    "sha256": "ae21b7126fadebb288c553b7d671f4a4103d626c56eda731a6634d78f5b7a4b2"
+  },
+  {
+    "file": "test/goldens/design_system/home-service-intake-320.png",
+    "change": "modified",
+    "sha256": "e857bbc0463077ca6e6764ccb694e89309abdde82c389d29d293d6c4c38495ef"
+  },
+  {
+    "file": "test/goldens/design_system/mom-handoff-purchased-bottom-320-1x.png",
+    "change": "new",
+    "sha256": "c50ef49ed17c753a97a3635e54cc7bf538d8443431ac063e6fff6ff8f106cab6"
+  },
+  {
+    "file": "test/goldens/design_system/mom-handoff-recorded-top-360-2x.png",
+    "change": "new",
+    "sha256": "c722bde709a77bb35bb188825c01a9eaf705e105c58ded257b5d359d25d9ee8a"
+  },
+  {
+    "file": "test/goldens/design_system/mom-handoff-initial-bottom-360-1x.png",
+    "change": "new",
+    "sha256": "f203c98d76e6f3fba37ac754b80d4aac893ddcd182dd924b7f040b9a92b0ed96"
+  },
+  {
+    "file": "test/goldens/design_system/expert-appointment-430.png",
+    "change": "modified",
+    "sha256": "56ebd80cfebcbb0f990cd9ae5c4471b9dd057ac2f285834d2576088cbac1912d"
+  },
+  {
+    "file": "test/goldens/design_system/home-preparation-ready-430-2x.png",
+    "change": "modified",
+    "sha256": "05750093ccd9193f8ff69e58af186b087f9f8b52c59b58fda9343fae6f0c5572"
+  },
+  {
+    "file": "test/goldens/design_system/home-service-ready-320.png",
+    "change": "modified",
+    "sha256": "09e01eb3f1e50b2b3ea1777039203df99555895ffc6b8914f461c3bb50dcba59"
+  },
+  {
+    "file": "test/goldens/design_system/expert-appointment-390.png",
+    "change": "modified",
+    "sha256": "cfba770ff665896e51007344e5a8e9e54fe47c75349f044420a543cab39da58d"
+  },
+  {
+    "file": "test/goldens/design_system/home-preparation-cancel-320.png",
+    "change": "modified",
+    "sha256": "858fca7cd13bd464d20539963b4ce7d0f57c387280d2b06519db8346e63c705f"
+  },
+  {
+    "file": "test/goldens/design_system/home-preparation-ready-320.png",
+    "change": "modified",
+    "sha256": "4091116df3a7cac3735c478626beaabcbb886d4de4c00c6fa543b001c7500d31"
+  },
+  {
+    "file": "test/goldens/design_system/mom-handoff-initial-bottom-320-2x.png",
+    "change": "new",
+    "sha256": "d5b7c7c55ce36834c41ae0184d71516ebd5283fa53eb8ee1ef72dc70fe4b67be"
+  },
+  {
+    "file": "test/goldens/design_system/mom-handoff-recorded-top-320-1x.png",
+    "change": "new",
+    "sha256": "8ea2251975decabb438d5239e5ff09a10d4653394d604a6c3cfc3373beaee8ea"
+  },
+  {
+    "file": "test/goldens/design_system/mom-handoff-purchased-bottom-360-2x.png",
+    "change": "new",
+    "sha256": "3ee768a365171fc45a8f9a3fc2c77ea35543806b0065c00bea201f8b22da842f"
+  },
+  {
+    "file": "test/goldens/design_system/home-preparation-cancel-320-2x.png",
+    "change": "modified",
+    "sha256": "19120a6bec22277198debef8f8743ed89f8488e3b2a2ff54ce06f9f58a342b6a"
+  },
+  {
+    "file": "test/goldens/design_system/mom-handoff-purchased-bottom-393-2x.png",
+    "change": "new",
+    "sha256": "e94f74a6e33b5a545bd4d9cae882db1a614f5595229b2d2b84610b3e4222dca0"
+  },
+  {
+    "file": "test/goldens/product_baseline/mother-home-430.png",
+    "change": "modified",
+    "sha256": "c1c8e3734199daeeb054dec8f5742b49bd5e07b94fd9c840be913ab6f7a2a585"
+  },
+  {
+    "file": "test/goldens/product_baseline/mother-home-lower-430.png",
+    "change": "modified",
+    "sha256": "d40bc0658b58d4b995c3c4f958c11a8e628eaa13211b40d75c9a2afc53ffa73d"
+  },
+  {
+    "file": "test/goldens/product_baseline/mother-home-390.png",
+    "change": "modified",
+    "sha256": "8866c16a292d54a298d44adf83c50d8d16a48fa437551b39b69fc65f0dcdd6b9"
+  },
+  {
+    "file": "test/goldens/product_baseline/mother-home-lower-390.png",
+    "change": "modified",
+    "sha256": "794902ba0f4a68c05acdfe372f06b76d5bbaec7216079c94deffe260e41bb33a"
+  },
+  {
+    "file": "test/goldens/product_baseline/mother-home-lower-320.png",
+    "change": "modified",
+    "sha256": "ba4c956bf3c34cc89f06d46b98b8e00cf6ef3850483912be5186213b3aa9c1e2"
+  },
+  {
+    "file": "test/goldens/product_baseline/mother-home-320.png",
+    "change": "modified",
+    "sha256": "01c1842e5a19959293d5bb115e6a65a7ea1a5a3e56f39e89d096402ffcd60cec"
+  },
+  {
+    "file": "test/modules/mom/mom_home_handoff_test.dart",
+    "change": "new",
+    "sha256": "e8c0eb1b5b0f96367f203244a4cbdc9a1eeeba92c1c9638244421d601cb9a36a"
+  },
+  {
+    "file": "test/modules/mom/mother_home_test.dart",
+    "change": "modified",
+    "sha256": "53c9a9e7d2985c0428f3ed833465850f4967cc643edf5f3ab30e3f53462849a1"
+  },
+  {
+    "file": "integration_test/mom_home_handoff_test.dart",
+    "change": "new",
+    "sha256": "757eca44c2e6f3d5f82ed1585264a85961ef43bf1b3202be4f2111cbc3f6a282"
+  },
+  {
+    "file": "integration_test/motion_preferences_design_test.dart",
+    "change": "format-only",
+    "sha256": "feed3cd51b7c4e11db45bdbb9436052746309e790bfe5fbab5c2a19f7169e7cc"
+  },
+  {
+    "file": "assets/images/mom_home/imgDecorationAiBlushGlow.svg",
+    "change": "new",
+    "sha256": "2a81dc19f2716b050b6807e4cd21332306d555da11499ec56e08fe4c74950803"
+  },
+  {
+    "file": "assets/images/mom_home/imgDecorationMoodWave.svg",
+    "change": "new",
+    "sha256": "278e63d01e4491d53d1881a87a1b146f6d22038b89075dc6488b0090651f59fd"
+  },
+  {
+    "file": "assets/images/mom_home/imgDecorationSleepCrescent.svg",
+    "change": "new",
+    "sha256": "d205a4affc9a6c8d501fcf0da6e00f335ed6c78bfc7512a310eb75f960bda406"
+  },
+  {
+    "file": "assets/images/mom_home/expert_group.png",
+    "change": "new",
+    "sha256": "b9cdcddff6191a9017e7777cea63ed738731f2a3b8503e5154e1d67f4ce6859c"
+  },
+  {
+    "file": "assets/images/mom_home/imgDecorationExpertSupportHalo.svg",
+    "change": "new",
+    "sha256": "20854ba65e1b90b3e83f91a88f277352f49a863fd4fca9dbc026f64f44555887"
+  },
+  {
+    "file": "assets/images/mom_home/imgDecorationBodyRecoveryRing.svg",
+    "change": "new",
+    "sha256": "677e0af2f03cd067bd3e5d6dc662062661ff8e9a13991b38e32302be16065d29"
+  },
+  {
+    "file": "assets/images/mom_home/imgIconCalendar.svg",
+    "change": "new",
+    "sha256": "03c6869d830abdd3bb33600c71f4bf597f01af95e1fae04c09f71a812be5b217"
+  },
+  {
+    "file": "assets/images/mom_home/ibclc_jamie_lee.png",
+    "change": "new",
+    "sha256": "7d12869e788277f41d77d6f2ea4a029e0bc8c9498d5ff99261e6fec972dd9905"
+  },
+  {
+    "file": "assets/images/mom_home/imgDecorationAiSparkle.svg",
+    "change": "new",
+    "sha256": "17cab799b07d52add8c1602c82b13c64bc04ac02d2b02ada45cfd20dc5a0de9c"
+  },
+  {
+    "file": "assets/images/mom_home/imgDecorationBodyRecoveryGlow.svg",
+    "change": "new",
+    "sha256": "903c8acab0dcd272943171775202b61a3435706996f27d8fc69a46a9faea78ef"
+  },
+  {
+    "file": "assets/images/mom_home/imgDecorationExpertSupportLeaves.svg",
+    "change": "new",
+    "sha256": "5b808824a3dc0eea5a0e7598bdf77d5f7dbfb023468d8014fa1bcb64df12f524"
+  },
+  {
+    "file": "assets/images/mom_home/imgDecorationLactationDroplet.svg",
+    "change": "new",
+    "sha256": "7ea24a884dbae92aca0b6c4b634b88e352c028e2d924f483c82c59abd2001d36"
+  },
+  {
+    "file": "assets/images/mom_home/imgDecorationAiLilacGlow.svg",
+    "change": "new",
+    "sha256": "256f1442848b4a59fa5d55565f48371d1f388546f6f4dacaf0bc9cac3a268b31"
+  },
+  {
+    "file": "assets/images/mom_home/imgDecorationServiceLeaf.svg",
+    "change": "new",
+    "sha256": "1c131f3b065f4e7ee9218c53fe772fdd53d414aa5c802c0743b5f8df806878a4"
+  },
+  {
+    "file": "assets/images/mom_home/imgIconExpertSupportArrow.svg",
+    "change": "new",
+    "sha256": "9e987be9fb9157feb0d55a410d6b32c00ccfea70ab87ebe5001d129d19b4bccc"
+  },
+  {
+    "file": "assets/images/mom_home/cozymate_avatar.png",
+    "change": "new",
+    "sha256": "66056fa637fb92364c03c52bee742ec682ecbd1ababff4ca14c767e19508ee1f"
+  },
+  {
+    "file": "assets/images/mom_home/imgIconConsultation.svg",
+    "change": "new",
+    "sha256": "4e6dd8dfcce07e53dead60224f83a2d876248b91b03cb62bc1b1e5b5bb924fa2"
+  },
+  {
+    "file": "assets/images/mom_home/imgDecorationBodyRecoverySoftDot.svg",
+    "change": "new",
+    "sha256": "7dc1a423f131ff95420e0d9ebaa2a3ad196082ba9fec0ca25c5fbcc02884b892"
+  },
+  {
+    "file": "assets/images/mom_home/imgDecorationServiceMintGlow.svg",
+    "change": "new",
+    "sha256": "1f2f70b1a6f4b8ee3a2d1aea11227b8b24492037a89911d6ab3c3a9140863ce3"
+  },
+  {
+    "file": "assets/fonts/NotoSansCJKsc-Bold.otf",
+    "change": "new",
+    "sha256": "b5f0d1a190a7f9b43c310a8850630af12553df32c4c050543f9059732d9b4c0a"
+  },
+  {
+    "file": "assets/fonts/NotoSansCJK-LICENSE.txt",
+    "change": "new",
+    "sha256": "6a73f9541c2de74158c0e7cf6b0a58ef774f5a780bf191f2d7ec9cc53efe2bf2"
+  },
+  {
+    "file": "pubspec.yaml",
+    "change": "modified",
+    "sha256": "b42bb115f6cefb2e9f5ff936d9dfb77b29b65a381c1be51d3d2fa41ac664583c"
+  },
+  {
+    "file": "scripts/inventory-ui-reference.py",
+    "change": "modified",
+    "sha256": "8cd0bbe9fe668878c734cabf8169b088b33a702c0d7d8d5045432ce193d8fa1b"
+  },
+  {
+    "file": "docs/ui-reference/page-map.json",
+    "change": "modified",
+    "sha256": "11c4397a7e7d171ce4396f2fef4a656c4294bf693d2f9f2e7453b0be91eaed78"
+  },
+  {
+    "file": "docs/ui-reference/mom/home.md",
+    "change": "modified",
+    "sha256": "a47f577bb3618198bc67d69374cbf9df28e18ccb312d7109d9781d400f549a62"
+  }
+]

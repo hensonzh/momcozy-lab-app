@@ -1,5 +1,10 @@
 # Me-based App design system — audit and implementation record
 
+> Historical record. Superseded for the 2026-09-12 UI alignment task by
+> [the product-design reference and page map](ui-reference/page-map.md).
+> The current Flutter Me page is no longer the visual authority; prior checks
+> are historical evidence and do not prove alignment with the product design.
+
 Date: 2026-09-11. Scope: the complete current Flutter App, including the separate
 IBCLC entry point and embedded Agent forms/cards, media and assessment surfaces.
 Visual authority is the **current Me implementation**, not the older product

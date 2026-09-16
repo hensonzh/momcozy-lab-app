@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/purchase-current-query-error-393-1x.png",
+  "previous_source": "test/goldens/ui_inventory/purchase-current-query-pending-393-1x.png",
+  "route": "/services/feeding-confidence",
+  "trigger": "Order GET 503 → preserve uncertain outcome",
+  "root_entry": "Authenticated More → tap Me bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/services/purchase_current_inventory_test.dart"
+}

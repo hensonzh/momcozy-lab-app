@@ -1,0 +1,9 @@
+{
+  "observed_states": 2788,
+  "added": [],
+  "changed": [
+    "01-auth/onboarding-upload-pending"
+  ],
+  "removed": [],
+  "note": "Screenshot state counts are not page counts or completion evidence."
+}

@@ -1,0 +1,228 @@
+{
+  "result": "PASS",
+  "scope": "mood control source, actual route, PNG and continuous visual review evidence; not all App completion",
+  "states": 64,
+  "viewport_variants": 95,
+  "long_variants": 87,
+  "original_pngs": 182,
+  "continuous_segments": 418,
+  "reviewed_unique_segments": 168,
+  "new_reviewed_sheets": 25,
+  "reused_prior_segments": 18,
+  "option_observations": [
+    {
+      "group": "心情",
+      "field": "toneLabels",
+      "option": "steady",
+      "label": "还算平稳",
+      "state": "03-mom/mom-mood-control-tone-steady",
+      "variant": "393/1x",
+      "evidence": "actual tap and selected-value assertion"
+    },
+    {
+      "group": "心情",
+      "field": "toneLabels",
+      "option": "tense",
+      "label": "有点绷着",
+      "state": "03-mom/mom-mood-control-tone-tense",
+      "variant": "393/1x",
+      "evidence": "actual tap and selected-value assertion"
+    },
+    {
+      "group": "心情",
+      "field": "toneLabels",
+      "option": "low",
+      "label": "低落 / 没力气",
+      "state": "03-mom/mom-mood-control-tone-low",
+      "variant": "393/1x",
+      "evidence": "actual tap and selected-value assertion"
+    },
+    {
+      "group": "心情",
+      "field": "toneLabels",
+      "option": "reactive",
+      "label": "很容易被触发",
+      "state": "03-mom/mom-mood-control-tone-reactive",
+      "variant": "393/1x",
+      "evidence": "actual tap and selected-value assertion"
+    },
+    {
+      "group": "心情",
+      "field": "toneLabels",
+      "option": "unclear",
+      "label": "说不清楚",
+      "state": "03-mom/mom-mood-control-tone-unclear",
+      "variant": "393/1x",
+      "evidence": "actual tap and selected-value assertion"
+    },
+    {
+      "group": "压力来源",
+      "field": "pressureLabels",
+      "option": "babyWorry",
+      "label": "担心宝宝",
+      "state": "03-mom/mom-mood-control-pressure-babyWorry",
+      "variant": "393/1x",
+      "evidence": "actual tap and selected-value assertion"
+    },
+    {
+      "group": "压力来源",
+      "field": "pressureLabels",
+      "option": "feedingPressure",
+      "label": "喂养压力",
+      "state": "03-mom/mom-mood-control-pressure-feedingPressure",
+      "variant": "393/1x",
+      "evidence": "actual tap and selected-value assertion"
+    },
+    {
+      "group": "压力来源",
+      "field": "pressureLabels",
+      "option": "bodyRecovery",
+      "label": "身体恢复",
+      "state": "03-mom/mom-mood-control-pressure-bodyRecovery",
+      "variant": "393/1x",
+      "evidence": "actual tap and selected-value assertion"
+    },
+    {
+      "group": "压力来源",
+      "field": "pressureLabels",
+      "option": "sleepLoss",
+      "label": "睡不好",
+      "state": "03-mom/mom-mood-control-pressure-sleepLoss",
+      "variant": "393/1x",
+      "evidence": "actual tap and selected-value assertion"
+    },
+    {
+      "group": "压力来源",
+      "field": "pressureLabels",
+      "option": "familyFriction",
+      "label": "和家人相处",
+      "state": "03-mom/mom-mood-control-pressure-familyFriction",
+      "variant": "393/1x",
+      "evidence": "actual tap and selected-value assertion"
+    },
+    {
+      "group": "压力来源",
+      "field": "pressureLabels",
+      "option": "selfDoubt",
+      "label": "对自己没信心",
+      "state": "03-mom/mom-mood-control-pressure-selfDoubt",
+      "variant": "393/1x",
+      "evidence": "actual tap and selected-value assertion"
+    },
+    {
+      "group": "压力来源",
+      "field": "pressureLabels",
+      "option": "noTime",
+      "label": "没有自己的时间",
+      "state": "03-mom/mom-mood-control-pressure-noTime",
+      "variant": "393/1x",
+      "evidence": "actual tap and selected-value assertion"
+    },
+    {
+      "group": "压力来源",
+      "field": "pressureLabels",
+      "option": "unclear",
+      "label": "说不清楚",
+      "state": "03-mom/mom-mood-control-pressure-unclear",
+      "variant": "393/1x",
+      "evidence": "actual tap and selected-value assertion"
+    },
+    {
+      "group": "心情影响",
+      "field": "moodImpactLabels",
+      "option": "none",
+      "label": "没有影响",
+      "state": "03-mom/mom-mood-control-impact-none",
+      "variant": "393/1x",
+      "evidence": "actual tap and selected-value assertion"
+    },
+    {
+      "group": "心情影响",
+      "field": "moodImpactLabels",
+      "option": "some",
+      "label": "有一点影响",
+      "state": "03-mom/mom-mood-control-impact-some",
+      "variant": "393/1x",
+      "evidence": "actual tap and selected-value assertion"
+    },
+    {
+      "group": "心情影响",
+      "field": "moodImpactLabels",
+      "option": "hard",
+      "label": "很难完成日常事情",
+      "state": "03-mom/mom-mood-control-impact-hard",
+      "variant": "393/1x",
+      "evidence": "actual tap and selected-value assertion"
+    },
+    {
+      "group": "支持情况",
+      "field": "supportLabels",
+      "option": "supported",
+      "label": "有人帮到我",
+      "state": "03-mom/mom-mood-control-support-supported",
+      "variant": "393/1x",
+      "evidence": "actual tap and selected-value assertion"
+    },
+    {
+      "group": "支持情况",
+      "field": "supportLabels",
+      "option": "carryingMost",
+      "label": "有人，但主要还是我在扛",
+      "state": "03-mom/mom-mood-control-support-carryingMost",
+      "variant": "393/1x",
+      "evidence": "actual tap and selected-value assertion"
+    },
+    {
+      "group": "支持情况",
+      "field": "supportLabels",
+      "option": "alone",
+      "label": "基本靠自己",
+      "state": "03-mom/mom-mood-control-support-alone",
+      "variant": "393/1x",
+      "evidence": "actual tap and selected-value assertion"
+    }
+  ],
+  "route_journey_variants": 95,
+  "source_hashes": {
+    "test/modules/mom/mom_mood_control_inventory_test.dart": "e975c5d89f028b3a85fda0a8918a130bab76c0ddd7df6ee50e1827f3c85353e1",
+    "lib/modules/mom/presentation/diary_fields.dart": "f89a12bf4e975c1f5323dfce6c9fb142c0b11d35c8802685a63d63c355fbdf30",
+    "lib/modules/mom/presentation/diary_labels.dart": "575a2c9b92e2517abb2c6c04c19f0eba78e7b528274b986688c376ced7833c79",
+    "lib/shared/widgets/choice_field.dart": "417db3d0d30d86537467474efbdbb7d8fba585a5ce75c536a76339495f290990",
+    "lib/modules/mom/presentation/mother_diary_editor.dart": "b27713314588f40ef41dcf304e1abac0d9b9d162b201a4c35cb7d7a2dbe491f4"
+  },
+  "qa_manifest_sha256": "bb7061f1fcba49d76d47e1c8ad7bbee05f25bda063e6171bb6c329b814fd735d",
+  "review_sheet_sha256": {
+    "mom-mood-control-visual-review/sheet-01.png": "522b9d5f8c6c650db16fe3de816f92823d8bb7c9a355ec58a301a7a0f478848f",
+    "mom-mood-control-visual-review/sheet-02.png": "6237571abbfbd0dcc882edd728f87937bcbc4bf31ebd24169462f48899a939ba",
+    "mom-mood-control-visual-review/sheet-03.png": "21e323ce554920218c88e3f0473e019d86c0851605572671b81d4aa9f2c52f43",
+    "mom-mood-control-visual-review/sheet-04.png": "35163f674554bb61edd84966241c36a755b621044cf68e18070cb76d5f76009a",
+    "mom-rest-control-visual-review/sheet-14.png": "8edbb5eea9ac32adab73db4a35ac05cea32c69c241a97671072479df57090e07",
+    "mom-rest-control-visual-review/sheet-15.png": "6abbc7775a85183bbda245e70ac2799bcdd60894b4831cb421d364cc9d46c4bd",
+    "mom-rest-control-visual-review/sheet-16.png": "bcc0707df7a3375185aca0e211ba72de004916f939c8c4e454ebc9c065b82e4d",
+    "mom-rest-control-visual-review/sheet-17.png": "5eef9a69b371a544042abf94248100a0701f5cd92057ea898c384297630c8a89",
+    "mom-mood-control-visual-review/sheet-05.png": "07396c432126f7697b5bcdd1a13bc06c078de48809ccc693768d09241507039f",
+    "mom-rest-control-visual-review/sheet-18.png": "3023e83494074a43647276cf8281ec6be42ab82eae06da1c4d093ae28959f4d3",
+    "mom-mood-control-visual-review/sheet-06.png": "0ef77d49faba08f5351388c5e9cbf351a65369b15a9e9856dff5afa6f3cb4430",
+    "mom-mood-control-visual-review/sheet-07.png": "0a39572878dae29ddd312df6ea62e718ae62d3630599ff163af80fc60095dac4",
+    "mom-mood-control-visual-review/sheet-08.png": "0638fd9edf156057a96e3fffb13f048f6ec4e031b22a11916f4e79dbd8530dbc",
+    "mom-rest-control-visual-review/sheet-19.png": "ec6bd469695b32b407bf1b6c150f5a3317cb3c79fa257b0fd08084dc6b275249",
+    "mom-rest-control-visual-review/sheet-20.png": "c7bcd5dfc06a5b08b4d0d68c66d5a0a11c7264604d6c5d03a28566639865c577",
+    "mom-mood-control-visual-review/sheet-09.png": "e012aea308279bb37ccec419ac3b1d55483f10e5ec91df47cdadba7d295abc94",
+    "mom-mood-control-visual-review/sheet-10.png": "005d156eb2660daf281aa8246c6d98abd781cf33d78bcb258845dbc888f2c984",
+    "mom-mood-control-visual-review/sheet-11.png": "7ce474c497e7ea00a70822919674e06202a86e0362f0c40d208cc03b51d1e27f",
+    "mom-mood-control-visual-review/sheet-12.png": "425af934f29442999b246c353d9329c80b6337c3e98a3dd1d6532ff6dddc5f36",
+    "mom-mood-control-visual-review/sheet-13.png": "d7f21f6320ac3dd3ce057e5dbc5163c1857e42cf10bf48741a90e4a67c278153",
+    "mom-mood-control-visual-review/sheet-14.png": "2f06895d1306a570a3c8b8ae74cfd5716ca11b2ec6ca041e083f9d2caa69ad87",
+    "mom-mood-control-visual-review/sheet-15.png": "2d03c96e35d560354c79b976c5174f1ca4b4e27143e7705bbd3390c740b0949a",
+    "mom-mood-control-visual-review/sheet-16.png": "6b5ec797dc8c54f494deb2404d33e7bac4423b4f7d304fcbac3c2189f2daed54",
+    "mom-mood-control-visual-review/sheet-17.png": "03a102b4e4bee5705f94eb1060bb68a849e7f4fa32d34ab0237f8f3dfebb9c03",
+    "mom-mood-control-visual-review/sheet-18.png": "8e1af0c18eb2a91eafb5f8e7ee4d72c62dbf34ec10e885cbca3a5fd27f29a288",
+    "mom-mood-control-visual-review/sheet-19.png": "2e911d25865a0318229e6cda4760ea5e5daaeee3ccc43d95af2458b3e491110e",
+    "mom-mood-control-visual-review/sheet-20.png": "ff23922fa1a85614b3b664883bd972615606d887041b978eacd77a0a8b70d3a4",
+    "mom-mood-control-visual-review/sheet-21.png": "06b8e5701edf7132fa30cadbab8672206312e5685f44d2706a815e09ba7122de",
+    "mom-mood-control-visual-review/sheet-22.png": "7eede0e5978952b9148ca27d5ff7d1a10ed287f5e70a7e3ecc35310acae192f2",
+    "mom-mood-control-visual-review/sheet-23.png": "1950f603afc27f6269e720c1831ab1183c641d9ba1b654a58ce68294c8344f02",
+    "mom-mood-control-visual-review/sheet-24.png": "1530d3426a79ff3202aacce2dfd469f361f82f1931e029aa9a3231ad038fed28",
+    "mom-mood-control-visual-review/sheet-25.png": "15877e0b5f893f9d9c2bf698a24ea9024867a62a626013fbb8ebc087349d2a35"
+  }
+}

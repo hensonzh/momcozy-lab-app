@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/agent-entry-journey-external-dismissed-393.png",
+  "previous_source": "test/goldens/ui_inventory/agent-entry-journey-external-failed-393.png",
+  "route": "/",
+  "trigger": "Dismiss Snackbar → card remains actionable",
+  "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage via public agentHubBuilder; production SSE parser, runner with default retries, cancel client and profile repository; isolated SSE/control/ticket HTTP and voice dependencies; production artifact mapper and route dispatch; external launcher controlled at public interface. Motion page is not force mounted and no missing route is added. History disabled as in default local build; no remote model request.",
+  "test": "test/features/agent_hub/agent_entry_inventory_journey_test.dart"
+}

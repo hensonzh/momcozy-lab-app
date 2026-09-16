@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/agent-journey-long-reply-393.png",
+  "previous_source": null,
+  "route": "/",
+  "trigger": "Receive long Markdown and quick-reply payload; current page omits quick-reply controls",
+  "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage via public agentHubBuilder; production SSE parser, runner with default retries, cancel client and profile repository; isolated SSE/control HTTP/voice dependencies. History disabled as in default local build; no remote model request.",
+  "test": "test/features/agent_hub/agent_inventory_journey_test.dart"
+}

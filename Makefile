@@ -18,6 +18,7 @@ export PATH := $(TOOLCHAIN_PATH)
 	local-dev-up \
 	local-dev-start \
 	local-dev-app \
+	local-dev-account \
 	local-dev-verify \
 	local-dev-status \
 	local-dev-logs \
@@ -45,6 +46,9 @@ local-dev-start:
 
 local-dev-app:
 	node scripts/local-dev-stack.mjs app
+
+local-dev-account:
+	node scripts/local-dev-stack.mjs account
 
 local-dev-verify:
 	node scripts/local-dev-stack.mjs verify

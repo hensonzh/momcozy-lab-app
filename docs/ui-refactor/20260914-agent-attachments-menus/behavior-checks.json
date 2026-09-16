@@ -1,0 +1,9 @@
+{
+  "Agent Hub state lifecycle requests upload removal and sending unchanged": true,
+  "Composer input controls and sending conditions unchanged": true,
+  "Image loading caching retry zoom and full screen viewer unchanged": true,
+  "Menu actions stale-message guard clipboard and retry dispatch unchanged": true,
+  "Menu availability and opening guard unchanged": true,
+  "Keyboard context menu and accessibility actions unchanged": true,
+  "File size formatting unchanged": true
+}

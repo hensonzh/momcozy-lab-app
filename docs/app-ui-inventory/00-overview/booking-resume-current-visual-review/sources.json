@@ -1,0 +1,2350 @@
+{
+  "method": "full-width continuous 650px strips; identical pixels reference prior reviewed Mom or Baby controls; remaining segments reviewed at native width",
+  "sources": [
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-cancel-closed-320-2x.long.png",
+      "sha256": "f1b2ee4e8f5da783cc2f4732929c400da4c305119301db4ebc3df08b52aa21a3",
+      "width": 320,
+      "height": 1535,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "d6995787a585f2fa0668785f0f67b7b66463b2ed3640421906a91c958cbea9b6",
+          "review": "../booking-selection-current-visual-review/sheet-12.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "d656ae97498e0bc00ce22ef8d05c428532aa85525ff3d47b04fda5682512b862",
+          "review": "sheet-01.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1535,
+          "pixel_sha256": "167f9f9587e8884ed25ebeee3adddc1989f438e97a0374f608fdbc8afec69694",
+          "review": "sheet-01.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-cancel-closed-320-2x.png",
+      "sha256": "09490ad9a66a686cdf0f6eff21ca976a21d35ee0d821a9ea58ccf2a66760adc8",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "1e8931c7400e17f78d3d2810763add2e8f0bde39293e254e8697008392e85d77",
+          "review": "../booking-selection-current-visual-review/sheet-13.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "5f05b3e4cc75ce80e9af12af2964f6f966530450d8fa5782dce9e57626ff2eb4",
+          "review": "sheet-01.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-cancel-closed-393-1x.long.png",
+      "sha256": "6ba93faf32ef10800bf2fb192a6738a2a9eaea1c2b0bd52f00050a38caa4f5f0",
+      "width": 393,
+      "height": 903,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9c8f559362326c67d3ea579c5e98abc268b8edbcea9f969fe4ca5367e047a7bc",
+          "review": "../booking-selection-current-visual-review/sheet-13.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 903,
+          "pixel_sha256": "5ae15c8cdc134cd758248e9eb374ade63cebcbe7ec827a94d248ee5f1dd45090",
+          "review": "sheet-01.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-cancel-closed-393-1x.png",
+      "sha256": "e4fb442db442853fcc0fbfdbbba79b134720c9f188dbe29603a8a5afeb2c3641",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9c8f559362326c67d3ea579c5e98abc268b8edbcea9f969fe4ca5367e047a7bc",
+          "review": "../booking-selection-current-visual-review/sheet-13.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "604d583b85bdd5939378acfed38a9ad80aee3cdffc2788433f4c40117f28cf52",
+          "review": "sheet-01.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-cancel-home-320-2x.long.png",
+      "sha256": "2fa0ada62a6d9ca50683e54400f6043cf68a1e285a2eae008e38ff1f462eb258",
+      "width": 320,
+      "height": 2459,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a6aa9ef781460e5016527f099324419f84c6e4f14cdb26c410651cd7359b41ef",
+          "review": "../mom-rest-control-visual-review/sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "0edf1d289b2e804b112ca91367c51524ae8a6a6a4684a4fdcad651b0ae8de7ad",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "737fbf296926091c9d3d8c054e5fcb5aa6828a0542d136aef0e678fcf5a2a305",
+          "review": "../more-current-visual-review/sheet-04.png#tile-5"
+        },
+        {
+          "y0": 1950,
+          "y1": 2459,
+          "pixel_sha256": "0692ec2c55d8d8438d85f340a92827d471acee47031f9c8fde3159a11158b360",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-15.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-cancel-home-320-2x.png",
+      "sha256": "6b61a480f7a3fd5ddb29685624aed748a99b94ad55016153855b11225ef09868",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a6aa9ef781460e5016527f099324419f84c6e4f14cdb26c410651cd7359b41ef",
+          "review": "../mom-rest-control-visual-review/sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1462d46c4861c29041d879736402097e4fd061fcb6e577142cd6e832cb70fae0",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-cancel-home-393-1x.long.png",
+      "sha256": "0f04c06b170ca26a6ceca6d9954f08895999c1df1446be6abb5fb53f267160ab",
+      "width": 393,
+      "height": 1211,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa661999d6307948942c23dc2e7dad221367a614b3ae09dd12dec24bc67fec6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1211,
+          "pixel_sha256": "468a1f2363d31ad56f5959e2dbd4aba2e602497cea767b2f5d8d0ec625cb9890",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-16.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-cancel-home-393-1x.png",
+      "sha256": "be291808401e7f353b8f14552b0df4a698f3edd191e5e2d770c66c2e129fc145",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa661999d6307948942c23dc2e7dad221367a614b3ae09dd12dec24bc67fec6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3208ac8b3b1d4a7464bc46ef7618c8e19bd85dee870d86c1847457571b6198a6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-cancel-home-return-320-2x.long.png",
+      "sha256": "2fa0ada62a6d9ca50683e54400f6043cf68a1e285a2eae008e38ff1f462eb258",
+      "width": 320,
+      "height": 2459,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a6aa9ef781460e5016527f099324419f84c6e4f14cdb26c410651cd7359b41ef",
+          "review": "../mom-rest-control-visual-review/sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "0edf1d289b2e804b112ca91367c51524ae8a6a6a4684a4fdcad651b0ae8de7ad",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "737fbf296926091c9d3d8c054e5fcb5aa6828a0542d136aef0e678fcf5a2a305",
+          "review": "../more-current-visual-review/sheet-04.png#tile-5"
+        },
+        {
+          "y0": 1950,
+          "y1": 2459,
+          "pixel_sha256": "0692ec2c55d8d8438d85f340a92827d471acee47031f9c8fde3159a11158b360",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-15.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-cancel-home-return-320-2x.png",
+      "sha256": "6b61a480f7a3fd5ddb29685624aed748a99b94ad55016153855b11225ef09868",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a6aa9ef781460e5016527f099324419f84c6e4f14cdb26c410651cd7359b41ef",
+          "review": "../mom-rest-control-visual-review/sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1462d46c4861c29041d879736402097e4fd061fcb6e577142cd6e832cb70fae0",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-cancel-home-return-393-1x.long.png",
+      "sha256": "0f04c06b170ca26a6ceca6d9954f08895999c1df1446be6abb5fb53f267160ab",
+      "width": 393,
+      "height": 1211,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa661999d6307948942c23dc2e7dad221367a614b3ae09dd12dec24bc67fec6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1211,
+          "pixel_sha256": "468a1f2363d31ad56f5959e2dbd4aba2e602497cea767b2f5d8d0ec625cb9890",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-16.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-cancel-home-return-393-1x.png",
+      "sha256": "be291808401e7f353b8f14552b0df4a698f3edd191e5e2d770c66c2e129fc145",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa661999d6307948942c23dc2e7dad221367a614b3ae09dd12dec24bc67fec6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3208ac8b3b1d4a7464bc46ef7618c8e19bd85dee870d86c1847457571b6198a6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-cancel-recovered-320-2x.long.png",
+      "sha256": "3770a8a9e05dec586ef35b6679d741b1b85c219ee32b6a9e0d8c9c39740c4472",
+      "width": 320,
+      "height": 1196,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b4afefb4599350fb6e74bcc8bac4285a127bebe76af197b2011a58407b10a998",
+          "review": "../booking-precheck-current-visual-review/sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1196,
+          "pixel_sha256": "be0b599b0910cd3a0fd2f681a1ec6bcf35402e86d9aaf9a0bd62e6e89e926adc",
+          "review": "../booking-precheck-current-visual-review/sheet-01.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-cancel-recovered-320-2x.png",
+      "sha256": "53207b1fe5264a74c5a88c41f2ee18a58cb6a76d142b08ef2ee4e6c2d637dd56",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "58ef7a474ae86daf0e40b3b5bd9e6bd9a24eb9f22966112751d6642c8424a2c4",
+          "review": "sheet-01.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "f6daeaec8c6d812eae9feefa5cd4a3e52885aadb7a318f00af9a86bc5cc6481f",
+          "review": "sheet-02.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-cancel-recovered-393-1x.png",
+      "sha256": "efae04e13b6c3b1941104ebb96c8aa478619c13357fd3c8e072b89cf2d75b3ef",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "f3459b4c51647d4b64f855748cc62d2e4614639e29dce974367c15ed483fb1f9",
+          "review": "../booking-precheck-current-visual-review/sheet-01.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "91250228adba22feeea4fd9e122c77873e3ab7fbd867dc6a027c5fd59f7b35ce",
+          "review": "../booking-precheck-current-visual-review/sheet-01.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-cancel-slots-320-2x.long.png",
+      "sha256": "3770a8a9e05dec586ef35b6679d741b1b85c219ee32b6a9e0d8c9c39740c4472",
+      "width": 320,
+      "height": 1196,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b4afefb4599350fb6e74bcc8bac4285a127bebe76af197b2011a58407b10a998",
+          "review": "../booking-precheck-current-visual-review/sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1196,
+          "pixel_sha256": "be0b599b0910cd3a0fd2f681a1ec6bcf35402e86d9aaf9a0bd62e6e89e926adc",
+          "review": "../booking-precheck-current-visual-review/sheet-01.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-cancel-slots-320-2x.png",
+      "sha256": "64bab2b34c2245f477192e175c5231349bbd1d609e90046688ff0c25f1c21ef9",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b4afefb4599350fb6e74bcc8bac4285a127bebe76af197b2011a58407b10a998",
+          "review": "../booking-precheck-current-visual-review/sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "4f41ab1ebf06028082bea91e6436be40d5ea65ee4859ea3a8182c0e9b53b109b",
+          "review": "../booking-precheck-current-visual-review/sheet-01.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-cancel-slots-393-1x.png",
+      "sha256": "efae04e13b6c3b1941104ebb96c8aa478619c13357fd3c8e072b89cf2d75b3ef",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "f3459b4c51647d4b64f855748cc62d2e4614639e29dce974367c15ed483fb1f9",
+          "review": "../booking-precheck-current-visual-review/sheet-01.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "91250228adba22feeea4fd9e122c77873e3ab7fbd867dc6a027c5fd59f7b35ce",
+          "review": "../booking-precheck-current-visual-review/sheet-01.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-cancel-unknown-320-2x.long.png",
+      "sha256": "813f32405d871ebd8983cace29cbc1987365b4518075f8e08738f225372f73d2",
+      "width": 320,
+      "height": 1602,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "bf6476b15f1841c167bbf143072b863ae65032049c9559d882a3cd90efdbe97d",
+          "review": "../booking-selection-current-visual-review/sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "b803a361c90cedf88332b39b6a86de0c5c31a12fcb5f464e20df6d98525f2cc8",
+          "review": "../booking-selection-current-visual-review/sheet-01.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1602,
+          "pixel_sha256": "6745bd06f7a5f7c894079ac0019b8c9e92834ad6c001e5093c18bdacc31c3edb",
+          "review": "../booking-selection-current-visual-review/sheet-01.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-cancel-unknown-320-2x.png",
+      "sha256": "ced9ac74857d88321a6cfd31e34094d8622aee9cd040a9497612a07a6ca24aea",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "194bf47fed7cc688d1c2b317f81cae347f0f6ac5660693ad1e01d692509bb8b4",
+          "review": "../booking-selection-current-visual-review/sheet-01.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "210829b44c83d696f13558ff3474c27249bdb33013c3532b86e8c6df6c54142a",
+          "review": "../booking-selection-current-visual-review/sheet-01.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-cancel-unknown-393-1x.long.png",
+      "sha256": "b8cd89bfdc1cde7bee92a33577bdab586cf7d9d4735270dd91e8d2cadfbb1df6",
+      "width": 393,
+      "height": 896,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa9628b51c76b2499b37c2171ef031322202ee61c0429bc3ad29ec61527d2b7",
+          "review": "../booking-selection-current-visual-review/sheet-01.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 896,
+          "pixel_sha256": "97929c11770d54e86ba61c8e5d3d8bda62c06e8964ed7557081ead235bbaa0be",
+          "review": "../booking-selection-current-visual-review/sheet-02.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-cancel-unknown-393-1x.png",
+      "sha256": "77c69d3ee7f9f7e134c491ba34c9b5d12fe5b55b483ea135c2fe89840b3be137",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa9628b51c76b2499b37c2171ef031322202ee61c0429bc3ad29ec61527d2b7",
+          "review": "../booking-selection-current-visual-review/sheet-01.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "5a1be1f8413bed30f433b4241566bd8027dc745c0206194de22e0e4886f1cd5a",
+          "review": "../booking-selection-current-visual-review/sheet-02.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-confirm-back-closed-320-2x.long.png",
+      "sha256": "f1b2ee4e8f5da783cc2f4732929c400da4c305119301db4ebc3df08b52aa21a3",
+      "width": 320,
+      "height": 1535,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "d6995787a585f2fa0668785f0f67b7b66463b2ed3640421906a91c958cbea9b6",
+          "review": "../booking-selection-current-visual-review/sheet-12.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "d656ae97498e0bc00ce22ef8d05c428532aa85525ff3d47b04fda5682512b862",
+          "review": "sheet-01.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1535,
+          "pixel_sha256": "167f9f9587e8884ed25ebeee3adddc1989f438e97a0374f608fdbc8afec69694",
+          "review": "sheet-01.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-confirm-back-closed-320-2x.png",
+      "sha256": "ef33a9c5995f972d7bce85fee52753c530ebdd3354280ec9384c0a5da2d8ceee",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c93c060cdc0fb0db65d9865f953356f68a73e8eefbfb9f4606c55d86d26c0ed4",
+          "review": "sheet-02.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2add48ebcc35e401e2637007cb3781d482993bdc0d6701197c99d8446011bf40",
+          "review": "sheet-02.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-confirm-back-closed-393-1x.long.png",
+      "sha256": "6ba93faf32ef10800bf2fb192a6738a2a9eaea1c2b0bd52f00050a38caa4f5f0",
+      "width": 393,
+      "height": 903,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9c8f559362326c67d3ea579c5e98abc268b8edbcea9f969fe4ca5367e047a7bc",
+          "review": "../booking-selection-current-visual-review/sheet-13.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 903,
+          "pixel_sha256": "5ae15c8cdc134cd758248e9eb374ade63cebcbe7ec827a94d248ee5f1dd45090",
+          "review": "sheet-01.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-confirm-back-closed-393-1x.png",
+      "sha256": "8af4b3eee67ec6540ece5f465098490ff8fb81771766660298fb46668e6c6cb8",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "4de0b52fd6435498e517df74dd4b092caf58eeb34acd4568bdc7049e3c0713cc",
+          "review": "sheet-02.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1d7747b2c8e4efe22efa9e931d6eed1d080e30b2400b9104721cce83be6be42a",
+          "review": "sheet-02.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-confirm-closed-320-2x.long.png",
+      "sha256": "f1b2ee4e8f5da783cc2f4732929c400da4c305119301db4ebc3df08b52aa21a3",
+      "width": 320,
+      "height": 1535,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "d6995787a585f2fa0668785f0f67b7b66463b2ed3640421906a91c958cbea9b6",
+          "review": "../booking-selection-current-visual-review/sheet-12.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "d656ae97498e0bc00ce22ef8d05c428532aa85525ff3d47b04fda5682512b862",
+          "review": "sheet-01.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1535,
+          "pixel_sha256": "167f9f9587e8884ed25ebeee3adddc1989f438e97a0374f608fdbc8afec69694",
+          "review": "sheet-01.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-confirm-closed-320-2x.png",
+      "sha256": "09490ad9a66a686cdf0f6eff21ca976a21d35ee0d821a9ea58ccf2a66760adc8",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "1e8931c7400e17f78d3d2810763add2e8f0bde39293e254e8697008392e85d77",
+          "review": "../booking-selection-current-visual-review/sheet-13.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "5f05b3e4cc75ce80e9af12af2964f6f966530450d8fa5782dce9e57626ff2eb4",
+          "review": "sheet-01.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-confirm-closed-393-1x.long.png",
+      "sha256": "6ba93faf32ef10800bf2fb192a6738a2a9eaea1c2b0bd52f00050a38caa4f5f0",
+      "width": 393,
+      "height": 903,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9c8f559362326c67d3ea579c5e98abc268b8edbcea9f969fe4ca5367e047a7bc",
+          "review": "../booking-selection-current-visual-review/sheet-13.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 903,
+          "pixel_sha256": "5ae15c8cdc134cd758248e9eb374ade63cebcbe7ec827a94d248ee5f1dd45090",
+          "review": "sheet-01.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-confirm-closed-393-1x.png",
+      "sha256": "e4fb442db442853fcc0fbfdbbba79b134720c9f188dbe29603a8a5afeb2c3641",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9c8f559362326c67d3ea579c5e98abc268b8edbcea9f969fe4ca5367e047a7bc",
+          "review": "../booking-selection-current-visual-review/sheet-13.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "604d583b85bdd5939378acfed38a9ad80aee3cdffc2788433f4c40117f28cf52",
+          "review": "sheet-01.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-confirm-home-320-2x.long.png",
+      "sha256": "2fa0ada62a6d9ca50683e54400f6043cf68a1e285a2eae008e38ff1f462eb258",
+      "width": 320,
+      "height": 2459,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a6aa9ef781460e5016527f099324419f84c6e4f14cdb26c410651cd7359b41ef",
+          "review": "../mom-rest-control-visual-review/sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "0edf1d289b2e804b112ca91367c51524ae8a6a6a4684a4fdcad651b0ae8de7ad",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "737fbf296926091c9d3d8c054e5fcb5aa6828a0542d136aef0e678fcf5a2a305",
+          "review": "../more-current-visual-review/sheet-04.png#tile-5"
+        },
+        {
+          "y0": 1950,
+          "y1": 2459,
+          "pixel_sha256": "0692ec2c55d8d8438d85f340a92827d471acee47031f9c8fde3159a11158b360",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-15.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-confirm-home-320-2x.png",
+      "sha256": "6b61a480f7a3fd5ddb29685624aed748a99b94ad55016153855b11225ef09868",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a6aa9ef781460e5016527f099324419f84c6e4f14cdb26c410651cd7359b41ef",
+          "review": "../mom-rest-control-visual-review/sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1462d46c4861c29041d879736402097e4fd061fcb6e577142cd6e832cb70fae0",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-confirm-home-393-1x.long.png",
+      "sha256": "0f04c06b170ca26a6ceca6d9954f08895999c1df1446be6abb5fb53f267160ab",
+      "width": 393,
+      "height": 1211,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa661999d6307948942c23dc2e7dad221367a614b3ae09dd12dec24bc67fec6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1211,
+          "pixel_sha256": "468a1f2363d31ad56f5959e2dbd4aba2e602497cea767b2f5d8d0ec625cb9890",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-16.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-confirm-home-393-1x.png",
+      "sha256": "be291808401e7f353b8f14552b0df4a698f3edd191e5e2d770c66c2e129fc145",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa661999d6307948942c23dc2e7dad221367a614b3ae09dd12dec24bc67fec6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3208ac8b3b1d4a7464bc46ef7618c8e19bd85dee870d86c1847457571b6198a6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-confirm-home-return-320-2x.long.png",
+      "sha256": "eebb4f72950d19fbf167a2242f4139c460d77317abb7a9986da77ec4a9c4cb8d",
+      "width": 320,
+      "height": 2632,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a6aa9ef781460e5016527f099324419f84c6e4f14cdb26c410651cd7359b41ef",
+          "review": "../mom-rest-control-visual-review/sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "0edf1d289b2e804b112ca91367c51524ae8a6a6a4684a4fdcad651b0ae8de7ad",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "737fbf296926091c9d3d8c054e5fcb5aa6828a0542d136aef0e678fcf5a2a305",
+          "review": "../more-current-visual-review/sheet-04.png#tile-5"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "1284386d549eecb030c16573ea3d77034e01904e01ae7353f6acd4b10ce7aa60",
+          "review": "../booking-selection-current-visual-review/sheet-13.png#tile-5"
+        },
+        {
+          "y0": 2600,
+          "y1": 2632,
+          "pixel_sha256": "3b7a0a91c34455cd936bb9e7c300fe49668695b79f3c98b8b43e37193c05f5f0",
+          "review": "../more-current-visual-review/sheet-05.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-confirm-home-return-320-2x.png",
+      "sha256": "6b61a480f7a3fd5ddb29685624aed748a99b94ad55016153855b11225ef09868",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a6aa9ef781460e5016527f099324419f84c6e4f14cdb26c410651cd7359b41ef",
+          "review": "../mom-rest-control-visual-review/sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1462d46c4861c29041d879736402097e4fd061fcb6e577142cd6e832cb70fae0",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-confirm-home-return-393-1x.long.png",
+      "sha256": "c35c71895313fa2a83c044c2640214c37cf58866354d5372332982edaeb43ce6",
+      "width": 393,
+      "height": 1265,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa661999d6307948942c23dc2e7dad221367a614b3ae09dd12dec24bc67fec6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1265,
+          "pixel_sha256": "dcb901be683f506a37dcb81640888d8e88917ca980d437ef7064f65635c426bf",
+          "review": "../booking-selection-current-visual-review/sheet-14.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-confirm-home-return-393-1x.png",
+      "sha256": "be291808401e7f353b8f14552b0df4a698f3edd191e5e2d770c66c2e129fc145",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa661999d6307948942c23dc2e7dad221367a614b3ae09dd12dec24bc67fec6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3208ac8b3b1d4a7464bc46ef7618c8e19bd85dee870d86c1847457571b6198a6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-confirm-reopened-320-2x.long.png",
+      "sha256": "f2d5c6c3463af85dd47c79da05a357a44b8a8158d36ad1de151ff763caf3705c",
+      "width": 320,
+      "height": 1602,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "f82cf3b07a1eaed600e5800100944dd3f37ad31036f62796a63c45a736beea96",
+          "review": "../booking-selection-current-visual-review/sheet-10.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "3431666f611b4b90e57133f3f65fe0ea9804228315c4b4ea61a538df9f05c1b0",
+          "review": "sheet-02.png#tile-5"
+        },
+        {
+          "y0": 1300,
+          "y1": 1602,
+          "pixel_sha256": "5bdc26aee6c16de1d1b173de9867703373541c475bb3cfa40d29cb4422934c44",
+          "review": "sheet-03.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-confirm-reopened-320-2x.png",
+      "sha256": "caf6d40e883430ca00cb0eead403939677e8584f8850e2696f0403358b56c146",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "f82cf3b07a1eaed600e5800100944dd3f37ad31036f62796a63c45a736beea96",
+          "review": "../booking-selection-current-visual-review/sheet-10.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "d9cccb2553db17ae5900274df1d3ae2622202f3da6ae8a8b8f77818e2095d19d",
+          "review": "../booking-selection-current-visual-review/sheet-11.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-confirm-reopened-393-1x.long.png",
+      "sha256": "da8dc161b73e64bec0fb7e3e4944ec86a8aa69a0b638beb36a99ce9e7ef0e139",
+      "width": 393,
+      "height": 896,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "bcbb317d69db81a2480509cd2e69e0d3d4897b87921092046e92eb5571ae4d70",
+          "review": "sheet-03.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 896,
+          "pixel_sha256": "855f360e149d04b972ca1209de0cc0806994c65ed321ee70228acb4db44b3b4d",
+          "review": "sheet-03.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-confirm-reopened-393-1x.png",
+      "sha256": "d53abd02e1f257728b6774965620a449420531a1997e56fcda956511506c29cd",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "bcbb317d69db81a2480509cd2e69e0d3d4897b87921092046e92eb5571ae4d70",
+          "review": "sheet-03.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "ec731ebd6a445f11b7b0a158e5dd320af3eef9051a004cf7897dc9cb6c836119",
+          "review": "sheet-03.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-confirm-retry-intake-320-2x.long.png",
+      "sha256": "d74f30e22560b81dcd229b22c9aaf06408899fd6c8b06a0cc05e023d4496acae",
+      "width": 320,
+      "height": 2432,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b39078c30c6cf1e6a88a7ca5018d045fad7061eea5b8bc7906a8f58e75d2dc1b",
+          "review": "../booking-selection-current-visual-review/sheet-04.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "1c6caf2cc4be8d33e45f1ac6a3125c7d2fb19a8acaff613727316a308cfa9ccb",
+          "review": "../booking-selection-current-visual-review/sheet-04.png#tile-3"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "8db76879b5384ccfc0e0c81b564e9f54e186ad4ecb895bb1385baaabefc976be",
+          "review": "../booking-selection-current-visual-review/sheet-04.png#tile-4"
+        },
+        {
+          "y0": 1950,
+          "y1": 2432,
+          "pixel_sha256": "14c2bd0673e48e73001d1a0bf2af873c26d33338a6c1b1e8246d2d82032f51ff",
+          "review": "../booking-selection-current-visual-review/sheet-04.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-confirm-retry-intake-320-2x.png",
+      "sha256": "a952bffed3b54a0d270462c718bfbebf00f417b0b5c6a24d0e10dbd8ccc52a62",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b39078c30c6cf1e6a88a7ca5018d045fad7061eea5b8bc7906a8f58e75d2dc1b",
+          "review": "../booking-selection-current-visual-review/sheet-04.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1903dc3b7c565b4e0e7a4242df13c4683c29999dd0267060d11fcc5e729b8660",
+          "review": "../booking-selection-current-visual-review/sheet-05.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-confirm-retry-intake-393-1x.long.png",
+      "sha256": "83e2d2be41e9d9f2cbd6d408088e89ad482eb7526f4993e99aa0251fd1881731",
+      "width": 393,
+      "height": 1263,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "3195823f98194a219529292644c796b9cdff97dc5f2fd0ba7e9150f1531ecd5f",
+          "review": "../booking-selection-current-visual-review/sheet-05.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1263,
+          "pixel_sha256": "9e733a2ac430abe33736727e665bce355657b0e642f4b8c3438f2c4bbf566491",
+          "review": "../booking-selection-current-visual-review/sheet-05.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-confirm-retry-intake-393-1x.png",
+      "sha256": "7337ec246bbdc7b861f2762b710410a111c5dcdd3629f0dc57861102d124c8c9",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "3195823f98194a219529292644c796b9cdff97dc5f2fd0ba7e9150f1531ecd5f",
+          "review": "../booking-selection-current-visual-review/sheet-05.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "f1416f4205b524da2195c4883341a4a16dcbe8caa315725263aea0db51220b55",
+          "review": "../booking-selection-current-visual-review/sheet-05.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-confirm-retry-return-320-2x.long.png",
+      "sha256": "0aa086cead95ca0516bb646c841ba58a2752a046161219a4fbc56227c2af453b",
+      "width": 320,
+      "height": 1337,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c4f1354a2fc65d9c52294597c004e26556a68a123e2cd3b4583647f810337e6d",
+          "review": "../booking-selection-current-visual-review/sheet-03.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "53052b00855ecea38aa6a66f7397960b844b23eb0e92c7fd736153e80f6a8179",
+          "review": "../booking-selection-current-visual-review/sheet-03.png#tile-4"
+        },
+        {
+          "y0": 1300,
+          "y1": 1337,
+          "pixel_sha256": "b83d94ed08fa8c9356d460dcefdc01bc313afbac558538cd44ab1eccb3b42f14",
+          "review": "../progress-current-visual-review-update/../progress-current-visual-review/sheet-07.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-confirm-retry-return-320-2x.png",
+      "sha256": "0c0d0b19831ee2aa8aaa61bd407294e08a1329e3133606af5fbf959e50c7911b",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "33bd60915a3e0c3e76325a4af0b83d0d663395e5a83fe1d1e6cf3b7cbfeb4bd1",
+          "review": "sheet-03.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "5a7ca1dab756b0751c8f6f9823a947fa6a9609d5390a3ea0083b767333d8de4f",
+          "review": "sheet-03.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-confirm-retry-return-393-1x.png",
+      "sha256": "beff41b7dc6b21244942f2d4cfe4c17762a021c851778e22208a6d74942af689",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a3610bd82bd42c3d4072d120b47fa722e392a5b88f0ab413cd518e02019f8ec5",
+          "review": "../booking-selection-current-visual-review/sheet-04.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1585373ef5f681776dd1a51bec267f1493425e5f2aa676ddb24a0b02e60a44c2",
+          "review": "../progress-current-visual-review-update/../progress-current-visual-review/sheet-07.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-confirm-slots-320-2x.long.png",
+      "sha256": "3770a8a9e05dec586ef35b6679d741b1b85c219ee32b6a9e0d8c9c39740c4472",
+      "width": 320,
+      "height": 1196,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b4afefb4599350fb6e74bcc8bac4285a127bebe76af197b2011a58407b10a998",
+          "review": "../booking-precheck-current-visual-review/sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1196,
+          "pixel_sha256": "be0b599b0910cd3a0fd2f681a1ec6bcf35402e86d9aaf9a0bd62e6e89e926adc",
+          "review": "../booking-precheck-current-visual-review/sheet-01.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-confirm-slots-320-2x.png",
+      "sha256": "64bab2b34c2245f477192e175c5231349bbd1d609e90046688ff0c25f1c21ef9",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b4afefb4599350fb6e74bcc8bac4285a127bebe76af197b2011a58407b10a998",
+          "review": "../booking-precheck-current-visual-review/sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "4f41ab1ebf06028082bea91e6436be40d5ea65ee4859ea3a8182c0e9b53b109b",
+          "review": "../booking-precheck-current-visual-review/sheet-01.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-confirm-slots-393-1x.png",
+      "sha256": "efae04e13b6c3b1941104ebb96c8aa478619c13357fd3c8e072b89cf2d75b3ef",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "f3459b4c51647d4b64f855748cc62d2e4614639e29dce974367c15ed483fb1f9",
+          "review": "../booking-precheck-current-visual-review/sheet-01.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "91250228adba22feeea4fd9e122c77873e3ab7fbd867dc6a027c5fd59f7b35ce",
+          "review": "../booking-precheck-current-visual-review/sheet-01.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-confirm-unknown-320-2x.long.png",
+      "sha256": "813f32405d871ebd8983cace29cbc1987365b4518075f8e08738f225372f73d2",
+      "width": 320,
+      "height": 1602,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "bf6476b15f1841c167bbf143072b863ae65032049c9559d882a3cd90efdbe97d",
+          "review": "../booking-selection-current-visual-review/sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "b803a361c90cedf88332b39b6a86de0c5c31a12fcb5f464e20df6d98525f2cc8",
+          "review": "../booking-selection-current-visual-review/sheet-01.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1602,
+          "pixel_sha256": "6745bd06f7a5f7c894079ac0019b8c9e92834ad6c001e5093c18bdacc31c3edb",
+          "review": "../booking-selection-current-visual-review/sheet-01.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-confirm-unknown-320-2x.png",
+      "sha256": "ced9ac74857d88321a6cfd31e34094d8622aee9cd040a9497612a07a6ca24aea",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "194bf47fed7cc688d1c2b317f81cae347f0f6ac5660693ad1e01d692509bb8b4",
+          "review": "../booking-selection-current-visual-review/sheet-01.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "210829b44c83d696f13558ff3474c27249bdb33013c3532b86e8c6df6c54142a",
+          "review": "../booking-selection-current-visual-review/sheet-01.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-confirm-unknown-393-1x.long.png",
+      "sha256": "b8cd89bfdc1cde7bee92a33577bdab586cf7d9d4735270dd91e8d2cadfbb1df6",
+      "width": 393,
+      "height": 896,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa9628b51c76b2499b37c2171ef031322202ee61c0429bc3ad29ec61527d2b7",
+          "review": "../booking-selection-current-visual-review/sheet-01.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 896,
+          "pixel_sha256": "97929c11770d54e86ba61c8e5d3d8bda62c06e8964ed7557081ead235bbaa0be",
+          "review": "../booking-selection-current-visual-review/sheet-02.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-confirm-unknown-393-1x.png",
+      "sha256": "77c69d3ee7f9f7e134c491ba34c9b5d12fe5b55b483ea135c2fe89840b3be137",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa9628b51c76b2499b37c2171ef031322202ee61c0429bc3ad29ec61527d2b7",
+          "review": "../booking-selection-current-visual-review/sheet-01.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "5a1be1f8413bed30f433b4241566bd8027dc745c0206194de22e0e4886f1cd5a",
+          "review": "../booking-selection-current-visual-review/sheet-02.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-hold-home-320-2x.long.png",
+      "sha256": "2fa0ada62a6d9ca50683e54400f6043cf68a1e285a2eae008e38ff1f462eb258",
+      "width": 320,
+      "height": 2459,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a6aa9ef781460e5016527f099324419f84c6e4f14cdb26c410651cd7359b41ef",
+          "review": "../mom-rest-control-visual-review/sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "0edf1d289b2e804b112ca91367c51524ae8a6a6a4684a4fdcad651b0ae8de7ad",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "737fbf296926091c9d3d8c054e5fcb5aa6828a0542d136aef0e678fcf5a2a305",
+          "review": "../more-current-visual-review/sheet-04.png#tile-5"
+        },
+        {
+          "y0": 1950,
+          "y1": 2459,
+          "pixel_sha256": "0692ec2c55d8d8438d85f340a92827d471acee47031f9c8fde3159a11158b360",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-15.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-hold-home-320-2x.png",
+      "sha256": "6b61a480f7a3fd5ddb29685624aed748a99b94ad55016153855b11225ef09868",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a6aa9ef781460e5016527f099324419f84c6e4f14cdb26c410651cd7359b41ef",
+          "review": "../mom-rest-control-visual-review/sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1462d46c4861c29041d879736402097e4fd061fcb6e577142cd6e832cb70fae0",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-hold-home-393-1x.long.png",
+      "sha256": "0f04c06b170ca26a6ceca6d9954f08895999c1df1446be6abb5fb53f267160ab",
+      "width": 393,
+      "height": 1211,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa661999d6307948942c23dc2e7dad221367a614b3ae09dd12dec24bc67fec6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1211,
+          "pixel_sha256": "468a1f2363d31ad56f5959e2dbd4aba2e602497cea767b2f5d8d0ec625cb9890",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-16.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-hold-home-393-1x.png",
+      "sha256": "be291808401e7f353b8f14552b0df4a698f3edd191e5e2d770c66c2e129fc145",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa661999d6307948942c23dc2e7dad221367a614b3ae09dd12dec24bc67fec6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3208ac8b3b1d4a7464bc46ef7618c8e19bd85dee870d86c1847457571b6198a6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-hold-home-return-320-2x.long.png",
+      "sha256": "2fa0ada62a6d9ca50683e54400f6043cf68a1e285a2eae008e38ff1f462eb258",
+      "width": 320,
+      "height": 2459,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a6aa9ef781460e5016527f099324419f84c6e4f14cdb26c410651cd7359b41ef",
+          "review": "../mom-rest-control-visual-review/sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "0edf1d289b2e804b112ca91367c51524ae8a6a6a4684a4fdcad651b0ae8de7ad",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "737fbf296926091c9d3d8c054e5fcb5aa6828a0542d136aef0e678fcf5a2a305",
+          "review": "../more-current-visual-review/sheet-04.png#tile-5"
+        },
+        {
+          "y0": 1950,
+          "y1": 2459,
+          "pixel_sha256": "0692ec2c55d8d8438d85f340a92827d471acee47031f9c8fde3159a11158b360",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-15.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-hold-home-return-320-2x.png",
+      "sha256": "6b61a480f7a3fd5ddb29685624aed748a99b94ad55016153855b11225ef09868",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a6aa9ef781460e5016527f099324419f84c6e4f14cdb26c410651cd7359b41ef",
+          "review": "../mom-rest-control-visual-review/sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1462d46c4861c29041d879736402097e4fd061fcb6e577142cd6e832cb70fae0",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-hold-home-return-393-1x.long.png",
+      "sha256": "0f04c06b170ca26a6ceca6d9954f08895999c1df1446be6abb5fb53f267160ab",
+      "width": 393,
+      "height": 1211,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa661999d6307948942c23dc2e7dad221367a614b3ae09dd12dec24bc67fec6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1211,
+          "pixel_sha256": "468a1f2363d31ad56f5959e2dbd4aba2e602497cea767b2f5d8d0ec625cb9890",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-16.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-hold-home-return-393-1x.png",
+      "sha256": "be291808401e7f353b8f14552b0df4a698f3edd191e5e2d770c66c2e129fc145",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa661999d6307948942c23dc2e7dad221367a614b3ae09dd12dec24bc67fec6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3208ac8b3b1d4a7464bc46ef7618c8e19bd85dee870d86c1847457571b6198a6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-hold-left-320-2x.long.png",
+      "sha256": "2fa0ada62a6d9ca50683e54400f6043cf68a1e285a2eae008e38ff1f462eb258",
+      "width": 320,
+      "height": 2459,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a6aa9ef781460e5016527f099324419f84c6e4f14cdb26c410651cd7359b41ef",
+          "review": "../mom-rest-control-visual-review/sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "0edf1d289b2e804b112ca91367c51524ae8a6a6a4684a4fdcad651b0ae8de7ad",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "737fbf296926091c9d3d8c054e5fcb5aa6828a0542d136aef0e678fcf5a2a305",
+          "review": "../more-current-visual-review/sheet-04.png#tile-5"
+        },
+        {
+          "y0": 1950,
+          "y1": 2459,
+          "pixel_sha256": "0692ec2c55d8d8438d85f340a92827d471acee47031f9c8fde3159a11158b360",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-15.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-hold-left-320-2x.png",
+      "sha256": "6b61a480f7a3fd5ddb29685624aed748a99b94ad55016153855b11225ef09868",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a6aa9ef781460e5016527f099324419f84c6e4f14cdb26c410651cd7359b41ef",
+          "review": "../mom-rest-control-visual-review/sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1462d46c4861c29041d879736402097e4fd061fcb6e577142cd6e832cb70fae0",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-hold-left-393-1x.long.png",
+      "sha256": "0f04c06b170ca26a6ceca6d9954f08895999c1df1446be6abb5fb53f267160ab",
+      "width": 393,
+      "height": 1211,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa661999d6307948942c23dc2e7dad221367a614b3ae09dd12dec24bc67fec6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1211,
+          "pixel_sha256": "468a1f2363d31ad56f5959e2dbd4aba2e602497cea767b2f5d8d0ec625cb9890",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-16.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-hold-left-393-1x.png",
+      "sha256": "be291808401e7f353b8f14552b0df4a698f3edd191e5e2d770c66c2e129fc145",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa661999d6307948942c23dc2e7dad221367a614b3ae09dd12dec24bc67fec6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3208ac8b3b1d4a7464bc46ef7618c8e19bd85dee870d86c1847457571b6198a6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-hold-new-request-320-2x.long.png",
+      "sha256": "a2855e24e7b9cdde6a67a975fd657ac4e0878bab82b6414f2edcb508bd71ecd8",
+      "width": 320,
+      "height": 1437,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "544c66ba3abe6cf5760f47501e29556cfc29aec2cef9e6bd8f5743a0afbcda51",
+          "review": "../booking-selection-current-visual-review/sheet-19.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "57020baa7f321b2380b23d6e1c466870852cd7238a4e937c6aa01a1637b6e054",
+          "review": "../booking-selection-current-visual-review/sheet-20.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1437,
+          "pixel_sha256": "cd0a2afc83fba4de717ad7ed48ecf3b24fc1f271e810b23eef2b17155775218e",
+          "review": "../booking-selection-current-visual-review/sheet-20.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-hold-new-request-320-2x.png",
+      "sha256": "3ea060b541ad2895ab5b74fea100b11bd24bd921261f50d3558f62ea42fd100e",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "544c66ba3abe6cf5760f47501e29556cfc29aec2cef9e6bd8f5743a0afbcda51",
+          "review": "../booking-selection-current-visual-review/sheet-19.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "33af7b4ac211cc094f2e3b80519b6073a4221b9af55ba0b40c3b43c51c3d96e8",
+          "review": "../booking-selection-current-visual-review/sheet-20.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-hold-new-request-393-1x.png",
+      "sha256": "cdfc6ff1d2fe6717793ade5ba0cf8823da436855735458e5f9ff0c1795b7038e",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a5bb265d9d73528be3aecd6418699d7a5955026eaa99b5e008a35eecccd94b5a",
+          "review": "../booking-selection-current-visual-review/sheet-11.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "ced032ea51b767b9fb893731f105c71a282d335528a40dc5d830f599234ee3ca",
+          "review": "../booking-selection-current-visual-review/sheet-11.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-hold-reentered-320-2x.long.png",
+      "sha256": "3770a8a9e05dec586ef35b6679d741b1b85c219ee32b6a9e0d8c9c39740c4472",
+      "width": 320,
+      "height": 1196,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b4afefb4599350fb6e74bcc8bac4285a127bebe76af197b2011a58407b10a998",
+          "review": "../booking-precheck-current-visual-review/sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1196,
+          "pixel_sha256": "be0b599b0910cd3a0fd2f681a1ec6bcf35402e86d9aaf9a0bd62e6e89e926adc",
+          "review": "../booking-precheck-current-visual-review/sheet-01.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-hold-reentered-320-2x.png",
+      "sha256": "64bab2b34c2245f477192e175c5231349bbd1d609e90046688ff0c25f1c21ef9",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b4afefb4599350fb6e74bcc8bac4285a127bebe76af197b2011a58407b10a998",
+          "review": "../booking-precheck-current-visual-review/sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "4f41ab1ebf06028082bea91e6436be40d5ea65ee4859ea3a8182c0e9b53b109b",
+          "review": "../booking-precheck-current-visual-review/sheet-01.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-hold-reentered-393-1x.png",
+      "sha256": "efae04e13b6c3b1941104ebb96c8aa478619c13357fd3c8e072b89cf2d75b3ef",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "f3459b4c51647d4b64f855748cc62d2e4614639e29dce974367c15ed483fb1f9",
+          "review": "../booking-precheck-current-visual-review/sheet-01.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "91250228adba22feeea4fd9e122c77873e3ab7fbd867dc6a027c5fd59f7b35ce",
+          "review": "../booking-precheck-current-visual-review/sheet-01.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-hold-slots-320-2x.long.png",
+      "sha256": "3770a8a9e05dec586ef35b6679d741b1b85c219ee32b6a9e0d8c9c39740c4472",
+      "width": 320,
+      "height": 1196,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b4afefb4599350fb6e74bcc8bac4285a127bebe76af197b2011a58407b10a998",
+          "review": "../booking-precheck-current-visual-review/sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1196,
+          "pixel_sha256": "be0b599b0910cd3a0fd2f681a1ec6bcf35402e86d9aaf9a0bd62e6e89e926adc",
+          "review": "../booking-precheck-current-visual-review/sheet-01.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-hold-slots-320-2x.png",
+      "sha256": "64bab2b34c2245f477192e175c5231349bbd1d609e90046688ff0c25f1c21ef9",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b4afefb4599350fb6e74bcc8bac4285a127bebe76af197b2011a58407b10a998",
+          "review": "../booking-precheck-current-visual-review/sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "4f41ab1ebf06028082bea91e6436be40d5ea65ee4859ea3a8182c0e9b53b109b",
+          "review": "../booking-precheck-current-visual-review/sheet-01.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-hold-slots-393-1x.png",
+      "sha256": "efae04e13b6c3b1941104ebb96c8aa478619c13357fd3c8e072b89cf2d75b3ef",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "f3459b4c51647d4b64f855748cc62d2e4614639e29dce974367c15ed483fb1f9",
+          "review": "../booking-precheck-current-visual-review/sheet-01.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "91250228adba22feeea4fd9e122c77873e3ab7fbd867dc6a027c5fd59f7b35ce",
+          "review": "../booking-precheck-current-visual-review/sheet-01.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-hold-unknown-320-2x.long.png",
+      "sha256": "60afa1a4f842f9df006e431b41576a8c5f0838abed906bae9b97d51e7f7a67f2",
+      "width": 320,
+      "height": 1534,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "d6995787a585f2fa0668785f0f67b7b66463b2ed3640421906a91c958cbea9b6",
+          "review": "../booking-selection-current-visual-review/sheet-12.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "0f74d2c406fbf261b23cf212f0b29ad9cb91ede9229a0ea750430f2ce1f95ec2",
+          "review": "../booking-selection-current-visual-review/sheet-12.png#tile-4"
+        },
+        {
+          "y0": 1300,
+          "y1": 1534,
+          "pixel_sha256": "192586b7f1a04fc84c9781963247ea5dfe14edb7aac4ebddf791c85b1701aaac",
+          "review": "../booking-selection-current-visual-review/sheet-12.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-hold-unknown-320-2x.png",
+      "sha256": "4da0dcfd6b1b5fcbdac2427e76660c1a02fe67c27d4568495d6f38d1c483968c",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "1e8931c7400e17f78d3d2810763add2e8f0bde39293e254e8697008392e85d77",
+          "review": "../booking-selection-current-visual-review/sheet-13.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "021928d8f4117b2a28eac03fa4edcbce5e3700d1b229d26c548343aea7223d78",
+          "review": "../booking-selection-current-visual-review/sheet-13.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-hold-unknown-393-1x.long.png",
+      "sha256": "789aa1d8beada5f2e3bfaa95ad5a044a18a3e677174e3b65cba085b5ac6cf66d",
+      "width": 393,
+      "height": 892,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9c8f559362326c67d3ea579c5e98abc268b8edbcea9f969fe4ca5367e047a7bc",
+          "review": "../booking-selection-current-visual-review/sheet-13.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 892,
+          "pixel_sha256": "858eebf6872fe0648cafc7237d25d0f045dbb226318c060ebdca728d257d8533",
+          "review": "../booking-selection-current-visual-review/sheet-13.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-hold-unknown-393-1x.png",
+      "sha256": "343a0a78641e50be2195c906ea7c13bbf47e16877d36c50941b2e40489c98904",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9c8f559362326c67d3ea579c5e98abc268b8edbcea9f969fe4ca5367e047a7bc",
+          "review": "../booking-selection-current-visual-review/sheet-13.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "9ce7962e1d69e6554e491ea585dfc90b0956e5051bbd445fe91962722586534e",
+          "review": "../booking-selection-current-visual-review/sheet-13.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-reminder-home-320-2x.long.png",
+      "sha256": "2fa0ada62a6d9ca50683e54400f6043cf68a1e285a2eae008e38ff1f462eb258",
+      "width": 320,
+      "height": 2459,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a6aa9ef781460e5016527f099324419f84c6e4f14cdb26c410651cd7359b41ef",
+          "review": "../mom-rest-control-visual-review/sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "0edf1d289b2e804b112ca91367c51524ae8a6a6a4684a4fdcad651b0ae8de7ad",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "737fbf296926091c9d3d8c054e5fcb5aa6828a0542d136aef0e678fcf5a2a305",
+          "review": "../more-current-visual-review/sheet-04.png#tile-5"
+        },
+        {
+          "y0": 1950,
+          "y1": 2459,
+          "pixel_sha256": "0692ec2c55d8d8438d85f340a92827d471acee47031f9c8fde3159a11158b360",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-15.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-reminder-home-320-2x.png",
+      "sha256": "6b61a480f7a3fd5ddb29685624aed748a99b94ad55016153855b11225ef09868",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a6aa9ef781460e5016527f099324419f84c6e4f14cdb26c410651cd7359b41ef",
+          "review": "../mom-rest-control-visual-review/sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1462d46c4861c29041d879736402097e4fd061fcb6e577142cd6e832cb70fae0",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-reminder-home-393-1x.long.png",
+      "sha256": "0f04c06b170ca26a6ceca6d9954f08895999c1df1446be6abb5fb53f267160ab",
+      "width": 393,
+      "height": 1211,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa661999d6307948942c23dc2e7dad221367a614b3ae09dd12dec24bc67fec6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1211,
+          "pixel_sha256": "468a1f2363d31ad56f5959e2dbd4aba2e602497cea767b2f5d8d0ec625cb9890",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-16.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-reminder-home-393-1x.png",
+      "sha256": "be291808401e7f353b8f14552b0df4a698f3edd191e5e2d770c66c2e129fc145",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa661999d6307948942c23dc2e7dad221367a614b3ae09dd12dec24bc67fec6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3208ac8b3b1d4a7464bc46ef7618c8e19bd85dee870d86c1847457571b6198a6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-reminder-home-return-320-2x.long.png",
+      "sha256": "eebb4f72950d19fbf167a2242f4139c460d77317abb7a9986da77ec4a9c4cb8d",
+      "width": 320,
+      "height": 2632,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a6aa9ef781460e5016527f099324419f84c6e4f14cdb26c410651cd7359b41ef",
+          "review": "../mom-rest-control-visual-review/sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "0edf1d289b2e804b112ca91367c51524ae8a6a6a4684a4fdcad651b0ae8de7ad",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "737fbf296926091c9d3d8c054e5fcb5aa6828a0542d136aef0e678fcf5a2a305",
+          "review": "../more-current-visual-review/sheet-04.png#tile-5"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "1284386d549eecb030c16573ea3d77034e01904e01ae7353f6acd4b10ce7aa60",
+          "review": "../booking-selection-current-visual-review/sheet-13.png#tile-5"
+        },
+        {
+          "y0": 2600,
+          "y1": 2632,
+          "pixel_sha256": "3b7a0a91c34455cd936bb9e7c300fe49668695b79f3c98b8b43e37193c05f5f0",
+          "review": "../more-current-visual-review/sheet-05.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-reminder-home-return-320-2x.png",
+      "sha256": "6b61a480f7a3fd5ddb29685624aed748a99b94ad55016153855b11225ef09868",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a6aa9ef781460e5016527f099324419f84c6e4f14cdb26c410651cd7359b41ef",
+          "review": "../mom-rest-control-visual-review/sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1462d46c4861c29041d879736402097e4fd061fcb6e577142cd6e832cb70fae0",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-reminder-home-return-393-1x.long.png",
+      "sha256": "c35c71895313fa2a83c044c2640214c37cf58866354d5372332982edaeb43ce6",
+      "width": 393,
+      "height": 1265,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa661999d6307948942c23dc2e7dad221367a614b3ae09dd12dec24bc67fec6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1265,
+          "pixel_sha256": "dcb901be683f506a37dcb81640888d8e88917ca980d437ef7064f65635c426bf",
+          "review": "../booking-selection-current-visual-review/sheet-14.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-reminder-home-return-393-1x.png",
+      "sha256": "be291808401e7f353b8f14552b0df4a698f3edd191e5e2d770c66c2e129fc145",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa661999d6307948942c23dc2e7dad221367a614b3ae09dd12dec24bc67fec6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3208ac8b3b1d4a7464bc46ef7618c8e19bd85dee870d86c1847457571b6198a6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-reminder-message-dismissed-320-2x.long.png",
+      "sha256": "d74f30e22560b81dcd229b22c9aaf06408899fd6c8b06a0cc05e023d4496acae",
+      "width": 320,
+      "height": 2432,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b39078c30c6cf1e6a88a7ca5018d045fad7061eea5b8bc7906a8f58e75d2dc1b",
+          "review": "../booking-selection-current-visual-review/sheet-04.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "1c6caf2cc4be8d33e45f1ac6a3125c7d2fb19a8acaff613727316a308cfa9ccb",
+          "review": "../booking-selection-current-visual-review/sheet-04.png#tile-3"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "8db76879b5384ccfc0e0c81b564e9f54e186ad4ecb895bb1385baaabefc976be",
+          "review": "../booking-selection-current-visual-review/sheet-04.png#tile-4"
+        },
+        {
+          "y0": 1950,
+          "y1": 2432,
+          "pixel_sha256": "14c2bd0673e48e73001d1a0bf2af873c26d33338a6c1b1e8246d2d82032f51ff",
+          "review": "../booking-selection-current-visual-review/sheet-04.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-reminder-message-dismissed-320-2x.png",
+      "sha256": "a952bffed3b54a0d270462c718bfbebf00f417b0b5c6a24d0e10dbd8ccc52a62",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b39078c30c6cf1e6a88a7ca5018d045fad7061eea5b8bc7906a8f58e75d2dc1b",
+          "review": "../booking-selection-current-visual-review/sheet-04.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1903dc3b7c565b4e0e7a4242df13c4683c29999dd0267060d11fcc5e729b8660",
+          "review": "../booking-selection-current-visual-review/sheet-05.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-reminder-message-dismissed-393-1x.long.png",
+      "sha256": "83e2d2be41e9d9f2cbd6d408088e89ad482eb7526f4993e99aa0251fd1881731",
+      "width": 393,
+      "height": 1263,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "3195823f98194a219529292644c796b9cdff97dc5f2fd0ba7e9150f1531ecd5f",
+          "review": "../booking-selection-current-visual-review/sheet-05.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1263,
+          "pixel_sha256": "9e733a2ac430abe33736727e665bce355657b0e642f4b8c3438f2c4bbf566491",
+          "review": "../booking-selection-current-visual-review/sheet-05.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-reminder-message-dismissed-393-1x.png",
+      "sha256": "7337ec246bbdc7b861f2762b710410a111c5dcdd3629f0dc57861102d124c8c9",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "3195823f98194a219529292644c796b9cdff97dc5f2fd0ba7e9150f1531ecd5f",
+          "review": "../booking-selection-current-visual-review/sheet-05.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "f1416f4205b524da2195c4883341a4a16dcbe8caa315725263aea0db51220b55",
+          "review": "../booking-selection-current-visual-review/sheet-05.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-reminder-return-320-2x.long.png",
+      "sha256": "0aa086cead95ca0516bb646c841ba58a2752a046161219a4fbc56227c2af453b",
+      "width": 320,
+      "height": 1337,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c4f1354a2fc65d9c52294597c004e26556a68a123e2cd3b4583647f810337e6d",
+          "review": "../booking-selection-current-visual-review/sheet-03.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "53052b00855ecea38aa6a66f7397960b844b23eb0e92c7fd736153e80f6a8179",
+          "review": "../booking-selection-current-visual-review/sheet-03.png#tile-4"
+        },
+        {
+          "y0": 1300,
+          "y1": 1337,
+          "pixel_sha256": "b83d94ed08fa8c9356d460dcefdc01bc313afbac558538cd44ab1eccb3b42f14",
+          "review": "../progress-current-visual-review-update/../progress-current-visual-review/sheet-07.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-reminder-return-320-2x.png",
+      "sha256": "3ae61d679002c8bed6e09924baaad7bc108aa283fb5126e6d4972da690815a83",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "1c501816cc287a021b6e68a35c982c7f371a1d909fbe91c35e57fc688fdcbfce",
+          "review": "../booking-selection-current-visual-review/sheet-03.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2f99eb9fa66060ae45617704b9aa43c466682e8dc61a9d5f6cda6ca6ca611fc7",
+          "review": "../booking-selection-current-visual-review/sheet-04.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-reminder-return-393-1x.png",
+      "sha256": "beff41b7dc6b21244942f2d4cfe4c17762a021c851778e22208a6d74942af689",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a3610bd82bd42c3d4072d120b47fa722e392a5b88f0ab413cd518e02019f8ec5",
+          "review": "../booking-selection-current-visual-review/sheet-04.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1585373ef5f681776dd1a51bec267f1493425e5f2aa676ddb24a0b02e60a44c2",
+          "review": "../progress-current-visual-review-update/../progress-current-visual-review/sheet-07.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-reminder-selected-320-2x.long.png",
+      "sha256": "157f86cc220e2aa12f1aa84a2c144dbd59ca5526a6df0b9dfb43ba9d58cc1576",
+      "width": 320,
+      "height": 1437,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "544c66ba3abe6cf5760f47501e29556cfc29aec2cef9e6bd8f5743a0afbcda51",
+          "review": "../booking-selection-current-visual-review/sheet-19.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "7c3883aee4e5d7b6b4ab3746fcfd85d6ec7b6536bb12d5f43cfee95476c0685c",
+          "review": "sheet-04.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1437,
+          "pixel_sha256": "cd0a2afc83fba4de717ad7ed48ecf3b24fc1f271e810b23eef2b17155775218e",
+          "review": "../booking-selection-current-visual-review/sheet-20.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-reminder-selected-320-2x.png",
+      "sha256": "9137798e67d81fee3b0420957cac47eac356482c2f22ded5320b464300690761",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "4c1088318a3105ca1db87ad33693fbc4af95ccdce47ee164c0ad0994caff8093",
+          "review": "sheet-04.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "bda097884d65d543d6c4b8ce36528c2cae49ae4a483f87c407769a06732211a0",
+          "review": "sheet-04.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-reminder-selected-393-1x.png",
+      "sha256": "9daeaa4ec8928172d7c678dbfde101a9bf7a469bf8348921b9d450f86e7fe200",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "7482e6acb5ddb5b8dd2a5a38c4b32a2be6f06017d9bd0f3d38adcbbf145b2859",
+          "review": "../booking-selection-current-visual-review/sheet-17.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "54ad2ff1e8698878e206b08cfa897d93ce1d10aa34849fa558c69620da495488",
+          "review": "../booking-selection-current-visual-review/sheet-18.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-reminder-slots-320-2x.long.png",
+      "sha256": "3770a8a9e05dec586ef35b6679d741b1b85c219ee32b6a9e0d8c9c39740c4472",
+      "width": 320,
+      "height": 1196,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b4afefb4599350fb6e74bcc8bac4285a127bebe76af197b2011a58407b10a998",
+          "review": "../booking-precheck-current-visual-review/sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1196,
+          "pixel_sha256": "be0b599b0910cd3a0fd2f681a1ec6bcf35402e86d9aaf9a0bd62e6e89e926adc",
+          "review": "../booking-precheck-current-visual-review/sheet-01.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-reminder-slots-320-2x.png",
+      "sha256": "64bab2b34c2245f477192e175c5231349bbd1d609e90046688ff0c25f1c21ef9",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b4afefb4599350fb6e74bcc8bac4285a127bebe76af197b2011a58407b10a998",
+          "review": "../booking-precheck-current-visual-review/sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "4f41ab1ebf06028082bea91e6436be40d5ea65ee4859ea3a8182c0e9b53b109b",
+          "review": "../booking-precheck-current-visual-review/sheet-01.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-reminder-slots-393-1x.png",
+      "sha256": "efae04e13b6c3b1941104ebb96c8aa478619c13357fd3c8e072b89cf2d75b3ef",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "f3459b4c51647d4b64f855748cc62d2e4614639e29dce974367c15ed483fb1f9",
+          "review": "../booking-precheck-current-visual-review/sheet-01.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "91250228adba22feeea4fd9e122c77873e3ab7fbd867dc6a027c5fd59f7b35ce",
+          "review": "../booking-precheck-current-visual-review/sheet-01.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-reminder-unavailable-intake-320-2x.long.png",
+      "sha256": "ff554d9604aaaf61d8e7ad595b0cecff103c56cfddbf9d3cf3e92df21a466da7",
+      "width": 320,
+      "height": 2432,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b39078c30c6cf1e6a88a7ca5018d045fad7061eea5b8bc7906a8f58e75d2dc1b",
+          "review": "../booking-selection-current-visual-review/sheet-04.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "2a380aad1d6ac0d080cbfc4e60024d98d9640ff8db1719d0a3b6e5640dc3e61f",
+          "review": "sheet-04.png#tile-3"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "8db76879b5384ccfc0e0c81b564e9f54e186ad4ecb895bb1385baaabefc976be",
+          "review": "../booking-selection-current-visual-review/sheet-04.png#tile-4"
+        },
+        {
+          "y0": 1950,
+          "y1": 2432,
+          "pixel_sha256": "949419e79e8da2097a24b7ac364440d2c5158454cab1af87499f63190f5b6b8e",
+          "review": "sheet-04.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-reminder-unavailable-intake-320-2x.png",
+      "sha256": "2fa181aa4a27a63adc54369df447d9d4f8c32600dff0def602222b27b3f831da",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "e624f07abe21b37b973962d7791791beb1cc17d6506101965f1b7f5cdd8f368c",
+          "review": "sheet-04.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3f316853738c96928d2eed325389d90ca6f952543c9e31f3e9583ef477f65fb0",
+          "review": "sheet-05.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-reminder-unavailable-intake-393-1x.long.png",
+      "sha256": "5640bee3675f26b2563ae8fd0de089fd50dcfcbcf28bcc661b18ef6dad146b4f",
+      "width": 393,
+      "height": 1263,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "3195823f98194a219529292644c796b9cdff97dc5f2fd0ba7e9150f1531ecd5f",
+          "review": "../booking-selection-current-visual-review/sheet-05.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1263,
+          "pixel_sha256": "5b69d818d5b8722c774a209af7ca668aee575dc3a459df1a529817b69101d06b",
+          "review": "sheet-05.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/booking-resume-current-reminder-unavailable-intake-393-1x.png",
+      "sha256": "76edb573bd9f4ddecfce2f51b8ff20b088066e0d02a2acaab74892d0568e8d94",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "3195823f98194a219529292644c796b9cdff97dc5f2fd0ba7e9150f1531ecd5f",
+          "review": "../booking-selection-current-visual-review/sheet-05.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "f93e44570c3de27f97ff84e6ba3e258b4c3b6992933157eb16c4e1c78f857193",
+          "review": "sheet-05.png#tile-2"
+        }
+      ]
+    }
+  ],
+  "unique_segments": 84,
+  "new_segments": 27,
+  "new_sheets": 5
+}

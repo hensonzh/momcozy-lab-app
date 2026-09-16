@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/schedule-journey-first-page-end-393.png",
+  "previous_source": "test/goldens/ui_inventory/schedule-journey-first-page-overflow-393.png",
+  "route": "/schedule",
+  "trigger": "Scroll to final loaded event → no load-more control",
+  "root_entry": "Authenticated More → tap Schedule bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/schedule/schedule_inventory_journey_test.dart"
+}

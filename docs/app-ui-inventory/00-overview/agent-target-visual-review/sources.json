@@ -1,0 +1,78 @@
+[
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-history-journey-default-recovered-393.png",
+    "sha256": "c6ea52c42a7d3b8cc151cb5ae038b22ff3b23712f2d9793bb8239756d72c5bb3"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-history-journey-error-away-393.png",
+    "sha256": "6ac33e6dd952b54bfe0bbfa4209df0bf816602f324b0120ff7730cb4d19cfda7"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-history-journey-external-target-393.png",
+    "sha256": "e83aded39a1d27eda58b4e89b65f59363302711e3f079f579322f318a0339be0"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-history-journey-extra-query-393.png",
+    "sha256": "e83aded39a1d27eda58b4e89b65f59363302711e3f079f579322f318a0339be0"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-history-journey-invalid-id-393.png",
+    "sha256": "e83aded39a1d27eda58b4e89b65f59363302711e3f079f579322f318a0339be0"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-history-journey-notification-entry-393.png",
+    "sha256": "bbb78f11aab6dce56d318dbfccca9b73b7964aff57dcf8489d5844f4c3589bf1"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-history-journey-read-notification-393.png",
+    "sha256": "605dc0131bab870f82e5d6b29c652d0bcd051b668bc62324fcfad400239c1563"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-history-journey-rejected-dismissed-393.png",
+    "sha256": "605dc0131bab870f82e5d6b29c652d0bcd051b668bc62324fcfad400239c1563"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-history-journey-target-error-393.png",
+    "sha256": "483d2f18b960a19364b6452478fe7b7756d31ef4eee51f679e256261ebe82b15"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-history-journey-default-recovered-320-2x.png",
+    "sha256": "ab4fb06747d5d8335988e84f020033d0372dd9c97cd4d31856ddadcf39a512ac"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-history-journey-error-away-320-2x.png",
+    "sha256": "feee4d506ac1bef973428daf2906121e24ef6412509098c203c180d745777dd0"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-history-journey-external-target-320-2x.png",
+    "sha256": "de1b96f73f11f6526330412559defabf69e3e540faa9e0d4bd4a0595314cc4da"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-history-journey-extra-query-320-2x.png",
+    "sha256": "de1b96f73f11f6526330412559defabf69e3e540faa9e0d4bd4a0595314cc4da"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-history-journey-invalid-id-320-2x.png",
+    "sha256": "de1b96f73f11f6526330412559defabf69e3e540faa9e0d4bd4a0595314cc4da"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-history-journey-notification-entry-320-2x.png",
+    "sha256": "2c0715cd2ef9fa10298762ebbf594c31666cba1511e4dc7ae8a757fc4c23eeef"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-history-journey-read-notification-320-2x.png",
+    "sha256": "2d69e9cc48a39594f15b5b84d9f0699ca055219eab1c83e934c79de46c4dcc9b"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-history-journey-rejected-dismissed-320-2x.png",
+    "sha256": "2d69e9cc48a39594f15b5b84d9f0699ca055219eab1c83e934c79de46c4dcc9b"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-history-journey-target-error-320-2x.png",
+    "sha256": "f74bc7446f0492ad5ddaa52d14d9f4b854fd53dc6b4591431fb91fc0e45c4a05"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-history-journey-default-recovered-320-2x.long.png",
+    "sha256": "bce13849d62422f3724239ce20d23a22d5e32d5a7d5434b9c5185e3341acf869"
+  }
+]

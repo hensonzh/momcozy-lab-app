@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/service-journey-booking-cancel-confirm-393.png",
+  "previous_source": "test/goldens/ui_inventory/service-journey-booking-confirmed-details-393.png",
+  "route": "/services/episodes/service-episode/booking",
+  "trigger": "Cancel appointment → cancellation confirmation",
+  "root_entry": "Authenticated More → tap Me bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/services/service_inventory_journey_test.dart"
+}

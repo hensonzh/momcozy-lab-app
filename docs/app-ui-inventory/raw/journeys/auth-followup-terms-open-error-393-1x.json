@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/auth-followup-terms-open-error-393-1x.png",
+  "previous_source": "test/goldens/ui_inventory/auth-followup-language-dismissed-393-1x.png",
+  "route": "/login",
+  "trigger": "Tap Terms of Use → external browser launch fails → Snackbar",
+  "root_entry": "Open More while signed out → real auth redirect",
+  "evidence": "Actual MomCozyFlutterApp and createMomCozyRouter; only HTTP/session/native-intent dependencies replaced with isolated fixtures",
+  "test": "test/features/auth/auth_followup_inventory_test.dart"
+}

@@ -1,0 +1,75 @@
+{
+  "device": "emulator-5554",
+  "package": "com.momcozymai.app.flutterpoc.local",
+  "version": [
+    "versionCode=57 minSdk=24 targetSdk=36",
+    "versionName=1.0.0"
+  ],
+  "steps": [
+    {
+      "state": "agenda",
+      "action": "Mom → Schedule bottom navigation",
+      "previous": null,
+      "png": "agenda.png",
+      "xml": "agenda.xml",
+      "sha256": "477e1e3f2c824c373a88690317ec4ebdfadfdd3da7f70e0b923f58ebde545514"
+    },
+    {
+      "state": "create-empty",
+      "action": "Add schedule → empty focused form",
+      "previous": "agenda",
+      "png": "create-empty.png",
+      "xml": "create-empty.xml",
+      "sha256": "234beca69facb9ca957341d291719c9faaa07782f556343e2ec77ce5440e08f4"
+    },
+    {
+      "state": "date-picker",
+      "action": "Tap date → calendar dialog",
+      "previous": "create-empty",
+      "png": "date-picker.png",
+      "xml": "date-picker.xml",
+      "sha256": "d7c96e5cefa565738468f21762827aa3455e0231c98fccb4b50b38cd7e329faf"
+    },
+    {
+      "state": "date-cancelled",
+      "action": "Cancel calendar → date unchanged",
+      "previous": "date-picker",
+      "png": "date-cancelled.png",
+      "xml": "date-cancelled.xml",
+      "sha256": "22597815b9b2f502e27f9d001b55e5edadf69a9beab3b675933ee8e5f4a9b858"
+    },
+    {
+      "state": "time-picker",
+      "action": "Tap start time → clock dialog",
+      "previous": "date-cancelled",
+      "png": "time-picker.png",
+      "xml": "time-picker.xml",
+      "sha256": "d9a996e1944d2eb096b08de9e571e4034b4b7c9dfdb5bda6f023a2a2b03a2223"
+    },
+    {
+      "state": "time-cancelled",
+      "action": "Cancel clock → time unchanged",
+      "previous": "time-picker",
+      "png": "time-cancelled.png",
+      "xml": "time-cancelled.xml",
+      "sha256": "bdea6168556ba27232bdb218a65ec4bb01b530c0548602e26128807ff9c40df9"
+    },
+    {
+      "state": "agenda-return",
+      "action": "Close unchanged form → original agenda",
+      "previous": "time-cancelled",
+      "png": "agenda-return.png",
+      "xml": "agenda-return.xml",
+      "sha256": "a4d2665fd63d6c035827cc950f05432ffcf4f2ffbc55bfbbbe9f4107811a39b7"
+    },
+    {
+      "state": "restored-mom",
+      "action": "Me bottom tab → original Mom page",
+      "previous": "agenda-return",
+      "png": "restored-mom.png",
+      "xml": "restored-mom.xml",
+      "sha256": "4b4ba8da6e1247a03a0e733edf25502882d1a67aed6f55e1b60db8828b8f849b"
+    }
+  ],
+  "restoration": "Agenda labels unchanged; original Mom and restored Mom semantic labels identical. No text entered, no save or delete tapped, no account or permission mutation. Current installed APK; no rebuild."
+}

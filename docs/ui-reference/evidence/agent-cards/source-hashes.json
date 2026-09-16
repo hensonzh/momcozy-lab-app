@@ -1,0 +1,9 @@
+{
+  "lib/features/agent_hub/artifacts/agent_artifact_panel.dart": "210d2fb39fbef8ce9e3b50a52eef74736e51c6107ccb2540400d2ce9cdecb198",
+  "lib/features/agent_hub/artifacts/cards/agent_artifact_card_registry.dart": "aa6e80c37ffe4b6aa1c005c8c29c641cf713c483879740843370ffe365bf68e4",
+  "lib/features/agent_hub/artifacts/cards/agent_result_card.dart": "52ef69e7d857b839fe612f9d41489494951a7c52dd9af5a98b266ead71367c7e",
+  "docs/ui-reference/agent/derived/structured-card.md": "740f220ec1e11167608e5edceb37b4648b30e9466b829eff6fc9720b592d64f0",
+  "/Users/lute/project/momcozy-lab产品设计/src/pages/UserApp.tsx": "b6e1f16bbcead983beae5929d8973c4b5aaf24d53d696205aaeb57a921248fa9",
+  "/Users/lute/project/momcozy-lab产品设计/src/styles.css": "c4642c8479cc6da616e0d81ac69465956c1adec71eb128ac9042ec22e99a6d56",
+  "/Users/lute/project/momcozy-lab产品设计/src/styles/me-agent.css": "03a97a15b7a21f045da36627b39245cf09eba81e3da2ab5ad4d8b0dbd703f32d"
+}

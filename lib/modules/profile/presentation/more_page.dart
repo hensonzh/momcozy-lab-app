@@ -3,190 +3,335 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../app/momcozy_api_runtime.dart';
-import '../../../shared/design_system/momcozy_design_system.dart';
-import '../../../shared/widgets/momcozy_components.dart';
+import '../../../shared/design_system/mom_home_tokens.dart';
+import '../../../shared/widgets/mom_companion_widgets.dart';
+import '../../../shared/widgets/mom_settings_row.dart';
 
 /// The fifth tab is an account and service surface.  Health records belong in
 /// Me, Baby, or the service episode; More must not become another clinical
 /// profile store.
-class MorePage extends StatelessWidget {
+class MorePage extends StatefulWidget {
   const MorePage({super.key, required this.onLogout});
 
   final Future<void> Function()? onLogout;
 
   @override
-  Widget build(BuildContext context) {
+  State<MorePage> createState() => _MorePageState();
+}
+
+class _MorePageState extends State<MorePage> {
+  MomCozyApiRuntime? _runtime;
+  Future<({String name, String email})>? _identity;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
     final runtime = MomCozyRuntimeScope.of(context);
-    final session = runtime.currentSession;
+    if (!identical(runtime, _runtime)) {
+      _runtime = runtime;
+      _identity = _loadIdentity(runtime);
+    }
+  }
+
+  Future<({String name, String email})> _loadIdentity(
+    MomCozyApiRuntime runtime,
+  ) async {
+    // Each field can still render if the other existing endpoint is unavailable.
+    final values = await Future.wait([
+      runtime.agentHubProfileRepository
+          .fetchGreetingProfile()
+          .then((profile) => profile.displayName)
+          .catchError((_) => ''),
+      runtime.authRepository
+          .account()
+          .then((account) => account['email'] as String? ?? '')
+          .catchError((_) => ''),
+    ]);
+    return (name: values[0], email: values[1]);
+  }
+
+  @override
+  Widget build(BuildContext context) =>
+      FutureBuilder<({String name, String email})>(
+        future: _identity,
+        builder: (context, snapshot) => _content(
+          context,
+          name: snapshot.data?.name ?? '',
+          email: snapshot.data?.email ?? '',
+          loading: snapshot.connectionState != ConnectionState.done,
+        ),
+      );
+
+  Widget _content(
+    BuildContext context, {
+    required String name,
+    required String email,
+    required bool loading,
+  }) {
+    final unread =
+        NotificationScope.maybeOf(context)?.inbox?.state.unreadCount ?? 0;
     return ColoredBox(
       key: const ValueKey('route-page-/more'),
-      color: MomCozyColors.background,
+      color: MomHomeTokens.background,
       child: ListView(
-        padding: MomCozyInsets.page,
+        padding: const EdgeInsets.symmetric(
+          horizontal: MomHomeTokens.inset,
+          vertical: 24,
+        ),
         children: [
-          const MomCozyPageHeader(title: 'More'),
-          const SizedBox(height: 16),
-          _ActionCard(
-            icon: Icons.manage_accounts_outlined,
-            title: 'Account settings',
-            detail: 'Sign-in methods and account deletion',
-            onTap: () => context.push('/account'),
+          Row(
+            children: [
+              Expanded(
+                child: Semantics(
+                  header: true,
+                  child: Text(
+                    '更多',
+                    style: MomHomeTokens.text(
+                      22,
+                      weight: FontWeight.w700,
+                      height: 26 / 22,
+                    ),
+                  ),
+                ),
+              ),
+              TextButton(
+                onPressed: () => context.push('/privacy'),
+                style: TextButton.styleFrom(
+                  minimumSize: const Size(44, 44),
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  alignment: Alignment.topLeft,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 12,
+                  ),
+                  foregroundColor: MomHomeTokens.secondary,
+                  textStyle: MomHomeTokens.text(12, height: 14 / 12),
+                ),
+                child: const Text('隐私'),
+              ),
+            ],
           ),
-          _AccountCard(userId: session.userId, locale: session.locale),
-          const SizedBox(height: 14),
-          _ActionCard(
-            icon: Icons.notifications_none_rounded,
-            title: '通知',
-            detail:
-                (NotificationScope.maybeOf(context)?.inbox?.state.unreadCount ??
-                        0) >
-                    0
-                ? '${NotificationScope.maybeOf(context)!.inbox!.state.unreadCount} unread'
-                : '查看预约、任务和服务提醒',
-            onTap: () => context.push('/notifications?from=/more'),
+          const SizedBox(height: MomHomeTokens.gap),
+          Text(
+            '照顾好自己，也安心管理每一份陪伴',
+            style: MomHomeTokens.text(
+              12,
+              color: MomHomeTokens.secondary,
+              height: 14 / 12,
+            ),
           ),
-          _ActionCard(
-            icon: Icons.support_agent_rounded,
+          const SizedBox(height: MomHomeTokens.gap),
+          Semantics(
+            label: '账号信息',
+            child: _AccountCard(name: name, email: email, loading: loading),
+          ),
+          const SizedBox(height: MomHomeTokens.gap),
+          const _SectionTitle('日常管理'),
+          const SizedBox(height: MomHomeTokens.gap),
+          Material(
+            color: MomHomeTokens.surface,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(MomHomeTokens.cardRadius),
+              side: const BorderSide(color: MomHomeTokens.border),
+            ),
+            clipBehavior: Clip.antiAlias,
+            child: MomCardBackground(
+              decoration: MomCardDecoration.utility,
+              child: Column(
+                children: [
+                  MomSettingsRow(
+                    title: '账号设置',
+                    subtitle: '登录方式与账号管理',
+                    onTap: () => context.push('/account'),
+                  ),
+                  const Divider(height: 1, color: MomHomeTokens.border),
+                  MomSettingsRow(
+                    title: '通知',
+                    subtitle: '查看消息与服务提醒',
+                    unreadCount: unread,
+                    onTap: () => context.push('/notifications?from=/more'),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: MomHomeTokens.gap),
+          const _SectionTitle('专家陪伴'),
+          const SizedBox(height: MomHomeTokens.gap),
+          MomExpertPlanEntry(
+            settingsLayout: true,
             title: '专家支持',
-            detail: '浏览 IBCLC 服务包和当前服务',
+            trailingGap: MomHomeTokens.gap,
             onTap: () => context.push('/services'),
           ),
-          _ActionCard(
-            icon: Icons.lock_outline_rounded,
-            title: '隐私与授权',
-            detail: '管理记录、AI 和视频咨询的使用范围',
-            onTap: () => _showPrivacy(context),
-          ),
-          const SizedBox(height: 18),
-          OutlinedButton(
+          const SizedBox(height: MomHomeTokens.gap),
+          TextButton(
             key: const ValueKey('more-logout'),
-            onPressed: onLogout == null
+            onPressed: loading || widget.onLogout == null
                 ? null
                 : () async {
                     final messenger = ScaffoldMessenger.of(context);
                     try {
-                      await onLogout!();
+                      await widget.onLogout!();
                     } catch (_) {
                       messenger.showSnackBar(
-                        const SnackBar(
+                        SnackBar(
+                          behavior: SnackBarBehavior.floating,
+                          elevation: 0,
+                          backgroundColor: MomHomeTokens.ink,
+                          margin: const EdgeInsets.all(16),
+                          padding: const EdgeInsets.all(16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(22),
+                            side: const BorderSide(color: MomHomeTokens.border),
+                          ),
                           content: Text(
                             'Sign-out could not finish. Reconnect and try again.',
+                            style: MomHomeTokens.text(
+                              13,
+                              color: MomHomeTokens.surface,
+                              height: 18 / 13,
+                            ),
                           ),
                         ),
                       );
                     }
                     if (context.mounted) context.go('/login');
                   },
+            style: TextButton.styleFrom(
+              foregroundColor: MomHomeTokens.secondary,
+              disabledForegroundColor: MomHomeTokens.secondary.withValues(
+                alpha: .4,
+              ),
+              minimumSize: const Size(44, 44),
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              textStyle: MomHomeTokens.text(13, height: 16 / 13),
+            ),
             child: const Text('退出登录'),
           ),
         ],
       ),
     );
   }
+}
 
-  void _showPrivacy(BuildContext context) {
-    showDialog<void>(
-      context: context,
-      builder: (context) => AlertDialog(
-        scrollable: true,
-        title: const Text('隐私与授权'),
-        content: const Text(
-          '你主动填写的妈妈、宝宝和服务记录只会在对应的账号与服务范围内使用。进入视频咨询和让 Cozymate 使用记录前，App 会分别请求授权。',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('知道了'),
-          ),
-        ],
-      ),
-    );
-  }
+class _SectionTitle extends StatelessWidget {
+  const _SectionTitle(this.title);
+  final String title;
+
+  @override
+  Widget build(BuildContext context) => Semantics(
+    header: true,
+    child: Text(
+      title,
+      style: MomHomeTokens.text(18, weight: FontWeight.w700, height: 30 / 18),
+    ),
+  );
 }
 
 class _AccountCard extends StatelessWidget {
-  const _AccountCard({required this.userId, required this.locale});
-
-  final String userId;
-  final String locale;
+  const _AccountCard({
+    required this.name,
+    required this.email,
+    required this.loading,
+  });
+  final String name;
+  final String email;
+  final bool loading;
 
   @override
   Widget build(BuildContext context) {
-    final initial = userId.trim().isEmpty
-        ? '?'
-        : userId.trim()[0].toUpperCase();
-    return Card(
-      margin: EdgeInsets.zero,
-      child: Padding(
-        padding: MomCozyInsets.card,
-        child: Row(
-          children: [
-            CircleAvatar(
-              radius: 28,
-              backgroundColor: MomCozyColors.violetSoft,
-              child: Text(
-                initial,
-                style: const TextStyle(
-                  color: MomCozyColors.violet,
-                  fontWeight: FontWeight.w800,
-                  fontSize: MomCozyTypography.headingSize,
-                ),
-              ),
-            ),
-            const SizedBox(width: 14),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('账号', style: Theme.of(context).textTheme.labelMedium),
-                  const SizedBox(height: 4),
-                  Text(
-                    userId,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
-                  const SizedBox(height: 3),
-                  Text(
-                    '语言：$locale',
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
-                ],
-              ),
-            ),
-          ],
+    final displayName = name.trim().isNotEmpty ? name.trim() : '我的账号';
+    final initial = name
+        .trim()
+        .split(RegExp(r'\s+'))
+        .where((word) => word.isNotEmpty)
+        .take(2)
+        .map((word) => word.characters.first)
+        .join()
+        .toUpperCase();
+    final avatar = ExcludeSemantics(
+      child: Container(
+        width: 52,
+        height: 52,
+        decoration: const BoxDecoration(
+          shape: BoxShape.circle,
+          color: MomHomeTokens.surface,
+        ),
+        alignment: Alignment.center,
+        child: Text(
+          initial.isNotEmpty
+              ? initial
+              : loading
+              ? '…'
+              : 'M',
+          textScaler: TextScaler.noScaling,
+          style: MomHomeTokens.text(
+            17,
+            weight: FontWeight.w700,
+            color: MomHomeTokens.rose,
+            height: 20 / 17,
+          ),
         ),
       ),
     );
-  }
-}
-
-class _ActionCard extends StatelessWidget {
-  const _ActionCard({
-    required this.icon,
-    required this.title,
-    required this.detail,
-    required this.onTap,
-  });
-
-  final IconData icon;
-  final String title;
-  final String detail;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 10),
-      child: ListTile(
-        leading: Icon(icon, color: MomCozyColors.violet),
-        title: Text(title, style: const TextStyle(fontWeight: FontWeight.w700)),
-        subtitle: Text(detail),
-        trailing: const Icon(Icons.chevron_right_rounded),
-        onTap: onTap,
-      ),
+    final identity = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          displayName,
+          style: MomHomeTokens.text(
+            19,
+            weight: FontWeight.w700,
+            height: 25 / 19,
+          ),
+        ),
+        const SizedBox(height: 5),
+        ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: 25),
+          child: Text(
+            loading
+                ? '正在加载账号…'
+                : email.isEmpty
+                ? '管理你的账号信息'
+                : email,
+            style: MomHomeTokens.text(12, color: MomHomeTokens.secondary),
+          ),
+        ),
+      ],
+    );
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final vertical =
+            constraints.maxWidth < 328 ||
+            MediaQuery.textScalerOf(context).scale(1) > 1.3;
+        return MomHomeSurface(
+          gradient: MomHomeTokens.milk,
+          backgroundDecoration: MomCardDecoration.account,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: MomHomeTokens.inset,
+              vertical: 22,
+            ),
+            child: vertical
+                ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      avatar,
+                      const SizedBox(height: MomHomeTokens.gap),
+                      identity,
+                    ],
+                  )
+                : Row(
+                    children: [
+                      avatar,
+                      const SizedBox(width: MomHomeTokens.gap),
+                      Expanded(child: identity),
+                    ],
+                  ),
+          ),
+        );
+      },
     );
   }
 }

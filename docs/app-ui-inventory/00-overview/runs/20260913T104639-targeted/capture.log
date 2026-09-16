@@ -1,0 +1,344 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/features/auth/auth_inventory_journey_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: inventory real login → More → account → deletion → login
+══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
+The following assertion was thrown building UnmanagedRestorationScope:
+'package:flutter/src/widgets/framework.dart': Failed assertion: line 6417 pos 14: '() {
+        // check that it really is our descendant
+        Element? ancestor = dependent._parent;
+        while (ancestor != this && ancestor != null) {
+          ancestor = ancestor._parent;
+        }
+        return ancestor == this;
+      }()': is not true.
+
+Either the assertion indicates an error in the framework itself, or we should provide substantially
+more information in this error message to help you determine and fix the underlying cause.
+In either case, please report this assertion by filing a bug on GitHub:
+  https://github.com/flutter/flutter/issues/new?template=02_bug.yml
+
+When the exception was thrown, this was the stack:
+#2      InheritedElement.notifyClients (package:flutter/src/widgets/framework.dart:6417:14)
+#3      ProxyElement.updated (package:flutter/src/widgets/framework.dart:6159:5)
+#4      InheritedElement.updated (package:flutter/src/widgets/framework.dart:6398:13)
+#5      ProxyElement.update (package:flutter/src/widgets/framework.dart:6148:5)
+#6      Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#7      ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#8      Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#9      ProxyElement.update (package:flutter/src/widgets/framework.dart:6149:5)
+#10     Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#11     ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#12     StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5982:11)
+#13     Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#14     StatefulElement.update (package:flutter/src/widgets/framework.dart:6007:5)
+#15     Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#16     ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#17     StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5982:11)
+#18     Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#19     StatefulElement.update (package:flutter/src/widgets/framework.dart:6007:5)
+#20     Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#21     ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#22     StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5982:11)
+#23     Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#24     BuildScope._tryRebuild (package:flutter/src/widgets/framework.dart:2750:15)
+#25     BuildScope._flushDirtyElements (package:flutter/src/widgets/framework.dart:2807:11)
+#26     BuildOwner.buildScope (package:flutter/src/widgets/framework.dart:3111:18)
+#27     AutomatedTestWidgetsFlutterBinding.drawFrame (package:flutter_test/src/binding.dart:2431:19)
+#28     RendererBinding._handlePersistentFrameCallback (package:flutter/src/rendering/binding.dart:509:5)
+#29     SchedulerBinding._invokeFrameCallback (package:flutter/src/scheduler/binding.dart:1430:15)
+#30     SchedulerBinding.handleDrawFrame (package:flutter/src/scheduler/binding.dart:1345:9)
+#31     AutomatedTestWidgetsFlutterBinding.pump.<anonymous closure> (package:flutter_test/src/binding.dart:2260:9)
+#34     TestAsyncUtils.guard (package:flutter_test/src/test_async_utils.dart:74:41)
+#35     AutomatedTestWidgetsFlutterBinding.pump (package:flutter_test/src/binding.dart:2249:27)
+#36     WidgetTester.pumpAndSettle.<anonymous closure> (package:flutter_test/src/widget_tester.dart:719:23)
+#39     TestAsyncUtils.guard (package:flutter_test/src/test_async_utils.dart:74:41)
+#40     WidgetTester.pumpAndSettle (package:flutter_test/src/widget_tester.dart:712:27)
+#41     main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/auth/auth_inventory_journey_test.dart:275:18)
+<asynchronous suspension>
+#42     testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#43     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 7 frames from class _AssertionError, dart:async, and package:stack_trace)
+
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
+The following assertion was thrown building Overlay-[LabeledGlobalKey<OverlayState>#81191](state:
+OverlayState#97d4e(entries: [OverlayEntry#6cc58(opaque: true; maintainState: false),
+OverlayEntry#b4c16(opaque: false; maintainState: true)])):
+'package:flutter/src/widgets/framework.dart': Failed assertion: line 6268 pos 12:
+'_dependents.isEmpty': is not true.
+
+Either the assertion indicates an error in the framework itself, or we should provide substantially
+more information in this error message to help you determine and fix the underlying cause.
+In either case, please report this assertion by filing a bug on GitHub:
+  https://github.com/flutter/flutter/issues/new?template=02_bug.yml
+
+The relevant error-causing widget was:
+  Navigator-[LabeledGlobalKey<NavigatorState>#6ede0 root]
+  Navigator:file:///Users/lute/.pub-cache/hosted/pub.dev/go_router-17.3.0/lib/src/builder.dart:459:16
+
+When the exception was thrown, this was the stack:
+#2      InheritedElement.debugDeactivated (package:flutter/src/widgets/framework.dart:6268:12)
+#3      _InactiveElements._deactivateRecursively.<anonymous closure> (package:flutter/src/widgets/framework.dart:2143:15)
+#4      _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2145:6)
+#5      ComponentElement.visitChildren (package:flutter/src/widgets/framework.dart:5871:14)
+#6      _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#7      ComponentElement.visitChildren (package:flutter/src/widgets/framework.dart:5871:14)
+#8      _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#9      ComponentElement.visitChildren (package:flutter/src/widgets/framework.dart:5871:14)
+#10     _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#11     SingleChildRenderObjectElement.visitChildren (package:flutter/src/widgets/framework.dart:7101:14)
+#12     _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#13     ComponentElement.visitChildren (package:flutter/src/widgets/framework.dart:5871:14)
+#14     _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#15     ComponentElement.visitChildren (package:flutter/src/widgets/framework.dart:5871:14)
+#16     _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#17     ComponentElement.visitChildren (package:flutter/src/widgets/framework.dart:5871:14)
+#18     _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#19     ComponentElement.visitChildren (package:flutter/src/widgets/framework.dart:5871:14)
+#20     _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#21     ComponentElement.visitChildren (package:flutter/src/widgets/framework.dart:5871:14)
+#22     _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#23     _InactiveElements.add (package:flutter/src/widgets/framework.dart:2155:9)
+#24     Element.deactivateChild (package:flutter/src/widgets/framework.dart:4636:30)
+#25     Element.updateChildren (package:flutter/src/widgets/framework.dart:4302:11)
+#26     MultiChildRenderObjectElement.update (package:flutter/src/widgets/framework.dart:7295:17)
+#27     Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#28     ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#29     StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5982:11)
+#30     Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#31     BuildScope._tryRebuild (package:flutter/src/widgets/framework.dart:2750:15)
+#32     BuildScope._flushDirtyElements (package:flutter/src/widgets/framework.dart:2807:11)
+#33     BuildOwner.buildScope (package:flutter/src/widgets/framework.dart:3111:18)
+#34     AutomatedTestWidgetsFlutterBinding.drawFrame (package:flutter_test/src/binding.dart:2431:19)
+#35     RendererBinding._handlePersistentFrameCallback (package:flutter/src/rendering/binding.dart:509:5)
+#36     SchedulerBinding._invokeFrameCallback (package:flutter/src/scheduler/binding.dart:1430:15)
+#37     SchedulerBinding.handleDrawFrame (package:flutter/src/scheduler/binding.dart:1345:9)
+#38     AutomatedTestWidgetsFlutterBinding.pump.<anonymous closure> (package:flutter_test/src/binding.dart:2260:9)
+#41     TestAsyncUtils.guard (package:flutter_test/src/test_async_utils.dart:74:41)
+#42     AutomatedTestWidgetsFlutterBinding.pump (package:flutter_test/src/binding.dart:2249:27)
+#43     WidgetTester.pumpAndSettle.<anonymous closure> (package:flutter_test/src/widget_tester.dart:719:23)
+<asynchronous suspension>
+#44     TestAsyncUtils.guard.<anonymous closure> (package:flutter_test/src/test_async_utils.dart:130:27)
+<asynchronous suspension>
+#45     main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/auth/auth_inventory_journey_test.dart:275:5)
+<asynchronous suspension>
+#46     testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#47     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 5 frames from class _AssertionError, dart:async, and package:stack_trace)
+
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY SCHEDULER LIBRARY ╞═════════════════════════════════════════════════════════
+The following assertion was thrown during a scheduler callback:
+Tried to build dirty widget in the wrong build scope.
+A widget which was marked as dirty and is still active was scheduled to be built, but the current
+build scope unexpectedly does not contain that widget.
+Sometimes this is detected when an element is removed from the widget tree, but the element somehow
+did not get marked as inactive. In that case, it might be caused by an ancestor element failing to
+implement visitChildren correctly, thus preventing some or all of its descendants from being
+correctly deactivated.
+The root of the build scope was:
+  [root]
+The offending element (which does not appear to be a descendant of the root of the build scope) was:
+  ListenableBuilder
+
+When the exception was thrown, this was the stack:
+#0      BuildScope._debugAssertElementInScope (package:flutter/src/widgets/framework.dart:2772:5)
+#1      BuildScope._flushDirtyElements (package:flutter/src/widgets/framework.dart:2806:18)
+#2      BuildOwner.buildScope (package:flutter/src/widgets/framework.dart:3111:18)
+#3      AutomatedTestWidgetsFlutterBinding.drawFrame (package:flutter_test/src/binding.dart:2431:19)
+#4      RendererBinding._handlePersistentFrameCallback (package:flutter/src/rendering/binding.dart:509:5)
+#5      SchedulerBinding._invokeFrameCallback (package:flutter/src/scheduler/binding.dart:1430:15)
+#6      SchedulerBinding.handleDrawFrame (package:flutter/src/scheduler/binding.dart:1345:9)
+#7      AutomatedTestWidgetsFlutterBinding.pump.<anonymous closure> (package:flutter_test/src/binding.dart:2260:9)
+#10     TestAsyncUtils.guard (package:flutter_test/src/test_async_utils.dart:74:41)
+#11     AutomatedTestWidgetsFlutterBinding.pump (package:flutter_test/src/binding.dart:2249:27)
+#12     WidgetTester.pumpAndSettle.<anonymous closure> (package:flutter_test/src/widget_tester.dart:719:23)
+<asynchronous suspension>
+#13     TestAsyncUtils.guard.<anonymous closure> (package:flutter_test/src/test_async_utils.dart:130:27)
+<asynchronous suspension>
+#14     main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/auth/auth_inventory_journey_test.dart:275:5)
+<asynchronous suspension>
+#15     testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#16     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY WIDGET INSPECTOR ╞══════════════════════════════════════════════════════════
+The following assertion was thrown:
+Looking up a deactivated widget's ancestor is unsafe.
+At this point the state of the widget's element tree is no longer stable.
+To safely refer to a widget's ancestor in its dispose() method, save a reference to the ancestor by
+calling dependOnInheritedWidgetOfExactType() in the widget's didChangeDependencies() method.
+
+When the exception was thrown, this was the stack:
+#0      Element._debugCheckStateIsActiveForAncestorLookup.<anonymous closure> (package:flutter/src/widgets/framework.dart:5049:9)
+#1      Element._debugCheckStateIsActiveForAncestorLookup (package:flutter/src/widgets/framework.dart:5063:6)
+#2      Element.visitAncestorElements (package:flutter/src/widgets/framework.dart:5174:12)
+#3      _describeRelevantUserCode (package:flutter/src/widgets/widget_inspector.dart:4242:13)
+#4      _parseDiagnosticsNode (package:flutter/src/widgets/widget_inspector.dart:4161:12)
+#5      debugTransformDebugCreator (package:flutter/src/widgets/widget_inspector.dart:4140:21)
+#6      _FlutterErrorDetailsNode.builder (package:flutter/src/foundation/assertions.dart:1300:31)
+#7      DiagnosticableNode.getProperties (package:flutter/src/foundation/diagnostics.dart:2943:68)
+#8      TextTreeRenderer._debugRender (package:flutter/src/foundation/diagnostics.dart:1270:63)
+#9      TextTreeRenderer.render (package:flutter/src/foundation/diagnostics.dart:1137:14)
+#10     FlutterError.dumpErrorToConsole (package:flutter/src/foundation/assertions.dart:1030:13)
+#11     TestWidgetsFlutterBinding._runTest.<anonymous closure> (package:flutter_test/src/binding.dart:1779:24)
+#12     FlutterError.reportError (package:flutter/src/foundation/assertions.dart:1193:14)
+#13     _reportException (package:flutter/src/widgets/framework.dart:7398:16)
+#14     ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5845:9)
+#15     StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5982:11)
+#16     Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#17     BuildScope._tryRebuild (package:flutter/src/widgets/framework.dart:2750:15)
+#18     BuildScope._flushDirtyElements (package:flutter/src/widgets/framework.dart:2807:11)
+#19     BuildOwner.buildScope (package:flutter/src/widgets/framework.dart:3111:18)
+#20     AutomatedTestWidgetsFlutterBinding.drawFrame (package:flutter_test/src/binding.dart:2431:19)
+#21     RendererBinding._handlePersistentFrameCallback (package:flutter/src/rendering/binding.dart:509:5)
+#22     SchedulerBinding._invokeFrameCallback (package:flutter/src/scheduler/binding.dart:1430:15)
+#23     SchedulerBinding.handleDrawFrame (package:flutter/src/scheduler/binding.dart:1345:9)
+#24     AutomatedTestWidgetsFlutterBinding.pump.<anonymous closure> (package:flutter_test/src/binding.dart:2260:9)
+#27     TestAsyncUtils.guard (package:flutter_test/src/test_async_utils.dart:74:41)
+#28     AutomatedTestWidgetsFlutterBinding.pump (package:flutter_test/src/binding.dart:2249:27)
+#29     WidgetTester.pumpAndSettle.<anonymous closure> (package:flutter_test/src/widget_tester.dart:719:23)
+<asynchronous suspension>
+#30     TestAsyncUtils.guard.<anonymous closure> (package:flutter_test/src/test_async_utils.dart:130:27)
+<asynchronous suspension>
+#31     main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/auth/auth_inventory_journey_test.dart:275:5)
+<asynchronous suspension>
+#32     testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#33     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+This exception was caught while trying to describe the user-relevant code of another error.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY WIDGET INSPECTOR ╞══════════════════════════════════════════════════════════
+The following assertion was thrown:
+Looking up a deactivated widget's ancestor is unsafe.
+At this point the state of the widget's element tree is no longer stable.
+To safely refer to a widget's ancestor in its dispose() method, save a reference to the ancestor by
+calling dependOnInheritedWidgetOfExactType() in the widget's didChangeDependencies() method.
+
+When the exception was thrown, this was the stack:
+#0      Element._debugCheckStateIsActiveForAncestorLookup.<anonymous closure> (package:flutter/src/widgets/framework.dart:5049:9)
+#1      Element._debugCheckStateIsActiveForAncestorLookup (package:flutter/src/widgets/framework.dart:5063:6)
+#2      Element.visitAncestorElements (package:flutter/src/widgets/framework.dart:5174:12)
+#3      _describeRelevantUserCode (package:flutter/src/widgets/widget_inspector.dart:4242:13)
+#4      _parseDiagnosticsNode (package:flutter/src/widgets/widget_inspector.dart:4161:12)
+#5      debugTransformDebugCreator (package:flutter/src/widgets/widget_inspector.dart:4140:21)
+#6      _FlutterErrorDetailsNode.builder (package:flutter/src/foundation/assertions.dart:1300:31)
+#7      DiagnosticableNode.emptyBodyDescription (package:flutter/src/foundation/diagnostics.dart:2939:45)
+#8      TextTreeRenderer._debugRender (package:flutter/src/foundation/diagnostics.dart:1307:14)
+#9      TextTreeRenderer.render (package:flutter/src/foundation/diagnostics.dart:1137:14)
+#10     FlutterError.dumpErrorToConsole (package:flutter/src/foundation/assertions.dart:1030:13)
+#11     TestWidgetsFlutterBinding._runTest.<anonymous closure> (package:flutter_test/src/binding.dart:1779:24)
+#12     FlutterError.reportError (package:flutter/src/foundation/assertions.dart:1193:14)
+#13     _reportException (package:flutter/src/widgets/framework.dart:7398:16)
+#14     ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5845:9)
+#15     StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5982:11)
+#16     Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#17     BuildScope._tryRebuild (package:flutter/src/widgets/framework.dart:2750:15)
+#18     BuildScope._flushDirtyElements (package:flutter/src/widgets/framework.dart:2807:11)
+#19     BuildOwner.buildScope (package:flutter/src/widgets/framework.dart:3111:18)
+#20     AutomatedTestWidgetsFlutterBinding.drawFrame (package:flutter_test/src/binding.dart:2431:19)
+#21     RendererBinding._handlePersistentFrameCallback (package:flutter/src/rendering/binding.dart:509:5)
+#22     SchedulerBinding._invokeFrameCallback (package:flutter/src/scheduler/binding.dart:1430:15)
+#23     SchedulerBinding.handleDrawFrame (package:flutter/src/scheduler/binding.dart:1345:9)
+#24     AutomatedTestWidgetsFlutterBinding.pump.<anonymous closure> (package:flutter_test/src/binding.dart:2260:9)
+#27     TestAsyncUtils.guard (package:flutter_test/src/test_async_utils.dart:74:41)
+#28     AutomatedTestWidgetsFlutterBinding.pump (package:flutter_test/src/binding.dart:2249:27)
+#29     WidgetTester.pumpAndSettle.<anonymous closure> (package:flutter_test/src/widget_tester.dart:719:23)
+<asynchronous suspension>
+#30     TestAsyncUtils.guard.<anonymous closure> (package:flutter_test/src/test_async_utils.dart:130:27)
+<asynchronous suspension>
+#31     main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/auth/auth_inventory_journey_test.dart:275:5)
+<asynchronous suspension>
+#32     testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#33     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+This exception was caught while trying to describe the user-relevant code of another error.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: 'Multiple exceptions (5) were detected during the running of the current test, and at
+least one was unexpected.'
+
+When the exception was thrown, this was the stack:
+#4      main.capture (file:///Users/lute/project/momcozy-lab/app/test/features/auth/auth_inventory_journey_test.dart:162:5)
+#5      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/auth/auth_inventory_journey_test.dart:277:11)
+<asynchronous suspension>
+#6      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#7      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/features/auth/auth_inventory_journey_test.dart line 162
+The test description was:
+  inventory real login → More → account → deletion → login
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +0 -1: inventory real login → More → account → deletion → login [E]
+  Test failed. See exception logs above.
+  The test description was: inventory real login → More → account → deletion → login
+  
+Warning: At least one test in this suite creates an HttpClient. When running a test suite that uses
+TestWidgetsFlutterBinding, all HTTP requests will return status code 400, and no network request
+will actually be made. Any test expecting a real network connection and status code will fail.
+To test code that needs an HttpClient, provide your own HttpClient implementation to the code under
+test, so that your test can consistently provide a testable response to the code under test.
+00:01 +0 -1: inventory registration verification resend and real sign out
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: _AssertionError:<'package:flutter/src/widgets/framework.dart': Failed assertion: line 6417
+pos 14: '() {
+                  // check that it really is our descendant
+                  Element? ancestor = dependent._parent;
+                  while (ancestor != this && ancestor != null) {
+                    ancestor = ancestor._parent;
+                  }
+                  return ancestor == this;
+                }()': is not true.>
+
+When the exception was thrown, this was the stack:
+#4      main.capture (file:///Users/lute/project/momcozy-lab/app/test/features/auth/auth_inventory_journey_test.dart:162:5)
+#5      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/auth/auth_inventory_journey_test.dart:372:11)
+<asynchronous suspension>
+#6      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#7      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/features/auth/auth_inventory_journey_test.dart line 162
+The test description was:
+  inventory registration verification resend and real sign out
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +0 -2: inventory registration verification resend and real sign out [E]
+  Test failed. See exception logs above.
+  The test description was: inventory registration verification resend and real sign out
+  
+00:01 +0 -2: (tearDownAll)
+00:01 +0 -2: Some tests failed.
+
+Failing tests:
+  /Users/lute/project/momcozy-lab/app/test/features/auth/auth_inventory_journey_test.dart: inventory real login → More → account → deletion → login
+  /Users/lute/project/momcozy-lab/app/test/features/auth/auth_inventory_journey_test.dart: inventory registration verification resend and real sign out

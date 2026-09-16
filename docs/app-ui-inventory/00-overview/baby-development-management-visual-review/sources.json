@@ -1,0 +1,3962 @@
+{
+  "method": "full-width continuous 650px strips; identical pixels reference prior reviewed Mom or Baby controls; remaining segments reviewed at native width",
+  "sources": [
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-delete-confirm-320-2x.png",
+      "sha256": "4dfd17f5116ae6fcf3179bf2ef64cd7aa8302ba84e451b9c3cb30628424b82aa",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "f2bd90b983f220bf271417c05c4630c98d08457a42eede99db73d29fe1e958bc",
+          "review": "sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "07a7eab73013a4e47d038890ee0592e20eb6a98f8500087ccb2f3a9f83f26067",
+          "review": "sheet-01.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-delete-confirm-393-1x.png",
+      "sha256": "4bf1b5430a2f59e8b282211bc3bcd67c8f8b62e0c3df2eff50bc503e3a4cb72e",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ff4b57801fbbb294490f0f99fd732512a51b32d0fcfe2e2c4e33dc0764fc3328",
+          "review": "sheet-01.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "749b6c42af3c3cd9eb72526d7fa2ddad4ae221bb6338713305dba8c56f277a96",
+          "review": "sheet-01.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-delete-kept-320-2x.png",
+      "sha256": "c4494d137ec9b550e25d3a8dd9bf63d0b40a3cf10c8b0bcc5b92bfc6d030bbca",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c2b98d2779ca018bd6526707dcd7f630a89854152da0f2b273b3b979c0854ff3",
+          "review": "sheet-01.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a72c2e9d472b74a73b3cc51b51a2be7cef2ccefb643c84695367073e8d4b15ab",
+          "review": "sheet-01.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-delete-kept-393-1x.png",
+      "sha256": "419919381a5149b431dc851aa9d8cc4008083942c8fb49194c837bf8eb8a3b4e",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "668548fd521774ab791faee9ebfbedc4117a90d86c6269a4b1fab001b47ca835",
+          "review": "sheet-02.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "8bdeffc41d4a3f4c9ce4bf04d242795fab314a5a6f5ce005f84e01795430343f",
+          "review": "../baby-feeding-control-visual-review/sheet-16.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-deleted-320-2x.long.png",
+      "sha256": "ab5b7d0cbf90b4c28061b8de825ec247698d18e711cd7e66d1695c224bc5a4fe",
+      "width": 320,
+      "height": 907,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "fb60245da9f73c20293512208b47d7336cfa544796aa02a14503b2b50db55657",
+          "review": "sheet-02.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 907,
+          "pixel_sha256": "3f695762c95910cb1c3f211a4a1abee7247a422c04ce6a23455667cd5084fc23",
+          "review": "sheet-02.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-deleted-320-2x.png",
+      "sha256": "833505a8b844e4ef82b671c2a414d4f5376c016ec5629145eff3eb7092dae9cf",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "fb60245da9f73c20293512208b47d7336cfa544796aa02a14503b2b50db55657",
+          "review": "sheet-02.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "f1f0a1e6064bd3058a82f1e3338c1c2af80f877aecdce5f7394f0887dbe084f1",
+          "review": "sheet-02.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-deleted-393-1x.png",
+      "sha256": "1180f17ef045d1251e218976fb29f64d09490b74fde5963c531259b058def101",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "1b1d6cf5b94ddd6675f536ccc2fa2f9bef9a2d3fab30744b8e74f222d82339a4",
+          "review": "sheet-02.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "8bdeffc41d4a3f4c9ce4bf04d242795fab314a5a6f5ce005f84e01795430343f",
+          "review": "../baby-feeding-control-visual-review/sheet-16.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-head-history-320-2x.long.png",
+      "sha256": "501c41312f747cd0c5f35e5e0fdb3f11c46a9841b465a25490a0765424840560",
+      "width": 320,
+      "height": 1003,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "191e11b082f264e0b06395aa13518e9d1963842abb198b60c2696c2211ad0107",
+          "review": "sheet-02.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1003,
+          "pixel_sha256": "ed560a79e56ab946d147f44d6cefb98f715bfe3b209c9c390318577a5776da65",
+          "review": "sheet-03.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-head-history-320-2x.png",
+      "sha256": "d0ef271a779fde0b52ff1c6502d5cc90f78bcc4a29373bd1a3d4870ff5bc628a",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "191e11b082f264e0b06395aa13518e9d1963842abb198b60c2696c2211ad0107",
+          "review": "sheet-02.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "cfcd776632d55da6c23ee5ada0717d3c2804a309425ef9bb116c4db0b30410bd",
+          "review": "sheet-03.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-head-history-393-1x.png",
+      "sha256": "e5c8020f29d9e57cc6122d0de18dff8328e59a820a57b5e05f20762fa1c16579",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "8d7862eb248f67b1387c2b02c9372ec32399c248b9efd810d1f078fd13af5f1a",
+          "review": "sheet-03.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "0750df732dd85dd85ce59e0c17c9fbcd52d6184b58290ab62433e38a542cea9a",
+          "review": "sheet-03.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-head-home-entry-320-2x.long.png",
+      "sha256": "2a7eed3eaa881740523730a74f99487a3935cee5f5e500fdea7e513a60082fc7",
+      "width": 320,
+      "height": 3460,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "58578630282c08ed070b330c5092b2346554d47e291ecce03bfa1790d2ebdd62",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "034c398b12fe2df5aaef1e8fd2e151d4092f4bc550a8179f7524acfdf8572a5d",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "fa27bf1b8f7135cf78bb1380036cbe25b805799678f9c6338d1b09862168215b",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "cf7b9827ee12ea5f4ce473b5b04736e9eca7e63163a06350e8ad0569b0e9a58a",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-3"
+        },
+        {
+          "y0": 2600,
+          "y1": 3250,
+          "pixel_sha256": "830120be56be43c6e4e4a7527c94577138b4175b12f8b7b606a89d5ff059987b",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-4"
+        },
+        {
+          "y0": 3250,
+          "y1": 3460,
+          "pixel_sha256": "347ac7ec17d5bdaf8c362c53e6be84275398444203824d119dff6d55c72c68e4",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-head-home-entry-320-2x.png",
+      "sha256": "32e02297eb960cf9da693d3ed9a4e380131ba98e63d64680e1c452112635af75",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "58578630282c08ed070b330c5092b2346554d47e291ecce03bfa1790d2ebdd62",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "98ef9a2ad09f8a3c8229ac286c7eb3cb28273ffd01708531c25ae3c0ce531fd2",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-head-home-entry-393-1x.long.png",
+      "sha256": "f0cba396e8a9efa775fb9fbb71adccd863e4ce8dace888759be74db253f099a6",
+      "width": 393,
+      "height": 1752,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2541e10f43029eb71329290bf405fa83fabe418cf9eb6676ed4e3eb8498f6856",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "462243825730002d5a7b26fe7e1bbdb2f381ea57afabfc7a0cad762ed9541c1e",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1752,
+          "pixel_sha256": "5d1142fe86ef6e5a8664871afce9928bf15cf58f7b773ac5f1080f1b7fead23c",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-head-home-entry-393-1x.png",
+      "sha256": "f7c02c89b1acb7e0cd4ab4adc0593819b05f05ed599398d49ea569c924ea6a82",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2541e10f43029eb71329290bf405fa83fabe418cf9eb6676ed4e3eb8498f6856",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a1f9a5a5f828e0a335129ce0d0a8a7cf54c1ab1e6b87423f882a64c1946d8f9e",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-head-home-return-320-2x.long.png",
+      "sha256": "2a7eed3eaa881740523730a74f99487a3935cee5f5e500fdea7e513a60082fc7",
+      "width": 320,
+      "height": 3460,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "58578630282c08ed070b330c5092b2346554d47e291ecce03bfa1790d2ebdd62",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "034c398b12fe2df5aaef1e8fd2e151d4092f4bc550a8179f7524acfdf8572a5d",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "fa27bf1b8f7135cf78bb1380036cbe25b805799678f9c6338d1b09862168215b",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "cf7b9827ee12ea5f4ce473b5b04736e9eca7e63163a06350e8ad0569b0e9a58a",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-3"
+        },
+        {
+          "y0": 2600,
+          "y1": 3250,
+          "pixel_sha256": "830120be56be43c6e4e4a7527c94577138b4175b12f8b7b606a89d5ff059987b",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-4"
+        },
+        {
+          "y0": 3250,
+          "y1": 3460,
+          "pixel_sha256": "347ac7ec17d5bdaf8c362c53e6be84275398444203824d119dff6d55c72c68e4",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-head-home-return-320-2x.png",
+      "sha256": "32e02297eb960cf9da693d3ed9a4e380131ba98e63d64680e1c452112635af75",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "58578630282c08ed070b330c5092b2346554d47e291ecce03bfa1790d2ebdd62",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "98ef9a2ad09f8a3c8229ac286c7eb3cb28273ffd01708531c25ae3c0ce531fd2",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-head-home-return-393-1x.long.png",
+      "sha256": "f0cba396e8a9efa775fb9fbb71adccd863e4ce8dace888759be74db253f099a6",
+      "width": 393,
+      "height": 1752,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2541e10f43029eb71329290bf405fa83fabe418cf9eb6676ed4e3eb8498f6856",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "462243825730002d5a7b26fe7e1bbdb2f381ea57afabfc7a0cad762ed9541c1e",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1752,
+          "pixel_sha256": "5d1142fe86ef6e5a8664871afce9928bf15cf58f7b773ac5f1080f1b7fead23c",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-head-home-return-393-1x.png",
+      "sha256": "f7c02c89b1acb7e0cd4ab4adc0593819b05f05ed599398d49ea569c924ea6a82",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2541e10f43029eb71329290bf405fa83fabe418cf9eb6676ed4e3eb8498f6856",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a1f9a5a5f828e0a335129ce0d0a8a7cf54c1ab1e6b87423f882a64c1946d8f9e",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-head-more-return-320-2x.png",
+      "sha256": "90ff3249f64fc7750a5da2a6bac0e2e90a64014893d9e85c3df4c76dbe8dea38",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "7925ed8e5939f589376b72745969839e14c7fb166cfb48866eed469fa66c4d02",
+          "review": "../baby-profile-control-visual-review/sheet-19.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "f95aac7cc67095efb73a4ae0b9ee5dc9518b86f20195158e860fce9621ec483a",
+          "review": "../mom-rest-control-visual-review/sheet-19.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-head-more-return-393-1x.png",
+      "sha256": "1905827f337ce2fe60b46266600cce9aa8dea3b9aac6828fb6a1d3f67f020b35",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c8e12900bddbe318fd8d03ad9b384466fc1af1f6c371f72f999f20bc96cac1d6",
+          "review": "../baby-profile-control-visual-review/sheet-19.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "ae62a60cadfc8bfb09e3e94acb0dc8f7d481c4c260eae5960e33ebdc5f0799db",
+          "review": "../mom-rest-control-visual-review/sheet-20.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-head-saved-320-2x.long.png",
+      "sha256": "52798ca8bf235f1b0243306c2809a4000371320ca3102c04576ab86821aa3036",
+      "width": 320,
+      "height": 3554,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "58578630282c08ed070b330c5092b2346554d47e291ecce03bfa1790d2ebdd62",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "034c398b12fe2df5aaef1e8fd2e151d4092f4bc550a8179f7524acfdf8572a5d",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "fa27bf1b8f7135cf78bb1380036cbe25b805799678f9c6338d1b09862168215b",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "cf7b9827ee12ea5f4ce473b5b04736e9eca7e63163a06350e8ad0569b0e9a58a",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-3"
+        },
+        {
+          "y0": 2600,
+          "y1": 3250,
+          "pixel_sha256": "b0642aba05928c776f791d9c26e7add778f68d5b445da62b1c9ac1f5620d383f",
+          "review": "../baby-development-boundary-visual-review/sheet-05.png#tile-0"
+        },
+        {
+          "y0": 3250,
+          "y1": 3554,
+          "pixel_sha256": "c79e47165de7b9cdc32d472e17bb425ee22d7bdbf49e0704b2ce714dc7b37d42",
+          "review": "../baby-development-boundary-visual-review/sheet-05.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-head-saved-320-2x.png",
+      "sha256": "d1a06ef4c1d0eabd15a6117114cc9c2dc084e50807447444ae687434e57642b0",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "0d284b4e8d46327c9f87d34c3265a444625536a280bb38ed32370453046a2f24",
+          "review": "../baby-development-control-visual-review/sheet-05.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "563dd0eb6127eff7c02d4cf0854f116747677cf072bd11574cc7adf5267526f7",
+          "review": "../baby-feeding-control-visual-review/sheet-18.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-head-saved-393-1x.long.png",
+      "sha256": "14830f54ec9e4f659edeaf399a4e59c10e2967ed23b80587d93837a86fddb826",
+      "width": 393,
+      "height": 1816,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2541e10f43029eb71329290bf405fa83fabe418cf9eb6676ed4e3eb8498f6856",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "462243825730002d5a7b26fe7e1bbdb2f381ea57afabfc7a0cad762ed9541c1e",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1816,
+          "pixel_sha256": "339a0014bca02680e8fbe8909d175a4db523583a2db9804b5a4fc07fa05f291e",
+          "review": "../baby-development-control-visual-review/sheet-05.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-head-saved-393-1x.png",
+      "sha256": "fad0d44f149b0bc1a8154c905dfb7e10b6f3abe8ca047d26baf977424f910efc",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "1d1b4de2c1b81d5666fd54394d73c5b21b2a7bea81744a337473932cb4467d25",
+          "review": "../baby-development-control-visual-review/sheet-05.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "4708d68a58904bdf9acff66f8efee44d91bea259d8da8661c22c884071926520",
+          "review": "../baby-development-control-visual-review/sheet-05.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-head-selected-lifts-head-320-2x.long.png",
+      "sha256": "2e6c3099a8da982c146b76b5284abfaf15112605a3aac5baad51dd47fdf2063d",
+      "width": 320,
+      "height": 1542,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "fc92358c6c52fe7fda4deddad164fd97c7aec6a75959e2d71dfa5d0eddd3242b",
+          "review": "../baby-development-control-visual-review/sheet-02.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "867de9fe2509a173e9b1e75430830bd756120ec5bd2e485780718daa035003f8",
+          "review": "../baby-development-control-visual-review/sheet-20.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1542,
+          "pixel_sha256": "2c89335eab245687767495301a221a6db8203bd6469a4d19e287833f78d69d19",
+          "review": "../baby-development-control-visual-review/sheet-02.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-head-selected-lifts-head-320-2x.png",
+      "sha256": "c0f8eb84469452d2647ec4c6cf1c124011ef3cd52d8f9b9a1bb186bf3bdeaea9",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "232c996cd34a4554ab4842278ea3b265da4c01241b01ea9ba766c03aa69e7f4f",
+          "review": "../baby-development-control-visual-review/sheet-02.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "76ec8de8e0399d20f7bf211c63fa2d18776a2d1a4325cbd39efdb6b14fcc53fb",
+          "review": "../baby-development-control-visual-review/sheet-02.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-head-selected-lifts-head-393-1x.png",
+      "sha256": "28fa1fa5bd47a22c096ed4cf79cb2e719e1e7dcab57a019aaec8189ee240e082",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "99c4113628c0ae7b0042c59073a9f1991fb634f1c917aae0a0afb4c3488a4bd8",
+          "review": "sheet-03.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "bfe04f1aa45247cf0495b9768136828ab49029f142966453a3eb385907fcd460",
+          "review": "../baby-development-control-visual-review/sheet-03.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-head-selected-looks-at-face-320-2x.long.png",
+      "sha256": "cd49bb5e6d9cac5c0c08d1d3089f015fc106d0853b66332894c6caf048c73cb7",
+      "width": 320,
+      "height": 1542,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "fc92358c6c52fe7fda4deddad164fd97c7aec6a75959e2d71dfa5d0eddd3242b",
+          "review": "../baby-development-control-visual-review/sheet-02.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "e100bbc8f595a34fca0d9206c5d3ad4c5be9567a70d2927b195089a9d8118a80",
+          "review": "../baby-development-control-visual-review/sheet-03.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1542,
+          "pixel_sha256": "2c89335eab245687767495301a221a6db8203bd6469a4d19e287833f78d69d19",
+          "review": "../baby-development-control-visual-review/sheet-02.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-head-selected-looks-at-face-320-2x.png",
+      "sha256": "f5ead7d98e7b272dcdd5b58fd751a2b2cd55732c855da040b71366a7d3055c64",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "df2be000c0d7d740d506a2ab64a3cb1922a776cc52098ca11e0e709289ddbb6f",
+          "review": "../baby-development-control-visual-review/sheet-03.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "15b71561fb7c07a14715ad7e3e48ee533dbf6ecfaa1143f8743b6baed9f60d2d",
+          "review": "../baby-development-control-visual-review/sheet-03.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-head-selected-looks-at-face-393-1x.png",
+      "sha256": "6e9f2f42ca63a3d40b6d280701e8422f3d655fe4bd0e2ef71af6fd57139c0320",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "1889d0998a5da7a1ebff7ca94b961da6b39dbd55c61a582b596666265d94aa9f",
+          "review": "../baby-development-control-visual-review/sheet-03.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "bfe04f1aa45247cf0495b9768136828ab49029f142966453a3eb385907fcd460",
+          "review": "../baby-development-control-visual-review/sheet-03.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-history-320-2x.png",
+      "sha256": "c4494d137ec9b550e25d3a8dd9bf63d0b40a3cf10c8b0bcc5b92bfc6d030bbca",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c2b98d2779ca018bd6526707dcd7f630a89854152da0f2b273b3b979c0854ff3",
+          "review": "sheet-01.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a72c2e9d472b74a73b3cc51b51a2be7cef2ccefb643c84695367073e8d4b15ab",
+          "review": "sheet-01.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-history-393-1x.png",
+      "sha256": "419919381a5149b431dc851aa9d8cc4008083942c8fb49194c837bf8eb8a3b4e",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "668548fd521774ab791faee9ebfbedc4117a90d86c6269a4b1fab001b47ca835",
+          "review": "sheet-02.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "8bdeffc41d4a3f4c9ce4bf04d242795fab314a5a6f5ce005f84e01795430343f",
+          "review": "../baby-feeding-control-visual-review/sheet-16.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-home-entry-320-2x.long.png",
+      "sha256": "2a7eed3eaa881740523730a74f99487a3935cee5f5e500fdea7e513a60082fc7",
+      "width": 320,
+      "height": 3460,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "58578630282c08ed070b330c5092b2346554d47e291ecce03bfa1790d2ebdd62",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "034c398b12fe2df5aaef1e8fd2e151d4092f4bc550a8179f7524acfdf8572a5d",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "fa27bf1b8f7135cf78bb1380036cbe25b805799678f9c6338d1b09862168215b",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "cf7b9827ee12ea5f4ce473b5b04736e9eca7e63163a06350e8ad0569b0e9a58a",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-3"
+        },
+        {
+          "y0": 2600,
+          "y1": 3250,
+          "pixel_sha256": "830120be56be43c6e4e4a7527c94577138b4175b12f8b7b606a89d5ff059987b",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-4"
+        },
+        {
+          "y0": 3250,
+          "y1": 3460,
+          "pixel_sha256": "347ac7ec17d5bdaf8c362c53e6be84275398444203824d119dff6d55c72c68e4",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-home-entry-320-2x.png",
+      "sha256": "32e02297eb960cf9da693d3ed9a4e380131ba98e63d64680e1c452112635af75",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "58578630282c08ed070b330c5092b2346554d47e291ecce03bfa1790d2ebdd62",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "98ef9a2ad09f8a3c8229ac286c7eb3cb28273ffd01708531c25ae3c0ce531fd2",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-home-entry-393-1x.long.png",
+      "sha256": "f0cba396e8a9efa775fb9fbb71adccd863e4ce8dace888759be74db253f099a6",
+      "width": 393,
+      "height": 1752,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2541e10f43029eb71329290bf405fa83fabe418cf9eb6676ed4e3eb8498f6856",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "462243825730002d5a7b26fe7e1bbdb2f381ea57afabfc7a0cad762ed9541c1e",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1752,
+          "pixel_sha256": "5d1142fe86ef6e5a8664871afce9928bf15cf58f7b773ac5f1080f1b7fead23c",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-home-entry-393-1x.png",
+      "sha256": "f7c02c89b1acb7e0cd4ab4adc0593819b05f05ed599398d49ea569c924ea6a82",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2541e10f43029eb71329290bf405fa83fabe418cf9eb6676ed4e3eb8498f6856",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a1f9a5a5f828e0a335129ce0d0a8a7cf54c1ab1e6b87423f882a64c1946d8f9e",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-home-return-320-2x.long.png",
+      "sha256": "2a7eed3eaa881740523730a74f99487a3935cee5f5e500fdea7e513a60082fc7",
+      "width": 320,
+      "height": 3460,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "58578630282c08ed070b330c5092b2346554d47e291ecce03bfa1790d2ebdd62",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "034c398b12fe2df5aaef1e8fd2e151d4092f4bc550a8179f7524acfdf8572a5d",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "fa27bf1b8f7135cf78bb1380036cbe25b805799678f9c6338d1b09862168215b",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "cf7b9827ee12ea5f4ce473b5b04736e9eca7e63163a06350e8ad0569b0e9a58a",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-3"
+        },
+        {
+          "y0": 2600,
+          "y1": 3250,
+          "pixel_sha256": "830120be56be43c6e4e4a7527c94577138b4175b12f8b7b606a89d5ff059987b",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-4"
+        },
+        {
+          "y0": 3250,
+          "y1": 3460,
+          "pixel_sha256": "347ac7ec17d5bdaf8c362c53e6be84275398444203824d119dff6d55c72c68e4",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-home-return-320-2x.png",
+      "sha256": "32e02297eb960cf9da693d3ed9a4e380131ba98e63d64680e1c452112635af75",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "58578630282c08ed070b330c5092b2346554d47e291ecce03bfa1790d2ebdd62",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "98ef9a2ad09f8a3c8229ac286c7eb3cb28273ffd01708531c25ae3c0ce531fd2",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-home-return-393-1x.long.png",
+      "sha256": "f0cba396e8a9efa775fb9fbb71adccd863e4ce8dace888759be74db253f099a6",
+      "width": 393,
+      "height": 1752,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2541e10f43029eb71329290bf405fa83fabe418cf9eb6676ed4e3eb8498f6856",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "462243825730002d5a7b26fe7e1bbdb2f381ea57afabfc7a0cad762ed9541c1e",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1752,
+          "pixel_sha256": "5d1142fe86ef6e5a8664871afce9928bf15cf58f7b773ac5f1080f1b7fead23c",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-home-return-393-1x.png",
+      "sha256": "f7c02c89b1acb7e0cd4ab4adc0593819b05f05ed599398d49ea569c924ea6a82",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2541e10f43029eb71329290bf405fa83fabe418cf9eb6676ed4e3eb8498f6856",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a1f9a5a5f828e0a335129ce0d0a8a7cf54c1ab1e6b87423f882a64c1946d8f9e",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-more-return-320-2x.png",
+      "sha256": "90ff3249f64fc7750a5da2a6bac0e2e90a64014893d9e85c3df4c76dbe8dea38",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "7925ed8e5939f589376b72745969839e14c7fb166cfb48866eed469fa66c4d02",
+          "review": "../baby-profile-control-visual-review/sheet-19.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "f95aac7cc67095efb73a4ae0b9ee5dc9518b86f20195158e860fce9621ec483a",
+          "review": "../mom-rest-control-visual-review/sheet-19.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-more-return-393-1x.png",
+      "sha256": "1905827f337ce2fe60b46266600cce9aa8dea3b9aac6828fb6a1d3f67f020b35",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c8e12900bddbe318fd8d03ad9b384466fc1af1f6c371f72f999f20bc96cac1d6",
+          "review": "../baby-profile-control-visual-review/sheet-19.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "ae62a60cadfc8bfb09e3e94acb0dc8f7d481c4c260eae5960e33ebdc5f0799db",
+          "review": "../mom-rest-control-visual-review/sheet-20.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-restored-320-2x.png",
+      "sha256": "c4494d137ec9b550e25d3a8dd9bf63d0b40a3cf10c8b0bcc5b92bfc6d030bbca",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c2b98d2779ca018bd6526707dcd7f630a89854152da0f2b273b3b979c0854ff3",
+          "review": "sheet-01.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a72c2e9d472b74a73b3cc51b51a2be7cef2ccefb643c84695367073e8d4b15ab",
+          "review": "sheet-01.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-restored-393-1x.png",
+      "sha256": "419919381a5149b431dc851aa9d8cc4008083942c8fb49194c837bf8eb8a3b4e",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "668548fd521774ab791faee9ebfbedc4117a90d86c6269a4b1fab001b47ca835",
+          "review": "sheet-02.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "8bdeffc41d4a3f4c9ce4bf04d242795fab314a5a6f5ce005f84e01795430343f",
+          "review": "../baby-feeding-control-visual-review/sheet-16.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-restored-edit-320-2x.long.png",
+      "sha256": "a0a655e24e2eeddb623bfc94164e46cbde37e9220386ec5434d39107a6fd026c",
+      "width": 320,
+      "height": 1005,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c17e026b0e7a2694fb0466ee9eb3701627fd5a24b3a441e62c122c1a630b652e",
+          "review": "sheet-03.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1005,
+          "pixel_sha256": "3b678584cebcebd70097661afe7adcd4e913804deadb4d7e5be85de1bca1cc2f",
+          "review": "sheet-04.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-restored-edit-320-2x.png",
+      "sha256": "211bcc24dfb1af0be07687a6fc3403dd5bf9b9495adee52be69812f5e2ca1eca",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c17e026b0e7a2694fb0466ee9eb3701627fd5a24b3a441e62c122c1a630b652e",
+          "review": "sheet-03.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3daee19830a288d7965e723ea8d5e856caf31ea898a08866d5eb133bda4af9e9",
+          "review": "sheet-04.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-restored-edit-393-1x.png",
+      "sha256": "d6d6b9b53680bef4e8a384117e7a23fc4d71ba115ffce14115bf20aa282770ec",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "1eb8df8765c02527d380297b59915fa1d21ec22dd2277031934e4fa7e9deab91",
+          "review": "sheet-04.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "19a26adeff3ffdad9f2567ec7fa4afb7dbab169b5aad7a7748b3c127d34a6f37",
+          "review": "sheet-04.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-restored-edit-closed-320-2x.png",
+      "sha256": "c4494d137ec9b550e25d3a8dd9bf63d0b40a3cf10c8b0bcc5b92bfc6d030bbca",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c2b98d2779ca018bd6526707dcd7f630a89854152da0f2b273b3b979c0854ff3",
+          "review": "sheet-01.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a72c2e9d472b74a73b3cc51b51a2be7cef2ccefb643c84695367073e8d4b15ab",
+          "review": "sheet-01.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-restored-edit-closed-393-1x.png",
+      "sha256": "419919381a5149b431dc851aa9d8cc4008083942c8fb49194c837bf8eb8a3b4e",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "668548fd521774ab791faee9ebfbedc4117a90d86c6269a4b1fab001b47ca835",
+          "review": "sheet-02.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "8bdeffc41d4a3f4c9ce4bf04d242795fab314a5a6f5ce005f84e01795430343f",
+          "review": "../baby-feeding-control-visual-review/sheet-16.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-saved-320-2x.long.png",
+      "sha256": "52798ca8bf235f1b0243306c2809a4000371320ca3102c04576ab86821aa3036",
+      "width": 320,
+      "height": 3554,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "58578630282c08ed070b330c5092b2346554d47e291ecce03bfa1790d2ebdd62",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "034c398b12fe2df5aaef1e8fd2e151d4092f4bc550a8179f7524acfdf8572a5d",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "fa27bf1b8f7135cf78bb1380036cbe25b805799678f9c6338d1b09862168215b",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "cf7b9827ee12ea5f4ce473b5b04736e9eca7e63163a06350e8ad0569b0e9a58a",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-3"
+        },
+        {
+          "y0": 2600,
+          "y1": 3250,
+          "pixel_sha256": "b0642aba05928c776f791d9c26e7add778f68d5b445da62b1c9ac1f5620d383f",
+          "review": "../baby-development-boundary-visual-review/sheet-05.png#tile-0"
+        },
+        {
+          "y0": 3250,
+          "y1": 3554,
+          "pixel_sha256": "c79e47165de7b9cdc32d472e17bb425ee22d7bdbf49e0704b2ce714dc7b37d42",
+          "review": "../baby-development-boundary-visual-review/sheet-05.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-saved-320-2x.png",
+      "sha256": "d1a06ef4c1d0eabd15a6117114cc9c2dc084e50807447444ae687434e57642b0",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "0d284b4e8d46327c9f87d34c3265a444625536a280bb38ed32370453046a2f24",
+          "review": "../baby-development-control-visual-review/sheet-05.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "563dd0eb6127eff7c02d4cf0854f116747677cf072bd11574cc7adf5267526f7",
+          "review": "../baby-feeding-control-visual-review/sheet-18.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-saved-393-1x.long.png",
+      "sha256": "14830f54ec9e4f659edeaf399a4e59c10e2967ed23b80587d93837a86fddb826",
+      "width": 393,
+      "height": 1816,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2541e10f43029eb71329290bf405fa83fabe418cf9eb6676ed4e3eb8498f6856",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "462243825730002d5a7b26fe7e1bbdb2f381ea57afabfc7a0cad762ed9541c1e",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1816,
+          "pixel_sha256": "339a0014bca02680e8fbe8909d175a4db523583a2db9804b5a4fc07fa05f291e",
+          "review": "../baby-development-control-visual-review/sheet-05.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-saved-393-1x.png",
+      "sha256": "fad0d44f149b0bc1a8154c905dfb7e10b6f3abe8ca047d26baf977424f910efc",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "1d1b4de2c1b81d5666fd54394d73c5b21b2a7bea81744a337473932cb4467d25",
+          "review": "../baby-development-control-visual-review/sheet-05.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "4708d68a58904bdf9acff66f8efee44d91bea259d8da8661c22c884071926520",
+          "review": "../baby-development-control-visual-review/sheet-05.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-selected-looks-at-face-320-2x.long.png",
+      "sha256": "cd49bb5e6d9cac5c0c08d1d3089f015fc106d0853b66332894c6caf048c73cb7",
+      "width": 320,
+      "height": 1542,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "fc92358c6c52fe7fda4deddad164fd97c7aec6a75959e2d71dfa5d0eddd3242b",
+          "review": "../baby-development-control-visual-review/sheet-02.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "e100bbc8f595a34fca0d9206c5d3ad4c5be9567a70d2927b195089a9d8118a80",
+          "review": "../baby-development-control-visual-review/sheet-03.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1542,
+          "pixel_sha256": "2c89335eab245687767495301a221a6db8203bd6469a4d19e287833f78d69d19",
+          "review": "../baby-development-control-visual-review/sheet-02.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-selected-looks-at-face-320-2x.png",
+      "sha256": "f5ead7d98e7b272dcdd5b58fd751a2b2cd55732c855da040b71366a7d3055c64",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "df2be000c0d7d740d506a2ab64a3cb1922a776cc52098ca11e0e709289ddbb6f",
+          "review": "../baby-development-control-visual-review/sheet-03.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "15b71561fb7c07a14715ad7e3e48ee533dbf6ecfaa1143f8743b6baed9f60d2d",
+          "review": "../baby-development-control-visual-review/sheet-03.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-selected-looks-at-face-393-1x.png",
+      "sha256": "6e9f2f42ca63a3d40b6d280701e8422f3d655fe4bd0e2ef71af6fd57139c0320",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "1889d0998a5da7a1ebff7ca94b961da6b39dbd55c61a582b596666265d94aa9f",
+          "review": "../baby-development-control-visual-review/sheet-03.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "bfe04f1aa45247cf0495b9768136828ab49029f142966453a3eb385907fcd460",
+          "review": "../baby-development-control-visual-review/sheet-03.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-sound-history-320-2x.long.png",
+      "sha256": "e457275063ca0a57a1dfdc4b48256d42d5ed125360d3c14f63d27f96aba72e9a",
+      "width": 320,
+      "height": 1045,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "45a06c0e71e7abc1b99812914490ff51e2918fe8ee3dc0ad771430fda5d2d04c",
+          "review": "sheet-04.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1045,
+          "pixel_sha256": "37de357c250fb0d6d91b09abbb7a7042c2c1b50ac84e683b724f6b4d133e5626",
+          "review": "sheet-04.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-sound-history-320-2x.png",
+      "sha256": "db4ed7832c1031130b48c4182b21167b857ed3f40b573c74c6389e058a063b6d",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "45a06c0e71e7abc1b99812914490ff51e2918fe8ee3dc0ad771430fda5d2d04c",
+          "review": "sheet-04.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "7195466eafd08d8b6a421a50ef8a1285c08e9fd1ed395e90068b833158e87d0f",
+          "review": "sheet-05.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-sound-history-393-1x.png",
+      "sha256": "7539b46a4f49488323f3ea3bbd30ea0c0306c0096847f2d198ace2524f30a927",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a11a2ce31094d60464f62da1b575c8f1c4ffee02cf8b8208f0c226b1ec58b0bb",
+          "review": "sheet-05.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "48c8b962eb5d95c36f5cc12f4e112b6f073041256336ee31915b096c41d0e3b4",
+          "review": "sheet-05.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-sound-home-entry-320-2x.long.png",
+      "sha256": "2a7eed3eaa881740523730a74f99487a3935cee5f5e500fdea7e513a60082fc7",
+      "width": 320,
+      "height": 3460,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "58578630282c08ed070b330c5092b2346554d47e291ecce03bfa1790d2ebdd62",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "034c398b12fe2df5aaef1e8fd2e151d4092f4bc550a8179f7524acfdf8572a5d",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "fa27bf1b8f7135cf78bb1380036cbe25b805799678f9c6338d1b09862168215b",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "cf7b9827ee12ea5f4ce473b5b04736e9eca7e63163a06350e8ad0569b0e9a58a",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-3"
+        },
+        {
+          "y0": 2600,
+          "y1": 3250,
+          "pixel_sha256": "830120be56be43c6e4e4a7527c94577138b4175b12f8b7b606a89d5ff059987b",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-4"
+        },
+        {
+          "y0": 3250,
+          "y1": 3460,
+          "pixel_sha256": "347ac7ec17d5bdaf8c362c53e6be84275398444203824d119dff6d55c72c68e4",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-sound-home-entry-320-2x.png",
+      "sha256": "32e02297eb960cf9da693d3ed9a4e380131ba98e63d64680e1c452112635af75",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "58578630282c08ed070b330c5092b2346554d47e291ecce03bfa1790d2ebdd62",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "98ef9a2ad09f8a3c8229ac286c7eb3cb28273ffd01708531c25ae3c0ce531fd2",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-sound-home-entry-393-1x.long.png",
+      "sha256": "f0cba396e8a9efa775fb9fbb71adccd863e4ce8dace888759be74db253f099a6",
+      "width": 393,
+      "height": 1752,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2541e10f43029eb71329290bf405fa83fabe418cf9eb6676ed4e3eb8498f6856",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "462243825730002d5a7b26fe7e1bbdb2f381ea57afabfc7a0cad762ed9541c1e",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1752,
+          "pixel_sha256": "5d1142fe86ef6e5a8664871afce9928bf15cf58f7b773ac5f1080f1b7fead23c",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-sound-home-entry-393-1x.png",
+      "sha256": "f7c02c89b1acb7e0cd4ab4adc0593819b05f05ed599398d49ea569c924ea6a82",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2541e10f43029eb71329290bf405fa83fabe418cf9eb6676ed4e3eb8498f6856",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a1f9a5a5f828e0a335129ce0d0a8a7cf54c1ab1e6b87423f882a64c1946d8f9e",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-sound-home-return-320-2x.long.png",
+      "sha256": "2a7eed3eaa881740523730a74f99487a3935cee5f5e500fdea7e513a60082fc7",
+      "width": 320,
+      "height": 3460,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "58578630282c08ed070b330c5092b2346554d47e291ecce03bfa1790d2ebdd62",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "034c398b12fe2df5aaef1e8fd2e151d4092f4bc550a8179f7524acfdf8572a5d",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "fa27bf1b8f7135cf78bb1380036cbe25b805799678f9c6338d1b09862168215b",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "cf7b9827ee12ea5f4ce473b5b04736e9eca7e63163a06350e8ad0569b0e9a58a",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-3"
+        },
+        {
+          "y0": 2600,
+          "y1": 3250,
+          "pixel_sha256": "830120be56be43c6e4e4a7527c94577138b4175b12f8b7b606a89d5ff059987b",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-4"
+        },
+        {
+          "y0": 3250,
+          "y1": 3460,
+          "pixel_sha256": "347ac7ec17d5bdaf8c362c53e6be84275398444203824d119dff6d55c72c68e4",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-sound-home-return-320-2x.png",
+      "sha256": "32e02297eb960cf9da693d3ed9a4e380131ba98e63d64680e1c452112635af75",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "58578630282c08ed070b330c5092b2346554d47e291ecce03bfa1790d2ebdd62",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "98ef9a2ad09f8a3c8229ac286c7eb3cb28273ffd01708531c25ae3c0ce531fd2",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-sound-home-return-393-1x.long.png",
+      "sha256": "f0cba396e8a9efa775fb9fbb71adccd863e4ce8dace888759be74db253f099a6",
+      "width": 393,
+      "height": 1752,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2541e10f43029eb71329290bf405fa83fabe418cf9eb6676ed4e3eb8498f6856",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "462243825730002d5a7b26fe7e1bbdb2f381ea57afabfc7a0cad762ed9541c1e",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1752,
+          "pixel_sha256": "5d1142fe86ef6e5a8664871afce9928bf15cf58f7b773ac5f1080f1b7fead23c",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-sound-home-return-393-1x.png",
+      "sha256": "f7c02c89b1acb7e0cd4ab4adc0593819b05f05ed599398d49ea569c924ea6a82",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2541e10f43029eb71329290bf405fa83fabe418cf9eb6676ed4e3eb8498f6856",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a1f9a5a5f828e0a335129ce0d0a8a7cf54c1ab1e6b87423f882a64c1946d8f9e",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-sound-more-return-320-2x.png",
+      "sha256": "90ff3249f64fc7750a5da2a6bac0e2e90a64014893d9e85c3df4c76dbe8dea38",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "7925ed8e5939f589376b72745969839e14c7fb166cfb48866eed469fa66c4d02",
+          "review": "../baby-profile-control-visual-review/sheet-19.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "f95aac7cc67095efb73a4ae0b9ee5dc9518b86f20195158e860fce9621ec483a",
+          "review": "../mom-rest-control-visual-review/sheet-19.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-sound-more-return-393-1x.png",
+      "sha256": "1905827f337ce2fe60b46266600cce9aa8dea3b9aac6828fb6a1d3f67f020b35",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c8e12900bddbe318fd8d03ad9b384466fc1af1f6c371f72f999f20bc96cac1d6",
+          "review": "../baby-profile-control-visual-review/sheet-19.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "ae62a60cadfc8bfb09e3e94acb0dc8f7d481c4c260eae5960e33ebdc5f0799db",
+          "review": "../mom-rest-control-visual-review/sheet-20.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-sound-saved-320-2x.long.png",
+      "sha256": "52798ca8bf235f1b0243306c2809a4000371320ca3102c04576ab86821aa3036",
+      "width": 320,
+      "height": 3554,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "58578630282c08ed070b330c5092b2346554d47e291ecce03bfa1790d2ebdd62",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "034c398b12fe2df5aaef1e8fd2e151d4092f4bc550a8179f7524acfdf8572a5d",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "fa27bf1b8f7135cf78bb1380036cbe25b805799678f9c6338d1b09862168215b",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "cf7b9827ee12ea5f4ce473b5b04736e9eca7e63163a06350e8ad0569b0e9a58a",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-3"
+        },
+        {
+          "y0": 2600,
+          "y1": 3250,
+          "pixel_sha256": "b0642aba05928c776f791d9c26e7add778f68d5b445da62b1c9ac1f5620d383f",
+          "review": "../baby-development-boundary-visual-review/sheet-05.png#tile-0"
+        },
+        {
+          "y0": 3250,
+          "y1": 3554,
+          "pixel_sha256": "c79e47165de7b9cdc32d472e17bb425ee22d7bdbf49e0704b2ce714dc7b37d42",
+          "review": "../baby-development-boundary-visual-review/sheet-05.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-sound-saved-320-2x.png",
+      "sha256": "d1a06ef4c1d0eabd15a6117114cc9c2dc084e50807447444ae687434e57642b0",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "0d284b4e8d46327c9f87d34c3265a444625536a280bb38ed32370453046a2f24",
+          "review": "../baby-development-control-visual-review/sheet-05.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "563dd0eb6127eff7c02d4cf0854f116747677cf072bd11574cc7adf5267526f7",
+          "review": "../baby-feeding-control-visual-review/sheet-18.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-sound-saved-393-1x.long.png",
+      "sha256": "14830f54ec9e4f659edeaf399a4e59c10e2967ed23b80587d93837a86fddb826",
+      "width": 393,
+      "height": 1816,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2541e10f43029eb71329290bf405fa83fabe418cf9eb6676ed4e3eb8498f6856",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "462243825730002d5a7b26fe7e1bbdb2f381ea57afabfc7a0cad762ed9541c1e",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1816,
+          "pixel_sha256": "339a0014bca02680e8fbe8909d175a4db523583a2db9804b5a4fc07fa05f291e",
+          "review": "../baby-development-control-visual-review/sheet-05.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-sound-saved-393-1x.png",
+      "sha256": "fad0d44f149b0bc1a8154c905dfb7e10b6f3abe8ca047d26baf977424f910efc",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "1d1b4de2c1b81d5666fd54394d73c5b21b2a7bea81744a337473932cb4467d25",
+          "review": "../baby-development-control-visual-review/sheet-05.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "4708d68a58904bdf9acff66f8efee44d91bea259d8da8661c22c884071926520",
+          "review": "../baby-development-control-visual-review/sheet-05.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-sound-selected-looks-at-face-320-2x.long.png",
+      "sha256": "cd49bb5e6d9cac5c0c08d1d3089f015fc106d0853b66332894c6caf048c73cb7",
+      "width": 320,
+      "height": 1542,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "fc92358c6c52fe7fda4deddad164fd97c7aec6a75959e2d71dfa5d0eddd3242b",
+          "review": "../baby-development-control-visual-review/sheet-02.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "e100bbc8f595a34fca0d9206c5d3ad4c5be9567a70d2927b195089a9d8118a80",
+          "review": "../baby-development-control-visual-review/sheet-03.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1542,
+          "pixel_sha256": "2c89335eab245687767495301a221a6db8203bd6469a4d19e287833f78d69d19",
+          "review": "../baby-development-control-visual-review/sheet-02.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-sound-selected-looks-at-face-320-2x.png",
+      "sha256": "f5ead7d98e7b272dcdd5b58fd751a2b2cd55732c855da040b71366a7d3055c64",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "df2be000c0d7d740d506a2ab64a3cb1922a776cc52098ca11e0e709289ddbb6f",
+          "review": "../baby-development-control-visual-review/sheet-03.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "15b71561fb7c07a14715ad7e3e48ee533dbf6ecfaa1143f8743b6baed9f60d2d",
+          "review": "../baby-development-control-visual-review/sheet-03.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-sound-selected-looks-at-face-393-1x.png",
+      "sha256": "6e9f2f42ca63a3d40b6d280701e8422f3d655fe4bd0e2ef71af6fd57139c0320",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "1889d0998a5da7a1ebff7ca94b961da6b39dbd55c61a582b596666265d94aa9f",
+          "review": "../baby-development-control-visual-review/sheet-03.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "bfe04f1aa45247cf0495b9768136828ab49029f142966453a3eb385907fcd460",
+          "review": "../baby-development-control-visual-review/sheet-03.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-sound-selected-responds-to-sound-320-2x.long.png",
+      "sha256": "25e301f09a4d8c15f83b54be6908977aaf7cf6b2397cb2e553bc304cfd59f5cb",
+      "width": 320,
+      "height": 1542,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "fc92358c6c52fe7fda4deddad164fd97c7aec6a75959e2d71dfa5d0eddd3242b",
+          "review": "../baby-development-control-visual-review/sheet-02.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "e95f73e991859f992b2b42a6df1263e27168849e7a8b045b8b850530efba0a2c",
+          "review": "../baby-development-control-visual-review/sheet-04.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1542,
+          "pixel_sha256": "2c89335eab245687767495301a221a6db8203bd6469a4d19e287833f78d69d19",
+          "review": "../baby-development-control-visual-review/sheet-02.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-sound-selected-responds-to-sound-320-2x.png",
+      "sha256": "172bb2eec3c6bc70eaf2baa85f43ad2fe273c403fe044903064c3ad23a1de916",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "0917138c5d3dde1c69d55b01eb2c0d5bfdaf669ca136153b77cb68124c65a0ed",
+          "review": "../baby-development-control-visual-review/sheet-04.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "61d0150ee228a5b28eaf70a120e98678c84b9808f74e542871454fb0b5342d35",
+          "review": "../baby-development-control-visual-review/sheet-04.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-face-sound-selected-responds-to-sound-393-1x.png",
+      "sha256": "4c5b198e6c4412b44aebff3b3a72a81487248bfc321c262659907103ebf370c5",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "f6db15ced80eed9371ed6fd9f2e8eec9f4672f8211b1e6c340a0be7b4ef48355",
+          "review": "../baby-development-control-visual-review/sheet-04.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "bfe04f1aa45247cf0495b9768136828ab49029f142966453a3eb385907fcd460",
+          "review": "../baby-development-control-visual-review/sheet-03.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-head-delete-confirm-320-2x.png",
+      "sha256": "14e983783494677db176e3a3ea08025b4721b2b47308a2798a5a79bcb4fb8133",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "537cdba1f604d94a51da40f19fcb16b7c5604dc0ebd99c3f62a41c5e4f7be93f",
+          "review": "sheet-05.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "cbea78776b355b00352b2dfe4c6cb3ec46721e11428d9b6038a7d74e95881440",
+          "review": "sheet-05.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-head-delete-confirm-393-1x.png",
+      "sha256": "b600ee6bd7abd2d3abce475ed20453bc510fc9f131b48501c973870e9b159a6b",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c07f87bd355e93ac8284d60e866298677a699439c38fe8256aac51d8404a8176",
+          "review": "sheet-05.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "749b6c42af3c3cd9eb72526d7fa2ddad4ae221bb6338713305dba8c56f277a96",
+          "review": "sheet-01.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-head-delete-kept-320-2x.png",
+      "sha256": "b4ce4bec172a76677f66c0e0029bc88b5358e6ec6c26c5af2ec72931a06d7b9d",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c90f293f17db82b9fda0575d5ab173ac2aee578e2ea03ff8642a530919499774",
+          "review": "sheet-06.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "b87b594a18f693b245d80fde11b22d14133fa16318174354a123bf0cf98571ba",
+          "review": "sheet-06.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-head-delete-kept-393-1x.png",
+      "sha256": "2804219d5d2c619cc1c86b63473a11ae3c7720db692e284cb9e1b6fe5a280eaa",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "f83e7168d61581949a4a4ab4d644cff9934b6541ad60018a6d711a39da2a7181",
+          "review": "sheet-06.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "8bdeffc41d4a3f4c9ce4bf04d242795fab314a5a6f5ce005f84e01795430343f",
+          "review": "../baby-feeding-control-visual-review/sheet-16.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-head-deleted-320-2x.long.png",
+      "sha256": "ab5b7d0cbf90b4c28061b8de825ec247698d18e711cd7e66d1695c224bc5a4fe",
+      "width": 320,
+      "height": 907,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "fb60245da9f73c20293512208b47d7336cfa544796aa02a14503b2b50db55657",
+          "review": "sheet-02.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 907,
+          "pixel_sha256": "3f695762c95910cb1c3f211a4a1abee7247a422c04ce6a23455667cd5084fc23",
+          "review": "sheet-02.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-head-deleted-320-2x.png",
+      "sha256": "833505a8b844e4ef82b671c2a414d4f5376c016ec5629145eff3eb7092dae9cf",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "fb60245da9f73c20293512208b47d7336cfa544796aa02a14503b2b50db55657",
+          "review": "sheet-02.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "f1f0a1e6064bd3058a82f1e3338c1c2af80f877aecdce5f7394f0887dbe084f1",
+          "review": "sheet-02.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-head-deleted-393-1x.png",
+      "sha256": "1180f17ef045d1251e218976fb29f64d09490b74fde5963c531259b058def101",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "1b1d6cf5b94ddd6675f536ccc2fa2f9bef9a2d3fab30744b8e74f222d82339a4",
+          "review": "sheet-02.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "8bdeffc41d4a3f4c9ce4bf04d242795fab314a5a6f5ce005f84e01795430343f",
+          "review": "../baby-feeding-control-visual-review/sheet-16.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-head-history-320-2x.png",
+      "sha256": "b4ce4bec172a76677f66c0e0029bc88b5358e6ec6c26c5af2ec72931a06d7b9d",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c90f293f17db82b9fda0575d5ab173ac2aee578e2ea03ff8642a530919499774",
+          "review": "sheet-06.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "b87b594a18f693b245d80fde11b22d14133fa16318174354a123bf0cf98571ba",
+          "review": "sheet-06.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-head-history-393-1x.png",
+      "sha256": "2804219d5d2c619cc1c86b63473a11ae3c7720db692e284cb9e1b6fe5a280eaa",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "f83e7168d61581949a4a4ab4d644cff9934b6541ad60018a6d711a39da2a7181",
+          "review": "sheet-06.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "8bdeffc41d4a3f4c9ce4bf04d242795fab314a5a6f5ce005f84e01795430343f",
+          "review": "../baby-feeding-control-visual-review/sheet-16.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-head-home-entry-320-2x.long.png",
+      "sha256": "2a7eed3eaa881740523730a74f99487a3935cee5f5e500fdea7e513a60082fc7",
+      "width": 320,
+      "height": 3460,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "58578630282c08ed070b330c5092b2346554d47e291ecce03bfa1790d2ebdd62",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "034c398b12fe2df5aaef1e8fd2e151d4092f4bc550a8179f7524acfdf8572a5d",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "fa27bf1b8f7135cf78bb1380036cbe25b805799678f9c6338d1b09862168215b",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "cf7b9827ee12ea5f4ce473b5b04736e9eca7e63163a06350e8ad0569b0e9a58a",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-3"
+        },
+        {
+          "y0": 2600,
+          "y1": 3250,
+          "pixel_sha256": "830120be56be43c6e4e4a7527c94577138b4175b12f8b7b606a89d5ff059987b",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-4"
+        },
+        {
+          "y0": 3250,
+          "y1": 3460,
+          "pixel_sha256": "347ac7ec17d5bdaf8c362c53e6be84275398444203824d119dff6d55c72c68e4",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-head-home-entry-320-2x.png",
+      "sha256": "32e02297eb960cf9da693d3ed9a4e380131ba98e63d64680e1c452112635af75",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "58578630282c08ed070b330c5092b2346554d47e291ecce03bfa1790d2ebdd62",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "98ef9a2ad09f8a3c8229ac286c7eb3cb28273ffd01708531c25ae3c0ce531fd2",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-head-home-entry-393-1x.long.png",
+      "sha256": "f0cba396e8a9efa775fb9fbb71adccd863e4ce8dace888759be74db253f099a6",
+      "width": 393,
+      "height": 1752,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2541e10f43029eb71329290bf405fa83fabe418cf9eb6676ed4e3eb8498f6856",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "462243825730002d5a7b26fe7e1bbdb2f381ea57afabfc7a0cad762ed9541c1e",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1752,
+          "pixel_sha256": "5d1142fe86ef6e5a8664871afce9928bf15cf58f7b773ac5f1080f1b7fead23c",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-head-home-entry-393-1x.png",
+      "sha256": "f7c02c89b1acb7e0cd4ab4adc0593819b05f05ed599398d49ea569c924ea6a82",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2541e10f43029eb71329290bf405fa83fabe418cf9eb6676ed4e3eb8498f6856",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a1f9a5a5f828e0a335129ce0d0a8a7cf54c1ab1e6b87423f882a64c1946d8f9e",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-head-home-return-320-2x.long.png",
+      "sha256": "2a7eed3eaa881740523730a74f99487a3935cee5f5e500fdea7e513a60082fc7",
+      "width": 320,
+      "height": 3460,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "58578630282c08ed070b330c5092b2346554d47e291ecce03bfa1790d2ebdd62",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "034c398b12fe2df5aaef1e8fd2e151d4092f4bc550a8179f7524acfdf8572a5d",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "fa27bf1b8f7135cf78bb1380036cbe25b805799678f9c6338d1b09862168215b",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "cf7b9827ee12ea5f4ce473b5b04736e9eca7e63163a06350e8ad0569b0e9a58a",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-3"
+        },
+        {
+          "y0": 2600,
+          "y1": 3250,
+          "pixel_sha256": "830120be56be43c6e4e4a7527c94577138b4175b12f8b7b606a89d5ff059987b",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-4"
+        },
+        {
+          "y0": 3250,
+          "y1": 3460,
+          "pixel_sha256": "347ac7ec17d5bdaf8c362c53e6be84275398444203824d119dff6d55c72c68e4",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-head-home-return-320-2x.png",
+      "sha256": "32e02297eb960cf9da693d3ed9a4e380131ba98e63d64680e1c452112635af75",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "58578630282c08ed070b330c5092b2346554d47e291ecce03bfa1790d2ebdd62",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "98ef9a2ad09f8a3c8229ac286c7eb3cb28273ffd01708531c25ae3c0ce531fd2",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-head-home-return-393-1x.long.png",
+      "sha256": "f0cba396e8a9efa775fb9fbb71adccd863e4ce8dace888759be74db253f099a6",
+      "width": 393,
+      "height": 1752,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2541e10f43029eb71329290bf405fa83fabe418cf9eb6676ed4e3eb8498f6856",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "462243825730002d5a7b26fe7e1bbdb2f381ea57afabfc7a0cad762ed9541c1e",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1752,
+          "pixel_sha256": "5d1142fe86ef6e5a8664871afce9928bf15cf58f7b773ac5f1080f1b7fead23c",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-head-home-return-393-1x.png",
+      "sha256": "f7c02c89b1acb7e0cd4ab4adc0593819b05f05ed599398d49ea569c924ea6a82",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2541e10f43029eb71329290bf405fa83fabe418cf9eb6676ed4e3eb8498f6856",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a1f9a5a5f828e0a335129ce0d0a8a7cf54c1ab1e6b87423f882a64c1946d8f9e",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-head-more-return-320-2x.png",
+      "sha256": "90ff3249f64fc7750a5da2a6bac0e2e90a64014893d9e85c3df4c76dbe8dea38",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "7925ed8e5939f589376b72745969839e14c7fb166cfb48866eed469fa66c4d02",
+          "review": "../baby-profile-control-visual-review/sheet-19.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "f95aac7cc67095efb73a4ae0b9ee5dc9518b86f20195158e860fce9621ec483a",
+          "review": "../mom-rest-control-visual-review/sheet-19.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-head-more-return-393-1x.png",
+      "sha256": "1905827f337ce2fe60b46266600cce9aa8dea3b9aac6828fb6a1d3f67f020b35",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c8e12900bddbe318fd8d03ad9b384466fc1af1f6c371f72f999f20bc96cac1d6",
+          "review": "../baby-profile-control-visual-review/sheet-19.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "ae62a60cadfc8bfb09e3e94acb0dc8f7d481c4c260eae5960e33ebdc5f0799db",
+          "review": "../mom-rest-control-visual-review/sheet-20.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-head-restored-320-2x.png",
+      "sha256": "b4ce4bec172a76677f66c0e0029bc88b5358e6ec6c26c5af2ec72931a06d7b9d",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c90f293f17db82b9fda0575d5ab173ac2aee578e2ea03ff8642a530919499774",
+          "review": "sheet-06.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "b87b594a18f693b245d80fde11b22d14133fa16318174354a123bf0cf98571ba",
+          "review": "sheet-06.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-head-restored-393-1x.png",
+      "sha256": "2804219d5d2c619cc1c86b63473a11ae3c7720db692e284cb9e1b6fe5a280eaa",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "f83e7168d61581949a4a4ab4d644cff9934b6541ad60018a6d711a39da2a7181",
+          "review": "sheet-06.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "8bdeffc41d4a3f4c9ce4bf04d242795fab314a5a6f5ce005f84e01795430343f",
+          "review": "../baby-feeding-control-visual-review/sheet-16.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-head-restored-edit-320-2x.long.png",
+      "sha256": "3cacf0d9d7fd9be551d22aceb8948f5e60a961d6e11c6063fa8c1cbd9ef7bf2f",
+      "width": 320,
+      "height": 1005,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9f5cb365b2757f6a8f00cee863797794ce66b8fff185e5a1c771b4d981d594b3",
+          "review": "sheet-06.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1005,
+          "pixel_sha256": "3b678584cebcebd70097661afe7adcd4e913804deadb4d7e5be85de1bca1cc2f",
+          "review": "sheet-04.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-head-restored-edit-320-2x.png",
+      "sha256": "48de30f058981bda005bd98d025d9d82f1a20f848107f2118706de34d570fec2",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9f5cb365b2757f6a8f00cee863797794ce66b8fff185e5a1c771b4d981d594b3",
+          "review": "sheet-06.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3daee19830a288d7965e723ea8d5e856caf31ea898a08866d5eb133bda4af9e9",
+          "review": "sheet-04.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-head-restored-edit-393-1x.png",
+      "sha256": "856aa1ee05182a2e43358ea7d303814f23ea0663c3594d2e2dac21b0b270f5bc",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b37f1ea416ca22615d7ace52640416d33a4da5b54742710b80f127c1df61b365",
+          "review": "sheet-06.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "19a26adeff3ffdad9f2567ec7fa4afb7dbab169b5aad7a7748b3c127d34a6f37",
+          "review": "sheet-04.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-head-restored-edit-closed-320-2x.png",
+      "sha256": "b4ce4bec172a76677f66c0e0029bc88b5358e6ec6c26c5af2ec72931a06d7b9d",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c90f293f17db82b9fda0575d5ab173ac2aee578e2ea03ff8642a530919499774",
+          "review": "sheet-06.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "b87b594a18f693b245d80fde11b22d14133fa16318174354a123bf0cf98571ba",
+          "review": "sheet-06.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-head-restored-edit-closed-393-1x.png",
+      "sha256": "2804219d5d2c619cc1c86b63473a11ae3c7720db692e284cb9e1b6fe5a280eaa",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "f83e7168d61581949a4a4ab4d644cff9934b6541ad60018a6d711a39da2a7181",
+          "review": "sheet-06.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "8bdeffc41d4a3f4c9ce4bf04d242795fab314a5a6f5ce005f84e01795430343f",
+          "review": "../baby-feeding-control-visual-review/sheet-16.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-head-saved-320-2x.long.png",
+      "sha256": "52798ca8bf235f1b0243306c2809a4000371320ca3102c04576ab86821aa3036",
+      "width": 320,
+      "height": 3554,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "58578630282c08ed070b330c5092b2346554d47e291ecce03bfa1790d2ebdd62",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "034c398b12fe2df5aaef1e8fd2e151d4092f4bc550a8179f7524acfdf8572a5d",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "fa27bf1b8f7135cf78bb1380036cbe25b805799678f9c6338d1b09862168215b",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "cf7b9827ee12ea5f4ce473b5b04736e9eca7e63163a06350e8ad0569b0e9a58a",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-3"
+        },
+        {
+          "y0": 2600,
+          "y1": 3250,
+          "pixel_sha256": "b0642aba05928c776f791d9c26e7add778f68d5b445da62b1c9ac1f5620d383f",
+          "review": "../baby-development-boundary-visual-review/sheet-05.png#tile-0"
+        },
+        {
+          "y0": 3250,
+          "y1": 3554,
+          "pixel_sha256": "c79e47165de7b9cdc32d472e17bb425ee22d7bdbf49e0704b2ce714dc7b37d42",
+          "review": "../baby-development-boundary-visual-review/sheet-05.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-head-saved-320-2x.png",
+      "sha256": "d1a06ef4c1d0eabd15a6117114cc9c2dc084e50807447444ae687434e57642b0",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "0d284b4e8d46327c9f87d34c3265a444625536a280bb38ed32370453046a2f24",
+          "review": "../baby-development-control-visual-review/sheet-05.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "563dd0eb6127eff7c02d4cf0854f116747677cf072bd11574cc7adf5267526f7",
+          "review": "../baby-feeding-control-visual-review/sheet-18.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-head-saved-393-1x.long.png",
+      "sha256": "14830f54ec9e4f659edeaf399a4e59c10e2967ed23b80587d93837a86fddb826",
+      "width": 393,
+      "height": 1816,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2541e10f43029eb71329290bf405fa83fabe418cf9eb6676ed4e3eb8498f6856",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "462243825730002d5a7b26fe7e1bbdb2f381ea57afabfc7a0cad762ed9541c1e",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1816,
+          "pixel_sha256": "339a0014bca02680e8fbe8909d175a4db523583a2db9804b5a4fc07fa05f291e",
+          "review": "../baby-development-control-visual-review/sheet-05.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-head-saved-393-1x.png",
+      "sha256": "fad0d44f149b0bc1a8154c905dfb7e10b6f3abe8ca047d26baf977424f910efc",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "1d1b4de2c1b81d5666fd54394d73c5b21b2a7bea81744a337473932cb4467d25",
+          "review": "../baby-development-control-visual-review/sheet-05.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "4708d68a58904bdf9acff66f8efee44d91bea259d8da8661c22c884071926520",
+          "review": "../baby-development-control-visual-review/sheet-05.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-head-selected-lifts-head-320-2x.long.png",
+      "sha256": "f0f58da131e467d2807ccb041b484a5decf9aa34bb55377d999c26b41bd3c5c7",
+      "width": 320,
+      "height": 1542,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "bf1407b2d076d172db899b8e2278a8919f662b379bf36375f6395ae49f80f294",
+          "review": "../baby-development-control-visual-review/sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "867de9fe2509a173e9b1e75430830bd756120ec5bd2e485780718daa035003f8",
+          "review": "../baby-development-control-visual-review/sheet-20.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1542,
+          "pixel_sha256": "2c89335eab245687767495301a221a6db8203bd6469a4d19e287833f78d69d19",
+          "review": "../baby-development-control-visual-review/sheet-02.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-head-selected-lifts-head-320-2x.png",
+      "sha256": "c0f8eb84469452d2647ec4c6cf1c124011ef3cd52d8f9b9a1bb186bf3bdeaea9",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "232c996cd34a4554ab4842278ea3b265da4c01241b01ea9ba766c03aa69e7f4f",
+          "review": "../baby-development-control-visual-review/sheet-02.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "76ec8de8e0399d20f7bf211c63fa2d18776a2d1a4325cbd39efdb6b14fcc53fb",
+          "review": "../baby-development-control-visual-review/sheet-02.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-head-selected-lifts-head-393-1x.png",
+      "sha256": "abd7cce5259721c8ed531e9f969787fbe7a853a92dc617a9203834b696059afc",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "29103e0ae63fae92df5d7b7c6f7e1a6091c39381d0b4b7609dc1004140a7283b",
+          "review": "../baby-development-control-visual-review/sheet-20.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "bfe04f1aa45247cf0495b9768136828ab49029f142966453a3eb385907fcd460",
+          "review": "../baby-development-control-visual-review/sheet-03.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-sound-delete-confirm-320-2x.png",
+      "sha256": "6d47b73a620e99136425f405e37f3ab317641ff7f4c2dc328897f51e554d613f",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ccae697e62b94fe4d02db7c3fda345b38eeea721303da18ddbcffbdecdc7f5c8",
+          "review": "sheet-06.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "01f9b67ccf9c2d173f9ec08068e97cea297d7d0cffb1b1d907247ca357bc19c6",
+          "review": "sheet-07.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-sound-delete-confirm-393-1x.png",
+      "sha256": "0184b920ea85d710ec0d7309fdb993d6eda2af5d018ae3d2d9c05c74df4d5038",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "fc103c11cefbd82816041cdb905e1c76dc7da61f8fa3c47d67a62f3814d2b256",
+          "review": "sheet-07.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "749b6c42af3c3cd9eb72526d7fa2ddad4ae221bb6338713305dba8c56f277a96",
+          "review": "sheet-01.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-sound-delete-kept-320-2x.png",
+      "sha256": "b2667993934aa88481d3e69149b55e51169146da37211e5cef156b6cf948801d",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "cb2c2925037908f5469ccbf9fd2a8cf44e6c2959b859efbf77822b0b907bee15",
+          "review": "sheet-07.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "4f535692ab7fd544c39f9ec1d504543b1e683c63f954a540be70f974c9678b75",
+          "review": "sheet-07.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-sound-delete-kept-393-1x.png",
+      "sha256": "9539c7eb4dcf4311f6914b5fb2ba137e58e1fe06f736c6e60fb75eb13d6fcd8b",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6869a89cf5c35d4c535d7a4a64a2abc79557c4e066d92ac334e8b07e11adbd40",
+          "review": "sheet-07.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "8bdeffc41d4a3f4c9ce4bf04d242795fab314a5a6f5ce005f84e01795430343f",
+          "review": "../baby-feeding-control-visual-review/sheet-16.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-sound-deleted-320-2x.long.png",
+      "sha256": "ab5b7d0cbf90b4c28061b8de825ec247698d18e711cd7e66d1695c224bc5a4fe",
+      "width": 320,
+      "height": 907,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "fb60245da9f73c20293512208b47d7336cfa544796aa02a14503b2b50db55657",
+          "review": "sheet-02.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 907,
+          "pixel_sha256": "3f695762c95910cb1c3f211a4a1abee7247a422c04ce6a23455667cd5084fc23",
+          "review": "sheet-02.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-sound-deleted-320-2x.png",
+      "sha256": "833505a8b844e4ef82b671c2a414d4f5376c016ec5629145eff3eb7092dae9cf",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "fb60245da9f73c20293512208b47d7336cfa544796aa02a14503b2b50db55657",
+          "review": "sheet-02.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "f1f0a1e6064bd3058a82f1e3338c1c2af80f877aecdce5f7394f0887dbe084f1",
+          "review": "sheet-02.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-sound-deleted-393-1x.png",
+      "sha256": "1180f17ef045d1251e218976fb29f64d09490b74fde5963c531259b058def101",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "1b1d6cf5b94ddd6675f536ccc2fa2f9bef9a2d3fab30744b8e74f222d82339a4",
+          "review": "sheet-02.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "8bdeffc41d4a3f4c9ce4bf04d242795fab314a5a6f5ce005f84e01795430343f",
+          "review": "../baby-feeding-control-visual-review/sheet-16.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-sound-head-history-320-2x.long.png",
+      "sha256": "3a8355efc9ab5e2af9aafc27df10d4b1859f687d49c0c3db53d798fce745ef62",
+      "width": 320,
+      "height": 1087,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9282cb0612233219ebf6679f95840963f29cc04dc2902969b9373bc267e09198",
+          "review": "sheet-07.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1087,
+          "pixel_sha256": "f811a60fb4a0b3670e5b483093404a85b9c92bd28bf1bb1b9c7fcc781ea3c4f6",
+          "review": "sheet-08.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-sound-head-history-320-2x.png",
+      "sha256": "b24b4ec008f256b34f69caacc670a2fb60e551d97d24e4cb96fa9ab30989271d",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9282cb0612233219ebf6679f95840963f29cc04dc2902969b9373bc267e09198",
+          "review": "sheet-07.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "c47efe9ec84d45b1fdd34ec83c23a3b4dc442f56ac43810f2fc4268e8cdba3d5",
+          "review": "sheet-08.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-sound-head-history-393-1x.png",
+      "sha256": "c5eac76adb84f5364c88f0118433933d6ebdb6d44a26cd34574803060f57cfd2",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "8af447de80d970a31f86ee99f62d01070b59652e4d0652a1288968440ebc0681",
+          "review": "sheet-08.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "48c8b962eb5d95c36f5cc12f4e112b6f073041256336ee31915b096c41d0e3b4",
+          "review": "sheet-05.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-sound-head-home-entry-320-2x.long.png",
+      "sha256": "2a7eed3eaa881740523730a74f99487a3935cee5f5e500fdea7e513a60082fc7",
+      "width": 320,
+      "height": 3460,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "58578630282c08ed070b330c5092b2346554d47e291ecce03bfa1790d2ebdd62",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "034c398b12fe2df5aaef1e8fd2e151d4092f4bc550a8179f7524acfdf8572a5d",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "fa27bf1b8f7135cf78bb1380036cbe25b805799678f9c6338d1b09862168215b",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "cf7b9827ee12ea5f4ce473b5b04736e9eca7e63163a06350e8ad0569b0e9a58a",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-3"
+        },
+        {
+          "y0": 2600,
+          "y1": 3250,
+          "pixel_sha256": "830120be56be43c6e4e4a7527c94577138b4175b12f8b7b606a89d5ff059987b",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-4"
+        },
+        {
+          "y0": 3250,
+          "y1": 3460,
+          "pixel_sha256": "347ac7ec17d5bdaf8c362c53e6be84275398444203824d119dff6d55c72c68e4",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-sound-head-home-entry-320-2x.png",
+      "sha256": "32e02297eb960cf9da693d3ed9a4e380131ba98e63d64680e1c452112635af75",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "58578630282c08ed070b330c5092b2346554d47e291ecce03bfa1790d2ebdd62",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "98ef9a2ad09f8a3c8229ac286c7eb3cb28273ffd01708531c25ae3c0ce531fd2",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-sound-head-home-entry-393-1x.long.png",
+      "sha256": "f0cba396e8a9efa775fb9fbb71adccd863e4ce8dace888759be74db253f099a6",
+      "width": 393,
+      "height": 1752,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2541e10f43029eb71329290bf405fa83fabe418cf9eb6676ed4e3eb8498f6856",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "462243825730002d5a7b26fe7e1bbdb2f381ea57afabfc7a0cad762ed9541c1e",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1752,
+          "pixel_sha256": "5d1142fe86ef6e5a8664871afce9928bf15cf58f7b773ac5f1080f1b7fead23c",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-sound-head-home-entry-393-1x.png",
+      "sha256": "f7c02c89b1acb7e0cd4ab4adc0593819b05f05ed599398d49ea569c924ea6a82",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2541e10f43029eb71329290bf405fa83fabe418cf9eb6676ed4e3eb8498f6856",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a1f9a5a5f828e0a335129ce0d0a8a7cf54c1ab1e6b87423f882a64c1946d8f9e",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-sound-head-home-return-320-2x.long.png",
+      "sha256": "2a7eed3eaa881740523730a74f99487a3935cee5f5e500fdea7e513a60082fc7",
+      "width": 320,
+      "height": 3460,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "58578630282c08ed070b330c5092b2346554d47e291ecce03bfa1790d2ebdd62",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "034c398b12fe2df5aaef1e8fd2e151d4092f4bc550a8179f7524acfdf8572a5d",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "fa27bf1b8f7135cf78bb1380036cbe25b805799678f9c6338d1b09862168215b",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "cf7b9827ee12ea5f4ce473b5b04736e9eca7e63163a06350e8ad0569b0e9a58a",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-3"
+        },
+        {
+          "y0": 2600,
+          "y1": 3250,
+          "pixel_sha256": "830120be56be43c6e4e4a7527c94577138b4175b12f8b7b606a89d5ff059987b",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-4"
+        },
+        {
+          "y0": 3250,
+          "y1": 3460,
+          "pixel_sha256": "347ac7ec17d5bdaf8c362c53e6be84275398444203824d119dff6d55c72c68e4",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-sound-head-home-return-320-2x.png",
+      "sha256": "32e02297eb960cf9da693d3ed9a4e380131ba98e63d64680e1c452112635af75",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "58578630282c08ed070b330c5092b2346554d47e291ecce03bfa1790d2ebdd62",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "98ef9a2ad09f8a3c8229ac286c7eb3cb28273ffd01708531c25ae3c0ce531fd2",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-sound-head-home-return-393-1x.long.png",
+      "sha256": "f0cba396e8a9efa775fb9fbb71adccd863e4ce8dace888759be74db253f099a6",
+      "width": 393,
+      "height": 1752,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2541e10f43029eb71329290bf405fa83fabe418cf9eb6676ed4e3eb8498f6856",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "462243825730002d5a7b26fe7e1bbdb2f381ea57afabfc7a0cad762ed9541c1e",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1752,
+          "pixel_sha256": "5d1142fe86ef6e5a8664871afce9928bf15cf58f7b773ac5f1080f1b7fead23c",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-sound-head-home-return-393-1x.png",
+      "sha256": "f7c02c89b1acb7e0cd4ab4adc0593819b05f05ed599398d49ea569c924ea6a82",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2541e10f43029eb71329290bf405fa83fabe418cf9eb6676ed4e3eb8498f6856",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a1f9a5a5f828e0a335129ce0d0a8a7cf54c1ab1e6b87423f882a64c1946d8f9e",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-sound-head-more-return-320-2x.png",
+      "sha256": "90ff3249f64fc7750a5da2a6bac0e2e90a64014893d9e85c3df4c76dbe8dea38",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "7925ed8e5939f589376b72745969839e14c7fb166cfb48866eed469fa66c4d02",
+          "review": "../baby-profile-control-visual-review/sheet-19.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "f95aac7cc67095efb73a4ae0b9ee5dc9518b86f20195158e860fce9621ec483a",
+          "review": "../mom-rest-control-visual-review/sheet-19.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-sound-head-more-return-393-1x.png",
+      "sha256": "1905827f337ce2fe60b46266600cce9aa8dea3b9aac6828fb6a1d3f67f020b35",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c8e12900bddbe318fd8d03ad9b384466fc1af1f6c371f72f999f20bc96cac1d6",
+          "review": "../baby-profile-control-visual-review/sheet-19.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "ae62a60cadfc8bfb09e3e94acb0dc8f7d481c4c260eae5960e33ebdc5f0799db",
+          "review": "../mom-rest-control-visual-review/sheet-20.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-sound-head-saved-320-2x.long.png",
+      "sha256": "52798ca8bf235f1b0243306c2809a4000371320ca3102c04576ab86821aa3036",
+      "width": 320,
+      "height": 3554,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "58578630282c08ed070b330c5092b2346554d47e291ecce03bfa1790d2ebdd62",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "034c398b12fe2df5aaef1e8fd2e151d4092f4bc550a8179f7524acfdf8572a5d",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "fa27bf1b8f7135cf78bb1380036cbe25b805799678f9c6338d1b09862168215b",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "cf7b9827ee12ea5f4ce473b5b04736e9eca7e63163a06350e8ad0569b0e9a58a",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-3"
+        },
+        {
+          "y0": 2600,
+          "y1": 3250,
+          "pixel_sha256": "b0642aba05928c776f791d9c26e7add778f68d5b445da62b1c9ac1f5620d383f",
+          "review": "../baby-development-boundary-visual-review/sheet-05.png#tile-0"
+        },
+        {
+          "y0": 3250,
+          "y1": 3554,
+          "pixel_sha256": "c79e47165de7b9cdc32d472e17bb425ee22d7bdbf49e0704b2ce714dc7b37d42",
+          "review": "../baby-development-boundary-visual-review/sheet-05.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-sound-head-saved-320-2x.png",
+      "sha256": "d1a06ef4c1d0eabd15a6117114cc9c2dc084e50807447444ae687434e57642b0",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "0d284b4e8d46327c9f87d34c3265a444625536a280bb38ed32370453046a2f24",
+          "review": "../baby-development-control-visual-review/sheet-05.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "563dd0eb6127eff7c02d4cf0854f116747677cf072bd11574cc7adf5267526f7",
+          "review": "../baby-feeding-control-visual-review/sheet-18.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-sound-head-saved-393-1x.long.png",
+      "sha256": "14830f54ec9e4f659edeaf399a4e59c10e2967ed23b80587d93837a86fddb826",
+      "width": 393,
+      "height": 1816,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2541e10f43029eb71329290bf405fa83fabe418cf9eb6676ed4e3eb8498f6856",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "462243825730002d5a7b26fe7e1bbdb2f381ea57afabfc7a0cad762ed9541c1e",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1816,
+          "pixel_sha256": "339a0014bca02680e8fbe8909d175a4db523583a2db9804b5a4fc07fa05f291e",
+          "review": "../baby-development-control-visual-review/sheet-05.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-sound-head-saved-393-1x.png",
+      "sha256": "fad0d44f149b0bc1a8154c905dfb7e10b6f3abe8ca047d26baf977424f910efc",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "1d1b4de2c1b81d5666fd54394d73c5b21b2a7bea81744a337473932cb4467d25",
+          "review": "../baby-development-control-visual-review/sheet-05.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "4708d68a58904bdf9acff66f8efee44d91bea259d8da8661c22c884071926520",
+          "review": "../baby-development-control-visual-review/sheet-05.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-sound-head-selected-lifts-head-320-2x.long.png",
+      "sha256": "1f257d3d89501db48b689afae7266fee4ded3c29bd139081fcacac25802d4c32",
+      "width": 320,
+      "height": 1542,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "bf1407b2d076d172db899b8e2278a8919f662b379bf36375f6395ae49f80f294",
+          "review": "../baby-development-control-visual-review/sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "789e5296d2acaccd87b47024d71bbab16d57cb7930726662ae4b2e6392b867c0",
+          "review": "../baby-development-control-visual-review/sheet-02.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1542,
+          "pixel_sha256": "2c89335eab245687767495301a221a6db8203bd6469a4d19e287833f78d69d19",
+          "review": "../baby-development-control-visual-review/sheet-02.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-sound-head-selected-lifts-head-320-2x.png",
+      "sha256": "c0f8eb84469452d2647ec4c6cf1c124011ef3cd52d8f9b9a1bb186bf3bdeaea9",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "232c996cd34a4554ab4842278ea3b265da4c01241b01ea9ba766c03aa69e7f4f",
+          "review": "../baby-development-control-visual-review/sheet-02.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "76ec8de8e0399d20f7bf211c63fa2d18776a2d1a4325cbd39efdb6b14fcc53fb",
+          "review": "../baby-development-control-visual-review/sheet-02.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-sound-head-selected-lifts-head-393-1x.png",
+      "sha256": "f6bdfaabec6b7c4f8c7b1f404db544b1f9e6ed8af1d9f14c02a5cc1a65d20987",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "0babbf5ebf61bf314c8c01db566f7cbc83d3f111687b7e75ef64344fae87a8b6",
+          "review": "sheet-08.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "bfe04f1aa45247cf0495b9768136828ab49029f142966453a3eb385907fcd460",
+          "review": "../baby-development-control-visual-review/sheet-03.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-sound-head-selected-responds-to-sound-320-2x.long.png",
+      "sha256": "c4c54385f90987a475ba07071570d6e249a8689bab3eb0fd7d12109c48945d70",
+      "width": 320,
+      "height": 1542,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "bf1407b2d076d172db899b8e2278a8919f662b379bf36375f6395ae49f80f294",
+          "review": "../baby-development-control-visual-review/sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "e95f73e991859f992b2b42a6df1263e27168849e7a8b045b8b850530efba0a2c",
+          "review": "../baby-development-control-visual-review/sheet-04.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1542,
+          "pixel_sha256": "2c89335eab245687767495301a221a6db8203bd6469a4d19e287833f78d69d19",
+          "review": "../baby-development-control-visual-review/sheet-02.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-sound-head-selected-responds-to-sound-320-2x.png",
+      "sha256": "172bb2eec3c6bc70eaf2baa85f43ad2fe273c403fe044903064c3ad23a1de916",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "0917138c5d3dde1c69d55b01eb2c0d5bfdaf669ca136153b77cb68124c65a0ed",
+          "review": "../baby-development-control-visual-review/sheet-04.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "61d0150ee228a5b28eaf70a120e98678c84b9808f74e542871454fb0b5342d35",
+          "review": "../baby-development-control-visual-review/sheet-04.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-sound-head-selected-responds-to-sound-393-1x.png",
+      "sha256": "4ef83cfa21271d4fd049760cf293c4fcc1453b74461ddcc0b8cda8f83ebf5e5a",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b755cfe7de25b1a645a448016428513ad1bf1db8577bd59a3f2dbd16363b0c78",
+          "review": "../baby-development-control-visual-review/sheet-22.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "bfe04f1aa45247cf0495b9768136828ab49029f142966453a3eb385907fcd460",
+          "review": "../baby-development-control-visual-review/sheet-03.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-sound-history-320-2x.png",
+      "sha256": "b2667993934aa88481d3e69149b55e51169146da37211e5cef156b6cf948801d",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "cb2c2925037908f5469ccbf9fd2a8cf44e6c2959b859efbf77822b0b907bee15",
+          "review": "sheet-07.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "4f535692ab7fd544c39f9ec1d504543b1e683c63f954a540be70f974c9678b75",
+          "review": "sheet-07.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-sound-history-393-1x.png",
+      "sha256": "9539c7eb4dcf4311f6914b5fb2ba137e58e1fe06f736c6e60fb75eb13d6fcd8b",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6869a89cf5c35d4c535d7a4a64a2abc79557c4e066d92ac334e8b07e11adbd40",
+          "review": "sheet-07.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "8bdeffc41d4a3f4c9ce4bf04d242795fab314a5a6f5ce005f84e01795430343f",
+          "review": "../baby-feeding-control-visual-review/sheet-16.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-sound-home-entry-320-2x.long.png",
+      "sha256": "2a7eed3eaa881740523730a74f99487a3935cee5f5e500fdea7e513a60082fc7",
+      "width": 320,
+      "height": 3460,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "58578630282c08ed070b330c5092b2346554d47e291ecce03bfa1790d2ebdd62",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "034c398b12fe2df5aaef1e8fd2e151d4092f4bc550a8179f7524acfdf8572a5d",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "fa27bf1b8f7135cf78bb1380036cbe25b805799678f9c6338d1b09862168215b",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "cf7b9827ee12ea5f4ce473b5b04736e9eca7e63163a06350e8ad0569b0e9a58a",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-3"
+        },
+        {
+          "y0": 2600,
+          "y1": 3250,
+          "pixel_sha256": "830120be56be43c6e4e4a7527c94577138b4175b12f8b7b606a89d5ff059987b",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-4"
+        },
+        {
+          "y0": 3250,
+          "y1": 3460,
+          "pixel_sha256": "347ac7ec17d5bdaf8c362c53e6be84275398444203824d119dff6d55c72c68e4",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-sound-home-entry-320-2x.png",
+      "sha256": "32e02297eb960cf9da693d3ed9a4e380131ba98e63d64680e1c452112635af75",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "58578630282c08ed070b330c5092b2346554d47e291ecce03bfa1790d2ebdd62",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "98ef9a2ad09f8a3c8229ac286c7eb3cb28273ffd01708531c25ae3c0ce531fd2",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-sound-home-entry-393-1x.long.png",
+      "sha256": "f0cba396e8a9efa775fb9fbb71adccd863e4ce8dace888759be74db253f099a6",
+      "width": 393,
+      "height": 1752,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2541e10f43029eb71329290bf405fa83fabe418cf9eb6676ed4e3eb8498f6856",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "462243825730002d5a7b26fe7e1bbdb2f381ea57afabfc7a0cad762ed9541c1e",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1752,
+          "pixel_sha256": "5d1142fe86ef6e5a8664871afce9928bf15cf58f7b773ac5f1080f1b7fead23c",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-sound-home-entry-393-1x.png",
+      "sha256": "f7c02c89b1acb7e0cd4ab4adc0593819b05f05ed599398d49ea569c924ea6a82",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2541e10f43029eb71329290bf405fa83fabe418cf9eb6676ed4e3eb8498f6856",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a1f9a5a5f828e0a335129ce0d0a8a7cf54c1ab1e6b87423f882a64c1946d8f9e",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-sound-home-return-320-2x.long.png",
+      "sha256": "2a7eed3eaa881740523730a74f99487a3935cee5f5e500fdea7e513a60082fc7",
+      "width": 320,
+      "height": 3460,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "58578630282c08ed070b330c5092b2346554d47e291ecce03bfa1790d2ebdd62",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "034c398b12fe2df5aaef1e8fd2e151d4092f4bc550a8179f7524acfdf8572a5d",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "fa27bf1b8f7135cf78bb1380036cbe25b805799678f9c6338d1b09862168215b",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "cf7b9827ee12ea5f4ce473b5b04736e9eca7e63163a06350e8ad0569b0e9a58a",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-3"
+        },
+        {
+          "y0": 2600,
+          "y1": 3250,
+          "pixel_sha256": "830120be56be43c6e4e4a7527c94577138b4175b12f8b7b606a89d5ff059987b",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-4"
+        },
+        {
+          "y0": 3250,
+          "y1": 3460,
+          "pixel_sha256": "347ac7ec17d5bdaf8c362c53e6be84275398444203824d119dff6d55c72c68e4",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-sound-home-return-320-2x.png",
+      "sha256": "32e02297eb960cf9da693d3ed9a4e380131ba98e63d64680e1c452112635af75",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "58578630282c08ed070b330c5092b2346554d47e291ecce03bfa1790d2ebdd62",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "98ef9a2ad09f8a3c8229ac286c7eb3cb28273ffd01708531c25ae3c0ce531fd2",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-sound-home-return-393-1x.long.png",
+      "sha256": "f0cba396e8a9efa775fb9fbb71adccd863e4ce8dace888759be74db253f099a6",
+      "width": 393,
+      "height": 1752,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2541e10f43029eb71329290bf405fa83fabe418cf9eb6676ed4e3eb8498f6856",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "462243825730002d5a7b26fe7e1bbdb2f381ea57afabfc7a0cad762ed9541c1e",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1752,
+          "pixel_sha256": "5d1142fe86ef6e5a8664871afce9928bf15cf58f7b773ac5f1080f1b7fead23c",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-sound-home-return-393-1x.png",
+      "sha256": "f7c02c89b1acb7e0cd4ab4adc0593819b05f05ed599398d49ea569c924ea6a82",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2541e10f43029eb71329290bf405fa83fabe418cf9eb6676ed4e3eb8498f6856",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a1f9a5a5f828e0a335129ce0d0a8a7cf54c1ab1e6b87423f882a64c1946d8f9e",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-sound-more-return-320-2x.png",
+      "sha256": "90ff3249f64fc7750a5da2a6bac0e2e90a64014893d9e85c3df4c76dbe8dea38",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "7925ed8e5939f589376b72745969839e14c7fb166cfb48866eed469fa66c4d02",
+          "review": "../baby-profile-control-visual-review/sheet-19.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "f95aac7cc67095efb73a4ae0b9ee5dc9518b86f20195158e860fce9621ec483a",
+          "review": "../mom-rest-control-visual-review/sheet-19.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-sound-more-return-393-1x.png",
+      "sha256": "1905827f337ce2fe60b46266600cce9aa8dea3b9aac6828fb6a1d3f67f020b35",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c8e12900bddbe318fd8d03ad9b384466fc1af1f6c371f72f999f20bc96cac1d6",
+          "review": "../baby-profile-control-visual-review/sheet-19.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "ae62a60cadfc8bfb09e3e94acb0dc8f7d481c4c260eae5960e33ebdc5f0799db",
+          "review": "../mom-rest-control-visual-review/sheet-20.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-sound-restored-320-2x.png",
+      "sha256": "b2667993934aa88481d3e69149b55e51169146da37211e5cef156b6cf948801d",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "cb2c2925037908f5469ccbf9fd2a8cf44e6c2959b859efbf77822b0b907bee15",
+          "review": "sheet-07.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "4f535692ab7fd544c39f9ec1d504543b1e683c63f954a540be70f974c9678b75",
+          "review": "sheet-07.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-sound-restored-393-1x.png",
+      "sha256": "9539c7eb4dcf4311f6914b5fb2ba137e58e1fe06f736c6e60fb75eb13d6fcd8b",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6869a89cf5c35d4c535d7a4a64a2abc79557c4e066d92ac334e8b07e11adbd40",
+          "review": "sheet-07.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "8bdeffc41d4a3f4c9ce4bf04d242795fab314a5a6f5ce005f84e01795430343f",
+          "review": "../baby-feeding-control-visual-review/sheet-16.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-sound-restored-edit-320-2x.long.png",
+      "sha256": "989f287d163ecce256089c4477051f69d5988ed6bac4e317791239388856d8cd",
+      "width": 320,
+      "height": 1050,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c7b7dd1d66b767ff40421f32b034f2a1968672f2ce08cc9219be23e484326392",
+          "review": "sheet-08.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1050,
+          "pixel_sha256": "bd4978f71f88a6ee9dcc0e2cac0e804209accda501ea5392574c6ff530b8db8b",
+          "review": "sheet-08.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-sound-restored-edit-320-2x.png",
+      "sha256": "9a0630dd310fdcd362e7952a2c939edc1cf275086713592e1c2212d2c54bfcc6",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c7b7dd1d66b767ff40421f32b034f2a1968672f2ce08cc9219be23e484326392",
+          "review": "sheet-08.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "0f424ea32553a28f941012d35a00a103ccdd8358f57aaa24a205354ddba58593",
+          "review": "sheet-09.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-sound-restored-edit-393-1x.png",
+      "sha256": "0da65b88dd231e20e45ea7f2b15ec3ad6678c2a45a65512e7b04d3c401cfee37",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "607862d4cb57d2a16773370cf7b2a6074f37088a3e898ced85b9761f9d25094b",
+          "review": "sheet-09.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "19a26adeff3ffdad9f2567ec7fa4afb7dbab169b5aad7a7748b3c127d34a6f37",
+          "review": "sheet-04.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-sound-restored-edit-closed-320-2x.png",
+      "sha256": "b2667993934aa88481d3e69149b55e51169146da37211e5cef156b6cf948801d",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "cb2c2925037908f5469ccbf9fd2a8cf44e6c2959b859efbf77822b0b907bee15",
+          "review": "sheet-07.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "4f535692ab7fd544c39f9ec1d504543b1e683c63f954a540be70f974c9678b75",
+          "review": "sheet-07.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-sound-restored-edit-closed-393-1x.png",
+      "sha256": "9539c7eb4dcf4311f6914b5fb2ba137e58e1fe06f736c6e60fb75eb13d6fcd8b",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6869a89cf5c35d4c535d7a4a64a2abc79557c4e066d92ac334e8b07e11adbd40",
+          "review": "sheet-07.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "8bdeffc41d4a3f4c9ce4bf04d242795fab314a5a6f5ce005f84e01795430343f",
+          "review": "../baby-feeding-control-visual-review/sheet-16.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-sound-saved-320-2x.long.png",
+      "sha256": "52798ca8bf235f1b0243306c2809a4000371320ca3102c04576ab86821aa3036",
+      "width": 320,
+      "height": 3554,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "58578630282c08ed070b330c5092b2346554d47e291ecce03bfa1790d2ebdd62",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "034c398b12fe2df5aaef1e8fd2e151d4092f4bc550a8179f7524acfdf8572a5d",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "fa27bf1b8f7135cf78bb1380036cbe25b805799678f9c6338d1b09862168215b",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "cf7b9827ee12ea5f4ce473b5b04736e9eca7e63163a06350e8ad0569b0e9a58a",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-3"
+        },
+        {
+          "y0": 2600,
+          "y1": 3250,
+          "pixel_sha256": "b0642aba05928c776f791d9c26e7add778f68d5b445da62b1c9ac1f5620d383f",
+          "review": "../baby-development-boundary-visual-review/sheet-05.png#tile-0"
+        },
+        {
+          "y0": 3250,
+          "y1": 3554,
+          "pixel_sha256": "c79e47165de7b9cdc32d472e17bb425ee22d7bdbf49e0704b2ce714dc7b37d42",
+          "review": "../baby-development-boundary-visual-review/sheet-05.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-sound-saved-320-2x.png",
+      "sha256": "d1a06ef4c1d0eabd15a6117114cc9c2dc084e50807447444ae687434e57642b0",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "0d284b4e8d46327c9f87d34c3265a444625536a280bb38ed32370453046a2f24",
+          "review": "../baby-development-control-visual-review/sheet-05.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "563dd0eb6127eff7c02d4cf0854f116747677cf072bd11574cc7adf5267526f7",
+          "review": "../baby-feeding-control-visual-review/sheet-18.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-sound-saved-393-1x.long.png",
+      "sha256": "14830f54ec9e4f659edeaf399a4e59c10e2967ed23b80587d93837a86fddb826",
+      "width": 393,
+      "height": 1816,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2541e10f43029eb71329290bf405fa83fabe418cf9eb6676ed4e3eb8498f6856",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "462243825730002d5a7b26fe7e1bbdb2f381ea57afabfc7a0cad762ed9541c1e",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1816,
+          "pixel_sha256": "339a0014bca02680e8fbe8909d175a4db523583a2db9804b5a4fc07fa05f291e",
+          "review": "../baby-development-control-visual-review/sheet-05.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-sound-saved-393-1x.png",
+      "sha256": "fad0d44f149b0bc1a8154c905dfb7e10b6f3abe8ca047d26baf977424f910efc",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "1d1b4de2c1b81d5666fd54394d73c5b21b2a7bea81744a337473932cb4467d25",
+          "review": "../baby-development-control-visual-review/sheet-05.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "4708d68a58904bdf9acff66f8efee44d91bea259d8da8661c22c884071926520",
+          "review": "../baby-development-control-visual-review/sheet-05.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-sound-selected-responds-to-sound-320-2x.long.png",
+      "sha256": "c4c54385f90987a475ba07071570d6e249a8689bab3eb0fd7d12109c48945d70",
+      "width": 320,
+      "height": 1542,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "bf1407b2d076d172db899b8e2278a8919f662b379bf36375f6395ae49f80f294",
+          "review": "../baby-development-control-visual-review/sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "e95f73e991859f992b2b42a6df1263e27168849e7a8b045b8b850530efba0a2c",
+          "review": "../baby-development-control-visual-review/sheet-04.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1542,
+          "pixel_sha256": "2c89335eab245687767495301a221a6db8203bd6469a4d19e287833f78d69d19",
+          "review": "../baby-development-control-visual-review/sheet-02.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-sound-selected-responds-to-sound-320-2x.png",
+      "sha256": "172bb2eec3c6bc70eaf2baa85f43ad2fe273c403fe044903064c3ad23a1de916",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "0917138c5d3dde1c69d55b01eb2c0d5bfdaf669ca136153b77cb68124c65a0ed",
+          "review": "../baby-development-control-visual-review/sheet-04.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "61d0150ee228a5b28eaf70a120e98678c84b9808f74e542871454fb0b5342d35",
+          "review": "../baby-development-control-visual-review/sheet-04.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-management-sound-selected-responds-to-sound-393-1x.png",
+      "sha256": "4ef83cfa21271d4fd049760cf293c4fcc1453b74461ddcc0b8cda8f83ebf5e5a",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b755cfe7de25b1a645a448016428513ad1bf1db8577bd59a3f2dbd16363b0c78",
+          "review": "../baby-development-control-visual-review/sheet-22.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "bfe04f1aa45247cf0495b9768136828ab49029f142966453a3eb385907fcd460",
+          "review": "../baby-development-control-visual-review/sheet-03.png#tile-1"
+        }
+      ]
+    }
+  ],
+  "unique_segments": 91,
+  "new_segments": 50,
+  "new_sheets": 9
+}

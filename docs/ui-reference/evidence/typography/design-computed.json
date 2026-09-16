@@ -1,0 +1,239 @@
+[
+  {
+    "width": 320,
+    "base": [
+      {
+        "text": "Welcome back",
+        "tag": "H1",
+        "font": "Manrope, \"DM Sans\", sans-serif",
+        "size": "28px",
+        "height": "30.8px",
+        "spacing": "-1.12px",
+        "weight": "700"
+      },
+      {
+        "text": "Daily care",
+        "tag": "H2",
+        "font": "Manrope, \"DM Sans\", sans-serif",
+        "size": "21px",
+        "height": "25.2px",
+        "spacing": "-0.525px",
+        "weight": "700"
+      },
+      {
+        "text": "Care plan",
+        "tag": "H3",
+        "font": "Manrope, \"DM Sans\", sans-serif",
+        "size": "16px",
+        "height": "20.8px",
+        "spacing": "normal",
+        "weight": "700"
+      },
+      {
+        "text": "Daily notes",
+        "tag": "P",
+        "font": "\"DM Sans\", -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "size": "16px",
+        "height": "24.8px",
+        "spacing": "normal",
+        "weight": "400"
+      },
+      {
+        "text": "Section heading",
+        "tag": "H2",
+        "font": "Manrope, \"DM Sans\", sans-serif",
+        "size": "18px",
+        "height": "21.6px",
+        "spacing": "-0.45px",
+        "weight": "700"
+      }
+    ],
+    "pageHeadings": [
+      {
+        "text": "Cozymate",
+        "tag": "H1",
+        "font": "Manrope, \"DM Sans\", sans-serif",
+        "size": "28px",
+        "height": "30.8px",
+        "spacing": "-1.12px",
+        "weight": "700"
+      },
+      {
+        "text": "账号信息",
+        "tag": "H1",
+        "font": "Manrope, \"DM Sans\", sans-serif",
+        "size": "28px",
+        "height": "30.8px",
+        "spacing": "-1.12px",
+        "weight": "700"
+      },
+      {
+        "text": "Mia Chen",
+        "tag": "H2",
+        "font": "Manrope, \"DM Sans\", sans-serif",
+        "size": "17px",
+        "height": "20.4px",
+        "spacing": "-0.425px",
+        "weight": "700"
+      }
+    ]
+  },
+  {
+    "width": 390,
+    "base": [
+      {
+        "text": "Welcome back",
+        "tag": "H1",
+        "font": "Manrope, \"DM Sans\", sans-serif",
+        "size": "28px",
+        "height": "30.8px",
+        "spacing": "-1.12px",
+        "weight": "700"
+      },
+      {
+        "text": "Daily care",
+        "tag": "H2",
+        "font": "Manrope, \"DM Sans\", sans-serif",
+        "size": "21px",
+        "height": "25.2px",
+        "spacing": "-0.525px",
+        "weight": "700"
+      },
+      {
+        "text": "Care plan",
+        "tag": "H3",
+        "font": "Manrope, \"DM Sans\", sans-serif",
+        "size": "16px",
+        "height": "20.8px",
+        "spacing": "normal",
+        "weight": "700"
+      },
+      {
+        "text": "Daily notes",
+        "tag": "P",
+        "font": "\"DM Sans\", -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "size": "16px",
+        "height": "24.8px",
+        "spacing": "normal",
+        "weight": "400"
+      },
+      {
+        "text": "Section heading",
+        "tag": "H2",
+        "font": "Manrope, \"DM Sans\", sans-serif",
+        "size": "18px",
+        "height": "21.6px",
+        "spacing": "-0.45px",
+        "weight": "700"
+      }
+    ],
+    "pageHeadings": [
+      {
+        "text": "Cozymate",
+        "tag": "H1",
+        "font": "Manrope, \"DM Sans\", sans-serif",
+        "size": "28px",
+        "height": "30.8px",
+        "spacing": "-1.12px",
+        "weight": "700"
+      },
+      {
+        "text": "账号信息",
+        "tag": "H1",
+        "font": "Manrope, \"DM Sans\", sans-serif",
+        "size": "28px",
+        "height": "30.8px",
+        "spacing": "-1.12px",
+        "weight": "700"
+      },
+      {
+        "text": "Mia Chen",
+        "tag": "H2",
+        "font": "Manrope, \"DM Sans\", sans-serif",
+        "size": "17px",
+        "height": "20.4px",
+        "spacing": "-0.425px",
+        "weight": "700"
+      }
+    ]
+  },
+  {
+    "width": 430,
+    "base": [
+      {
+        "text": "Welcome back",
+        "tag": "H1",
+        "font": "Manrope, \"DM Sans\", sans-serif",
+        "size": "28px",
+        "height": "30.8px",
+        "spacing": "-1.12px",
+        "weight": "700"
+      },
+      {
+        "text": "Daily care",
+        "tag": "H2",
+        "font": "Manrope, \"DM Sans\", sans-serif",
+        "size": "21px",
+        "height": "25.2px",
+        "spacing": "-0.525px",
+        "weight": "700"
+      },
+      {
+        "text": "Care plan",
+        "tag": "H3",
+        "font": "Manrope, \"DM Sans\", sans-serif",
+        "size": "16px",
+        "height": "20.8px",
+        "spacing": "normal",
+        "weight": "700"
+      },
+      {
+        "text": "Daily notes",
+        "tag": "P",
+        "font": "\"DM Sans\", -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+        "size": "16px",
+        "height": "24.8px",
+        "spacing": "normal",
+        "weight": "400"
+      },
+      {
+        "text": "Section heading",
+        "tag": "H2",
+        "font": "Manrope, \"DM Sans\", sans-serif",
+        "size": "18px",
+        "height": "21.6px",
+        "spacing": "-0.45px",
+        "weight": "700"
+      }
+    ],
+    "pageHeadings": [
+      {
+        "text": "Cozymate",
+        "tag": "H1",
+        "font": "Manrope, \"DM Sans\", sans-serif",
+        "size": "28px",
+        "height": "30.8px",
+        "spacing": "-1.12px",
+        "weight": "700"
+      },
+      {
+        "text": "账号信息",
+        "tag": "H1",
+        "font": "Manrope, \"DM Sans\", sans-serif",
+        "size": "28px",
+        "height": "30.8px",
+        "spacing": "-1.12px",
+        "weight": "700"
+      },
+      {
+        "text": "Mia Chen",
+        "tag": "H2",
+        "font": "Manrope, \"DM Sans\", sans-serif",
+        "size": "17px",
+        "height": "20.4px",
+        "spacing": "-0.425px",
+        "weight": "700"
+      }
+    ]
+  }
+]

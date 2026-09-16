@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/purchase-branches-current-payment-401-393-1x.png",
+  "previous_source": "test/goldens/ui_inventory/purchase-branches-current-create-business-recovered-393-1x.png",
+  "route": "/services/feeding-confidence",
+  "trigger": "Payment HTTP 401 → specific error and query action",
+  "root_entry": "Authenticated More → tap Me bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/services/purchase_branches_current_inventory_test.dart"
+}

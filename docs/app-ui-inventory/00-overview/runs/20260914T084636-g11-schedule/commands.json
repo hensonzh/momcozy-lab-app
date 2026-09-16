@@ -1,0 +1,31 @@
+[
+  [
+    "new-schedule-baselines",
+    [
+      "/Users/lute/.local/share/momcozy-toolchains/flutter/bin/flutter",
+      "--suppress-analytics",
+      "test",
+      "--no-pub",
+      "--reporter",
+      "expanded",
+      "test/modules/schedule/schedule_inventory_journey_test.dart",
+      "--name",
+      "inventory schedule current visible feedback gaps",
+      "--update-goldens"
+    ]
+  ],
+  [
+    "strict-capture",
+    [
+      "/Users/lute/.local/share/momcozy-toolchains/flutter/bin/flutter",
+      "--suppress-analytics",
+      "test",
+      "--no-pub",
+      "--reporter",
+      "expanded",
+      "test/modules/schedule/schedule_inventory_journey_test.dart",
+      "--name",
+      "inventory schedule current visible feedback gaps"
+    ]
+  ]
+]

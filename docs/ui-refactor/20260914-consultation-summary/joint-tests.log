@@ -1,0 +1,75 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 320.0 / 1.0
+00:00 +1: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 320.0 / 1.0
+00:00 +2: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 320.0 / 1.0
+00:00 +3: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 320.0 / 1.0
+00:00 +4: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 320.0 / 1.0
+00:00 +5: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 320.0 / 1.0
+00:00 +6: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 320.0 / 1.0
+00:00 +7: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 320.0 / 1.0
+00:00 +8: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 320.0 / 1.0
+00:00 +9: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 320.0 / 1.0
+00:00 +10: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 320.0 / 1.0
+00:00 +11: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 320.0 / 1.0
+00:00 +12: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 320.0 / 1.0
+00:00 +13: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 320.0 / 1.0
+00:00 +14: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 320.0 / 1.0
+00:01 +15: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 320.0 / 1.0
+00:01 +16: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 320.0 / 1.0
+00:01 +17: /Users/lute/project/momcozy-lab/app/test/modules/services/booking_test.dart: booking loading retry empty slots and unavailable slots 320.0/2.0
+00:01 +18: /Users/lute/project/momcozy-lab/app/test/modules/services/service_progress_test.dart: full timeline navigation at 320.0 / 2.0
+00:01 +19: /Users/lute/project/momcozy-lab/app/test/shared/product_feedback_test.dart: feedback layout and retry callbacks 390.0/1.0
+00:01 +20: /Users/lute/project/momcozy-lab/app/test/shared/product_feedback_test.dart: feedback layout and retry callbacks 390.0/1.0
+00:01 +21: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 320.0 / 2.0
+00:01 +22: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 320.0 / 2.0
+00:01 +23: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 320.0 / 2.0
+00:01 +24: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 320.0 / 2.0
+00:01 +25: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 320.0 / 2.0
+00:01 +26: /Users/lute/project/momcozy-lab/app/test/shared/product_feedback_test.dart: feedback layout and retry callbacks 430.0/1.0
+00:01 +27: /Users/lute/project/momcozy-lab/app/test/modules/services/service_progress_test.dart: full timeline navigation at 430.0 / 1.0
+00:01 +28: /Users/lute/project/momcozy-lab/app/test/modules/services/booking_test.dart: precheck waits for availability without allowing a second submit or back
+00:01 +29: /Users/lute/project/momcozy-lab/app/test/modules/services/booking_test.dart: precheck waits for availability without allowing a second submit or back
+00:01 +30: /Users/lute/project/momcozy-lab/app/test/modules/services/booking_test.dart: precheck waits for availability without allowing a second submit or back
+00:01 +31: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 390.0 / 1.0
+00:02 +32: /Users/lute/project/momcozy-lab/app/test/modules/services/service_progress_test.dart: failed appointment read preserves order and retry reads fresh appointments
+00:02 +33: /Users/lute/project/momcozy-lab/app/test/modules/services/booking_test.dart: resumed confirmed state offers intake rather than an expired hold
+00:02 +34: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 390.0 / 2.0
+00:02 +35: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 390.0 / 2.0
+00:02 +36: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 390.0 / 2.0
+00:02 +37: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 390.0 / 2.0
+00:02 +38: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 390.0 / 2.0
+00:02 +39: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 390.0 / 2.0
+00:02 +40: /Users/lute/project/momcozy-lab/app/test/modules/services/booking_test.dart: booking precheck and held dialog flow at 320.0 / 1.0
+00:02 +41: /Users/lute/project/momcozy-lab/app/test/modules/services/booking_test.dart: booking precheck and held dialog flow at 320.0 / 1.0
+00:02 +42: /Users/lute/project/momcozy-lab/app/test/modules/services/booking_test.dart: booking precheck and held dialog flow at 320.0 / 1.0
+00:02 +43: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 430.0 / 1.0
+00:02 +44: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 430.0 / 1.0
+00:02 +45: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 430.0 / 1.0
+00:03 +46: /Users/lute/project/momcozy-lab/app/test/modules/services/booking_test.dart: booking precheck and held dialog flow at 320.0 / 2.0
+00:03 +47: /Users/lute/project/momcozy-lab/app/test/modules/services/booking_test.dart: booking precheck and held dialog flow at 320.0 / 2.0
+00:03 +48: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: task uncertainty retries original version and locks competing updates
+00:03 +49: /Users/lute/project/momcozy-lab/app/test/modules/services/booking_test.dart: booking precheck and held dialog flow at 390.0 / 1.0
+00:03 +50: /Users/lute/project/momcozy-lab/app/test/modules/services/booking_test.dart: booking precheck and held dialog flow at 390.0 / 1.0
+00:03 +51: /Users/lute/project/momcozy-lab/app/test/modules/services/booking_test.dart: booking precheck and held dialog flow at 390.0 / 1.0
+00:03 +52: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: short large task keeps pending updates locked and retryable
+00:03 +53: /Users/lute/project/momcozy-lab/app/test/modules/services/booking_test.dart: booking precheck and held dialog flow at 390.0 / 2.0
+00:03 +54: /Users/lute/project/momcozy-lab/app/test/modules/services/booking_test.dart: booking precheck and held dialog flow at 390.0 / 2.0
+00:03 +55: /Users/lute/project/momcozy-lab/app/test/modules/services/booking_test.dart: booking precheck and held dialog flow at 390.0 / 2.0
+00:04 +56: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: empty action list and unsuccessful consultation keep appropriate destinations
+00:04 +57: /Users/lute/project/momcozy-lab/app/test/modules/services/booking_test.dart: booking precheck and held dialog flow at 430.0 / 1.0
+00:04 +58: /Users/lute/project/momcozy-lab/app/test/modules/services/booking_test.dart: booking precheck and held dialog flow at 430.0 / 2.0
+00:04 +59: /Users/lute/project/momcozy-lab/app/test/modules/services/booking_test.dart: held confirmation blocks back, retries original version then opens intake once
+00:04 +60: /Users/lute/project/momcozy-lab/app/test/modules/services/booking_test.dart: expired hold removes confirm and reselect does not cancel expired data
+00:04 +61: /Users/lute/project/momcozy-lab/app/test/modules/services/booking_test.dart: release retry closes held dialog after the original cancellation succeeds
+00:04 +62: /Users/lute/project/momcozy-lab/app/test/modules/services/booking_test.dart: appointment transport sends the selected instant and identity, never owner or client duration
+00:04 +63: /Users/lute/project/momcozy-lab/app/test/modules/services/booking_test.dart: time labels show provider date and distinguish repeated fall-back hours
+00:04 +64: /Users/lute/project/momcozy-lab/app/test/modules/services/booking_test.dart: risk acknowledgement gates eligibility and uncertain holds preserve the original key
+00:04 +65: /Users/lute/project/momcozy-lab/app/test/modules/services/booking_test.dart: confirmation retry uses the original version and reloading restores an owned appointment
+00:04 +66: /Users/lute/project/momcozy-lab/app/test/modules/services/booking_test.dart: select time, confirm, resume and cancel a persisted appointment
+00:04 +67: /Users/lute/project/momcozy-lab/app/test/modules/services/booking_test.dart: booking date and expert selection at 320.0 / 1.0
+00:04 +68: /Users/lute/project/momcozy-lab/app/test/modules/services/booking_test.dart: booking date and expert selection at 320.0 / 2.0
+00:04 +69: /Users/lute/project/momcozy-lab/app/test/modules/services/booking_test.dart: booking date and expert selection at 390.0 / 1.0
+00:05 +70: /Users/lute/project/momcozy-lab/app/test/modules/services/booking_test.dart: booking date and expert selection at 390.0 / 2.0
+00:05 +71: /Users/lute/project/momcozy-lab/app/test/modules/services/booking_test.dart: booking date and expert selection at 430.0 / 1.0
+00:05 +72: /Users/lute/project/momcozy-lab/app/test/modules/services/booking_test.dart: booking date and expert selection at 430.0 / 2.0
+00:05 +73: All tests passed!

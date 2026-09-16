@@ -1,0 +1,7 @@
+{
+  "apk": "build/app/outputs/flutter-apk/app-local-debug.apk",
+  "sha256": "8db938625f814333f565b011212d59653f7314e7beb0e0d897eb912c1680f955",
+  "version": "1.0.0+57",
+  "flavor": "local",
+  "installed_on": "emulator-5554"
+}

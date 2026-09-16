@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/agent-workflow-journey-intake-accepted-320-2x.png",
+  "previous_source": "test/goldens/ui_inventory/agent-workflow-journey-intake-submitting-320-2x.png",
+  "route": "/",
+  "trigger": "Server run starts → dialog closes and submitted entry retained",
+  "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage via public agentHubBuilder; production SSE parser, runner with default retries, cancel client and profile repository; isolated SSE/control/ticket HTTP and voice dependencies; production action client and support ticket repository. History disabled as in default local build; no remote model request.",
+  "test": "test/features/agent_hub/agent_workflow_inventory_journey_test.dart"
+}

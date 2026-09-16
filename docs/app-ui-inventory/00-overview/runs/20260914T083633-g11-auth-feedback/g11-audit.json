@@ -1,0 +1,21 @@
+{
+  "source_hashes": {
+    "lib/features/auth/presentation/auth_page.dart": "77bf0ab04f1599f353bbb66c4a3dab2fe826d5e5e04f7f1b106f0b73ec07475f",
+    "lib/features/auth/presentation/auth_login_chrome.dart": "3808b5484b0cda026e8007c5ce940027bc672e1185ba2fc4ac354d3d385ab7bb",
+    "lib/shared/widgets/product_feedback.dart": "f0e9384b049cfc0e3c0db31f4f751723d3b7faa587a136caee1d0db75b004af1",
+    "lib/shared/widgets/mom_settings_widgets.dart": "271b022cb619641d956e92a5600e5f5585d2a5b469446132d53d402987403025",
+    "test/features/auth/auth_followup_inventory_test.dart": "899409b850ca43c9df3e404f0234fd2885cf002b8cec1dfa1b72482854123b35",
+    "test/shared/product_feedback_test.dart": "1697fdf9751b41da52b7d107bf0bf58c1b393451859c892b7773e913614d583c"
+  },
+  "auth_missing_states_closed": [
+    "register-pending",
+    "register-email-unavailable",
+    "verify-submit-pending"
+  ],
+  "new_images": 3,
+  "reused_images": 6,
+  "visual_review": "9 complete images reviewed; 8 fit viewport, one existing measured long image. No OS keyboard claim.",
+  "shared_component_scope": "Default error/draft/retry, left-aligned empty and labeled loading strictly matched. Mom error reused with matching source hash from G05. Renewal empty is a page-owned MomSettingsCard, not ProductEmptyView. Host versions remain separately pending.",
+  "initial_failed_attempt": "Baseline creation mistakenly enabled strict inventory capture; capture guard rejected update-goldens. Corrected by creating only 3 new baselines without inventory env, then strict capture.",
+  "strict_scenarios_passed": 2
+}

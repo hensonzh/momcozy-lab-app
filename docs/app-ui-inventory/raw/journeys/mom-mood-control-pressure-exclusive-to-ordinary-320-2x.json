@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/mom-mood-control-pressure-exclusive-to-ordinary-320-2x.png",
+  "previous_source": "test/goldens/ui_inventory/mom-mood-control-pressure-exclusive-restored-320-2x.png",
+  "route": "/me",
+  "trigger": "Select baby worry while unclear is selected → unclear removed",
+  "root_entry": "Authenticated More → tap Me bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/mom/mom_mood_control_inventory_test.dart"
+}

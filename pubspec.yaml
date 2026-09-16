@@ -85,6 +85,7 @@ flutter:
   uses-material-design: true
 
   assets:
+    - assets/images/mom_home/
     - assets/certificates/
     - assets/images/
     - assets/images/mom/
@@ -93,6 +94,15 @@ flutter:
     - assets/images/me_baby_overview/icons/
 
   fonts:
+    - family: NotoSansSCHome
+      fonts:
+        - asset: assets/fonts/NotoSansCJKsc-Regular.otf
+          weight: 400
+        - asset: assets/fonts/NotoSansCJKsc-Bold.otf
+          weight: 700
+    - family: LibreCaslonDisplay
+      fonts:
+        - asset: assets/fonts/LibreCaslonDisplay-Regular.ttf
     - family: Manrope
       fonts:
         - asset: assets/fonts/Manrope.ttf

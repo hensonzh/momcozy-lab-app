@@ -1,0 +1,40 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/features/onboarding/configured_submission_inventory_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: inventory configured invite submission pending
+00:00 +1: inventory configured invitation failure outcomes
+00:00 +2: inventory configured avatar failure feedback
+00:01 +3: inventory configured avatar upload and handoff
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: FlutterError:<Golden "../../goldens/ui_inventory/onboarding-upload-pending-390.png": Pixel
+test failed, 0.60%, 1971px diff detected.
+          Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/features/onboarding/failures>
+
+When the exception was thrown, this was the stack:
+#4      main.capture (file:///Users/lute/project/momcozy-lab/app/test/features/onboarding/configured_submission_inventory_test.dart:67:5)
+<asynchronous suspension>
+#5      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/onboarding/configured_submission_inventory_test.dart:366:9)
+<asynchronous suspension>
+#6      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#7      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/features/onboarding/configured_submission_inventory_test.dart line 67
+The test description was:
+  inventory configured avatar upload and handoff
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +3 -1: inventory configured avatar upload and handoff [E]
+  Test failed. See exception logs above.
+  The test description was: inventory configured avatar upload and handoff
+  
+00:01 +3 -1: (tearDownAll)
+00:01 +3 -1: Some tests failed.
+
+Failing tests:
+  /Users/lute/project/momcozy-lab/app/test/features/onboarding/configured_submission_inventory_test.dart: inventory configured avatar upload and handoff

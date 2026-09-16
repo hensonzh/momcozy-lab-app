@@ -1,0 +1,83 @@
+[
+  {
+    "archive": "docs/ui-refactor/20260914-agent-reading-cards/verified-images.json",
+    "path": "test/goldens/design_system/agent-markdown-top-320-1x.png",
+    "sha256": "1f6489e21bf1206d7148dd99013c457daefd6bc5c9875507545531a0b7c28f32",
+    "expected": "be88a9378f293372077f9dbde88cccf432de303f1cdb239d632ed65d04a90b14",
+    "matches_archive": false,
+    "resolution": "Current image includes decoded avatar and bottom navigation portrait; early archive captured empty avatar disks. Reviewed both images; current markdown regression passed without baseline update.",
+    "current_test_log": "current-version-tests.log"
+  },
+  {
+    "archive": "docs/ui-refactor/20260914-baby-profile/verified-images.json",
+    "path": "test/goldens/design_system/baby-profile-existing-320.png",
+    "sha256": "1b9f71cf3aa810939fc60e3f52af2e9a7ec0310b40774ea1b4bc10fa042f5dac",
+    "expected": "2fafcb216024bc5257acda0da78727e2d342cf75185ccf664ec38fdd8f5a9d1a",
+    "matches_archive": false,
+    "resolution": "Later Baby home redesign changes the background behind the profile modal. Profile fields and actions retain their layout. Current switcher-to-profile golden and selection assertions passed without baseline update.",
+    "current_test_log": "changed-image-current-tests.log"
+  },
+  {
+    "archive": "docs/ui-refactor/20260914-baby-profile/verified-images.json",
+    "path": "test/goldens/design_system/baby-profile-existing-390.png",
+    "sha256": "6aa238a027dacd3cc8fb932d946e8a46e34471feae3a35961575d98e30972cac",
+    "expected": "2d97b9c59b2cc0c538ec1a182eff73e322e4d2dce1b5c4be2d9cd688062aad5d",
+    "matches_archive": false,
+    "resolution": "Later Baby home redesign changes the background behind the profile modal. Profile fields and actions retain their layout. Current switcher-to-profile golden and selection assertions passed without baseline update.",
+    "current_test_log": "changed-image-current-tests.log"
+  },
+  {
+    "archive": "docs/ui-refactor/20260914-baby-profile/verified-images.json",
+    "path": "test/goldens/design_system/baby-profile-existing-430.png",
+    "sha256": "b8aeb8fa59785d72ca815b813845d97afaa51a1b7933430cf1233351f6f190cc",
+    "expected": "9c0e16be7b07b6397c8696e037db69f1735adeedadf4f62e00f9d3a748316e96",
+    "matches_archive": false,
+    "resolution": "Later Baby home redesign changes the background behind the profile modal. Profile fields and actions retain their layout. Current switcher-to-profile golden and selection assertions passed without baseline update.",
+    "current_test_log": "changed-image-current-tests.log"
+  },
+  {
+    "archive": "docs/ui-refactor/20260914-agent-conversation/verified/agent-chat-320.png",
+    "path": "test/goldens/design_system/agent-chat-320.png",
+    "sha256": "01f99155dc770bf789bd3f889ebf638cc04e866845266db4e53e3fc41701bb85",
+    "expected": "99cb47a253a4723ecaeffeff12ab2ebdfc2caa413ee88b6b80295693e33d818d",
+    "matches_archive": false,
+    "resolution": "Current chat list text/bullet rendering differs within the list region. Compared current/archived 320px image and verified current 320/390/430 chat goldens, original message text and actions retained. No claim of byte-identical early image.",
+    "current_test_log": "changed-image-current-tests.log"
+  },
+  {
+    "archive": "docs/ui-refactor/20260914-agent-conversation/verified/agent-chat-390.png",
+    "path": "test/goldens/design_system/agent-chat-390.png",
+    "sha256": "dfbef5567aa97da254a09627c944c82b83853a1a0d11a7b32f5af3db0ca0270f",
+    "expected": "ba0a4278237fe0c76034e5aa8d42d824ba1b01fb71df7bb91279e3bd3afd9572",
+    "matches_archive": false,
+    "resolution": "Current chat list text/bullet rendering differs within the list region. Compared current/archived 320px image and verified current 320/390/430 chat goldens, original message text and actions retained. No claim of byte-identical early image.",
+    "current_test_log": "changed-image-current-tests.log"
+  },
+  {
+    "archive": "docs/ui-refactor/20260914-agent-conversation/verified/agent-chat-430.png",
+    "path": "test/goldens/design_system/agent-chat-430.png",
+    "sha256": "4ee5ac2b1f2cc2edb098e89dc6e1e3cda384fb2bfce2be4fa11b233b629218b4",
+    "expected": "0f7a6987e9405b62ace055e4316bd0c30a89bc315c22f29c5daedc8571f16544",
+    "matches_archive": false,
+    "resolution": "Current chat list text/bullet rendering differs within the list region. Compared current/archived 320px image and verified current 320/390/430 chat goldens, original message text and actions retained. No claim of byte-identical early image.",
+    "current_test_log": "changed-image-current-tests.log"
+  },
+  {
+    "path": "app/test/goldens/design_system/agent-form-date-picker-320-1x.png",
+    "resolution": "Ordinary calendar contains date-dependent today marker; intentionally archived as preview, not a fixed current golden. HANDOFF.md line 19 records this boundary; current form tests select and assert the submitted date.",
+    "archive": "docs/ui-refactor/20260914-agent-form-dialogs/verified/agent-form-date-picker-320-1x.png",
+    "archive_sha256": "013ba4a2b1dc9b5e46808c70fedf9d90b15ba77bd7b3db7860e4511d20e6f788"
+  },
+  {
+    "path": "app/test/goldens/design_system/agent-form-date-picker-390-1x.png",
+    "resolution": "Ordinary calendar contains date-dependent today marker; intentionally archived as preview, not a fixed current golden. HANDOFF.md line 19 records this boundary; current form tests select and assert the submitted date.",
+    "archive": "docs/ui-refactor/20260914-agent-form-dialogs/verified/agent-form-date-picker-390-1x.png",
+    "archive_sha256": "9552761e4bbab40249b81a41b3a48be329bfc12f20f8f6600a148fc7aaa4fbf3"
+  },
+  {
+    "path": "app/test/goldens/design_system/agent-form-date-picker-430-1x.png",
+    "resolution": "Ordinary calendar contains date-dependent today marker; intentionally archived as preview, not a fixed current golden. HANDOFF.md line 19 records this boundary; current form tests select and assert the submitted date.",
+    "archive": "docs/ui-refactor/20260914-agent-form-dialogs/verified/agent-form-date-picker-430-1x.png",
+    "archive_sha256": "36a339b30036f91470a464afe2b4814a0b28592a3531d09f4276c43c7946a345"
+  }
+]

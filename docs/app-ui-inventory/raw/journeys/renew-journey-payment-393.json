@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/renew-journey-payment-393.png",
+  "previous_source": "test/goldens/ui_inventory/renew-journey-selection-cancelled-393.png",
+  "route": "/services/episodes/completed-episode/renew",
+  "trigger": "Choose state and confirm → new sandbox order and card form",
+  "root_entry": "Authenticated More → tap Me bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production home/timeline/renew/purchase pages and repositories; isolated HTTP with completed original service preserved independently; fixed clock and timezone, no remote order/payment",
+  "test": "test/modules/services/renew_inventory_journey_test.dart"
+}

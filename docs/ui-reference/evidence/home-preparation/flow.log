@@ -1,0 +1,12 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/modules/consultation/home_consultation_dialog_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: loading can close safely and errors retry in the same overlay
+00:00 +1: intake navigation dismisses nested preflight and home overlay together
+00:00 +2: home preparation closes, cancels and enters through existing checks 320.0/1.0
+00:00 +3: home preparation closes, cancels and enters through existing checks 320.0/2.0
+00:01 +4: home preparation closes, cancels and enters through existing checks 390.0/1.0
+00:01 +5: home preparation closes, cancels and enters through existing checks 390.0/2.0
+00:01 +6: home preparation closes, cancels and enters through existing checks 430.0/1.0
+00:01 +7: home preparation closes, cancels and enters through existing checks 430.0/2.0
+00:01 +8: (tearDownAll)
+00:01 +8: All tests passed!

@@ -1,0 +1,532 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/features/agent_hub/artifacts/agent_artifact_voice_test.dart
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/artifacts/agent_artifact_voice_test.dart: projects only the latest artifact title and safe body copy
+00:00 +1: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/artifacts/agent_artifact_voice_test.dart: uses a form description only when artifact content is absent
+00:00 +2: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/artifacts/agent_artifact_voice_test.dart: does not project an unsupported latest artifact
+00:00 +3: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_me_design_test.dart: (setUpAll)
+00:00 +3: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/artifacts/agent_card_export_test.dart: builds the approved sanitized UTC card filename
+00:00 +4: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/artifacts/agent_artifact_mapper_test.dart: AgentArtifactMapper retains the current IBCLC artifact payload
+00:00 +5: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_me_design_test.dart: conversation drawer long titles at 320.0
+00:00 +6: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_me_design_test.dart: conversation drawer long titles at 320.0
+00:00 +7: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_me_design_test.dart: conversation drawer long titles at 320.0
+00:00 +8: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_me_design_test.dart: conversation drawer long titles at 320.0
+00:00 +9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_me_design_test.dart: conversation drawer long titles at 320.0
+00:00 +10: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_me_design_test.dart: conversation drawer long titles at 320.0
+00:00 +11: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_me_design_test.dart: conversation drawer long titles at 320.0
+00:00 +12: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_me_design_test.dart: conversation drawer long titles at 320.0
+00:00 +13: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_me_design_test.dart: conversation drawer long titles at 320.0
+00:00 +14: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_me_design_test.dart: conversation drawer long titles at 320.0
+00:00 +15: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_me_design_test.dart: conversation drawer long titles at 320.0
+00:00 +16: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_me_design_test.dart: conversation drawer long titles at 320.0
+00:00 +17: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_me_design_test.dart: conversation drawer long titles at 320.0
+00:00 +18: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_me_design_test.dart: conversation drawer long titles at 320.0
+00:00 +19: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_me_design_test.dart: conversation drawer long titles at 320.0
+00:00 +20: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_me_design_test.dart: conversation drawer long titles at 320.0
+00:00 +21: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_me_design_test.dart: conversation drawer long titles at 320.0
+00:00 +22: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_me_design_test.dart: conversation drawer long titles at 320.0
+00:00 +23: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_me_design_test.dart: conversation drawer long titles at 320.0
+00:00 +24: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_me_design_test.dart: conversation drawer long titles at 320.0
+00:00 +25: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_me_design_test.dart: conversation drawer long titles at 320.0
+00:00 +26: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_me_design_test.dart: conversation drawer long titles at 320.0
+00:00 +27: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_me_design_test.dart: conversation drawer long titles at 320.0
+00:00 +28: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_me_design_test.dart: Agent cards and dialog at 320.0 / 1.0
+00:00 +29: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_me_design_test.dart: Agent cards and dialog at 320.0 / 2.0
+00:00 +30: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_me_design_test.dart: Agent cards and dialog at 320.0 / 2.0
+00:00 +31: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_me_design_test.dart: Agent cards and dialog at 320.0 / 2.0
+00:00 +32: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_me_design_test.dart: Agent cards and dialog at 320.0 / 2.0
+00:00 +33: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_me_design_test.dart: Agent cards and dialog at 320.0 / 2.0
+00:00 +34: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_me_design_test.dart: Agent cards and dialog at 320.0 / 2.0
+00:00 +35: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_playback_coordinator_test.dart: AgentVoicePlaybackCoordinator keeps notification voice from being interrupted by auto reply
+00:00 +36: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_previews_test.dart: empty thumbnail stops loading and preserves original access
+00:00 +37: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_previews_test.dart: empty thumbnail stops loading and preserves original access
+00:01 +38: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_previews_test.dart: empty thumbnail stops loading and preserves original access
+00:01 +39: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_previews_test.dart: empty thumbnail stops loading and preserves original access
+00:01 +40: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_previews_test.dart: empty thumbnail stops loading and preserves original access
+00:01 +41: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_previews_test.dart: empty thumbnail stops loading and preserves original access
+00:01 +42: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_previews_test.dart: empty thumbnail stops loading and preserves original access
+00:01 +43: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_previews_test.dart: empty thumbnail stops loading and preserves original access
+00:01 +44: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_previews_test.dart: empty thumbnail stops loading and preserves original access
+00:01 +45: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_previews_test.dart: empty thumbnail stops loading and preserves original access
+00:01 +46: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_previews_test.dart: empty thumbnail stops loading and preserves original access
+00:01 +47: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_previews_test.dart: empty thumbnail stops loading and preserves original access
+00:01 +48: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_previews_test.dart: empty thumbnail stops loading and preserves original access
+00:01 +49: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_previews_test.dart: empty thumbnail stops loading and preserves original access
+00:01 +50: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 320.0/1.0
+00:01 +51: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 320.0/1.0
+00:01 +52: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 320.0/1.0
+00:01 +53: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 320.0/1.0
+00:01 +54: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 320.0/1.0
+00:01 +55: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 320.0/1.0
+00:01 +56: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 320.0/1.0
+00:01 +57: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 320.0/1.0
+00:01 +58: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 320.0/1.0
+00:01 +59: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 320.0/1.0
+00:01 +60: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 320.0/1.0
+00:01 +61: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 320.0/1.0
+00:01 +62: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 320.0/1.0
+00:01 +63: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 320.0/1.0
+00:01 +64: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 320.0/1.0
+00:01 +65: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 320.0/1.0
+00:01 +66: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 320.0/1.0
+00:01 +67: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 320.0/1.0
+00:01 +68: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 320.0/1.0
+00:01 +69: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 320.0/1.0
+00:01 +70: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 320.0/1.0
+00:01 +71: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 320.0/1.0
+00:01 +72: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 320.0/1.0
+00:01 +73: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 320.0/1.0
+00:01 +74: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 320.0/1.0
+00:01 +75: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 320.0/1.0
+00:01 +76: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 320.0/1.0
+00:01 +77: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 320.0/1.0
+00:01 +78: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 320.0/1.0
+00:01 +79: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 320.0/1.0
+00:01 +80: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart: image metadata, empty response, retry and zoom 320.0/1.0
+00:01 +81: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart: image metadata, empty response, retry and zoom 320.0/1.0
+00:01 +82: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_previews_test.dart: image read failure async recovers using authenticated original
+00:01 +83: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 320.0/2.0
+00:01 +84: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 320.0/2.0
+00:01 +85: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart: image metadata, empty response, retry and zoom 320.0/2.0
+00:01 +86: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart: image metadata, empty response, retry and zoom 320.0/2.0
+00:02 +87: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart: image metadata, empty response, retry and zoom 320.0/2.0
+00:02 +88: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart: image metadata, empty response, retry and zoom 320.0/2.0
+00:02 +89: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart: image metadata, empty response, retry and zoom 320.0/2.0
+00:02 +90: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_previews_test.dart: image read failure local-with-remote recovers using authenticated original
+00:02 +91: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_previews_test.dart: image read failure local-with-remote recovers using authenticated original
+00:02 +92: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_previews_test.dart: image read failure local-with-remote recovers using authenticated original
+00:02 +93: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 390.0/2.0
+00:02 +94: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 390.0/2.0
+00:02 +95: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 390.0/2.0
+00:02 +96: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart: image metadata, empty response, retry and zoom 390.0/1.0
+00:02 +97: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart: image metadata, empty response, retry and zoom 390.0/1.0
+00:02 +98: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart: image metadata, empty response, retry and zoom 390.0/1.0
+00:02 +99: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart: image metadata, empty response, retry and zoom 390.0/1.0
+00:02 +100: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart: image metadata, empty response, retry and zoom 390.0/1.0
+00:02 +101: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart: image metadata, empty response, retry and zoom 390.0/1.0
+00:02 +102: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart: image metadata, empty response, retry and zoom 390.0/1.0
+00:02 +103: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart: image metadata, empty response, retry and zoom 390.0/1.0
+00:02 +104: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart: image metadata, empty response, retry and zoom 390.0/1.0
+00:02 +105: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart: image metadata, empty response, retry and zoom 390.0/1.0
+00:02 +106: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart: image metadata, empty response, retry and zoom 390.0/1.0
+00:02 +107: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart: image metadata, empty response, retry and zoom 390.0/1.0
+00:02 +108: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart: image metadata, empty response, retry and zoom 390.0/1.0
+00:02 +109: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart: image metadata, empty response, retry and zoom 390.0/1.0
+00:02 +110: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart: image metadata, empty response, retry and zoom 390.0/1.0
+00:02 +111: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart: image metadata, empty response, retry and zoom 390.0/1.0
+00:02 +112: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart: image metadata, empty response, retry and zoom 390.0/1.0
+00:02 +113: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart: image metadata, empty response, retry and zoom 390.0/1.0
+00:02 +114: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart: image metadata, empty response, retry and zoom 390.0/1.0
+00:02 +115: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart: image metadata, empty response, retry and zoom 390.0/1.0
+00:02 +116: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart: image metadata, empty response, retry and zoom 390.0/1.0
+00:02 +117: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart: image metadata, empty response, retry and zoom 390.0/1.0
+00:02 +118: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart: image metadata, empty response, retry and zoom 390.0/1.0
+00:02 +119: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart: image metadata, empty response, retry and zoom 390.0/1.0
+00:02 +120: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart: image metadata, empty response, retry and zoom 390.0/1.0
+00:02 +121: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart: image metadata, empty response, retry and zoom 390.0/1.0
+00:02 +122: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart: image metadata, empty response, retry and zoom 390.0/1.0
+00:02 +123: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart: image metadata, empty response, retry and zoom 390.0/1.0
+00:02 +124: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart: image metadata, empty response, retry and zoom 390.0/1.0
+00:02 +125: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: notification conversation target opens the requested owned thread
+00:02 +126: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: notification conversation target opens the requested owned thread
+00:02 +127: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: notification conversation target opens the requested owned thread
+00:02 +128: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart: image metadata, empty response, retry and zoom 430.0/1.0
+00:02 +129: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart: image metadata, empty response, retry and zoom 430.0/1.0
+00:03 +130: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart: image metadata, empty response, retry and zoom 430.0/1.0
+00:03 +131: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: design shortcuts send through the existing conversation runner
+00:03 +132: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: design shortcuts send through the existing conversation runner
+00:03 +133: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart: image metadata, empty response, retry and zoom 430.0/2.0
+00:03 +134: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart: image metadata, empty response, retry and zoom 430.0/2.0
+00:03 +135: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart: image metadata, empty response, retry and zoom 430.0/2.0
+00:03 +136: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart: image metadata, empty response, retry and zoom 430.0/2.0
+00:03 +137: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart: image metadata, empty response, retry and zoom 430.0/2.0
+00:03 +138: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_test.dart: history message copies its own complete text
+00:03 +139: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_test.dart: history message copies its own complete text
+00:03 +140: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_test.dart: history message copies its own complete text
+00:03 +141: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_test.dart: history message copies its own complete text
+00:03 +142: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_test.dart: history message copies its own complete text
+00:03 +143: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_test.dart: history message copies its own complete text
+00:03 +144: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_test.dart: history message copies its own complete text
+00:03 +145: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_test.dart: history message copies its own complete text
+00:03 +146: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_test.dart: history message copies its own complete text
+00:03 +147: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_panel_test.dart: opens a flat partial-width conversation panel
+00:03 +148: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_panel_test.dart: opens a flat partial-width conversation panel
+00:03 +149: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_panel_test.dart: opens a flat partial-width conversation panel
+00:03 +150: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_panel_test.dart: opens a flat partial-width conversation panel
+00:03 +151: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_panel_test.dart: opens a flat partial-width conversation panel
+00:03 +152: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_panel_test.dart: opens a flat partial-width conversation panel
+00:03 +153: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_panel_test.dart: opens a flat partial-width conversation panel
+00:03 +154: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_panel_test.dart: opens a flat partial-width conversation panel
+00:03 +155: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_panel_test.dart: opens a flat partial-width conversation panel
+00:03 +156: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_panel_test.dart: opens a flat partial-width conversation panel
+00:03 +157: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:03 +158: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:03 +159: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:03 +160: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:03 +161: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:03 +162: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:03 +163: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:04 +164: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:04 +165: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:04 +166: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:04 +167: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:04 +168: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:04 +169: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:04 +170: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:04 +171: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:04 +172: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:04 +173: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:04 +174: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:04 +175: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:04 +176: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:04 +177: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:04 +178: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:04 +179: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: reduced motion opens fullscreen fully without elapsed animation
+00:04 +180: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: reduced motion opens fullscreen fully without elapsed animation
+00:04 +181: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: reduced motion opens fullscreen fully without elapsed animation
+00:04 +182: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: reduced motion opens fullscreen fully without elapsed animation
+00:04 +183: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: reduced motion opens fullscreen fully without elapsed animation
+00:04 +184: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: reduced motion opens fullscreen fully without elapsed animation
+00:04 +185: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: reduced motion opens fullscreen fully without elapsed animation
+00:04 +186: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/2.0
+00:04 +187: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/2.0
+00:04 +188: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/2.0
+00:04 +189: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/2.0
+00:04 +190: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/2.0
+00:04 +191: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/2.0
+00:04 +192: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/2.0
+00:04 +193: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/2.0
+00:04 +194: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/2.0
+00:04 +195: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: video long duration, controls and fullscreen 320.0 / 1.0
+00:04 +196: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: video long duration, controls and fullscreen 320.0 / 1.0
+00:04 +197: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: video long duration, controls and fullscreen 320.0 / 1.0
+00:04 +198: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: video long duration, controls and fullscreen 320.0 / 1.0
+00:04 +199: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: video long duration, controls and fullscreen 320.0 / 1.0
+00:04 +200: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: video long duration, controls and fullscreen 320.0 / 1.0
+00:04 +201: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: video long duration, controls and fullscreen 320.0 / 1.0
+00:04 +202: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 390.0/1.0
+00:04 +203: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 390.0/1.0
+00:04 +204: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 390.0/1.0
+00:04 +205: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 390.0/1.0
+00:04 +206: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 390.0/1.0
+00:04 +207: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 390.0/1.0
+00:04 +208: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 390.0/1.0
+00:05 +209: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_image_test.dart: switching resources hides the previous image while loading
+00:05 +210: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_image_test.dart: switching resources hides the previous image while loading
+00:05 +211: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_image_test.dart: switching resources hides the previous image while loading
+00:05 +212: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 390.0/2.0
+00:05 +213: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 390.0/2.0
+00:05 +214: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 390.0/2.0
+00:05 +215: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 390.0/2.0
+00:05 +216: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 390.0/2.0
+00:05 +217: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 390.0/2.0
+00:05 +218: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 390.0/2.0
+00:05 +219: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 390.0/2.0
+00:05 +220: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 390.0/2.0
+00:05 +221: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 390.0/2.0
+00:05 +222: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 390.0/2.0
+00:05 +223: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 390.0/2.0
+00:05 +224: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: video long duration, controls and fullscreen 430.0 / 1.0
+00:05 +225: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: video long duration, controls and fullscreen 430.0 / 1.0
+00:05 +226: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub dismisses the keyboard after the run is accepted
+00:05 +227: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 430.0/1.0
+00:05 +228: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 430.0/1.0
+00:05 +229: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 430.0/1.0
+00:05 +230: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 430.0/1.0
+00:05 +231: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 430.0/1.0
+00:05 +232: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 430.0/1.0
+00:05 +233: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 430.0/1.0
+00:05 +234: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 430.0/1.0
+00:05 +235: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 430.0/1.0
+00:05 +236: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 430.0/1.0
+00:05 +237: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 430.0/1.0
+00:05 +238: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub reuses backend thread id across follow-up turns
+00:05 +239: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub reuses backend thread id across follow-up turns
+00:05 +240: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 430.0/2.0
+00:05 +241: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 430.0/2.0
+00:05 +242: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 430.0/2.0
+00:05 +243: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 430.0/2.0
+00:05 +244: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 430.0/2.0
+00:05 +245: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub attaches image input to the next request
+00:05 +246: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub locks draft actions while an attachment is pending
+00:05 +247: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub uploads and sends a PDF file attachment
+00:05 +248: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub deletes an abandoned upload when it is removed
+00:05 +249: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub deletes draft attachments before a synthetic form request
+00:06 +250: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub deletes draft attachments before a new session
+00:06 +251: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub never retains a draft reference after deletion succeeds
+00:06 +252: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub preserves a draft when attachment deletion fails
+00:06 +253: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub keeps camera and gallery image sources distinct
+00:06 +254: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub removes image attachment before sending
+00:06 +255: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub removes image attachment before sending
+00:06 +256: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub removes image attachment before sending
+00:06 +257: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub removes image attachment before sending
+00:06 +258: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub removes image attachment before sending
+00:06 +259: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub removes image attachment before sending
+00:06 +260: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub removes image attachment before sending
+00:06 +261: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub removes image attachment before sending
+00:06 +262: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub removes image attachment before sending
+00:06 +263: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub removes image attachment before sending
+00:06 +264: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub removes image attachment before sending
+00:06 +265: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub removes image attachment before sending
+00:06 +266: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub removes image attachment before sending
+00:06 +267: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub removes image attachment before sending
+00:06 +268: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub removes image attachment before sending
+00:06 +269: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub removes image attachment before sending
+00:06 +270: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub removes image attachment before sending
+00:06 +271: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub removes image attachment before sending
+00:06 +272: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub removes image attachment before sending
+00:06 +273: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub removes image attachment before sending
+00:06 +274: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub removes image attachment before sending
+00:06 +275: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub removes image attachment before sending
+00:06 +276: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub removes image attachment before sending
+00:06 +277: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub removes image attachment before sending
+00:06 +278: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub removes image attachment before sending
+00:06 +279: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub removes image attachment before sending
+00:06 +280: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_file_cache_test.dart: persists product assets across cache instances
+00:06 +281: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_file_cache_test.dart: persists product assets across cache instances
+00:06 +282: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_file_cache_test.dart: persists product assets across cache instances
+00:06 +283: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub restores draft and image attachment by cache key
+00:06 +284: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub restores draft and image attachment by cache key
+00:06 +285: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub restores draft and image attachment by cache key
+00:06 +286: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub restores draft and image attachment by cache key
+00:06 +287: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub restores draft and image attachment by cache key
+00:06 +288: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub restores draft and image attachment by cache key
+00:06 +289: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub restores draft and image attachment by cache key
+00:06 +290: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub restores draft and image attachment by cache key
+00:06 +291: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub restores draft and image attachment by cache key
+00:06 +292: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub restores draft and image attachment by cache key
+00:06 +293: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub restores draft and image attachment by cache key
+00:06 +294: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub restores draft and image attachment by cache key
+00:06 +295: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub restores draft and image attachment by cache key
+00:06 +296: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub restores draft and image attachment by cache key
+00:06 +297: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub restores draft and image attachment by cache key
+00:06 +298: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media missing unavailable and return 320.0 / 1.0
+00:06 +299: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media missing unavailable and return 320.0 / 1.0
+00:06 +300: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media missing unavailable and return 320.0 / 1.0
+00:06 +301: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media missing unavailable and return 320.0 / 1.0
+00:06 +302: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media missing unavailable and return 320.0 / 1.0
+00:06 +303: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media missing unavailable and return 320.0 / 1.0
+00:06 +304: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media missing unavailable and return 320.0 / 1.0
+00:06 +305: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: durable motion feedback keeps refreshing with a visible pending state
+00:06 +306: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media image unavailable and return 320.0 / 1.0
+00:06 +307: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub starts auto voice playback after finished reply
+00:07 +308: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media pdf unavailable and return 320.0 / 1.0
+00:07 +309: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub appends generated reply chunks to realtime voice
+00:07 +310: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media video unavailable and return 320.0 / 1.0
+00:07 +311: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub starts voice as soon as reply text is generated
+00:07 +312: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: image loading failure retry and zoom 320.0 / 1.0
+00:07 +313: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: image loading failure retry and zoom 320.0 / 1.0
+00:07 +314: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: image loading failure retry and zoom 320.0 / 1.0
+00:07 +315: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: image loading failure retry and zoom 320.0 / 1.0
+00:07 +316: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: image loading failure retry and zoom 320.0 / 1.0
+00:07 +317: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: image loading failure retry and zoom 320.0 / 1.0
+00:07 +318: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: image loading failure retry and zoom 320.0 / 1.0
+00:07 +319: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: image loading failure retry and zoom 320.0 / 1.0
+00:07 +320: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: image loading failure retry and zoom 320.0 / 1.0
+00:07 +321: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: image loading failure retry and zoom 320.0 / 1.0
+00:07 +322: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: image loading failure retry and zoom 320.0 / 1.0
+00:07 +323: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: image loading failure retry and zoom 320.0 / 1.0
+00:07 +324: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: image loading failure retry and zoom 320.0 / 1.0
+00:07 +325: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: image loading failure retry and zoom 320.0 / 1.0
+00:07 +326: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: image loading failure retry and zoom 320.0 / 1.0
+00:07 +327: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: image loading failure retry and zoom 320.0 / 1.0
+00:07 +328: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: image loading failure retry and zoom 320.0 / 1.0
+00:07 +329: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: image loading failure retry and zoom 320.0 / 1.0
+00:07 +330: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: image loading failure retry and zoom 320.0 / 1.0
+00:07 +331: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: image loading failure retry and zoom 320.0 / 1.0
+00:07 +332: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: image loading failure retry and zoom 320.0 / 1.0
+00:07 +333: /Users/lute/project/momcozy-lab/app/test/core/agent_stream/agent_stream_run_state_test.dart: AgentStreamRunState withdrawal clears text and integrity state, survives reconnect and ignores late deltas
+00:07 +334: /Users/lute/project/momcozy-lab/app/test/core/agent_stream/agent_stream_run_state_test.dart: AgentStreamRunState withdrawal clears text and integrity state, survives reconnect and ignores late deltas
+00:07 +335: /Users/lute/project/momcozy-lab/app/test/core/agent_stream/agent_stream_run_state_test.dart: AgentStreamRunState withdrawal clears text and integrity state, survives reconnect and ignores late deltas
+00:07 +336: /Users/lute/project/momcozy-lab/app/test/core/agent_stream/agent_stream_run_state_test.dart: AgentStreamRunState withdrawal clears text and integrity state, survives reconnect and ignores late deltas
+00:07 +337: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub appends standalone media narration after a textless reply
+00:07 +338: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub appends standalone media narration after a textless reply
+00:07 +339: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub appends standalone media narration after a textless reply
+00:07 +340: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub appends standalone media narration after a textless reply
+00:07 +341: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub appends standalone media narration after a textless reply
+00:07 +342: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub appends standalone media narration after a textless reply
+00:07 +343: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub appends standalone media narration after a textless reply
+00:07 +344: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub appends standalone media narration after a textless reply
+00:07 +345: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub appends standalone media narration after a textless reply
+00:07 +346: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub appends standalone media narration after a textless reply
+00:07 +347: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub appends standalone media narration after a textless reply
+00:07 +348: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub appends standalone media narration after a textless reply
+00:07 +349: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub appends standalone media narration after a textless reply
+00:07 +350: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub appends standalone media narration after a textless reply
+00:07 +351: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub appends standalone media narration after a textless reply
+00:07 +352: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub appends standalone media narration after a textless reply
+00:07 +353: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub appends standalone media narration after a textless reply
+00:07 +354: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub appends standalone media narration after a textless reply
+00:07 +355: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub appends standalone media narration after a textless reply
+00:07 +356: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub appends standalone media narration after a textless reply
+00:07 +357: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub appends standalone media narration after a textless reply
+00:07 +358: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub appends standalone media narration after a textless reply
+00:07 +359: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub appends standalone media narration after a textless reply
+00:07 +360: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub appends standalone media narration after a textless reply
+00:07 +361: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub appends standalone media narration after a textless reply
+00:07 +362: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub appends standalone media narration after a textless reply
+00:07 +363: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub appends standalone media narration after a textless reply
+00:07 +364: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub appends standalone media narration after a textless reply
+00:07 +365: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub appends standalone media narration after a textless reply
+00:07 +366: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: PDF loading failure retry and return 320.0 / 1.0
+00:07 +367: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: PDF loading failure retry and return 320.0 / 1.0
+00:07 +368: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: PDF loading failure retry and return 320.0 / 1.0
+00:07 +369: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: PDF loading failure retry and return 320.0 / 1.0
+00:07 +370: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: PDF loading failure retry and return 320.0 / 1.0
+00:07 +371: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: PDF loading failure retry and return 320.0 / 1.0
+00:07 +372: /Users/lute/project/momcozy-lab/app/test/core/agent_stream/agent_stream_runner_test.dart: AgentStreamRunner does not reconnect after the run subscription is cancelled
+00:07 +373: /Users/lute/project/momcozy-lab/app/test/core/agent_stream/agent_stream_runner_test.dart: AgentStreamRunner does not reconnect after the run subscription is cancelled
+00:07 +374: /Users/lute/project/momcozy-lab/app/test/core/agent_stream/agent_stream_runner_test.dart: AgentStreamRunner does not reconnect after the run subscription is cancelled
+00:07 +375: /Users/lute/project/momcozy-lab/app/test/core/agent_stream/agent_stream_runner_test.dart: AgentStreamRunner does not reconnect after the run subscription is cancelled
+00:07 +376: /Users/lute/project/momcozy-lab/app/test/core/agent_stream/agent_stream_runner_test.dart: AgentStreamRunner does not reconnect after the run subscription is cancelled
+00:07 +377: /Users/lute/project/momcozy-lab/app/test/core/agent_stream/agent_stream_runner_test.dart: AgentStreamRunner does not reconnect after the run subscription is cancelled
+00:07 +378: /Users/lute/project/momcozy-lab/app/test/core/agent_stream/agent_stream_runner_test.dart: AgentStreamRunner does not reconnect after the run subscription is cancelled
+00:07 +379: /Users/lute/project/momcozy-lab/app/test/core/agent_stream/agent_stream_runner_test.dart: AgentStreamRunner does not reconnect after the run subscription is cancelled
+00:07 +380: /Users/lute/project/momcozy-lab/app/test/shared/me_components_test.dart: shared Me surfaces and controls at 320.0 / 1.0
+00:07 +381: /Users/lute/project/momcozy-lab/app/test/shared/me_components_test.dart: shared Me surfaces and controls at 320.0 / 1.0
+00:07 +382: /Users/lute/project/momcozy-lab/app/test/shared/me_components_test.dart: shared Me surfaces and controls at 320.0 / 1.0
+00:07 +383: /Users/lute/project/momcozy-lab/app/test/shared/me_components_test.dart: shared Me surfaces and controls at 320.0 / 1.0
+00:07 +384: /Users/lute/project/momcozy-lab/app/test/shared/me_components_test.dart: shared Me surfaces and controls at 320.0 / 1.0
+00:07 +385: /Users/lute/project/momcozy-lab/app/test/shared/me_components_test.dart: shared Me surfaces and controls at 320.0 / 1.0
+00:07 +386: /Users/lute/project/momcozy-lab/app/test/shared/me_components_test.dart: shared Me surfaces and controls at 320.0 / 1.0
+00:07 +387: /Users/lute/project/momcozy-lab/app/test/shared/me_components_test.dart: shared Me surfaces and controls at 320.0 / 1.0
+00:07 +388: /Users/lute/project/momcozy-lab/app/test/shared/me_components_test.dart: shared Me surfaces and controls at 320.0 / 1.0
+00:07 +389: /Users/lute/project/momcozy-lab/app/test/shared/me_components_test.dart: shared Me surfaces and controls at 320.0 / 1.0
+00:07 +390: /Users/lute/project/momcozy-lab/app/test/shared/me_components_test.dart: shared Me surfaces and controls at 320.0 / 1.0
+00:07 +391: /Users/lute/project/momcozy-lab/app/test/shared/me_components_test.dart: shared Me surfaces and controls at 320.0 / 1.0
+00:07 +392: /Users/lute/project/momcozy-lab/app/test/shared/me_components_test.dart: shared Me surfaces and controls at 320.0 / 1.0
+00:07 +393: /Users/lute/project/momcozy-lab/app/test/shared/me_components_test.dart: shared Me surfaces and controls at 320.0 / 1.0
+00:07 +394: /Users/lute/project/momcozy-lab/app/test/shared/me_components_test.dart: shared Me surfaces and controls at 320.0 / 1.0
+00:07 +395: /Users/lute/project/momcozy-lab/app/test/shared/me_components_test.dart: shared Me surfaces and controls at 320.0 / 1.0
+00:07 +396: /Users/lute/project/momcozy-lab/app/test/shared/me_components_test.dart: shared Me surfaces and controls at 320.0 / 1.0
+00:07 +397: /Users/lute/project/momcozy-lab/app/test/shared/me_components_test.dart: shared Me surfaces and controls at 320.0 / 1.0
+00:07 +398: /Users/lute/project/momcozy-lab/app/test/shared/me_components_test.dart: shared Me surfaces and controls at 320.0 / 1.0
+00:07 +399: /Users/lute/project/momcozy-lab/app/test/shared/me_components_test.dart: shared Me surfaces and controls at 320.0 / 1.0
+00:07 +400: /Users/lute/project/momcozy-lab/app/test/shared/me_components_test.dart: shared Me surfaces and controls at 320.0 / 1.0
+00:07 +401: /Users/lute/project/momcozy-lab/app/test/shared/me_components_test.dart: shared Me surfaces and controls at 320.0 / 1.0
+00:07 +402: /Users/lute/project/momcozy-lab/app/test/shared/me_components_test.dart: shared Me surfaces and controls at 320.0 / 1.0
+00:07 +403: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: image loading failure retry and zoom 390.0 / 1.0
+00:07 +404: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: image loading failure retry and zoom 390.0 / 1.0
+00:07 +405: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: image loading failure retry and zoom 390.0 / 1.0
+00:07 +406: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub settles server cancel before starting the next turn
+00:07 +407: /Users/lute/project/momcozy-lab/app/test/shared/me_components_test.dart: shared Me surfaces and controls at 390.0 / 1.0
+00:07 +408: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: PDF loading failure retry and return 390.0 / 1.0
+00:07 +409: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub does not claim server cancellation after a 401
+00:07 +410: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub does not claim server cancellation after a 401
+00:07 +411: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media missing unavailable and return 390.0 / 2.0
+00:07 +412: /Users/lute/project/momcozy-lab/app/test/shared/me_components_test.dart: shared Me surfaces and controls at 430.0 / 1.0
+00:07 +413: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub sends follow-up content while interrupting an active run
+00:07 +414: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub sends follow-up content while interrupting an active run
+00:07 +415: /Users/lute/project/momcozy-lab/app/test/shared/me_components_test.dart: shared Me surfaces and controls at 430.0 / 2.0
+00:07 +416: /Users/lute/project/momcozy-lab/app/test/shared/me_components_test.dart: shared Me surfaces and controls at 430.0 / 2.0
+00:07 +417: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub queues a follow-up after completed text until run terminal
+00:07 +418: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub queues a follow-up after completed text until run terminal
+00:07 +419: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub queues a follow-up after completed text until run terminal
+00:07 +420: /Users/lute/project/momcozy-lab/app/test/shared/me_components_test.dart: long dialog and keyboard sheet remain scrollable and dismissible
+00:08 +421: /Users/lute/project/momcozy-lab/app/test/shared/me_components_test.dart: long dialog and keyboard sheet remain scrollable and dismissible
+00:08 +422: /Users/lute/project/momcozy-lab/app/test/shared/me_components_test.dart: long dialog and keyboard sheet remain scrollable and dismissible
+00:08 +423: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub keeps queued text when the run starts awaiting confirmation
+00:08 +424: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: PDF loading failure retry and return 390.0 / 2.0
+00:08 +425: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub releases visible running UI after completed assistant message
+00:08 +426: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media missing unavailable and return 430.0 / 1.0
+00:08 +427: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub renders repeated streaming text deltas immediately
+00:08 +428: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media image unavailable and return 430.0 / 1.0
+00:08 +429: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub throttles active run snapshot writes during deltas
+00:08 +430: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub throttles active run snapshot writes during deltas
+00:08 +431: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media video unavailable and return 430.0 / 1.0
+00:08 +432: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media video unavailable and return 430.0 / 1.0
+00:08 +433: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub retries the last request after disconnect
+00:08 +434: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: image loading failure retry and zoom 430.0 / 1.0
+00:08 +435: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: image loading failure retry and zoom 430.0 / 1.0
+00:08 +436: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub reuses the turn idempotency key when run creation is retried
+00:08 +437: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: PDF loading failure retry and return 430.0 / 1.0
+00:08 +438: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub maps offline send failure to retryable copy
+00:08 +439: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media missing unavailable and return 430.0 / 2.0
+00:08 +440: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub hides tool progress internals from stream events
+00:08 +441: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media image unavailable and return 430.0 / 2.0
+00:08 +442: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media image unavailable and return 430.0 / 2.0
+00:08 +443: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub renders and confirms production action cards
+00:08 +444: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media pdf unavailable and return 430.0 / 2.0
+00:08 +445: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub renders only user-visible action cards
+00:08 +446: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media video unavailable and return 430.0 / 2.0
+00:08 +447: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media video unavailable and return 430.0 / 2.0
+00:08 +448: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub replay does not revive an applied-only action card
+00:08 +449: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: image loading failure retry and zoom 430.0 / 2.0
+00:08 +450: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: image loading failure retry and zoom 430.0 / 2.0
+00:08 +451: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: image loading failure retry and zoom 430.0 / 2.0
+00:08 +452: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: image loading failure retry and zoom 430.0 / 2.0
+00:08 +453: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub restores submitted historical forms as read-only
+00:08 +454: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: PDF loading failure retry and return 430.0 / 2.0
+00:08 +455: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub waits for final text then loads and auto-opens a new form once
+00:08 +456: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub waits for final text then loads and auto-opens a new form once
+00:08 +457: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub waits for final text then loads and auto-opens a new form once
+00:08 +458: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: image authorization or unsupported content 200 remains retryable
+00:08 +459: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: cancelled form dialog keeps its draft for manual reopen
+00:08 +460: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: cancelled form dialog keeps its draft for manual reopen
+00:08 +461: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: pdf authorization or unsupported content 403 remains retryable
+00:08 +462: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: artifact form dialog blocks barrier and back dismissal while submitting
+00:08 +463: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: pdf authorization or unsupported content 200 remains retryable
+00:08 +464: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: artifact form dialog scrolls validation feedback into view
+00:08 +465: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: artifact form dialog stacks long actions on narrow large-text screens
+00:08 +466: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub resumes stream after action confirmation and keeps backend terminal status
+00:08 +467: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub renders safe tool failure progress
+00:08 +468: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub renders safe artifact cards from stream events
+00:08 +469: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub renders cards from indexed reducer events
+00:08 +470: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub submits a support ticket without a second confirmation
+00:08 +471: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub keeps the support form retryable when submission fails
+00:08 +472: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub aligns grouped artifact form defaults other input and submit lock
+00:09 +473: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent artifact form stays editable when submission is rejected
+00:09 +474: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub restores form editing when run creation fails
+00:09 +475: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub treats legacy checkbox_group fields as multi-select
+00:09 +476: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub renders rich text card rows and button actions
+00:09 +477: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub renders citation and reference links safely
+00:09 +478: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub renders web search citations consistently
+00:09 +479: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub dispatches safe markdown links only
+00:09 +480: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub wraps long citations on narrow mobile
+00:09 +481: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub wraps long content on compact mobile viewport
+00:09 +482: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub renders disconnected partial response state
+00:09 +483: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub renders streaming and finished states from run state
+00:09 +484: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub renders assistant markdown without raw markers
+00:09 +485: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub keeps markdown rendering stable while streaming
+00:09 +486: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub renders product asset media links and opens viewer actions
+00:09 +487: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub degrades retired skill assets without network or viewer actions
+
+Warning: A call to tap() with finder "Found 1 widget with key [<'agent-artifact-action-retired-media-0'>]: [
+  OutlinedButton-[<'agent-artifact-action-retired-media-0'>](dependencies: [IconTheme, InheritedCupertinoTheme, MediaQuery, _InheritedTheme, _LocalizationsScope-[GlobalKey#d16e6]], state: _ButtonStyleState#e5496),
+]" derived an Offset (Offset(164.0, 507.0)) that would not hit test on the specified widget.
+Maybe the widget is actually off-screen, or another widget is obscuring it, or the widget cannot receive pointer events.
+The finder corresponds to this RenderBox: RenderSemanticsAnnotations#19ecb relayoutBoundary=up17
+The hit test result at that offset is: HitTestResult(RenderPointerListener#0beee@Offset(64.0, 37.0), RenderSemanticsAnnotations#12d23@Offset(64.0, 37.0), RenderMouseRegion#2778e@Offset(64.0, 37.0), RenderSemanticsAnnotations#fdc1c@Offset(64.0, 37.0), _RenderInkFeatures#cdf36@Offset(64.0, 37.0), RenderCustomPaint#c39eb@Offset(64.0, 37.0), RenderPhysicalShape#02966@Offset(64.0, 37.0), RenderConstrainedBox#48539@Offset(64.0, 37.0), _RenderInputPadding#8657c@Offset(64.0, 39.0), RenderSemanticsAnnotations#af506@Offset(64.0, 39.0), RenderWrap#6b10b@Offset(148.0, 39.0), RenderPositionedBox#23686@Offset(148.0, 39.0), RenderPadding#5cbaa@Offset(164.0, 47.0), RenderFlex#b49f6@Offset(164.0, 47.0), RenderFlex#06d35@Offset(164.0, 507.0), RenderStack#138ed@Offset(164.0, 507.0), _RenderColoredBox#6e897@Offset(164.0, 507.0), RenderPadding#c59c1@Offset(164.0, 507.0), RenderCustomMultiChildLayoutBox#8e6a1@Offset(164.0, 507.0), _RenderInkFeatures#a5850@Offset(164.0, 507.0), RenderPhysicalModel#59da3@Offset(164.0, 507.0), RenderSemanticsAnnotations#5fd5b@Offset(164.0, 507.0), RenderRepaintBoundary#47ab4@Offset(164.0, 507.0), RenderIgnorePointer#3d01a@Offset(164.0, 507.0), RenderAnimatedOpacity#a39a0@Offset(164.0, 507.0), RenderAnimatedOpacity#97fb6@Offset(164.0, 507.0), _RenderColoredBox#101e2@Offset(164.0, 507.0), RenderAnimatedOpacity#1e58a@Offset(164.0, 507.0), RenderIgnorePointer#f34c0@Offset(164.0, 507.0), RenderAnimatedOpacity#8a32f@Offset(164.0, 507.0), RenderRepaintBoundary#413c3@Offset(164.0, 507.0), RenderSemanticsAnnotations#62810@Offset(164.0, 507.0), RenderOffstage#89f45@Offset(164.0, 507.0), RenderSemanticsAnnotations#a0f27@Offset(164.0, 507.0), _RenderTheater#d9f05@Offset(164.0, 507.0), RenderAbsorbPointer#d86da@Offset(164.0, 507.0), RenderPointerListener#ef4c3@Offset(164.0, 507.0), RenderSemanticsAnnotations#0528d@Offset(164.0, 507.0), RenderSemanticsAnnotations#bfd05@Offset(164.0, 507.0), RenderSemanticsAnnotations#0f061@Offset(164.0, 507.0), RenderSemanticsAnnotations#e04fc@Offset(164.0, 507.0), RenderTapRegionSurface#aaeb8@Offset(164.0, 507.0), RenderSemanticsAnnotations#0077c@Offset(164.0, 507.0), RenderSemanticsAnnotations#3425d@Offset(164.0, 507.0), HitTestEntry<HitTestTarget>#4d446(_ReusableRenderView#4f05a), HitTestEntry<HitTestTarget>#05bf3(<AutomatedTestWidgetsFlutterBinding>))
+#0      WidgetController._getElementPoint (package:flutter_test/src/controller.dart:2165:25)
+#1      WidgetController.getCenter (package:flutter_test/src/controller.dart:1947:12)
+#2      WidgetController.tap (package:flutter_test/src/controller.dart:1080:7)
+#3      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart:6820:20)
+<asynchronous suspension>
+#4      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#5      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+#6      StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)
+<asynchronous suspension>
+To silence this warning, pass "warnIfMissed: false" to "tap()".
+To make this warning fatal, set WidgetController.hitTestWarningShouldBeFatal to true.
+
+00:09 +488: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub status line uses progress events before final text
+00:09 +489: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub uses the approved context-ready fallback copy
+00:09 +490: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub status line prefers backend semantic labels
+00:09 +491: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub ignores retired visibility-only semantic metadata
+00:09 +492: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub keeps thinking note semantic out of status line
+00:09 +493: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub renders model reasoning as a thinking note
+00:09 +494: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub clears thinking note on later progress phases
+00:09 +495: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub uses tool semantic labels for loop status
+00:09 +496: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub keeps a fast tool completion ahead of immediate generic progress
+00:09 +497: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent loop status copy is vertically and horizontally aligned
+00:09 +498: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent thinking note stays event-driven until cleared
+00:09 +499: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub ignores non-semantic tool and artifact status fallbacks
+00:09 +500: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub renders after-tool status and thinking note
+00:09 +501: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub renders artifact and action semantic status
+00:09 +502: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub does not render failed semantic status
+00:09 +503: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub treats hidden semantic as authoritative
+00:09 +504: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub clears thinking note on later labeled progress
+00:09 +505: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub switches status copy after reply text starts
+00:09 +506: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub keeps status through user persistence and token streaming
+00:09 +507: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_hub_page_test.dart: Agent Hub status line uses queued and started events
+00:09 +508: All tests passed!

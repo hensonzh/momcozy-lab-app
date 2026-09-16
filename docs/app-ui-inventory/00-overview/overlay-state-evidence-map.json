@@ -1,0 +1,2440 @@
+[
+  {
+    "overlay": "mom-diary-editor",
+    "state": "身体",
+    "evidence": [
+      {
+        "id": "03-mom/mom-journey-diary-body-empty",
+        "image": "03-mom/mom-journey-diary-body-empty/default.png",
+        "trigger": "inventory Mom diary quick record tabs save and standalone details",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "MOM-JOURNEYS.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "mom-diary-editor",
+    "state": "休息",
+    "evidence": [
+      {
+        "id": "03-mom/mom-journey-diary-rest-empty",
+        "image": "03-mom/mom-journey-diary-rest-empty/default.png",
+        "trigger": "inventory Mom diary quick record tabs save and standalone details",
+        "extent": "viewport"
+      }
+    ],
+    "report": "MOM-JOURNEYS.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "mom-diary-editor",
+    "state": "心情",
+    "evidence": [
+      {
+        "id": "03-mom/mom-journey-diary-mood-empty",
+        "image": "03-mom/mom-journey-diary-mood-empty/default.png",
+        "trigger": "inventory Mom diary quick record tabs save and standalone details",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "MOM-JOURNEYS.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "mom-diary-editor",
+    "state": "编辑",
+    "evidence": [
+      {
+        "id": "03-mom/mom-journey-diary-detail-updated",
+        "image": "03-mom/mom-journey-diary-detail-updated/default.png",
+        "trigger": "inventory Mom diary quick record tabs save and standalone details",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "MOM-JOURNEYS.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "mom-diary-editor",
+    "state": "校验",
+    "evidence": [
+      {
+        "id": "03-mom/mom-journey-diary-empty-validation",
+        "image": "03-mom/mom-journey-diary-empty-validation/default.png",
+        "trigger": "inventory Mom diary quick record tabs save and standalone details",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "MOM-JOURNEYS.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "mom-diary-editor",
+    "state": "保存",
+    "evidence": [
+      {
+        "id": "03-mom/mom-journey-diary-saving",
+        "image": "03-mom/mom-journey-diary-saving/default.png",
+        "trigger": "inventory Mom diary conflict reload and pending save",
+        "extent": "full-measured-scroll-stitch"
+      },
+      {
+        "id": "03-mom/mom-journey-diary-modal-saved",
+        "image": "03-mom/mom-journey-diary-modal-saved/default.png",
+        "trigger": "inventory Mom diary quick record tabs save and standalone details",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "MOM-JOURNEYS.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "mom-diary-editor",
+    "state": "放弃",
+    "evidence": [
+      {
+        "id": "03-mom/mom-journey-diary-discard-confirm",
+        "image": "03-mom/mom-journey-diary-discard-confirm/default.png",
+        "trigger": "inventory Mom diary quick record tabs save and standalone details",
+        "extent": "viewport"
+      },
+      {
+        "id": "03-mom/mom-journey-diary-discarded-home",
+        "image": "03-mom/mom-journey-diary-discarded-home/default.png",
+        "trigger": "inventory Mom optional diary sections and mood draft discard",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "MOM-JOURNEYS.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "lactation-editor",
+    "state": "新增",
+    "evidence": [
+      {
+        "id": "03-mom/mom-journey-milk-new-pump",
+        "image": "03-mom/mom-journey-milk-new-pump/default.png",
+        "trigger": "inventory Mom lactation create edit delete restore and home refresh",
+        "extent": "viewport"
+      }
+    ],
+    "report": "MOM-MILK-CONTROLS.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "lactation-editor",
+    "state": "编辑",
+    "evidence": [
+      {
+        "id": "03-mom/lactation-current-save-conflict",
+        "image": "03-mom/lactation-current-save-conflict/default.png",
+        "trigger": "lactation route reads, charts, long notes, conflicts and undo 390.0/1.0",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "MOM-MILK-CONTROLS.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "lactation-editor",
+    "state": "左右侧",
+    "evidence": [
+      {
+        "id": "03-mom/mom-milk-control-side-left",
+        "image": "03-mom/mom-milk-control-side-left/default.png",
+        "trigger": "inventory milk controls 393/1x",
+        "extent": "viewport"
+      },
+      {
+        "id": "03-mom/mom-milk-control-side-right",
+        "image": "03-mom/mom-milk-control-side-right/default.png",
+        "trigger": "inventory milk controls 393/1x",
+        "extent": "viewport"
+      }
+    ],
+    "report": "MOM-MILK-CONTROLS.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "lactation-editor",
+    "state": "泵奶与亲喂",
+    "evidence": [
+      {
+        "id": "03-mom/lactation-dialog-pump",
+        "image": "03-mom/lactation-dialog-pump/default.png",
+        "trigger": "lactation modal switches to nursing and saves at 390.0 / 1.0",
+        "extent": "full-measured-scroll-stitch"
+      },
+      {
+        "id": "03-mom/lactation-dialog-nurse",
+        "image": "03-mom/lactation-dialog-nurse/default.png",
+        "trigger": "lactation modal switches to nursing and saves at 390.0 / 1.0",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "MOM-MILK-CONTROLS.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "lactation-editor",
+    "state": "校验",
+    "evidence": [
+      {
+        "id": "03-mom/mom-journey-milk-invalid-volume",
+        "image": "03-mom/mom-journey-milk-invalid-volume/default.png",
+        "trigger": "inventory Mom lactation create edit delete restore and home refresh",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "MOM-MILK-CONTROLS.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "lactation-editor",
+    "state": "保存错误",
+    "evidence": [
+      {
+        "id": "03-mom/mom-journey-milk-save-error",
+        "image": "03-mom/mom-journey-milk-save-error/default.png",
+        "trigger": "inventory Mom lactation create edit delete restore and home refresh",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "MOM-MILK-CONTROLS.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "baby-profile",
+    "state": "新增",
+    "evidence": [
+      {
+        "id": "04-baby/baby-journey-first-profile-form",
+        "image": "04-baby/baby-journey-first-profile-form/default.png",
+        "trigger": "inventory Baby no profile creation and missing demographic data",
+        "extent": "viewport"
+      }
+    ],
+    "report": "BABY-PROFILE-CONTROLS.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "baby-profile",
+    "state": "编辑",
+    "evidence": [
+      {
+        "id": "04-baby/baby-profile-controls-editor",
+        "image": "04-baby/baby-profile-controls-editor/default.png",
+        "trigger": "inventory Baby profile controls 393/1x",
+        "extent": "viewport"
+      }
+    ],
+    "report": "BABY-PROFILE-CONTROLS.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "baby-profile",
+    "state": "校验",
+    "evidence": [
+      {
+        "id": "04-baby/baby-profile-controls-name-empty-validation",
+        "image": "04-baby/baby-profile-controls-name-empty-validation/default.png",
+        "trigger": "inventory Baby profile controls 393/1x",
+        "extent": "viewport"
+      }
+    ],
+    "report": "BABY-PROFILE-CONTROLS.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "baby-profile",
+    "state": "保存",
+    "evidence": [
+      {
+        "id": "04-baby/baby-profile-controls-retry-saved",
+        "image": "04-baby/baby-profile-controls-retry-saved/default.png",
+        "trigger": "inventory Baby profile controls 393/1x",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "BABY-PROFILE-CONTROLS.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "baby-profile",
+    "state": "关闭确认",
+    "evidence": [
+      {
+        "id": "04-baby/baby-journey-profile-discard-confirm",
+        "image": "04-baby/baby-journey-profile-discard-confirm/default.png",
+        "trigger": "inventory Baby profile switch editing and discard",
+        "extent": "viewport"
+      }
+    ],
+    "report": "BABY-PROFILE-CONTROLS.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "baby-record",
+    "state": "喂养",
+    "evidence": [
+      {
+        "id": "04-baby/baby-journey-feeding-filled",
+        "image": "04-baby/baby-journey-feeding-filled/default.png",
+        "trigger": "inventory Baby feeding save edit delete restore and history filters",
+        "extent": "viewport"
+      }
+    ],
+    "report": "BABY-JOURNEYS.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "baby-record",
+    "state": "睡眠",
+    "evidence": [
+      {
+        "id": "04-baby/baby-journey-sleep-active-editor",
+        "image": "04-baby/baby-journey-sleep-active-editor/default.png",
+        "trigger": "inventory Baby sleep stool knowledge and growth interactions",
+        "extent": "viewport"
+      }
+    ],
+    "report": "BABY-JOURNEYS.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "baby-record",
+    "state": "尿布",
+    "evidence": [
+      {
+        "id": "04-baby/baby-journey-wet-tab",
+        "image": "04-baby/baby-journey-wet-tab/default.png",
+        "trigger": "inventory Baby sleep stool knowledge and growth interactions",
+        "extent": "viewport"
+      },
+      {
+        "id": "04-baby/baby-journey-stool-tab",
+        "image": "04-baby/baby-journey-stool-tab/default.png",
+        "trigger": "inventory Baby sleep stool knowledge and growth interactions",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "BABY-JOURNEYS.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "baby-record",
+    "state": "生长",
+    "evidence": [
+      {
+        "id": "04-baby/baby-journey-growth-three-values",
+        "image": "04-baby/baby-journey-growth-three-values/default.png",
+        "trigger": "inventory Baby growth batch date validation and undo recovery",
+        "extent": "viewport"
+      }
+    ],
+    "report": "BABY-JOURNEYS.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "baby-record",
+    "state": "发育",
+    "evidence": [
+      {
+        "id": "04-baby/baby-journey-development-editor",
+        "image": "04-baby/baby-journey-development-editor/default.png",
+        "trigger": "inventory Baby sleep stool knowledge and growth interactions",
+        "extent": "viewport"
+      }
+    ],
+    "report": "BABY-JOURNEYS.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "baby-record",
+    "state": "编辑",
+    "evidence": [
+      {
+        "id": "04-baby/baby-journey-history-edit",
+        "image": "04-baby/baby-journey-history-edit/default.png",
+        "trigger": "inventory Baby feeding save edit delete restore and history filters",
+        "extent": "viewport"
+      }
+    ],
+    "report": "BABY-JOURNEYS.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "baby-record",
+    "state": "校验",
+    "evidence": [
+      {
+        "id": "04-baby/baby-journey-feeding-validation",
+        "image": "04-baby/baby-journey-feeding-validation/default.png",
+        "trigger": "inventory Baby feeding save edit delete restore and history filters",
+        "extent": "viewport"
+      },
+      {
+        "id": "04-baby/baby-journey-growth-invalid-value",
+        "image": "04-baby/baby-journey-growth-invalid-value/default.png",
+        "trigger": "inventory Baby growth batch date validation and undo recovery",
+        "extent": "viewport"
+      }
+    ],
+    "report": "BABY-JOURNEYS.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "baby-record",
+    "state": "保存",
+    "evidence": [
+      {
+        "id": "04-baby/baby-journey-record-saving",
+        "image": "04-baby/baby-journey-record-saving/default.png",
+        "trigger": "inventory Baby loading and pending save states",
+        "extent": "viewport"
+      },
+      {
+        "id": "04-baby/baby-journey-feeding-saved",
+        "image": "04-baby/baby-journey-feeding-saved/default.png",
+        "trigger": "inventory Baby feeding save edit delete restore and history filters",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "BABY-JOURNEYS.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "baby-saved",
+    "state": "保存成功",
+    "evidence": [
+      {
+        "id": "04-baby/baby-development-controls-batch-saved",
+        "image": "04-baby/baby-development-controls-batch-saved/default.png",
+        "trigger": "inventory Baby development controls 393/1x",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "BABY-DEVELOPMENT-CONTROLS.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "baby-saved",
+    "state": "后续记录",
+    "evidence": [
+      {
+        "id": "04-baby/baby-journey-returned-home",
+        "image": "04-baby/baby-journey-returned-home/default.png",
+        "trigger": "inventory Baby feeding save edit delete restore and history filters",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "BABY-DEVELOPMENT-CONTROLS.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "baby-switcher",
+    "state": "列表",
+    "evidence": [
+      {
+        "id": "04-baby/baby-journey-switcher",
+        "image": "04-baby/baby-journey-switcher/default.png",
+        "trigger": "inventory Baby profile switch editing and discard",
+        "extent": "viewport"
+      }
+    ],
+    "report": "BABY-JOURNEYS.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "baby-switcher",
+    "state": "当前选择",
+    "evidence": [
+      {
+        "id": "04-baby/baby-journey-switched-leo",
+        "image": "04-baby/baby-journey-switched-leo/default.png",
+        "trigger": "inventory Baby profile switch editing and discard",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "BABY-JOURNEYS.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "baby-switcher",
+    "state": "取消",
+    "evidence": [
+      {
+        "id": "04-baby/baby-journey-returned-home",
+        "image": "04-baby/baby-journey-returned-home/default.png",
+        "trigger": "inventory Baby feeding save edit delete restore and history filters",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "BABY-JOURNEYS.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "knowledge",
+    "state": "来源说明",
+    "evidence": [
+      {
+        "id": "04-baby/baby-journey-knowledge-detail",
+        "image": "04-baby/baby-journey-knowledge-detail/default.png",
+        "trigger": "inventory Baby sleep stool knowledge and growth interactions",
+        "extent": "viewport"
+      }
+    ],
+    "report": "BABY-KNOWLEDGE-SOURCES.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "knowledge",
+    "state": "关闭",
+    "evidence": [
+      {
+        "id": "04-baby/baby-profile-controls-knowledge-baby-return",
+        "image": "04-baby/baby-profile-controls-knowledge-baby-return/default.png",
+        "trigger": "inventory Baby profile controls 393/1x",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "BABY-KNOWLEDGE-SOURCES.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "agent-history",
+    "state": "列表／当前会话",
+    "evidence": [
+      {
+        "id": "05-agent/agent-history-list",
+        "image": "05-agent/agent-history-list/default.png",
+        "trigger": "history states 390.0/1.0",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "AGENT-ENTRY-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "agent-history",
+    "state": "空",
+    "evidence": [
+      {
+        "id": "05-agent/agent-history-empty",
+        "image": "05-agent/agent-history-empty/default.png",
+        "trigger": "history states 390.0/1.0",
+        "extent": "viewport"
+      }
+    ],
+    "report": "AGENT-ENTRY-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "agent-history",
+    "state": "加载",
+    "evidence": [
+      {
+        "id": "05-agent/agent-history-loading",
+        "image": "05-agent/agent-history-loading/default.png",
+        "trigger": "history states 390.0/1.0",
+        "extent": "viewport"
+      }
+    ],
+    "report": "AGENT-ENTRY-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "agent-history",
+    "state": "加载错误",
+    "evidence": [
+      {
+        "id": "05-agent/agent-history-load-error",
+        "image": "05-agent/agent-history-load-error/default.png",
+        "trigger": "history states 390.0/1.0",
+        "extent": "viewport"
+      }
+    ],
+    "report": "AGENT-ENTRY-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "agent-history",
+    "state": "回复锁定",
+    "evidence": [
+      {
+        "id": "05-agent/agent-history-locked",
+        "image": "05-agent/agent-history-locked/default.png",
+        "trigger": "history states 390.0/1.0",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "AGENT-ENTRY-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "agent-history",
+    "state": "切换中",
+    "evidence": [
+      {
+        "id": "05-agent/agent-history-switching",
+        "image": "05-agent/agent-history-switching/default.png",
+        "trigger": "history states 390.0/1.0",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "AGENT-ENTRY-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "agent-history",
+    "state": "切换失败",
+    "evidence": [
+      {
+        "id": "05-agent/agent-history-switch-error",
+        "image": "05-agent/agent-history-switch-error/default.png",
+        "trigger": "history states 390.0/1.0",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "AGENT-ENTRY-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "agent-history",
+    "state": "关闭",
+    "evidence": [
+      {
+        "id": "10-global-modals/notification-conversation",
+        "image": "10-global-modals/notification-conversation/default.png",
+        "trigger": "notification conversation opens and keeps drafts scoped to its runtime and thread 393.0 / 1.0",
+        "extent": "viewport"
+      }
+    ],
+    "report": "AGENT-ENTRY-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "agent-menu",
+    "state": "操作项",
+    "evidence": [
+      {
+        "id": "05-agent/agent-journey-assistant-menu",
+        "image": "05-agent/agent-journey-assistant-menu/default.png",
+        "trigger": "inventory agent real reply message copy and tab retention",
+        "extent": "viewport"
+      },
+      {
+        "id": "05-agent/agent-journey-user-menu",
+        "image": "05-agent/agent-journey-user-menu/default.png",
+        "trigger": "inventory agent real reply message copy and tab retention",
+        "extent": "viewport"
+      }
+    ],
+    "report": "AGENT-JOURNEYS.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "agent-menu",
+    "state": "复制反馈",
+    "evidence": [
+      {
+        "id": "05-agent/agent-journey-assistant-copied",
+        "image": "05-agent/agent-journey-assistant-copied/default.png",
+        "trigger": "inventory agent real reply message copy and tab retention",
+        "extent": "viewport"
+      }
+    ],
+    "report": "AGENT-JOURNEYS.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "agent-form",
+    "state": "各表单 schema",
+    "evidence": [
+      {
+        "id": "05-agent/agent-workflow-journey-intake-auto-open",
+        "image": "05-agent/agent-workflow-journey-intake-auto-open/default.png",
+        "trigger": "inventory workflow intake controls and accepted submission 393.0",
+        "extent": "full-measured-scroll-stitch"
+      },
+      {
+        "id": "05-agent/agent-workflow-journey-ticket-auto-open",
+        "image": "05-agent/agent-workflow-journey-ticket-auto-open/default.png",
+        "trigger": "inventory workflow support ticket retry and submitted detail",
+        "extent": "viewport"
+      }
+    ],
+    "report": "AGENT-CURRENT-REUSE.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "agent-form",
+    "state": "校验",
+    "evidence": [
+      {
+        "id": "05-agent/agent-workflow-journey-intake-validation",
+        "image": "05-agent/agent-workflow-journey-intake-validation/default.png",
+        "trigger": "inventory workflow intake controls and accepted submission 393.0",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "AGENT-CURRENT-REUSE.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "agent-form",
+    "state": "提交",
+    "evidence": [
+      {
+        "id": "05-agent/agent-workflow-journey-intake-submitting",
+        "image": "05-agent/agent-workflow-journey-intake-submitting/default.png",
+        "trigger": "inventory workflow intake controls and accepted submission 393.0",
+        "extent": "full-measured-scroll-stitch"
+      },
+      {
+        "id": "05-agent/agent-workflow-journey-ticket-submitting",
+        "image": "05-agent/agent-workflow-journey-ticket-submitting/default.png",
+        "trigger": "inventory workflow support ticket retry and submitted detail",
+        "extent": "viewport"
+      }
+    ],
+    "report": "AGENT-CURRENT-REUSE.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "agent-form",
+    "state": "失败",
+    "evidence": [
+      {
+        "id": "05-agent/agent-workflow-journey-retry-intake-failed",
+        "image": "05-agent/agent-workflow-journey-retry-intake-failed/default.png",
+        "trigger": "inventory workflow intake transport failure and retry",
+        "extent": "full-measured-scroll-stitch"
+      },
+      {
+        "id": "05-agent/agent-workflow-journey-ticket-failed",
+        "image": "05-agent/agent-workflow-journey-ticket-failed/default.png",
+        "trigger": "inventory workflow support ticket retry and submitted detail",
+        "extent": "viewport"
+      }
+    ],
+    "report": "AGENT-CURRENT-REUSE.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "agent-image",
+    "state": "加载",
+    "evidence": [
+      {
+        "id": "05-agent/agent-attachment-journey-image-remote-loading",
+        "image": "05-agent/agent-attachment-journey-image-remote-loading/default.png",
+        "trigger": "inventory attachment image upload failure and preview retry",
+        "extent": "viewport"
+      }
+    ],
+    "report": "AGENT-ATTACHMENTS.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "agent-image",
+    "state": "图片",
+    "evidence": [
+      {
+        "id": "05-agent/agent-attachment-journey-image-viewer",
+        "image": "05-agent/agent-attachment-journey-image-viewer/default.png",
+        "trigger": "inventory attachment mixed send and image viewer 393.0",
+        "extent": "viewport"
+      }
+    ],
+    "report": "AGENT-ATTACHMENTS.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+    "note": "实际 _AgentFullScreenImage 对话图片浮层；与资源卡打开的 media-viewer 独立页面分开。"
+  },
+  {
+    "overlay": "agent-image",
+    "state": "失败",
+    "evidence": [
+      {
+        "id": "05-agent/agent-attachment-journey-image-remote-failed",
+        "image": "05-agent/agent-attachment-journey-image-remote-failed/default.png",
+        "trigger": "inventory attachment image upload failure and preview retry",
+        "extent": "viewport"
+      }
+    ],
+    "report": "AGENT-ATTACHMENTS.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "agent-image",
+    "state": "关闭",
+    "evidence": [
+      {
+        "id": "05-agent/agent-attachment-journey-image-viewer-return",
+        "image": "05-agent/agent-attachment-journey-image-viewer-return/default.png",
+        "trigger": "inventory attachment mixed send and image viewer 393.0",
+        "extent": "viewport"
+      }
+    ],
+    "report": "AGENT-ATTACHMENTS.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "schedule-editor",
+    "state": "新增",
+    "evidence": [
+      {
+        "id": "06-schedule/schedule-create",
+        "image": "06-schedule/schedule-create/default.png",
+        "trigger": "personal schedule create edit delete at 390.0/1.0",
+        "extent": "viewport"
+      }
+    ],
+    "report": "SCHEDULE-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "schedule-editor",
+    "state": "编辑",
+    "evidence": [
+      {
+        "id": "06-schedule/schedule-edit",
+        "image": "06-schedule/schedule-edit/default.png",
+        "trigger": "personal schedule create edit delete at 390.0/1.0",
+        "extent": "viewport"
+      }
+    ],
+    "report": "SCHEDULE-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "schedule-editor",
+    "state": "时间",
+    "evidence": [
+      {
+        "id": "06-schedule/schedule-time-picker",
+        "image": "06-schedule/schedule-time-picker/default.png",
+        "trigger": "personal schedule create edit delete at 390.0/1.0",
+        "extent": "viewport"
+      },
+      {
+        "id": "06-schedule/schedule-date-picker",
+        "image": "06-schedule/schedule-date-picker/default.png",
+        "trigger": "personal schedule create edit delete at 390.0/1.0",
+        "extent": "viewport"
+      }
+    ],
+    "report": "SCHEDULE-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "schedule-editor",
+    "state": "校验",
+    "evidence": [
+      {
+        "id": "06-schedule/schedule-journey-current-create-invalid",
+        "image": "06-schedule/schedule-journey-current-create-invalid/default.png",
+        "trigger": "inventory schedule current visible feedback gaps",
+        "extent": "viewport"
+      }
+    ],
+    "report": "SCHEDULE-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "schedule-editor",
+    "state": "保存",
+    "evidence": [
+      {
+        "id": "06-schedule/schedule-save-busy",
+        "image": "06-schedule/schedule-save-busy/default.png",
+        "trigger": "pending personal save locks edits and close then creates once",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "SCHEDULE-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "schedule-editor",
+    "state": "错误",
+    "evidence": [
+      {
+        "id": "06-schedule/schedule-journey-current-edit-conflict",
+        "image": "06-schedule/schedule-journey-current-edit-conflict/default.png",
+        "trigger": "inventory schedule current visible feedback gaps",
+        "extent": "viewport"
+      }
+    ],
+    "report": "SCHEDULE-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "schedule-delete",
+    "state": "确认",
+    "evidence": [
+      {
+        "id": "06-schedule/schedule-journey-delete-confirm",
+        "image": "06-schedule/schedule-journey-delete-confirm/default.png",
+        "trigger": "inventory schedule calendar create edit delete",
+        "extent": "viewport"
+      }
+    ],
+    "report": "SCHEDULE-FEEDBACK-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "schedule-delete",
+    "state": "取消",
+    "evidence": [
+      {
+        "id": "06-schedule/schedule-journey-delete-cancelled",
+        "image": "06-schedule/schedule-journey-delete-cancelled/default.png",
+        "trigger": "inventory schedule calendar create edit delete",
+        "extent": "viewport"
+      }
+    ],
+    "report": "SCHEDULE-FEEDBACK-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "schedule-delete",
+    "state": "等待",
+    "evidence": [
+      {
+        "id": "06-schedule/schedule-overview",
+        "image": "06-schedule/schedule-overview/default.png",
+        "trigger": "published care plan and appointment at 390.0 / 1.0",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "SCHEDULE-FEEDBACK-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+    "note": "确认后弹窗先关闭，再等待 DELETE；控制器没有删除中状态变更。等待阶段共享原日程列表图，不存在独立等待弹窗。"
+  },
+  {
+    "overlay": "schedule-delete",
+    "state": "失败",
+    "evidence": [
+      {
+        "id": "06-schedule/schedule-journey-current-delete-error",
+        "image": "06-schedule/schedule-journey-current-delete-error/default.png",
+        "trigger": "inventory schedule current visible feedback gaps",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "SCHEDULE-FEEDBACK-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "provider-team",
+    "state": "团队",
+    "evidence": [
+      {
+        "id": "08-expert-service/service-current-catalog-team",
+        "image": "08-expert-service/service-current-catalog-team/default.png",
+        "trigger": "current service catalog all package and team entries false",
+        "extent": "viewport"
+      }
+    ],
+    "report": "SERVICE-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "provider-team",
+    "state": "空",
+    "evidence": [
+      {
+        "id": "08-expert-service/service-current-catalog-team-empty",
+        "image": "08-expert-service/service-current-catalog-team-empty/default.png",
+        "trigger": "current catalog loading empty errors and refresh false",
+        "extent": "viewport"
+      }
+    ],
+    "report": "SERVICE-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "provider-team",
+    "state": "关闭",
+    "evidence": [
+      {
+        "id": "08-expert-service/service-current-catalog",
+        "image": "08-expert-service/service-current-catalog/default.png",
+        "trigger": "current service catalog all package and team entries false",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "SERVICE-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "purchase",
+    "state": "资格",
+    "evidence": [
+      {
+        "id": "08-expert-service/purchase-current-eligibility-ready",
+        "image": "08-expert-service/purchase-current-eligibility-ready/default.png",
+        "trigger": "current purchase eligibility rejection create retry false",
+        "extent": "viewport"
+      }
+    ],
+    "report": "PURCHASE-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "purchase",
+    "state": "付款",
+    "evidence": [
+      {
+        "id": "08-expert-service/purchase-current-payment-pending",
+        "image": "08-expert-service/purchase-current-payment-pending/default.png",
+        "trigger": "current purchase uncertain payment retry query false",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "PURCHASE-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "purchase",
+    "state": "校验",
+    "evidence": [
+      {
+        "id": "08-expert-service/purchase-current-fields-invalid",
+        "image": "08-expert-service/purchase-current-fields-invalid/default.png",
+        "trigger": "current purchase fields decline verification success false",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "PURCHASE-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "purchase",
+    "state": "拒付",
+    "evidence": [
+      {
+        "id": "08-expert-service/purchase-current-declined",
+        "image": "08-expert-service/purchase-current-declined/default.png",
+        "trigger": "current purchase fields decline verification success false",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "PURCHASE-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "purchase",
+    "state": "额外验证",
+    "evidence": [
+      {
+        "id": "08-expert-service/purchase-current-challenge",
+        "image": "08-expert-service/purchase-current-challenge/default.png",
+        "trigger": "current purchase fields decline verification success false",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "PURCHASE-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "purchase",
+    "state": "待付",
+    "evidence": [
+      {
+        "id": "08-expert-service/purchase-current-processing",
+        "image": "08-expert-service/purchase-current-processing/default.png",
+        "trigger": "current purchase cancelled challenge reconciling and entitlement sync false",
+        "extent": "viewport"
+      }
+    ],
+    "report": "PURCHASE-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "purchase",
+    "state": "取消",
+    "evidence": [
+      {
+        "id": "08-expert-service/purchase-current-plain-cancelled",
+        "image": "08-expert-service/purchase-current-plain-cancelled/default.png",
+        "trigger": "current purchase plain cancellation and reconciliation completion false",
+        "extent": "viewport"
+      }
+    ],
+    "report": "PURCHASE-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "purchase",
+    "state": "成功",
+    "evidence": [
+      {
+        "id": "08-expert-service/purchase-current-verified-success",
+        "image": "08-expert-service/purchase-current-verified-success/default.png",
+        "trigger": "current purchase fields decline verification success false",
+        "extent": "viewport"
+      }
+    ],
+    "report": "PURCHASE-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "purchase",
+    "state": "同步权益",
+    "evidence": [
+      {
+        "id": "08-expert-service/purchase-current-paid-awaiting-benefits",
+        "image": "08-expert-service/purchase-current-paid-awaiting-benefits/default.png",
+        "trigger": "current purchase cancelled challenge reconciling and entitlement sync false",
+        "extent": "viewport"
+      },
+      {
+        "id": "08-expert-service/purchase-current-benefits-synced",
+        "image": "08-expert-service/purchase-current-benefits-synced/default.png",
+        "trigger": "current purchase cancelled challenge reconciling and entitlement sync false",
+        "extent": "viewport"
+      }
+    ],
+    "report": "PURCHASE-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "purchase",
+    "state": "错误",
+    "evidence": [
+      {
+        "id": "08-expert-service/purchase-current-create-error",
+        "image": "08-expert-service/purchase-current-create-error/default.png",
+        "trigger": "current purchase eligibility rejection create retry false",
+        "extent": "full-measured-scroll-stitch"
+      },
+      {
+        "id": "08-expert-service/purchase-current-payment-uncertain",
+        "image": "08-expert-service/purchase-current-payment-uncertain/default.png",
+        "trigger": "current purchase uncertain payment retry query false",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "PURCHASE-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "booking-precheck",
+    "state": "州选择",
+    "evidence": [
+      {
+        "id": "08-expert-service/booking-precheck-current-region-menu",
+        "image": "08-expert-service/booking-precheck-current-region-menu/default.png",
+        "trigger": "current booking precheck controls and recovery false",
+        "extent": "viewport"
+      }
+    ],
+    "report": "BOOKING-PRECHECK-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "booking-precheck",
+    "state": "适用性",
+    "evidence": [
+      {
+        "id": "08-expert-service/booking-precheck-current-suitable",
+        "image": "08-expert-service/booking-precheck-current-suitable/default.png",
+        "trigger": "current booking precheck controls and recovery false",
+        "extent": "viewport"
+      }
+    ],
+    "report": "BOOKING-PRECHECK-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "booking-precheck",
+    "state": "风险",
+    "evidence": [
+      {
+        "id": "08-expert-service/booking-precheck-current-emergency-help",
+        "image": "08-expert-service/booking-precheck-current-emergency-help/default.png",
+        "trigger": "current booking precheck controls and recovery false",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "BOOKING-PRECHECK-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "booking-precheck",
+    "state": "等待",
+    "evidence": [
+      {
+        "id": "08-expert-service/booking-precheck-current-submit-pending",
+        "image": "08-expert-service/booking-precheck-current-submit-pending/default.png",
+        "trigger": "current booking precheck controls and recovery false",
+        "extent": "viewport"
+      }
+    ],
+    "report": "BOOKING-PRECHECK-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "booking-precheck",
+    "state": "拒绝",
+    "evidence": [
+      {
+        "id": "08-expert-service/booking-precheck-current-server-service_unsuitable",
+        "image": "08-expert-service/booking-precheck-current-server-service_unsuitable/default.png",
+        "trigger": "current booking precheck controls and recovery false",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "BOOKING-PRECHECK-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "booking-precheck",
+    "state": "重试",
+    "evidence": [
+      {
+        "id": "08-expert-service/booking-precheck-current-availability-restored",
+        "image": "08-expert-service/booking-precheck-current-availability-restored/default.png",
+        "trigger": "current booking precheck availability loading and retry false",
+        "extent": "viewport"
+      }
+    ],
+    "report": "BOOKING-PRECHECK-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "booking-review",
+    "state": "held",
+    "evidence": [
+      {
+        "id": "08-expert-service/booking-selection-current-held-review",
+        "image": "08-expert-service/booking-selection-current-held-review/default.png",
+        "trigger": "current booking hold reselect and confirmation recovery false",
+        "extent": "viewport"
+      }
+    ],
+    "report": "BOOKING-SELECTION-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "booking-review",
+    "state": "提醒草稿",
+    "evidence": [
+      {
+        "id": "08-expert-service/booking-selection-current-reminder-selected",
+        "image": "08-expert-service/booking-selection-current-reminder-selected/default.png",
+        "trigger": "current booking hold reselect and confirmation recovery false",
+        "extent": "viewport"
+      },
+      {
+        "id": "08-expert-service/booking-selection-current-reminder-cleared",
+        "image": "08-expert-service/booking-selection-current-reminder-cleared/default.png",
+        "trigger": "current booking hold reselect and confirmation recovery false",
+        "extent": "viewport"
+      }
+    ],
+    "report": "BOOKING-SELECTION-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "booking-review",
+    "state": "过期",
+    "evidence": [
+      {
+        "id": "08-expert-service/booking-recovery-current-confirm-hold-expired",
+        "image": "08-expert-service/booking-recovery-current-confirm-hold-expired/default.png",
+        "trigger": "current booking hold expiry and latest confirmation false",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "BOOKING-SELECTION-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "booking-review",
+    "state": "确认中",
+    "evidence": [
+      {
+        "id": "08-expert-service/booking-selection-current-confirm-pending",
+        "image": "08-expert-service/booking-selection-current-confirm-pending/default.png",
+        "trigger": "current booking hold reselect and confirmation recovery false",
+        "extent": "viewport"
+      }
+    ],
+    "report": "BOOKING-SELECTION-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "booking-review",
+    "state": "错误",
+    "evidence": [
+      {
+        "id": "08-expert-service/booking-selection-current-confirm-error",
+        "image": "08-expert-service/booking-selection-current-confirm-error/default.png",
+        "trigger": "current booking hold reselect and confirmation recovery false",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "BOOKING-SELECTION-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "booking-review",
+    "state": "已确认",
+    "evidence": [
+      {
+        "id": "08-expert-service/booking-selection-current-confirmed-detail",
+        "image": "08-expert-service/booking-selection-current-confirmed-detail/default.png",
+        "trigger": "current booking hold reselect and confirmation recovery false",
+        "extent": "viewport"
+      }
+    ],
+    "report": "BOOKING-SELECTION-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "appointment-cancel",
+    "state": "确认",
+    "evidence": [
+      {
+        "id": "08-expert-service/booking-recovery-current-cancel-open",
+        "image": "08-expert-service/booking-recovery-current-cancel-open/default.png",
+        "trigger": "current confirmed appointment cancellation and state recovery false",
+        "extent": "viewport"
+      }
+    ],
+    "report": "BOOKING-RECOVERY-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "appointment-cancel",
+    "state": "保留",
+    "evidence": [
+      {
+        "id": "08-expert-service/booking-recovery-current-cancel-retained",
+        "image": "08-expert-service/booking-recovery-current-cancel-retained/default.png",
+        "trigger": "current confirmed appointment cancellation and state recovery false",
+        "extent": "viewport"
+      }
+    ],
+    "report": "BOOKING-RECOVERY-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "appointment-cancel",
+    "state": "等待",
+    "evidence": [
+      {
+        "id": "08-expert-service/booking-recovery-current-cancel-pending",
+        "image": "08-expert-service/booking-recovery-current-cancel-pending/default.png",
+        "trigger": "current confirmed appointment cancellation and state recovery false",
+        "extent": "viewport"
+      }
+    ],
+    "report": "BOOKING-RECOVERY-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "appointment-cancel",
+    "state": "未知",
+    "evidence": [
+      {
+        "id": "08-expert-service/booking-recovery-current-cancel-uncertain",
+        "image": "08-expert-service/booking-recovery-current-cancel-uncertain/default.png",
+        "trigger": "current confirmed appointment cancellation and state recovery false",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "BOOKING-RECOVERY-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "appointment-cancel",
+    "state": "状态变化",
+    "evidence": [
+      {
+        "id": "08-expert-service/booking-recovery-current-cancel-no-longer-allowed",
+        "image": "08-expert-service/booking-recovery-current-cancel-no-longer-allowed/default.png",
+        "trigger": "current confirmed appointment cancellation and state recovery false",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "BOOKING-RECOVERY-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "appointment-cancel",
+    "state": "恢复",
+    "evidence": [
+      {
+        "id": "08-expert-service/booking-recovery-current-cancel-in-progress-return",
+        "image": "08-expert-service/booking-recovery-current-cancel-in-progress-return/default.png",
+        "trigger": "current confirmed appointment cancellation and state recovery false",
+        "extent": "viewport"
+      }
+    ],
+    "report": "BOOKING-RECOVERY-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "home-consultation",
+    "state": "准备",
+    "evidence": [
+      {
+        "id": "08-expert-service/home-consultation-journey-preparation",
+        "image": "08-expert-service/home-consultation-journey-preparation/default.png",
+        "trigger": "inventory home consultation nested cancellation 393/1",
+        "extent": "viewport"
+      }
+    ],
+    "report": "ENTRY-FOLLOWUP.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "home-consultation",
+    "state": "信息采集入口",
+    "evidence": [
+      {
+        "id": "08-expert-service/home-consultation-journey-intake",
+        "image": "08-expert-service/home-consultation-journey-intake/default.png",
+        "trigger": "inventory home consultation intake route and return 393/1",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "ENTRY-FOLLOWUP.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "home-consultation",
+    "state": "取消",
+    "evidence": [
+      {
+        "id": "08-expert-service/home-consultation-journey-cancel-confirm",
+        "image": "08-expert-service/home-consultation-journey-cancel-confirm/default.png",
+        "trigger": "inventory home consultation nested cancellation 393/1",
+        "extent": "viewport"
+      }
+    ],
+    "report": "ENTRY-FOLLOWUP.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "home-consultation",
+    "state": "过期",
+    "evidence": [
+      {
+        "id": "08-expert-service/home-consultation-journey-window-expired",
+        "image": "08-expert-service/home-consultation-journey-window-expired/default.png",
+        "trigger": "inventory home expired consultation window",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "OVERLAY-STATE-MAP.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+    "note": "真实 More → Me → 查看预约；过期浮层完整窗口已检查，点击重新预约后到达 booking 路由。"
+  },
+  {
+    "overlay": "home-consultation",
+    "state": "错误",
+    "evidence": [
+      {
+        "id": "08-expert-service/home-consultation-journey-load-error",
+        "image": "08-expert-service/home-consultation-journey-load-error/default.png",
+        "trigger": "inventory home consultation load failure retry",
+        "extent": "viewport"
+      }
+    ],
+    "report": "ENTRY-FOLLOWUP.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "intake-consent",
+    "state": "说明",
+    "evidence": [
+      {
+        "id": "08-expert-service/service-journey-intake-consent-info",
+        "image": "08-expert-service/service-journey-intake-consent-info/default.png",
+        "trigger": "inventory Services intake fields consent uncertain save and update",
+        "extent": "viewport"
+      }
+    ],
+    "report": "INTAKE-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "intake-consent",
+    "state": "关闭",
+    "evidence": [
+      {
+        "id": "08-expert-service/service-journey-intake-unfilled",
+        "image": "08-expert-service/service-journey-intake-unfilled/default.png",
+        "trigger": "inventory Services intake fields consent uncertain save and update",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "INTAKE-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "intake-saved",
+    "state": "保存成功",
+    "evidence": [
+      {
+        "id": "08-expert-service/intake-saved",
+        "image": "08-expert-service/intake-saved/default.png",
+        "trigger": "intake design disclosures consent and save at 390.0 / 1.0",
+        "extent": "viewport"
+      }
+    ],
+    "report": "SERVICE-JOURNEYS.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "intake-saved",
+    "state": "预咨询",
+    "evidence": [
+      {
+        "id": "08-expert-service/service-journey-intake-to-cozymate",
+        "image": "08-expert-service/service-journey-intake-to-cozymate/default.png",
+        "trigger": "inventory Services date pickers intake retry profile and preconsult",
+        "extent": "viewport"
+      }
+    ],
+    "report": "SERVICE-JOURNEYS.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "intake-saved",
+    "state": "稍后",
+    "evidence": [
+      {
+        "id": "08-expert-service/service-journey-intake-saved-return",
+        "image": "08-expert-service/service-journey-intake-saved-return/default.png",
+        "trigger": "inventory Services intake fields consent uncertain save and update",
+        "extent": "viewport"
+      }
+    ],
+    "report": "SERVICE-JOURNEYS.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "device-check",
+    "state": "权限未授权",
+    "evidence": [
+      {
+        "id": "08-expert-service/consultation-journey-device-denied",
+        "image": "08-expert-service/consultation-journey-device-denied/default.png",
+        "trigger": "inventory consultation device failure retry consent and room entry",
+        "extent": "viewport"
+      }
+    ],
+    "report": "CONSULTATION-PREFLIGHT-FEEDBACK-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "device-check",
+    "state": "检查中",
+    "evidence": [
+      {
+        "id": "08-expert-service/consultation-journey-device-checking",
+        "image": "08-expert-service/consultation-journey-device-checking/default.png",
+        "trigger": "inventory consultation device failure retry consent and room entry",
+        "extent": "viewport"
+      }
+    ],
+    "report": "CONSULTATION-PREFLIGHT-FEEDBACK-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "device-check",
+    "state": "预览",
+    "evidence": [
+      {
+        "id": "08-expert-service/consultation-journey-device-recovered",
+        "image": "08-expert-service/consultation-journey-device-recovered/default.png",
+        "trigger": "inventory consultation device failure retry consent and room entry",
+        "extent": "viewport"
+      }
+    ],
+    "report": "CONSULTATION-PREFLIGHT-FEEDBACK-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "device-check",
+    "state": "错误",
+    "evidence": [
+      {
+        "id": "08-expert-service/consultation-journey-device-denied",
+        "image": "08-expert-service/consultation-journey-device-denied/default.png",
+        "trigger": "inventory consultation device failure retry consent and room entry",
+        "extent": "viewport"
+      }
+    ],
+    "report": "CONSULTATION-PREFLIGHT-FEEDBACK-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "device-check",
+    "state": "通过",
+    "evidence": [
+      {
+        "id": "08-expert-service/consultation-journey-device-recovered",
+        "image": "08-expert-service/consultation-journey-device-recovered/default.png",
+        "trigger": "inventory consultation device failure retry consent and room entry",
+        "extent": "viewport"
+      }
+    ],
+    "report": "CONSULTATION-PREFLIGHT-FEEDBACK-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "video-consent",
+    "state": "未勾选",
+    "evidence": [
+      {
+        "id": "08-expert-service/consultation-journey-video-consent",
+        "image": "08-expert-service/consultation-journey-video-consent/default.png",
+        "trigger": "inventory consultation device failure retry consent and room entry",
+        "extent": "viewport"
+      }
+    ],
+    "report": "CONSULTATION-PREFLIGHT-FEEDBACK-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "video-consent",
+    "state": "勾选",
+    "evidence": [
+      {
+        "id": "08-expert-service/consultation-journey-video-consent-selected",
+        "image": "08-expert-service/consultation-journey-video-consent-selected/default.png",
+        "trigger": "inventory consultation device failure retry consent and room entry",
+        "extent": "viewport"
+      }
+    ],
+    "report": "CONSULTATION-PREFLIGHT-FEEDBACK-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "video-consent",
+    "state": "同意",
+    "evidence": [
+      {
+        "id": "08-expert-service/consultation-journey-video-consent-granted",
+        "image": "08-expert-service/consultation-journey-video-consent-granted/default.png",
+        "trigger": "inventory consultation device failure retry consent and room entry",
+        "extent": "viewport"
+      }
+    ],
+    "report": "CONSULTATION-PREFLIGHT-FEEDBACK-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "video-consent",
+    "state": "关闭",
+    "evidence": [
+      {
+        "id": "08-expert-service/consultation-journey-video-consent-dismissed",
+        "image": "08-expert-service/consultation-journey-video-consent-dismissed/default.png",
+        "trigger": "inventory consultation loading failed read and closed preflight",
+        "extent": "viewport"
+      }
+    ],
+    "report": "CONSULTATION-PREFLIGHT-FEEDBACK-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "consultation-start",
+    "state": "准备",
+    "evidence": [
+      {
+        "id": "08-expert-service/consultation-journey-start-confirmation",
+        "image": "08-expert-service/consultation-journey-start-confirmation/default.png",
+        "trigger": "inventory consultation device failure retry consent and room entry",
+        "extent": "viewport"
+      }
+    ],
+    "report": "CONSULTATION-JOURNEYS.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "consultation-start",
+    "state": "确认",
+    "evidence": [
+      {
+        "id": "08-expert-service/consultation-journey-location-selected",
+        "image": "08-expert-service/consultation-journey-location-selected/default.png",
+        "trigger": "inventory consultation preflight rejection and retry boundaries",
+        "extent": "viewport"
+      }
+    ],
+    "report": "CONSULTATION-JOURNEYS.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "consultation-start",
+    "state": "等待",
+    "evidence": [
+      {
+        "id": "08-expert-service/preflight-preparing",
+        "image": "08-expert-service/preflight-preparing/default.png",
+        "trigger": "closing a preparing room cancels pending automatic join",
+        "extent": "viewport"
+      }
+    ],
+    "report": "CONSULTATION-JOURNEYS.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "consultation-start",
+    "state": "失败",
+    "evidence": [
+      {
+        "id": "08-expert-service/consultation-journey-current-join-request-error",
+        "image": "08-expert-service/consultation-journey-current-join-request-error/default.png",
+        "trigger": "inventory consultation current preflight feedback gaps",
+        "extent": "viewport"
+      }
+    ],
+    "report": "CONSULTATION-JOURNEYS.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "consultation-leave",
+    "state": "确认",
+    "evidence": [
+      {
+        "id": "08-expert-service/consultation-journey-current-live-leave-confirmation",
+        "image": "08-expert-service/consultation-journey-current-live-leave-confirmation/default.png",
+        "trigger": "inventory consultation current live leave route",
+        "extent": "viewport"
+      }
+    ],
+    "report": "CONSULTATION-LIVE-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "consultation-leave",
+    "state": "留下",
+    "evidence": [
+      {
+        "id": "08-expert-service/consultation-journey-current-live-active",
+        "image": "08-expert-service/consultation-journey-current-live-active/default.png",
+        "trigger": "inventory consultation current live leave route",
+        "extent": "viewport"
+      }
+    ],
+    "report": "CONSULTATION-LIVE-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "consultation-leave",
+    "state": "处理中",
+    "evidence": [
+      {
+        "id": "08-expert-service/room-leave-pending",
+        "image": "08-expert-service/room-leave-pending/default.png",
+        "trigger": "inventory leave pending then returns",
+        "extent": "viewport"
+      }
+    ],
+    "report": "CONSULTATION-LIVE-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+    "note": "已实际点击暂时离开；弹窗关闭，准备页出现请稍候并禁用操作。新增截图及请求完成后返回断言见本轮严格日志。"
+  },
+  {
+    "overlay": "consultation-leave",
+    "state": "失败",
+    "evidence": [
+      {
+        "id": "08-expert-service/room-leave-failure",
+        "image": "08-expert-service/room-leave-failure/default.png",
+        "trigger": "leave recovery 390.0 / 1.0",
+        "extent": "viewport"
+      }
+    ],
+    "report": "CONSULTATION-LIVE-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "notification-education",
+    "state": "说明",
+    "evidence": [
+      {
+        "id": "07-me/notification-permission-current-education-dialog",
+        "image": "07-me/notification-permission-current-education-dialog/default.png",
+        "trigger": "notification permission education cancellation denial and settings false",
+        "extent": "viewport"
+      }
+    ],
+    "report": "NOTIFICATION-PERMISSION-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "notification-education",
+    "state": "暂不",
+    "evidence": [
+      {
+        "id": "07-me/notification-permission-current-education-not-now",
+        "image": "07-me/notification-permission-current-education-not-now/default.png",
+        "trigger": "notification permission education cancellation denial and settings false",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "NOTIFICATION-PERMISSION-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "notification-education",
+    "state": "继续",
+    "evidence": [
+      {
+        "id": "07-me/notification-permission-current-request-authorized",
+        "image": "07-me/notification-permission-current-request-authorized/default.png",
+        "trigger": "notification permission request failure retry and direct settings error false",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "NOTIFICATION-PERMISSION-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "notification-education",
+    "state": "拒绝后去设置",
+    "evidence": [
+      {
+        "id": "07-me/notification-permission-current-offer-settings-dialog",
+        "image": "07-me/notification-permission-current-offer-settings-dialog/default.png",
+        "trigger": "notification permission education cancellation denial and settings false",
+        "extent": "viewport"
+      }
+    ],
+    "report": "NOTIFICATION-PERMISSION-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "auth-language",
+    "state": "语言列表",
+    "evidence": [
+      {
+        "id": "01-auth/auth-followup-language-sheet",
+        "image": "01-auth/auth-followup-language-sheet/default.png",
+        "trigger": "auth language dismissal legal failure and back navigation",
+        "extent": "viewport"
+      }
+    ],
+    "report": "AUTH-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "auth-language",
+    "state": "选中",
+    "evidence": [
+      {
+        "id": "01-auth/auth-followup-language-selected",
+        "image": "01-auth/auth-followup-language-selected/default.png",
+        "trigger": "auth language dismissal legal failure and back navigation",
+        "extent": "viewport"
+      }
+    ],
+    "report": "AUTH-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "auth-language",
+    "state": "取消",
+    "evidence": [
+      {
+        "id": "01-auth/auth-followup-language-dismissed",
+        "image": "01-auth/auth-followup-language-dismissed/default.png",
+        "trigger": "auth language dismissal legal failure and back navigation",
+        "extent": "viewport"
+      }
+    ],
+    "report": "AUTH-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "account-confirm",
+    "state": "密码确认",
+    "evidence": [
+      {
+        "id": "07-me/account-current-password-entered",
+        "image": "07-me/account-current-password-entered/default.png",
+        "trigger": "inventory current Account Google local unavailable false",
+        "extent": "viewport"
+      }
+    ],
+    "report": "ACCOUNT-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+    "note": "账号页内密码确认输入，非独立弹窗；沿用账号页对应图。"
+  },
+  {
+    "overlay": "account-confirm",
+    "state": "绑定 Google",
+    "evidence": [
+      {
+        "id": "07-me/account-current-google-unavailable",
+        "image": "07-me/account-current-google-unavailable/default.png",
+        "trigger": "inventory current Account Google local unavailable false",
+        "extent": "viewport"
+      }
+    ],
+    "report": "ACCOUNT-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+    "note": "当前 Google 不可用反馈；无可用真实账号选择器，不人为配置真实账号扩展采集。"
+  },
+  {
+    "overlay": "account-confirm",
+    "state": "删除账号",
+    "evidence": [
+      {
+        "id": "07-me/account-current-delete-confirm",
+        "image": "07-me/account-current-delete-confirm/default.png",
+        "trigger": "inventory current Account delete recovery success false",
+        "extent": "viewport"
+      }
+    ],
+    "report": "ACCOUNT-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "account-confirm",
+    "state": "错误",
+    "evidence": [
+      {
+        "id": "07-me/account-current-delete-error",
+        "image": "07-me/account-current-delete-error/default.png",
+        "trigger": "inventory current Account delete recovery success false",
+        "extent": "viewport"
+      }
+    ],
+    "report": "ACCOUNT-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "date-time",
+    "state": "日历",
+    "evidence": [
+      {
+        "id": "08-expert-service/booking-selection-current-date-open",
+        "image": "08-expert-service/booking-selection-current-date-open/default.png",
+        "trigger": "current booking provider and date selection false",
+        "extent": "viewport"
+      }
+    ],
+    "report": "BOOKING-SELECTION-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "date-time",
+    "state": "年份",
+    "evidence": [
+      {
+        "id": "08-expert-service/booking-selection-current-date-year-menu",
+        "image": "08-expert-service/booking-selection-current-date-year-menu/default.png",
+        "trigger": "current booking provider and date selection false",
+        "extent": "viewport"
+      }
+    ],
+    "report": "BOOKING-SELECTION-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "date-time",
+    "state": "输入",
+    "evidence": [
+      {
+        "id": "08-expert-service/booking-selection-current-date-valid-input",
+        "image": "08-expert-service/booking-selection-current-date-valid-input/default.png",
+        "trigger": "current booking provider and date selection false",
+        "extent": "viewport"
+      }
+    ],
+    "report": "BOOKING-SELECTION-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "date-time",
+    "state": "时钟",
+    "evidence": [
+      {
+        "id": "03-mom/lactation-current-time-dial",
+        "image": "03-mom/lactation-current-time-dial/default.png",
+        "trigger": "lactation route time input validates and pending save locks edits 390.0/1.0",
+        "extent": "viewport"
+      }
+    ],
+    "report": "BOOKING-SELECTION-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "date-time",
+    "state": "校验",
+    "evidence": [
+      {
+        "id": "03-mom/lactation-current-time-invalid",
+        "image": "03-mom/lactation-current-time-invalid/default.png",
+        "trigger": "lactation route time input validates and pending save locks edits 390.0/1.0",
+        "extent": "viewport"
+      }
+    ],
+    "report": "BOOKING-SELECTION-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "date-time",
+    "state": "取消",
+    "evidence": [
+      {
+        "id": "08-expert-service/booking-selection-current-date-cancelled",
+        "image": "08-expert-service/booking-selection-current-date-cancelled/default.png",
+        "trigger": "current booking provider and date selection false",
+        "extent": "viewport"
+      }
+    ],
+    "report": "BOOKING-SELECTION-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "date-time",
+    "state": "确认",
+    "evidence": [
+      {
+        "id": "08-expert-service/booking-selection-current-date-applied",
+        "image": "08-expert-service/booking-selection-current-date-applied/default.png",
+        "trigger": "current booking provider and date selection false",
+        "extent": "viewport"
+      }
+    ],
+    "report": "BOOKING-SELECTION-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "discard",
+    "state": "脏草稿",
+    "evidence": [
+      {
+        "id": "03-mom/mom-journey-diary-discard-confirm",
+        "image": "03-mom/mom-journey-diary-discard-confirm/default.png",
+        "trigger": "inventory Mom diary quick record tabs save and standalone details",
+        "extent": "viewport"
+      }
+    ],
+    "report": "ENTRY-STATUS.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "discard",
+    "state": "未知保存结果",
+    "evidence": [
+      {
+        "id": "06-schedule/schedule-journey-uncertain-discard",
+        "image": "06-schedule/schedule-journey-uncertain-discard/default.png",
+        "trigger": "inventory schedule discard and save retry",
+        "extent": "viewport"
+      }
+    ],
+    "report": "ENTRY-STATUS.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "discard",
+    "state": "留下",
+    "evidence": [
+      {
+        "id": "03-mom/mom-journey-diary-draft-retained",
+        "image": "03-mom/mom-journey-diary-draft-retained/default.png",
+        "trigger": "inventory Mom diary quick record tabs save and standalone details",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "ENTRY-STATUS.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "discard",
+    "state": "放弃",
+    "evidence": [
+      {
+        "id": "03-mom/mom-journey-diary-discarded-home",
+        "image": "03-mom/mom-journey-diary-discarded-home/default.png",
+        "trigger": "inventory Mom optional diary sections and mood draft discard",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "ENTRY-STATUS.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "snackbar",
+    "state": "成功",
+    "evidence": [
+      {
+        "id": "05-agent/agent-journey-assistant-copied",
+        "image": "05-agent/agent-journey-assistant-copied/default.png",
+        "trigger": "inventory agent real reply message copy and tab retention",
+        "extent": "viewport"
+      }
+    ],
+    "report": "SNACKBAR-LONG-REVIEW.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "snackbar",
+    "state": "错误",
+    "evidence": [
+      {
+        "id": "04-baby/baby-knowledge-source-source-false-error",
+        "image": "04-baby/baby-knowledge-source-source-false-error/default.png",
+        "trigger": "inventory Baby knowledge sources 393/1x",
+        "extent": "viewport"
+      }
+    ],
+    "report": "SNACKBAR-LONG-REVIEW.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "snackbar",
+    "state": "撤销",
+    "evidence": [
+      {
+        "id": "03-mom/mom-journey-milk-history-deleted",
+        "image": "03-mom/mom-journey-milk-history-deleted/default.png",
+        "trigger": "inventory Mom lactation create edit delete restore and home refresh",
+        "extent": "full-measured-scroll-stitch"
+      },
+      {
+        "id": "03-mom/mom-journey-milk-history-restored",
+        "image": "03-mom/mom-journey-milk-history-restored/default.png",
+        "trigger": "inventory Mom lactation create edit delete restore and home refresh",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "SNACKBAR-LONG-REVIEW.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "snackbar",
+    "state": "自动消失",
+    "evidence": [
+      {
+        "id": "04-baby/baby-journey-growth-feedback-dismissed",
+        "image": "04-baby/baby-journey-growth-feedback-dismissed/default.png",
+        "trigger": "inventory Baby growth batch date validation and undo recovery",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "SNACKBAR-LONG-REVIEW.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "tooltip",
+    "state": "出现",
+    "evidence": [
+      {
+        "id": "01-auth/auth-journey-password-tooltip",
+        "image": "01-auth/auth-journey-password-tooltip/default.png",
+        "trigger": "inventory real login → More → account → deletion → login",
+        "extent": "full-measured-scroll-stitch"
+      },
+      {
+        "id": "06-schedule/schedule-journey-current-add-tooltip",
+        "image": "06-schedule/schedule-journey-current-add-tooltip/default.png",
+        "trigger": "inventory schedule current visible feedback gaps",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "SCHEDULE-FEEDBACK-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "tooltip",
+    "state": "消失",
+    "evidence": [
+      {
+        "id": "01-auth/auth-journey-login",
+        "image": "01-auth/auth-journey-login/default.png",
+        "trigger": "inventory real login → More → account → deletion → login",
+        "extent": "viewport"
+      }
+    ],
+    "report": "SCHEDULE-FEEDBACK-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+    "note": "提示消失后恢复原登录页；同画面复用。原操作轨迹记录长按和后续切换。"
+  },
+  {
+    "overlay": "avatar-dialogs",
+    "state": "照片来源",
+    "evidence": [
+      {
+        "id": "01-auth/onboarding-required-source",
+        "image": "01-auth/onboarding-required-source/default.png",
+        "trigger": "onboarding avatar required at 390.0 / 1.0",
+        "extent": "viewport"
+      }
+    ],
+    "report": "CONFIGURED-SUBMISSION-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "avatar-dialogs",
+    "state": "默认确认",
+    "evidence": [
+      {
+        "id": "01-auth/onboarding-default-confirm",
+        "image": "01-auth/onboarding-default-confirm/default.png",
+        "trigger": "avatar photo failure and default confirmation at 390.0 / 1.0",
+        "extent": "viewport"
+      }
+    ],
+    "report": "CONFIGURED-SUBMISSION-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "avatar-dialogs",
+    "state": "生成交接（等待／进入 App）",
+    "evidence": [
+      {
+        "id": "01-auth/onboarding-generation-handoff",
+        "image": "01-auth/onboarding-generation-handoff/default.png",
+        "trigger": "inventory configured avatar upload and handoff",
+        "extent": "viewport"
+      }
+    ],
+    "report": "CONFIGURED-SUBMISSION-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "avatar-dialogs",
+    "state": "生成完成",
+    "evidence": [
+      {
+        "id": "01-auth/onboarding-banners",
+        "image": "01-auth/onboarding-banners/default.png",
+        "trigger": "avatar task banners at 390.0 / 1.0",
+        "extent": "viewport"
+      }
+    ],
+    "report": "CONFIGURED-PAGES-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "avatar-dialogs",
+    "state": "激活确认",
+    "evidence": [
+      {
+        "id": "01-auth/onboarding-reading-activation",
+        "image": "01-auth/onboarding-reading-activation/default.png",
+        "trigger": "onboarding reading 390.0/1.0",
+        "extent": "viewport"
+      }
+    ],
+    "report": "CONFIGURED-SUBMISSION-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "summary-task-detail",
+    "state": "待完成",
+    "evidence": [
+      {
+        "id": "08-expert-service/consultation-journey-current-summary-task-detail",
+        "image": "08-expert-service/consultation-journey-current-summary-task-detail/default.png",
+        "trigger": "inventory consultation current summary publication task updates and routes",
+        "extent": "viewport"
+      }
+    ],
+    "report": "CONSULTATION-SUMMARY-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "summary-task-detail",
+    "state": "进行中",
+    "evidence": [
+      {
+        "id": "08-expert-service/consultation-journey-current-summary-task-in-progress",
+        "image": "08-expert-service/consultation-journey-current-summary-task-in-progress/default.png",
+        "trigger": "inventory consultation current summary publication task updates and routes",
+        "extent": "viewport"
+      }
+    ],
+    "report": "CONSULTATION-SUMMARY-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "summary-task-detail",
+    "state": "已完成",
+    "evidence": [
+      {
+        "id": "08-expert-service/consultation-journey-current-summary-task-recovered",
+        "image": "08-expert-service/consultation-journey-current-summary-task-recovered/default.png",
+        "trigger": "inventory consultation current summary publication task updates and routes",
+        "extent": "viewport"
+      }
+    ],
+    "report": "CONSULTATION-SUMMARY-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+    "note": "已完成来自失败重试后持久化的选中状态，不以菜单中出现已完成文字判定。"
+  },
+  {
+    "overlay": "summary-task-detail",
+    "state": "暂时跳过",
+    "evidence": [
+      {
+        "id": "08-expert-service/consultation-journey-current-summary-task-skipped",
+        "image": "08-expert-service/consultation-journey-current-summary-task-skipped/default.png",
+        "trigger": "inventory consultation current summary publication task updates and routes",
+        "extent": "viewport"
+      }
+    ],
+    "report": "CONSULTATION-SUMMARY-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "summary-task-detail",
+    "state": "更新中",
+    "evidence": [
+      {
+        "id": "08-expert-service/summary-short-updating-320-2x-short",
+        "image": "08-expert-service/summary-short-updating-320-2x-short/default.png",
+        "trigger": "short large task keeps pending updates locked and retryable",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "CONSULTATION-SUMMARY-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "summary-task-detail",
+    "state": "结果不确定／重试",
+    "evidence": [
+      {
+        "id": "08-expert-service/consultation-journey-current-summary-task-uncertain",
+        "image": "08-expert-service/consultation-journey-current-summary-task-uncertain/default.png",
+        "trigger": "inventory consultation current summary publication task updates and routes",
+        "extent": "viewport"
+      }
+    ],
+    "report": "CONSULTATION-SUMMARY-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "summary-task-detail",
+    "state": "方案替换／重新载入",
+    "evidence": [
+      {
+        "id": "08-expert-service/summary-superseded",
+        "image": "08-expert-service/summary-superseded/default.png",
+        "trigger": "superseded action removed by reload remains safely closable at large text",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "CONSULTATION-SUMMARY-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "summary-task-detail",
+    "state": "行动移除／关闭",
+    "evidence": [
+      {
+        "id": "08-expert-service/summary-removed-action",
+        "image": "08-expert-service/summary-removed-action/default.png",
+        "trigger": "superseded action removed by reload remains safely closable at large text",
+        "extent": "viewport"
+      }
+    ],
+    "report": "CONSULTATION-SUMMARY-CURRENT.md",
+    "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained"
+  },
+  {
+    "overlay": "system",
+    "state": "键盘",
+    "evidence": [
+      {
+        "image": "native/baby-profile-software-keyboard.png",
+        "trigger": "See native XML and actual OS journey",
+        "extent": "full-system-window"
+      }
+    ],
+    "report": "NATIVE-WINDOWS-CATALOG.md",
+    "status": "NATIVE_RENDERED_EVIDENCE; Android platform scope retained"
+  },
+  {
+    "overlay": "system",
+    "state": "照片／文件选择",
+    "evidence": [
+      {
+        "image": "native/agent/photo-picker.png",
+        "trigger": "See native XML and actual OS journey",
+        "extent": "full-system-window"
+      },
+      {
+        "image": "native/agent/file-picker.png",
+        "trigger": "See native XML and actual OS journey",
+        "extent": "full-system-window"
+      }
+    ],
+    "report": "NATIVE-WINDOWS-CATALOG.md",
+    "status": "NATIVE_RENDERED_EVIDENCE; Android platform scope retained"
+  },
+  {
+    "overlay": "system",
+    "state": "通知",
+    "evidence": [
+      {
+        "image": "native/notification-permission/native-permission-deny-system-request.png",
+        "trigger": "See native XML and actual OS journey",
+        "extent": "full-system-window"
+      }
+    ],
+    "report": "NATIVE-WINDOWS-CATALOG.md",
+    "status": "NATIVE_RENDERED_EVIDENCE; Android platform scope retained"
+  },
+  {
+    "overlay": "system",
+    "state": "相机",
+    "evidence": [
+      {
+        "image": "native/consultation-devices/native-device-deny-camera.png",
+        "trigger": "See native XML and actual OS journey",
+        "extent": "full-system-window"
+      }
+    ],
+    "report": "NATIVE-WINDOWS-CATALOG.md",
+    "status": "NATIVE_RENDERED_EVIDENCE; Android platform scope retained"
+  },
+  {
+    "overlay": "system",
+    "state": "麦克风",
+    "evidence": [
+      {
+        "image": "native/consultation-devices/native-device-deny-microphone.png",
+        "trigger": "See native XML and actual OS journey",
+        "extent": "full-system-window"
+      }
+    ],
+    "report": "NATIVE-WINDOWS-CATALOG.md",
+    "status": "NATIVE_RENDERED_EVIDENCE; Android platform scope retained"
+  },
+  {
+    "overlay": "system",
+    "state": "系统设置",
+    "evidence": [
+      {
+        "image": "native/notification-permission/native-permission-deny-system-settings-off.png",
+        "trigger": "See native XML and actual OS journey",
+        "extent": "full-system-window"
+      },
+      {
+        "image": "native/notification-permission/native-permission-deny-system-settings-on.png",
+        "trigger": "See native XML and actual OS journey",
+        "extent": "full-system-window"
+      }
+    ],
+    "report": "NATIVE-WINDOWS-CATALOG.md",
+    "status": "NATIVE_RENDERED_EVIDENCE; Android platform scope retained"
+  }
+]

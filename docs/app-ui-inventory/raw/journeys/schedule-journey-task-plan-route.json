@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/schedule-journey-task-plan-route-393.png",
+  "previous_source": "test/goldens/ui_inventory/schedule-journey-clean-editor-closed-393.png",
+  "route": "/services/episodes/service-episode",
+  "trigger": "Task menu view service plan → actual episode route",
+  "root_entry": "Authenticated More → tap Schedule bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/schedule/schedule_inventory_journey_test.dart"
+}

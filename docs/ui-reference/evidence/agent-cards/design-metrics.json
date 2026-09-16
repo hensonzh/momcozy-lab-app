@@ -1,0 +1,218 @@
+[
+  {
+    "class": "recommendation-card",
+    "text": "推荐专家服务包喂养安心Support tailored to your feeding questions.$2197 天支持2 次 IBCLC 咨询查看支持方案 ",
+    "rect": {
+      "x": 66,
+      "y": 246.78125,
+      "width": 308,
+      "height": 170.875,
+      "top": 246.78125,
+      "right": 374,
+      "bottom": 417.65625,
+      "left": 66
+    },
+    "style": {
+      "backgroundColor": "rgb(255, 252, 255)",
+      "color": "rgb(48, 42, 41)",
+      "fontFamily": "-apple-system, \"system-ui\", \"Segoe UI\", \"Microsoft YaHei\", \"PingFang SC\", \"Noto Sans CJK SC\", sans-serif",
+      "fontSize": "16px",
+      "fontWeight": "400",
+      "lineHeight": "normal",
+      "padding": "12px",
+      "borderRadius": "12px",
+      "minHeight": "auto",
+      "gap": "12px",
+      "borderColor": "rgb(224, 210, 238)"
+    }
+  },
+  {
+    "class": "recommendation-card-main",
+    "text": "推荐专家服务包喂养安心Support tailored to your feeding questions.$219",
+    "rect": {
+      "x": 79,
+      "y": 259.78125,
+      "width": 282,
+      "height": 75.875,
+      "top": 259.78125,
+      "right": 361,
+      "bottom": 335.65625,
+      "left": 79
+    },
+    "style": {
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "color": "rgb(48, 42, 41)",
+      "fontFamily": "-apple-system, \"system-ui\", \"Segoe UI\", \"Microsoft YaHei\", \"PingFang SC\", \"Noto Sans CJK SC\", sans-serif",
+      "fontSize": "16px",
+      "fontWeight": "400",
+      "lineHeight": "normal",
+      "padding": "0px",
+      "borderRadius": "0px",
+      "minHeight": "0px",
+      "gap": "10px",
+      "borderColor": "rgb(48, 42, 41)"
+    }
+  },
+  {
+    "class": "recommendation-card-icon",
+    "text": "",
+    "rect": {
+      "x": 79,
+      "y": 280.71875,
+      "width": 34,
+      "height": 34,
+      "top": 280.71875,
+      "right": 113,
+      "bottom": 314.71875,
+      "left": 79
+    },
+    "style": {
+      "backgroundColor": "rgb(242, 230, 233)",
+      "color": "rgb(173, 92, 117)",
+      "fontFamily": "-apple-system, \"system-ui\", \"Segoe UI\", \"Microsoft YaHei\", \"PingFang SC\", \"Noto Sans CJK SC\", sans-serif",
+      "fontSize": "16px",
+      "fontWeight": "400",
+      "lineHeight": "normal",
+      "padding": "0px",
+      "borderRadius": "10px",
+      "minHeight": "auto",
+      "gap": "normal",
+      "borderColor": "rgb(173, 92, 117)"
+    }
+  },
+  {
+    "class": "recommendation-kicker",
+    "text": "推荐专家服务包",
+    "rect": {
+      "x": 123,
+      "y": 259.78125,
+      "width": 72.8125,
+      "height": 14,
+      "top": 259.78125,
+      "right": 195.8125,
+      "bottom": 273.78125,
+      "left": 123
+    },
+    "style": {
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "color": "rgb(121, 67, 181)",
+      "fontFamily": "-apple-system, \"system-ui\", \"Segoe UI\", \"Microsoft YaHei\", \"PingFang SC\", \"Noto Sans CJK SC\", sans-serif",
+      "fontSize": "10px",
+      "fontWeight": "800",
+      "lineHeight": "normal",
+      "padding": "0px",
+      "borderRadius": "0px",
+      "minHeight": "auto",
+      "gap": "normal",
+      "borderColor": "rgb(121, 67, 181)"
+    }
+  },
+  {
+    "class": "",
+    "text": "喂养安心",
+    "rect": {
+      "x": 123,
+      "y": 278.78125,
+      "width": 56,
+      "height": 20,
+      "top": 278.78125,
+      "right": 179,
+      "bottom": 298.78125,
+      "left": 123
+    },
+    "style": {
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "color": "rgb(70, 52, 59)",
+      "fontFamily": "Manrope, \"DM Sans\", sans-serif",
+      "fontSize": "14px",
+      "fontWeight": "700",
+      "lineHeight": "normal",
+      "padding": "0px",
+      "borderRadius": "0px",
+      "minHeight": "auto",
+      "gap": "normal",
+      "borderColor": "rgb(70, 52, 59)"
+    }
+  },
+  {
+    "class": "recommendation-price",
+    "text": "$219",
+    "rect": {
+      "x": 324.453125,
+      "y": 259.78125,
+      "width": 36.546875,
+      "height": 22,
+      "top": 259.78125,
+      "right": 361,
+      "bottom": 281.78125,
+      "left": 324.453125
+    },
+    "style": {
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "color": "rgb(142, 83, 101)",
+      "fontFamily": "Manrope, \"DM Sans\", sans-serif",
+      "fontSize": "16px",
+      "fontWeight": "700",
+      "lineHeight": "normal",
+      "padding": "0px",
+      "borderRadius": "0px",
+      "minHeight": "auto",
+      "gap": "normal",
+      "borderColor": "rgb(142, 83, 101)"
+    }
+  },
+  {
+    "class": "recommendation-card-meta",
+    "text": "7 天支持2 次 IBCLC 咨询",
+    "rect": {
+      "x": 123,
+      "y": 345.65625,
+      "width": 238,
+      "height": 14,
+      "top": 345.65625,
+      "right": 361,
+      "bottom": 359.65625,
+      "left": 123
+    },
+    "style": {
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "color": "rgb(132, 110, 119)",
+      "fontFamily": "-apple-system, \"system-ui\", \"Segoe UI\", \"Microsoft YaHei\", \"PingFang SC\", \"Noto Sans CJK SC\", sans-serif",
+      "fontSize": "10px",
+      "fontWeight": "400",
+      "lineHeight": "normal",
+      "padding": "0px",
+      "borderRadius": "0px",
+      "minHeight": "0px",
+      "gap": "12px",
+      "borderColor": "rgb(132, 110, 119)"
+    }
+  },
+  {
+    "class": "btn btn-soft btn-sm ",
+    "text": "查看支持方案 ",
+    "rect": {
+      "x": 79,
+      "y": 370.65625,
+      "width": 123.171875,
+      "height": 34,
+      "top": 370.65625,
+      "right": 202.171875,
+      "bottom": 404.65625,
+      "left": 79
+    },
+    "style": {
+      "backgroundColor": "rgb(240, 231, 250)",
+      "color": "rgb(121, 67, 181)",
+      "fontFamily": "-apple-system, \"system-ui\", \"Segoe UI\", \"Microsoft YaHei\", \"PingFang SC\", \"Noto Sans CJK SC\", sans-serif",
+      "fontSize": "12px",
+      "fontWeight": "700",
+      "lineHeight": "normal",
+      "padding": "0px 13px",
+      "borderRadius": "12px",
+      "minHeight": "34px",
+      "gap": "8px",
+      "borderColor": "rgba(180, 88, 112, 0.12)"
+    }
+  }
+]

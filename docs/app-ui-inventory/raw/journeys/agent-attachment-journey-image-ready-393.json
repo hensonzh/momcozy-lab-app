@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/agent-attachment-journey-image-ready-393.png",
+  "previous_source": "test/goldens/ui_inventory/agent-attachment-journey-image-uploading-393.png",
+  "route": "/",
+  "trigger": "Upload succeeds → removable local image preview",
+  "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage via public agentHubBuilder; production SSE parser, runner with default retries, cancel client and profile repository; isolated SSE/control/multipart/content HTTP, native picker and voice dependencies; production media repositories and PDF picker validation. History disabled as in default local build; no remote model request.",
+  "test": "test/features/agent_hub/agent_attachment_inventory_journey_test.dart"
+}

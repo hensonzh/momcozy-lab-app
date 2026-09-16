@@ -1,0 +1,1554 @@
+{
+  "method": "full-width continuous 650px strips; identical pixels reference prior reviewed Mom or Baby controls; remaining segments reviewed at native width",
+  "sources": [
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-date-baby-switcher-320-2x.png",
+      "sha256": "9b3f601fde365eee260b3b2a98fe3ac7a5da13522c9760b58df9ece513fbadca",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a95e5b96dbca23ac0d3f0d54797b366d25918d70dd520f6c3ff14d6976c3662a",
+          "review": "sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "6e591f0e59c379ee66f84192185865edb5ff751c996f2638016c925a40ff0fc9",
+          "review": "sheet-01.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-date-baby-switcher-393-1x.png",
+      "sha256": "28706b033623d9f65429b73a4bac588dbf70d0b233201509ed99f7bc733099b9",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "687b0b4187658d61ca25c7f268aaf96daafc456a03ba3bef23d294a56d92fdfc",
+          "review": "sheet-01.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "80585cfc77726a079131745872e3798cf0ea215b5ee96ffef953a0ee6a45dc83",
+          "review": "sheet-01.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-date-before-minimum-rejected-320-2x.png",
+      "sha256": "317568b36ff358f539e90cf6dcaaaf8b3573a2d6fd4d8fabd053c62fc70ceee9",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "f2dcb0934947a404f276d4429e5561fb5fb79682efeb22bdf8a885e8a18ce533",
+          "review": "sheet-01.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "9c531b786bf8a4959b5dc46f35bba938e5c6706840bcfa390ecf6a52fb6f36ed",
+          "review": "../baby-development-control-visual-review/sheet-05.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-date-before-minimum-rejected-393-1x.png",
+      "sha256": "bfca05c1271e30aea9d51415a63de8749012b22a1577ee30d98f4b57802b35cb",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "af1a83333748e398da2e08f93a2865a3a8916c66d9e639123df39b47046e3c04",
+          "review": "sheet-01.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "7043e195a70d3aefdd4c246a920841713f76bb49864290eb991c1a30fe7f5115",
+          "review": "../baby-development-control-visual-review/sheet-06.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-date-birth-cleared-320-2x.long.png",
+      "sha256": "0e9e99b30a52241ebe2101e2cef91d923a4803fd6086e47a0757c61356ccb3b1",
+      "width": 320,
+      "height": 1163,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "4328626ffe2093e33a3d94efe6a873f8b9276ee8b9b3e3841669dc156c7a5f04",
+          "review": "../baby-profile-control-visual-review/sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1163,
+          "pixel_sha256": "36b568a9c82a33b8fcc1f11a28a6560c8f91f36d86b73b12a6e67ae0a3d90bf4",
+          "review": "../baby-profile-control-visual-review/sheet-01.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-date-birth-cleared-320-2x.png",
+      "sha256": "03a7316f1a8af620762b25566c69015938d8097f53346ac16544af6abe8d60cd",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "0b6fa75974ebdbeda05d757c3fbce258d9dd603c7cf76e131e751e9a2eb71d50",
+          "review": "../baby-profile-control-visual-review/sheet-03.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "d12ff4bafa84e4db8c02eea5ee8584647a33a7d2dfcdb9c658e4eef027d57938",
+          "review": "../baby-profile-control-visual-review/sheet-03.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-date-birth-cleared-393-1x.png",
+      "sha256": "73ae246c0c2329aafcbf02047007a88a7cdf1c84598d8baadc8dca87eed734ce",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "80b86db8b7cb7b72824cb31edb64f6f64490635e27e0d1d779f3d13cf83f6b02",
+          "review": "../baby-profile-control-visual-review/sheet-03.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "c61c855ea0f2f3a1ec3a0bf4ecf57a211d6a3afec5acdf627761c0bac4356f91",
+          "review": "../baby-profile-control-visual-review/sheet-01.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-date-earlier-date-input-mode-393-1x.png",
+      "sha256": "3e1204f2c0a4ec35f057b5a5aebd06e445aa838d4a5d43b19944e70f0b616cf8",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "650c8455e1d5cfebcfb92731deafd15f9c907d7d5d9780a622bcdf16a0f4c067",
+          "review": "sheet-02.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "7043e195a70d3aefdd4c246a920841713f76bb49864290eb991c1a30fe7f5115",
+          "review": "../baby-development-control-visual-review/sheet-06.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-date-earlier-date-reopened-320-2x.png",
+      "sha256": "8742ce05fa7c2f8cd83b276c6538adea56eb6b696b8c080f992a5401fcb90b72",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "7b1a31241fa0c40f207fec1001d7cd80f3af030cb58d0df59a9616ea47749b14",
+          "review": "sheet-02.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "9c531b786bf8a4959b5dc46f35bba938e5c6706840bcfa390ecf6a52fb6f36ed",
+          "review": "../baby-development-control-visual-review/sheet-05.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-date-earlier-date-reopened-393-1x.png",
+      "sha256": "2e12077329ab55f739c549c0e17041a45b628992431990ca36646422c581186f",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "7991728d47945b98c609afdc4a3f0f283dfc9377a3c4c59a7c4fd2205cef89b4",
+          "review": "sheet-02.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "328e60e64418a8b6a25d0c11d31f4cc9d64ff9c02ff8943d1be1fe16b04d18cb",
+          "review": "../baby-development-control-visual-review/sheet-06.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-date-editor-320-2x.long.png",
+      "sha256": "3de5544cb07fcf2b7c3eb6f09a57078aaedf5e85e5d27ea689eeb946e60589ca",
+      "width": 320,
+      "height": 1542,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "bf1407b2d076d172db899b8e2278a8919f662b379bf36375f6395ae49f80f294",
+          "review": "../baby-development-control-visual-review/sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "e100bbc8f595a34fca0d9206c5d3ad4c5be9567a70d2927b195089a9d8118a80",
+          "review": "../baby-development-control-visual-review/sheet-03.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1542,
+          "pixel_sha256": "2c89335eab245687767495301a221a6db8203bd6469a4d19e287833f78d69d19",
+          "review": "../baby-development-control-visual-review/sheet-02.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-date-editor-320-2x.png",
+      "sha256": "0d1ad4bfd0adba4d28b5f1197eb188fc5a4756d3b2203fb76a07f65989951db3",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ac0ea67cce630e2bd71471cf853ef387394bfe5f46d532a5d32b5ed9de2fc75a",
+          "review": "../baby-development-control-visual-review/sheet-08.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "c749b2451dde77c5fcade2aad7120bfd76cc59a02f96b32957f6a6efe9fe49ff",
+          "review": "../baby-development-control-visual-review/sheet-08.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-date-editor-393-1x.png",
+      "sha256": "246367becec6e748f6b44758d269c85e95cad8d67d8928173b0493c98f00156a",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "1b89474f0bca3a4811a70d9b8d54f205c71c2b06d193ab70623b46d20195473b",
+          "review": "../baby-development-control-visual-review/sheet-08.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "bfe04f1aa45247cf0495b9768136828ab49029f142966453a3eb385907fcd460",
+          "review": "../baby-development-control-visual-review/sheet-03.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-date-home-entry-320-2x.long.png",
+      "sha256": "2a7eed3eaa881740523730a74f99487a3935cee5f5e500fdea7e513a60082fc7",
+      "width": 320,
+      "height": 3460,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "58578630282c08ed070b330c5092b2346554d47e291ecce03bfa1790d2ebdd62",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "034c398b12fe2df5aaef1e8fd2e151d4092f4bc550a8179f7524acfdf8572a5d",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "fa27bf1b8f7135cf78bb1380036cbe25b805799678f9c6338d1b09862168215b",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "cf7b9827ee12ea5f4ce473b5b04736e9eca7e63163a06350e8ad0569b0e9a58a",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-3"
+        },
+        {
+          "y0": 2600,
+          "y1": 3250,
+          "pixel_sha256": "830120be56be43c6e4e4a7527c94577138b4175b12f8b7b606a89d5ff059987b",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-4"
+        },
+        {
+          "y0": 3250,
+          "y1": 3460,
+          "pixel_sha256": "347ac7ec17d5bdaf8c362c53e6be84275398444203824d119dff6d55c72c68e4",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-date-home-entry-320-2x.png",
+      "sha256": "32e02297eb960cf9da693d3ed9a4e380131ba98e63d64680e1c452112635af75",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "58578630282c08ed070b330c5092b2346554d47e291ecce03bfa1790d2ebdd62",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "98ef9a2ad09f8a3c8229ac286c7eb3cb28273ffd01708531c25ae3c0ce531fd2",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-date-home-entry-393-1x.long.png",
+      "sha256": "f0cba396e8a9efa775fb9fbb71adccd863e4ce8dace888759be74db253f099a6",
+      "width": 393,
+      "height": 1752,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2541e10f43029eb71329290bf405fa83fabe418cf9eb6676ed4e3eb8498f6856",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "462243825730002d5a7b26fe7e1bbdb2f381ea57afabfc7a0cad762ed9541c1e",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1752,
+          "pixel_sha256": "5d1142fe86ef6e5a8664871afce9928bf15cf58f7b773ac5f1080f1b7fead23c",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-date-home-entry-393-1x.png",
+      "sha256": "f7c02c89b1acb7e0cd4ab4adc0593819b05f05ed599398d49ea569c924ea6a82",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2541e10f43029eb71329290bf405fa83fabe418cf9eb6676ed4e3eb8498f6856",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a1f9a5a5f828e0a335129ce0d0a8a7cf54c1ab1e6b87423f882a64c1946d8f9e",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-date-home-top-320-2x.long.png",
+      "sha256": "2a7eed3eaa881740523730a74f99487a3935cee5f5e500fdea7e513a60082fc7",
+      "width": 320,
+      "height": 3460,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "58578630282c08ed070b330c5092b2346554d47e291ecce03bfa1790d2ebdd62",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "034c398b12fe2df5aaef1e8fd2e151d4092f4bc550a8179f7524acfdf8572a5d",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "fa27bf1b8f7135cf78bb1380036cbe25b805799678f9c6338d1b09862168215b",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "cf7b9827ee12ea5f4ce473b5b04736e9eca7e63163a06350e8ad0569b0e9a58a",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-3"
+        },
+        {
+          "y0": 2600,
+          "y1": 3250,
+          "pixel_sha256": "830120be56be43c6e4e4a7527c94577138b4175b12f8b7b606a89d5ff059987b",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-4"
+        },
+        {
+          "y0": 3250,
+          "y1": 3460,
+          "pixel_sha256": "347ac7ec17d5bdaf8c362c53e6be84275398444203824d119dff6d55c72c68e4",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-date-home-top-320-2x.png",
+      "sha256": "30940ca1d37ec7f8f8e107af8aff823b5ccfebbc7e28c2d50b5b06fd086cf9d2",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ce5d16d4f2711e4a740f56401c5dcd6837d1cf689f2e399b45960c3a44db7e34",
+          "review": "../baby-profile-boundary-visual-review/sheet-14.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "e19cd0df32287c1f89f9c99c7ba781a548f86ead97402b2541ef79e2170df2fb",
+          "review": "../baby-profile-control-visual-review/sheet-18.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-date-home-top-393-1x.long.png",
+      "sha256": "f0cba396e8a9efa775fb9fbb71adccd863e4ce8dace888759be74db253f099a6",
+      "width": 393,
+      "height": 1752,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2541e10f43029eb71329290bf405fa83fabe418cf9eb6676ed4e3eb8498f6856",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "462243825730002d5a7b26fe7e1bbdb2f381ea57afabfc7a0cad762ed9541c1e",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1752,
+          "pixel_sha256": "5d1142fe86ef6e5a8664871afce9928bf15cf58f7b773ac5f1080f1b7fead23c",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-date-home-top-393-1x.png",
+      "sha256": "958a443fc14cc794b11db213f9f570ee6addbdbff9c2fafed30dc8ce924f2a8c",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "0b1626c1d11d95824cc7c6f4ae3679c0ff582f96b2c1eef7533f53e0e15378b8",
+          "review": "../baby-profile-boundary-visual-review/sheet-14.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "d9caabe75f93d41f3dc6e27cf23b56267bc9eb8660d89ffb64886347c45dbb5f",
+          "review": "../baby-profile-control-visual-review/sheet-19.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-date-known-birth-confirmed-320-2x.long.png",
+      "sha256": "d58f82fd08c260c284debe7ccc717cd90d74b126d89c78d4d60cbdf388265a7f",
+      "width": 320,
+      "height": 1542,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "bf1407b2d076d172db899b8e2278a8919f662b379bf36375f6395ae49f80f294",
+          "review": "../baby-development-control-visual-review/sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "e100bbc8f595a34fca0d9206c5d3ad4c5be9567a70d2927b195089a9d8118a80",
+          "review": "../baby-development-control-visual-review/sheet-03.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1542,
+          "pixel_sha256": "14bec13a65d98ac4c98bf38b381da6f463bb8ee44f1f1950d00e82acc7d31342",
+          "review": "../baby-development-control-visual-review/sheet-06.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-date-known-birth-confirmed-320-2x.png",
+      "sha256": "83e6ab6d19d42b60b5bef674487d5b4e1abcc74b1ec28f14bac84815e99dd547",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "1f97055974b1ece03f281e8541f8462ffb8d38176cbcedc1e182ca9e27aa19e8",
+          "review": "sheet-02.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "87f6ccd39f9b02b0a99a5c773c0a85aed18b6331dd975fc487913a483eea2854",
+          "review": "../baby-development-control-visual-review/sheet-07.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-date-known-birth-confirmed-393-1x.png",
+      "sha256": "c13c99d3f0b85352cd5babccfacdedf7f106978b91f4a96a30a6c34e39d67702",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "40ce33eb4f6bdbcf9576543328215f911e128c4f698a3289a8c264e1f8d3e41b",
+          "review": "sheet-02.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "bfe04f1aa45247cf0495b9768136828ab49029f142966453a3eb385907fcd460",
+          "review": "../baby-development-control-visual-review/sheet-03.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-date-known-birth-day-selected-393-1x.png",
+      "sha256": "c1e474f2474afdaba640302b229d3b5124c845816c92910d14401b7aa5f24787",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "042cac1cbf63a3577502112d18e7ec29f4bce235e5a372109a24ed7f8b3dea4b",
+          "review": "sheet-02.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "328e60e64418a8b6a25d0c11d31f4cc9d64ff9c02ff8943d1be1fe16b04d18cb",
+          "review": "../baby-development-control-visual-review/sheet-06.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-date-known-birth-discard-320-2x.png",
+      "sha256": "fd1ffd67f1c10e41e559b8e3eae9648b30c864c195ddb6cb000ed623dd51f2b9",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c2e3d7ef92b1d4fdaf2c071cf452d8b6410832accbb512e0b94d6e994391263a",
+          "review": "sheet-03.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "5772564c8c561fbeca4be13eb8f7f30e00042a011fb95654c37fd14194d73e03",
+          "review": "sheet-03.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-date-known-birth-discard-393-1x.png",
+      "sha256": "ea1169deab69419ae031cf6bb00b3766839296a98c847e8b6f719c838f526cd4",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "27425a2d964157c76c96798f42a91f48b04e7e9ec75233e35c2259ca789e8933",
+          "review": "sheet-03.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "7043e195a70d3aefdd4c246a920841713f76bb49864290eb991c1a30fe7f5115",
+          "review": "../baby-development-control-visual-review/sheet-06.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-date-known-birth-input-320-2x.png",
+      "sha256": "cf2c718b6950d963eeb0ffb9b8c38b5469308508596a75edf6dee1cf6f58ca64",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "d866c05b32591b920758704ddf5c4397993f0f36c315099acfa09063fb69fddc",
+          "review": "../baby-development-control-visual-review/sheet-05.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "9c531b786bf8a4959b5dc46f35bba938e5c6706840bcfa390ecf6a52fb6f36ed",
+          "review": "../baby-development-control-visual-review/sheet-05.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-date-known-birth-left-320-2x.long.png",
+      "sha256": "2a7eed3eaa881740523730a74f99487a3935cee5f5e500fdea7e513a60082fc7",
+      "width": 320,
+      "height": 3460,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "58578630282c08ed070b330c5092b2346554d47e291ecce03bfa1790d2ebdd62",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "034c398b12fe2df5aaef1e8fd2e151d4092f4bc550a8179f7524acfdf8572a5d",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "fa27bf1b8f7135cf78bb1380036cbe25b805799678f9c6338d1b09862168215b",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "cf7b9827ee12ea5f4ce473b5b04736e9eca7e63163a06350e8ad0569b0e9a58a",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-3"
+        },
+        {
+          "y0": 2600,
+          "y1": 3250,
+          "pixel_sha256": "830120be56be43c6e4e4a7527c94577138b4175b12f8b7b606a89d5ff059987b",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-4"
+        },
+        {
+          "y0": 3250,
+          "y1": 3460,
+          "pixel_sha256": "347ac7ec17d5bdaf8c362c53e6be84275398444203824d119dff6d55c72c68e4",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-date-known-birth-left-320-2x.png",
+      "sha256": "9ffcd0699fbdcd51d1a42a7ab55be7917f9123288923ecdea3cc3f75c5c1a17e",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "1d8eb15c29b63542d8e6efbe1da5f834ef1dac52a6ff2872fae0eb64851493a8",
+          "review": "../baby-development-boundary-visual-review/sheet-05.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "563dd0eb6127eff7c02d4cf0854f116747677cf072bd11574cc7adf5267526f7",
+          "review": "../baby-feeding-control-visual-review/sheet-18.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-date-known-birth-left-393-1x.long.png",
+      "sha256": "f0cba396e8a9efa775fb9fbb71adccd863e4ce8dace888759be74db253f099a6",
+      "width": 393,
+      "height": 1752,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2541e10f43029eb71329290bf405fa83fabe418cf9eb6676ed4e3eb8498f6856",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "462243825730002d5a7b26fe7e1bbdb2f381ea57afabfc7a0cad762ed9541c1e",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1752,
+          "pixel_sha256": "5d1142fe86ef6e5a8664871afce9928bf15cf58f7b773ac5f1080f1b7fead23c",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-date-known-birth-left-393-1x.png",
+      "sha256": "3a531daf662d059480fcd7348600d8ca0d9feac2bb40bd598ec6d3d2742ac047",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "77dbeefca551343e01099c6dffa3b1599116be347a739f4cbd38c54de6075642",
+          "review": "../baby-development-boundary-visual-review/sheet-05.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "d307954912ad4b9aea0f1b50ca393b0435e82681ee51db634dd7983cdf013921",
+          "review": "../baby-development-boundary-visual-review/sheet-05.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-date-known-birth-picker-320-2x.png",
+      "sha256": "8dd64421b39d7fdbd00d9c28faaade96496f4fc27c6aaec1bf1af9d28fc17bec",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "bebc6535dc54cc4520033809a88f38ca6d2d8f3a25fa24956e8ae621a0273e33",
+          "review": "../baby-development-control-visual-review/sheet-06.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "9c531b786bf8a4959b5dc46f35bba938e5c6706840bcfa390ecf6a52fb6f36ed",
+          "review": "../baby-development-control-visual-review/sheet-05.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-date-known-birth-picker-393-1x.png",
+      "sha256": "35343f922fcfc9862f13e80e1063e193e5555154d371609facf2cf29525870d5",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6a5ae365c1a9ead62090a7d3a57086f25b4a22c5bd65b918d4f85e6718ac3ca7",
+          "review": "../baby-development-control-visual-review/sheet-06.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "328e60e64418a8b6a25d0c11d31f4cc9d64ff9c02ff8943d1be1fe16b04d18cb",
+          "review": "../baby-development-control-visual-review/sheet-06.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-date-known-birth-year-selected-393-1x.png",
+      "sha256": "35343f922fcfc9862f13e80e1063e193e5555154d371609facf2cf29525870d5",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6a5ae365c1a9ead62090a7d3a57086f25b4a22c5bd65b918d4f85e6718ac3ca7",
+          "review": "../baby-development-control-visual-review/sheet-06.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "328e60e64418a8b6a25d0c11d31f4cc9d64ff9c02ff8943d1be1fe16b04d18cb",
+          "review": "../baby-development-control-visual-review/sheet-06.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-date-known-birth-years-393-1x.png",
+      "sha256": "5e65416e3ed8fc83a9bbbc262edbdaa65f46faa345aceb256911b5aa8eca7a20",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "fec881ef4bcf413d4abe8e02a27caef7b7eabc9c3dbe4adf3e41105806767d00",
+          "review": "sheet-03.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "328e60e64418a8b6a25d0c11d31f4cc9d64ff9c02ff8943d1be1fe16b04d18cb",
+          "review": "../baby-development-control-visual-review/sheet-06.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-date-minimum-confirmed-320-2x.long.png",
+      "sha256": "4674470ac934321decdf784cc8f2f8377b07bda7d2bc2197658e8750cc7f4b59",
+      "width": 320,
+      "height": 1542,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "76ba78044c8520c1b18c5ffd9153a2676f70a58614c55c30eb2dec747ad62985",
+          "review": "sheet-03.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "e100bbc8f595a34fca0d9206c5d3ad4c5be9567a70d2927b195089a9d8118a80",
+          "review": "../baby-development-control-visual-review/sheet-03.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1542,
+          "pixel_sha256": "6ee90b370d82efdc114d01a3acc971985ac60e20caf8df6cf962f74a70557224",
+          "review": "sheet-03.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-date-minimum-confirmed-320-2x.png",
+      "sha256": "b503d7e12e3f0e5800e2d9ebf3addcefb7894c7c1dc4763887fbc148769ddd01",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "d1c2d38aa5bcabfae5a26649d9a2e30994f2e8bb8cd071b00f30ad2b9cac945f",
+          "review": "sheet-04.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "e71b55d2855241584acfcf5b2874be5d0d9f89bbbd3df392cd3b70f5d28b79c0",
+          "review": "sheet-04.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-date-minimum-confirmed-393-1x.png",
+      "sha256": "a269216abb9b8bdfe70f062132ad426bb788c49dbf3c03bd39d534e6f29d921f",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "17127e89018a3fd7804763b6e3fe8a0d09d10874d33880581855795c1037ddf1",
+          "review": "sheet-04.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "bfe04f1aa45247cf0495b9768136828ab49029f142966453a3eb385907fcd460",
+          "review": "../baby-development-control-visual-review/sheet-03.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-date-minimum-discard-320-2x.png",
+      "sha256": "ea65228382c6ed9232e0a8cc19e11caa8afb98fba45d6a5c486ee5898c115eea",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "e8bd5daffc0948eb4457e81266e307a3eaa5ff592efa41bc742971f92a06efcb",
+          "review": "sheet-04.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3e46d55357e26d8dfacbd06b906922590369bf9d57f902787a5595d4c79e8015",
+          "review": "sheet-04.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-date-minimum-discard-393-1x.png",
+      "sha256": "92411e76bb6139f5e80383ba347807c90dad36b16c8867a86ca0d6c1d7e3e51e",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a1d005b5d92a9699d8495f9ccc6807560a6c2e1fc8f10d02c23ba67e50eb206e",
+          "review": "sheet-04.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "7043e195a70d3aefdd4c246a920841713f76bb49864290eb991c1a30fe7f5115",
+          "review": "../baby-development-control-visual-review/sheet-06.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-date-more-return-320-2x.long.png",
+      "sha256": "c74a41745192800d6cc86e7d60933a83ac1c509a8aa77e6da3a38d4d178a83f2",
+      "width": 320,
+      "height": 1145,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "053ade5b8791445ed3451141bf52db2e99968998f2814800bbfa47e3226079cf",
+          "review": "sheet-05.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1145,
+          "pixel_sha256": "cd37693ffe5b2e78b8b3a258a3eadf7eeacafefa0b115904197b2e7866e552c0",
+          "review": "sheet-05.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-date-more-return-320-2x.png",
+      "sha256": "9cdd341896209f508169df2ae9a5a58016e31c0450e4958b50eed59ebe01eb50",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "053ade5b8791445ed3451141bf52db2e99968998f2814800bbfa47e3226079cf",
+          "review": "sheet-05.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a0f4926a8b40813931c89c0dee6c98e834e5150fcff4de260b58648007b01f70",
+          "review": "sheet-05.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-date-more-return-393-1x.png",
+      "sha256": "133b264ca22bdd7c5dc278a57d3885efe9c7d12ef5d81cf56bde2774b46df204",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9c4bfe96339e3677750592ae4feaff3cbd8a8602ee88b6208a5b4b1459fef4bb",
+          "review": "sheet-05.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "ae4f630d503ab6fd4f559f429de09469456c11d171c0c3898413ee795bf5b433",
+          "review": "sheet-05.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-date-no-birth-confirmed-320-2x.long.png",
+      "sha256": "796bca18301ea593f267534499e68e0343eb4453d91bc8acab0b82b16b998b71",
+      "width": 320,
+      "height": 1542,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "76ba78044c8520c1b18c5ffd9153a2676f70a58614c55c30eb2dec747ad62985",
+          "review": "sheet-03.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "e100bbc8f595a34fca0d9206c5d3ad4c5be9567a70d2927b195089a9d8118a80",
+          "review": "../baby-development-control-visual-review/sheet-03.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1542,
+          "pixel_sha256": "740a84b0cad5da605d6e6b001d9c7f82f68ce9033363f7e807e29babff034987",
+          "review": "sheet-05.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-date-no-birth-confirmed-320-2x.png",
+      "sha256": "f8a75746d49e517e1e96240eed19b11897a9c97e5b5b34bc14c669cb3d2c2b30",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "3bdb1ca244f9a436ccc6a9878522b25a6a066ea6a9d118a9d5b26704f2edee6f",
+          "review": "sheet-06.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "0cc09b776522e1c3d206523bf3e599525370d432de2106eda7280bc36fd26789",
+          "review": "sheet-06.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-date-no-birth-confirmed-393-1x.png",
+      "sha256": "93fbf8f2dfaa147d2991182d386842a762cc831f483c07b409e21f9b5f3c8d84",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ca9a24051e2e537057068c8ff7143a51ea2df9556e5d1a8d0d19f8d1c01d1f4f",
+          "review": "sheet-06.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "bfe04f1aa45247cf0495b9768136828ab49029f142966453a3eb385907fcd460",
+          "review": "../baby-development-control-visual-review/sheet-03.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-date-no-birth-day-selected-393-1x.png",
+      "sha256": "2e12077329ab55f739c549c0e17041a45b628992431990ca36646422c581186f",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "7991728d47945b98c609afdc4a3f0f283dfc9377a3c4c59a7c4fd2205cef89b4",
+          "review": "sheet-02.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "328e60e64418a8b6a25d0c11d31f4cc9d64ff9c02ff8943d1be1fe16b04d18cb",
+          "review": "../baby-development-control-visual-review/sheet-06.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-date-no-birth-editor-320-2x.long.png",
+      "sha256": "add1efe8fc667166fec3d90c0394c813e2a6b5cfbfa70dd249dd728cd91a364d",
+      "width": 320,
+      "height": 1542,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "76ba78044c8520c1b18c5ffd9153a2676f70a58614c55c30eb2dec747ad62985",
+          "review": "sheet-03.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "e100bbc8f595a34fca0d9206c5d3ad4c5be9567a70d2927b195089a9d8118a80",
+          "review": "../baby-development-control-visual-review/sheet-03.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1542,
+          "pixel_sha256": "2c89335eab245687767495301a221a6db8203bd6469a4d19e287833f78d69d19",
+          "review": "../baby-development-control-visual-review/sheet-02.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-date-no-birth-editor-320-2x.png",
+      "sha256": "7fa3efc68266bff18cd8d615d8232475921bf8e027017a6bd3acf32cac36646e",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "bd90cbac45b65ec5fc3e829c086fc86a0a48721eb51efbc2e90f8f1e1387e0dd",
+          "review": "sheet-06.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "c749b2451dde77c5fcade2aad7120bfd76cc59a02f96b32957f6a6efe9fe49ff",
+          "review": "../baby-development-control-visual-review/sheet-08.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-date-no-birth-editor-393-1x.png",
+      "sha256": "46d216f741fd3f66b62ac12cdb2839b597960eb5342967679ec6704ea09efece",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ba1e62dc70e5946e42ca650518a29bc4b688d56c30e791c4fa5b5af6878f92c4",
+          "review": "sheet-06.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "bfe04f1aa45247cf0495b9768136828ab49029f142966453a3eb385907fcd460",
+          "review": "../baby-development-control-visual-review/sheet-03.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-date-no-birth-home-320-2x.long.png",
+      "sha256": "c149077d243639d428fe4b2729288db3a4b49109e79b1a11f79d707af2d83166",
+      "width": 320,
+      "height": 3153,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6831ff757ee72a60fb1b6f948fcc146c11f7129f0d2aca69709329b46555ea49",
+          "review": "../baby-profile-control-visual-review/sheet-17.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "034c398b12fe2df5aaef1e8fd2e151d4092f4bc550a8179f7524acfdf8572a5d",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "fa27bf1b8f7135cf78bb1380036cbe25b805799678f9c6338d1b09862168215b",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "a32f7ba6781d25391eb637317ab409c5fed06964045dbfcbc4c573cfa06dccd3",
+          "review": "../baby-profile-control-visual-review/sheet-17.png#tile-4"
+        },
+        {
+          "y0": 2600,
+          "y1": 3153,
+          "pixel_sha256": "09a0b2def479e155792c991c1263904973266de8d60406d0e7d3e11824f95dd0",
+          "review": "../baby-profile-control-visual-review/sheet-17.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-date-no-birth-home-320-2x.png",
+      "sha256": "5207e6a278bb23993b2c05c3d753e6561ee7504346f728fc1a636afaec9d0eb5",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "460cf70aba02781f615d89ecadbb64f18f3cc4f8010d3631518207556bbe3228",
+          "review": "../baby-profile-control-visual-review/sheet-18.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "e19cd0df32287c1f89f9c99c7ba781a548f86ead97402b2541ef79e2170df2fb",
+          "review": "../baby-profile-control-visual-review/sheet-18.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-date-no-birth-home-393-1x.long.png",
+      "sha256": "cc2db515985244cd4e9695b6bec680cde61afe5a7186c9009ab9b737ccf751b4",
+      "width": 393,
+      "height": 1647,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "0288f7cb303a993777f757252f4d50e3be457b332dec32d72c2db9a87f6fba2f",
+          "review": "../baby-profile-control-visual-review/sheet-18.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "21cb368fa28a374bec1718e6c7a9acfe2e540cb7efc396082091777c405fb7ed",
+          "review": "../baby-profile-control-visual-review/sheet-18.png#tile-3"
+        },
+        {
+          "y0": 1300,
+          "y1": 1647,
+          "pixel_sha256": "08cee1eacf6bcb7a3fc6c6d82942471536c8d63c861df009c860f8a8454f8ca0",
+          "review": "../baby-profile-control-visual-review/sheet-18.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-date-no-birth-home-393-1x.png",
+      "sha256": "fa13eb54ec66c718f6ee753edec62e79dfe3cf1b67d69958183140de59a644b6",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "34eb2779043f4a344d9294a0037071cd48fabf9fd37a69e84166e4c7488eaa79",
+          "review": "../baby-profile-control-visual-review/sheet-18.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "d9caabe75f93d41f3dc6e27cf23b56267bc9eb8660d89ffb64886347c45dbb5f",
+          "review": "../baby-profile-control-visual-review/sheet-19.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-date-no-birth-input-320-2x.png",
+      "sha256": "0e4471d2104fda81eaa22dea4c74e1e35dd81753687e2213c134c90b3b106936",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c3ad6495480e59d4a0119c66aa1d97f86859740431099c2221f10a7c676b0b52",
+          "review": "sheet-06.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "9c531b786bf8a4959b5dc46f35bba938e5c6706840bcfa390ecf6a52fb6f36ed",
+          "review": "../baby-development-control-visual-review/sheet-05.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-date-no-birth-left-320-2x.long.png",
+      "sha256": "c149077d243639d428fe4b2729288db3a4b49109e79b1a11f79d707af2d83166",
+      "width": 320,
+      "height": 3153,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6831ff757ee72a60fb1b6f948fcc146c11f7129f0d2aca69709329b46555ea49",
+          "review": "../baby-profile-control-visual-review/sheet-17.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "034c398b12fe2df5aaef1e8fd2e151d4092f4bc550a8179f7524acfdf8572a5d",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "fa27bf1b8f7135cf78bb1380036cbe25b805799678f9c6338d1b09862168215b",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "a32f7ba6781d25391eb637317ab409c5fed06964045dbfcbc4c573cfa06dccd3",
+          "review": "../baby-profile-control-visual-review/sheet-17.png#tile-4"
+        },
+        {
+          "y0": 2600,
+          "y1": 3153,
+          "pixel_sha256": "09a0b2def479e155792c991c1263904973266de8d60406d0e7d3e11824f95dd0",
+          "review": "../baby-profile-control-visual-review/sheet-17.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-date-no-birth-left-320-2x.png",
+      "sha256": "437e3e1b29ac50bf25d6c8dcf1743029cb05a6c441e48c463fcfbdb79ea90957",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "fee40addd75f8cd59167c5c9e08ce3a6e21be75df2a12e9b253ecee945ab6231",
+          "review": "sheet-07.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "563dd0eb6127eff7c02d4cf0854f116747677cf072bd11574cc7adf5267526f7",
+          "review": "../baby-feeding-control-visual-review/sheet-18.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-date-no-birth-left-393-1x.long.png",
+      "sha256": "cc2db515985244cd4e9695b6bec680cde61afe5a7186c9009ab9b737ccf751b4",
+      "width": 393,
+      "height": 1647,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "0288f7cb303a993777f757252f4d50e3be457b332dec32d72c2db9a87f6fba2f",
+          "review": "../baby-profile-control-visual-review/sheet-18.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "21cb368fa28a374bec1718e6c7a9acfe2e540cb7efc396082091777c405fb7ed",
+          "review": "../baby-profile-control-visual-review/sheet-18.png#tile-3"
+        },
+        {
+          "y0": 1300,
+          "y1": 1647,
+          "pixel_sha256": "08cee1eacf6bcb7a3fc6c6d82942471536c8d63c861df009c860f8a8454f8ca0",
+          "review": "../baby-profile-control-visual-review/sheet-18.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-date-no-birth-left-393-1x.png",
+      "sha256": "a2fec95ef15237d70e8cae3a1588b8af62703ddc181d092097e801c2189b3ffc",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ae70c165f412fc7eb12469e0effb09f161f1668371b8e7492ca19008d94d20de",
+          "review": "sheet-07.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "d307954912ad4b9aea0f1b50ca393b0435e82681ee51db634dd7983cdf013921",
+          "review": "../baby-development-boundary-visual-review/sheet-05.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-date-no-birth-picker-320-2x.png",
+      "sha256": "c2f8a2e730e7e00781b9a006ffd9990a94d4ffeaaf7519bd7898108ed2d5058b",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "75297a2c543509bf0ccb8626b318569355963e173a05904601811cd5d5f1620a",
+          "review": "sheet-07.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "9c531b786bf8a4959b5dc46f35bba938e5c6706840bcfa390ecf6a52fb6f36ed",
+          "review": "../baby-development-control-visual-review/sheet-05.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-date-no-birth-picker-393-1x.png",
+      "sha256": "f359b232966b66e6365d540f9c8c17cb9d784e4b5449e32fd232cfc2e0af8372",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a5c20f7f0c6997f647682512cdbc27b5ad0e8fa69fee4553de058ddf1fb3f6a0",
+          "review": "sheet-07.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "328e60e64418a8b6a25d0c11d31f4cc9d64ff9c02ff8943d1be1fe16b04d18cb",
+          "review": "../baby-development-control-visual-review/sheet-06.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-date-no-birth-year-selected-393-1x.png",
+      "sha256": "0f950a12db7eb8af610f9b4a604b6f3e0f99501874dcb8fc7568c7c6119a79e6",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "5fcf7c4ff5bb6890731d787f97114a3eb3a295414a6b382d131d82c9ae01d396",
+          "review": "sheet-07.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "328e60e64418a8b6a25d0c11d31f4cc9d64ff9c02ff8943d1be1fe16b04d18cb",
+          "review": "../baby-development-control-visual-review/sheet-06.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-date-no-birth-years-393-1x.long.png",
+      "sha256": "4250ac654ade5427e966b5bf89a413a065ae3e05e830e47b2f2f4ed936ff02eb",
+      "width": 393,
+      "height": 2746,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "f6826092a12c093008f32f6a7372b6f2554b75ee1860864c27f88ea415c9d3d9",
+          "review": "sheet-07.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "d0a8f98f1bf4d5b473e4ea5fea620fdb53425fc118e9816682206d798d7bc35e",
+          "review": "sheet-08.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "d28a8d37f09f9d8971fbf556a4c0b1a381a6bdd8926d60dcaf88537f4c09c28e",
+          "review": "sheet-08.png#tile-1"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "fbcd3453251d7224dca930961952946b8f0bb241c087f54c6ab7dbae680ff1c5",
+          "review": "sheet-08.png#tile-2"
+        },
+        {
+          "y0": 2600,
+          "y1": 2746,
+          "pixel_sha256": "f92f76d34a17dda66ac7e3613f823ced9be601a505a9256f3e6bb7bf320d492b",
+          "review": "sheet-08.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-date-no-birth-years-393-1x.png",
+      "sha256": "986abe198519fceb7e6f894a2ee7560640ec92c2172e0c8aba5a70579d9f172b",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "93f0a15311e857f416d89efc5be81489d8b2a33e8084f31e0ab264caf56beea2",
+          "review": "sheet-08.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "328e60e64418a8b6a25d0c11d31f4cc9d64ff9c02ff8943d1be1fe16b04d18cb",
+          "review": "../baby-development-control-visual-review/sheet-06.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-date-profile-editor-320-2x.long.png",
+      "sha256": "c594a05ccde747c5459b63bba6a8a82f389600c8fd24a48f3869dfa2257cf703",
+      "width": 320,
+      "height": 1211,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "5bbd909d27f33c7a352401c8fe87ef86035081fbcf6227f8199dcbba618358eb",
+          "review": "../baby-profile-control-visual-review/sheet-04.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1211,
+          "pixel_sha256": "64e83c1c38a7ff9828545d30d893ce24e19a24c392c39f4fb536f8d4f9c94030",
+          "review": "../baby-profile-control-visual-review/sheet-02.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-date-profile-editor-320-2x.png",
+      "sha256": "65884c2dfaccab4c64b1a8a47d389694322e53a323dff6db43aa89ff338463f4",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "db463eaf766904283357d72165df582745c65116fe0037ccea201a2512db2ca8",
+          "review": "../baby-profile-control-visual-review/sheet-05.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "490f393640533246ea7a999600ce13e3e00a4ee93fb8d882e920fb30e7d8a293",
+          "review": "../baby-profile-control-visual-review/sheet-05.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-date-profile-editor-393-1x.png",
+      "sha256": "40001d51af84665046f1fd8fa0363ed7104dcde2ed4e880ccb0bd0679cf20d81",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c1a10afec3e722277995bb640d4d8d36f4077a9d5b94ee08f033a122fdfadc63",
+          "review": "../baby-profile-control-visual-review/sheet-05.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a19e15a753d77086d495d5299718bcd56dd74b981911554a3266279040aafe5c",
+          "review": "../baby-profile-control-visual-review/sheet-02.png#tile-5"
+        }
+      ]
+    }
+  ],
+  "unique_segments": 101,
+  "new_segments": 47,
+  "new_sheets": 8
+}

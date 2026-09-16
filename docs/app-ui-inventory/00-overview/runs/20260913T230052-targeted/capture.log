@@ -1,0 +1,16 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_development_management_inventory_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: inventory development management face 393/1x
+00:01 +1: inventory development management face 320/2x
+00:02 +2: inventory development management sound 393/1x
+00:03 +3: inventory development management sound 320/2x
+00:04 +4: inventory development management head 393/1x
+00:04 +5: inventory development management head 320/2x
+00:05 +6: inventory development management face-sound 393/1x
+00:05 +7: inventory development management face-sound 320/2x
+00:06 +8: inventory development management face-head 393/1x
+00:07 +9: inventory development management face-head 320/2x
+00:07 +10: inventory development management sound-head 393/1x
+00:08 +11: inventory development management sound-head 320/2x
+00:08 +12: (tearDownAll)
+00:08 +12: All tests passed!

@@ -1,0 +1,350 @@
+[
+  {
+    "state": "consultation-journey-consent-revoked-in-room",
+    "source": "08-expert-service/consultation-journey-consent-revoked-in-room/viewport.png",
+    "sha256": "26847b4088efec9bdb3272daa7dabaddbf4ac1f0206f1192bd185e001e59dfc3",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "consultation-journey-consultation-active",
+    "source": "08-expert-service/consultation-journey-consultation-active/viewport.png",
+    "sha256": "e3570edefd889c463fda87cb97ab2cd2d5f8c42769fe846cf1c6f56ebac8fbd2",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "consultation-journey-consultation-completed",
+    "source": "08-expert-service/consultation-journey-consultation-completed/viewport.png",
+    "sha256": "7dcec0aa2c972bc0ef7799a2ca0dd08e36f6fe609380580d7d9a4cba55697985",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "consultation-journey-device-check-dismissed",
+    "source": "08-expert-service/consultation-journey-device-check-dismissed/viewport.png",
+    "sha256": "26847b4088efec9bdb3272daa7dabaddbf4ac1f0206f1192bd185e001e59dfc3",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "consultation-journey-device-checking",
+    "source": "08-expert-service/consultation-journey-device-checking/viewport.png",
+    "sha256": "d8e9ea3278285aa544bffba83263f8c36b31aafad03e935e2f8d70a4ef0a379a",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "consultation-journey-device-denied",
+    "source": "08-expert-service/consultation-journey-device-denied/viewport.png",
+    "sha256": "9867a791800831d6f55d62e47749aa91cfd469954651cfaa44736bf742e268e8",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "consultation-journey-device-recovered",
+    "source": "08-expert-service/consultation-journey-device-recovered/viewport.png",
+    "sha256": "dd7239f1b65a62cfa9e94f9c7f814899f3505f75a95947396a362b1f6b0252ed",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "consultation-journey-join-poll-recovered",
+    "source": "08-expert-service/consultation-journey-join-poll-recovered/viewport.png",
+    "sha256": "495dd48df845829ae1fd83fcc7c6ad10a0819ab21d0e0e92812eb03134cf4380",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "consultation-journey-join-request-error",
+    "source": "08-expert-service/consultation-journey-join-request-error/viewport.png",
+    "sha256": "6e4bd32384f013b0abe3ab53315a80975a79e2a2092668e36337360e9f5093a2",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "consultation-journey-leave-confirmation",
+    "source": "08-expert-service/consultation-journey-leave-confirmation/viewport.png",
+    "sha256": "93053024b8c85d9cc390a52f54aed6bcd8ff4b93b0c00129b7fe15c81e338db4",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "consultation-journey-leave-retained",
+    "source": "08-expert-service/consultation-journey-leave-retained/viewport.png",
+    "sha256": "495dd48df845829ae1fd83fcc7c6ad10a0819ab21d0e0e92812eb03134cf4380",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "consultation-journey-left-to-booking",
+    "source": "08-expert-service/consultation-journey-left-to-booking/viewport.png",
+    "sha256": "66ae9c2b2ccacce87d7cb77f2549023e9775ff332bf03a8b830fc9c8befd91eb",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "consultation-journey-location-options",
+    "source": "08-expert-service/consultation-journey-location-options/viewport.png",
+    "sha256": "03155309b43485158a7f3d890a88fca80983d00cfa2aac52fe50170321890271",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "consultation-journey-location-rejected",
+    "source": "08-expert-service/consultation-journey-location-rejected/viewport.png",
+    "sha256": "c7f02740662f32894bc12dd9ba831c7e2863c0a8b33e5d4069a2e88fc3550b50",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "consultation-journey-location-request-error",
+    "source": "08-expert-service/consultation-journey-location-request-error/viewport.png",
+    "sha256": "36333e17a05900c0de090858606045f9ad00a8e09fa85a455213ac6bbdccaf75",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "consultation-journey-location-selected",
+    "source": "08-expert-service/consultation-journey-location-selected/viewport.png",
+    "sha256": "e08f7b4c53dbae6fae548e23f3be4123a72f975b969f6e135af9f95b3590448c",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "consultation-journey-no-show-before-outcome",
+    "source": "08-expert-service/consultation-journey-no-show-before-outcome/viewport.png",
+    "sha256": "26847b4088efec9bdb3272daa7dabaddbf4ac1f0206f1192bd185e001e59dfc3",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "consultation-journey-no-show-home",
+    "source": "08-expert-service/consultation-journey-no-show-home/viewport.png",
+    "sha256": "be291808401e7f353b8f14552b0df4a698f3edd191e5e2d770c66c2e129fc145",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "consultation-journey-no-show-outcome",
+    "source": "08-expert-service/consultation-journey-no-show-outcome/viewport.png",
+    "sha256": "d855604423dcbfaf6cba23ac1154734f15c4c108af9a04464823e5aad202cfde",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "consultation-journey-preflight-dismissed",
+    "source": "08-expert-service/consultation-journey-preflight-dismissed/viewport.png",
+    "sha256": "26847b4088efec9bdb3272daa7dabaddbf4ac1f0206f1192bd185e001e59dfc3",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "consultation-journey-preparation-case-consent-required",
+    "source": "08-expert-service/consultation-journey-preparation-case-consent-required/viewport.png",
+    "sha256": "6b742fc89d08884bc4b52b1e25890ce60edd3a9a64743d93fd281c7b8a0a9de8",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "consultation-journey-preparation-demo-early",
+    "source": "08-expert-service/consultation-journey-preparation-demo-early/viewport.png",
+    "sha256": "853c984cb6c0fc2594ec5299adbbe203a47b701e8e1eb5a7cce51705d0f1219e",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "consultation-journey-preparation-intake-required",
+    "source": "08-expert-service/consultation-journey-preparation-intake-required/viewport.png",
+    "sha256": "70de1e6ad7bb02e464b4982a9cb71b0dfd38007acfb3541a51a4ad3fbf13e79d",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "consultation-journey-preparation-ready",
+    "source": "08-expert-service/consultation-journey-preparation-ready/viewport.png",
+    "sha256": "26847b4088efec9bdb3272daa7dabaddbf4ac1f0206f1192bd185e001e59dfc3",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "consultation-journey-preparation-rebook",
+    "source": "08-expert-service/consultation-journey-preparation-rebook/viewport.png",
+    "sha256": "cf5076260eab45a37c9db04babb664a68d382ff194799190927b73b0b8fe2d20",
+    "sheet": "overview-3.jpg"
+  },
+  {
+    "state": "consultation-journey-preparation-to-intake",
+    "source": "08-expert-service/consultation-journey-preparation-to-intake/viewport.png",
+    "sha256": "e83f446673b46d7d46e20b8b48ca8b632a8de4d9b9b7adc81899e3ed07f00e6c",
+    "sheet": "overview-3.jpg"
+  },
+  {
+    "state": "consultation-journey-preparation-too-early",
+    "source": "08-expert-service/consultation-journey-preparation-too-early/viewport.png",
+    "sha256": "20a50690fd7c48a38c3b92e08ec6e8ea4957e170f3dc1d9f3094f6e718ea1b60",
+    "sheet": "overview-3.jpg"
+  },
+  {
+    "state": "consultation-journey-preparation-video-disabled",
+    "source": "08-expert-service/consultation-journey-preparation-video-disabled/viewport.png",
+    "sha256": "ae347e73cb3af3680e88cf1fbc7b6c09c4601bd115bdc85e5a83fdfb11848fa2",
+    "sheet": "overview-3.jpg"
+  },
+  {
+    "state": "consultation-journey-preparation-window-expired",
+    "source": "08-expert-service/consultation-journey-preparation-window-expired/viewport.png",
+    "sha256": "2de7a4e731e83fcc9d769917423cc4b4cb00be6f238a84ce9e774910b194d324",
+    "sheet": "overview-3.jpg"
+  },
+  {
+    "state": "consultation-journey-room-load-error",
+    "source": "08-expert-service/consultation-journey-room-load-error/viewport.png",
+    "sha256": "18e3ad987050d1892065ec0b1238151062d821f234225e9a64f37a963e52f36b",
+    "sheet": "overview-3.jpg"
+  },
+  {
+    "state": "consultation-journey-room-load-retry",
+    "source": "08-expert-service/consultation-journey-room-load-retry/viewport.png",
+    "sha256": "26847b4088efec9bdb3272daa7dabaddbf4ac1f0206f1192bd185e001e59dfc3",
+    "sheet": "overview-3.jpg"
+  },
+  {
+    "state": "consultation-journey-room-loading",
+    "source": "08-expert-service/consultation-journey-room-loading/viewport.png",
+    "sha256": "4d9726b2c837b4c16ea1165c9c632078b77b34e0e780497b8a7b984cfcef1dfb",
+    "sheet": "overview-3.jpg"
+  },
+  {
+    "state": "consultation-journey-safety-before-outcome",
+    "source": "08-expert-service/consultation-journey-safety-before-outcome/viewport.png",
+    "sha256": "495dd48df845829ae1fd83fcc7c6ad10a0819ab21d0e0e92812eb03134cf4380",
+    "sheet": "overview-3.jpg"
+  },
+  {
+    "state": "consultation-journey-safety-outcome",
+    "source": "08-expert-service/consultation-journey-safety-outcome/viewport.png",
+    "sha256": "8a98842b77cc6f09efd838877f488d7445eea7539957b9657b61a8279ec41fdf",
+    "sheet": "overview-3.jpg"
+  },
+  {
+    "state": "consultation-journey-safety-summary-pending",
+    "source": "08-expert-service/consultation-journey-safety-summary-pending/viewport.png",
+    "sha256": "2ce3e5a45568df1ab836850893fda9b68fe5617cd07b0c6fe29087f82c700f7a",
+    "sheet": "overview-3.jpg"
+  },
+  {
+    "state": "consultation-journey-start-confirmation",
+    "source": "08-expert-service/consultation-journey-start-confirmation/viewport.png",
+    "sha256": "37b85094b227acb0fa50716afce1b13038180cd0fd37022c20b938523755865a",
+    "sheet": "overview-3.jpg"
+  },
+  {
+    "state": "consultation-journey-summary-consultation-started",
+    "source": "08-expert-service/consultation-journey-summary-consultation-started/viewport.png",
+    "sha256": "e3570edefd889c463fda87cb97ab2cd2d5f8c42769fe846cf1c6f56ebac8fbd2",
+    "sheet": "overview-4.jpg"
+  },
+  {
+    "state": "consultation-journey-summary-entry-waiting-room",
+    "source": "08-expert-service/consultation-journey-summary-entry-waiting-room/viewport.png",
+    "sha256": "495dd48df845829ae1fd83fcc7c6ad10a0819ab21d0e0e92812eb03134cf4380",
+    "sheet": "overview-4.jpg"
+  },
+  {
+    "state": "consultation-journey-summary-pending",
+    "source": "08-expert-service/consultation-journey-summary-pending/viewport.png",
+    "sha256": "2ce3e5a45568df1ab836850893fda9b68fe5617cd07b0c6fe29087f82c700f7a",
+    "sheet": "overview-4.jpg"
+  },
+  {
+    "state": "consultation-journey-summary-published",
+    "source": "08-expert-service/consultation-journey-summary-published/viewport.png",
+    "sha256": "e7e51cb7176f173e0e6d962eba86cd2e0a91bbf5c9860997ba06b8e4db96d215",
+    "sheet": "overview-4.jpg"
+  },
+  {
+    "state": "consultation-journey-summary-service-information",
+    "source": "08-expert-service/consultation-journey-summary-service-information/viewport.png",
+    "sha256": "812deabcac6d6492edd151a23e3563375bdf530ac7ee4adac7e5a8ec985e9ab7",
+    "sheet": "overview-4.jpg"
+  },
+  {
+    "state": "consultation-journey-summary-task-detail",
+    "source": "08-expert-service/consultation-journey-summary-task-detail/viewport.png",
+    "sha256": "a1dd26a2be795b2a07e4fc5940419f84537bf1cea46ecdfced2fc5adaba6280c",
+    "sheet": "overview-4.jpg"
+  },
+  {
+    "state": "consultation-journey-summary-task-in-progress",
+    "source": "08-expert-service/consultation-journey-summary-task-in-progress/viewport.png",
+    "sha256": "7ac7aa9adf775d57ee5c6f1de42914d8bed440b9505d33959afd2ed097e31862",
+    "sheet": "overview-4.jpg"
+  },
+  {
+    "state": "consultation-journey-summary-task-recovered",
+    "source": "08-expert-service/consultation-journey-summary-task-recovered/viewport.png",
+    "sha256": "9813add1001dce317d95e3ff0dd8e0ef934c5afe64c7c5a532117696c4f58bf7",
+    "sheet": "overview-4.jpg"
+  },
+  {
+    "state": "consultation-journey-summary-task-return",
+    "source": "08-expert-service/consultation-journey-summary-task-return/viewport.png",
+    "sha256": "11f7972f34809fb0e82bba61e69c4c04b71b82d5d776262b9842bbea44bea9b4",
+    "sheet": "overview-4.jpg"
+  },
+  {
+    "state": "consultation-journey-summary-task-skipped",
+    "source": "08-expert-service/consultation-journey-summary-task-skipped/viewport.png",
+    "sha256": "68b2ec52d6b01e5507a40c08511478e7fac3000658a5437694d69ef8803d8e9c",
+    "sheet": "overview-4.jpg"
+  },
+  {
+    "state": "consultation-journey-summary-task-uncertain",
+    "source": "08-expert-service/consultation-journey-summary-task-uncertain/viewport.png",
+    "sha256": "4d797d66b8ec8796f51c45139e219746298ce9fad99a0933115531e79cdf56e8",
+    "sheet": "overview-4.jpg"
+  },
+  {
+    "state": "consultation-journey-summary-to-progress",
+    "source": "08-expert-service/consultation-journey-summary-to-progress/viewport.png",
+    "sha256": "8d375af0cb99d687f23d535fb25e8a4173261b902ec332e3226e87b60b41b234",
+    "sheet": "overview-4.jpg"
+  },
+  {
+    "state": "consultation-journey-technical-before-outcome",
+    "source": "08-expert-service/consultation-journey-technical-before-outcome/viewport.png",
+    "sha256": "495dd48df845829ae1fd83fcc7c6ad10a0819ab21d0e0e92812eb03134cf4380",
+    "sheet": "overview-5.jpg"
+  },
+  {
+    "state": "consultation-journey-technical-outcome",
+    "source": "08-expert-service/consultation-journey-technical-outcome/viewport.png",
+    "sha256": "96f2f60c70ddeecd98c4414efc4ca92c5569f49d54acbfea667dc366004b7e8e",
+    "sheet": "overview-5.jpg"
+  },
+  {
+    "state": "consultation-journey-technical-rebook",
+    "source": "08-expert-service/consultation-journey-technical-rebook/viewport.png",
+    "sha256": "15ba20e272414d373a432186af649c7b3c638d1ca16c7f5cfd7814bf2b04a537",
+    "sheet": "overview-5.jpg"
+  },
+  {
+    "state": "consultation-journey-video-consent",
+    "source": "08-expert-service/consultation-journey-video-consent/viewport.png",
+    "sha256": "2245914af21970a2c663bf1e9ace862e3e4ec14cef884c09ec465a7c4bc49a3c",
+    "sheet": "overview-5.jpg"
+  },
+  {
+    "state": "consultation-journey-video-consent-dismissed",
+    "source": "08-expert-service/consultation-journey-video-consent-dismissed/viewport.png",
+    "sha256": "37b85094b227acb0fa50716afce1b13038180cd0fd37022c20b938523755865a",
+    "sheet": "overview-5.jpg"
+  },
+  {
+    "state": "consultation-journey-video-consent-error",
+    "source": "08-expert-service/consultation-journey-video-consent-error/viewport.png",
+    "sha256": "9c32286b7047f2e365feadd208650f48280850d886641d930ffbb00f4d84df92",
+    "sheet": "overview-5.jpg"
+  },
+  {
+    "state": "consultation-journey-video-consent-granted",
+    "source": "08-expert-service/consultation-journey-video-consent-granted/viewport.png",
+    "sha256": "aba726c56d4344df764067f0be153f393d4b4aaa4cde55f6f7d88fe6f38bbebf",
+    "sheet": "overview-5.jpg"
+  },
+  {
+    "state": "consultation-journey-video-consent-retry",
+    "source": "08-expert-service/consultation-journey-video-consent-retry/viewport.png",
+    "sha256": "aba726c56d4344df764067f0be153f393d4b4aaa4cde55f6f7d88fe6f38bbebf",
+    "sheet": "overview-5.jpg"
+  },
+  {
+    "state": "consultation-journey-video-consent-selected",
+    "source": "08-expert-service/consultation-journey-video-consent-selected/viewport.png",
+    "sha256": "cc16824d9f3397903e017b12129be2c418cfd664163b3f1449109e1698d6ca85",
+    "sheet": "overview-5.jpg"
+  },
+  {
+    "state": "consultation-journey-waiting-room",
+    "source": "08-expert-service/consultation-journey-waiting-room/viewport.png",
+    "sha256": "495dd48df845829ae1fd83fcc7c6ad10a0819ab21d0e0e92812eb03134cf4380",
+    "sheet": "overview-5.jpg"
+  }
+]

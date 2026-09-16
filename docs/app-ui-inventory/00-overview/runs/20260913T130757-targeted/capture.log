@@ -1,0 +1,12 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_inventory_journey_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: inventory attachment upload removal and tab retention 393.0
+00:01 +1: inventory attachment mixed send and image viewer 393.0
+00:02 +2: inventory attachment upload removal and tab retention 320.0
+00:03 +3: inventory attachment mixed send and image viewer 320.0
+00:05 +4: inventory attachment picker cancellation and failure
+00:05 +5: inventory attachment PDF validation upload retry and file only send
+00:06 +6: inventory attachment new session cleanup retry
+00:06 +7: inventory attachment image upload failure and preview retry
+00:07 +8: (tearDownAll)
+00:07 +8: All tests passed!

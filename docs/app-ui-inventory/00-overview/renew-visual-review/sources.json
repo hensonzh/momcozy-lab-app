@@ -1,0 +1,198 @@
+[
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/renew-journey-active-progress-320-2x.png",
+    "sha256": "e803fd233d33ab11a6a0b3b9a7e1aa14eee773105c7515a27253410d099ac206"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/renew-journey-active-progress-393.png",
+    "sha256": "54f84ac57d4f4398b423358dd4d712526ff24d4da0e20283a8615d4d84c4961c"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/renew-journey-active-return-320-2x.png",
+    "sha256": "fd84635ad073911a3f2f1633860721e3189b862ed53977757cb3a1163415aa21"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/renew-journey-active-return-320-2x.long.png",
+    "sha256": "9b8b39d75715249a052fd8962cd9384fa651a5acdda041c08ab69117fbdca3fc"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/renew-journey-active-return-393.png",
+    "sha256": "553d8a66000ad172e9d1663abe6f8b5f6bc4ec3e074fd20ef737fa40a5144a30"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/renew-journey-booking-320-2x.png",
+    "sha256": "f136ce939796ace273baa2bf0999267869f68eb1a96d81fba1676f5e54a6306b"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/renew-journey-booking-320-2x.long.png",
+    "sha256": "fb3fefc3474b713e419ccaa6a5311d23891d6fb504c1ecc53f560c23e654ada8"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/renew-journey-booking-393.png",
+    "sha256": "15ba20e272414d373a432186af649c7b3c638d1ca16c7f5cfd7814bf2b04a537"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/renew-journey-completed-progress-320-2x.png",
+    "sha256": "3ba8321c6958b6054ff6158733afa084289ccad0073e1c5b81a9fa22b5b12f3b"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/renew-journey-completed-progress-393.png",
+    "sha256": "28b63b3ae75340162f3160432cbe65dabce36ae3fa00ad7ceeddf0a461027944"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/renew-journey-completed-return-320-2x.png",
+    "sha256": "3ba8321c6958b6054ff6158733afa084289ccad0073e1c5b81a9fa22b5b12f3b"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/renew-journey-completed-return-393.png",
+    "sha256": "28b63b3ae75340162f3160432cbe65dabce36ae3fa00ad7ceeddf0a461027944"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/renew-journey-eligibility-320-2x.png",
+    "sha256": "b9e4637a1cd3a1a6de919101a5f5346dc2b6316488fb10d54d592f1e9345b9e6"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/renew-journey-eligibility-320-2x.long.png",
+    "sha256": "ef9233f9f6cc525c36b418f6e4aa087918f3c6e31148a7ea56d51bc7a71d9e31"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/renew-journey-eligibility-393.png",
+    "sha256": "9d75dcc716680a760f36d6369965e855ea9fbafec826cb1599af392b4742ae92"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/renew-journey-empty-393.png",
+    "sha256": "dbd36eb2045e5c2f57330d9441e56fb296981ae81769cfc8902a8af4a0a03640"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/renew-journey-empty-refreshed-393.png",
+    "sha256": "86f0d08ed2564d46fe4f51678bfdde301e1e18ec5169e0764903b73bb33b15a9"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/renew-journey-list-320-2x.png",
+    "sha256": "ead8e5c1d7b6e60c995467468fcff8673f2ea59385da635a63151062ac924eea"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/renew-journey-list-320-2x.long.png",
+    "sha256": "c195f9a915308e8d6cea12ec9ad11ec15ff67a135ae3f0fd0dc4729d58dec38c"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/renew-journey-list-393.png",
+    "sha256": "86f0d08ed2564d46fe4f51678bfdde301e1e18ec5169e0764903b73bb33b15a9"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/renew-journey-load-error-393.png",
+    "sha256": "784517de0d86bdd1240f4cf950d2de2d352b9346102152407e5188f1c5d5b74b"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/renew-journey-loading-393.png",
+    "sha256": "7384c012744dcb33bcb7ef8830d02181ab178b22aa5217af5053e50db83a8fff"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/renew-journey-order-error-320-2x.png",
+    "sha256": "f0af60f8f522fd203d5fbacc2d6feb4f0e31c9a25a6a38ca2baa9e5cd09bf442"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/renew-journey-order-error-320-2x.long.png",
+    "sha256": "cb94d88d5de8649e5b9bc3a060af702465305551f2db2e11b3dbf97a980071bc"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/renew-journey-order-error-393.png",
+    "sha256": "ab43e1beab1eb16e3d094cfa73b1c6b5218b5bb91ad94aa82fd39e5bdaf963fd"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/renew-journey-order-loading-320-2x.png",
+    "sha256": "238345ba800e94bae554fb60edca2214a59b9ff6983c38712591287ae09b0d84"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/renew-journey-order-loading-320-2x.long.png",
+    "sha256": "dc0ab82d2ce359ff63e9948cb03045541f89c2323db4ef37f46e43a584a7a394"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/renew-journey-order-loading-393.png",
+    "sha256": "ba04404360324442207471569a5671f3071744c892f2d650b92779268ab49f1d"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/renew-journey-order-resumed-320-2x.png",
+    "sha256": "ed653a108d044f2b3d54125436d27a21a182a3bdcd8e0aa2330e8c6e615a4bb6"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/renew-journey-order-resumed-320-2x.long.png",
+    "sha256": "ab94e72c29151b62645380043b3143fe80f6776daf3854d6a68cd53be03bcc8a"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/renew-journey-order-resumed-393.png",
+    "sha256": "c1d656a2de4b8deb793729791b8d20892c87595c58899327299168f79a3f4e30"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/renew-journey-paid-320-2x.png",
+    "sha256": "40d5848c6c1bc952282a2ffa550461253d45031ad93a3cdb116dcc779f88b50a"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/renew-journey-paid-393.png",
+    "sha256": "83891d97380fcfa5def47e44527863f80df0a8ad44416dce245738f09f8d40c6"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/renew-journey-payment-320-2x.png",
+    "sha256": "325cd6598abfe3a1a0b7fa175308b82d73764df5b180e54d610261eddde3c894"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/renew-journey-payment-320-2x.long.png",
+    "sha256": "95d36ca518e981b424f2f687c3d9f351087c611545172c4afd20e3a3cfb7de7f"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/renew-journey-payment-393.png",
+    "sha256": "c1d656a2de4b8deb793729791b8d20892c87595c58899327299168f79a3f4e30"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/renew-journey-pending-closed-320-2x.png",
+    "sha256": "5a82ea37a8675a440dc7a1a0cc41e0e7b6fd7e6b8220bf0b5a804c4e18d864c9"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/renew-journey-pending-closed-320-2x.long.png",
+    "sha256": "9de9f41f046bab0f2f9730cb80c1705aa0f27d556a536e3c24ab9982fb11f0f9"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/renew-journey-pending-closed-393.png",
+    "sha256": "61c2cdef699adce3661187738094d06aa870403eae617e008b8fad5d2eef8088"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/renew-journey-pending-listed-320-2x.png",
+    "sha256": "a181dcc6f1059e28ccf4a3331c70603d8d9584278709321e5e3c39014034ff55"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/renew-journey-pending-listed-320-2x.long.png",
+    "sha256": "9de9f41f046bab0f2f9730cb80c1705aa0f27d556a536e3c24ab9982fb11f0f9"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/renew-journey-pending-listed-393.png",
+    "sha256": "61c2cdef699adce3661187738094d06aa870403eae617e008b8fad5d2eef8088"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/renew-journey-purchase-disabled-393.png",
+    "sha256": "bfefd15b5f6ba391bd75a57480cfe160da8b4e9e25e01a7812476756dd6ffdfc"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/renew-journey-purchase-return-320-2x.png",
+    "sha256": "fd84635ad073911a3f2f1633860721e3189b862ed53977757cb3a1163415aa21"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/renew-journey-purchase-return-320-2x.long.png",
+    "sha256": "9b8b39d75715249a052fd8962cd9384fa651a5acdda041c08ab69117fbdca3fc"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/renew-journey-purchase-return-393.png",
+    "sha256": "553d8a66000ad172e9d1663abe6f8b5f6bc4ec3e074fd20ef737fa40a5144a30"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/renew-journey-selection-cancelled-320-2x.png",
+    "sha256": "7221da8ae5ec454b88ea973803333c7d87900f15302b3bffabdd12c5e859c091"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/renew-journey-selection-cancelled-320-2x.long.png",
+    "sha256": "c195f9a915308e8d6cea12ec9ad11ec15ff67a135ae3f0fd0dc4729d58dec38c"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/renew-journey-selection-cancelled-393.png",
+    "sha256": "86f0d08ed2564d46fe4f51678bfdde301e1e18ec5169e0764903b73bb33b15a9"
+  }
+]

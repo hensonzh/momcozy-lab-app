@@ -1,0 +1,87 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_reduced_motion_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: reduced motion stops and resumes reply rail
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown running a test:
+pumpAndSettle timed out
+
+When the exception was thrown, this was the stack:
+#0      WidgetTester.pumpAndSettle.<anonymous closure> (package:flutter_test/src/widget_tester.dart:717:11)
+<asynchronous suspension>
+#1      TestAsyncUtils.guard.<anonymous closure> (package:flutter_test/src/test_async_utils.dart:130:27)
+<asynchronous suspension>
+#2      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_reduced_motion_test.dart:34:7)
+<asynchronous suspension>
+#3      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#4      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  reduced motion stops and resumes reply rail
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +0 -1: reduced motion stops and resumes reply rail [E]
+  Test failed. See exception logs above.
+  The test description was: reduced motion stops and resumes reply rail
+  
+00:01 +0 -1: reduced motion stops and resumes status sweeps
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown running a test:
+pumpAndSettle timed out
+
+When the exception was thrown, this was the stack:
+#0      WidgetTester.pumpAndSettle.<anonymous closure> (package:flutter_test/src/widget_tester.dart:717:11)
+<asynchronous suspension>
+#1      TestAsyncUtils.guard.<anonymous closure> (package:flutter_test/src/test_async_utils.dart:130:27)
+<asynchronous suspension>
+#2      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_reduced_motion_test.dart:34:7)
+<asynchronous suspension>
+#3      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#4      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  reduced motion stops and resumes status sweeps
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:02 +0 -2: reduced motion stops and resumes status sweeps [E]
+  Test failed. See exception logs above.
+  The test description was: reduced motion stops and resumes status sweeps
+  
+00:02 +0 -2: reduced motion keeps reply and status changes readable
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown running a test:
+pumpAndSettle timed out
+
+When the exception was thrown, this was the stack:
+#0      WidgetTester.pumpAndSettle.<anonymous closure> (package:flutter_test/src/widget_tester.dart:717:11)
+<asynchronous suspension>
+#1      TestAsyncUtils.guard.<anonymous closure> (package:flutter_test/src/test_async_utils.dart:130:27)
+<asynchronous suspension>
+#2      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_reduced_motion_test.dart:71:5)
+<asynchronous suspension>
+#3      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#4      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  reduced motion keeps reply and status changes readable
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:03 +0 -3: reduced motion keeps reply and status changes readable [E]
+  Test failed. See exception logs above.
+  The test description was: reduced motion keeps reply and status changes readable
+  
+00:03 +0 -3: (tearDownAll)
+00:03 +0 -3: Some tests failed.
+
+Failing tests:
+  /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_reduced_motion_test.dart: reduced motion keeps reply and status changes readable
+  /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_reduced_motion_test.dart: reduced motion stops and resumes reply rail
+  /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_reduced_motion_test.dart: reduced motion stops and resumes status sweeps

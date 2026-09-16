@@ -1,0 +1,84 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart: wire contract keeps methods exclusive and carries the deletion version
+00:00 +1: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: (setUpAll)
+00:00 +2: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: (setUpAll)
+00:00 +3: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: (setUpAll)
+00:00 +3: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_test.dart: app router opens the selected diary section with the current API
+00:00 +4: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_page_test.dart: independent diary uses shared sections, preserves draft and saves 320.0/1.0
+00:00 +5: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_page_test.dart: independent diary uses shared sections, preserves draft and saves 320.0/1.0
+00:00 +6: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_page_test.dart: independent diary uses shared sections, preserves draft and saves 320.0/1.0
+00:00 +7: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_page_test.dart: independent diary uses shared sections, preserves draft and saves 320.0/1.0
+00:00 +8: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_page_test.dart: independent diary uses shared sections, preserves draft and saves 320.0/1.0
+00:01 +9: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_page_test.dart: independent diary uses shared sections, preserves draft and saves 320.0/1.0
+00:01 +10: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_page_test.dart: independent diary uses shared sections, preserves draft and saves 320.0/1.0
+00:01 +11: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_page_test.dart: independent diary uses shared sections, preserves draft and saves 320.0/1.0
+00:01 +12: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_page_test.dart: independent diary uses shared sections, preserves draft and saves 320.0/1.0
+00:01 +13: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_page_test.dart: independent diary uses shared sections, preserves draft and saves 320.0/1.0
+00:01 +14: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_page_test.dart: independent diary uses shared sections, preserves draft and saves 320.0/1.0
+00:01 +15: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/1.0
+00:01 +16: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/1.0
+00:01 +17: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/1.0
+00:01 +18: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/1.0
+00:01 +19: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/1.0
+00:01 +20: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/1.0
+00:01 +21: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/1.0
+00:01 +22: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/1.0
+00:01 +23: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 320.0/1.0
+00:01 +24: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 320.0/1.0
+00:01 +25: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 320.0/1.0
+00:01 +26: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 320.0/1.0
+00:01 +27: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 320.0/1.0
+00:01 +28: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 320.0/1.0
+00:01 +29: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 320.0/1.0
+00:02 +30: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 320.0/1.0
+00:02 +31: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/2.0
+00:02 +32: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/2.0
+00:02 +33: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/2.0
+00:02 +34: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/2.0
+00:02 +35: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_page_test.dart: independent diary uses shared sections, preserves draft and saves 390.0/1.0
+00:02 +36: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_page_test.dart: independent diary uses shared sections, preserves draft and saves 390.0/1.0
+00:02 +37: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_forms_design_test.dart: diary body dialog at 320.0 / 2.0
+00:02 +38: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_forms_design_test.dart: diary body dialog at 320.0 / 2.0
+00:02 +39: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 320.0/2.0
+00:02 +40: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 320.0/2.0
+00:02 +41: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 320.0/2.0
+00:02 +42: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 320.0/2.0
+00:02 +43: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 320.0/2.0
+00:02 +44: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 320.0/2.0
+00:02 +45: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 320.0/2.0
+00:02 +46: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 320.0/2.0
+00:02 +47: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 320.0/2.0
+00:02 +48: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 320.0/2.0
+00:02 +49: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 320.0/2.0
+00:02 +50: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 320.0/2.0
+00:02 +51: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 320.0/2.0
+00:02 +52: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 320.0/2.0
+00:02 +53: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 320.0/2.0
+00:02 +54: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 320.0/2.0
+00:02 +55: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 320.0/2.0
+00:02 +56: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 320.0/2.0
+00:02 +57: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 320.0/2.0
+00:03 +58: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 320.0/2.0
+00:03 +59: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_page_test.dart: independent diary uses shared sections, preserves draft and saves 430.0/1.0
+00:03 +60: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_page_test.dart: independent diary uses shared sections, preserves draft and saves 430.0/1.0
+00:03 +61: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 390.0/2.0
+00:03 +62: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 390.0/2.0
+00:03 +63: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 390.0/2.0
+00:03 +64: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 390.0/2.0
+00:03 +65: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 390.0/1.0
+00:03 +66: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 390.0/1.0
+00:03 +67: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 390.0/1.0
+00:03 +68: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 390.0/1.0
+00:03 +69: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 430.0/1.0
+00:03 +70: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 430.0/1.0
+00:03 +71: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 390.0/2.0
+00:03 +72: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 390.0/2.0
+00:04 +73: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 390.0/2.0
+00:04 +74: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 390.0/2.0
+00:04 +75: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 430.0/2.0
+00:04 +76: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 430.0/2.0
+00:04 +77: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 430.0/1.0
+00:04 +78: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 430.0/1.0
+00:04 +79: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: diary optional and conditional fields save without stale values 430.0/2.0
+00:04 +80: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_states_test.dart: (tearDownAll)
+00:04 +80: All tests passed!

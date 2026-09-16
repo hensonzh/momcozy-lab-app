@@ -1,0 +1,1047 @@
+{
+  "source": "test/goldens/design_system/diary-mood-selected-390.png",
+  "evidence": "current-widget-test-render; golden comparison passed",
+  "test_description": "diary mood dialog at 390.0 / 1.0",
+  "sequence": 1,
+  "sha256": "615998542dc81f75a81243de2f1f64a19c8342e807a9b693df2657913ba6b6a6",
+  "width": 390,
+  "height": 844,
+  "captured_at": "2026-09-13T13:38:03.833929Z",
+  "widget_types": [
+    "AbsorbPointer",
+    "Actions",
+    "Align",
+    "AnimatedBuilder",
+    "AnimatedDefaultTextStyle",
+    "AnimatedModalBarrier",
+    "AnimatedPadding",
+    "AnimatedPhysicalModel",
+    "AnimatedTheme",
+    "BackdropFilter",
+    "BlockSemantics",
+    "Builder",
+    "Center",
+    "ChoiceField<MoodImpact>",
+    "ChoiceField<MoodPressure>",
+    "ChoiceField<MoodSupport>",
+    "ChoiceField<MoodTone>",
+    "ClipRect",
+    "ColoredBox",
+    "Column",
+    "ConstrainedBox",
+    "Container",
+    "CupertinoTheme",
+    "CustomMultiChildLayout",
+    "CustomPaint",
+    "DecoratedBox",
+    "DefaultSelectionStyle",
+    "DefaultTextEditingShortcuts",
+    "DefaultTextStyle",
+    "Dialog",
+    "Directionality",
+    "DisplayFeatureSubScreen",
+    "DualTransitionBuilder",
+    "ExcludeSemantics",
+    "Expanded",
+    "FadeTransition",
+    "FilledButton",
+    "FittedBox",
+    "Flexible",
+    "Focus",
+    "FocusScope",
+    "FocusTraversalGroup",
+    "FractionalTranslation",
+    "GestureDetector",
+    "HeroControllerScope",
+    "Icon",
+    "IconButton",
+    "IconTheme",
+    "IgnorePointer",
+    "InheritedCupertinoTheme",
+    "InkWell",
+    "KeyedSubtree",
+    "LayoutBuilder",
+    "LayoutId",
+    "ListenableBuilder",
+    "Listener",
+    "Localizations",
+    "Material",
+    "MaterialApp",
+    "MediaQuery",
+    "ModalBarrier",
+    "MomCozyLineIcon",
+    "MoodFields",
+    "MotherDiaryEditor",
+    "MouseRegion",
+    "Navigator",
+    "NotificationListener<LayoutChangedNotification>",
+    "NotificationListener<NavigationNotification>",
+    "NotificationListener<ScrollMetricsNotification>",
+    "NotificationListener<ScrollNotification>",
+    "Offstage",
+    "OutlinedButton",
+    "Overlay",
+    "OverlayPortal",
+    "Padding",
+    "PageStorage",
+    "PhysicalModel",
+    "PhysicalShape",
+    "PopScope<Object>",
+    "Positioned",
+    "PrimaryScrollController",
+    "RawGestureDetector",
+    "RawTooltip",
+    "RawView",
+    "RepaintBoundary",
+    "RestorationScope",
+    "RichText",
+    "RootRestorationScope",
+    "RotationTransition",
+    "Row",
+    "SafeArea",
+    "Scaffold",
+    "ScaffoldMessenger",
+    "ScaleTransition",
+    "ScrollConfiguration",
+    "ScrollNotificationObserver",
+    "Scrollable",
+    "Semantics",
+    "SharedAppData",
+    "ShortcutRegistrar",
+    "Shortcuts",
+    "SingleChildScrollView",
+    "SizedBox",
+    "SlideTransition",
+    "Stack",
+    "StretchEffect",
+    "StretchingOverscrollIndicator",
+    "SvgPicture",
+    "TapRegionSurface",
+    "Text",
+    "TextButton",
+    "Theme",
+    "TickerMode",
+    "Title",
+    "Tooltip",
+    "Transform",
+    "UnmanagedRestorationScope",
+    "ValueListenableBuilder<bool>",
+    "VectorGraphic",
+    "View",
+    "WidgetsApp",
+    "Wrap",
+    "_ActionsScope",
+    "_BodyBuilder",
+    "_CaptureAll",
+    "_DiaryHeader",
+    "_DiaryTabs",
+    "_EffectiveTickerMode",
+    "_ExclusiveMouseRegion",
+    "_FadeForwardsPageTransition",
+    "_FloatingActionButtonTransition",
+    "_FocusInheritedScope",
+    "_FocusScopeWithExternalFocusNode",
+    "_GestureSemantics",
+    "_IconButtonM3",
+    "_InheritedTheme",
+    "_InkFeatures",
+    "_InkResponseStateWidget",
+    "_InputPadding",
+    "_LocalizationsScope",
+    "_MaterialInterior",
+    "_MediaQueryFromView",
+    "_ModalBarrierGestureDetector",
+    "_ModalScope<dynamic>",
+    "_ModalScope<void>",
+    "_ModalScopeStatus",
+    "_OverlayEntryWidget",
+    "_OverlayPortal",
+    "_PageTransitionsThemeTransitions<dynamic>",
+    "_ParentInkResponseProvider",
+    "_PipelineOwnerScope",
+    "_PredictiveBackGestureDetector",
+    "_RawPictureVectorGraphicWidget",
+    "_RawViewInternal",
+    "_RenderTheaterMarker",
+    "_ScaffoldMessengerScope",
+    "_ScaffoldScope",
+    "_ScrollNotificationObserverScope",
+    "_ScrollSemantics",
+    "_ScrollableScope",
+    "_SelectableIconButton",
+    "_ShapeBorderPaint",
+    "_SharedAppModel",
+    "_ShortcutRegistrarScope",
+    "_SingleChildViewport",
+    "_Theater",
+    "_ViewScope"
+  ],
+  "texts": [
+    "记录",
+    "今日心情",
+    "产后第 21 天 · 恢复建立期 · 9/8",
+    "1/3 已记录",
+    "不用急着变好，如实记录此刻的心情。",
+    "休息",
+    "身体",
+    "心情",
+    "今天心里更接近哪一种",
+    "可以说不清楚",
+    "还算平稳",
+    "有点绷着",
+    "低落 / 没力气",
+    "很容易被触发",
+    "说不清楚",
+    "什么一直占据着你的心？",
+    "可多选",
+    "担心宝宝",
+    "喂养压力",
+    "身体恢复",
+    "睡不好",
+    "和家人相处",
+    "对自己没信心",
+    "没有自己的时间",
+    "说不清楚",
+    "这份难受影响到你了吗？",
+    "没有影响",
+    "有一点影响",
+    "很难完成日常事情",
+    "今天有人接住你吗？",
+    "有人帮到我",
+    "有人，但主要还是我在扛",
+    "基本靠自己",
+    "保存今天的记录"
+  ],
+  "scrolls": [
+    {
+      "foreground": true,
+      "axis": "vertical",
+      "direction": "down",
+      "pixels": 47.0,
+      "min": 0.0,
+      "max": 190.0,
+      "viewport": 480.0
+    }
+  ],
+  "controls": [
+    {
+      "widget": "IconButton",
+      "key": null,
+      "labels": [
+        "关闭记录"
+      ],
+      "enabled": true,
+      "bounds": [
+        308.0,
+        40.0,
+        48.0,
+        48.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "_IconButtonM3",
+      "key": null,
+      "labels": [
+        "关闭记录"
+      ],
+      "enabled": true,
+      "bounds": [
+        308.0,
+        40.0,
+        48.0,
+        48.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [],
+      "enabled": true,
+      "bounds": [
+        310.0,
+        42.0,
+        44.0,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "TextButton",
+      "key": null,
+      "labels": [
+        "休息"
+      ],
+      "enabled": true,
+      "bounds": [
+        36.0,
+        196.0,
+        106.0,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [
+        "休息"
+      ],
+      "enabled": true,
+      "bounds": [
+        36.0,
+        196.0,
+        106.0,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "TextButton",
+      "key": null,
+      "labels": [
+        "身体"
+      ],
+      "enabled": true,
+      "bounds": [
+        142.0,
+        196.0,
+        106.0,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [
+        "身体"
+      ],
+      "enabled": true,
+      "bounds": [
+        142.0,
+        196.0,
+        106.0,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "TextButton",
+      "key": null,
+      "labels": [
+        "心情"
+      ],
+      "enabled": true,
+      "bounds": [
+        248.0,
+        196.0,
+        106.0,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [
+        "心情"
+      ],
+      "enabled": true,
+      "bounds": [
+        248.0,
+        196.0,
+        106.0,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "OutlinedButton",
+      "key": null,
+      "labels": [
+        "还算平稳"
+      ],
+      "enabled": true,
+      "bounds": [
+        32.0,
+        247.0,
+        103.33333333333331,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [
+        "还算平稳"
+      ],
+      "enabled": true,
+      "bounds": [
+        32.0,
+        247.0,
+        103.33333333333331,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "OutlinedButton",
+      "key": null,
+      "labels": [
+        "有点绷着"
+      ],
+      "enabled": true,
+      "bounds": [
+        143.33333333333331,
+        247.0,
+        103.33333333333331,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [
+        "有点绷着"
+      ],
+      "enabled": true,
+      "bounds": [
+        143.33333333333331,
+        247.0,
+        103.33333333333331,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "OutlinedButton",
+      "key": null,
+      "labels": [
+        "低落 / 没力气"
+      ],
+      "enabled": true,
+      "bounds": [
+        254.66666666666666,
+        247.0,
+        103.33333333333334,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [
+        "低落 / 没力气"
+      ],
+      "enabled": true,
+      "bounds": [
+        254.66666666666666,
+        247.0,
+        103.33333333333334,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "OutlinedButton",
+      "key": null,
+      "labels": [
+        "很容易被触发"
+      ],
+      "enabled": true,
+      "bounds": [
+        32.0,
+        299.0,
+        103.33333333333331,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [
+        "很容易被触发"
+      ],
+      "enabled": true,
+      "bounds": [
+        32.0,
+        299.0,
+        103.33333333333331,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "OutlinedButton",
+      "key": null,
+      "labels": [
+        "说不清楚"
+      ],
+      "enabled": true,
+      "bounds": [
+        143.33333333333331,
+        299.0,
+        103.33333333333331,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [
+        "说不清楚"
+      ],
+      "enabled": true,
+      "bounds": [
+        143.33333333333331,
+        299.0,
+        103.33333333333331,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "OutlinedButton",
+      "key": null,
+      "labels": [
+        "担心宝宝"
+      ],
+      "enabled": true,
+      "bounds": [
+        32.0,
+        397.0,
+        159.0,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [
+        "担心宝宝"
+      ],
+      "enabled": true,
+      "bounds": [
+        32.0,
+        397.0,
+        159.0,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "OutlinedButton",
+      "key": null,
+      "labels": [
+        "喂养压力"
+      ],
+      "enabled": true,
+      "bounds": [
+        199.0,
+        397.0,
+        159.0,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [
+        "喂养压力"
+      ],
+      "enabled": true,
+      "bounds": [
+        199.0,
+        397.0,
+        159.0,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "OutlinedButton",
+      "key": null,
+      "labels": [
+        "身体恢复"
+      ],
+      "enabled": true,
+      "bounds": [
+        32.0,
+        449.0,
+        159.0,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [
+        "身体恢复"
+      ],
+      "enabled": true,
+      "bounds": [
+        32.0,
+        449.0,
+        159.0,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "OutlinedButton",
+      "key": null,
+      "labels": [
+        "睡不好"
+      ],
+      "enabled": true,
+      "bounds": [
+        199.0,
+        449.0,
+        159.0,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [
+        "睡不好"
+      ],
+      "enabled": true,
+      "bounds": [
+        199.0,
+        449.0,
+        159.0,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "OutlinedButton",
+      "key": null,
+      "labels": [
+        "和家人相处"
+      ],
+      "enabled": true,
+      "bounds": [
+        32.0,
+        501.0,
+        159.0,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [
+        "和家人相处"
+      ],
+      "enabled": true,
+      "bounds": [
+        32.0,
+        501.0,
+        159.0,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "OutlinedButton",
+      "key": null,
+      "labels": [
+        "对自己没信心"
+      ],
+      "enabled": true,
+      "bounds": [
+        199.0,
+        501.0,
+        159.0,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [
+        "对自己没信心"
+      ],
+      "enabled": true,
+      "bounds": [
+        199.0,
+        501.0,
+        159.0,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "OutlinedButton",
+      "key": null,
+      "labels": [
+        "没有自己的时间"
+      ],
+      "enabled": true,
+      "bounds": [
+        32.0,
+        553.0,
+        159.0,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [
+        "没有自己的时间"
+      ],
+      "enabled": true,
+      "bounds": [
+        32.0,
+        553.0,
+        159.0,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "OutlinedButton",
+      "key": null,
+      "labels": [
+        "说不清楚"
+      ],
+      "enabled": true,
+      "bounds": [
+        199.0,
+        553.0,
+        159.0,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [
+        "说不清楚"
+      ],
+      "enabled": true,
+      "bounds": [
+        199.0,
+        553.0,
+        159.0,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "OutlinedButton",
+      "key": null,
+      "labels": [
+        "没有影响"
+      ],
+      "enabled": true,
+      "bounds": [
+        36.0,
+        655.0,
+        103.33333333333331,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [
+        "没有影响"
+      ],
+      "enabled": true,
+      "bounds": [
+        36.0,
+        655.0,
+        103.33333333333331,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "OutlinedButton",
+      "key": null,
+      "labels": [
+        "有一点影响"
+      ],
+      "enabled": true,
+      "bounds": [
+        143.33333333333331,
+        655.0,
+        103.33333333333331,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [
+        "有一点影响"
+      ],
+      "enabled": true,
+      "bounds": [
+        143.33333333333331,
+        655.0,
+        103.33333333333331,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "OutlinedButton",
+      "key": null,
+      "labels": [
+        "很难完成日常事情"
+      ],
+      "enabled": true,
+      "bounds": [
+        250.66666666666666,
+        655.0,
+        103.33333333333334,
+        54.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [
+        "很难完成日常事情"
+      ],
+      "enabled": true,
+      "bounds": [
+        250.66666666666666,
+        655.0,
+        103.33333333333334,
+        54.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "OutlinedButton",
+      "key": null,
+      "labels": [
+        "有人帮到我"
+      ],
+      "enabled": true,
+      "bounds": [
+        32.0,
+        767.0,
+        159.0,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [
+        "有人帮到我"
+      ],
+      "enabled": true,
+      "bounds": [
+        32.0,
+        767.0,
+        159.0,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "OutlinedButton",
+      "key": null,
+      "labels": [
+        "有人，但主要还是我在扛"
+      ],
+      "enabled": true,
+      "bounds": [
+        199.0,
+        767.0,
+        159.0,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [
+        "有人，但主要还是我在扛"
+      ],
+      "enabled": true,
+      "bounds": [
+        199.0,
+        767.0,
+        159.0,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "OutlinedButton",
+      "key": null,
+      "labels": [
+        "基本靠自己"
+      ],
+      "enabled": true,
+      "bounds": [
+        32.0,
+        819.0,
+        159.0,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [
+        "基本靠自己"
+      ],
+      "enabled": true,
+      "bounds": [
+        32.0,
+        819.0,
+        159.0,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "FilledButton",
+      "key": null,
+      "labels": [
+        "保存今天的记录"
+      ],
+      "enabled": true,
+      "bounds": [
+        32.0,
+        754.0,
+        326.0,
+        48.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [
+        "保存今天的记录"
+      ],
+      "enabled": true,
+      "bounds": [
+        32.0,
+        754.0,
+        326.0,
+        48.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    }
+  ],
+  "needs_long_capture": true,
+  "interactions_since_previous_capture": [
+    {
+      "action": "tap",
+      "labels_at_start": [
+        "还算平稳"
+      ],
+      "from": [
+        83.66666666666666,
+        269.0
+      ],
+      "to": [
+        83.66666666666666,
+        269.0
+      ]
+    }
+  ],
+  "call_stack": "#0      _InventoryComparator._record (file:///Users/lute/project/momcozy-lab/app/test/support/ui_inventory_capture.dart:169:32)\n<asynchronous suspension>\n#1      _InventoryComparator.compare (file:///Users/lute/project/momcozy-lab/app/test/support/ui_inventory_capture.dart:96:17)\n<asynchronous suspension>\n#2      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)\n<asynchronous suspension>\n#3      _AsyncCompleter.complete (dart:async/future_impl.dart:96:3)\n<asynchronous suspension>\n#4      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)\n<asynchronous suspension>\n#5      StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)\n<asynchronous suspension>\n#6      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)\n<asynchronous suspension>\n#7      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/mom/mother_forms_design_test.dart:69:13)\n<asynchronous suspension>\n#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)\n<asynchronous suspension>\n#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)\n<asynchronous suspension>\n#10     StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)\n<asynchronous suspension>\n",
+  "long_capture": {
+    "status": "complete-measured-scroll-stitch",
+    "file": "/Users/lute/project/momcozy-lab/app/docs/app-ui-inventory/raw/test/goldens/design_system/diary-mood-selected-390.long.png",
+    "offsets": [
+      0.0,
+      190.0
+    ],
+    "scroll_bounds": [
+      32.0,
+      260.0,
+      326.0,
+      480.0
+    ],
+    "content_height": 670.0,
+    "interior_strip_edge_guard": 64.0,
+    "fixed_bottom_overlay_bounds": [],
+    "original_scroll_offset": 47.0,
+    "tooltip_preserved_from_matched_viewport": false
+  }
+}

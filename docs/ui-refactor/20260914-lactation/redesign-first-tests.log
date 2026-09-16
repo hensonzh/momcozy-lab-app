@@ -1,0 +1,14 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_redesign_test.dart
+test/modules/mom/lactation_redesign_test.dart:194:44: Error: No named parameter with the name 'alignment'.
+          await tester.ensureVisible(note, alignment: 0);
+                                           ^^^^^^^^^
+00:00 +0 -1: loading /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_redesign_test.dart [E]
+  Failed to load "/Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_redesign_test.dart":
+  Compilation failed for testPath=/Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_redesign_test.dart: test/modules/mom/lactation_redesign_test.dart:194:44: Error: No named parameter with the name 'alignment'.
+            await tester.ensureVisible(note, alignment: 0);
+                                             ^^^^^^^^^
+  .
+00:00 +0 -1: Some tests failed.
+
+Failing tests:
+  /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_redesign_test.dart: loading /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_redesign_test.dart

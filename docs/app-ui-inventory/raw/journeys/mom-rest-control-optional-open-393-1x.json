@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/mom-rest-control-optional-open-393-1x.png",
+  "previous_source": "test/goldens/ui_inventory/mom-rest-control-recovery-exhausted-393-1x.png",
+  "route": "/me",
+  "trigger": "Expand rest optional fields",
+  "root_entry": "Authenticated More → tap Me bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/mom/mom_rest_control_inventory_test.dart"
+}

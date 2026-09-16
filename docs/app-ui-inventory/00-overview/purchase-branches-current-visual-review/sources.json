@@ -1,0 +1,4298 @@
+{
+  "method": "full-width continuous 650px strips; identical pixels reference prior reviewed Mom or Baby controls; remaining segments reviewed at native width",
+  "sources": [
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-business-cancelled-320-2x.long.png",
+      "sha256": "7629de5114f85db78cef1a00820390672d822e6fbed4a402230513b40838e584",
+      "width": 320,
+      "height": 885,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "874b31c6f0db0caa5b25be9a3de75f1532a3bb73228f66c39a99cc010469d466",
+          "review": "../purchase-current-visual-review/sheet-04.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 885,
+          "pixel_sha256": "78efd4c031e0e4837b3ca3a1cc6bf1149cb594d08bdb5f277c0c2071dcb66575",
+          "review": "../purchase-current-visual-review/sheet-05.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-business-cancelled-320-2x.png",
+      "sha256": "52929b039fd7c9a8ece114a51a7644a975fd588839c384f6d92bd08f1f0dd420",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ca540e95c97050a6953ad13275f4fa678fc918fc3b0fc71dfaba0433060fd7af",
+          "review": "../purchase-current-visual-review/sheet-05.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "fd8aeefa6e2ff4daa0fa453fba173a1f95a49968d04fc584f0b77b70f5686aa9",
+          "review": "../purchase-current-visual-review/sheet-05.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-business-cancelled-393-1x.png",
+      "sha256": "a81788d9a2b588acfe9e4af8ed269bc6761aaf596c1d8b1540a1d9f8e7a20468",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "da51b84f484fc89c8cb564395e16ddc81498448b7545aaf9aa0620c73eac0369",
+          "review": "../purchase-current-visual-review/sheet-05.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "638cfa0d5e1cfac3d49a96c108af74c8911bd9b170827297a51408e877e79a74",
+          "review": "../purchase-current-visual-review/sheet-05.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-business-query-recovered-320-2x.long.png",
+      "sha256": "d18f384c1f1fb3c9c1be0cd266324b94acfc56758961d7dfb08ea39442e8fe83",
+      "width": 320,
+      "height": 1489,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "06e196fe5d11e32c82672e36f55012f60d23ff0d40b194feef3e2d134dab78b5",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-36.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "8082e8281fa2d4ef25921a4315a02f918a05e97632580c1039009de5391258b3",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-36.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1489,
+          "pixel_sha256": "595f64b013d82f617a7f83f57e43a70cc013a12871bdfb5f78ce2b271e5ad60e",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-36.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-business-query-recovered-320-2x.png",
+      "sha256": "d2f1986a83552638f2cba1d7670adbf8ff0349ba16c96667590e1c43e8d60b2c",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "e04dad8aa4b7fcdf5f3aa573d1247a118b0eb6d22544cab4cf3e5bade07cdf90",
+          "review": "../purchase-current-visual-review/sheet-08.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "764f4109c8d0ad8c374540bcb297b25f72537581798f2dfe6b7b5183fff4bf17",
+          "review": "../purchase-current-visual-review/sheet-08.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-business-query-recovered-393-1x.long.png",
+      "sha256": "fb476e8b3f411994d0f94e14c172f998bc9f957331a0a297605dc7926b3998c0",
+      "width": 393,
+      "height": 906,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "873c9465f5c3323f3905a273f0c7ffdbbc8729c0e1b6b5e4b2aa990437037275",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-36.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 906,
+          "pixel_sha256": "18cd70f708187316be48b2916722e9637c7d2e5d2e10c0abfe0f0d9e0ae80f2b",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-37.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-business-query-recovered-393-1x.png",
+      "sha256": "78bc236ce60a6bac2845ba3f312d0c7fe51412305e7f9e9d51c87de36372c607",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b2fd2eeca83a23ef6b87517093a6fd2fa57fbca8793a471b8cd9693cc9440a11",
+          "review": "../purchase-current-visual-review/sheet-08.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "e4b39abff8590fa3d9705b4cc4825e880de8d09aa65d5b60e34fdc2be456f7a8",
+          "review": "../purchase-current-visual-review/sheet-09.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-challenge-back-dismissed-320-2x.long.png",
+      "sha256": "8baec43d29dbcc14df024c676cfc14902c1de95fd0694c0b18609f833c82b039",
+      "width": 320,
+      "height": 2008,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2761111ff7ead03718e169cfe59fac0a82c0f0a0588fb9342bc34d69352d876b",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-22.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "ee8e04271895b13e4d9e600a9fd59e5fa640aa1963c69273933b0686a5efaba5",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-21.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "d58ded7df8989fa893e947db4482e9fc1a1fd022f62db9aeb8da29273611fd00",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-22.png#tile-3"
+        },
+        {
+          "y0": 1950,
+          "y1": 2008,
+          "pixel_sha256": "5cdc0b70ac1139c3de69107062b125a6bdb63d97da63e5192ca87abbdc1f0be9",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-34.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-challenge-back-dismissed-320-2x.png",
+      "sha256": "fd5d42e9dc63935e46fd4a02b6da3ed8b73e6bc313db2055e4025decdaf18562",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "224532604c16d4061cad40218219f6fa9d8f85db8e023ae12c2f8eb2d1d69beb",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-27.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "606aebea479c96426091e659170dcac2995383f00e61a4460817d046c4c60b29",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-34.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-challenge-back-dismissed-393-1x.long.png",
+      "sha256": "70d81eadfd02853583ec625c333020cd5bb1f87d7fed3b6ffff1ca2c76a3c2cc",
+      "width": 393,
+      "height": 1000,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "35e98e8bce5f0b6f7de91e98bd8f83e892d9f77034bb0edcfb80725b5d2e3033",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-23.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1000,
+          "pixel_sha256": "baace0aed656d5225c4e2bb8d1becfdd6f09bbe605197224facc64734e33a5ff",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-34.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-challenge-back-dismissed-393-1x.png",
+      "sha256": "8f4fd09dbd3073ff5ded8d02d58f24c852405cd0adcff9deb548c76832fa8e2d",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "35e98e8bce5f0b6f7de91e98bd8f83e892d9f77034bb0edcfb80725b5d2e3033",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-23.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "10bd514446fb673176419abd5141c173e3a056ec004b916b703758e21c47a929",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-34.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-challenge-closed-320-2x.long.png",
+      "sha256": "8baec43d29dbcc14df024c676cfc14902c1de95fd0694c0b18609f833c82b039",
+      "width": 320,
+      "height": 2008,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2761111ff7ead03718e169cfe59fac0a82c0f0a0588fb9342bc34d69352d876b",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-22.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "ee8e04271895b13e4d9e600a9fd59e5fa640aa1963c69273933b0686a5efaba5",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-21.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "d58ded7df8989fa893e947db4482e9fc1a1fd022f62db9aeb8da29273611fd00",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-22.png#tile-3"
+        },
+        {
+          "y0": 1950,
+          "y1": 2008,
+          "pixel_sha256": "5cdc0b70ac1139c3de69107062b125a6bdb63d97da63e5192ca87abbdc1f0be9",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-34.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-challenge-closed-320-2x.png",
+      "sha256": "fd5d42e9dc63935e46fd4a02b6da3ed8b73e6bc313db2055e4025decdaf18562",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "224532604c16d4061cad40218219f6fa9d8f85db8e023ae12c2f8eb2d1d69beb",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-27.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "606aebea479c96426091e659170dcac2995383f00e61a4460817d046c4c60b29",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-34.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-challenge-closed-393-1x.long.png",
+      "sha256": "70d81eadfd02853583ec625c333020cd5bb1f87d7fed3b6ffff1ca2c76a3c2cc",
+      "width": 393,
+      "height": 1000,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "35e98e8bce5f0b6f7de91e98bd8f83e892d9f77034bb0edcfb80725b5d2e3033",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-23.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1000,
+          "pixel_sha256": "baace0aed656d5225c4e2bb8d1becfdd6f09bbe605197224facc64734e33a5ff",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-34.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-challenge-closed-393-1x.png",
+      "sha256": "8f4fd09dbd3073ff5ded8d02d58f24c852405cd0adcff9deb548c76832fa8e2d",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "35e98e8bce5f0b6f7de91e98bd8f83e892d9f77034bb0edcfb80725b5d2e3033",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-23.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "10bd514446fb673176419abd5141c173e3a056ec004b916b703758e21c47a929",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-34.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-challenge-reopened-320-2x.long.png",
+      "sha256": "da4a547197809e960690dcf919762787852c97897da4d0f1eeb796bc99a77a87",
+      "width": 320,
+      "height": 1144,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2af4d1b98741b455eb45a9dc084742162236af2a75bf649c5672a0e3d646af48",
+          "review": "sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1144,
+          "pixel_sha256": "22add4384e1e3156d72a391b3f1b5d9d4b2399eff2a2e31a24a93ba3a54e8bc6",
+          "review": "sheet-01.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-challenge-reopened-320-2x.png",
+      "sha256": "7798c0698a355df25f610f1ea0436286cfde7f2043b8b32c9df9e1efe42507cb",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2af4d1b98741b455eb45a9dc084742162236af2a75bf649c5672a0e3d646af48",
+          "review": "sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a022a0ef8eb2d13b5b9fe0aff68c1d400b2a8379e015dbcef1bc1b95fd600445",
+          "review": "sheet-01.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-challenge-reopened-393-1x.png",
+      "sha256": "ccb5fd380acc7eb2d1d58f8a643f8c5294a9770dceabc2923c70d75d4d49cbd3",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9d1ed5bb76b2d1372303d60c8eba36f2bd82c8d0c5c79570710f93d525b61e64",
+          "review": "sheet-01.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "85c40b3556f88549ec22785d3ef6b00082ba1cb154e2678501a77ee635b366ff",
+          "review": "../purchase-current-visual-review/sheet-04.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-checkout-back-blocked-320-2x.long.png",
+      "sha256": "ca6f116a20f13bb2b47263dce0aa2f765dd9a2109e4357e1784a4227c5614d54",
+      "width": 320,
+      "height": 1040,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c24765b8c38a4f125b9b6834f9098f84d25a047a28a7c51cf3c7e7afb4631b14",
+          "review": "sheet-01.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1040,
+          "pixel_sha256": "a4d997adc14f1b22fe60647033171697ac1995fc36036ac2976aa82d2c66d9fe",
+          "review": "sheet-01.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-checkout-back-blocked-320-2x.png",
+      "sha256": "9f9dad4a4ad43274562faebaf9e557951f3efbd513c0464cfe4d7f82649ca828",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "23be1e2618dca548e9730492146267bb6717f54721a51f0ea304d9959f98bc29",
+          "review": "sheet-02.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "b2cc8172ffcf56d3b6275a7a395dafa8d3426ad8b1cc4f2410b34988f0d16741",
+          "review": "sheet-02.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-checkout-back-blocked-393-1x.png",
+      "sha256": "88270093b619de8003ebb69d9c9f693932ef831c16304e68758b06d837056949",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "040cb2303e43e1f9dea1ba92cdbb025e8150a8e6b1a1bd68c6bdef40c11cae6c",
+          "review": "sheet-02.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "87105fcafc5eccc829fd41b00e250a770538d15a6c87e2a4358bb086662ba442",
+          "review": "sheet-02.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-checkout-error-320-2x.long.png",
+      "sha256": "1338d3bcdc8b915373d16130c913a7c756d0d9aa03722300ecde556238f21de5",
+      "width": 320,
+      "height": 1410,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a1ca659ce26d8423b7a8286451af5b471c46cbad207943d2c38a608f2f551209",
+          "review": "sheet-02.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "09d028da92b71ed991b8736b01f801d7b811a1e2181b111807092198197c2962",
+          "review": "sheet-02.png#tile-5"
+        },
+        {
+          "y0": 1300,
+          "y1": 1410,
+          "pixel_sha256": "01ed787f741e4b669af0c8ca7250c85671f319ea803b2de2b0192c957eb463eb",
+          "review": "sheet-03.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-checkout-error-320-2x.png",
+      "sha256": "39579b2734ac75da8db052f69723d8d2e143b10bfe89996218b1a36869d94676",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "350b249a9d6a1083fbffcc50d6d01358060607e29650214796bd1ce937cad2bd",
+          "review": "sheet-03.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "22c0c1b5bdb497adafffca99a4e5219ff24091438d52994baeaae40a14d9cde2",
+          "review": "sheet-03.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-checkout-error-393-1x.png",
+      "sha256": "199b2d945026fa28a9ad7d1c9d8b5f16c9841aadf636ca1a5216eb69048e252b",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ef29b335eaca2e4864265821dfb027b4b0313c2b0c95edcbb7fc146bcff172ea",
+          "review": "sheet-03.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "baa9a7b19983abd57341f2b0b55b8c3e39a6d847de56056f446ad312bd4c160a",
+          "review": "sheet-03.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-checkout-pending-320-2x.long.png",
+      "sha256": "ca6f116a20f13bb2b47263dce0aa2f765dd9a2109e4357e1784a4227c5614d54",
+      "width": 320,
+      "height": 1040,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c24765b8c38a4f125b9b6834f9098f84d25a047a28a7c51cf3c7e7afb4631b14",
+          "review": "sheet-01.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1040,
+          "pixel_sha256": "a4d997adc14f1b22fe60647033171697ac1995fc36036ac2976aa82d2c66d9fe",
+          "review": "sheet-01.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-checkout-pending-320-2x.png",
+      "sha256": "9f9dad4a4ad43274562faebaf9e557951f3efbd513c0464cfe4d7f82649ca828",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "23be1e2618dca548e9730492146267bb6717f54721a51f0ea304d9959f98bc29",
+          "review": "sheet-02.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "b2cc8172ffcf56d3b6275a7a395dafa8d3426ad8b1cc4f2410b34988f0d16741",
+          "review": "sheet-02.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-checkout-pending-393-1x.png",
+      "sha256": "88270093b619de8003ebb69d9c9f693932ef831c16304e68758b06d837056949",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "040cb2303e43e1f9dea1ba92cdbb025e8150a8e6b1a1bd68c6bdef40c11cae6c",
+          "review": "sheet-02.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "87105fcafc5eccc829fd41b00e250a770538d15a6c87e2a4358bb086662ba442",
+          "review": "sheet-02.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-create-401-320-2x.long.png",
+      "sha256": "a66e62d473cdfa330186ee3d81048d50b9f66aee41d01dcd3ae0ee0c8c8e9fa7",
+      "width": 320,
+      "height": 1428,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2dae1ff87388bc7bbd5dc0e6091edd1332a5d904d51d7a4f1ccbbbc4c8a32f0b",
+          "review": "../purchase-current-visual-review/sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "79cb26b71dee1ac989d6b729e88789ffa5247e0791824dde85625ef26214c189",
+          "review": "sheet-03.png#tile-5"
+        },
+        {
+          "y0": 1300,
+          "y1": 1428,
+          "pixel_sha256": "df812492914a1664c7ca21f27efb04488ff426d4bd9f1e6595ba6c322cd286a4",
+          "review": "../purchase-current-visual-review/sheet-07.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-create-401-320-2x.png",
+      "sha256": "4eb2bb1800fe37b2a1fc3e1cc64b57bd61f82f8c0e1acffc33c5082046862fe3",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2dae1ff87388bc7bbd5dc0e6091edd1332a5d904d51d7a4f1ccbbbc4c8a32f0b",
+          "review": "../purchase-current-visual-review/sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "48a17ff6803871c857d5c9dd96051b340b6894eccfb56f1c9b721fe56b8b4e28",
+          "review": "../purchase-current-visual-review/sheet-11.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-create-401-393-1x.long.png",
+      "sha256": "7625e5a0f7e9956db7c0c81ec36030ea9a01eaeb1822ab911b5efbebd832e71b",
+      "width": 393,
+      "height": 926,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c22b41cdf90510207da8915a1f434aa7ad7c83283c261623a5bebbd5aa765b61",
+          "review": "../purchase-current-visual-review/sheet-07.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 926,
+          "pixel_sha256": "e152e7f3e6695c4d804cc3db29aee2cfd2a8fa15fb211e6689209c49bb606d4a",
+          "review": "sheet-04.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-create-401-393-1x.png",
+      "sha256": "f671683a4b7c257e5dea095db95ccaa3eb5067453737144958418b8fd0116b67",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c22b41cdf90510207da8915a1f434aa7ad7c83283c261623a5bebbd5aa765b61",
+          "review": "../purchase-current-visual-review/sheet-07.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "24fbf70146ba16f673d52b4283f0625d58e56784ee7d2b1a14c5ed4b049c2fce",
+          "review": "sheet-04.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-create-403-320-2x.long.png",
+      "sha256": "d9c01a22025b63910cae26dcb5fc8d239110a5c8bc15da35f79eec4e131a25cd",
+      "width": 320,
+      "height": 1388,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2dae1ff87388bc7bbd5dc0e6091edd1332a5d904d51d7a4f1ccbbbc4c8a32f0b",
+          "review": "../purchase-current-visual-review/sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "a0dd7f58d059c510910ff32f03aea8be441e2a4f8777a2319dbd0f6cb263852a",
+          "review": "sheet-04.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1388,
+          "pixel_sha256": "078b75830250c25d29af630b4c3955181d23b29fd65e10ded02e9dfd9f19e4a9",
+          "review": "sheet-04.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-create-403-320-2x.png",
+      "sha256": "4eb2bb1800fe37b2a1fc3e1cc64b57bd61f82f8c0e1acffc33c5082046862fe3",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2dae1ff87388bc7bbd5dc0e6091edd1332a5d904d51d7a4f1ccbbbc4c8a32f0b",
+          "review": "../purchase-current-visual-review/sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "48a17ff6803871c857d5c9dd96051b340b6894eccfb56f1c9b721fe56b8b4e28",
+          "review": "../purchase-current-visual-review/sheet-11.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-create-403-393-1x.long.png",
+      "sha256": "1439e80351b9420835e4f42b9e39a35a8bc5e611dfc67464c19baa4efd3bd600",
+      "width": 393,
+      "height": 926,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c22b41cdf90510207da8915a1f434aa7ad7c83283c261623a5bebbd5aa765b61",
+          "review": "../purchase-current-visual-review/sheet-07.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 926,
+          "pixel_sha256": "d29b54fd76e9e735c67ff0141f3fc9ea5a014713479509860ba54385ef4c406a",
+          "review": "sheet-04.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-create-403-393-1x.png",
+      "sha256": "2c28b50bf478a5140b0453231a438b20cd96fbc0e7c44a804655733f25aebf5b",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c22b41cdf90510207da8915a1f434aa7ad7c83283c261623a5bebbd5aa765b61",
+          "review": "../purchase-current-visual-review/sheet-07.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "e422f967335684388c2508d271e450f1a12f707ef3e765b25b561cb6dd888a6b",
+          "review": "sheet-04.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-create-409-320-2x.long.png",
+      "sha256": "b7f808b9ac16a4bee06035ecd0ea93c857ef0534a44476e986425f3dd8d7a46d",
+      "width": 320,
+      "height": 1428,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2dae1ff87388bc7bbd5dc0e6091edd1332a5d904d51d7a4f1ccbbbc4c8a32f0b",
+          "review": "../purchase-current-visual-review/sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "da6dc220a21218fac60cda87b3bc535eca7d972cc4ec8f349d3d39bf8e006b19",
+          "review": "sheet-05.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1428,
+          "pixel_sha256": "df812492914a1664c7ca21f27efb04488ff426d4bd9f1e6595ba6c322cd286a4",
+          "review": "../purchase-current-visual-review/sheet-07.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-create-409-320-2x.png",
+      "sha256": "4eb2bb1800fe37b2a1fc3e1cc64b57bd61f82f8c0e1acffc33c5082046862fe3",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2dae1ff87388bc7bbd5dc0e6091edd1332a5d904d51d7a4f1ccbbbc4c8a32f0b",
+          "review": "../purchase-current-visual-review/sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "48a17ff6803871c857d5c9dd96051b340b6894eccfb56f1c9b721fe56b8b4e28",
+          "review": "../purchase-current-visual-review/sheet-11.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-create-409-393-1x.long.png",
+      "sha256": "d59d0c0481b5e0279d4c03b5d54f4c6204641c1dad39a9bde77ba9b3775ce8be",
+      "width": 393,
+      "height": 926,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c22b41cdf90510207da8915a1f434aa7ad7c83283c261623a5bebbd5aa765b61",
+          "review": "../purchase-current-visual-review/sheet-07.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 926,
+          "pixel_sha256": "b9489eea804ac33dfebfaf5fb075ca5684132b31951c36101f1a6dd441203c31",
+          "review": "sheet-05.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-create-409-393-1x.png",
+      "sha256": "e1515eae569456a4846aec638fd1e6b0a84cd50fada11bdd03dcef1856342d48",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c22b41cdf90510207da8915a1f434aa7ad7c83283c261623a5bebbd5aa765b61",
+          "review": "../purchase-current-visual-review/sheet-07.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "66723dfdd8f21556c179f952956611273bc0cc6148f9dccb6252077029dd0c4c",
+          "review": "sheet-05.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-create-422-320-2x.long.png",
+      "sha256": "c42c9404a3ef557aed5a97887f25f36168e0fe4bc856202337d28eeaafc4c742",
+      "width": 320,
+      "height": 1388,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2dae1ff87388bc7bbd5dc0e6091edd1332a5d904d51d7a4f1ccbbbc4c8a32f0b",
+          "review": "../purchase-current-visual-review/sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "6e1f6ad68a6aeb029219398d44e0d8e384edbb248473f70fa1f2995bac2379b5",
+          "review": "sheet-05.png#tile-3"
+        },
+        {
+          "y0": 1300,
+          "y1": 1388,
+          "pixel_sha256": "078b75830250c25d29af630b4c3955181d23b29fd65e10ded02e9dfd9f19e4a9",
+          "review": "sheet-04.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-create-422-320-2x.png",
+      "sha256": "4eb2bb1800fe37b2a1fc3e1cc64b57bd61f82f8c0e1acffc33c5082046862fe3",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2dae1ff87388bc7bbd5dc0e6091edd1332a5d904d51d7a4f1ccbbbc4c8a32f0b",
+          "review": "../purchase-current-visual-review/sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "48a17ff6803871c857d5c9dd96051b340b6894eccfb56f1c9b721fe56b8b4e28",
+          "review": "../purchase-current-visual-review/sheet-11.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-create-422-393-1x.long.png",
+      "sha256": "a8b660e168a28c3ec752347b2553791f0a8826b981abc31b355a51e70b4817a8",
+      "width": 393,
+      "height": 926,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c22b41cdf90510207da8915a1f434aa7ad7c83283c261623a5bebbd5aa765b61",
+          "review": "../purchase-current-visual-review/sheet-07.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 926,
+          "pixel_sha256": "bb0041daa8ea0eb742e57331c514351c5154260cddee86d1e80af39d094f1138",
+          "review": "sheet-05.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-create-422-393-1x.png",
+      "sha256": "30074575383da1cf4ef60c230d9ae259e33dc9c95b8c29ed5a00a51f3753fa26",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c22b41cdf90510207da8915a1f434aa7ad7c83283c261623a5bebbd5aa765b61",
+          "review": "../purchase-current-visual-review/sheet-07.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "6b3927eaddcc3128825149eb741111cbda5a167f2cf3608bf1fbce193c380305",
+          "review": "sheet-05.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-create-business-recovered-320-2x.long.png",
+      "sha256": "d18f384c1f1fb3c9c1be0cd266324b94acfc56758961d7dfb08ea39442e8fe83",
+      "width": 320,
+      "height": 1489,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "06e196fe5d11e32c82672e36f55012f60d23ff0d40b194feef3e2d134dab78b5",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-36.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "8082e8281fa2d4ef25921a4315a02f918a05e97632580c1039009de5391258b3",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-36.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1489,
+          "pixel_sha256": "595f64b013d82f617a7f83f57e43a70cc013a12871bdfb5f78ce2b271e5ad60e",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-36.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-create-business-recovered-320-2x.png",
+      "sha256": "d2f1986a83552638f2cba1d7670adbf8ff0349ba16c96667590e1c43e8d60b2c",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "e04dad8aa4b7fcdf5f3aa573d1247a118b0eb6d22544cab4cf3e5bade07cdf90",
+          "review": "../purchase-current-visual-review/sheet-08.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "764f4109c8d0ad8c374540bcb297b25f72537581798f2dfe6b7b5183fff4bf17",
+          "review": "../purchase-current-visual-review/sheet-08.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-create-business-recovered-393-1x.long.png",
+      "sha256": "fb476e8b3f411994d0f94e14c172f998bc9f957331a0a297605dc7926b3998c0",
+      "width": 393,
+      "height": 906,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "873c9465f5c3323f3905a273f0c7ffdbbc8729c0e1b6b5e4b2aa990437037275",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-36.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 906,
+          "pixel_sha256": "18cd70f708187316be48b2916722e9637c7d2e5d2e10c0abfe0f0d9e0ae80f2b",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-37.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-create-business-recovered-393-1x.png",
+      "sha256": "78bc236ce60a6bac2845ba3f312d0c7fe51412305e7f9e9d51c87de36372c607",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b2fd2eeca83a23ef6b87517093a6fd2fa57fbca8793a471b8cd9693cc9440a11",
+          "review": "../purchase-current-visual-review/sheet-08.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "e4b39abff8590fa3d9705b4cc4825e880de8d09aa65d5b60e34fdc2be456f7a8",
+          "review": "../purchase-current-visual-review/sheet-09.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-eligibility-back-dismissed-320-2x.long.png",
+      "sha256": "ddeeabe3d2ea7801edf98d82f32a83767c0c8990ca59a7dc9ce26631c011437e",
+      "width": 320,
+      "height": 2008,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2761111ff7ead03718e169cfe59fac0a82c0f0a0588fb9342bc34d69352d876b",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-22.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "ee8e04271895b13e4d9e600a9fd59e5fa640aa1963c69273933b0686a5efaba5",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-21.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "d58ded7df8989fa893e947db4482e9fc1a1fd022f62db9aeb8da29273611fd00",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-22.png#tile-3"
+        },
+        {
+          "y0": 1950,
+          "y1": 2008,
+          "pixel_sha256": "889273b4de5ae28a8c66c15256496d50e1ca0895766215915b752a542c783fb4",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-22.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-eligibility-back-dismissed-320-2x.png",
+      "sha256": "288f60072696050aa5563436dad12c7d4adc0821f266262c7398085bcfaed356",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "224532604c16d4061cad40218219f6fa9d8f85db8e023ae12c2f8eb2d1d69beb",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-27.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "515cdac34ef810c0341adb482ffbb299c3a22bc25fe2e49a3e430a36db2fa720",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-26.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-eligibility-back-dismissed-393-1x.long.png",
+      "sha256": "32173148e547dacd963cd69e9dc624e38f1ae4cfa7883e83d53241d2860a5cb2",
+      "width": 393,
+      "height": 1000,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "35e98e8bce5f0b6f7de91e98bd8f83e892d9f77034bb0edcfb80725b5d2e3033",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-23.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1000,
+          "pixel_sha256": "99099c1f732d65db360ee805fcfafcb3cfa196908aa2df57f7f216ec81dc8808",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-23.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-eligibility-back-dismissed-393-1x.png",
+      "sha256": "e560fd8a139273bc75c4ca3b2aaef2837dd245bf86a2f327172244794f552bfb",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "35e98e8bce5f0b6f7de91e98bd8f83e892d9f77034bb0edcfb80725b5d2e3033",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-23.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "ca6f4f9941a943122673f21fe5c2391f6375e028c05085cc08588ce28f3a0382",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-27.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-eligibility-idle-320-2x.long.png",
+      "sha256": "d5426d93d0c5c0989a63f3b22f216b99f5dbb316efea0e8374622234bd36e997",
+      "width": 320,
+      "height": 1094,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2dae1ff87388bc7bbd5dc0e6091edd1332a5d904d51d7a4f1ccbbbc4c8a32f0b",
+          "review": "../purchase-current-visual-review/sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1094,
+          "pixel_sha256": "a8063509e1b30a76bcffdee757b45dfb0d43f92c63d65ae0cb664e335ec205f4",
+          "review": "../purchase-current-visual-review/sheet-11.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-eligibility-idle-320-2x.png",
+      "sha256": "727108fe67f82faa5121ba32ad35892cdb5a0b5b26c1b41f9790c612b8b540ee",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2dae1ff87388bc7bbd5dc0e6091edd1332a5d904d51d7a4f1ccbbbc4c8a32f0b",
+          "review": "../purchase-current-visual-review/sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "654033b4f54e17fe4ebbab5648644ce4e3947f08c338f3c0fc0356d026edae83",
+          "review": "../purchase-current-visual-review/sheet-11.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-eligibility-idle-393-1x.png",
+      "sha256": "50936787f8c10d659c50da38c6a645bcf19ddc6f158ecbeaa1748d99158266dd",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b5f0b42d0b472d57426370369ab56e20734f42f121209f836b29762832761b11",
+          "review": "../purchase-current-visual-review/sheet-11.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "4014a6553dfa8c65fcc34e0c2f4dfca8823777a8a8dc9ab194f069e19dadd33d",
+          "review": "../purchase-current-visual-review/sheet-11.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-eligibility-outside-retained-320-2x.long.png",
+      "sha256": "d5426d93d0c5c0989a63f3b22f216b99f5dbb316efea0e8374622234bd36e997",
+      "width": 320,
+      "height": 1094,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2dae1ff87388bc7bbd5dc0e6091edd1332a5d904d51d7a4f1ccbbbc4c8a32f0b",
+          "review": "../purchase-current-visual-review/sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1094,
+          "pixel_sha256": "a8063509e1b30a76bcffdee757b45dfb0d43f92c63d65ae0cb664e335ec205f4",
+          "review": "../purchase-current-visual-review/sheet-11.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-eligibility-outside-retained-320-2x.png",
+      "sha256": "727108fe67f82faa5121ba32ad35892cdb5a0b5b26c1b41f9790c612b8b540ee",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2dae1ff87388bc7bbd5dc0e6091edd1332a5d904d51d7a4f1ccbbbc4c8a32f0b",
+          "review": "../purchase-current-visual-review/sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "654033b4f54e17fe4ebbab5648644ce4e3947f08c338f3c0fc0356d026edae83",
+          "review": "../purchase-current-visual-review/sheet-11.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-eligibility-outside-retained-393-1x.png",
+      "sha256": "50936787f8c10d659c50da38c6a645bcf19ddc6f158ecbeaa1748d99158266dd",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b5f0b42d0b472d57426370369ab56e20734f42f121209f836b29762832761b11",
+          "review": "../purchase-current-visual-review/sheet-11.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "4014a6553dfa8c65fcc34e0c2f4dfca8823777a8a8dc9ab194f069e19dadd33d",
+          "review": "../purchase-current-visual-review/sheet-11.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-errors-catalog-320-2x.long.png",
+      "sha256": "dfe029de1a0b06403e982e81a22f52e064e3a84ed88f666dd89d8d473753c230",
+      "width": 320,
+      "height": 3161,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "3080ed1e9099f20a15fa2c3cb615ed0d8624a066c7a7c5e4cb570f52bd8263fd",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "701d67450a0486656e4e942b279540206444850701fa3805c2c7e73b81561570",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-01.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "3921da55ed9b6d493f46e0f448c55e776ec191ca0647b5bce138219a0c5eb232",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-01.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "a752944d98d6700c5344afd38980d7369b801eb3d5c3a5edadbec7f81d3216ce",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-01.png#tile-3"
+        },
+        {
+          "y0": 2600,
+          "y1": 3161,
+          "pixel_sha256": "c2abcae664025db75933328ad375b6ecc780d49a335ccec5a2581efe80f05229",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-01.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-errors-catalog-320-2x.png",
+      "sha256": "369af5703768cbadeb9a63085d13f89d7f607787ba51e860788d4035a16704ad",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "3080ed1e9099f20a15fa2c3cb615ed0d8624a066c7a7c5e4cb570f52bd8263fd",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "9e6d7dad877015a6f5a925003120c1d9de941debc3cd9b24c9a49f3fe8f798cd",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-01.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-errors-catalog-393-1x.long.png",
+      "sha256": "626202225717f37c86a1dcb0abec46903f41943181d0ea28951e6e6c20699541",
+      "width": 393,
+      "height": 1615,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6df2083d88e72ff4cf599bc51a8bb8d3d96204d4c77266a8a7c617207b58a42b",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-02.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "ac603a6c0ae53bcbb33c98452c22a6f916d5b3e323ade4a8ba1ec569cca03c7f",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-02.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1615,
+          "pixel_sha256": "b5ffaff21f524e96af55ffee46fa2defa5398d0f8a37ebd3e08ce17ab3512c27",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-02.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-errors-catalog-393-1x.png",
+      "sha256": "13c6c89c1fbfdfaed6e7ab1543ca02599d84121c7e0aa2401bc8a609f7ead7ac",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6df2083d88e72ff4cf599bc51a8bb8d3d96204d4c77266a8a7c617207b58a42b",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-02.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "b44c3d7a72178fd743ec2bf9b67abd99b21e97c5af8b0cbae5f17feb4ecb411f",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-02.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-errors-catalog-return-320-2x.long.png",
+      "sha256": "dfe029de1a0b06403e982e81a22f52e064e3a84ed88f666dd89d8d473753c230",
+      "width": 320,
+      "height": 3161,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "3080ed1e9099f20a15fa2c3cb615ed0d8624a066c7a7c5e4cb570f52bd8263fd",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "701d67450a0486656e4e942b279540206444850701fa3805c2c7e73b81561570",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-01.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "3921da55ed9b6d493f46e0f448c55e776ec191ca0647b5bce138219a0c5eb232",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-01.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "a752944d98d6700c5344afd38980d7369b801eb3d5c3a5edadbec7f81d3216ce",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-01.png#tile-3"
+        },
+        {
+          "y0": 2600,
+          "y1": 3161,
+          "pixel_sha256": "c2abcae664025db75933328ad375b6ecc780d49a335ccec5a2581efe80f05229",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-01.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-errors-catalog-return-320-2x.png",
+      "sha256": "f2ec56f014f1960fe02390b2b121ba2c39540347f17d732ba9d0286de93a85c2",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "98469939c3fbe64553b00de836c820ec747f588d8238815f1f6bd01c90fa22d6",
+          "review": "../purchase-current-visual-review/sheet-02.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "09ce5b1995ab82a58164b0f25052d71eca9f1c12aa54f3ae106833a33600bc59",
+          "review": "../purchase-current-visual-review/sheet-03.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-errors-catalog-return-393-1x.long.png",
+      "sha256": "626202225717f37c86a1dcb0abec46903f41943181d0ea28951e6e6c20699541",
+      "width": 393,
+      "height": 1615,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6df2083d88e72ff4cf599bc51a8bb8d3d96204d4c77266a8a7c617207b58a42b",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-02.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "ac603a6c0ae53bcbb33c98452c22a6f916d5b3e323ade4a8ba1ec569cca03c7f",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-02.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1615,
+          "pixel_sha256": "b5ffaff21f524e96af55ffee46fa2defa5398d0f8a37ebd3e08ce17ab3512c27",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-02.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-errors-catalog-return-393-1x.png",
+      "sha256": "b01a4de20015e5475364761777f753155bcc1465c91f5eda0da5a9654f7d6d1a",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "141eb4aa777ee479f8ce1eac652fab35872fb11ed05ca650c82cccfc3ae10eef",
+          "review": "../purchase-current-visual-review/sheet-03.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "c138d5cefb04dfa94eeca300401dd0318eb4fe86e502baa247a82725d625dab8",
+          "review": "../purchase-current-visual-review/sheet-03.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-errors-home-320-2x.long.png",
+      "sha256": "b29f1f9dc909ca023dcd2865b0d4424a7485a4fb1dd4d05f54d8ee61e6cf46ef",
+      "width": 320,
+      "height": 1939,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a6aa9ef781460e5016527f099324419f84c6e4f14cdb26c410651cd7359b41ef",
+          "review": "../mom-rest-control-visual-review/sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "0edf1d289b2e804b112ca91367c51524ae8a6a6a4684a4fdcad651b0ae8de7ad",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1939,
+          "pixel_sha256": "8824f3d60a1ba788460adc4d5731a39ee81dafb5cb1f7d7112dd43123bbe2812",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-errors-home-320-2x.png",
+      "sha256": "6b61a480f7a3fd5ddb29685624aed748a99b94ad55016153855b11225ef09868",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a6aa9ef781460e5016527f099324419f84c6e4f14cdb26c410651cd7359b41ef",
+          "review": "../mom-rest-control-visual-review/sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1462d46c4861c29041d879736402097e4fd061fcb6e577142cd6e832cb70fae0",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-errors-home-393-1x.long.png",
+      "sha256": "0a4e3294f0ff67f0d7ed84ee3eacb393b50571fb4db300a7d15899ba9359a330",
+      "width": 393,
+      "height": 917,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa661999d6307948942c23dc2e7dad221367a614b3ae09dd12dec24bc67fec6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 917,
+          "pixel_sha256": "134109b5afc9a0d972ecc00b197fb963d8131bfc37dbfad2a4c51a0a091a86ad",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-errors-home-393-1x.png",
+      "sha256": "be291808401e7f353b8f14552b0df4a698f3edd191e5e2d770c66c2e129fc145",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa661999d6307948942c23dc2e7dad221367a614b3ae09dd12dec24bc67fec6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3208ac8b3b1d4a7464bc46ef7618c8e19bd85dee870d86c1847457571b6198a6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-errors-home-return-320-2x.long.png",
+      "sha256": "b29f1f9dc909ca023dcd2865b0d4424a7485a4fb1dd4d05f54d8ee61e6cf46ef",
+      "width": 320,
+      "height": 1939,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a6aa9ef781460e5016527f099324419f84c6e4f14cdb26c410651cd7359b41ef",
+          "review": "../mom-rest-control-visual-review/sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "0edf1d289b2e804b112ca91367c51524ae8a6a6a4684a4fdcad651b0ae8de7ad",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1939,
+          "pixel_sha256": "8824f3d60a1ba788460adc4d5731a39ee81dafb5cb1f7d7112dd43123bbe2812",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-errors-home-return-320-2x.png",
+      "sha256": "6b61a480f7a3fd5ddb29685624aed748a99b94ad55016153855b11225ef09868",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a6aa9ef781460e5016527f099324419f84c6e4f14cdb26c410651cd7359b41ef",
+          "review": "../mom-rest-control-visual-review/sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1462d46c4861c29041d879736402097e4fd061fcb6e577142cd6e832cb70fae0",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-errors-home-return-393-1x.long.png",
+      "sha256": "0a4e3294f0ff67f0d7ed84ee3eacb393b50571fb4db300a7d15899ba9359a330",
+      "width": 393,
+      "height": 917,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa661999d6307948942c23dc2e7dad221367a614b3ae09dd12dec24bc67fec6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 917,
+          "pixel_sha256": "134109b5afc9a0d972ecc00b197fb963d8131bfc37dbfad2a4c51a0a091a86ad",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-errors-home-return-393-1x.png",
+      "sha256": "be291808401e7f353b8f14552b0df4a698f3edd191e5e2d770c66c2e129fc145",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa661999d6307948942c23dc2e7dad221367a614b3ae09dd12dec24bc67fec6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3208ac8b3b1d4a7464bc46ef7618c8e19bd85dee870d86c1847457571b6198a6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-errors-package-320-2x.long.png",
+      "sha256": "ddeeabe3d2ea7801edf98d82f32a83767c0c8990ca59a7dc9ce26631c011437e",
+      "width": 320,
+      "height": 2008,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2761111ff7ead03718e169cfe59fac0a82c0f0a0588fb9342bc34d69352d876b",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-22.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "ee8e04271895b13e4d9e600a9fd59e5fa640aa1963c69273933b0686a5efaba5",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-21.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "d58ded7df8989fa893e947db4482e9fc1a1fd022f62db9aeb8da29273611fd00",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-22.png#tile-3"
+        },
+        {
+          "y0": 1950,
+          "y1": 2008,
+          "pixel_sha256": "889273b4de5ae28a8c66c15256496d50e1ca0895766215915b752a542c783fb4",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-22.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-errors-package-320-2x.png",
+      "sha256": "288f60072696050aa5563436dad12c7d4adc0821f266262c7398085bcfaed356",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "224532604c16d4061cad40218219f6fa9d8f85db8e023ae12c2f8eb2d1d69beb",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-27.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "515cdac34ef810c0341adb482ffbb299c3a22bc25fe2e49a3e430a36db2fa720",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-26.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-errors-package-393-1x.long.png",
+      "sha256": "32173148e547dacd963cd69e9dc624e38f1ae4cfa7883e83d53241d2860a5cb2",
+      "width": 393,
+      "height": 1000,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "35e98e8bce5f0b6f7de91e98bd8f83e892d9f77034bb0edcfb80725b5d2e3033",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-23.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1000,
+          "pixel_sha256": "99099c1f732d65db360ee805fcfafcb3cfa196908aa2df57f7f216ec81dc8808",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-23.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-errors-package-393-1x.png",
+      "sha256": "e560fd8a139273bc75c4ca3b2aaef2837dd245bf86a2f327172244794f552bfb",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "35e98e8bce5f0b6f7de91e98bd8f83e892d9f77034bb0edcfb80725b5d2e3033",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-23.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "ca6f4f9941a943122673f21fe5c2391f6375e028c05085cc08588ce28f3a0382",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-27.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-launch-accepted-320-2x.long.png",
+      "sha256": "7f8052795770e7f5a779424d6f39cd8bc9eb47583514deed9191298c47c1b875",
+      "width": 320,
+      "height": 1076,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a1ca659ce26d8423b7a8286451af5b471c46cbad207943d2c38a608f2f551209",
+          "review": "sheet-02.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1076,
+          "pixel_sha256": "420e9f82b69537c838ccbdc129521c6e70a19daec6c01511c41eedcba273bb0e",
+          "review": "sheet-06.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-launch-accepted-320-2x.png",
+      "sha256": "39579b2734ac75da8db052f69723d8d2e143b10bfe89996218b1a36869d94676",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "350b249a9d6a1083fbffcc50d6d01358060607e29650214796bd1ce937cad2bd",
+          "review": "sheet-03.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "22c0c1b5bdb497adafffca99a4e5219ff24091438d52994baeaae40a14d9cde2",
+          "review": "sheet-03.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-launch-accepted-393-1x.png",
+      "sha256": "673b9e333e7002448eda45db717c345f3aa29f449b0838493b1ef49f29fa55ee",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "39f5d75bee5c4db219bbae5b48873e0a49bae04345407d77691f8bcbe8083f17",
+          "review": "sheet-06.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "5a38cda62a60dad50eb6c12ce2995d72c847b8e12d378415afdc352237a84c7d",
+          "review": "sheet-06.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-launch-back-blocked-320-2x.long.png",
+      "sha256": "ca6f116a20f13bb2b47263dce0aa2f765dd9a2109e4357e1784a4227c5614d54",
+      "width": 320,
+      "height": 1040,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c24765b8c38a4f125b9b6834f9098f84d25a047a28a7c51cf3c7e7afb4631b14",
+          "review": "sheet-01.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1040,
+          "pixel_sha256": "a4d997adc14f1b22fe60647033171697ac1995fc36036ac2976aa82d2c66d9fe",
+          "review": "sheet-01.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-launch-back-blocked-320-2x.png",
+      "sha256": "9f9dad4a4ad43274562faebaf9e557951f3efbd513c0464cfe4d7f82649ca828",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "23be1e2618dca548e9730492146267bb6717f54721a51f0ea304d9959f98bc29",
+          "review": "sheet-02.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "b2cc8172ffcf56d3b6275a7a395dafa8d3426ad8b1cc4f2410b34988f0d16741",
+          "review": "sheet-02.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-launch-back-blocked-393-1x.png",
+      "sha256": "88270093b619de8003ebb69d9c9f693932ef831c16304e68758b06d837056949",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "040cb2303e43e1f9dea1ba92cdbb025e8150a8e6b1a1bd68c6bdef40c11cae6c",
+          "review": "sheet-02.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "87105fcafc5eccc829fd41b00e250a770538d15a6c87e2a4358bb086662ba442",
+          "review": "sheet-02.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-launch-pending-320-2x.long.png",
+      "sha256": "ca6f116a20f13bb2b47263dce0aa2f765dd9a2109e4357e1784a4227c5614d54",
+      "width": 320,
+      "height": 1040,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c24765b8c38a4f125b9b6834f9098f84d25a047a28a7c51cf3c7e7afb4631b14",
+          "review": "sheet-01.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1040,
+          "pixel_sha256": "a4d997adc14f1b22fe60647033171697ac1995fc36036ac2976aa82d2c66d9fe",
+          "review": "sheet-01.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-launch-pending-320-2x.png",
+      "sha256": "9f9dad4a4ad43274562faebaf9e557951f3efbd513c0464cfe4d7f82649ca828",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "23be1e2618dca548e9730492146267bb6717f54721a51f0ea304d9959f98bc29",
+          "review": "sheet-02.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "b2cc8172ffcf56d3b6275a7a395dafa8d3426ad8b1cc4f2410b34988f0d16741",
+          "review": "sheet-02.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-launch-pending-393-1x.png",
+      "sha256": "88270093b619de8003ebb69d9c9f693932ef831c16304e68758b06d837056949",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "040cb2303e43e1f9dea1ba92cdbb025e8150a8e6b1a1bd68c6bdef40c11cae6c",
+          "review": "sheet-02.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "87105fcafc5eccc829fd41b00e250a770538d15a6c87e2a4358bb086662ba442",
+          "review": "sheet-02.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-launch-rejected-320-2x.long.png",
+      "sha256": "be97cf2d42793c4c6262ee050b8fcf866ad9c71866ff6b594f4eec5378f339ca",
+      "width": 320,
+      "height": 1376,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a1ca659ce26d8423b7a8286451af5b471c46cbad207943d2c38a608f2f551209",
+          "review": "sheet-02.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "621e02cfe6add26fc3c8296fd1763796abfc8aadb5189082a23e642e3f2cc60e",
+          "review": "sheet-06.png#tile-3"
+        },
+        {
+          "y0": 1300,
+          "y1": 1376,
+          "pixel_sha256": "c446f7279a7e5cb05b08cd1d8e5d8624c4de2e1c101c4d265a6b7006df8ca1c5",
+          "review": "sheet-06.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-launch-rejected-320-2x.png",
+      "sha256": "3d350dd6af97ae6322027b1a4410fe952f43034d1f87cccd447b5e3939743c6e",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "7bb3a07548f2a54bf801e4754baad53dacb3310f623ed8bf43c4af88f755c347",
+          "review": "sheet-06.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "02df3bc6807e6098e0a7eef324b9a18519d1cc69a9a1df96d22b15f3edd059fc",
+          "review": "sheet-07.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-launch-rejected-393-1x.png",
+      "sha256": "5368baee691e976448fdf2fed0effc2c32527264a4f61935bb7c1b890e232b0e",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "074a45104f87009411b13a321a2e2eeaed4251b396f83f2208e69673ae48194d",
+          "review": "sheet-07.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "77695fde6cfbd2a56c489331d336b8d6ec556e969c598a501df275d437786c7e",
+          "review": "sheet-07.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-new-card-320-2x.long.png",
+      "sha256": "d18f384c1f1fb3c9c1be0cd266324b94acfc56758961d7dfb08ea39442e8fe83",
+      "width": 320,
+      "height": 1489,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "06e196fe5d11e32c82672e36f55012f60d23ff0d40b194feef3e2d134dab78b5",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-36.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "8082e8281fa2d4ef25921a4315a02f918a05e97632580c1039009de5391258b3",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-36.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1489,
+          "pixel_sha256": "595f64b013d82f617a7f83f57e43a70cc013a12871bdfb5f78ce2b271e5ad60e",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-36.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-new-card-320-2x.png",
+      "sha256": "dab334e2152387f98780fcf7371e35dc30a8829e37f8fe60fceb5f69f4628c79",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "06e196fe5d11e32c82672e36f55012f60d23ff0d40b194feef3e2d134dab78b5",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-36.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "7c5cf1d7dd4d1b35cfaf604721a5cdaa45cc9eb56b0ede30e7f0e4438a404a3d",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-36.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-new-card-393-1x.long.png",
+      "sha256": "fb476e8b3f411994d0f94e14c172f998bc9f957331a0a297605dc7926b3998c0",
+      "width": 393,
+      "height": 906,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "873c9465f5c3323f3905a273f0c7ffdbbc8729c0e1b6b5e4b2aa990437037275",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-36.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 906,
+          "pixel_sha256": "18cd70f708187316be48b2916722e9637c7d2e5d2e10c0abfe0f0d9e0ae80f2b",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-37.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-new-card-393-1x.png",
+      "sha256": "2c34f3bf7d3664d1857f8e2db08716a839241943d354a4d1735399a34702f761",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "873c9465f5c3323f3905a273f0c7ffdbbc8729c0e1b6b5e4b2aa990437037275",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-36.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "7e522f2e996ccb57e78259accbc9348441c21fe6b4d9aba2cb7134b89f71c855",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-37.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-payment-401-320-2x.long.png",
+      "sha256": "5ed84d15dd38e9f9365aeb0baa831eb7f739f114b01c50cf3071ab5c1810d817",
+      "width": 320,
+      "height": 1823,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "06e196fe5d11e32c82672e36f55012f60d23ff0d40b194feef3e2d134dab78b5",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-36.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "8082e8281fa2d4ef25921a4315a02f918a05e97632580c1039009de5391258b3",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-36.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1823,
+          "pixel_sha256": "b4eab2345b3ba7255028a7b9425fbf644f4cf961b7a4ba9f87ca43587ab152e0",
+          "review": "sheet-07.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-payment-401-320-2x.png",
+      "sha256": "1ef8a1e1137e5e006da9f59b62f888fdaacb989b6cd6c60fc49ef7b8e051f343",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "33a820d4e88df08f7a28ea39597688bc463abd37f9c80a59a079a22f59903be5",
+          "review": "sheet-07.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "340262fed1d3343fb9c20698597410ec80504913d85209ecc6e24831a5a36659",
+          "review": "sheet-07.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-payment-401-393-1x.long.png",
+      "sha256": "36b786e4614182f3fe23a00d4e0c4727eb5aeae4cbf83d3f66cafffc7a2c36ba",
+      "width": 393,
+      "height": 1070,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "873c9465f5c3323f3905a273f0c7ffdbbc8729c0e1b6b5e4b2aa990437037275",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-36.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1070,
+          "pixel_sha256": "2aebdebcbd8cba88f800387173cc3cb9d4e3463516f99a0ad4ff3e909a3b0957",
+          "review": "sheet-08.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-payment-401-393-1x.png",
+      "sha256": "0c74b57e6a2d8abd0250595d805e28d0f4a63505e3e8193d80fef26d8805e07a",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "8006061aed4995f42b8635c2d6e887a135f6f18d7a91351562f8127b8708f3e0",
+          "review": "sheet-08.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "67867d4c18977d69319f04d1e39a1a8f2c6ae985a9f75fef526d072bafee42ed",
+          "review": "sheet-08.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-payment-403-320-2x.long.png",
+      "sha256": "1afd740c79e4d8e47289a515b57bfce541b0f21414c78d12b895a846c146ae92",
+      "width": 320,
+      "height": 1783,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "06e196fe5d11e32c82672e36f55012f60d23ff0d40b194feef3e2d134dab78b5",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-36.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "8082e8281fa2d4ef25921a4315a02f918a05e97632580c1039009de5391258b3",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-36.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1783,
+          "pixel_sha256": "3d31cf201f5cf164940f1b4bdba36cbd6757beba45c06958428bb7d9766bfe61",
+          "review": "sheet-08.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-payment-403-320-2x.png",
+      "sha256": "9e6e0b0d2e65a3d5536a06e55279cce80e6ac89e2bc16c7fa9cfd88418cdec0d",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "0e673b60ac8ac5e8db139ea9d4a007de225e72040c482fd5f5e43f6349012c95",
+          "review": "sheet-08.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "ed0d8dafb31794c82444c9f724a7f86da1b3deea4dece9da04cf1d0d5540f5c6",
+          "review": "sheet-08.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-payment-403-393-1x.long.png",
+      "sha256": "d812325f2c9a0a7bff76c9fb1900523f4f50bdebd7d24d91150a08a150181a11",
+      "width": 393,
+      "height": 1070,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "873c9465f5c3323f3905a273f0c7ffdbbc8729c0e1b6b5e4b2aa990437037275",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-36.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1070,
+          "pixel_sha256": "fec55fd3a9227bfa3be81dc8dd0908996cf3168e97992c950ee570414a8af03a",
+          "review": "sheet-09.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-payment-403-393-1x.png",
+      "sha256": "be729da370febe87d7f729b81ab7c83625eacba522bd50e2a3755f77ea717f8d",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "8006061aed4995f42b8635c2d6e887a135f6f18d7a91351562f8127b8708f3e0",
+          "review": "sheet-08.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "b03ce01446d3d5058b454cc9ec17c925099ca30f25f0bb7b2db0d4e5d5ad8d27",
+          "review": "sheet-09.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-payment-409-320-2x.long.png",
+      "sha256": "5ba4bb43f553c4d5b03c2b05982f5a08fef9de19af8d1572a87985317a11bee7",
+      "width": 320,
+      "height": 1823,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "06e196fe5d11e32c82672e36f55012f60d23ff0d40b194feef3e2d134dab78b5",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-36.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "8082e8281fa2d4ef25921a4315a02f918a05e97632580c1039009de5391258b3",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-36.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1823,
+          "pixel_sha256": "86b07fe329f14d1165a740064bb7ea4ecfbcc48aa8072d882048c9283a10ca2f",
+          "review": "sheet-09.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-payment-409-320-2x.png",
+      "sha256": "f598f8053ad6cb3ba01e2c1c55dc955e2cffc3b3b3e94bda85e3dcda1850af54",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "82d086e15d6bf23d9c6a1578919ed43afb974ccf0d4099fe2bcdc1bbe4e2ce79",
+          "review": "sheet-09.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "bab39e9d53538b941723da41e88f81b2df47944202cb0dd7236c69d941c0a7a1",
+          "review": "sheet-09.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-payment-409-393-1x.long.png",
+      "sha256": "9a5560655882f34ffa18c4cf37caef5a5a48f73e81367c76d346a248fd08cbe3",
+      "width": 393,
+      "height": 1070,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "873c9465f5c3323f3905a273f0c7ffdbbc8729c0e1b6b5e4b2aa990437037275",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-36.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1070,
+          "pixel_sha256": "d639289213f2674ae84e50939a86159233d89f2a38253df809f4bf2ce1d03aaa",
+          "review": "sheet-09.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-payment-409-393-1x.png",
+      "sha256": "5fcee589b54f33ee2168599fb36a865a78317f8f76d6704a6362d5f92314bb0b",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "8006061aed4995f42b8635c2d6e887a135f6f18d7a91351562f8127b8708f3e0",
+          "review": "sheet-08.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "af9abe01386fa5ab5a8a574119105e2efb8f4cf98bc33a669d996b8b119cd67b",
+          "review": "sheet-10.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-payment-422-320-2x.long.png",
+      "sha256": "7a61a2ddd8eed93d7efafb50b5ca59f5293e0cdaa3c92baa74353fa07996a846",
+      "width": 320,
+      "height": 1783,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "06e196fe5d11e32c82672e36f55012f60d23ff0d40b194feef3e2d134dab78b5",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-36.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "8082e8281fa2d4ef25921a4315a02f918a05e97632580c1039009de5391258b3",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-36.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1783,
+          "pixel_sha256": "f6301c080fe6f4aed353ce63eef3ff85987dde2289bacefd487fd5c6ffd154db",
+          "review": "sheet-10.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-payment-422-320-2x.png",
+      "sha256": "e151c26780b3cb5f116a2a7822e952691504feb19ec6b959a6b8a2db435cd937",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "52fae28058ef29e9a6724ed8a627c64a0bdffea501229f68fefd02c8ef88d122",
+          "review": "sheet-10.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "f5a4250a5b44109e25cafa9361fd3b8ff7762549cbf05ccbf54e10e78821139a",
+          "review": "sheet-10.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-payment-422-393-1x.long.png",
+      "sha256": "cb0bf7178639983fa71dc8bf805c5014483e9608b89cfc52899ccee8508b54f5",
+      "width": 393,
+      "height": 1070,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "873c9465f5c3323f3905a273f0c7ffdbbc8729c0e1b6b5e4b2aa990437037275",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-36.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1070,
+          "pixel_sha256": "f044b7b51e8ab44505292b0c2158ce56031517d22e502f0fbd81d9fc9cefab21",
+          "review": "sheet-10.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-payment-422-393-1x.png",
+      "sha256": "f6781e851e61dd71880dd45e4c245e92f544124d10aac358267723e993ca9d5c",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "8006061aed4995f42b8635c2d6e887a135f6f18d7a91351562f8127b8708f3e0",
+          "review": "sheet-08.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "02b274c96d0a4a75b72a4744aaacbb8f52cb81ddbc87a006eaf6f8591be27da9",
+          "review": "sheet-10.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-reopened-challenge-success-320-2x.long.png",
+      "sha256": "41707c376bdffd41e0d54d3b952d3af3ef7fa382742bba2373caba3de888a555",
+      "width": 320,
+      "height": 1039,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "5e7c05c2460d0063a5cee24816619e805e5baa5170a2b0f9163881e582b6d57f",
+          "review": "../purchase-current-visual-review/sheet-02.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1039,
+          "pixel_sha256": "6954bcbde02ff713fae4ac715b4b3fcc547b5eacc2aac7191abd59c790f298ad",
+          "review": "../purchase-current-visual-review/sheet-02.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-reopened-challenge-success-320-2x.png",
+      "sha256": "d3bfcb5f542ef3c474be17f01811fcc0b981846fc731c6d6ee8ac0ce54b29b0a",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "5e7c05c2460d0063a5cee24816619e805e5baa5170a2b0f9163881e582b6d57f",
+          "review": "../purchase-current-visual-review/sheet-02.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "cc81da8e984c3db160130413d6e14f582e77d11a0ded2ed7762240733b8d465f",
+          "review": "../purchase-current-visual-review/sheet-02.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-reopened-challenge-success-393-1x.png",
+      "sha256": "73db3f0a12abeddbaf1f30c481882bab68d52aff02e44eb398200f4e2d50636e",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "76f023fa51706fed51721da30e6395660808b48ba6119e3f6e76c09eb6f7c4ab",
+          "review": "../purchase-current-visual-review/sheet-02.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "f28746892c3aadd5fe7e19dadc09663dcd67cd9e0867dddbdbdd40e22461b463",
+          "review": "../purchase-current-visual-review/sheet-02.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-resume-catalog-320-2x.long.png",
+      "sha256": "dfe029de1a0b06403e982e81a22f52e064e3a84ed88f666dd89d8d473753c230",
+      "width": 320,
+      "height": 3161,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "3080ed1e9099f20a15fa2c3cb615ed0d8624a066c7a7c5e4cb570f52bd8263fd",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "701d67450a0486656e4e942b279540206444850701fa3805c2c7e73b81561570",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-01.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "3921da55ed9b6d493f46e0f448c55e776ec191ca0647b5bce138219a0c5eb232",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-01.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "a752944d98d6700c5344afd38980d7369b801eb3d5c3a5edadbec7f81d3216ce",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-01.png#tile-3"
+        },
+        {
+          "y0": 2600,
+          "y1": 3161,
+          "pixel_sha256": "c2abcae664025db75933328ad375b6ecc780d49a335ccec5a2581efe80f05229",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-01.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-resume-catalog-320-2x.png",
+      "sha256": "369af5703768cbadeb9a63085d13f89d7f607787ba51e860788d4035a16704ad",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "3080ed1e9099f20a15fa2c3cb615ed0d8624a066c7a7c5e4cb570f52bd8263fd",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "9e6d7dad877015a6f5a925003120c1d9de941debc3cd9b24c9a49f3fe8f798cd",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-01.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-resume-catalog-393-1x.long.png",
+      "sha256": "626202225717f37c86a1dcb0abec46903f41943181d0ea28951e6e6c20699541",
+      "width": 393,
+      "height": 1615,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6df2083d88e72ff4cf599bc51a8bb8d3d96204d4c77266a8a7c617207b58a42b",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-02.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "ac603a6c0ae53bcbb33c98452c22a6f916d5b3e323ade4a8ba1ec569cca03c7f",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-02.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1615,
+          "pixel_sha256": "b5ffaff21f524e96af55ffee46fa2defa5398d0f8a37ebd3e08ce17ab3512c27",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-02.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-resume-catalog-393-1x.png",
+      "sha256": "13c6c89c1fbfdfaed6e7ab1543ca02599d84121c7e0aa2401bc8a609f7ead7ac",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6df2083d88e72ff4cf599bc51a8bb8d3d96204d4c77266a8a7c617207b58a42b",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-02.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "b44c3d7a72178fd743ec2bf9b67abd99b21e97c5af8b0cbae5f17feb4ecb411f",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-02.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-resume-catalog-return-320-2x.long.png",
+      "sha256": "dfe029de1a0b06403e982e81a22f52e064e3a84ed88f666dd89d8d473753c230",
+      "width": 320,
+      "height": 3161,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "3080ed1e9099f20a15fa2c3cb615ed0d8624a066c7a7c5e4cb570f52bd8263fd",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "701d67450a0486656e4e942b279540206444850701fa3805c2c7e73b81561570",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-01.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "3921da55ed9b6d493f46e0f448c55e776ec191ca0647b5bce138219a0c5eb232",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-01.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "a752944d98d6700c5344afd38980d7369b801eb3d5c3a5edadbec7f81d3216ce",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-01.png#tile-3"
+        },
+        {
+          "y0": 2600,
+          "y1": 3161,
+          "pixel_sha256": "c2abcae664025db75933328ad375b6ecc780d49a335ccec5a2581efe80f05229",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-01.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-resume-catalog-return-320-2x.png",
+      "sha256": "f2ec56f014f1960fe02390b2b121ba2c39540347f17d732ba9d0286de93a85c2",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "98469939c3fbe64553b00de836c820ec747f588d8238815f1f6bd01c90fa22d6",
+          "review": "../purchase-current-visual-review/sheet-02.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "09ce5b1995ab82a58164b0f25052d71eca9f1c12aa54f3ae106833a33600bc59",
+          "review": "../purchase-current-visual-review/sheet-03.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-resume-catalog-return-393-1x.long.png",
+      "sha256": "626202225717f37c86a1dcb0abec46903f41943181d0ea28951e6e6c20699541",
+      "width": 393,
+      "height": 1615,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6df2083d88e72ff4cf599bc51a8bb8d3d96204d4c77266a8a7c617207b58a42b",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-02.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "ac603a6c0ae53bcbb33c98452c22a6f916d5b3e323ade4a8ba1ec569cca03c7f",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-02.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1615,
+          "pixel_sha256": "b5ffaff21f524e96af55ffee46fa2defa5398d0f8a37ebd3e08ce17ab3512c27",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-02.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-resume-catalog-return-393-1x.png",
+      "sha256": "b01a4de20015e5475364761777f753155bcc1465c91f5eda0da5a9654f7d6d1a",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "141eb4aa777ee479f8ce1eac652fab35872fb11ed05ca650c82cccfc3ae10eef",
+          "review": "../purchase-current-visual-review/sheet-03.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "c138d5cefb04dfa94eeca300401dd0318eb4fe86e502baa247a82725d625dab8",
+          "review": "../purchase-current-visual-review/sheet-03.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-resume-home-320-2x.long.png",
+      "sha256": "b29f1f9dc909ca023dcd2865b0d4424a7485a4fb1dd4d05f54d8ee61e6cf46ef",
+      "width": 320,
+      "height": 1939,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a6aa9ef781460e5016527f099324419f84c6e4f14cdb26c410651cd7359b41ef",
+          "review": "../mom-rest-control-visual-review/sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "0edf1d289b2e804b112ca91367c51524ae8a6a6a4684a4fdcad651b0ae8de7ad",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1939,
+          "pixel_sha256": "8824f3d60a1ba788460adc4d5731a39ee81dafb5cb1f7d7112dd43123bbe2812",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-resume-home-320-2x.png",
+      "sha256": "6b61a480f7a3fd5ddb29685624aed748a99b94ad55016153855b11225ef09868",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a6aa9ef781460e5016527f099324419f84c6e4f14cdb26c410651cd7359b41ef",
+          "review": "../mom-rest-control-visual-review/sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1462d46c4861c29041d879736402097e4fd061fcb6e577142cd6e832cb70fae0",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-resume-home-393-1x.long.png",
+      "sha256": "0a4e3294f0ff67f0d7ed84ee3eacb393b50571fb4db300a7d15899ba9359a330",
+      "width": 393,
+      "height": 917,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa661999d6307948942c23dc2e7dad221367a614b3ae09dd12dec24bc67fec6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 917,
+          "pixel_sha256": "134109b5afc9a0d972ecc00b197fb963d8131bfc37dbfad2a4c51a0a091a86ad",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-resume-home-393-1x.png",
+      "sha256": "be291808401e7f353b8f14552b0df4a698f3edd191e5e2d770c66c2e129fc145",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa661999d6307948942c23dc2e7dad221367a614b3ae09dd12dec24bc67fec6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3208ac8b3b1d4a7464bc46ef7618c8e19bd85dee870d86c1847457571b6198a6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-resume-home-return-320-2x.long.png",
+      "sha256": "2fa0ada62a6d9ca50683e54400f6043cf68a1e285a2eae008e38ff1f462eb258",
+      "width": 320,
+      "height": 2459,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a6aa9ef781460e5016527f099324419f84c6e4f14cdb26c410651cd7359b41ef",
+          "review": "../mom-rest-control-visual-review/sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "0edf1d289b2e804b112ca91367c51524ae8a6a6a4684a4fdcad651b0ae8de7ad",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "737fbf296926091c9d3d8c054e5fcb5aa6828a0542d136aef0e678fcf5a2a305",
+          "review": "../more-current-visual-review/sheet-04.png#tile-5"
+        },
+        {
+          "y0": 1950,
+          "y1": 2459,
+          "pixel_sha256": "0692ec2c55d8d8438d85f340a92827d471acee47031f9c8fde3159a11158b360",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-15.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-resume-home-return-320-2x.png",
+      "sha256": "6b61a480f7a3fd5ddb29685624aed748a99b94ad55016153855b11225ef09868",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a6aa9ef781460e5016527f099324419f84c6e4f14cdb26c410651cd7359b41ef",
+          "review": "../mom-rest-control-visual-review/sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1462d46c4861c29041d879736402097e4fd061fcb6e577142cd6e832cb70fae0",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-resume-home-return-393-1x.long.png",
+      "sha256": "0f04c06b170ca26a6ceca6d9954f08895999c1df1446be6abb5fb53f267160ab",
+      "width": 393,
+      "height": 1211,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa661999d6307948942c23dc2e7dad221367a614b3ae09dd12dec24bc67fec6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1211,
+          "pixel_sha256": "468a1f2363d31ad56f5959e2dbd4aba2e602497cea767b2f5d8d0ec625cb9890",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-16.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-resume-home-return-393-1x.png",
+      "sha256": "be291808401e7f353b8f14552b0df4a698f3edd191e5e2d770c66c2e129fc145",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa661999d6307948942c23dc2e7dad221367a614b3ae09dd12dec24bc67fec6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3208ac8b3b1d4a7464bc46ef7618c8e19bd85dee870d86c1847457571b6198a6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-resume-package-320-2x.long.png",
+      "sha256": "ddeeabe3d2ea7801edf98d82f32a83767c0c8990ca59a7dc9ce26631c011437e",
+      "width": 320,
+      "height": 2008,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2761111ff7ead03718e169cfe59fac0a82c0f0a0588fb9342bc34d69352d876b",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-22.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "ee8e04271895b13e4d9e600a9fd59e5fa640aa1963c69273933b0686a5efaba5",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-21.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "d58ded7df8989fa893e947db4482e9fc1a1fd022f62db9aeb8da29273611fd00",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-22.png#tile-3"
+        },
+        {
+          "y0": 1950,
+          "y1": 2008,
+          "pixel_sha256": "889273b4de5ae28a8c66c15256496d50e1ca0895766215915b752a542c783fb4",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-22.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-resume-package-320-2x.png",
+      "sha256": "288f60072696050aa5563436dad12c7d4adc0821f266262c7398085bcfaed356",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "224532604c16d4061cad40218219f6fa9d8f85db8e023ae12c2f8eb2d1d69beb",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-27.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "515cdac34ef810c0341adb482ffbb299c3a22bc25fe2e49a3e430a36db2fa720",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-26.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-resume-package-393-1x.long.png",
+      "sha256": "32173148e547dacd963cd69e9dc624e38f1ae4cfa7883e83d53241d2860a5cb2",
+      "width": 393,
+      "height": 1000,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "35e98e8bce5f0b6f7de91e98bd8f83e892d9f77034bb0edcfb80725b5d2e3033",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-23.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1000,
+          "pixel_sha256": "99099c1f732d65db360ee805fcfafcb3cfa196908aa2df57f7f216ec81dc8808",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-23.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-resume-package-393-1x.png",
+      "sha256": "e560fd8a139273bc75c4ca3b2aaef2837dd245bf86a2f327172244794f552bfb",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "35e98e8bce5f0b6f7de91e98bd8f83e892d9f77034bb0edcfb80725b5d2e3033",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-23.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "ca6f4f9941a943122673f21fe5c2391f6375e028c05085cc08588ce28f3a0382",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-27.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-cancel-return-320-2x.long.png",
+      "sha256": "ddeeabe3d2ea7801edf98d82f32a83767c0c8990ca59a7dc9ce26631c011437e",
+      "width": 320,
+      "height": 2008,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2761111ff7ead03718e169cfe59fac0a82c0f0a0588fb9342bc34d69352d876b",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-22.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "ee8e04271895b13e4d9e600a9fd59e5fa640aa1963c69273933b0686a5efaba5",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-21.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "d58ded7df8989fa893e947db4482e9fc1a1fd022f62db9aeb8da29273611fd00",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-22.png#tile-3"
+        },
+        {
+          "y0": 1950,
+          "y1": 2008,
+          "pixel_sha256": "889273b4de5ae28a8c66c15256496d50e1ca0895766215915b752a542c783fb4",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-22.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-cancel-return-320-2x.png",
+      "sha256": "288f60072696050aa5563436dad12c7d4adc0821f266262c7398085bcfaed356",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "224532604c16d4061cad40218219f6fa9d8f85db8e023ae12c2f8eb2d1d69beb",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-27.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "515cdac34ef810c0341adb482ffbb299c3a22bc25fe2e49a3e430a36db2fa720",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-26.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-cancel-return-393-1x.long.png",
+      "sha256": "32173148e547dacd963cd69e9dc624e38f1ae4cfa7883e83d53241d2860a5cb2",
+      "width": 393,
+      "height": 1000,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "35e98e8bce5f0b6f7de91e98bd8f83e892d9f77034bb0edcfb80725b5d2e3033",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-23.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1000,
+          "pixel_sha256": "99099c1f732d65db360ee805fcfafcb3cfa196908aa2df57f7f216ec81dc8808",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-23.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-cancel-return-393-1x.png",
+      "sha256": "e560fd8a139273bc75c4ca3b2aaef2837dd245bf86a2f327172244794f552bfb",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "35e98e8bce5f0b6f7de91e98bd8f83e892d9f77034bb0edcfb80725b5d2e3033",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-23.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "ca6f4f9941a943122673f21fe5c2391f6375e028c05085cc08588ce28f3a0382",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-27.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-cancelled-320-2x.long.png",
+      "sha256": "b932661ed8a3c6e6bdf86bdacf7593c0654627547a4a9b02de1d95db2c852545",
+      "width": 320,
+      "height": 885,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "f81db87abe0b10980eedc72f4cb852e819c6657a65e82ef99ab4b037bd06b8c1",
+          "review": "sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 885,
+          "pixel_sha256": "78efd4c031e0e4837b3ca3a1cc6bf1149cb594d08bdb5f277c0c2071dcb66575",
+          "review": "../purchase-current-visual-review/sheet-05.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-cancelled-320-2x.png",
+      "sha256": "879383e24135cd57b012e22fe06cccf5a3d3800622f5679b87e9e51d8efd77c3",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "0e498db8047cf792040f978d440571bed6c9574b3a93d3dfcca8bd3b36696e4e",
+          "review": "sheet-11.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "fd8aeefa6e2ff4daa0fa453fba173a1f95a49968d04fc584f0b77b70f5686aa9",
+          "review": "../purchase-current-visual-review/sheet-05.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-cancelled-393-1x.png",
+      "sha256": "42673bb15eef17a11a9d89291b1e1fca9c5d73fd314f5c49d9c721fa384603ac",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "7e352b6feee0b96849e090861aee50fa846e91f16cf2e7707f81293f825e6402",
+          "review": "sheet-11.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "638cfa0d5e1cfac3d49a96c108af74c8911bd9b170827297a51408e877e79a74",
+          "review": "../purchase-current-visual-review/sheet-05.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-catalog-320-2x.long.png",
+      "sha256": "dfe029de1a0b06403e982e81a22f52e064e3a84ed88f666dd89d8d473753c230",
+      "width": 320,
+      "height": 3161,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "3080ed1e9099f20a15fa2c3cb615ed0d8624a066c7a7c5e4cb570f52bd8263fd",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "701d67450a0486656e4e942b279540206444850701fa3805c2c7e73b81561570",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-01.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "3921da55ed9b6d493f46e0f448c55e776ec191ca0647b5bce138219a0c5eb232",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-01.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "a752944d98d6700c5344afd38980d7369b801eb3d5c3a5edadbec7f81d3216ce",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-01.png#tile-3"
+        },
+        {
+          "y0": 2600,
+          "y1": 3161,
+          "pixel_sha256": "c2abcae664025db75933328ad375b6ecc780d49a335ccec5a2581efe80f05229",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-01.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-catalog-320-2x.png",
+      "sha256": "369af5703768cbadeb9a63085d13f89d7f607787ba51e860788d4035a16704ad",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "3080ed1e9099f20a15fa2c3cb615ed0d8624a066c7a7c5e4cb570f52bd8263fd",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "9e6d7dad877015a6f5a925003120c1d9de941debc3cd9b24c9a49f3fe8f798cd",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-01.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-catalog-393-1x.long.png",
+      "sha256": "626202225717f37c86a1dcb0abec46903f41943181d0ea28951e6e6c20699541",
+      "width": 393,
+      "height": 1615,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6df2083d88e72ff4cf599bc51a8bb8d3d96204d4c77266a8a7c617207b58a42b",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-02.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "ac603a6c0ae53bcbb33c98452c22a6f916d5b3e323ade4a8ba1ec569cca03c7f",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-02.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1615,
+          "pixel_sha256": "b5ffaff21f524e96af55ffee46fa2defa5398d0f8a37ebd3e08ce17ab3512c27",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-02.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-catalog-393-1x.png",
+      "sha256": "13c6c89c1fbfdfaed6e7ab1543ca02599d84121c7e0aa2401bc8a609f7ead7ac",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6df2083d88e72ff4cf599bc51a8bb8d3d96204d4c77266a8a7c617207b58a42b",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-02.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "b44c3d7a72178fd743ec2bf9b67abd99b21e97c5af8b0cbae5f17feb4ecb411f",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-02.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-catalog-return-320-2x.long.png",
+      "sha256": "dfe029de1a0b06403e982e81a22f52e064e3a84ed88f666dd89d8d473753c230",
+      "width": 320,
+      "height": 3161,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "3080ed1e9099f20a15fa2c3cb615ed0d8624a066c7a7c5e4cb570f52bd8263fd",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "701d67450a0486656e4e942b279540206444850701fa3805c2c7e73b81561570",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-01.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "3921da55ed9b6d493f46e0f448c55e776ec191ca0647b5bce138219a0c5eb232",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-01.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "a752944d98d6700c5344afd38980d7369b801eb3d5c3a5edadbec7f81d3216ce",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-01.png#tile-3"
+        },
+        {
+          "y0": 2600,
+          "y1": 3161,
+          "pixel_sha256": "c2abcae664025db75933328ad375b6ecc780d49a335ccec5a2581efe80f05229",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-01.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-catalog-return-320-2x.png",
+      "sha256": "f2ec56f014f1960fe02390b2b121ba2c39540347f17d732ba9d0286de93a85c2",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "98469939c3fbe64553b00de836c820ec747f588d8238815f1f6bd01c90fa22d6",
+          "review": "../purchase-current-visual-review/sheet-02.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "09ce5b1995ab82a58164b0f25052d71eca9f1c12aa54f3ae106833a33600bc59",
+          "review": "../purchase-current-visual-review/sheet-03.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-catalog-return-393-1x.long.png",
+      "sha256": "626202225717f37c86a1dcb0abec46903f41943181d0ea28951e6e6c20699541",
+      "width": 393,
+      "height": 1615,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6df2083d88e72ff4cf599bc51a8bb8d3d96204d4c77266a8a7c617207b58a42b",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-02.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "ac603a6c0ae53bcbb33c98452c22a6f916d5b3e323ade4a8ba1ec569cca03c7f",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-02.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1615,
+          "pixel_sha256": "b5ffaff21f524e96af55ffee46fa2defa5398d0f8a37ebd3e08ce17ab3512c27",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-02.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-catalog-return-393-1x.png",
+      "sha256": "b01a4de20015e5475364761777f753155bcc1465c91f5eda0da5a9654f7d6d1a",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "141eb4aa777ee479f8ce1eac652fab35872fb11ed05ca650c82cccfc3ae10eef",
+          "review": "../purchase-current-visual-review/sheet-03.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "c138d5cefb04dfa94eeca300401dd0318eb4fe86e502baa247a82725d625dab8",
+          "review": "../purchase-current-visual-review/sheet-03.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-failed-320-2x.long.png",
+      "sha256": "74949074d8a302d6faaf2bd8713cf67eb0957aff61c0dd58688c624748d7787c",
+      "width": 320,
+      "height": 1297,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a1be13b9727816466c8d098ff543a1f11fb72849eb239f7e328a8edebfb84eeb",
+          "review": "sheet-11.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1297,
+          "pixel_sha256": "280bc10acccab0f9b647af1670ba7cb4320a890ba609e91c24efdaa4b808d5ec",
+          "review": "sheet-11.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-failed-320-2x.png",
+      "sha256": "a757d5b202151113474efa1f33a4a8579e8122e3ceae89bfd8d11df0e66684dc",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "23b8bb1ce0932f3ce63df14465cb811ed80482f4ca51072ef6c851312042ab1e",
+          "review": "sheet-11.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "541d2e5950fa14c76a30011482742ff8756002d01392ebace7964af5a8066a6b",
+          "review": "sheet-12.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-failed-393-1x.png",
+      "sha256": "d9adffff264ce0009fe7785fdd629b103b1b2fc2641527a6b4813c482725ae4f",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "4564ffb4769e67cc5a3b41f5d8d0514dc834f67e9ab7b37eb5d584e8bc227799",
+          "review": "sheet-12.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "5a38cda62a60dad50eb6c12ce2995d72c847b8e12d378415afdc352237a84c7d",
+          "review": "sheet-06.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-home-320-2x.long.png",
+      "sha256": "b29f1f9dc909ca023dcd2865b0d4424a7485a4fb1dd4d05f54d8ee61e6cf46ef",
+      "width": 320,
+      "height": 1939,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a6aa9ef781460e5016527f099324419f84c6e4f14cdb26c410651cd7359b41ef",
+          "review": "../mom-rest-control-visual-review/sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "0edf1d289b2e804b112ca91367c51524ae8a6a6a4684a4fdcad651b0ae8de7ad",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1939,
+          "pixel_sha256": "8824f3d60a1ba788460adc4d5731a39ee81dafb5cb1f7d7112dd43123bbe2812",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-home-320-2x.png",
+      "sha256": "6b61a480f7a3fd5ddb29685624aed748a99b94ad55016153855b11225ef09868",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a6aa9ef781460e5016527f099324419f84c6e4f14cdb26c410651cd7359b41ef",
+          "review": "../mom-rest-control-visual-review/sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1462d46c4861c29041d879736402097e4fd061fcb6e577142cd6e832cb70fae0",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-home-393-1x.long.png",
+      "sha256": "0a4e3294f0ff67f0d7ed84ee3eacb393b50571fb4db300a7d15899ba9359a330",
+      "width": 393,
+      "height": 917,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa661999d6307948942c23dc2e7dad221367a614b3ae09dd12dec24bc67fec6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 917,
+          "pixel_sha256": "134109b5afc9a0d972ecc00b197fb963d8131bfc37dbfad2a4c51a0a091a86ad",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-home-393-1x.png",
+      "sha256": "be291808401e7f353b8f14552b0df4a698f3edd191e5e2d770c66c2e129fc145",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa661999d6307948942c23dc2e7dad221367a614b3ae09dd12dec24bc67fec6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3208ac8b3b1d4a7464bc46ef7618c8e19bd85dee870d86c1847457571b6198a6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-home-return-320-2x.long.png",
+      "sha256": "2fa0ada62a6d9ca50683e54400f6043cf68a1e285a2eae008e38ff1f462eb258",
+      "width": 320,
+      "height": 2459,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a6aa9ef781460e5016527f099324419f84c6e4f14cdb26c410651cd7359b41ef",
+          "review": "../mom-rest-control-visual-review/sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "0edf1d289b2e804b112ca91367c51524ae8a6a6a4684a4fdcad651b0ae8de7ad",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "737fbf296926091c9d3d8c054e5fcb5aa6828a0542d136aef0e678fcf5a2a305",
+          "review": "../more-current-visual-review/sheet-04.png#tile-5"
+        },
+        {
+          "y0": 1950,
+          "y1": 2459,
+          "pixel_sha256": "0692ec2c55d8d8438d85f340a92827d471acee47031f9c8fde3159a11158b360",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-15.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-home-return-320-2x.png",
+      "sha256": "6b61a480f7a3fd5ddb29685624aed748a99b94ad55016153855b11225ef09868",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a6aa9ef781460e5016527f099324419f84c6e4f14cdb26c410651cd7359b41ef",
+          "review": "../mom-rest-control-visual-review/sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1462d46c4861c29041d879736402097e4fd061fcb6e577142cd6e832cb70fae0",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-home-return-393-1x.long.png",
+      "sha256": "0f04c06b170ca26a6ceca6d9954f08895999c1df1446be6abb5fb53f267160ab",
+      "width": 393,
+      "height": 1211,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa661999d6307948942c23dc2e7dad221367a614b3ae09dd12dec24bc67fec6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1211,
+          "pixel_sha256": "468a1f2363d31ad56f5959e2dbd4aba2e602497cea767b2f5d8d0ec625cb9890",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-16.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-home-return-393-1x.png",
+      "sha256": "be291808401e7f353b8f14552b0df4a698f3edd191e5e2d770c66c2e129fc145",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa661999d6307948942c23dc2e7dad221367a614b3ae09dd12dec24bc67fec6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3208ac8b3b1d4a7464bc46ef7618c8e19bd85dee870d86c1847457571b6198a6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-owned-320-2x.long.png",
+      "sha256": "12e772a0869f8dca6d99de934a409daec4c352899f8dcd2bdf8c4bc6f37d56b1",
+      "width": 320,
+      "height": 2426,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "3bc93003b58853d413ef36869ba51bce09368769e2bfee123be7d00daa3b5dec",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-12.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "9a36a8e973a285c960de21fde17e3612d251b111cdf3256316558afe0d57fe2e",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-12.png#tile-3"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "7965fc4b18ead2e3d8adaa7b43fc7d33c89e72f128173835ba407ecffb9cfa11",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-12.png#tile-4"
+        },
+        {
+          "y0": 1950,
+          "y1": 2426,
+          "pixel_sha256": "201c0929e9f6cb5a1f0b94980eadf71d1c44011fa76f81879ceff49902601d59",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-12.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-owned-320-2x.png",
+      "sha256": "9a106badc7a01b451c71f7304520fffda7844efca780e45187cc4c6c90997f9b",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "3bc93003b58853d413ef36869ba51bce09368769e2bfee123be7d00daa3b5dec",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-12.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "e5db96a85f82452ec3716ea5b4d7b971e31222a46029e6e6bcea271bf7ea84a3",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-16.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-owned-393-1x.long.png",
+      "sha256": "add186eedbfa58be82bd981c635cb9f727aa09bd5c4a57720a333b6039aacb10",
+      "width": 393,
+      "height": 1272,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "222a57c85f9ac9033a32e75910c1c3dee67bf565293e6e51a8dd1dfbc4a33b93",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-13.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1272,
+          "pixel_sha256": "62bd42c9be6644cb0a0a13780c53f29e6f5cb835c016ddff47fe2af10cc5e55a",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-13.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-owned-393-1x.png",
+      "sha256": "6a6010c7ba628f9684391ac5b13ed4182d8d4754bd0b2378ef4aa784329a77b4",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "222a57c85f9ac9033a32e75910c1c3dee67bf565293e6e51a8dd1dfbc4a33b93",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-13.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1d3ef37a7d6b299aa5cca32446b248a1f5e9f5f5a250d01e2e9e13e48502a666",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-16.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-package-320-2x.long.png",
+      "sha256": "ddeeabe3d2ea7801edf98d82f32a83767c0c8990ca59a7dc9ce26631c011437e",
+      "width": 320,
+      "height": 2008,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2761111ff7ead03718e169cfe59fac0a82c0f0a0588fb9342bc34d69352d876b",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-22.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "ee8e04271895b13e4d9e600a9fd59e5fa640aa1963c69273933b0686a5efaba5",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-21.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "d58ded7df8989fa893e947db4482e9fc1a1fd022f62db9aeb8da29273611fd00",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-22.png#tile-3"
+        },
+        {
+          "y0": 1950,
+          "y1": 2008,
+          "pixel_sha256": "889273b4de5ae28a8c66c15256496d50e1ca0895766215915b752a542c783fb4",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-22.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-package-320-2x.png",
+      "sha256": "288f60072696050aa5563436dad12c7d4adc0821f266262c7398085bcfaed356",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "224532604c16d4061cad40218219f6fa9d8f85db8e023ae12c2f8eb2d1d69beb",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-27.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "515cdac34ef810c0341adb482ffbb299c3a22bc25fe2e49a3e430a36db2fa720",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-26.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-package-393-1x.long.png",
+      "sha256": "32173148e547dacd963cd69e9dc624e38f1ae4cfa7883e83d53241d2860a5cb2",
+      "width": 393,
+      "height": 1000,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "35e98e8bce5f0b6f7de91e98bd8f83e892d9f77034bb0edcfb80725b5d2e3033",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-23.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1000,
+          "pixel_sha256": "99099c1f732d65db360ee805fcfafcb3cfa196908aa2df57f7f216ec81dc8808",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-23.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-package-393-1x.png",
+      "sha256": "e560fd8a139273bc75c4ca3b2aaef2837dd245bf86a2f327172244794f552bfb",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "35e98e8bce5f0b6f7de91e98bd8f83e892d9f77034bb0edcfb80725b5d2e3033",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-23.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "ca6f4f9941a943122673f21fe5c2391f6375e028c05085cc08588ce28f3a0382",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-27.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-payment-320-2x.long.png",
+      "sha256": "7f8052795770e7f5a779424d6f39cd8bc9eb47583514deed9191298c47c1b875",
+      "width": 320,
+      "height": 1076,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a1ca659ce26d8423b7a8286451af5b471c46cbad207943d2c38a608f2f551209",
+          "review": "sheet-02.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1076,
+          "pixel_sha256": "420e9f82b69537c838ccbdc129521c6e70a19daec6c01511c41eedcba273bb0e",
+          "review": "sheet-06.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-payment-320-2x.png",
+      "sha256": "230583a7104779d551850d02e19df8ba339c1c50d8f22d5448542ce9fa87f3ba",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a1ca659ce26d8423b7a8286451af5b471c46cbad207943d2c38a608f2f551209",
+          "review": "sheet-02.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "f013e06fee359db412dc6362862cf494c526324549a37e68e4173e6a6cb74108",
+          "review": "sheet-12.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-payment-393-1x.png",
+      "sha256": "673b9e333e7002448eda45db717c345f3aa29f449b0838493b1ef49f29fa55ee",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "39f5d75bee5c4db219bbae5b48873e0a49bae04345407d77691f8bcbe8083f17",
+          "review": "sheet-06.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "5a38cda62a60dad50eb6c12ce2995d72c847b8e12d378415afdc352237a84c7d",
+          "review": "sheet-06.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-processing-320-2x.long.png",
+      "sha256": "b40777eefd002f607bee23db7515fd9b768f89f25af08015e6572a42b821a023",
+      "width": 320,
+      "height": 1068,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "5dbce7e77fcb0af996d7148517f3a6f1b10669617555307fb180197432e3ba02",
+          "review": "sheet-12.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1068,
+          "pixel_sha256": "8b1b8261ca4a6e6f252c6756c47250b576f0319fa8dd18e4c39c324a18bce365",
+          "review": "sheet-12.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-processing-320-2x.png",
+      "sha256": "d4e72e5c38d7fa396a4cbf1c0a3a78a04c41ebe5e318174abacec901423b3878",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "d1a5f77a589f50840e30ae4f598159d35a9b424ce859e7a9459be22c640bc1ff",
+          "review": "sheet-12.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "18a15c244c7d0f91b9139e7c6fbf59faa01d52e69d81006198327aff0a4aa90b",
+          "review": "sheet-13.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-processing-393-1x.png",
+      "sha256": "995a3b8b312a9c6383ead239b52fefd2244b977020a28409b2741bd21aeeb4ab",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "edb081af7a356477c0d3e97fff9b7121f278c0687d093a383661c5dea9e6add3",
+          "review": "sheet-13.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "447372dc7a2df70e86ed62e6fc345e669dc6a2010242e5c838d9b771d55ccb17",
+          "review": "sheet-13.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-query-error-320-2x.long.png",
+      "sha256": "1338d3bcdc8b915373d16130c913a7c756d0d9aa03722300ecde556238f21de5",
+      "width": 320,
+      "height": 1410,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a1ca659ce26d8423b7a8286451af5b471c46cbad207943d2c38a608f2f551209",
+          "review": "sheet-02.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "09d028da92b71ed991b8736b01f801d7b811a1e2181b111807092198197c2962",
+          "review": "sheet-02.png#tile-5"
+        },
+        {
+          "y0": 1300,
+          "y1": 1410,
+          "pixel_sha256": "01ed787f741e4b669af0c8ca7250c85671f319ea803b2de2b0192c957eb463eb",
+          "review": "sheet-03.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-query-error-320-2x.png",
+      "sha256": "40d9d00221394d0d2d18d8986b712597eec096a3ed03781500fc390f7b98e98e",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6ca5ba75297fa07aa45bf835d20891b0748377e078b39c0e8d1e37563e5af486",
+          "review": "sheet-13.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "d3fe49966fb0f3526031cebb7a38dc23f551f0cdfa3eb8978980711b75ef3a18",
+          "review": "sheet-13.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-query-error-393-1x.png",
+      "sha256": "199b2d945026fa28a9ad7d1c9d8b5f16c9841aadf636ca1a5216eb69048e252b",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ef29b335eaca2e4864265821dfb027b4b0313c2b0c95edcbb7fc146bcff172ea",
+          "review": "sheet-03.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "baa9a7b19983abd57341f2b0b55b8c3e39a6d847de56056f446ad312bd4c160a",
+          "review": "sheet-03.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-query-pending-320-2x.long.png",
+      "sha256": "ca6f116a20f13bb2b47263dce0aa2f765dd9a2109e4357e1784a4227c5614d54",
+      "width": 320,
+      "height": 1040,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c24765b8c38a4f125b9b6834f9098f84d25a047a28a7c51cf3c7e7afb4631b14",
+          "review": "sheet-01.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1040,
+          "pixel_sha256": "a4d997adc14f1b22fe60647033171697ac1995fc36036ac2976aa82d2c66d9fe",
+          "review": "sheet-01.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-query-pending-320-2x.png",
+      "sha256": "9f9dad4a4ad43274562faebaf9e557951f3efbd513c0464cfe4d7f82649ca828",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "23be1e2618dca548e9730492146267bb6717f54721a51f0ea304d9959f98bc29",
+          "review": "sheet-02.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "b2cc8172ffcf56d3b6275a7a395dafa8d3426ad8b1cc4f2410b34988f0d16741",
+          "review": "sheet-02.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-query-pending-393-1x.png",
+      "sha256": "88270093b619de8003ebb69d9c9f693932ef831c16304e68758b06d837056949",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "040cb2303e43e1f9dea1ba92cdbb025e8150a8e6b1a1bd68c6bdef40c11cae6c",
+          "review": "sheet-02.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "87105fcafc5eccc829fd41b00e250a770538d15a6c87e2a4358bb086662ba442",
+          "review": "sheet-02.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-repurchase-320-2x.long.png",
+      "sha256": "7f8052795770e7f5a779424d6f39cd8bc9eb47583514deed9191298c47c1b875",
+      "width": 320,
+      "height": 1076,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a1ca659ce26d8423b7a8286451af5b471c46cbad207943d2c38a608f2f551209",
+          "review": "sheet-02.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1076,
+          "pixel_sha256": "420e9f82b69537c838ccbdc129521c6e70a19daec6c01511c41eedcba273bb0e",
+          "review": "sheet-06.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-repurchase-320-2x.png",
+      "sha256": "230583a7104779d551850d02e19df8ba339c1c50d8f22d5448542ce9fa87f3ba",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a1ca659ce26d8423b7a8286451af5b471c46cbad207943d2c38a608f2f551209",
+          "review": "sheet-02.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "f013e06fee359db412dc6362862cf494c526324549a37e68e4173e6a6cb74108",
+          "review": "sheet-12.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-repurchase-393-1x.png",
+      "sha256": "673b9e333e7002448eda45db717c345f3aa29f449b0838493b1ef49f29fa55ee",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "39f5d75bee5c4db219bbae5b48873e0a49bae04345407d77691f8bcbe8083f17",
+          "review": "sheet-06.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "5a38cda62a60dad50eb6c12ce2995d72c847b8e12d378415afdc352237a84c7d",
+          "review": "sheet-06.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-success-320-2x.long.png",
+      "sha256": "4433b1d9a1890f6fe863c324e5329afee67399ac0a1344fe465af6e6b0e7df75",
+      "width": 320,
+      "height": 1039,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "1691c43eac5d23cb964667905cff6a212d33c7f59e2fa1aad5753814ff651699",
+          "review": "sheet-13.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1039,
+          "pixel_sha256": "6954bcbde02ff713fae4ac715b4b3fcc547b5eacc2aac7191abd59c790f298ad",
+          "review": "../purchase-current-visual-review/sheet-02.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-success-320-2x.png",
+      "sha256": "772e3a6e6b85f2514da7ff58476b53f6f1b2034779b6f557aec851ebd1c272b9",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "1691c43eac5d23cb964667905cff6a212d33c7f59e2fa1aad5753814ff651699",
+          "review": "sheet-13.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "cc81da8e984c3db160130413d6e14f582e77d11a0ded2ed7762240733b8d465f",
+          "review": "../purchase-current-visual-review/sheet-02.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-success-393-1x.png",
+      "sha256": "ec122e6b22f44f5f5e95bd1d4da490fe69e1a38b63d2f1605649f6f36fe7c08d",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a9deff6922a1167cc0b8e7ac71774019956bd90be65205aae022d3bc9891db88",
+          "review": "sheet-14.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "f28746892c3aadd5fe7e19dadc09663dcd67cd9e0867dddbdbdd40e22461b463",
+          "review": "../purchase-current-visual-review/sheet-02.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-syncing-320-2x.long.png",
+      "sha256": "cb2bd7dbd8081b462a9b4423740eb4effd142cf8519acfc9c79375e8172fe033",
+      "width": 320,
+      "height": 1108,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "5dbce7e77fcb0af996d7148517f3a6f1b10669617555307fb180197432e3ba02",
+          "review": "sheet-12.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1108,
+          "pixel_sha256": "1e12471be080415b3762af84d3de885e3e79fd16353a575a587ea6f35c8b2e62",
+          "review": "sheet-14.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-syncing-320-2x.png",
+      "sha256": "097894b8f78f6217c8ae210604db20079322ca2dcb5e26ce8cef27dee52ec41e",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "5dbce7e77fcb0af996d7148517f3a6f1b10669617555307fb180197432e3ba02",
+          "review": "sheet-12.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "aaccdfdef4c85e9315c5c368c940b5b67f150b2ed4fa1c49d3bdfbdcec49fa49",
+          "review": "../purchase-current-visual-review/sheet-14.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-syncing-393-1x.png",
+      "sha256": "aecb0b4aa86d8bbfddaf05ed8b1dfbdb0b93074743b3bb5ad0a1082a1039f5cf",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "edb081af7a356477c0d3e97fff9b7121f278c0687d093a383661c5dea9e6add3",
+          "review": "sheet-13.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "ca577f58cda7247d9958903211872798f842756816eb4cf802b4ec624371b6a1",
+          "review": "sheet-14.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-submitted-challenge-320-2x.long.png",
+      "sha256": "dae54ddb158495a10ead43d4e719e12d33b45b2cb4da8b68aec9f4dfb6e631e8",
+      "width": 320,
+      "height": 1781,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "06e196fe5d11e32c82672e36f55012f60d23ff0d40b194feef3e2d134dab78b5",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-36.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "c2559affdfa637403c5c534559acd051d372ec36687ef5c72bf37b066f435019",
+          "review": "../purchase-current-visual-review/sheet-03.png#tile-3"
+        },
+        {
+          "y0": 1300,
+          "y1": 1781,
+          "pixel_sha256": "af271df0d9bb0fe352590684032eca78008224a30c877d1bbddcd1deb5eae188",
+          "review": "../purchase-current-visual-review/sheet-03.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-submitted-challenge-320-2x.png",
+      "sha256": "2938adf1b6607270df4be994a12e1dcf26ec66554164a638040742c339403df0",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6314ccf7992a824ab46463b23095a53441b363849d6d47af02ff9cc91f9065ec",
+          "review": "../purchase-current-visual-review/sheet-03.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "bb206b6c7bfac278fa5ca1b3151f38a10c3c17043f2d80ecde5a6fba2c801c66",
+          "review": "../purchase-current-visual-review/sheet-04.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-submitted-challenge-393-1x.long.png",
+      "sha256": "8bb35500c67dec3d4f744d2ae97a2db2d58d1b4808a2de7365c505858c0963b5",
+      "width": 393,
+      "height": 966,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "106f2ebef2e3bce61bb46224d0ae23aa236a15f640d2a2b6a89d56c176b1b889",
+          "review": "../purchase-current-visual-review/sheet-04.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 966,
+          "pixel_sha256": "03e184472e258503b4993024559e7e2e6126b7d8be7084be19d4df8687f44d1b",
+          "review": "../purchase-current-visual-review/sheet-04.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-submitted-challenge-393-1x.png",
+      "sha256": "f3b1774ad50cce9b318756d4f0ec83de77e4da6a46f2fb8c5b99863dccbb83fb",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b01f01f0cf91752f9f29fef2de5e4b0cde3fb2d2af1c375d644d7ebdd623980b",
+          "review": "../purchase-current-visual-review/sheet-04.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "85c40b3556f88549ec22785d3ef6b00082ba1cb154e2678501a77ee635b366ff",
+          "review": "../purchase-current-visual-review/sheet-04.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-success-close-320-2x.long.png",
+      "sha256": "12e772a0869f8dca6d99de934a409daec4c352899f8dcd2bdf8c4bc6f37d56b1",
+      "width": 320,
+      "height": 2426,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "3bc93003b58853d413ef36869ba51bce09368769e2bfee123be7d00daa3b5dec",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-12.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "9a36a8e973a285c960de21fde17e3612d251b111cdf3256316558afe0d57fe2e",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-12.png#tile-3"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "7965fc4b18ead2e3d8adaa7b43fc7d33c89e72f128173835ba407ecffb9cfa11",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-12.png#tile-4"
+        },
+        {
+          "y0": 1950,
+          "y1": 2426,
+          "pixel_sha256": "201c0929e9f6cb5a1f0b94980eadf71d1c44011fa76f81879ceff49902601d59",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-12.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-success-close-320-2x.png",
+      "sha256": "9a106badc7a01b451c71f7304520fffda7844efca780e45187cc4c6c90997f9b",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "3bc93003b58853d413ef36869ba51bce09368769e2bfee123be7d00daa3b5dec",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-12.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "e5db96a85f82452ec3716ea5b4d7b971e31222a46029e6e6bcea271bf7ea84a3",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-16.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-success-close-393-1x.long.png",
+      "sha256": "add186eedbfa58be82bd981c635cb9f727aa09bd5c4a57720a333b6039aacb10",
+      "width": 393,
+      "height": 1272,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "222a57c85f9ac9033a32e75910c1c3dee67bf565293e6e51a8dd1dfbc4a33b93",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-13.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1272,
+          "pixel_sha256": "62bd42c9be6644cb0a0a13780c53f29e6f5cb835c016ddff47fe2af10cc5e55a",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-13.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/purchase-branches-current-success-close-393-1x.png",
+      "sha256": "6a6010c7ba628f9684391ac5b13ed4182d8d4754bd0b2378ef4aa784329a77b4",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "222a57c85f9ac9033a32e75910c1c3dee67bf565293e6e51a8dd1dfbc4a33b93",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-13.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1d3ef37a7d6b299aa5cca32446b248a1f5e9f5f5a250d01e2e9e13e48502a666",
+          "review": "../service-current-visual-review-update/../service-current-visual-review/sheet-16.png#tile-5"
+        }
+      ]
+    }
+  ],
+  "unique_segments": 165,
+  "new_segments": 81,
+  "new_sheets": 14
+}

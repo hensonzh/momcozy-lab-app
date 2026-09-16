@@ -1,0 +1,174 @@
+{
+  "counts": {
+    "Total Pages": 147,
+    "Completed": 142,
+    "Need Review": 5,
+    "Missing Reference": 0
+  },
+  "design_snapshot_files_verified": 18,
+  "user_app_ui_files": 92,
+  "unmapped": [],
+  "errors": [],
+  "historical_review_hash_information": [
+    {
+      "id": "common/navigation",
+      "historical_sha256": "03a97a15b7a21f045da36627b39245cf09eba81e3da2ab5ad4d8b0dbd703f32d",
+      "matched_files": [
+        "source/src/styles/me-agent.css"
+      ],
+      "note": "Historical review scope differs or is unspecified; not an automatic stale-source finding."
+    },
+    {
+      "id": "mom/home",
+      "historical_sha256": "b16dac3ff072c780a2ffdae1d635bd201ba9f80cbcc9254c10948e78905abdac",
+      "matched_files": [
+        "source/src/components/MeOverview.tsx"
+      ],
+      "note": "Historical review scope differs or is unspecified; not an automatic stale-source finding."
+    },
+    {
+      "id": "mom/diary-rest",
+      "historical_sha256": "f17824007a98d3fcc9c7a90e398d050d28e94b29c204b66a1d3c4ffc37f2ef3d",
+      "matched_files": [],
+      "note": "Historical review scope differs or is unspecified; not an automatic stale-source finding."
+    },
+    {
+      "id": "mom/diary-body",
+      "historical_sha256": "f17824007a98d3fcc9c7a90e398d050d28e94b29c204b66a1d3c4ffc37f2ef3d",
+      "matched_files": [],
+      "note": "Historical review scope differs or is unspecified; not an automatic stale-source finding."
+    },
+    {
+      "id": "mom/diary-mood",
+      "historical_sha256": "f17824007a98d3fcc9c7a90e398d050d28e94b29c204b66a1d3c4ffc37f2ef3d",
+      "matched_files": [],
+      "note": "Historical review scope differs or is unspecified; not an automatic stale-source finding."
+    },
+    {
+      "id": "mom/lactation",
+      "historical_sha256": "4d9fb0d78f90e0a633f0b0b694da737c663ddc3048263ac03417a48724467129",
+      "matched_files": [],
+      "note": "Historical review scope differs or is unspecified; not an automatic stale-source finding."
+    },
+    {
+      "id": "mom/lactation-edit",
+      "historical_sha256": "4d9fb0d78f90e0a633f0b0b694da737c663ddc3048263ac03417a48724467129",
+      "matched_files": [],
+      "note": "Historical review scope differs or is unspecified; not an automatic stale-source finding."
+    },
+    {
+      "id": "mom/other-functions",
+      "historical_sha256": "03a97a15b7a21f045da36627b39245cf09eba81e3da2ab5ad4d8b0dbd703f32d",
+      "matched_files": [
+        "source/src/styles/me-agent.css"
+      ],
+      "note": "Historical review scope differs or is unspecified; not an automatic stale-source finding."
+    },
+    {
+      "id": "baby/home",
+      "historical_sha256": "62b5d02304c3ae9d61c529d5bd4a2ab6e24692b8ab5e05fe4a914fda2256d490",
+      "matched_files": [
+        "source/src/styles/baby.css"
+      ],
+      "note": "Historical review scope differs or is unspecified; not an automatic stale-source finding."
+    },
+    {
+      "id": "baby/growth",
+      "historical_sha256": "62b5d02304c3ae9d61c529d5bd4a2ab6e24692b8ab5e05fe4a914fda2256d490",
+      "matched_files": [
+        "source/src/styles/baby.css"
+      ],
+      "note": "Historical review scope differs or is unspecified; not an automatic stale-source finding."
+    },
+    {
+      "id": "profile/more",
+      "historical_sha256": "88ea2377acce7ee06f1032bd6640bf555bfb631ac00ec4af562da91cd14d79b5",
+      "matched_files": [],
+      "note": "Historical review scope differs or is unspecified; not an automatic stale-source finding."
+    },
+    {
+      "id": "services/catalog",
+      "historical_sha256": "6e25712d32528a94dd01c18e65c790c30d595b0bf57b3d7c08348402163ad52a",
+      "matched_files": [],
+      "note": "Historical review scope differs or is unspecified; not an automatic stale-source finding."
+    },
+    {
+      "id": "services/package",
+      "historical_sha256": "6e25712d32528a94dd01c18e65c790c30d595b0bf57b3d7c08348402163ad52a",
+      "matched_files": [],
+      "note": "Historical review scope differs or is unspecified; not an automatic stale-source finding."
+    },
+    {
+      "id": "services/team",
+      "historical_sha256": "6e25712d32528a94dd01c18e65c790c30d595b0bf57b3d7c08348402163ad52a",
+      "matched_files": [],
+      "note": "Historical review scope differs or is unspecified; not an automatic stale-source finding."
+    },
+    {
+      "id": "auth/login",
+      "historical_sha256": "8c845ddbdb3d3ef097c75580594032f97f61680aa4813dc42ebe161715b81024",
+      "matched_files": [
+        "auth/reference/user-approved-login.png"
+      ],
+      "note": "Historical review scope differs or is unspecified; not an automatic stale-source finding."
+    },
+    {
+      "id": "auth/register",
+      "historical_sha256": "c0f727151b90cb3080d5b2db3a31538c3db9da2b7e544d994ae698dcae18a462",
+      "matched_files": [],
+      "note": "Historical review scope differs or is unspecified; not an automatic stale-source finding."
+    },
+    {
+      "id": "auth/verify",
+      "historical_sha256": "c0f727151b90cb3080d5b2db3a31538c3db9da2b7e544d994ae698dcae18a462",
+      "matched_files": [],
+      "note": "Historical review scope differs or is unspecified; not an automatic stale-source finding."
+    },
+    {
+      "id": "auth/forgot",
+      "historical_sha256": "c0f727151b90cb3080d5b2db3a31538c3db9da2b7e544d994ae698dcae18a462",
+      "matched_files": [],
+      "note": "Historical review scope differs or is unspecified; not an automatic stale-source finding."
+    },
+    {
+      "id": "auth/reset",
+      "historical_sha256": "c0f727151b90cb3080d5b2db3a31538c3db9da2b7e544d994ae698dcae18a462",
+      "matched_files": [],
+      "note": "Historical review scope differs or is unspecified; not an automatic stale-source finding."
+    },
+    {
+      "id": "mom/state-01",
+      "historical_sha256": "b16dac3ff072c780a2ffdae1d635bd201ba9f80cbcc9254c10948e78905abdac",
+      "matched_files": [
+        "source/src/components/MeOverview.tsx"
+      ],
+      "note": "Historical review scope differs or is unspecified; not an automatic stale-source finding."
+    },
+    {
+      "id": "mom/state-04",
+      "historical_sha256": "f17824007a98d3fcc9c7a90e398d050d28e94b29c204b66a1d3c4ffc37f2ef3d",
+      "matched_files": [],
+      "note": "Historical review scope differs or is unspecified; not an automatic stale-source finding."
+    },
+    {
+      "id": "mom/state-06",
+      "historical_sha256": "f17824007a98d3fcc9c7a90e398d050d28e94b29c204b66a1d3c4ffc37f2ef3d",
+      "matched_files": [],
+      "note": "Historical review scope differs or is unspecified; not an automatic stale-source finding."
+    },
+    {
+      "id": "mom/state-09",
+      "historical_sha256": "f17824007a98d3fcc9c7a90e398d050d28e94b29c204b66a1d3c4ffc37f2ef3d",
+      "matched_files": [],
+      "note": "Historical review scope differs or is unspecified; not an automatic stale-source finding."
+    },
+    {
+      "id": "mom/state-11",
+      "historical_sha256": "b16dac3ff072c780a2ffdae1d635bd201ba9f80cbcc9254c10948e78905abdac",
+      "matched_files": [
+        "source/src/components/MeOverview.tsx"
+      ],
+      "note": "Historical review scope differs or is unspecified; not an automatic stale-source finding."
+    }
+  ]
+}

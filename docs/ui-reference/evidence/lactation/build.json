@@ -1,0 +1,6 @@
+{
+  "apk": "build/app/outputs/flutter-apk/app-local-debug.apk",
+  "sha256": "95b95796a2258f11b453367dfdf7e186828b98c3ac095c6c13bd81da52db3bb2",
+  "environment": "local debug emulator-5554",
+  "date": "2026-09-12"
+}

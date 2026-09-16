@@ -1,0 +1,90 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: (setUpAll)
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: quick mood starts a draft; save preserves other groups and refreshes home
+00:00 +1: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: lactation create uses the existing editor and refreshes total and analysis
+00:00 +2: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: first frame uses skeleton then independent purchased and empty records
+00:00 +3: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: generating insight preserves its state without a ready conclusion
+00:00 +4: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: failed portrait uses single expert fallback and keeps service actions
+00:01 +5: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: paused service retains progress and disables new booking
+00:01 +6: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: expired service retains progress and disables new booking
+00:01 +7: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: exhausted service retains progress and disables new booking
+00:01 +8: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: partial records preserve missing sections and unknown percentages
+00:01 +9: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: record refresh reloads insight; failure cannot show a stale conclusion
+00:01 +10: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: diary failure is local; missing delivery date has honest stage fallback
+00:01 +11: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: handoff initial 320.0/1.0
+00:01 +12: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: handoff recorded 320.0/1.0
+00:01 +13: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: handoff purchased 320.0/1.0
+00:01 +14: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: handoff initial 320.0/2.0
+00:01 +15: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: handoff recorded 320.0/2.0
+00:01 +16: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: handoff purchased 320.0/2.0
+00:01 +17: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: handoff initial 360.0/1.0
+00:01 +18: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: handoff recorded 360.0/1.0
+00:02 +19: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: handoff purchased 360.0/1.0
+00:02 +20: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: handoff initial 360.0/2.0
+00:02 +21: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: handoff recorded 360.0/2.0
+00:02 +22: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: handoff purchased 360.0/2.0
+00:02 +23: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: handoff initial 393.0/1.0
+00:02 +24: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: handoff recorded 393.0/1.0
+00:02 +25: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: handoff purchased 393.0/1.0
+00:02 +26: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: handoff initial 393.0/2.0
+00:02 +27: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: handoff recorded 393.0/2.0
+00:03 +28: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: handoff purchased 393.0/2.0
+00:03 +29: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: (tearDownAll)
+00:03 +29: loading /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_redesign_test.dart
+00:03 +29: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_redesign_test.dart: (setUpAll)
+00:03 +29: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_redesign_test.dart: diary loading, conflict, draft boundary and versioned reload 320.0/1.0
+00:04 +30: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_redesign_test.dart: diary quick mood, exclusive pressure and clearing saved record 320.0/1.0
+00:05 +31: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_redesign_test.dart: diary loading, conflict, draft boundary and versioned reload 320.0/2.0
+00:05 +32: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_redesign_test.dart: diary quick mood, exclusive pressure and clearing saved record 320.0/2.0
+00:05 +33: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_redesign_test.dart: diary loading, conflict, draft boundary and versioned reload 390.0/1.0
+00:06 +34: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_redesign_test.dart: diary quick mood, exclusive pressure and clearing saved record 390.0/1.0
+00:06 +35: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_redesign_test.dart: diary loading, conflict, draft boundary and versioned reload 390.0/2.0
+00:06 +36: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_redesign_test.dart: diary quick mood, exclusive pressure and clearing saved record 390.0/2.0
+00:06 +37: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_redesign_test.dart: diary loading, conflict, draft boundary and versioned reload 430.0/1.0
+00:07 +38: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_redesign_test.dart: diary quick mood, exclusive pressure and clearing saved record 430.0/1.0
+00:07 +39: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_redesign_test.dart: diary loading, conflict, draft boundary and versioned reload 430.0/2.0
+00:07 +40: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_redesign_test.dart: diary quick mood, exclusive pressure and clearing saved record 430.0/2.0
+00:07 +41: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_redesign_test.dart: (tearDownAll)
+00:07 +41: loading /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_page_test.dart
+00:08 +41: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_page_test.dart: independent diary uses shared sections, preserves draft and saves 320.0/1.0
+00:09 +42: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_page_test.dart: independent diary uses shared sections, preserves draft and saves 320.0/2.0
+00:09 +43: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_page_test.dart: independent diary uses shared sections, preserves draft and saves 390.0/1.0
+00:09 +44: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_page_test.dart: independent diary uses shared sections, preserves draft and saves 390.0/2.0
+00:10 +45: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_page_test.dart: independent diary uses shared sections, preserves draft and saves 430.0/1.0
+00:10 +46: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_page_test.dart: independent diary uses shared sections, preserves draft and saves 430.0/2.0
+00:10 +47: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_page_test.dart: short diary keeps note and save reachable with keyboard and large text
+00:10 +48: loading /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_redesign_test.dart
+00:11 +48: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_redesign_test.dart: (setUpAll)
+00:11 +48: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_redesign_test.dart: profile draft, conflict reload and removed profile 320.0/1.0
+00:12 +49: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_redesign_test.dart: profile choices and uncertain save preserve exact request 320.0/1.0
+00:12 +50: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_redesign_test.dart: profile draft, conflict reload and removed profile 320.0/2.0
+00:12 +51: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_redesign_test.dart: profile choices and uncertain save preserve exact request 320.0/2.0
+00:13 +52: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_redesign_test.dart: profile draft, conflict reload and removed profile 390.0/1.0
+00:13 +53: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_redesign_test.dart: profile choices and uncertain save preserve exact request 390.0/1.0
+00:13 +54: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_redesign_test.dart: profile draft, conflict reload and removed profile 390.0/2.0
+00:13 +55: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_redesign_test.dart: profile choices and uncertain save preserve exact request 390.0/2.0
+00:14 +56: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_redesign_test.dart: profile draft, conflict reload and removed profile 430.0/1.0
+00:14 +57: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_redesign_test.dart: profile choices and uncertain save preserve exact request 430.0/1.0
+00:14 +58: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_redesign_test.dart: profile draft, conflict reload and removed profile 430.0/2.0
+00:14 +59: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_redesign_test.dart: profile choices and uncertain save preserve exact request 430.0/2.0
+00:14 +60: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_redesign_test.dart: (tearDownAll)
+00:14 +60: loading /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_knowledge_and_summary_test.dart
+00:15 +60: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_knowledge_and_summary_test.dart: knowledge changes at local eight and ignores another baby and later events
+00:15 +61: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_knowledge_and_summary_test.dart: dated measurements become eligible on the next completed date, without invented timestamps
+00:15 +62: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_knowledge_and_summary_test.dart: daily sleep uses elapsed overlap while intake and nursing keep distinct known quantities
+00:15 +63: loading /Users/lute/project/momcozy-lab/app/test/shared/knowledge_article_design_test.dart
+00:15 +63: /Users/lute/project/momcozy-lab/app/test/shared/knowledge_article_design_test.dart: (setUpAll)
+00:15 +63: /Users/lute/project/momcozy-lab/app/test/shared/knowledge_article_design_test.dart: knowledge mom at 320.0 / 1.0
+00:16 +64: /Users/lute/project/momcozy-lab/app/test/shared/knowledge_article_design_test.dart: knowledge mom at 320.0 / 2.0
+00:16 +65: /Users/lute/project/momcozy-lab/app/test/shared/knowledge_article_design_test.dart: knowledge mom at 390.0 / 1.0
+00:16 +66: /Users/lute/project/momcozy-lab/app/test/shared/knowledge_article_design_test.dart: knowledge mom at 390.0 / 2.0
+00:16 +67: /Users/lute/project/momcozy-lab/app/test/shared/knowledge_article_design_test.dart: knowledge mom at 430.0 / 1.0
+00:16 +68: /Users/lute/project/momcozy-lab/app/test/shared/knowledge_article_design_test.dart: knowledge mom at 430.0 / 2.0
+00:16 +69: /Users/lute/project/momcozy-lab/app/test/shared/knowledge_article_design_test.dart: knowledge baby at 320.0 / 1.0
+00:16 +70: /Users/lute/project/momcozy-lab/app/test/shared/knowledge_article_design_test.dart: knowledge baby at 320.0 / 2.0
+00:16 +71: /Users/lute/project/momcozy-lab/app/test/shared/knowledge_article_design_test.dart: knowledge baby at 390.0 / 1.0
+00:16 +72: /Users/lute/project/momcozy-lab/app/test/shared/knowledge_article_design_test.dart: knowledge baby at 390.0 / 2.0
+00:16 +73: /Users/lute/project/momcozy-lab/app/test/shared/knowledge_article_design_test.dart: knowledge baby at 430.0 / 1.0
+00:16 +74: /Users/lute/project/momcozy-lab/app/test/shared/knowledge_article_design_test.dart: knowledge baby at 430.0 / 2.0
+00:16 +75: /Users/lute/project/momcozy-lab/app/test/shared/knowledge_article_design_test.dart: (tearDownAll)
+00:16 +75: All tests passed!

@@ -1,0 +1,11 @@
+{
+  "outcome": "no-show",
+  "source": "test/goldens/ui_inventory/consultation-journey-current-no-show-outcome-393.png",
+  "destinations": [
+    {
+      "button": "返回妈妈主页",
+      "route": "/me"
+    }
+  ],
+  "evidence": "Actual visible CTA taps and production router assertions; isolated HTTP/device boundaries"
+}

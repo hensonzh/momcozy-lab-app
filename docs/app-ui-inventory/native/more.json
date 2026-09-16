@@ -1,0 +1,66 @@
+{
+  "entry": "Bottom navigation",
+  "trigger": "More",
+  "controls": [
+    {
+      "text": "隐私",
+      "class": "android.widget.Button",
+      "bounds": "[1049,270][1193,414]",
+      "scrollable": "false"
+    },
+    {
+      "text": "账号设置",
+      "class": "android.view.View",
+      "bounds": "[48,519][1232,663]",
+      "scrollable": "false"
+    },
+    {
+      "text": "通知",
+      "class": "android.view.View",
+      "bounds": "[48,666][1232,810]",
+      "scrollable": "false"
+    },
+    {
+      "text": "专家支持",
+      "class": "android.view.View",
+      "bounds": "[48,813][1232,957]",
+      "scrollable": "false"
+    },
+    {
+      "text": "退出登录",
+      "class": "android.widget.Button",
+      "bounds": "[48,1029][1232,1173]",
+      "scrollable": "false"
+    },
+    {
+      "text": "Me",
+      "class": "android.widget.Button",
+      "bounds": "[24,2571][270,2766]",
+      "scrollable": "false"
+    },
+    {
+      "text": "Baby",
+      "class": "android.widget.Button",
+      "bounds": "[270,2571][517,2766]",
+      "scrollable": "false"
+    },
+    {
+      "text": "Cozymate",
+      "class": "android.widget.Button",
+      "bounds": "[517,2571][763,2766]",
+      "scrollable": "false"
+    },
+    {
+      "text": "Schedule",
+      "class": "android.widget.Button",
+      "bounds": "[763,2571][1010,2766]",
+      "scrollable": "false"
+    },
+    {
+      "text": "More",
+      "class": "android.widget.Button",
+      "bounds": "[1010,2571][1256,2766]",
+      "scrollable": "false"
+    }
+  ]
+}

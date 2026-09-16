@@ -1,0 +1,17 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/app/momcozy_route_shell_contract_test.dart
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/app/mom_navigation_test.dart: (setUpAll)
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/app/mom_navigation_test.dart: navigation reference at 320.0 with all selected states
+00:00 +1: /Users/lute/project/momcozy-lab/app/test/app/momcozy_route_shell_contract_test.dart: primary navigation is hidden on secondary pages
+00:00 +2: /Users/lute/project/momcozy-lab/app/test/app/momcozy_route_shell_contract_test.dart: primary navigation is hidden on secondary pages
+00:00 +3: /Users/lute/project/momcozy-lab/app/test/app/momcozy_route_shell_contract_test.dart: primary navigation is hidden on secondary pages
+00:00 +4: /Users/lute/project/momcozy-lab/app/test/app/mom_navigation_test.dart: five navigation destinations remain readable and tappable at 2x text on 390.0
+00:00 +5: /Users/lute/project/momcozy-lab/app/test/app/momcozy_route_shell_contract_test.dart: MomCozy route shell contract registers every documented Flutter route shell path
+00:00 +6: /Users/lute/project/momcozy-lab/app/test/app/mom_navigation_test.dart: navigation reference at 430.0 with all selected states
+00:00 +7: /Users/lute/project/momcozy-lab/app/test/app/mom_navigation_test.dart: navigation reference at 430.0 with all selected states
+00:00 +8: /Users/lute/project/momcozy-lab/app/test/app/mom_navigation_test.dart: navigation reference at 430.0 with all selected states
+00:00 +9: /Users/lute/project/momcozy-lab/app/test/app/mom_navigation_test.dart: five navigation destinations remain readable and tappable at 2x text on 430.0
+00:00 +10: /Users/lute/project/momcozy-lab/app/test/app/mom_navigation_test.dart: (tearDownAll)
+00:00 +10: All tests passed!
+
+Analyzing 3 items...                                            
+No issues found! (ran in 1.3s)

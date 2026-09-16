@@ -1,0 +1,70 @@
+{
+  "scope": "Fixed G11 detail; no new error-code, viewport, platform or timing matrix",
+  "completed_named_rows": {
+    "auth": "AUTH-SUBMIT-FEEDBACK-CURRENT.md",
+    "consultation": "CONSULTATION-PREFLIGHT-FEEDBACK-CURRENT.md",
+    "intake": "INTAKE-FEEDBACK-CURRENT.md",
+    "schedule": "SCHEDULE-FEEDBACK-CURRENT.md",
+    "renew": "RENEW-PENDING-CURRENT.md",
+    "configured_three_gaps": "CONFIGURED-SUBMISSION-CURRENT.md",
+    "configured_errors": "CONFIGURED-ERRORS-CURRENT.md",
+    "agent_source_drift": "AGENT-CURRENT-REUSE.md"
+  },
+  "shared_feedback": "Representative ordinary/Mom errors, loading and empty layouts verified; host-wide final mapping pending",
+  "remaining": [],
+  "completion": "COMPLETE",
+  "bounded_capture_decisions": "CAPTURE-DECISIONS.md",
+  "confirmed_unindexed_visual_states": [],
+  "reused_without_recapture": [
+    "avatar activation completion",
+    "auth password tooltip complete long image"
+  ],
+  "agent_previous_capture": {
+    "run": "runs/20260914T090104-g11-agent-drift",
+    "passed": 10,
+    "failed": 1,
+    "failure": "Markdown top golden 0.68% difference",
+    "current_source_matches_run": false,
+    "resolution": "Missing decoded avatars; targeted helper awaits asset, original golden passes. See AGENT-CURRENT-REUSE.md"
+  },
+  "latest_capture": {
+    "new_images": 3,
+    "reused_markdown_images": 2,
+    "strict_scenarios_passed": 3,
+    "reports": [
+      "CONFIGURED-ERRORS-CURRENT.md",
+      "AGENT-CURRENT-REUSE.md"
+    ],
+    "configured_final_scenarios_passed": 4,
+    "updated_existing_image": "onboarding-upload-pending illustration decoded",
+    "final_run": "runs/20260914T092346-g11-configured-final"
+  },
+  "earlier_named_batch": {
+    "this_turn_new_images": 17,
+    "this_turn_reviewed_full_images": 37,
+    "strict_scenarios_passed": 11
+  },
+  "final_mapping": {
+    "page_reports_mapped": 34,
+    "overlay_families_mapped": 35,
+    "auth_form_states_explicitly_mapped": 26,
+    "auth_form_pages_explicitly_mapped": 5,
+    "classification_fixed": "auth-followup-forgot-pending → auth-forgot; observed unique subtitle retained while submit spinner hides button text",
+    "reports": [
+      "PAGE-INTERACTION-MAP.md",
+      "OVERLAY-EVIDENCE-MAP.md",
+      "AUTH-STATE-MAP.md"
+    ],
+    "new_screenshots_this_mapping_pass": 0,
+    "flutter_tests_run_this_mapping_pass": 0,
+    "remaining": [],
+    "all_page_state_rows": 213,
+    "unresolved_state_selections": 0,
+    "new_distinct_state_images": 3,
+    "reused_specific_existing_images": 4,
+    "latest_report": "STATE-MAP-FINAL.md",
+    "overlay_states_explicitly_mapped": 166,
+    "source_reviews_pending": 0,
+    "acceptance": "AUDIT.md"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/baby-development-controls-responds-to-sound-notObserved-393-1x.png",
+  "previous_source": "test/goldens/ui_inventory/baby-development-controls-responds-to-sound-observed-393-1x.png",
+  "route": "/baby",
+  "trigger": "Select 听到声音后有动作或表情反应 → 暂未观察到",
+  "root_entry": "Authenticated More → tap Baby bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/baby/baby_development_control_inventory_test.dart"
+}

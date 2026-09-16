@@ -1,0 +1,8 @@
+{
+  "lib/features/media/presentation/pdf_document_toolbar.dart": "f4e5e05eea453584b1049429be7e535ae7b799a8dba42db3e092299f74d87335",
+  "lib/features/media/presentation/product_asset_video_player.dart": "97ebf46698abe55482b54fa75a5cd11db629dec24bf6ec5f67552a00493cda21",
+  "lib/features/media/presentation/media_viewer_page.dart": "4ef74f4df4d7254774086da4df76013a46034c57bd7e01c234cc105711e15beb",
+  "lib/features/media/presentation/media_viewer_feedback.dart": "e96c1542356308782b6607eaac4b3b490da3baa0c65709fe2df18fbefa0bacd6",
+  "test/features/media/product_asset_video_player_test.dart": "c4e536ecfddc7f408f1091def1bc348ad016a47003362a9566532de908928813",
+  "test/native/media_pdf_design_test.dart": "3c273e38896a8859a9cd07809348adf19fa10802b5577e913282473b7031dd38"
+}

@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/notification-navigation-current-rejection-more-return-393-1x.png",
+  "previous_source": "test/goldens/ui_inventory/notification-navigation-current-rejection-recovered-inbox-393-1x.png",
+  "route": "/more",
+  "trigger": "Notification center back → More; scroll More back to top",
+  "root_entry": "Authenticated More page",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production notification coordinator/repository/controller; isolated HTTP, push gateway and permission platform; real router.go and ScaffoldMessenger callbacks, no native OS dialog or remote push",
+  "test": "test/features/notifications/notification_navigation_current_inventory_test.dart"
+}

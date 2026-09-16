@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/booking-recovery-current-cancel-query-pending-320-2x.png",
+  "previous_source": "test/goldens/ui_inventory/booking-recovery-current-cancel-uncertain-320-2x.png",
+  "route": "/services/episodes/service-episode/booking",
+  "trigger": "Query latest appointment → pending",
+  "root_entry": "Authenticated More → tap Me bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/services/booking_recovery_current_inventory_test.dart"
+}

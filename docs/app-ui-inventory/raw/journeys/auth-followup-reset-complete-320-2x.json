@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/auth-followup-reset-complete-320-2x.png",
+  "previous_source": "test/goldens/ui_inventory/auth-followup-reset-pending-320-2x.png",
+  "route": "/login",
+  "trigger": "Reset accepted → login with success message, password cleared, still signed out",
+  "root_entry": "Open More while signed out → real auth redirect",
+  "evidence": "Actual MomCozyFlutterApp and createMomCozyRouter; only HTTP/session/native-intent dependencies replaced with isolated fixtures",
+  "test": "test/features/auth/auth_followup_inventory_test.dart"
+}

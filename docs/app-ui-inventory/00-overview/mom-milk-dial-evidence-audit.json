@@ -1,0 +1,46 @@
+{
+  "result": "PASS",
+  "scope": "milk dial interactions, horizontal picker edges and reviewed images only; full App completion unresolved",
+  "states": 26,
+  "viewport_variants": 50,
+  "long_variants": 12,
+  "original_pngs": 62,
+  "continuous_segments": 124,
+  "unique_reviewed_segments": 80,
+  "new_reviewed_sheets": 11,
+  "reused_prior_segments": 14,
+  "source_hashes": {
+    "test/modules/mom/mom_milk_dial_inventory_test.dart": "fc00d404ef452740fadeb2e125b9791b645902efdce2810dfb0420022aabea48",
+    "lib/shared/widgets/date_time_picker.dart": "0496a04eb4be7b9e587c672b8772ff52cc65d3268864c36f17143614838c1e05",
+    "lib/modules/mom/presentation/lactation_panel.dart": "bafc981a2aca86692cd64c6ce0fb5bea8e86af7da6ddb6911a3be8190f8bd9a6",
+    "lib/modules/mom/application/lactation_controller.dart": "b87259d6f8eab2ae2af9f20e189f9df35a28b4d20d5c1ac36dfb0576ce02cbed"
+  },
+  "qa_manifest_sha256": "3593664bfcf590dd8f710b8f6d4cb22821d9362c9e118cf80310c1b5258b1f5c",
+  "review_sheet_sha256": {
+    "mom-milk-dial-visual-review/sheet-01.png": "e33ae992ea5b9224489f78a6404d05ec5d6293391f549f5c645c871f77e9f519",
+    "mom-milk-control-visual-review/sheet-10.png": "353428b68e28a62faa8ff96a557d325a6becd38698cb38715ca8a97325683d64",
+    "mom-milk-control-visual-review/sheet-20.png": "d2de6c59cf9fd757b9f4b01b126c85ce692b4fb383f3f02bf97d246a7b92ce49",
+    "mom-milk-dial-visual-review/sheet-02.png": "c4e86b83ad7ead8a3a6a0c71090f085195fcd9ae6329344084ba08984729f4b8",
+    "mom-milk-validation-visual-review/sheet-21.png": "270db779e56ee0878b052ba887e881a456d4cb056c3bc81f0dca258f25f051df",
+    "mom-milk-dial-visual-review/sheet-03.png": "fef2d8690e7c325fb34af263a30bba454ae2ff718e0a9db34b1b15f7aad58ff4",
+    "mom-milk-validation-visual-review/sheet-02.png": "4f4e4dbc97d83aae0143e8a60fc36e5dbafd8e21cae8dc7c9d9f73eff5dcd8d2",
+    "mom-note-boundary-visual-review/sheet-13.png": "163326993fda5ad6972d859651b3ca4c1de520d1a8429392e999849d17099858",
+    "mom-note-boundary-visual-review/sheet-14.png": "fb66652092c30c1a2681847aac782aee46892f5359fc62807384d9e987db2894",
+    "mom-milk-dial-visual-review/sheet-04.png": "4681368503eba7c920353d6472c0689fb4c43b36a3356ea4f06b6cb5231ab77d",
+    "mom-rest-control-visual-review/sheet-15.png": "6abbc7775a85183bbda245e70ac2799bcdd60894b4831cb421d364cc9d46c4bd",
+    "mom-milk-dial-visual-review/sheet-05.png": "679f0c3eb1da676647a4b118b618fe29e9d3b19bcac28abbe79a57b9c12ef181",
+    "mom-rest-control-visual-review/sheet-17.png": "5eef9a69b371a544042abf94248100a0701f5cd92057ea898c384297630c8a89",
+    "mom-milk-dial-visual-review/sheet-06.png": "3b256ee5a95c959b0ee89ca3a83b6b0b4d1c368a5455b21482da38ed5ed22420",
+    "mom-milk-dial-visual-review/sheet-07.png": "655c1d4c1098a949d8e0524e80e1e33a60909e39c3671d57afea147c14af8244",
+    "mom-milk-dial-visual-review/sheet-08.png": "574f754bf47481e4412983fda65bb5deb0afef3329c92749c40beea17a115a43",
+    "mom-milk-dial-visual-review/sheet-09.png": "06868a88438f6932fc818f54382be614f8a5da6209df909ed501b067b9feff8d",
+    "mom-rest-control-visual-review/sheet-19.png": "ec6bd469695b32b407bf1b6c150f5a3317cb3c79fa257b0fd08084dc6b275249",
+    "mom-rest-control-visual-review/sheet-20.png": "c7bcd5dfc06a5b08b4d0d68c66d5a0a11c7264604d6c5d03a28566639865c577",
+    "mom-milk-dial-visual-review/sheet-10.png": "b77f83937eea5e5aa3226638555e00d25ddbfe497bbd703c1d6034e769eb8fcf",
+    "mom-milk-dial-visual-review/sheet-11.png": "b0574d761645bfe99113e6e1353ae5eb2f26fe949987f6f30f92366741d56265"
+  },
+  "horizontal_edges_px": [
+    0,
+    40
+  ]
+}

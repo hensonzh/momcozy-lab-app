@@ -1,0 +1,8 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/modules/services/booking_selection_current_inventory_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: current booking provider and date selection false
+00:02 +1: current booking hold reselect and confirmation recovery false
+00:03 +2: current booking provider and date selection true
+00:04 +3: current booking hold reselect and confirmation recovery true
+00:05 +4: (tearDownAll)
+00:05 +4: All tests passed!

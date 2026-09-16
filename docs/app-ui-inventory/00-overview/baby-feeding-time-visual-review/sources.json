@@ -1,0 +1,1340 @@
+{
+  "method": "full-width continuous 650px strips; identical pixels reference prior reviewed Mom or Baby controls; remaining segments reviewed at native width",
+  "sources": [
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-time-current-minute-restored-320-2x.long.png",
+      "sha256": "3ac1f98d36cfeb3f44cfe40f01e64970359e99cece8332a35c48eea5656cc236",
+      "width": 320,
+      "height": 1443,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "af9e23c4f64f3c4b0a5a3dcda976f32d18708e267dcc1202288faa43bbe7c307",
+          "review": "../baby-feeding-control-visual-review/sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "ef57412c94ec34a662104efb740b6bde1637cc5016d579f984683c9b547067f6",
+          "review": "../baby-feeding-control-visual-review/sheet-23.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1443,
+          "pixel_sha256": "729b245c56036ab2034ae0b27e528197ceb8b75ad6814f56484196b127840528",
+          "review": "../baby-feeding-control-visual-review/sheet-04.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-time-current-minute-restored-320-2x.png",
+      "sha256": "85dc5d8b1c83a2e96312d846cadbc39202bfc407691955e8231612f6e5b11cfc",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "62ea59cf513c3a3732e320e68986386e0db075624411e4c84948ea233aa8f0c9",
+          "review": "sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "ecafb57a8c16c0cf7c812c17de70b20ecb49c31035e676a05807f1e6ea0ceb7b",
+          "review": "sheet-01.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-time-current-minute-restored-393-1x.png",
+      "sha256": "8a80527d7b2fbdf980bf89c96887a8428a5fdf95a226a7b1e7eaed266410819d",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "f5336536e0f5753b053a9c6d967e6e7b364b32e1a99f26b9da5d8cc185794dad",
+          "review": "../baby-feeding-control-visual-review/sheet-23.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "18208b73a0a24766cee5ce14dfedee6ecd8766c22fd185d3de032b10e5b804a1",
+          "review": "../baby-feeding-control-visual-review/sheet-04.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-time-date-cancelled-320-2x.long.png",
+      "sha256": "3ac1f98d36cfeb3f44cfe40f01e64970359e99cece8332a35c48eea5656cc236",
+      "width": 320,
+      "height": 1443,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "af9e23c4f64f3c4b0a5a3dcda976f32d18708e267dcc1202288faa43bbe7c307",
+          "review": "../baby-feeding-control-visual-review/sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "ef57412c94ec34a662104efb740b6bde1637cc5016d579f984683c9b547067f6",
+          "review": "../baby-feeding-control-visual-review/sheet-23.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1443,
+          "pixel_sha256": "729b245c56036ab2034ae0b27e528197ceb8b75ad6814f56484196b127840528",
+          "review": "../baby-feeding-control-visual-review/sheet-04.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-time-date-cancelled-320-2x.png",
+      "sha256": "85dc5d8b1c83a2e96312d846cadbc39202bfc407691955e8231612f6e5b11cfc",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "62ea59cf513c3a3732e320e68986386e0db075624411e4c84948ea233aa8f0c9",
+          "review": "sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "ecafb57a8c16c0cf7c812c17de70b20ecb49c31035e676a05807f1e6ea0ceb7b",
+          "review": "sheet-01.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-time-date-cancelled-393-1x.png",
+      "sha256": "8a80527d7b2fbdf980bf89c96887a8428a5fdf95a226a7b1e7eaed266410819d",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "f5336536e0f5753b053a9c6d967e6e7b364b32e1a99f26b9da5d8cc185794dad",
+          "review": "../baby-feeding-control-visual-review/sheet-23.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "18208b73a0a24766cee5ce14dfedee6ecd8766c22fd185d3de032b10e5b804a1",
+          "review": "../baby-feeding-control-visual-review/sheet-04.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-time-date-open-320-2x.png",
+      "sha256": "4c837d7846742a21237bd1a41d5d631f1810478469d54c55eab55ed74c3a61af",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "d40ec2344e217e937f824d6f78a1d2a9e33a151c7520a70785a1687c39aa5643",
+          "review": "sheet-01.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a04872872ce449b80a849e7166b4a5f374cd329f02f58b5fa6d282614932798f",
+          "review": "sheet-01.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-time-date-open-393-1x.png",
+      "sha256": "2971fcf8631d891161c13929219b64b81a27fda6320a629e8d9823a62dd600a8",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "d073eaac850b3afb18c7db82f0ed8ba7ffff66355e539c90d8c40b66db0ab560",
+          "review": "sheet-01.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "272503cd9fefc608b1fd32f332b37440e9159eb7ce674435caddf0fdb64cd5dc",
+          "review": "sheet-01.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-time-future-date-rejected-320-2x.png",
+      "sha256": "188c027e65f9bf969becfa3090516049d874cbff61b27a75ac98e31006500db5",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "bffb04f04d8bd1ed3fc00a01d22adab3c4b28317174ecd89dce507de3b548f15",
+          "review": "sheet-02.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a04872872ce449b80a849e7166b4a5f374cd329f02f58b5fa6d282614932798f",
+          "review": "sheet-01.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-time-future-date-rejected-393-1x.png",
+      "sha256": "e13301f16f68ff3472afe20ef4e244437cda7e06d11a776aeda5133dd9938664",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "7392ee3299cefe9996ccbf5974d13a3eb4bb1e748ed131650190eb44c4268f4d",
+          "review": "sheet-02.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "378c48eb02ec76e582488b71bbc1a224c8d93851eb7d3dc47ecd2edb3eb1a296",
+          "review": "sheet-02.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-time-future-minute-input-320-2x.png",
+      "sha256": "e3cff4fcda4dfb7d2c8da5cd8c54ac4ba7835a6094428a6b670964263f3ce266",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "59758d9ce0a7e1efb705ca7a0db235f2be65e7fbe0eb4916e02416225e728109",
+          "review": "sheet-02.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "e09230575bd5475fa90465d76c786b6a4e55e0b338b6092e8b97ba6ad6b9525f",
+          "review": "sheet-02.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-time-future-minute-input-393-1x.png",
+      "sha256": "55c584a606d8a1f63b4a392228f281c03b954e17d04c7879bef335ed95c94cd0",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "548a545f2162c4e0faaba2b158abf09a35792aa51fbc08336077559e8a4dcc23",
+          "review": "sheet-02.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "378c48eb02ec76e582488b71bbc1a224c8d93851eb7d3dc47ecd2edb3eb1a296",
+          "review": "sheet-02.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-time-future-minute-rejected-320-2x.long.png",
+      "sha256": "79bf3b4f2da80a444f88ccd8bbeceacce3594c9afde67616af5063ba92859d49",
+      "width": 320,
+      "height": 1537,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "7ce7ff8318a7de408be79e3eea8ac0db2880f8dd7e47dccfdd2b380176eb5efc",
+          "review": "sheet-03.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "49b5c8335929a6bd5a2afd512f29a7c63569dd29adccec2f599ee9feb7d3137b",
+          "review": "sheet-03.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1537,
+          "pixel_sha256": "6c506a3f1029ab19de1ebbac7e9933103aceb2bfa77c16e08d93f649b91c3e5c",
+          "review": "sheet-03.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-time-future-minute-rejected-320-2x.png",
+      "sha256": "df0d626476f836e98f7ab62dbf6e7d5a99c63524ebaa4fceab228760f7148ad3",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "03500db8d5d4e6a15e55106e1a7477c1c0f51c0c1ec97fe5ad7e759b39b8eccc",
+          "review": "sheet-03.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "5369896f6442312007137ed434c8225cfdd1c08061bde28aad75576cb80da95f",
+          "review": "sheet-03.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-time-future-minute-rejected-393-1x.long.png",
+      "sha256": "c1965c8379bb9830fb5a8bb1b95db39f2fee13dfe016df16ad9f9d06bebf37df",
+      "width": 393,
+      "height": 885,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "cbd8f6a862b2e854dd0acbba48c9ca596bd38c8164f2f995976cb112db330b8a",
+          "review": "sheet-03.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 885,
+          "pixel_sha256": "cdace7f0e6dab8692c4ecb21f9e2a4ba52b59ce7b7a25969e5ac920979496d01",
+          "review": "sheet-04.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-time-future-minute-rejected-393-1x.png",
+      "sha256": "e0e2aecef89093096b077d513387b7171dd89d7e346687d52c4968093260e2ee",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "fc706da78267795d9ff00d3dafe050e9606527f9b84ff3528cefa3f2cb1b541c",
+          "review": "sheet-04.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "f90bf14492c41f92b1b2db3d037e21847addd2f9b3b09aee1d05b8472aeeaeb8",
+          "review": "sheet-04.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-time-future-minute-selected-320-2x.long.png",
+      "sha256": "ff02a7e049955f4d3ad8089110667246ec1e52b4058829a99d0411bb98c1205d",
+      "width": 320,
+      "height": 1443,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "7ce7ff8318a7de408be79e3eea8ac0db2880f8dd7e47dccfdd2b380176eb5efc",
+          "review": "sheet-03.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "ef57412c94ec34a662104efb740b6bde1637cc5016d579f984683c9b547067f6",
+          "review": "../baby-feeding-control-visual-review/sheet-23.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1443,
+          "pixel_sha256": "729b245c56036ab2034ae0b27e528197ceb8b75ad6814f56484196b127840528",
+          "review": "../baby-feeding-control-visual-review/sheet-04.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-time-future-minute-selected-320-2x.png",
+      "sha256": "060e5dc041264e1950f392b4e5c46ebc736f091c4a88fc0c79f4bb467d7b4564",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b56d7bb250cc0531158009444f0717f98e302abd3b38376c3bc7fa501c0043ac",
+          "review": "sheet-04.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "ecafb57a8c16c0cf7c812c17de70b20ecb49c31035e676a05807f1e6ea0ceb7b",
+          "review": "sheet-01.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-time-future-minute-selected-393-1x.png",
+      "sha256": "db8fe2779d8c7b503785293909919d2a5e512737cdd1f329324e01ef9a107828",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "f7c5029be31b0a4d857eaedc3ed464b011060363363f38eb85004ae7d5177bf0",
+          "review": "sheet-04.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "18208b73a0a24766cee5ce14dfedee6ecd8766c22fd185d3de032b10e5b804a1",
+          "review": "../baby-feeding-control-visual-review/sheet-04.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-time-home-entry-320-2x.long.png",
+      "sha256": "2a7eed3eaa881740523730a74f99487a3935cee5f5e500fdea7e513a60082fc7",
+      "width": 320,
+      "height": 3460,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "58578630282c08ed070b330c5092b2346554d47e291ecce03bfa1790d2ebdd62",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "034c398b12fe2df5aaef1e8fd2e151d4092f4bc550a8179f7524acfdf8572a5d",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "fa27bf1b8f7135cf78bb1380036cbe25b805799678f9c6338d1b09862168215b",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "cf7b9827ee12ea5f4ce473b5b04736e9eca7e63163a06350e8ad0569b0e9a58a",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-3"
+        },
+        {
+          "y0": 2600,
+          "y1": 3250,
+          "pixel_sha256": "830120be56be43c6e4e4a7527c94577138b4175b12f8b7b606a89d5ff059987b",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-4"
+        },
+        {
+          "y0": 3250,
+          "y1": 3460,
+          "pixel_sha256": "347ac7ec17d5bdaf8c362c53e6be84275398444203824d119dff6d55c72c68e4",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-time-home-entry-320-2x.png",
+      "sha256": "32e02297eb960cf9da693d3ed9a4e380131ba98e63d64680e1c452112635af75",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "58578630282c08ed070b330c5092b2346554d47e291ecce03bfa1790d2ebdd62",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "98ef9a2ad09f8a3c8229ac286c7eb3cb28273ffd01708531c25ae3c0ce531fd2",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-time-home-entry-393-1x.long.png",
+      "sha256": "f0cba396e8a9efa775fb9fbb71adccd863e4ce8dace888759be74db253f099a6",
+      "width": 393,
+      "height": 1752,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2541e10f43029eb71329290bf405fa83fabe418cf9eb6676ed4e3eb8498f6856",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "462243825730002d5a7b26fe7e1bbdb2f381ea57afabfc7a0cad762ed9541c1e",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1752,
+          "pixel_sha256": "5d1142fe86ef6e5a8664871afce9928bf15cf58f7b773ac5f1080f1b7fead23c",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-time-home-entry-393-1x.png",
+      "sha256": "f7c02c89b1acb7e0cd4ab4adc0593819b05f05ed599398d49ea569c924ea6a82",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2541e10f43029eb71329290bf405fa83fabe418cf9eb6676ed4e3eb8498f6856",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a1f9a5a5f828e0a335129ce0d0a8a7cf54c1ab1e6b87423f882a64c1946d8f9e",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-time-home-volume-refreshed-320-2x.long.png",
+      "sha256": "8c7e42137f83ce5639650b484844f458ad63f45a07053c8c888e420cc1223635",
+      "width": 320,
+      "height": 3504,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "58578630282c08ed070b330c5092b2346554d47e291ecce03bfa1790d2ebdd62",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "034c398b12fe2df5aaef1e8fd2e151d4092f4bc550a8179f7524acfdf8572a5d",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "1261fffe5aca15dab3e1bfddb76f6e0839264c18c40ee1c6ba9471f19c9fb687",
+          "review": "sheet-04.png#tile-5"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "d804b0ab559b409f0dd5fdca030066712ae0591e340c780c73f625935686b014",
+          "review": "../baby-knowledge-source-visual-review/sheet-08.png#tile-5"
+        },
+        {
+          "y0": 2600,
+          "y1": 3250,
+          "pixel_sha256": "12c2b7abd9d10a50dddd3e108de4abba42883afba40fe2891cefdee5e472fd24",
+          "review": "../baby-knowledge-source-visual-review/sheet-09.png#tile-0"
+        },
+        {
+          "y0": 3250,
+          "y1": 3504,
+          "pixel_sha256": "d0e955cfaaca3dbbc53eee761cddd7a4fd95f5db04aadb1186cc22460e972fc5",
+          "review": "../baby-knowledge-source-visual-review/sheet-09.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-time-home-volume-refreshed-320-2x.png",
+      "sha256": "32e02297eb960cf9da693d3ed9a4e380131ba98e63d64680e1c452112635af75",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "58578630282c08ed070b330c5092b2346554d47e291ecce03bfa1790d2ebdd62",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "98ef9a2ad09f8a3c8229ac286c7eb3cb28273ffd01708531c25ae3c0ce531fd2",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-time-home-volume-refreshed-393-1x.long.png",
+      "sha256": "84d6d5284f880687d8d43330ae4b64eb5931549227fed0f8d89ae9eaa7c80d76",
+      "width": 393,
+      "height": 1752,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "120c58019c39b6088ba17217dd94c86ac4ab807a7b5569f38be04131bf6c69a2",
+          "review": "../baby-feeding-control-visual-review/sheet-10.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "2c5b6e55cfbf23b0bca3cb70e7707aaf088a66181c4bdb06c1a1b45ba1285397",
+          "review": "sheet-05.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1752,
+          "pixel_sha256": "5d1142fe86ef6e5a8664871afce9928bf15cf58f7b773ac5f1080f1b7fead23c",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-time-home-volume-refreshed-393-1x.png",
+      "sha256": "d67897dfda635dd2f0801e9e78addccb4a4c8119e5a6096eba8c0604826ecd8d",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "120c58019c39b6088ba17217dd94c86ac4ab807a7b5569f38be04131bf6c69a2",
+          "review": "../baby-feeding-control-visual-review/sheet-10.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "00d77b7a15ff8f4a64128e72e3b796c185db42d8a78f3110bc2f5ab38c32b102",
+          "review": "sheet-05.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-time-invalid-clock-320-2x.png",
+      "sha256": "9c82e094b3d65602893658c6e08622f70f9ac5ec38d9d643c96a6edcf65d7c34",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6875dbfffb1bdfd709362fba2d47e363e70c0b58fae7c7b4a8d62bd45f3569f3",
+          "review": "sheet-05.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "e09230575bd5475fa90465d76c786b6a4e55e0b338b6092e8b97ba6ad6b9525f",
+          "review": "sheet-02.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-time-invalid-clock-393-1x.png",
+      "sha256": "fbd11cc82982c269de9fd51505c3fb358116e3fb806063134405214467ebc637",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "d9aed265c896cdf8d04aa78bb793c85b4dde256adefdba1268d9c353c55865f3",
+          "review": "sheet-05.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "378c48eb02ec76e582488b71bbc1a224c8d93851eb7d3dc47ecd2edb3eb1a296",
+          "review": "sheet-02.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-time-maximum-volume-ready-320-2x.long.png",
+      "sha256": "3c6400a9066498d4286ca3525e50b5616d07669df510ba9e52df9ff5c69b2835",
+      "width": 320,
+      "height": 1180,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "562a716a7688e69f946e73c12a02d92eb1ec47d62f0673849c0f0220096deccc",
+          "review": "sheet-05.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1180,
+          "pixel_sha256": "b80e5cfe4dd912884e81bcc095e1100b5df404d16ff96a94a49c3d8adc05d5b7",
+          "review": "sheet-05.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-time-maximum-volume-ready-320-2x.png",
+      "sha256": "490ae8801281d3e7c7a14adb194030c51d5de0e6ce76963e222d12dc1da2d3d2",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "52d9abac85a00c556dd73d82acdcd98c41e27babef949cc05d3256d5b8f0e274",
+          "review": "sheet-06.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2343e740ac2361f42c66e0de4983f9d35cb3e4dac8e9a6695d796aac580f51e8",
+          "review": "sheet-06.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-time-maximum-volume-ready-393-1x.png",
+      "sha256": "63c8b005f662caf4b647b9cdd90e7a8c6d0de91a74eec30edf86af3be2306a0b",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "d79bc7fc94a494a0591a7cc610455ebfb2971d06997e4145c7d35929a9857b6d",
+          "review": "sheet-06.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "87e34646db7e6cb257b9f335d3be13bbafe861019f495db31618296c4452c85b",
+          "review": "sheet-06.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-time-maximum-volume-reopened-320-2x.long.png",
+      "sha256": "d7ae132776d90040408008d71e47f975401a80b537e25690d66886dc89fe45f6",
+      "width": 320,
+      "height": 1180,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "562a716a7688e69f946e73c12a02d92eb1ec47d62f0673849c0f0220096deccc",
+          "review": "sheet-05.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1180,
+          "pixel_sha256": "be75f48d59125b167b7c9287936ac298e1241aad4d278db5b213b60c9f75cef7",
+          "review": "sheet-06.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-time-maximum-volume-reopened-320-2x.png",
+      "sha256": "8695d07834027240a4c182634a4bfe3cb14d7cbc626a8692e9da11f560f2f161",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "562a716a7688e69f946e73c12a02d92eb1ec47d62f0673849c0f0220096deccc",
+          "review": "sheet-05.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "d0ac4f783b522e02602305f1378f5f167ef608695745ff8101e55d76a3011d47",
+          "review": "sheet-06.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-time-maximum-volume-reopened-393-1x.png",
+      "sha256": "0b74520500defa77ed95e61cf7e51df73fb32509b20a407698d6bbb240a3c2a9",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "626cbf3f0bba1fe505ef779db8f461e1ddf6ea6dc7b4a0c7c2ea185ba4f5333b",
+          "review": "sheet-07.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "87e34646db7e6cb257b9f335d3be13bbafe861019f495db31618296c4452c85b",
+          "review": "sheet-06.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-time-maximum-volume-saved-320-2x.png",
+      "sha256": "f28050402c475f6ef2f8f507cdbbb7a5f026e58ca4065c497a353d0d86464cd1",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "5f6ee27b9aa13c5816fef2f584c52d35896366b00816ed5f6425c1bcd5708c7e",
+          "review": "sheet-07.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "d93c68406e732cec45839c080d8a066bac5f7a1109d2e0d7203d8d5771494186",
+          "review": "sheet-07.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-time-maximum-volume-saved-393-1x.png",
+      "sha256": "37e5b81248f9a6fee43fd05352303533314bd78cac9dee70249e82c7df9abb00",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "257f914252e6abda4bf6a62cddd65849c3594c599ec6b54dabdb8a19ef72024e",
+          "review": "sheet-07.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "6a5a78b0156f5d4fa1018d72fc617139ab47cbd88d0c51728ccdb569d098ce8f",
+          "review": "../baby-feeding-control-visual-review/sheet-09.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-time-minimum-duration-saved-320-2x.png",
+      "sha256": "d8439244cfed091724ca4623b5b4821a88d95a65ff60cd9a9ae8906797e1d5b3",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ee59826514b5f186203e65bef180d785ae137e326e505c03356be5829e6e19ab",
+          "review": "sheet-07.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "8a57bd9ea72d62b55a6e661ed59734011ebec95f6f3e1c97465600aa588fc7eb",
+          "review": "sheet-07.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-time-minimum-duration-saved-393-1x.png",
+      "sha256": "ae024d289cf8790dae309da35985d78d354598e97a1b0caa68d50e7679766bd2",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "e432bbc2ddec316aeb7b166cbcf0c3f5c7ff8b0666e589dc49790ce3ac25490d",
+          "review": "sheet-08.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "6a5a78b0156f5d4fa1018d72fc617139ab47cbd88d0c51728ccdb569d098ce8f",
+          "review": "../baby-feeding-control-visual-review/sheet-09.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-time-more-return-320-2x.png",
+      "sha256": "90ff3249f64fc7750a5da2a6bac0e2e90a64014893d9e85c3df4c76dbe8dea38",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "7925ed8e5939f589376b72745969839e14c7fb166cfb48866eed469fa66c4d02",
+          "review": "../baby-profile-control-visual-review/sheet-19.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "f95aac7cc67095efb73a4ae0b9ee5dc9518b86f20195158e860fce9621ec483a",
+          "review": "../mom-rest-control-visual-review/sheet-19.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-time-more-return-393-1x.png",
+      "sha256": "1905827f337ce2fe60b46266600cce9aa8dea3b9aac6828fb6a1d3f67f020b35",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c8e12900bddbe318fd8d03ad9b384466fc1af1f6c371f72f999f20bc96cac1d6",
+          "review": "../baby-profile-control-visual-review/sheet-19.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "ae62a60cadfc8bfb09e3e94acb0dc8f7d481c4c260eae5960e33ebdc5f0799db",
+          "review": "../mom-rest-control-visual-review/sheet-20.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-time-nursing-ready-320-2x.long.png",
+      "sha256": "3ac1f98d36cfeb3f44cfe40f01e64970359e99cece8332a35c48eea5656cc236",
+      "width": 320,
+      "height": 1443,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "af9e23c4f64f3c4b0a5a3dcda976f32d18708e267dcc1202288faa43bbe7c307",
+          "review": "../baby-feeding-control-visual-review/sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "ef57412c94ec34a662104efb740b6bde1637cc5016d579f984683c9b547067f6",
+          "review": "../baby-feeding-control-visual-review/sheet-23.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1443,
+          "pixel_sha256": "729b245c56036ab2034ae0b27e528197ceb8b75ad6814f56484196b127840528",
+          "review": "../baby-feeding-control-visual-review/sheet-04.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-time-nursing-ready-320-2x.png",
+      "sha256": "8debf1652a81ed67af0f503fff01b30438bd7f1aa87bf69e04aefd13cc9765c6",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "da10205f38966b60ba7bfb8e2d5b19ca15762b9b0c55d28ceb548a1155c0b15b",
+          "review": "../baby-feeding-control-visual-review/sheet-23.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "5179af0ea3d5cdb977a7ee0d02d6b19ef9a7f8bb23fc3763983bd5c75fac6a8f",
+          "review": "../baby-feeding-control-visual-review/sheet-23.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-time-nursing-ready-393-1x.png",
+      "sha256": "8a80527d7b2fbdf980bf89c96887a8428a5fdf95a226a7b1e7eaed266410819d",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "f5336536e0f5753b053a9c6d967e6e7b364b32e1a99f26b9da5d8cc185794dad",
+          "review": "../baby-feeding-control-visual-review/sheet-23.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "18208b73a0a24766cee5ce14dfedee6ecd8766c22fd185d3de032b10e5b804a1",
+          "review": "../baby-feeding-control-visual-review/sheet-04.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-time-optional-duration-history-320-2x.png",
+      "sha256": "442e8b3f148a17432b1a8461c7bfcdf42a5dd52f2c09fc4c354b6b2afbe06ee5",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "db3fa46efdab1246d41d1678a7300e455412ffee7c665b26f83eeaea258e5340",
+          "review": "sheet-08.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "7d203c9f4fa9b1fdd09bbd74d47b61924c9123de5b4879a93912e37ec0adaeed",
+          "review": "sheet-08.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-time-optional-duration-history-393-1x.png",
+      "sha256": "714b17d610c4239307cbc0554749ec22ae75e762c760f8284a619e940fdc6a81",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "5d8cbcac943ac1da798bcbaa4826ba58f728e9861962e577774196110309ff42",
+          "review": "sheet-08.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "8bdeffc41d4a3f4c9ce4bf04d242795fab314a5a6f5ce005f84e01795430343f",
+          "review": "../baby-feeding-control-visual-review/sheet-16.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-time-optional-duration-reopened-320-2x.long.png",
+      "sha256": "eb8274fd8e1056aceb280031da8bb4a79fb8afee2c01f3f0b24778dd49039123",
+      "width": 320,
+      "height": 1381,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "df3792ad4b6380be86f6fc628e023420b0a52aea90cc5e522c3b04cf0a5ea59d",
+          "review": "../baby-feeding-control-visual-review/sheet-16.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "8eb742ada7198f5f1a544f5b0929866a2270a7b4da866f2279276f24c581703e",
+          "review": "sheet-08.png#tile-4"
+        },
+        {
+          "y0": 1300,
+          "y1": 1381,
+          "pixel_sha256": "ef7ca416927fe298bf8d2245fcb6ab7dd464f8fa07b155e8e6a721f031fb931e",
+          "review": "sheet-08.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-time-optional-duration-reopened-320-2x.png",
+      "sha256": "9c852157a9b87f9367d9e67351426bd8b281cc7f1418280f78eac9bfd91b0b5d",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "df3792ad4b6380be86f6fc628e023420b0a52aea90cc5e522c3b04cf0a5ea59d",
+          "review": "../baby-feeding-control-visual-review/sheet-16.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "84a27d83ba5e1b947fa5a73317615f5ca9ca1930c66a3dc0709272abff41c97d",
+          "review": "sheet-09.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-time-optional-duration-reopened-393-1x.png",
+      "sha256": "d457d9c0f7d4d885875390d2a9acdc2948b43ef04ed148b75d4bfbb020deddd3",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "503c94b6c9f30f9d8c990cfb931f34b60d1748c8490daf84c2d77a350bac3efe",
+          "review": "sheet-09.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "ad81ca2b639f8582b2acb5120c009bc390d49767a559d463b538e6844925565a",
+          "review": "sheet-09.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-time-optional-duration-saved-320-2x.long.png",
+      "sha256": "1cac06388c40405b383bfdc3b9f24a265cf5306053bce0e8db698736c38afedc",
+      "width": 320,
+      "height": 3644,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "58578630282c08ed070b330c5092b2346554d47e291ecce03bfa1790d2ebdd62",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "034c398b12fe2df5aaef1e8fd2e151d4092f4bc550a8179f7524acfdf8572a5d",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "6880f8a20e94d8723b6b4b402b30f117f0c3ba3b75d3d745c9c647a904da36f8",
+          "review": "../baby-feeding-control-visual-review/sheet-10.png#tile-0"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "6758738cc91ebd9d3ec55dfbe78e1ae564175064133320157147dbd3711df612",
+          "review": "../baby-feeding-control-visual-review/sheet-10.png#tile-1"
+        },
+        {
+          "y0": 2600,
+          "y1": 3250,
+          "pixel_sha256": "e93a79427a0129fd52737e634973bd7894e189b06514ca5a9b6c153468cb3d5b",
+          "review": "sheet-09.png#tile-3"
+        },
+        {
+          "y0": 3250,
+          "y1": 3644,
+          "pixel_sha256": "1ec2d45e726370e051ef1945a8f4eba7fc17541b467b01a531a0f17872cd864f",
+          "review": "sheet-09.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-time-optional-duration-saved-320-2x.png",
+      "sha256": "d82183d9b88e9350096a7def7f0c006ce3da1f40b334e5144e8a5e0439d7c3bb",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "0f881286e2153955b9d0b297db61869b25611b7acef985924f2e2bffcfb71ae7",
+          "review": "../baby-feeding-control-visual-review/sheet-18.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "563dd0eb6127eff7c02d4cf0854f116747677cf072bd11574cc7adf5267526f7",
+          "review": "../baby-feeding-control-visual-review/sheet-18.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-time-optional-duration-saved-393-1x.long.png",
+      "sha256": "9b497a739e90ba371771c85e4095c221625b9c69d3491250e52c735f88177b0f",
+      "width": 393,
+      "height": 1841,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "120c58019c39b6088ba17217dd94c86ac4ab807a7b5569f38be04131bf6c69a2",
+          "review": "../baby-feeding-control-visual-review/sheet-10.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "b99aba8757d53ab1c3f34b3d3924b3e2fb907226ad7a321c93bc14669b620081",
+          "review": "../baby-feeding-control-visual-review/sheet-10.png#tile-5"
+        },
+        {
+          "y0": 1300,
+          "y1": 1841,
+          "pixel_sha256": "75297bd830f1b613525f40d02316fe120141d080568e34dea58ee69652044a77",
+          "review": "../baby-feeding-control-visual-review/sheet-18.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-time-optional-duration-saved-393-1x.png",
+      "sha256": "72304b3ff5c5fb58f4289dba113527a142ccff6a32a62e561f36e4427582fcef",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "f21fdebce37f5d558803b7ec7d2ca335fa3d01ce46990f9f0f1b5ba027c5afc9",
+          "review": "../baby-feeding-control-visual-review/sheet-18.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "fa89fc35c134e2b3ed02a70a1f9d3864370f0c315bb200f409eb54a07652e2d5",
+          "review": "../baby-feeding-control-visual-review/sheet-18.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-time-previous-day-input-320-2x.png",
+      "sha256": "6fd032a3a2fbecfe5fb9dd5caf576d71e40e3f29d79300dca3993907634383f4",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "07700598ccd8d6ddd218adee0cc0fac95d43137642db8e2bb5c97a48d336055c",
+          "review": "sheet-09.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a04872872ce449b80a849e7166b4a5f374cd329f02f58b5fa6d282614932798f",
+          "review": "sheet-01.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-time-previous-day-input-393-1x.png",
+      "sha256": "b05a86242356c3ac4b9e52c6fedef325807027a447345377d41e3c0d7d8231c3",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "892e436cb6954d090a37fdb3b6fa7dcc2a9b33616dc3ccffaef3cdec66473e28",
+          "review": "sheet-10.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "378c48eb02ec76e582488b71bbc1a224c8d93851eb7d3dc47ecd2edb3eb1a296",
+          "review": "sheet-02.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-time-time-cancelled-320-2x.long.png",
+      "sha256": "3ac1f98d36cfeb3f44cfe40f01e64970359e99cece8332a35c48eea5656cc236",
+      "width": 320,
+      "height": 1443,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "af9e23c4f64f3c4b0a5a3dcda976f32d18708e267dcc1202288faa43bbe7c307",
+          "review": "../baby-feeding-control-visual-review/sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "ef57412c94ec34a662104efb740b6bde1637cc5016d579f984683c9b547067f6",
+          "review": "../baby-feeding-control-visual-review/sheet-23.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1443,
+          "pixel_sha256": "729b245c56036ab2034ae0b27e528197ceb8b75ad6814f56484196b127840528",
+          "review": "../baby-feeding-control-visual-review/sheet-04.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-time-time-cancelled-320-2x.png",
+      "sha256": "85dc5d8b1c83a2e96312d846cadbc39202bfc407691955e8231612f6e5b11cfc",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "62ea59cf513c3a3732e320e68986386e0db075624411e4c84948ea233aa8f0c9",
+          "review": "sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "ecafb57a8c16c0cf7c812c17de70b20ecb49c31035e676a05807f1e6ea0ceb7b",
+          "review": "sheet-01.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-time-time-cancelled-393-1x.png",
+      "sha256": "8a80527d7b2fbdf980bf89c96887a8428a5fdf95a226a7b1e7eaed266410819d",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "f5336536e0f5753b053a9c6d967e6e7b364b32e1a99f26b9da5d8cc185794dad",
+          "review": "../baby-feeding-control-visual-review/sheet-23.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "18208b73a0a24766cee5ce14dfedee6ecd8766c22fd185d3de032b10e5b804a1",
+          "review": "../baby-feeding-control-visual-review/sheet-04.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-time-time-open-320-2x.png",
+      "sha256": "137a824e06241e08233886c7628004b3b9018db0ea51cfda6d8d911d50257384",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "098b4b29699181c8dc5bd714ac9780f68840a3962fbb318f0313fe11e3bdb53f",
+          "review": "sheet-10.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "e09230575bd5475fa90465d76c786b6a4e55e0b338b6092e8b97ba6ad6b9525f",
+          "review": "sheet-02.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-time-time-open-393-1x.png",
+      "sha256": "8aadc636bc0da143f7fb06ddf01bb4e8b32e5c4d2f162cdc60e16be511e9c3cc",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "38861c3a537857c030ae820422a73d5e7fd58956b89504c460aed41f65afe6f7",
+          "review": "sheet-10.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "ad939c31acd5758fb2c3f98b95448a2a7d49e8c881025f20fa2a21dce72d8361",
+          "review": "sheet-10.png#tile-3"
+        }
+      ]
+    }
+  ],
+  "unique_segments": 95,
+  "new_segments": 58,
+  "new_sheets": 10
+}

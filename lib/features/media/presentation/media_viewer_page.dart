@@ -1,3 +1,7 @@
+import 'media_viewer_header.dart';
+import 'media_viewer_feedback.dart';
+import 'dart:async';
+import 'pdf_document_toolbar.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pdfrx/pdfrx.dart';
@@ -7,7 +11,7 @@ import 'package:momcozy_flutter_app/features/media/domain/product_asset.dart';
 import 'package:momcozy_flutter_app/features/media/presentation/product_asset_image.dart';
 import 'package:momcozy_flutter_app/features/media/presentation/product_asset_video_player.dart';
 import 'package:momcozy_flutter_app/shared/design_system/momcozy_design_system.dart';
-import '../../../shared/widgets/product_feedback.dart';
+import 'package:momcozy_flutter_app/shared/design_system/mom_home_tokens.dart';
 
 class MediaViewerPage extends StatefulWidget {
   const MediaViewerPage({
@@ -52,13 +56,10 @@ class _MediaViewerPageState extends State<MediaViewerPage> {
 
     return ColoredBox(
       key: ValueKey('route-page-${widget.path}'),
-      color: MomCozyColors.background,
+      color: MomHomeTokens.background,
       child: Column(
         children: [
-          _MediaViewerHeader(
-            title: headerTitle,
-            onBack: _returnFromMediaViewer,
-          ),
+          MediaViewerHeader(title: headerTitle, onBack: _returnFromMediaViewer),
           Expanded(
             child: media == null
                 ? const _MediaViewerMissingResource()
@@ -70,75 +71,16 @@ class _MediaViewerPageState extends State<MediaViewerPage> {
   }
 }
 
-class _MediaViewerHeader extends StatelessWidget {
-  const _MediaViewerHeader({required this.title, required this.onBack});
-
-  final String title;
-  final VoidCallback onBack;
-
-  @override
-  Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: const BoxDecoration(
-        color: MomCozyColors.background,
-        border: Border(bottom: BorderSide(color: MomCozyColors.border)),
-      ),
-      child: SafeArea(
-        bottom: false,
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(
-            minHeight: MomCozyLayout.headerHeight,
-          ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: MomCozySpacing.pageGutter,
-              vertical: MomCozySpacing.xs,
-            ),
-            child: Row(
-              children: [
-                SizedBox.square(
-                  dimension: MomCozyTapTargets.minimum,
-                  child: IconButton(
-                    key: const ValueKey('media-return-button'),
-                    tooltip: '返回',
-                    onPressed: onBack,
-                    icon: const Icon(
-                      Icons.arrow_back_rounded,
-                      size: MomCozyIconSizes.standard,
-                    ),
-                    color: MomCozyColors.foreground,
-                    visualDensity: VisualDensity.compact,
-                    padding: EdgeInsets.zero,
-                  ),
-                ),
-                const SizedBox(width: MomCozySpacing.content),
-                Expanded(
-                  child: Text(
-                    title,
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      color: MomCozyColors.foreground,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 class _MediaViewerMissingResource extends StatelessWidget {
   const _MediaViewerMissingResource();
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: SingleChildScrollView(
-        child: ProductEmptyView(title: '缺少资源参数，请从资料卡片进入。'),
-      ),
+    return const MediaViewerLoadError(
+      message: '暂时没有可查看的资料',
+      description: '请从资料卡片打开图片、视频或文档。',
+      darkBackground: false,
+      icon: Icons.description_outlined,
     );
   }
 }
@@ -172,6 +114,7 @@ class _PdfViewerStageState extends State<_PdfViewerStage> {
   ProductAssetRepository? _repository;
   Future<ProductAssetContent>? _content;
   var _documentRevision = 0;
+  int _page = 0, _pageCount = 0;
   final _pdfController = PdfViewerController();
 
   @override
@@ -206,6 +149,8 @@ class _PdfViewerStageState extends State<_PdfViewerStage> {
     _reference = reference;
     _repository = repository;
     _documentRevision += 1;
+    _page = 0;
+    _pageCount = 0;
     _content = _load();
   }
 
@@ -221,7 +166,29 @@ class _PdfViewerStageState extends State<_PdfViewerStage> {
   void _retry() {
     setState(() {
       _documentRevision += 1;
+      _page = 0;
+      _pageCount = 0;
       _content = _load();
+      // Keep fast failures handled until FutureBuilder subscribes next frame.
+      _content?.ignore();
+    });
+  }
+
+  void _updatePager(int revision) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted ||
+          revision != _documentRevision ||
+          !_pdfController.isReady) {
+        return;
+      }
+      final page = _pdfController.pageNumber ?? 1;
+      final count = _pdfController.pageCount;
+      if (page != _page || count != _pageCount) {
+        setState(() {
+          _page = page;
+          _pageCount = count;
+        });
+      }
     });
   }
 
@@ -230,7 +197,7 @@ class _PdfViewerStageState extends State<_PdfViewerStage> {
     final reference = _reference;
     final content = _content;
     if (reference == null || content == null) {
-      return const _MediaViewerLoadError(
+      return const MediaViewerLoadError(
         message: 'PDF 加载失败',
         darkBackground: false,
         icon: Icons.picture_as_pdf_outlined,
@@ -239,8 +206,14 @@ class _PdfViewerStageState extends State<_PdfViewerStage> {
     return FutureBuilder<ProductAssetContent>(
       future: content,
       builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const MediaViewerLoading(
+            label: '加载 PDF…',
+            darkBackground: false,
+          );
+        }
         if (snapshot.hasError) {
-          return _MediaViewerLoadError(
+          return MediaViewerLoadError(
             message: 'PDF 加载失败',
             darkBackground: false,
             icon: Icons.picture_as_pdf_outlined,
@@ -251,39 +224,69 @@ class _PdfViewerStageState extends State<_PdfViewerStage> {
         if (loaded == null) {
           return const ColoredBox(
             color: MomCozyColors.background,
-            child: _MediaViewerLoading(label: '加载 PDF…', darkBackground: false),
+            child: MediaViewerLoading(label: '加载 PDF…', darkBackground: false),
           );
         }
-        return KeyedSubtree(
-          key: const ValueKey('media-pdf-viewer'),
-          child: PdfViewer.data(
-            loaded.bytes,
-            key: ValueKey('media-pdf-document-$_documentRevision'),
-            sourceName: reference.assetId,
-            controller: _pdfController,
-            params: PdfViewerParams(
-              margin: MomCozySpacing.compact,
-              backgroundColor: MomCozyColors.background,
-              minScale: 0.1,
-              maxScale: 4,
-              panAxis: PanAxis.free,
-              pageDropShadow: MomCozyShadows.documentPage,
-              loadingBannerBuilder: (context, downloaded, total) {
-                return const _MediaViewerLoading(
-                  label: '正在打开 PDF…',
-                  darkBackground: false,
-                );
-              },
-              errorBannerBuilder: (context, error, stackTrace, documentRef) {
-                return _MediaViewerLoadError(
-                  message: 'PDF 加载失败',
-                  darkBackground: false,
-                  icon: Icons.picture_as_pdf_outlined,
-                  onRetry: _retry,
-                );
-              },
+        final revision = _documentRevision;
+        return Column(
+          children: [
+            Expanded(
+              child: KeyedSubtree(
+                key: const ValueKey('media-pdf-viewer'),
+                child: PdfViewer.data(
+                  loaded.bytes,
+                  key: ValueKey('media-pdf-document-$_documentRevision'),
+                  sourceName: reference.assetId,
+                  controller: _pdfController,
+                  params: PdfViewerParams(
+                    onViewerReady: (_, _) => _updatePager(revision),
+                    onPageChanged: (_) => _updatePager(revision),
+                    onGeneralTap: (_, controller, details) {
+                      if (details.type != PdfViewerGeneralTapType.doubleTap) {
+                        return false;
+                      }
+                      unawaited(
+                        controller.zoomUpOnLocalPosition(
+                          localPosition: details.localPosition,
+                          loop: true,
+                        ),
+                      );
+                      return true;
+                    },
+                    margin: MomCozySpacing.compact,
+                    backgroundColor: MomHomeTokens.background,
+                    minScale: 0.1,
+                    maxScale: 4,
+                    panAxis: PanAxis.free,
+                    pageDropShadow: MomCozyShadows.documentPage,
+                    loadingBannerBuilder: (context, downloaded, total) {
+                      return const MediaViewerLoading(
+                        label: '正在打开 PDF…',
+                        darkBackground: false,
+                      );
+                    },
+                    errorBannerBuilder:
+                        (context, error, stackTrace, documentRef) {
+                          return MediaViewerLoadError(
+                            message: 'PDF 加载失败',
+                            darkBackground: false,
+                            icon: Icons.picture_as_pdf_outlined,
+                            onRetry: _retry,
+                          );
+                        },
+                  ),
+                ),
+              ),
             ),
-          ),
+            PdfDocumentToolbar(
+              page: _page,
+              pageCount: _pageCount,
+              onPrevious: () => _pdfController.goToPage(pageNumber: _page - 1),
+              onNext: () => _pdfController.goToPage(pageNumber: _page + 1),
+              onZoomIn: () => _pdfController.zoomUp(),
+              onZoomOut: () => _pdfController.zoomDown(),
+            ),
+          ],
         );
       },
     );
@@ -342,7 +345,7 @@ class _ImageViewerStageState extends State<_ImageViewerStage> {
       title: widget.media.title,
     );
     if (reference == null) {
-      return const _MediaViewerLoadError(message: '图片加载失败');
+      return const MediaViewerLoadError(message: '图片加载失败');
     }
     final repository = MomCozyRuntimeScope.maybeOf(
       context,
@@ -356,10 +359,10 @@ class _ImageViewerStageState extends State<_ImageViewerStage> {
         fit: BoxFit.contain,
         semanticLabel: widget.media.title,
         loadingBuilder: (context) {
-          return const _MediaViewerLoading(label: '加载图片…');
+          return const MediaViewerLoading(label: '加载图片…');
         },
         errorBuilder: (context, error, retry) {
-          return _MediaViewerLoadError(message: '图片加载失败', onRetry: retry);
+          return MediaViewerLoadError(message: '图片加载失败', onRetry: retry);
         },
         loadedBuilder: (context, content, image) {
           return GestureDetector(
@@ -386,71 +389,6 @@ class _ImageViewerStageState extends State<_ImageViewerStage> {
   }
 }
 
-class _MediaViewerLoading extends StatelessWidget {
-  const _MediaViewerLoading({required this.label, this.darkBackground = true});
-
-  final String label;
-  final bool darkBackground;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      key: const ValueKey('media-viewer-loading'),
-      child: SingleChildScrollView(
-        child: ProductLoadingView(
-          label: label,
-          foreground: darkBackground ? MomCozyColors.onMediaSecondary : null,
-        ),
-      ),
-    );
-  }
-}
-
-class _MediaViewerLoadError extends StatelessWidget {
-  const _MediaViewerLoadError({
-    required this.message,
-    this.onRetry,
-    this.darkBackground = true,
-    this.icon = Icons.broken_image_outlined,
-  });
-
-  final String message;
-  final VoidCallback? onRetry;
-  final bool darkBackground;
-  final IconData icon;
-
-  @override
-  Widget build(BuildContext context) {
-    final foreground = darkBackground
-        ? MomCozyColors.onMediaSecondary
-        : MomCozyColors.mutedForeground;
-    return ColoredBox(
-      color: darkBackground
-          ? MomCozyColors.mediaBackground
-          : MomCozyColors.background,
-      child: Center(
-        key: const ValueKey('media-viewer-load-error'),
-        child: SingleChildScrollView(
-          child: ProductEmptyView(
-            title: message,
-            icon: icon,
-            foreground: foreground,
-            action: onRetry == null
-                ? null
-                : IconButton(
-                    key: const ValueKey('media-viewer-retry'),
-                    tooltip: '重新加载',
-                    onPressed: onRetry,
-                    icon: const Icon(Icons.refresh_rounded),
-                    color: foreground,
-                  ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 class _VideoViewerStage extends StatelessWidget {
   const _VideoViewerStage({required this.media});
 
@@ -467,7 +405,7 @@ class _VideoViewerStage extends StatelessWidget {
       context,
     )?.productAssetRepository;
     if (reference == null || repository == null) {
-      return const _MediaViewerLoadError(
+      return const MediaViewerLoadError(
         message: '视频加载失败',
         icon: Icons.videocam_off_outlined,
       );

@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/baby-growth-controls-date-birth-320-2x.png",
+  "previous_source": "test/goldens/ui_inventory/baby-growth-controls-date-future-320-2x.png",
+  "route": "/baby",
+  "trigger": "Confirm birth date → earliest date accepted in draft",
+  "root_entry": "Authenticated More → tap Baby bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/baby/baby_growth_control_inventory_test.dart"
+}

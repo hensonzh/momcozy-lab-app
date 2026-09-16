@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/agent-resource-journey-renew-list-320-2x.png",
+  "previous_source": "test/goldens/ui_inventory/agent-resource-journey-renew-card-320-2x.png",
+  "route": "/services/renew",
+  "trigger": "Tap supported internal artifact link → real renewal route without episode parameter",
+  "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage through public builder; real SSE parser, runner, artifact mapper and dispatcher, media and Care repositories; only SSE/HTTP bytes, voice, session and video platform isolated. Real image bytes decoded; video texture/native decoder is a platform stub. Default local history flag; no remote requests.",
+  "test": "test/features/agent_hub/agent_resource_inventory_journey_test.dart"
+}

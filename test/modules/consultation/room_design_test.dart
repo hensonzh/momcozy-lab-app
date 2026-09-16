@@ -1,3 +1,6 @@
+import 'package:momcozy_flutter_app/modules/consultation/presentation/consultation_start_dialog.dart';
+import 'dart:async';
+import 'package:livekit_client/livekit_client.dart' as lk;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/modules/consultation/presentation/device_check_dialog.dart';
@@ -14,10 +17,11 @@ void main() {
       testWidgets('device check states $width / $scale', (tester) async {
         _size(tester, width);
         var requests = 0;
+        final pending = Completer<lk.LocalVideoTrack>();
         final check = ConsultationDeviceCheck(
           createVideo: () async {
             requests++;
-            throw StateError('camera unavailable');
+            return pending.future;
           },
           createAudio: () async {
             requests++;
@@ -43,29 +47,36 @@ void main() {
         );
         await tester.tap(find.text('设备检查'));
         await tester.pumpAndSettle();
-        expect(requests, 0);
+        expect(requests, 1);
         expect(tester.takeException(), isNull);
         await _golden(tester, 'room-device', width, scale);
-        await tester.tap(find.text('开始检查'));
+        expect(
+          tester
+              .widget<FilledButton>(find.widgetWithText(FilledButton, '检查中…'))
+              .onPressed,
+          isNull,
+        );
+        pending.completeError(StateError('camera unavailable'));
         await tester.pumpAndSettle();
         expect(requests, 2);
-        await tester.ensureVisible(find.text('未能使用麦克风，请检查权限或设备。'));
+        await tester.ensureVisible(find.textContaining('未能使用麦克风，请检查权限或设备。'));
         await tester.pumpAndSettle();
         expect(tester.takeException(), isNull);
         await _golden(tester, 'room-device-error', width, scale);
-        await tester.tap(find.text('关闭检查'));
+        await tester.tap(find.byTooltip('关闭设备检测'));
         await tester.pumpAndSettle();
         expect(find.byType(ConsultationDeviceCheckDialog), findsNothing);
       });
       testWidgets('room location and consent $width / $scale', (tester) async {
         _size(tester, width);
-        final repository = TestRoomRepository();
+        final repository = TestRoomRepository()..ready();
         final controller = testController(repository, TestConsultationMedia());
         await tester.pumpWidget(
           _app(
             scale,
             ConsultationRoomPage(
               createController: () => controller,
+              createDeviceCheck: TestReadyDeviceCheck.new,
               onBack: () {},
               onIntake: () async {},
               onProgress: (_) {},
@@ -74,32 +85,29 @@ void main() {
           ),
         );
         await tester.pumpAndSettle();
-        final checkbox = find.descendant(
-          of: find.byKey(const ValueKey('room-video-consent')),
-          matching: find.byType(Checkbox),
-        );
-        await tester.scrollUntilVisible(checkbox, 180);
+        await tester.scrollUntilVisible(find.text('开始咨询'), 180);
         await tester.pumpAndSettle();
-        await tester.tap(checkbox);
+        await tester.tap(find.text('开始咨询'));
         await tester.pumpAndSettle();
-        expect(
-          tester
-              .widget<CheckboxListTile>(
-                find.byKey(const ValueKey('room-video-consent')),
-              )
-              .value,
-          isTrue,
+        await tester.ensureVisible(find.text('继续确认'));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('继续确认'));
+        await tester.pumpAndSettle();
+        await tester.ensureVisible(
+          find.byKey(const ValueKey('consult-location')),
         );
-        await tester.ensureVisible(find.byKey(const ValueKey('room-location')));
-        await tester.tap(find.byKey(const ValueKey('room-location')));
+        await tester.tap(find.byKey(const ValueKey('consult-location')));
         await tester.pumpAndSettle();
         await tester.tap(find.text('New York (NY)').last);
         await tester.pumpAndSettle();
-        await tester.ensureVisible(find.text('确认当前位置'));
-        await tester.pumpAndSettle();
         expect(tester.takeException(), isNull);
         await _golden(tester, 'room-location', width, scale);
-        await tester.tap(find.text('确认当前位置'));
+        await tester.tap(
+          find.descendant(
+            of: find.byType(ConsultationStartDialog),
+            matching: find.byTooltip('关闭咨询确认'),
+          ),
+        );
         await tester.pumpAndSettle();
         expect(controller.data!.location, isNotNull);
         expect(tester.takeException(), isNull);

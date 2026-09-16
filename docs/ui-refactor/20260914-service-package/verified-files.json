@@ -1,0 +1,8 @@
+{
+  "lib/modules/services/presentation/service_package_page.dart": "6ed6b240500325c7d763b02ede7d54f286062b982464a983f21be59116a5ec32",
+  "lib/modules/services/presentation/service_purchase_dialog.dart": "ab1280bcecd27eda6240d107d365fc561ddbd068a24fad30b2f879d38de5fdfe",
+  "lib/shared/widgets/mom_settings_widgets.dart": "30895ea0189f4115b3dfb8982dee67e5178f7b7ea6843a06de94bcc2f9938247",
+  "test/modules/services/service_purchase_test.dart": "22ad4db9b433e25395744fc55d3972e8fbf5f3c366083ac41d64125bfc8a7762",
+  "test/modules/services/service_package_redesign_test.dart": "45fbd308feb09abf5bf0c63bdf4e617a44f09875b89bcaa4e607333ac4656309",
+  "test/modules/services/service_design_test.dart": "92ed965a74751fdc1c46d8c4965d5909a2f506dbfd7b0dfc98cac65080a03132"
+}

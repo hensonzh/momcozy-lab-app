@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/account-journey-load-error-393.png",
+  "previous_source": "test/goldens/ui_inventory/account-journey-more-393.png",
+  "route": "/account",
+  "trigger": "More → Account settings; account request fails",
+  "root_entry": "Open More while signed out → real auth redirect",
+  "evidence": "Actual MomCozyFlutterApp and createMomCozyRouter; only HTTP/session/native-intent dependencies replaced with isolated fixtures",
+  "test": "test/features/auth/auth_inventory_journey_test.dart"
+}

@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/mom-note-boundary-body-reopened-393-1x.png",
+  "previous_source": "test/goldens/ui_inventory/mom-note-boundary-body-home-393-1x.png",
+  "route": "/me",
+  "trigger": "Reopen saved body note → all 2000 characters retained",
+  "root_entry": "Authenticated More → tap Me bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/mom/mom_note_boundary_inventory_test.dart"
+}

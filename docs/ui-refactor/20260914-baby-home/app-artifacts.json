@@ -1,0 +1,242 @@
+[
+  {
+    "path": "test/goldens/design_system/baby-feeding-saved-320.png",
+    "sha256": "563ce2bb8a97f77c842289d23ae94852ede5c5a2061e773c37b60e14f37bbb0b"
+  },
+  {
+    "path": "test/goldens/design_system/baby-feeding-saved-390.png",
+    "sha256": "1487c1533aa21f6ce76a720729bb6f34030c2489db917b0907befe23bc43b9ca"
+  },
+  {
+    "path": "test/goldens/design_system/baby-feeding-saved-430.png",
+    "sha256": "8d295493dfcc2d14b970d2e7c094196d34e0af9f0fe703d89e6f12d32908d6b2"
+  },
+  {
+    "path": "test/goldens/design_system/baby-feeding-validation-320.png",
+    "sha256": "82e50e4790b8658b3b0f907384f691c8001322b50ec8eca1449a29a2f190f57d"
+  },
+  {
+    "path": "test/goldens/design_system/baby-feeding-validation-390.png",
+    "sha256": "ea76b16cd49b694b031c00b85fce5dd0aeb84978d23b34009dc57359ee51128a"
+  },
+  {
+    "path": "test/goldens/design_system/baby-feeding-validation-430.png",
+    "sha256": "f8c5fbc07e399eee33c6affe9d600e3b46e2d7bfccca6cffbd723e0efec72cf1"
+  },
+  {
+    "path": "test/goldens/design_system/baby-growth-missing-birth-320.png",
+    "sha256": "c00bd0c69b70ecfff24212d9dd391637b8b483f1e5c0007a4cd6458c7ba7b4e4"
+  },
+  {
+    "path": "test/goldens/design_system/baby-growth-missing-birth-390.png",
+    "sha256": "a4a86c7639562edb882edf8d2b6b00e76feae624656c59b51009580b6ef862d3"
+  },
+  {
+    "path": "test/goldens/design_system/baby-growth-missing-birth-430.png",
+    "sha256": "dd1dee7384e7d105fdafa43b3da7c9b9f04afdd13088fd43bd0fa77592d2dcbe"
+  },
+  {
+    "path": "test/goldens/design_system/baby-growth-missing-both-320.png",
+    "sha256": "63fefa8730c82cc248c785b59e3216bb6637d919498847c0528263787276c200"
+  },
+  {
+    "path": "test/goldens/design_system/baby-growth-missing-both-390.png",
+    "sha256": "ae58b9590714eae7198f3fda3287176a7753962293a6117db7a3c5bb0da9328d"
+  },
+  {
+    "path": "test/goldens/design_system/baby-growth-missing-both-430.png",
+    "sha256": "51a0d46ea40e1073f659ba496214e183c8d2fc4d0b924e855a9bc61bcafb4c53"
+  },
+  {
+    "path": "test/goldens/design_system/baby-growth-missing-sex-320.png",
+    "sha256": "63fefa8730c82cc248c785b59e3216bb6637d919498847c0528263787276c200"
+  },
+  {
+    "path": "test/goldens/design_system/baby-growth-missing-sex-390.png",
+    "sha256": "ae58b9590714eae7198f3fda3287176a7753962293a6117db7a3c5bb0da9328d"
+  },
+  {
+    "path": "test/goldens/design_system/baby-growth-missing-sex-430.png",
+    "sha256": "51a0d46ea40e1073f659ba496214e183c8d2fc4d0b924e855a9bc61bcafb4c53"
+  },
+  {
+    "path": "test/goldens/design_system/baby-home-current-curve-headCircumference-320-2x.png",
+    "sha256": "5c3d942bdffacc5a59d2c66de80c17fc15bfda5663128cce2a5da3d2b352d747"
+  },
+  {
+    "path": "test/goldens/design_system/baby-home-current-curve-headCircumference-390-1x.png",
+    "sha256": "8304efbf1ee14089c0bf8b533f25a0e11dd2e690a19eeac37948b9ad3c2a534e"
+  },
+  {
+    "path": "test/goldens/design_system/baby-home-current-curve-length-320-2x.png",
+    "sha256": "1e2520ffe85e9c4b632408a13bd9a33dc9909ef6f2d1a388ef592bbd9d4fba4e"
+  },
+  {
+    "path": "test/goldens/design_system/baby-home-current-curve-length-390-1x.png",
+    "sha256": "6da40da3dff4c5305d08f1f48b9cdcca8253900df2d8ef7d7f4d1907f880ad84"
+  },
+  {
+    "path": "test/goldens/design_system/baby-home-current-curve-weight-320-2x.png",
+    "sha256": "d25690c2ce7e8a7ff85b90beb4c2fd257e19f6eaf79e99611e29972b818a6f67"
+  },
+  {
+    "path": "test/goldens/design_system/baby-home-current-curve-weight-390-1x.png",
+    "sha256": "6c1cbe34a4ea25cdc2bf8da2fa0f85927d4992b276eea7715be6d689d57ac4db"
+  },
+  {
+    "path": "test/goldens/design_system/baby-home-current-empty-top-320-2x.png",
+    "sha256": "2933759e849ce28f15a3d208604a7ad909ff0ac7412991603b6b8c73c33cb7e3"
+  },
+  {
+    "path": "test/goldens/design_system/baby-home-current-empty-top-390-1x.png",
+    "sha256": "2bdd36c4566b78b27e933b9c3c18a988b7d3bd84c848544331c108e482a382ef"
+  },
+  {
+    "path": "test/goldens/design_system/baby-home-current-error-320-2x.png",
+    "sha256": "c1be24e5a0e31b6cd142689a6fa59568037e73507e608c25933e68c26992887d"
+  },
+  {
+    "path": "test/goldens/design_system/baby-home-current-error-390-1x.png",
+    "sha256": "1fa12ff5c7528fd30debaa3d5b814e749d2582f161236a33aac16e7654dafdf2"
+  },
+  {
+    "path": "test/goldens/design_system/baby-home-current-knowledge-end-320-2x.png",
+    "sha256": "efc21bbee4d2b48fc8854bbc9806e30b66f54de4cc7c2838e931d12580a9978a"
+  },
+  {
+    "path": "test/goldens/design_system/baby-home-current-knowledge-end-390-1x.png",
+    "sha256": "12b86e2ceff40db7cb741ab5f2dd02fd592dfe808b3a446eb8cfe28f31d766b6"
+  },
+  {
+    "path": "test/goldens/design_system/baby-home-current-knowledge-top-320-2x.png",
+    "sha256": "d4dd8067602bd7794b6f8ab5c253a4e0258d74a7963d7787d7f3dd6de243acab"
+  },
+  {
+    "path": "test/goldens/design_system/baby-home-current-knowledge-top-390-1x.png",
+    "sha256": "12b86e2ceff40db7cb741ab5f2dd02fd592dfe808b3a446eb8cfe28f31d766b6"
+  },
+  {
+    "path": "test/goldens/design_system/baby-home-current-loading-320-2x.png",
+    "sha256": "2933759e849ce28f15a3d208604a7ad909ff0ac7412991603b6b8c73c33cb7e3"
+  },
+  {
+    "path": "test/goldens/design_system/baby-home-current-loading-390-1x.png",
+    "sha256": "44016902f5b3bac461f10bb3c9f5db5cb5d70600f1b59de0866436126aa4c461"
+  },
+  {
+    "path": "test/goldens/design_system/baby-home-current-missing-reference-320-2x.png",
+    "sha256": "d0af14c65faf72fd52a3c9a105a6bd5690df6fc7e9c76fbbee3f2bba11f33d63"
+  },
+  {
+    "path": "test/goldens/design_system/baby-home-current-missing-reference-390-1x.png",
+    "sha256": "79233ead1fe1e512d175e6c8979fe180131e045ae2ec9b3d0b70abffd8357511"
+  },
+  {
+    "path": "test/goldens/design_system/baby-home-current-no-profile-320-2x.png",
+    "sha256": "baabe762faf729e6066cf1f1470c2434e8a7de81093db63974fe15b28178b3b4"
+  },
+  {
+    "path": "test/goldens/design_system/baby-home-current-no-profile-390-1x.png",
+    "sha256": "cbac7bca4a977727e32cccf52b81ff562b01afe8a4c0876525be9526c4a916c9"
+  },
+  {
+    "path": "test/goldens/design_system/baby-home-current-recorded-top-320-2x.png",
+    "sha256": "2933759e849ce28f15a3d208604a7ad909ff0ac7412991603b6b8c73c33cb7e3"
+  },
+  {
+    "path": "test/goldens/design_system/baby-home-current-recorded-top-390-1x.png",
+    "sha256": "88e38388cf5372ad487125588648ba6fa7d0b3ad9af42caaa4721ab16d051f76"
+  },
+  {
+    "path": "test/goldens/design_system/baby-home-current-saved-320-2x.png",
+    "sha256": "d3098df500507a1e268b40191f4210d50d98f1b5cf1185fa150a666b8121cbbb"
+  },
+  {
+    "path": "test/goldens/design_system/baby-home-current-saved-390-1x.png",
+    "sha256": "b3211f763335ec94adc484b348e11e04a232a77324254ae200991eda6713e9d5"
+  },
+  {
+    "path": "test/goldens/design_system/baby-home-current-section-今日吃奶-320-2x.png",
+    "sha256": "4e2e57d767cf7cbedd6fda825f00fb6851b9aa466a353fdf9dbba0176230439b"
+  },
+  {
+    "path": "test/goldens/design_system/baby-home-current-section-今日吃奶-390-1x.png",
+    "sha256": "7eb1cafe27e56e56ab2958fd77d81273280a5ccdc51d5bc10f14a0851f9ea46b"
+  },
+  {
+    "path": "test/goldens/design_system/baby-home-current-section-今日状态-320-2x.png",
+    "sha256": "337410fab36fc0786314d6eefcadb7441c2d1aea8b493cb32e110f05f5d8d0c8"
+  },
+  {
+    "path": "test/goldens/design_system/baby-home-current-section-今日状态-390-1x.png",
+    "sha256": "585382f0d8dc7870950638b8e9b8d3b2a9b9621f25ccc356d835d4669aaff91c"
+  },
+  {
+    "path": "test/goldens/design_system/baby-home-current-section-生长发育记录-320-2x.png",
+    "sha256": "459edd4b7dd1b36218d97ba7eb1d76729d984b8d53c6b8bfb8af82a1cea1d57e"
+  },
+  {
+    "path": "test/goldens/design_system/baby-home-current-section-生长发育记录-390-1x.png",
+    "sha256": "a8b8197eac99ba94aa8b9296da596d2a89fcd25c03b65a04269c70270e5eb648"
+  },
+  {
+    "path": "test/goldens/design_system/baby-home-current-switcher-320-2x.png",
+    "sha256": "a3a3786de98f693df966c8b573f068942a10aa5a029a164dc4b69b04bfde0a1a"
+  },
+  {
+    "path": "test/goldens/design_system/baby-home-current-switcher-390-1x.png",
+    "sha256": "58cc91e94fdf9452276f61bb729ecd99c42486570b6fbfbd75106342912929a5"
+  },
+  {
+    "path": "test/goldens/design_system/baby-home-current-undo-error-320-2x.png",
+    "sha256": "491144a7c31587f5484c1186b2e6a56ce78362d6c211f1ab4b5f3a2a4231de12"
+  },
+  {
+    "path": "test/goldens/design_system/baby-home-current-undo-error-390-1x.png",
+    "sha256": "ca97f71bdde38b0ade80a37bd5a0f3b5dd4fccdf4115c702e420106267937e78"
+  },
+  {
+    "path": "test/goldens/design_system/baby-home-current-undone-320-2x.png",
+    "sha256": "e89994d03201ac34fde18de1cb5844a3ba23a6a392ab0278993735cbf3c7ddc4"
+  },
+  {
+    "path": "test/goldens/design_system/baby-home-current-undone-390-1x.png",
+    "sha256": "65552c05c96fab02e025221de41b0abbf66e6c30843c4f007f7110436a2a3811"
+  },
+  {
+    "path": "test/goldens/design_system/baby-switcher-320.png",
+    "sha256": "b1eef420322df4c7ea9064ff066eeae1d84c337c3ba1c7699a2f5f3e693c1e1a"
+  },
+  {
+    "path": "test/goldens/design_system/baby-switcher-390.png",
+    "sha256": "841c4eae1e54e9441b18b46a3916603c11948cfd065245866e0363788604c31c"
+  },
+  {
+    "path": "test/goldens/design_system/baby-switcher-430.png",
+    "sha256": "5a0029b482e43b3e4deed001de5bfb9a17d454865e9e43b2673b7d190fc75f75"
+  },
+  {
+    "path": "test/modules/baby/goldens/baby-growth-320.png",
+    "sha256": "3b7f08275a65a0248a2ce85e0d6e4e3546d6402e83cb1157e479fc4763afe498"
+  },
+  {
+    "path": "test/modules/baby/goldens/baby-growth-390.png",
+    "sha256": "6c1cbe34a4ea25cdc2bf8da2fa0f85927d4992b276eea7715be6d689d57ac4db"
+  },
+  {
+    "path": "test/modules/baby/goldens/baby-growth-430.png",
+    "sha256": "3ac12699f89f02ff6e19c3376dc1a332b140fde1feb48117c1f453d459c4e579"
+  },
+  {
+    "path": "test/modules/baby/goldens/baby-home-320.png",
+    "sha256": "96bcd5ce8d341777649f842a4f88e63765021157b4f01e2a75ec3ca1d052e57e"
+  },
+  {
+    "path": "test/modules/baby/goldens/baby-home-390.png",
+    "sha256": "4b52e6f0e1c0472edfb8323182a588b3d046fac479ed7806d7c725f51fb6bdc3"
+  },
+  {
+    "path": "test/modules/baby/goldens/baby-home-430.png",
+    "sha256": "3ca52e3b094099197e76fd81e3866787f2b752df0ece0c061e61d10cf082274d"
+  }
+]

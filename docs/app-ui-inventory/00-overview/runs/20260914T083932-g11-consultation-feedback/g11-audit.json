@@ -1,0 +1,16 @@
+{
+  "source_hashes": {
+    "lib/modules/consultation/presentation/room_page.dart": "2431630b028d90bf090d9b7f726fa420d2b1908da23175e4c37a2a6f4a553f35",
+    "lib/modules/consultation/presentation/consultation_start_dialog.dart": "de86de9a8c1abb0143b175feb1a8e595b44d906637e5a636d1f47af7cc98cd0f",
+    "lib/modules/consultation/presentation/device_check_dialog.dart": "6ea94e71e9041f386c7dd5e313fad06743d1ceb013c2a94772d1b036ea4f5f7c",
+    "lib/shared/widgets/product_feedback.dart": "f0e9384b049cfc0e3c0db31f4f751723d3b7faa587a136caee1d0db75b004af1",
+    "test/modules/consultation/consultation_inventory_journey_test.dart": "59b4931e1eb26589ed36f081142b49e17b968e4f2c3b2442e99f59c6adbfe66a",
+    "test/modules/consultation/room_entry_design_test.dart": "c169df75598463a37396739709ebb2d6323da5bb273dcc986861eca921876939"
+  },
+  "new_images": 5,
+  "reused_images": 4,
+  "strict_scenarios_passed": 3,
+  "images_reviewed": 9,
+  "long_images": 0,
+  "scope": "本报告关闭 G11 已列出的加载、载入失败、视频授权提交失败、位置确认失败与入室失败的版本缺口。咨询结果和通话按 G01/G02 报告复用；准备页其它已有控件状态保留原条目，最终全状态映射审计仍需逐项记录。系统权限与真实双端媒体不由本次替身链证明。未修改产品代码。"
+}

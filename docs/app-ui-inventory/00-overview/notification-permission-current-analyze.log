@@ -1,0 +1,5 @@
+Analyzing app...                                                
+
+warning • Unused import: 'package:momcozy_flutter_app/domain/shared/product_failure.dart'. Try removing the import directive • test/modules/services/service_catalog_redesign_test.dart:9:8 • unused_import
+
+1 issue found. (ran in 3.9s)

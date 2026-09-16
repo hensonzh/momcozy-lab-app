@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/home-consultation-journey-intake-required-320-2x.png",
+  "previous_source": null,
+  "route": "/me",
+  "trigger": "Home preparation room context requires intake before joining",
+  "root_entry": "Authenticated More → tap Me bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories/codecs and LiveKit device checks; isolated HTTP and native method channels, sandbox room, fixed clock/timezone; no real OS permission dialog or remote media",
+  "test": "test/modules/consultation/home_consultation_inventory_journey_test.dart"
+}

@@ -1,0 +1,72 @@
+[
+  {
+    "page": "mom-lactation",
+    "state": "加载",
+    "source_image": "test/goldens/ui_refactor/lactation/loading-390-1x.png",
+    "sha256": "69a62371aa7b36a2a80e2cf9616a82818905575631b8d5f54b48a674e3b9f3bd",
+    "source_hashes_match": {
+      "lib/modules/mom/presentation/lactation_panel.dart": true,
+      "lib/modules/mom/presentation/lactation_chart.dart": true,
+      "lib/modules/mom/presentation/lactation_page.dart": true,
+      "test/modules/mom/lactation_redesign_test.dart": true
+    },
+    "evidence": {
+      "id": "00-overview/reused-state-evidence/lactation-loading",
+      "image": "00-overview/reused-state-evidence/lactation-loading/default.png",
+      "observed_route": null,
+      "trigger": "打开今日泌乳 → 请求仍在进行；同一测试随后读取失败 → 重试 → 记录列表。",
+      "extent": "FULL_VIEWPORT; visually inspected, all content visible"
+    }
+  },
+  {
+    "page": "appointment",
+    "state": "加载",
+    "source_image": "test/goldens/design_system/appointment-loading-320-2x.png",
+    "sha256": "9acf827953f1bcc821d22e53e2fbebcb72534f5988404356f43ad7588185b30b",
+    "source_hashes_match": {
+      "lib/modules/services/presentation/appointment_detail_page.dart": true,
+      "test/modules/services/appointment_detail_test.dart": true
+    },
+    "evidence": {
+      "id": "00-overview/reused-state-evidence/appointment-loading",
+      "image": "00-overview/reused-state-evidence/appointment-loading/default.png",
+      "observed_route": null,
+      "trigger": "打开独立预约详情 → 首次请求未返回；同一测试完成请求后出现取消按钮。",
+      "extent": "FULL_VIEWPORT; visually inspected, all content visible"
+    }
+  },
+  {
+    "page": "appointment",
+    "state": "in_progress",
+    "source_image": "test/goldens/design_system/appointment-in_progress-390.png",
+    "sha256": "abceefd5c7704e3c90733427b8243ea17bdfffebdcb7c4b04243231c0d0a06c0",
+    "source_hashes_match": {
+      "lib/modules/services/presentation/appointment_detail_page.dart": true,
+      "test/modules/services/appointment_detail_test.dart": true
+    },
+    "evidence": {
+      "id": "00-overview/reused-state-evidence/appointment-in-progress",
+      "image": "00-overview/reused-state-evidence/appointment-in-progress/default.png",
+      "observed_route": null,
+      "trigger": "进入咨询中的预约详情 → 返回咨询室；原专项测试点击并断言目标回调。",
+      "extent": "FULL_VIEWPORT; visually inspected, all content visible"
+    }
+  },
+  {
+    "page": "appointment",
+    "state": "completed",
+    "source_image": "test/goldens/design_system/appointment-completed-390.png",
+    "sha256": "d541a32ba4bbe713a6aa66f3fc533bb6fd1a253e39fae689bc96979d19312c95",
+    "source_hashes_match": {
+      "lib/modules/services/presentation/appointment_detail_page.dart": true,
+      "test/modules/services/appointment_detail_test.dart": true
+    },
+    "evidence": {
+      "id": "00-overview/reused-state-evidence/appointment-completed",
+      "image": "00-overview/reused-state-evidence/appointment-completed/default.png",
+      "observed_route": null,
+      "trigger": "进入已完成预约详情 → 查看咨询总结；原专项测试点击并断言目标回调。",
+      "extent": "FULL_VIEWPORT; visually inspected, all content visible"
+    }
+  }
+]

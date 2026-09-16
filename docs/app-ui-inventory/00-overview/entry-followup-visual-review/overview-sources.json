@@ -1,0 +1,164 @@
+[
+  {
+    "state": "agent-entry-journey-external-accepted",
+    "source": "05-agent/agent-entry-journey-external-accepted/viewport.png",
+    "sha256": "c5b3df9e41ff9a9b0e7af3bb4b3ec2b5bd391f0818fb3c7b800bbc2a64ba9127",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "agent-entry-journey-external-card",
+    "source": "05-agent/agent-entry-journey-external-card/viewport.png",
+    "sha256": "c5b3df9e41ff9a9b0e7af3bb4b3ec2b5bd391f0818fb3c7b800bbc2a64ba9127",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "agent-entry-journey-external-dismissed",
+    "source": "05-agent/agent-entry-journey-external-dismissed/viewport.png",
+    "sha256": "c5b3df9e41ff9a9b0e7af3bb4b3ec2b5bd391f0818fb3c7b800bbc2a64ba9127",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "agent-entry-journey-external-failed",
+    "source": "05-agent/agent-entry-journey-external-failed/viewport.png",
+    "sha256": "e799a8af072ddcc271ec4972f47c56e2ed7eb6baa7872c6d4809ef264010c926",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "agent-entry-journey-external-pending",
+    "source": "05-agent/agent-entry-journey-external-pending/viewport.png",
+    "sha256": "c5b3df9e41ff9a9b0e7af3bb4b3ec2b5bd391f0818fb3c7b800bbc2a64ba9127",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "agent-entry-journey-external-thrown",
+    "source": "05-agent/agent-entry-journey-external-thrown/viewport.png",
+    "sha256": "e799a8af072ddcc271ec4972f47c56e2ed7eb6baa7872c6d4809ef264010c926",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "agent-entry-journey-forward_head-away",
+    "source": "05-agent/agent-entry-journey-forward_head-away/viewport.png",
+    "sha256": "6ac33e6dd952b54bfe0bbfa4209df0bf816602f324b0120ff7730cb4d19cfda7",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "agent-entry-journey-forward_head-card",
+    "source": "05-agent/agent-entry-journey-forward_head-card/viewport.png",
+    "sha256": "4e2d1eda49ebdfcc6910b4c2cbf8d0b591fb5a393a30f89506ee89f44b12321e",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "agent-entry-journey-forward_head-no-navigation",
+    "source": "05-agent/agent-entry-journey-forward_head-no-navigation/viewport.png",
+    "sha256": "4e2d1eda49ebdfcc6910b4c2cbf8d0b591fb5a393a30f89506ee89f44b12321e",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "agent-entry-journey-forward_head-return",
+    "source": "05-agent/agent-entry-journey-forward_head-return/viewport.png",
+    "sha256": "4e2d1eda49ebdfcc6910b4c2cbf8d0b591fb5a393a30f89506ee89f44b12321e",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "agent-entry-journey-posture_screen-away",
+    "source": "05-agent/agent-entry-journey-posture_screen-away/viewport.png",
+    "sha256": "6ac33e6dd952b54bfe0bbfa4209df0bf816602f324b0120ff7730cb4d19cfda7",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "agent-entry-journey-posture_screen-card",
+    "source": "05-agent/agent-entry-journey-posture_screen-card/viewport.png",
+    "sha256": "701003700c254d4b27d30a1c2a5f0db3394c685693cab37c1e53db75f291005e",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "agent-entry-journey-posture_screen-no-navigation",
+    "source": "05-agent/agent-entry-journey-posture_screen-no-navigation/viewport.png",
+    "sha256": "701003700c254d4b27d30a1c2a5f0db3394c685693cab37c1e53db75f291005e",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "agent-entry-journey-posture_screen-return",
+    "source": "05-agent/agent-entry-journey-posture_screen-return/viewport.png",
+    "sha256": "701003700c254d4b27d30a1c2a5f0db3394c685693cab37c1e53db75f291005e",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "home-consultation-journey-cancel-confirm",
+    "source": "08-expert-service/home-consultation-journey-cancel-confirm/viewport.png",
+    "sha256": "bea095c083bc9a8f26ea6d4ea901ccbdc91a7b63ebb2b373d98af860a01365be",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "home-consultation-journey-cancel-kept-home",
+    "source": "08-expert-service/home-consultation-journey-cancel-kept-home/viewport.png",
+    "sha256": "c7edd2ba147aaa107c59cd64f5313695f1e08062ecef5f89052b6893fc25582b",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "home-consultation-journey-closed-home",
+    "source": "08-expert-service/home-consultation-journey-closed-home/viewport.png",
+    "sha256": "c7edd2ba147aaa107c59cd64f5313695f1e08062ecef5f89052b6893fc25582b",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "home-consultation-journey-intake",
+    "source": "08-expert-service/home-consultation-journey-intake/viewport.png",
+    "sha256": "e83f446673b46d7d46e20b8b48ca8b632a8de4d9b9b7adc81899e3ed07f00e6c",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "home-consultation-journey-intake-required",
+    "source": "08-expert-service/home-consultation-journey-intake-required/viewport.png",
+    "sha256": "0e421cf83d48fe3882c4e808df3f98722f82991409b7fea96c5cd09efc5afadd",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "home-consultation-journey-intake-return-home",
+    "source": "08-expert-service/home-consultation-journey-intake-return-home/viewport.png",
+    "sha256": "be291808401e7f353b8f14552b0df4a698f3edd191e5e2d770c66c2e129fc145",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "home-consultation-journey-load-error",
+    "source": "08-expert-service/home-consultation-journey-load-error/viewport.png",
+    "sha256": "a9f7a571bebebd1e16e93b9c3191c2e41e4650d13417e6928039d18cd945e4cc",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "home-consultation-journey-load-recovered",
+    "source": "08-expert-service/home-consultation-journey-load-recovered/viewport.png",
+    "sha256": "34e36420e961182ac75d88c9b2403c0458838c623f8c70c5df99e5892657a35c",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "home-consultation-journey-load-return-home",
+    "source": "08-expert-service/home-consultation-journey-load-return-home/viewport.png",
+    "sha256": "c7edd2ba147aaa107c59cd64f5313695f1e08062ecef5f89052b6893fc25582b",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "home-consultation-journey-loading",
+    "source": "08-expert-service/home-consultation-journey-loading/viewport.png",
+    "sha256": "fb0089511a89e1eb4196b2157f21d09d148b29447b06f415459d12b9509b7720",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "home-consultation-journey-outside-dismiss-blocked",
+    "source": "08-expert-service/home-consultation-journey-outside-dismiss-blocked/viewport.png",
+    "sha256": "34e36420e961182ac75d88c9b2403c0458838c623f8c70c5df99e5892657a35c",
+    "sheet": "overview-3.jpg"
+  },
+  {
+    "state": "home-consultation-journey-preparation",
+    "source": "08-expert-service/home-consultation-journey-preparation/viewport.png",
+    "sha256": "34e36420e961182ac75d88c9b2403c0458838c623f8c70c5df99e5892657a35c",
+    "sheet": "overview-3.jpg"
+  },
+  {
+    "state": "home-consultation-journey-reopened",
+    "source": "08-expert-service/home-consultation-journey-reopened/viewport.png",
+    "sha256": "34e36420e961182ac75d88c9b2403c0458838c623f8c70c5df99e5892657a35c",
+    "sheet": "overview-3.jpg"
+  }
+]

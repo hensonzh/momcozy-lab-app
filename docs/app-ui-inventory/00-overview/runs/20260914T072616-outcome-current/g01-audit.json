@@ -1,0 +1,209 @@
+{
+  "gap": "G01",
+  "status": "CLOSED_FOR_RECORDED_SOURCE",
+  "scope": "six distinct rendered outcome states at 393x844, all 11 visible action buttons through actual app routes; no native or backend acceptance claim",
+  "capture_run": "runs/20260914T072616-outcome-current",
+  "source_snapshot": "source-snapshot.json",
+  "source_drift": [
+    "lib/features/agent_hub/presentation/agent_conversation_panel.dart",
+    "test/features/agent_hub/agent_history_design_test.dart"
+  ],
+  "rendered_widget_source_drift": [],
+  "unrelated_drift_note": "Agent conversation panel and its design tests changed after capture; neither rendered nor executed in this G01 batch; see source_drift for exact paths",
+  "visual_review": "All 10 complete images reviewed at full image coverage; six outcome appointment cards entirely visible; home full measured long image reviewed",
+  "images": [
+    {
+      "id": "08-expert-service/consultation-journey-current-before-outcome",
+      "image": "08-expert-service/consultation-journey-current-before-outcome/default.png",
+      "extent": "viewport",
+      "metadata": "raw/test/goldens/ui_inventory/consultation-journey-current-before-outcome-393.png.json",
+      "verified_route": "/services/appointments/service-appointment/room"
+    },
+    {
+      "id": "08-expert-service/consultation-journey-current-cancelled-outcome",
+      "image": "08-expert-service/consultation-journey-current-cancelled-outcome/default.png",
+      "extent": "viewport",
+      "metadata": "raw/test/goldens/ui_inventory/consultation-journey-current-cancelled-outcome-393.png.json",
+      "verified_route": "/services/appointments/service-appointment/room"
+    },
+    {
+      "id": "08-expert-service/consultation-journey-current-completed-outcome",
+      "image": "08-expert-service/consultation-journey-current-completed-outcome/default.png",
+      "extent": "viewport",
+      "metadata": "raw/test/goldens/ui_inventory/consultation-journey-current-completed-outcome-393.png.json",
+      "verified_route": "/services/appointments/service-appointment/room"
+    },
+    {
+      "id": "08-expert-service/consultation-journey-current-no-show-outcome",
+      "image": "08-expert-service/consultation-journey-current-no-show-outcome/default.png",
+      "extent": "viewport",
+      "metadata": "raw/test/goldens/ui_inventory/consultation-journey-current-no-show-outcome-393.png.json",
+      "verified_route": "/services/appointments/service-appointment/room"
+    },
+    {
+      "id": "08-expert-service/consultation-journey-current-outcome-home",
+      "image": "08-expert-service/consultation-journey-current-outcome-home/default.png",
+      "extent": "full-measured-scroll-stitch",
+      "metadata": "raw/test/goldens/ui_inventory/consultation-journey-current-outcome-home-393.png.json",
+      "verified_route": "/me"
+    },
+    {
+      "id": "08-expert-service/consultation-journey-current-outcome-rebook",
+      "image": "08-expert-service/consultation-journey-current-outcome-rebook/default.png",
+      "extent": "viewport",
+      "metadata": "raw/test/goldens/ui_inventory/consultation-journey-current-outcome-rebook-393.png.json",
+      "verified_route": "/services/episodes/service-episode/booking"
+    },
+    {
+      "id": "08-expert-service/consultation-journey-current-outcome-summary",
+      "image": "08-expert-service/consultation-journey-current-outcome-summary/default.png",
+      "extent": "viewport",
+      "metadata": "raw/test/goldens/ui_inventory/consultation-journey-current-outcome-summary-393.png.json",
+      "verified_route": "/services/appointments/service-appointment/summary"
+    },
+    {
+      "id": "08-expert-service/consultation-journey-current-pending-record-outcome",
+      "image": "08-expert-service/consultation-journey-current-pending-record-outcome/default.png",
+      "extent": "viewport",
+      "metadata": "raw/test/goldens/ui_inventory/consultation-journey-current-pending-record-outcome-393.png.json",
+      "verified_route": "/services/appointments/service-appointment/room"
+    },
+    {
+      "id": "08-expert-service/consultation-journey-current-safety-outcome",
+      "image": "08-expert-service/consultation-journey-current-safety-outcome/default.png",
+      "extent": "viewport",
+      "metadata": "raw/test/goldens/ui_inventory/consultation-journey-current-safety-outcome-393.png.json",
+      "verified_route": "/services/appointments/service-appointment/room"
+    },
+    {
+      "id": "08-expert-service/consultation-journey-current-technical-outcome",
+      "image": "08-expert-service/consultation-journey-current-technical-outcome/default.png",
+      "extent": "viewport",
+      "metadata": "raw/test/goldens/ui_inventory/consultation-journey-current-technical-outcome-393.png.json",
+      "verified_route": "/services/appointments/service-appointment/room"
+    }
+  ],
+  "actions": [
+    {
+      "outcome": "cancelled",
+      "source": "test/goldens/ui_inventory/consultation-journey-current-cancelled-outcome-393.png",
+      "destinations": [
+        {
+          "button": "查看咨询总结",
+          "route": "/services/appointments/service-appointment/summary"
+        }
+      ],
+      "evidence": "Actual visible CTA taps and production router assertions; isolated HTTP/device boundaries"
+    },
+    {
+      "outcome": "cancelled",
+      "source": "test/goldens/ui_inventory/consultation-journey-current-cancelled-outcome-393.png",
+      "destinations": [
+        {
+          "button": "重新预约",
+          "route": "/services/episodes/service-episode/booking"
+        }
+      ],
+      "evidence": "Actual visible CTA taps and production router assertions; isolated HTTP/device boundaries"
+    },
+    {
+      "outcome": "completed",
+      "source": "test/goldens/ui_inventory/consultation-journey-current-completed-outcome-393.png",
+      "destinations": [
+        {
+          "button": "查看咨询总结",
+          "route": "/services/appointments/service-appointment/summary"
+        }
+      ],
+      "evidence": "Actual visible CTA taps and production router assertions; isolated HTTP/device boundaries"
+    },
+    {
+      "outcome": "no-show",
+      "source": "test/goldens/ui_inventory/consultation-journey-current-no-show-outcome-393.png",
+      "destinations": [
+        {
+          "button": "重新预约",
+          "route": "/services/episodes/service-episode/booking"
+        }
+      ],
+      "evidence": "Actual visible CTA taps and production router assertions; isolated HTTP/device boundaries"
+    },
+    {
+      "outcome": "no-show",
+      "source": "test/goldens/ui_inventory/consultation-journey-current-no-show-outcome-393.png",
+      "destinations": [
+        {
+          "button": "返回妈妈主页",
+          "route": "/me"
+        }
+      ],
+      "evidence": "Actual visible CTA taps and production router assertions; isolated HTTP/device boundaries"
+    },
+    {
+      "outcome": "pending-record",
+      "source": "test/goldens/ui_inventory/consultation-journey-current-pending-record-outcome-393.png",
+      "destinations": [
+        {
+          "button": "查看咨询总结",
+          "route": "/services/appointments/service-appointment/summary"
+        }
+      ],
+      "evidence": "Actual visible CTA taps and production router assertions; isolated HTTP/device boundaries"
+    },
+    {
+      "outcome": "pending-record",
+      "source": "test/goldens/ui_inventory/consultation-journey-current-pending-record-outcome-393.png",
+      "destinations": [
+        {
+          "button": "重新预约",
+          "route": "/services/episodes/service-episode/booking"
+        }
+      ],
+      "evidence": "Actual visible CTA taps and production router assertions; isolated HTTP/device boundaries"
+    },
+    {
+      "outcome": "safety",
+      "source": "test/goldens/ui_inventory/consultation-journey-current-safety-outcome-393.png",
+      "destinations": [
+        {
+          "button": "查看咨询总结",
+          "route": "/services/appointments/service-appointment/summary"
+        }
+      ],
+      "evidence": "Actual visible CTA taps and production router assertions; isolated HTTP/device boundaries"
+    },
+    {
+      "outcome": "safety",
+      "source": "test/goldens/ui_inventory/consultation-journey-current-safety-outcome-393.png",
+      "destinations": [
+        {
+          "button": "重新预约",
+          "route": "/services/episodes/service-episode/booking"
+        }
+      ],
+      "evidence": "Actual visible CTA taps and production router assertions; isolated HTTP/device boundaries"
+    },
+    {
+      "outcome": "technical",
+      "source": "test/goldens/ui_inventory/consultation-journey-current-technical-outcome-393.png",
+      "destinations": [
+        {
+          "button": "重新预约",
+          "route": "/services/episodes/service-episode/booking"
+        }
+      ],
+      "evidence": "Actual visible CTA taps and production router assertions; isolated HTTP/device boundaries"
+    },
+    {
+      "outcome": "technical",
+      "source": "test/goldens/ui_inventory/consultation-journey-current-technical-outcome-393.png",
+      "destinations": [
+        {
+          "button": "返回妈妈主页",
+          "route": "/me"
+        }
+      ],
+      "evidence": "Actual visible CTA taps and production router assertions; isolated HTTP/device boundaries"
+    }
+  ]
+}

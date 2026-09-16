@@ -1,0 +1,12 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/modules/services/booking_resume_current_inventory_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: unknown confirm close reopen and page retry false
+00:02 +1: unknown held cancellation close and retry false
+00:02 +2: unknown hold leave and reenter false
+00:03 +3: selected reminder unavailable after confirmation false
+00:03 +4: unknown confirm close reopen and page retry true
+00:04 +5: unknown held cancellation close and retry true
+00:05 +6: unknown hold leave and reenter true
+00:06 +7: selected reminder unavailable after confirmation true
+00:06 +8: (tearDownAll)
+00:06 +8: All tests passed!

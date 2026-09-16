@@ -1,0 +1,7 @@
+{
+  "lib/modules/services/presentation/consultation_summary_page.dart": "545bbfa5a4bdb6a23a74f9d782561824ddb9e873dfcb0eab95eed51014dd2531",
+  "lib/modules/services/presentation/consultation_summary_content.dart": "d2f13602e2faae53d5b36179f9d0f806db369fd391247d6f4cbb7f6ad7ab65a5",
+  "lib/shared/widgets/product_feedback.dart": "f0e9384b049cfc0e3c0db31f4f751723d3b7faa587a136caee1d0db75b004af1",
+  "lib/modules/services/application/summary_controller.dart": "9d4cb5ec509810478196b258a9e5d69d4daa213794af23e58e450a72b3f8ece1",
+  "test/modules/services/consultation_summary_test.dart": "ea579f18bc4ff989ae5bfea3d8384403741f58f3e3893d6de9a8ec5a4d3d0219"
+}

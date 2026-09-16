@@ -1,0 +1,32 @@
+[
+  {
+    "state": "agent-voice-journey-keyboard-dismissed",
+    "source": "05-agent/agent-voice-journey-keyboard-dismissed/default.png",
+    "sha256": "378715fc6e3a2d2bc3aba20ca3e97465831d85741bc3ff244ceff7593fb48cff",
+    "sheet": "long-1.jpg"
+  },
+  {
+    "state": "agent-voice-journey-keyboard-failed",
+    "source": "05-agent/agent-voice-journey-keyboard-failed/default.png",
+    "sha256": "6ee0b24b3d2d368f96ff560b18a5a5a3bf52781ed229346883b3e39d95edc24a",
+    "sheet": "long-1.jpg"
+  },
+  {
+    "state": "agent-voice-journey-new-greeting-off",
+    "source": "05-agent/agent-voice-journey-new-greeting-off/default.png",
+    "sha256": "960904bcda5457929c8cf0aedca96e3892caee651dc3adf1f4cae6d7854cf8ef",
+    "sheet": "long-1.jpg"
+  },
+  {
+    "state": "agent-voice-journey-new-greeting-off-return",
+    "source": "05-agent/agent-voice-journey-new-greeting-off-return/default.png",
+    "sha256": "960904bcda5457929c8cf0aedca96e3892caee651dc3adf1f4cae6d7854cf8ef",
+    "sheet": "long-1.jpg"
+  },
+  {
+    "state": "agent-voice-journey-new-greeting-playing",
+    "source": "05-agent/agent-voice-journey-new-greeting-playing/default.png",
+    "sha256": "9c442884de5b6a5b487a260eb427e28dc74850382a82b7cbfbd955b5fc3e9e21",
+    "sheet": "long-1.jpg"
+  }
+]

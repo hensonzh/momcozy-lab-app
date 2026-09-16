@@ -1,0 +1,347 @@
+[
+  {
+    "id": "01-auth/auth-followup-verify-more",
+    "path": "docs/app-ui-inventory/01-auth/auth-followup-verify-more/default.png",
+    "sheet": 1
+  },
+  {
+    "id": "03-mom/mom-diary-error",
+    "path": "docs/app-ui-inventory/03-mom/mom-diary-error/default.png",
+    "sheet": 1
+  },
+  {
+    "id": "03-mom/mom-handoff-initial-top",
+    "path": "docs/app-ui-inventory/03-mom/mom-handoff-initial-top/default.png",
+    "sheet": 1
+  },
+  {
+    "id": "03-mom/mom-handoff-purchased-top",
+    "path": "docs/app-ui-inventory/03-mom/mom-handoff-purchased-top/default.png",
+    "sheet": 1
+  },
+  {
+    "id": "03-mom/mom-handoff-recorded-top",
+    "path": "docs/app-ui-inventory/03-mom/mom-handoff-recorded-top/default.png",
+    "sheet": 1
+  },
+  {
+    "id": "03-mom/mom-insight-unavailable",
+    "path": "docs/app-ui-inventory/03-mom/mom-insight-unavailable/default.png",
+    "sheet": 1
+  },
+  {
+    "id": "03-mom/mom-journey-diary-discarded-home",
+    "path": "docs/app-ui-inventory/03-mom/mom-journey-diary-discarded-home/default.png",
+    "sheet": 1
+  },
+  {
+    "id": "03-mom/mom-loading",
+    "path": "docs/app-ui-inventory/03-mom/mom-loading/default.png",
+    "sheet": 1
+  },
+  {
+    "id": "03-mom/mom-partial-records",
+    "path": "docs/app-ui-inventory/03-mom/mom-partial-records/default.png",
+    "sheet": 2
+  },
+  {
+    "id": "05-agent/agent-journey-assistant-copied",
+    "path": "docs/app-ui-inventory/05-agent/agent-journey-assistant-copied/default.png",
+    "sheet": 2
+  },
+  {
+    "id": "05-agent/agent-journey-draft",
+    "path": "docs/app-ui-inventory/05-agent/agent-journey-draft/default.png",
+    "sheet": 2
+  },
+  {
+    "id": "05-agent/agent-journey-manual-retry",
+    "path": "docs/app-ui-inventory/05-agent/agent-journey-manual-retry/default.png",
+    "sheet": 2
+  },
+  {
+    "id": "05-agent/agent-journey-reply",
+    "path": "docs/app-ui-inventory/05-agent/agent-journey-reply/default.png",
+    "sheet": 2
+  },
+  {
+    "id": "05-agent/agent-journey-resumed",
+    "path": "docs/app-ui-inventory/05-agent/agent-journey-resumed/default.png",
+    "sheet": 2
+  },
+  {
+    "id": "05-agent/agent-journey-streaming",
+    "path": "docs/app-ui-inventory/05-agent/agent-journey-streaming/default.png",
+    "sheet": 2
+  },
+  {
+    "id": "05-agent/agent-journey-terminal-error",
+    "path": "docs/app-ui-inventory/05-agent/agent-journey-terminal-error/default.png",
+    "sheet": 2
+  },
+  {
+    "id": "05-agent/agent-resource-journey-video-playing",
+    "path": "docs/app-ui-inventory/05-agent/agent-resource-journey-video-playing/default.png",
+    "sheet": 3
+  },
+  {
+    "id": "05-agent/agent-resource-journey-video-runtime-error",
+    "path": "docs/app-ui-inventory/05-agent/agent-resource-journey-video-runtime-error/default.png",
+    "sheet": 3
+  },
+  {
+    "id": "07-me/account-current-delete-confirm",
+    "path": "docs/app-ui-inventory/07-me/account-current-delete-confirm/default.png",
+    "sheet": 3
+  },
+  {
+    "id": "07-me/account-current-delete-error",
+    "path": "docs/app-ui-inventory/07-me/account-current-delete-error/default.png",
+    "sheet": 3
+  },
+  {
+    "id": "07-me/account-current-delete-pending",
+    "path": "docs/app-ui-inventory/07-me/account-current-delete-pending/default.png",
+    "sheet": 3
+  },
+  {
+    "id": "07-me/account-current-google-only-ready",
+    "path": "docs/app-ui-inventory/07-me/account-current-google-only-ready/default.png",
+    "sheet": 3
+  },
+  {
+    "id": "07-me/account-current-google-unavailable",
+    "path": "docs/app-ui-inventory/07-me/account-current-google-unavailable/default.png",
+    "sheet": 3
+  },
+  {
+    "id": "07-me/account-current-password-entered",
+    "path": "docs/app-ui-inventory/07-me/account-current-password-entered/default.png",
+    "sheet": 3
+  },
+  {
+    "id": "07-me/account-current-password-ready",
+    "path": "docs/app-ui-inventory/07-me/account-current-password-ready/default.png",
+    "sheet": 4
+  },
+  {
+    "id": "07-me/more-current-identity-name-only-arrived",
+    "path": "docs/app-ui-inventory/07-me/more-current-identity-name-only-arrived/default.png",
+    "sheet": 4
+  },
+  {
+    "id": "07-me/more-current-identity-pending",
+    "path": "docs/app-ui-inventory/07-me/more-current-identity-pending/default.png",
+    "sheet": 4
+  },
+  {
+    "id": "07-me/more-current-identity-resolved",
+    "path": "docs/app-ui-inventory/07-me/more-current-identity-resolved/default.png",
+    "sheet": 4
+  },
+  {
+    "id": "07-me/more-current-inbox-return",
+    "path": "docs/app-ui-inventory/07-me/more-current-inbox-return/default.png",
+    "sheet": 4
+  },
+  {
+    "id": "07-me/notification-current-archive-final-more",
+    "path": "docs/app-ui-inventory/07-me/notification-current-archive-final-more/default.png",
+    "sheet": 4
+  },
+  {
+    "id": "07-me/notification-current-inbox-all-read",
+    "path": "docs/app-ui-inventory/07-me/notification-current-inbox-all-read/default.png",
+    "sheet": 4
+  },
+  {
+    "id": "07-me/notification-current-inbox-archived",
+    "path": "docs/app-ui-inventory/07-me/notification-current-inbox-archived/default.png",
+    "sheet": 4
+  },
+  {
+    "id": "07-me/notification-current-inbox-empty",
+    "path": "docs/app-ui-inventory/07-me/notification-current-inbox-empty/default.png",
+    "sheet": 5
+  },
+  {
+    "id": "07-me/notification-current-inbox-first-page",
+    "path": "docs/app-ui-inventory/07-me/notification-current-inbox-first-page/default.png",
+    "sheet": 5
+  },
+  {
+    "id": "07-me/notification-current-inbox-last-page",
+    "path": "docs/app-ui-inventory/07-me/notification-current-inbox-last-page/default.png",
+    "sheet": 5
+  },
+  {
+    "id": "07-me/notification-current-inbox-loading",
+    "path": "docs/app-ui-inventory/07-me/notification-current-inbox-loading/default.png",
+    "sheet": 5
+  },
+  {
+    "id": "07-me/notification-current-inbox-read-error",
+    "path": "docs/app-ui-inventory/07-me/notification-current-inbox-read-error/default.png",
+    "sheet": 5
+  },
+  {
+    "id": "07-me/notification-current-inbox-second-page",
+    "path": "docs/app-ui-inventory/07-me/notification-current-inbox-second-page/default.png",
+    "sheet": 5
+  },
+  {
+    "id": "07-me/notification-current-notification-open-error",
+    "path": "docs/app-ui-inventory/07-me/notification-current-notification-open-error/default.png",
+    "sheet": 5
+  },
+  {
+    "id": "07-me/notification-current-notification-target-unavailable",
+    "path": "docs/app-ui-inventory/07-me/notification-current-notification-target-unavailable/default.png",
+    "sheet": 5
+  },
+  {
+    "id": "07-me/notification-permission-current-education-denied",
+    "path": "docs/app-ui-inventory/07-me/notification-permission-current-education-denied/default.png",
+    "sheet": 6
+  },
+  {
+    "id": "07-me/notification-permission-current-education-dialog",
+    "path": "docs/app-ui-inventory/07-me/notification-permission-current-education-dialog/default.png",
+    "sheet": 6
+  },
+  {
+    "id": "07-me/notification-permission-current-education-not-now",
+    "path": "docs/app-ui-inventory/07-me/notification-permission-current-education-not-now/default.png",
+    "sheet": 6
+  },
+  {
+    "id": "07-me/notification-permission-current-education-ready",
+    "path": "docs/app-ui-inventory/07-me/notification-permission-current-education-ready/default.png",
+    "sheet": 6
+  },
+  {
+    "id": "07-me/notification-permission-current-offer-settings-dialog",
+    "path": "docs/app-ui-inventory/07-me/notification-permission-current-offer-settings-dialog/default.png",
+    "sheet": 6
+  },
+  {
+    "id": "07-me/notification-permission-current-permission-restored-disabled",
+    "path": "docs/app-ui-inventory/07-me/notification-permission-current-permission-restored-disabled/default.png",
+    "sheet": 6
+  },
+  {
+    "id": "07-me/notification-permission-current-permission-restored-enabled",
+    "path": "docs/app-ui-inventory/07-me/notification-permission-current-permission-restored-enabled/default.png",
+    "sheet": 6
+  },
+  {
+    "id": "07-me/notification-permission-current-registration-http-error",
+    "path": "docs/app-ui-inventory/07-me/notification-permission-current-registration-http-error/default.png",
+    "sheet": 6
+  },
+  {
+    "id": "07-me/notification-permission-current-registration-pending",
+    "path": "docs/app-ui-inventory/07-me/notification-permission-current-registration-pending/default.png",
+    "sheet": 7
+  },
+  {
+    "id": "07-me/notification-permission-current-registration-sdk-unavailable",
+    "path": "docs/app-ui-inventory/07-me/notification-permission-current-registration-sdk-unavailable/default.png",
+    "sheet": 7
+  },
+  {
+    "id": "07-me/notification-permission-current-request-authorized",
+    "path": "docs/app-ui-inventory/07-me/notification-permission-current-request-authorized/default.png",
+    "sheet": 7
+  },
+  {
+    "id": "08-expert-service/home-consultation-journey-cancel-confirm",
+    "path": "docs/app-ui-inventory/08-expert-service/home-consultation-journey-cancel-confirm/default.png",
+    "sheet": 7
+  },
+  {
+    "id": "08-expert-service/service-current-catalog",
+    "path": "docs/app-ui-inventory/08-expert-service/service-current-catalog/default.png",
+    "sheet": 7
+  },
+  {
+    "id": "08-expert-service/service-current-catalog-empty",
+    "path": "docs/app-ui-inventory/08-expert-service/service-current-catalog-empty/default.png",
+    "sheet": 7
+  },
+  {
+    "id": "08-expert-service/service-current-catalog-error",
+    "path": "docs/app-ui-inventory/08-expert-service/service-current-catalog-error/default.png",
+    "sheet": 7
+  },
+  {
+    "id": "08-expert-service/service-current-catalog-loading",
+    "path": "docs/app-ui-inventory/08-expert-service/service-current-catalog-loading/default.png",
+    "sheet": 7
+  },
+  {
+    "id": "08-expert-service/service-current-catalog-team",
+    "path": "docs/app-ui-inventory/08-expert-service/service-current-catalog-team/default.png",
+    "sheet": 8
+  },
+  {
+    "id": "08-expert-service/service-current-catalog-team-empty",
+    "path": "docs/app-ui-inventory/08-expert-service/service-current-catalog-team-empty/default.png",
+    "sheet": 8
+  },
+  {
+    "id": "08-expert-service/service-current-owned-package",
+    "path": "docs/app-ui-inventory/08-expert-service/service-current-owned-package/default.png",
+    "sheet": 8
+  },
+  {
+    "id": "08-expert-service/service-current-package-better-breastfeeding",
+    "path": "docs/app-ui-inventory/08-expert-service/service-current-package-better-breastfeeding/default.png",
+    "sheet": 8
+  },
+  {
+    "id": "08-expert-service/service-current-package-comfortable-feeding",
+    "path": "docs/app-ui-inventory/08-expert-service/service-current-package-comfortable-feeding/default.png",
+    "sheet": 8
+  },
+  {
+    "id": "08-expert-service/service-current-package-error",
+    "path": "docs/app-ui-inventory/08-expert-service/service-current-package-error/default.png",
+    "sheet": 8
+  },
+  {
+    "id": "08-expert-service/service-current-package-feeding-confidence",
+    "path": "docs/app-ui-inventory/08-expert-service/service-current-package-feeding-confidence/default.png",
+    "sheet": 8
+  },
+  {
+    "id": "08-expert-service/service-current-package-loading",
+    "path": "docs/app-ui-inventory/08-expert-service/service-current-package-loading/default.png",
+    "sheet": 8
+  },
+  {
+    "id": "08-expert-service/service-current-package-milk-supply-care",
+    "path": "docs/app-ui-inventory/08-expert-service/service-current-package-milk-supply-care/default.png",
+    "sheet": 9
+  },
+  {
+    "id": "08-expert-service/service-current-package-missing",
+    "path": "docs/app-ui-inventory/08-expert-service/service-current-package-missing/default.png",
+    "sheet": 9
+  },
+  {
+    "id": "08-expert-service/service-current-package-purchase-disabled",
+    "path": "docs/app-ui-inventory/08-expert-service/service-current-package-purchase-disabled/default.png",
+    "sheet": 9
+  },
+  {
+    "id": "08-expert-service/service-current-pending-package",
+    "path": "docs/app-ui-inventory/08-expert-service/service-current-pending-package/default.png",
+    "sheet": 9
+  },
+  {
+    "id": "08-expert-service/service-journey-intake-to-cozymate",
+    "path": "docs/app-ui-inventory/08-expert-service/service-journey-intake-to-cozymate/default.png",
+    "sheet": 9
+  }
+]

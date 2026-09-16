@@ -1,0 +1,4929 @@
+{
+  "version": 1,
+  "counting_rule": "独立路由页面归并路由别名；/login 五个表单步骤分列；同一页面数据状态不计为新页面；Navigator 视频全屏单列；弹窗归属宿主页面。",
+  "pages": [
+    {
+      "id": "auth-login",
+      "name": "登录",
+      "routes": [
+        "/login"
+      ],
+      "widget": "MomCozyAuthPage",
+      "source": "lib/features/auth/presentation/auth_page.dart",
+      "states": [
+        "初始",
+        "密码可见",
+        "提交中",
+        "认证错误",
+        "成功跳转",
+        "Google 不可用"
+      ],
+      "entry": "未登录打开受保护页面",
+      "scope": "default",
+      "review_note": "当前表单、完整图与操作证据见 [G04 报告](../AUTH-CURRENT.md)；注册／验证剩余共用状态按 G11 核对，系统窗口按 G10 单列。",
+      "coverage_review": {
+        "report": "AUTH-CURRENT.md",
+        "status": "VERIFIED_FOR_RECORDED_SOURCE",
+        "source_hashes": {
+          "lib/app/mom_bottom_navigation.dart": "b762f1e2b67b9febb2e5662d1d29125556dd8d08a6b485f64e42b08a63759dff",
+          "lib/app/momcozy_app.dart": "00881d1d0901b24af222b6e08fd61b0a1ffd6ac309e02277cd1f400b6f1a59a0",
+          "lib/core/observability/momcozy_observability.dart": "f9e8e964dbab041804babc1038c5be0c2e04b4175ec0f2c12ad8c77625385f4f",
+          "lib/features/auth/presentation/auth_login_chrome.dart": "3808b5484b0cda026e8007c5ce940027bc672e1185ba2fc4ac354d3d385ab7bb",
+          "lib/features/auth/presentation/auth_page.dart": "77bf0ab04f1599f353bbb66c4a3dab2fe826d5e5e04f7f1b106f0b73ec07475f",
+          "lib/modules/profile/presentation/more_page.dart": "546a6a3221c0f6344c77f97b88f6f3419e4ea574479df1eede367438f151e60e",
+          "lib/shared/widgets/mom_companion_widgets.dart": "93c5cc4e022ac56ee5ca31dc5208f6c3a8df03d08e39ace0d761b101e04571ab",
+          "lib/shared/widgets/mom_settings_row.dart": "4821938015ac71d8f9e9fac8d2b481535930fdb8717228d8e2d218a386c4efff",
+          "lib/shared/widgets/mom_settings_widgets.dart": "271b022cb619641d956e92a5600e5f5585d2a5b469446132d53d402987403025",
+          "lib/shared/widgets/momcozy_components.dart": "5477eff325acaa95e4ac6036fe3aedda03d15104b49b6ba772e586fe8ffb1157",
+          "lib/shared/widgets/momcozy_line_icon.dart": "5d4442b930359144e47316073efd7b99e8779abdadf1df6c965fe061d9de6eb6",
+          "test/features/auth/auth_design_test.dart": "21a46fbbab3b280eac940b685659cace8021dea887b0aa0472297d424d39a4ca",
+          "test/features/auth/auth_followup_inventory_test.dart": "245e4748d85a652bdc7edf86780a1b7f5a9baaab72f9c31e0d494da366227ee4",
+          "test/features/auth/auth_inventory_journey_test.dart": "e5796444aa2fab9a4ef6dfb11287188ca4a6c2c55c74364e37a2a4a563c3e8b6",
+          "test/features/auth/auth_redesign_states_test.dart": "a4ccda8389947cc59c3a8911f9cf7046b64a1b0c84d647f355078da0b8b35094"
+        }
+      },
+      "inventory_reports": [
+        "AUTH-CURRENT.md",
+        "AUTH-SUBMIT-FEEDBACK-CURRENT.md"
+      ],
+      "state_evidence_map": [
+        {
+          "state": "初始",
+          "evidence": [
+            {
+              "id": "01-auth/auth-journey-login",
+              "image": "01-auth/auth-journey-login/default.png",
+              "observed_route": "/login",
+              "trigger": "Anonymous open /more; guard redirects to login with return location",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source limits retained in reports"
+        },
+        {
+          "state": "密码可见",
+          "evidence": [
+            {
+              "id": "01-auth/auth-followup-login-password-visible",
+              "image": "01-auth/auth-followup-login-password-visible/default.png",
+              "observed_route": "/login",
+              "trigger": "Login password eye → visible synthetic password; shared field behavior",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source limits retained in reports"
+        },
+        {
+          "state": "提交中",
+          "evidence": [
+            {
+              "id": "01-auth/auth-journey-login-busy",
+              "image": "01-auth/auth-journey-login-busy/default.png",
+              "observed_route": "/login",
+              "trigger": "Sign in; HTTP response is still pending",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source limits retained in reports"
+        },
+        {
+          "state": "认证错误",
+          "evidence": [
+            {
+              "id": "01-auth/auth-journey-invalid-credentials",
+              "image": "01-auth/auth-journey-invalid-credentials/default.png",
+              "observed_route": "/login",
+              "trigger": "Sign in; backend returns authentication_required",
+              "extent": "full-measured-scroll-stitch"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source limits retained in reports"
+        },
+        {
+          "state": "成功跳转",
+          "evidence": [
+            {
+              "id": "01-auth/auth-followup-reset-login-more",
+              "image": "01-auth/auth-followup-reset-login-more/default.png",
+              "observed_route": "/more",
+              "trigger": "Sign in with new password → real session transition restores More",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source limits retained in reports"
+        },
+        {
+          "state": "Google 不可用",
+          "evidence": [
+            {
+              "id": "01-auth/auth-journey-google-unavailable",
+              "image": "01-auth/auth-journey-google-unavailable/default.png",
+              "observed_route": "/login",
+              "trigger": "Continue with Google; current build has no client ID",
+              "extent": "full-measured-scroll-stitch"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source limits retained in reports"
+        }
+      ]
+    },
+    {
+      "id": "auth-register",
+      "name": "注册",
+      "routes": [
+        "/login"
+      ],
+      "widget": "MomCozyAuthPage",
+      "source": "lib/features/auth/presentation/auth_page.dart",
+      "states": [
+        "空表单",
+        "校验错误",
+        "提交中",
+        "发送验证码",
+        "服务错误"
+      ],
+      "entry": "登录 → Create an account",
+      "scope": "default",
+      "review_note": "G04 五表单与本次注册／验证提交状态已核对，见 AUTH-SUBMIT-FEEDBACK-CURRENT.md。",
+      "coverage_review": {
+        "report": "AUTH-SUBMIT-FEEDBACK-CURRENT.md",
+        "status": "NAMED_AUTH_SUBMIT_STATES_AND_G04_CURRENT_REPRESENTATIVES_VERIFIED",
+        "source_hashes": {
+          "lib/features/auth/presentation/auth_page.dart": "77bf0ab04f1599f353bbb66c4a3dab2fe826d5e5e04f7f1b106f0b73ec07475f",
+          "lib/features/auth/presentation/auth_login_chrome.dart": "3808b5484b0cda026e8007c5ce940027bc672e1185ba2fc4ac354d3d385ab7bb"
+        }
+      },
+      "inventory_reports": [
+        "AUTH-CURRENT.md",
+        "AUTH-SUBMIT-FEEDBACK-CURRENT.md"
+      ],
+      "state_evidence_map": [
+        {
+          "state": "空表单",
+          "evidence": [
+            {
+              "id": "01-auth/auth-register",
+              "image": "01-auth/auth-register/default.png",
+              "observed_route": null,
+              "trigger": "email entry and registration at 390.0 / 1.0",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source limits retained in reports"
+        },
+        {
+          "state": "校验错误",
+          "evidence": [
+            {
+              "id": "01-auth/auth-register-validation",
+              "image": "01-auth/auth-register-validation/default.png",
+              "observed_route": null,
+              "trigger": "email entry and registration at 390.0 / 1.0",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source limits retained in reports"
+        },
+        {
+          "state": "提交中",
+          "evidence": [
+            {
+              "id": "01-auth/auth-followup-register-pending",
+              "image": "01-auth/auth-followup-register-pending/default.png",
+              "observed_route": "/login",
+              "trigger": "Submit → /v1/auth/register request pending, form disabled",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source limits retained in reports"
+        },
+        {
+          "state": "发送验证码",
+          "evidence": [
+            {
+              "id": "01-auth/auth-journey-verify",
+              "image": "01-auth/auth-journey-verify/default.png",
+              "observed_route": "/login",
+              "trigger": "Submit registration → backend verification_required → verify form",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source limits retained in reports"
+        },
+        {
+          "state": "服务错误",
+          "evidence": [
+            {
+              "id": "01-auth/auth-followup-register-email-unavailable",
+              "image": "01-auth/auth-followup-register-email-unavailable/default.png",
+              "observed_route": "/login",
+              "trigger": "Registration email service fails → form and draft retained → retry enabled",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source limits retained in reports"
+        }
+      ]
+    },
+    {
+      "id": "auth-verify",
+      "name": "邮箱验证",
+      "routes": [
+        "/login"
+      ],
+      "widget": "MomCozyAuthPage",
+      "source": "lib/features/auth/presentation/auth_page.dart",
+      "states": [
+        "待输入",
+        "验证码错误",
+        "重发等待与反馈",
+        "提交中",
+        "验证成功"
+      ],
+      "entry": "注册或未验证账号登录",
+      "scope": "default",
+      "review_note": "G04 五表单与本次注册／验证提交状态已核对，见 AUTH-SUBMIT-FEEDBACK-CURRENT.md。",
+      "coverage_review": {
+        "report": "AUTH-SUBMIT-FEEDBACK-CURRENT.md",
+        "status": "NAMED_AUTH_SUBMIT_STATES_AND_G04_CURRENT_REPRESENTATIVES_VERIFIED",
+        "source_hashes": {
+          "lib/features/auth/presentation/auth_page.dart": "77bf0ab04f1599f353bbb66c4a3dab2fe826d5e5e04f7f1b106f0b73ec07475f",
+          "lib/features/auth/presentation/auth_login_chrome.dart": "3808b5484b0cda026e8007c5ce940027bc672e1185ba2fc4ac354d3d385ab7bb"
+        }
+      },
+      "inventory_reports": [
+        "AUTH-CURRENT.md",
+        "AUTH-SUBMIT-FEEDBACK-CURRENT.md"
+      ],
+      "state_evidence_map": [
+        {
+          "state": "待输入",
+          "evidence": [
+            {
+              "id": "01-auth/auth-verify",
+              "image": "01-auth/auth-verify/default.png",
+              "observed_route": null,
+              "trigger": "email entry and registration at 390.0 / 1.0",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source limits retained in reports"
+        },
+        {
+          "state": "验证码错误",
+          "evidence": [
+            {
+              "id": "01-auth/auth-journey-code-validation",
+              "image": "01-auth/auth-journey-code-validation/default.png",
+              "observed_route": "/login",
+              "trigger": "Submit without eight-digit code → field validation",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source limits retained in reports"
+        },
+        {
+          "state": "重发等待与反馈",
+          "evidence": [
+            {
+              "id": "01-auth/auth-followup-verify-resend-pending",
+              "image": "01-auth/auth-followup-verify-resend-pending/default.png",
+              "observed_route": "/login",
+              "trigger": "Resend code → request pending and form disabled",
+              "extent": "viewport"
+            },
+            {
+              "id": "01-auth/auth-followup-verify-resend-success",
+              "image": "01-auth/auth-followup-verify-resend-success/default.png",
+              "observed_route": "/login",
+              "trigger": "Resend accepted → success message",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source limits retained in reports"
+        },
+        {
+          "state": "提交中",
+          "evidence": [
+            {
+              "id": "01-auth/auth-followup-verify-submit-pending",
+              "image": "01-auth/auth-followup-verify-submit-pending/default.png",
+              "observed_route": "/login",
+              "trigger": "Submit → /v1/auth/verify-email request pending, form disabled",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source limits retained in reports"
+        },
+        {
+          "state": "验证成功",
+          "evidence": [
+            {
+              "id": "01-auth/auth-followup-verify-more",
+              "image": "01-auth/auth-followup-verify-more/default.png",
+              "observed_route": "/more",
+              "trigger": "Verify email → authenticated intended More route",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source limits retained in reports"
+        }
+      ]
+    },
+    {
+      "id": "auth-forgot",
+      "name": "找回密码",
+      "routes": [
+        "/login"
+      ],
+      "widget": "MomCozyAuthPage",
+      "source": "lib/features/auth/presentation/auth_page.dart",
+      "states": [
+        "初始",
+        "校验错误",
+        "提交中",
+        "发送失败",
+        "进入重置"
+      ],
+      "entry": "登录 → Forgot password",
+      "scope": "default",
+      "review_note": "当前表单、完整图与操作证据见 [G04 报告](../AUTH-CURRENT.md)；注册／验证剩余共用状态按 G11 核对，系统窗口按 G10 单列。",
+      "coverage_review": {
+        "report": "AUTH-CURRENT.md",
+        "status": "VERIFIED_FOR_RECORDED_SOURCE",
+        "source_hashes": {
+          "lib/app/mom_bottom_navigation.dart": "b762f1e2b67b9febb2e5662d1d29125556dd8d08a6b485f64e42b08a63759dff",
+          "lib/app/momcozy_app.dart": "00881d1d0901b24af222b6e08fd61b0a1ffd6ac309e02277cd1f400b6f1a59a0",
+          "lib/core/observability/momcozy_observability.dart": "f9e8e964dbab041804babc1038c5be0c2e04b4175ec0f2c12ad8c77625385f4f",
+          "lib/features/auth/presentation/auth_login_chrome.dart": "3808b5484b0cda026e8007c5ce940027bc672e1185ba2fc4ac354d3d385ab7bb",
+          "lib/features/auth/presentation/auth_page.dart": "77bf0ab04f1599f353bbb66c4a3dab2fe826d5e5e04f7f1b106f0b73ec07475f",
+          "lib/modules/profile/presentation/more_page.dart": "546a6a3221c0f6344c77f97b88f6f3419e4ea574479df1eede367438f151e60e",
+          "lib/shared/widgets/mom_companion_widgets.dart": "93c5cc4e022ac56ee5ca31dc5208f6c3a8df03d08e39ace0d761b101e04571ab",
+          "lib/shared/widgets/mom_settings_row.dart": "4821938015ac71d8f9e9fac8d2b481535930fdb8717228d8e2d218a386c4efff",
+          "lib/shared/widgets/mom_settings_widgets.dart": "271b022cb619641d956e92a5600e5f5585d2a5b469446132d53d402987403025",
+          "lib/shared/widgets/momcozy_components.dart": "5477eff325acaa95e4ac6036fe3aedda03d15104b49b6ba772e586fe8ffb1157",
+          "lib/shared/widgets/momcozy_line_icon.dart": "5d4442b930359144e47316073efd7b99e8779abdadf1df6c965fe061d9de6eb6",
+          "test/features/auth/auth_design_test.dart": "21a46fbbab3b280eac940b685659cace8021dea887b0aa0472297d424d39a4ca",
+          "test/features/auth/auth_followup_inventory_test.dart": "245e4748d85a652bdc7edf86780a1b7f5a9baaab72f9c31e0d494da366227ee4",
+          "test/features/auth/auth_inventory_journey_test.dart": "e5796444aa2fab9a4ef6dfb11287188ca4a6c2c55c74364e37a2a4a563c3e8b6",
+          "test/features/auth/auth_redesign_states_test.dart": "a4ccda8389947cc59c3a8911f9cf7046b64a1b0c84d647f355078da0b8b35094"
+        }
+      },
+      "inventory_reports": [
+        "AUTH-CURRENT.md"
+      ],
+      "state_evidence_map": [
+        {
+          "state": "初始",
+          "evidence": [
+            {
+              "id": "01-auth/auth-forgot",
+              "image": "01-auth/auth-forgot/default.png",
+              "observed_route": null,
+              "trigger": "reset form with keyboard at 390.0 / 1.0",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source limits retained in reports"
+        },
+        {
+          "state": "校验错误",
+          "evidence": [
+            {
+              "id": "01-auth/auth-followup-forgot-validation",
+              "image": "01-auth/auth-followup-forgot-validation/default.png",
+              "observed_route": "/login",
+              "trigger": "Submit empty recovery email → validation",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source limits retained in reports"
+        },
+        {
+          "state": "提交中",
+          "evidence": [
+            {
+              "id": "01-auth/auth-followup-forgot-pending",
+              "image": "01-auth/auth-followup-forgot-pending/default.png",
+              "observed_route": "/login",
+              "trigger": "Submit → /v1/auth/forgot-password request pending, form disabled",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source limits retained in reports"
+        },
+        {
+          "state": "发送失败",
+          "evidence": [
+            {
+              "id": "01-auth/auth-followup-forgot-email-unavailable",
+              "image": "01-auth/auth-followup-forgot-email-unavailable/default.png",
+              "observed_route": "/login",
+              "trigger": "Retry recovery → email service unavailable",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source limits retained in reports"
+        },
+        {
+          "state": "进入重置",
+          "evidence": [
+            {
+              "id": "01-auth/auth-followup-reset-code-form",
+              "image": "01-auth/auth-followup-reset-code-form/default.png",
+              "observed_route": "/login",
+              "trigger": "Recovery accepted → reset code and new password form",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source limits retained in reports"
+        }
+      ]
+    },
+    {
+      "id": "auth-reset",
+      "name": "重置密码",
+      "routes": [
+        "/login"
+      ],
+      "widget": "MomCozyAuthPage",
+      "source": "lib/features/auth/presentation/auth_page.dart",
+      "states": [
+        "初始",
+        "密码和验证码校验",
+        "提交中",
+        "失败",
+        "成功返回登录"
+      ],
+      "entry": "找回密码发送验证码成功",
+      "scope": "default",
+      "review_note": "当前表单、完整图与操作证据见 [G04 报告](../AUTH-CURRENT.md)；注册／验证剩余共用状态按 G11 核对，系统窗口按 G10 单列。",
+      "coverage_review": {
+        "report": "AUTH-CURRENT.md",
+        "status": "VERIFIED_FOR_RECORDED_SOURCE",
+        "source_hashes": {
+          "lib/app/mom_bottom_navigation.dart": "b762f1e2b67b9febb2e5662d1d29125556dd8d08a6b485f64e42b08a63759dff",
+          "lib/app/momcozy_app.dart": "00881d1d0901b24af222b6e08fd61b0a1ffd6ac309e02277cd1f400b6f1a59a0",
+          "lib/core/observability/momcozy_observability.dart": "f9e8e964dbab041804babc1038c5be0c2e04b4175ec0f2c12ad8c77625385f4f",
+          "lib/features/auth/presentation/auth_login_chrome.dart": "3808b5484b0cda026e8007c5ce940027bc672e1185ba2fc4ac354d3d385ab7bb",
+          "lib/features/auth/presentation/auth_page.dart": "77bf0ab04f1599f353bbb66c4a3dab2fe826d5e5e04f7f1b106f0b73ec07475f",
+          "lib/modules/profile/presentation/more_page.dart": "546a6a3221c0f6344c77f97b88f6f3419e4ea574479df1eede367438f151e60e",
+          "lib/shared/widgets/mom_companion_widgets.dart": "93c5cc4e022ac56ee5ca31dc5208f6c3a8df03d08e39ace0d761b101e04571ab",
+          "lib/shared/widgets/mom_settings_row.dart": "4821938015ac71d8f9e9fac8d2b481535930fdb8717228d8e2d218a386c4efff",
+          "lib/shared/widgets/mom_settings_widgets.dart": "271b022cb619641d956e92a5600e5f5585d2a5b469446132d53d402987403025",
+          "lib/shared/widgets/momcozy_components.dart": "5477eff325acaa95e4ac6036fe3aedda03d15104b49b6ba772e586fe8ffb1157",
+          "lib/shared/widgets/momcozy_line_icon.dart": "5d4442b930359144e47316073efd7b99e8779abdadf1df6c965fe061d9de6eb6",
+          "test/features/auth/auth_design_test.dart": "21a46fbbab3b280eac940b685659cace8021dea887b0aa0472297d424d39a4ca",
+          "test/features/auth/auth_followup_inventory_test.dart": "245e4748d85a652bdc7edf86780a1b7f5a9baaab72f9c31e0d494da366227ee4",
+          "test/features/auth/auth_inventory_journey_test.dart": "e5796444aa2fab9a4ef6dfb11287188ca4a6c2c55c74364e37a2a4a563c3e8b6",
+          "test/features/auth/auth_redesign_states_test.dart": "a4ccda8389947cc59c3a8911f9cf7046b64a1b0c84d647f355078da0b8b35094"
+        }
+      },
+      "inventory_reports": [
+        "AUTH-CURRENT.md"
+      ],
+      "state_evidence_map": [
+        {
+          "state": "初始",
+          "evidence": [
+            {
+              "id": "01-auth/auth-reset",
+              "image": "01-auth/auth-reset/default.png",
+              "observed_route": null,
+              "trigger": "reset form with keyboard at 390.0 / 1.0",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source limits retained in reports"
+        },
+        {
+          "state": "密码和验证码校验",
+          "evidence": [
+            {
+              "id": "01-auth/auth-followup-reset-empty-validation",
+              "image": "01-auth/auth-followup-reset-empty-validation/default.png",
+              "observed_route": "/login",
+              "trigger": "Submit empty code and new password → field errors",
+              "extent": "viewport"
+            },
+            {
+              "id": "01-auth/auth-followup-reset-password-validation",
+              "image": "01-auth/auth-followup-reset-password-validation/default.png",
+              "observed_route": "/login",
+              "trigger": "Eight digit code and weak new password → password rule error",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source limits retained in reports"
+        },
+        {
+          "state": "提交中",
+          "evidence": [
+            {
+              "id": "01-auth/auth-followup-reset-pending",
+              "image": "01-auth/auth-followup-reset-pending/default.png",
+              "observed_route": "/login",
+              "trigger": "Submit → /v1/auth/reset-password request pending, form disabled",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source limits retained in reports"
+        },
+        {
+          "state": "失败",
+          "evidence": [
+            {
+              "id": "01-auth/auth-followup-reset-expired-code",
+              "image": "01-auth/auth-followup-reset-expired-code/default.png",
+              "observed_route": "/login",
+              "trigger": "Reset submission → expired code and values retained",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source limits retained in reports"
+        },
+        {
+          "state": "成功返回登录",
+          "evidence": [
+            {
+              "id": "01-auth/auth-followup-reset-complete",
+              "image": "01-auth/auth-followup-reset-complete/default.png",
+              "observed_route": "/login",
+              "trigger": "Reset accepted → login with success message, password cleared, still signed out",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source limits retained in reports"
+        }
+      ]
+    },
+    {
+      "id": "mom-home",
+      "name": "妈妈首页",
+      "routes": [
+        "/me"
+      ],
+      "widget": "MotherHomePage",
+      "source": "lib/modules/mom/presentation/mother_home_page.dart",
+      "states": [
+        "初始",
+        "有记录",
+        "已购服务",
+        "部分数据",
+        "加载",
+        "局部错误"
+      ],
+      "entry": "Me Tab",
+      "scope": "default",
+      "inventory_reports": [
+        "MOM-JOURNEYS.md",
+        "MOM-CONTROL-COVERAGE.md",
+        "SERVICE-JOURNEYS.md"
+      ],
+      "state_evidence_map": [
+        {
+          "state": "初始",
+          "evidence": [
+            {
+              "id": "03-mom/mom-handoff-initial-top",
+              "image": "03-mom/mom-handoff-initial-top/default.png",
+              "observed_route": null,
+              "trigger": "handoff initial 393.0/1.0",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "有记录",
+          "evidence": [
+            {
+              "id": "03-mom/mom-handoff-recorded-top",
+              "image": "03-mom/mom-handoff-recorded-top/default.png",
+              "observed_route": null,
+              "trigger": "handoff recorded 393.0/1.0",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "已购服务",
+          "evidence": [
+            {
+              "id": "03-mom/mom-handoff-purchased-top",
+              "image": "03-mom/mom-handoff-purchased-top/default.png",
+              "observed_route": null,
+              "trigger": "handoff purchased 393.0/1.0",
+              "extent": "full-measured-scroll-stitch"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "部分数据",
+          "evidence": [
+            {
+              "id": "03-mom/mom-partial-records",
+              "image": "03-mom/mom-partial-records/default.png",
+              "observed_route": null,
+              "trigger": "inventory mom partial-records",
+              "extent": "full-measured-scroll-stitch"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "加载",
+          "evidence": [
+            {
+              "id": "03-mom/mom-loading",
+              "image": "03-mom/mom-loading/default.png",
+              "observed_route": null,
+              "trigger": "inventory mom loading",
+              "extent": "full-measured-scroll-stitch"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "局部错误",
+          "evidence": [
+            {
+              "id": "03-mom/mom-diary-error",
+              "image": "03-mom/mom-diary-error/default.png",
+              "observed_route": null,
+              "trigger": "inventory mom diary-error",
+              "extent": "full-measured-scroll-stitch"
+            },
+            {
+              "id": "03-mom/mom-insight-unavailable",
+              "image": "03-mom/mom-insight-unavailable/default.png",
+              "observed_route": null,
+              "trigger": "inventory mom insight-unavailable",
+              "extent": "full-measured-scroll-stitch"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        }
+      ]
+    },
+    {
+      "id": "mom-diary",
+      "name": "今日状态记录页",
+      "routes": [
+        "/me/diary"
+      ],
+      "widget": "MotherDiaryPage",
+      "source": "lib/modules/mom/presentation/mother_diary_page.dart",
+      "states": [
+        "身体",
+        "休息",
+        "心情",
+        "加载",
+        "空记录",
+        "保存与失败"
+      ],
+      "entry": "妈妈首页 → 今日状态",
+      "scope": "default",
+      "inventory_reports": [
+        "MOM-JOURNEYS.md",
+        "MOM-BODY-CONTROLS.md",
+        "MOM-REST-CONTROLS.md",
+        "MOM-MOOD-CONTROLS.md",
+        "STATE-MAP-FINAL.md"
+      ],
+      "state_evidence_map": [
+        {
+          "state": "身体",
+          "evidence": [
+            {
+              "id": "03-mom/mom-journey-diary-detail-body",
+              "image": "03-mom/mom-journey-diary-detail-body/default.png",
+              "observed_route": "/me/diary",
+              "trigger": "Standalone diary → Body tab",
+              "extent": "full-measured-scroll-stitch"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "休息",
+          "evidence": [
+            {
+              "id": "03-mom/mom-journey-diary-detail-rest",
+              "image": "03-mom/mom-journey-diary-detail-rest/default.png",
+              "observed_route": "/me/diary",
+              "trigger": "Completed daily status → standalone diary detail",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "心情",
+          "evidence": [
+            {
+              "id": "03-mom/mom-journey-diary-detail-mood",
+              "image": "03-mom/mom-journey-diary-detail-mood/default.png",
+              "observed_route": "/me/diary",
+              "trigger": "Standalone diary → Mood tab",
+              "extent": "full-measured-scroll-stitch"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "加载",
+          "evidence": [
+            {
+              "id": "03-mom/mom-diary-loading",
+              "image": "03-mom/mom-diary-loading/default.png",
+              "observed_route": null,
+              "trigger": "inventory independent diary loading then ready",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "空记录",
+          "evidence": [
+            {
+              "id": "03-mom/diary-page-rest",
+              "image": "03-mom/diary-page-rest/default.png",
+              "trigger": "independent diary uses shared sections, preserves draft and saves 390.0/1.0",
+              "extent": "viewport",
+              "observed_route": null
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "保存与失败",
+          "evidence": [
+            {
+              "id": "03-mom/diary-page-saved",
+              "image": "03-mom/diary-page-saved/default.png",
+              "observed_route": null,
+              "trigger": "independent diary uses shared sections, preserves draft and saves 390.0/1.0",
+              "extent": "full-measured-scroll-stitch"
+            },
+            {
+              "id": "03-mom/diary-page-offline",
+              "image": "03-mom/diary-page-offline/default.png",
+              "observed_route": null,
+              "trigger": "independent diary uses shared sections, preserves draft and saves 390.0/1.0",
+              "extent": "full-measured-scroll-stitch"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        }
+      ]
+    },
+    {
+      "id": "mom-lactation",
+      "name": "泌乳记录与趋势",
+      "routes": [
+        "/me/lactation"
+      ],
+      "widget": "LactationPage",
+      "source": "lib/modules/mom/presentation/lactation_page.dart",
+      "states": [
+        "空记录",
+        "有记录与趋势",
+        "日期切换",
+        "加载",
+        "错误",
+        "删除与撤销"
+      ],
+      "entry": "妈妈首页 → 查看记录",
+      "scope": "default",
+      "inventory_reports": [
+        "MOM-JOURNEYS.md",
+        "MOM-MILK-CONTROLS.md",
+        "MOM-MILK-VALIDATION.md",
+        "STATE-MAP-FINAL.md",
+        "LACTATION-VERSION-CURRENT.md"
+      ],
+      "state_evidence_map": [
+        {
+          "state": "空记录",
+          "evidence": [
+            {
+              "id": "03-mom/mom-journey-milk-history-empty",
+              "image": "03-mom/mom-journey-milk-history-empty/default.png",
+              "observed_route": "/me/lactation",
+              "trigger": "Home View records → empty standalone lactation history",
+              "extent": "full-measured-scroll-stitch"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "有记录与趋势",
+          "evidence": [
+            {
+              "id": "03-mom/lactation-current-overview",
+              "image": "03-mom/lactation-current-overview/default.png",
+              "trigger": "lactation route reads, charts, long notes, conflicts and undo 390.0/1.0",
+              "extent": "full-measured-scroll-stitch"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "日期切换",
+          "evidence": [
+            {
+              "id": "03-mom/lactation-current-30-days",
+              "image": "03-mom/lactation-current-30-days/default.png",
+              "trigger": "lactation route reads, charts, long notes, conflicts and undo 390.0/1.0",
+              "extent": "full-measured-scroll-stitch"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "加载",
+          "evidence": [
+            {
+              "id": "03-mom/lactation-current-loading",
+              "image": "03-mom/lactation-current-loading/default.png",
+              "trigger": "lactation route reads, charts, long notes, conflicts and undo 390.0/1.0",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "REUSED_RENDERED_EVIDENCE; scoped source hashes match; route proven separately"
+        },
+        {
+          "state": "错误",
+          "evidence": [
+            {
+              "id": "03-mom/lactation-current-read-error",
+              "image": "03-mom/lactation-current-read-error/default.png",
+              "trigger": "lactation route reads, charts, long notes, conflicts and undo 390.0/1.0",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "删除与撤销",
+          "evidence": [
+            {
+              "id": "03-mom/lactation-current-restored",
+              "image": "03-mom/lactation-current-restored/default.png",
+              "trigger": "lactation route reads, charts, long notes, conflicts and undo 390.0/1.0",
+              "extent": "full-measured-scroll-stitch"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        }
+      ]
+    },
+    {
+      "id": "baby-home",
+      "name": "宝宝首页",
+      "routes": [
+        "/baby"
+      ],
+      "widget": "BabyHomePage",
+      "source": "lib/modules/baby/presentation/baby_home_page.dart",
+      "states": [
+        "无宝宝",
+        "有宝宝",
+        "有记录",
+        "加载",
+        "局部错误",
+        "生长曲线切换"
+      ],
+      "entry": "Baby Tab",
+      "scope": "default",
+      "inventory_reports": [
+        "BABY-JOURNEYS.md",
+        "BABY-PROFILE-CONTROLS.md",
+        "BABY-KNOWLEDGE-SOURCES.md"
+      ],
+      "state_evidence_map": [
+        {
+          "state": "无宝宝",
+          "evidence": [
+            {
+              "id": "04-baby/baby-journey-no-profile",
+              "image": "04-baby/baby-journey-no-profile/default.png",
+              "observed_route": "/baby",
+              "trigger": "More → Baby with no owned profile",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "有宝宝",
+          "evidence": [
+            {
+              "id": "04-baby/baby-journey-empty-home",
+              "image": "04-baby/baby-journey-empty-home/default.png",
+              "observed_route": "/baby",
+              "trigger": "More → Baby, owned profiles without records",
+              "extent": "full-measured-scroll-stitch"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "有记录",
+          "evidence": [
+            {
+              "id": "04-baby/baby-journey-records-loaded",
+              "image": "04-baby/baby-journey-records-loaded/default.png",
+              "observed_route": "/baby",
+              "trigger": "Pending records resolve → empty cards and growth curve",
+              "extent": "full-measured-scroll-stitch"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "加载",
+          "evidence": [
+            {
+              "id": "04-baby/baby-journey-records-loading",
+              "image": "04-baby/baby-journey-records-loading/default.png",
+              "observed_route": "/baby",
+              "trigger": "Baby entered; profile ready while records requests are pending",
+              "extent": "full-measured-scroll-stitch"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "局部错误",
+          "evidence": [
+            {
+              "id": "04-baby/baby-journey-record-read-error",
+              "image": "04-baby/baby-journey-record-read-error/default.png",
+              "observed_route": "/baby",
+              "trigger": "More → Baby; record API fails, profile remains usable",
+              "extent": "full-measured-scroll-stitch"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "生长曲线切换",
+          "evidence": [
+            {
+              "id": "04-baby/baby-journey-growth-curve-weight",
+              "image": "04-baby/baby-journey-growth-curve-weight/default.png",
+              "observed_route": "/baby",
+              "trigger": "Switch growth curve to 体重",
+              "extent": "full-measured-scroll-stitch"
+            },
+            {
+              "id": "04-baby/baby-journey-growth-curve-length",
+              "image": "04-baby/baby-journey-growth-curve-length/default.png",
+              "observed_route": "/baby",
+              "trigger": "Switch growth curve to 身长",
+              "extent": "full-measured-scroll-stitch"
+            },
+            {
+              "id": "04-baby/baby-journey-growth-curve-head",
+              "image": "04-baby/baby-journey-growth-curve-head/default.png",
+              "observed_route": "/baby",
+              "trigger": "Switch growth curve to 头围",
+              "extent": "full-measured-scroll-stitch"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        }
+      ]
+    },
+    {
+      "id": "baby-records",
+      "name": "宝宝记录历史",
+      "routes": [
+        "/babies/:babyId/records"
+      ],
+      "widget": "BabyRecordsPage",
+      "source": "lib/modules/baby/presentation/baby_records_page.dart",
+      "states": [
+        "空",
+        "列表",
+        "种类和日期切换",
+        "加载",
+        "错误",
+        "删除与撤销"
+      ],
+      "entry": "宝宝首页 → 记录历史",
+      "scope": "default",
+      "inventory_reports": [
+        "BABY-JOURNEYS.md",
+        "BABY-FEEDING-CONTROLS.md",
+        "BABY-DIAPER-CONTROLS.md",
+        "BABY-SLEEP-CONTROLS.md",
+        "BABY-GROWTH-CONTROLS.md",
+        "BABY-DEVELOPMENT-CONTROLS.md"
+      ],
+      "state_evidence_map": [
+        {
+          "state": "空",
+          "evidence": [
+            {
+              "id": "04-baby/baby-journey-history-sleep-empty",
+              "image": "04-baby/baby-journey-history-sleep-empty/default.png",
+              "observed_route": "/babies/inventory-baby/records",
+              "trigger": "Tap 睡眠 filter → empty category",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "列表",
+          "evidence": [
+            {
+              "id": "04-baby/baby-journey-history-first-page",
+              "image": "04-baby/baby-journey-history-first-page/default.png",
+              "observed_route": "/babies/inventory-baby/records",
+              "trigger": "Baby → monthly feeding history with 51 records, first 50 loaded",
+              "extent": "full-measured-scroll-stitch"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "种类和日期切换",
+          "evidence": [
+            {
+              "id": "04-baby/baby-journey-history-feeding",
+              "image": "04-baby/baby-journey-history-feeding/default.png",
+              "observed_route": "/babies/inventory-baby/records",
+              "trigger": "Saved home → View all records",
+              "extent": "viewport"
+            },
+            {
+              "id": "04-baby/baby-journey-history-previous-month",
+              "image": "04-baby/baby-journey-history-previous-month/default.png",
+              "observed_route": "/babies/inventory-baby/records",
+              "trigger": "Previous month → August",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "加载",
+          "evidence": [
+            {
+              "id": "04-baby/baby-journey-history-more-loading",
+              "image": "04-baby/baby-journey-history-more-loading/default.png",
+              "observed_route": "/babies/inventory-baby/records",
+              "trigger": "Retry page load while response pending",
+              "extent": "full-measured-scroll-stitch"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "错误",
+          "evidence": [
+            {
+              "id": "04-baby/baby-journey-history-more-error",
+              "image": "04-baby/baby-journey-history-more-error/default.png",
+              "observed_route": "/babies/inventory-baby/records",
+              "trigger": "Load more → page failure keeps first page visible",
+              "extent": "full-measured-scroll-stitch"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "删除与撤销",
+          "evidence": [
+            {
+              "id": "04-baby/baby-journey-history-deleted",
+              "image": "04-baby/baby-journey-history-deleted/default.png",
+              "observed_route": "/babies/inventory-baby/records",
+              "trigger": "Confirm deletion → empty list with undo",
+              "extent": "viewport"
+            },
+            {
+              "id": "04-baby/baby-journey-history-restored",
+              "image": "04-baby/baby-journey-history-restored/default.png",
+              "observed_route": "/babies/inventory-baby/records",
+              "trigger": "Undo deletion → restored record",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        }
+      ]
+    },
+    {
+      "id": "agent-home",
+      "name": "Cozymate 对话",
+      "routes": [
+        "/"
+      ],
+      "widget": "AgentHubPage",
+      "source": "lib/features/agent_hub/agent_hub_page.dart",
+      "states": [
+        "初始",
+        "对话",
+        "生成中",
+        "结构化卡片",
+        "输入及附件",
+        "语音",
+        "失败与重试",
+        "会话恢复"
+      ],
+      "entry": "Cozymate Tab",
+      "scope": "default",
+      "review_note": "[G11 当前版本复用](../AGENT-CURRENT-REUSE.md)：Markdown 原金图已严格通过，行动与表单引用已有当前交付，历史抽屉及普通入口保留 G08 条件；最终全状态映射待验收。",
+      "coverage_review": {
+        "report": "AGENT-CURRENT-REUSE.md",
+        "status": "NAMED_SOURCE_DRIFT_RESOLVED; FINAL_STATE_MAPPING_PENDING",
+        "source_hashes": {
+          "lib/features/agent_hub/agent_hub_page.dart": "f8873ef56dec4899557067eefbc0b838c2523ab0a16a3b3fc65176cc06a557ff",
+          "lib/features/agent_hub/artifacts/forms/agent_artifact_form_dialog.dart": "f2fa1623d32726adaa6653d7c1cdf64e72053088d30ac2fae4d0392d2bb977ad",
+          "lib/app/momcozy_app.dart": "4e28954f3c930728bd0efd196e2a59a374ab3962675bf9305ca7ad8b77e57627",
+          "test/support/agent_markdown_scenarios.dart": "27021e8fbae7f82a4b4aebac792b0c57293279e037cec10fe036449ecd50feea"
+        }
+      },
+      "inventory_reports": [
+        "AGENT-CURRENT-REUSE.md",
+        "AGENT-JOURNEYS.md",
+        "AGENT-RESOURCE-JOURNEYS.md",
+        "AGENT-ENTRY-CURRENT.md"
+      ],
+      "state_evidence_map": [
+        {
+          "state": "初始",
+          "evidence": [
+            {
+              "id": "05-agent/agent-home",
+              "image": "05-agent/agent-home/default.png",
+              "observed_route": null,
+              "trigger": "Agent home and keyboard at 390.0 / 1.0",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "对话",
+          "evidence": [
+            {
+              "id": "05-agent/agent-journey-reply",
+              "image": "05-agent/agent-journey-reply/default.png",
+              "observed_route": "/",
+              "trigger": "SSE completion → final Markdown response",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "生成中",
+          "evidence": [
+            {
+              "id": "05-agent/agent-journey-streaming",
+              "image": "05-agent/agent-journey-streaming/default.png",
+              "observed_route": "/",
+              "trigger": "Receive SSE delta → live response",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "结构化卡片",
+          "evidence": [
+            {
+              "id": "05-agent/agent-cards",
+              "image": "05-agent/agent-cards/default.png",
+              "observed_route": null,
+              "trigger": "Agent cards and dialog at 390.0 / 1.0",
+              "extent": "viewport"
+            },
+            {
+              "id": "05-agent/agent-cards-ready",
+              "image": "05-agent/agent-cards-ready/default.png",
+              "observed_route": null,
+              "trigger": "Agent cards and dialog at 390.0 / 1.0",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "输入及附件",
+          "evidence": [
+            {
+              "id": "05-agent/agent-journey-draft",
+              "image": "05-agent/agent-journey-draft/default.png",
+              "observed_route": "/",
+              "trigger": "Enter unsent composer draft",
+              "extent": "viewport"
+            },
+            {
+              "id": "05-agent/agent-journey-attachment-menu",
+              "image": "05-agent/agent-journey-attachment-menu/default.png",
+              "observed_route": "/",
+              "trigger": "Composer add → supported attachment sources",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "语音",
+          "evidence": [
+            {
+              "id": "05-agent/agent-voice-off",
+              "image": "05-agent/agent-voice-off/default.png",
+              "observed_route": null,
+              "trigger": "voice states 390.0/1.0",
+              "extent": "viewport"
+            },
+            {
+              "id": "05-agent/agent-voice-on",
+              "image": "05-agent/agent-voice-on/default.png",
+              "observed_route": null,
+              "trigger": "voice states 390.0/1.0",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "失败与重试",
+          "evidence": [
+            {
+              "id": "05-agent/agent-journey-terminal-error",
+              "image": "05-agent/agent-journey-terminal-error/default.png",
+              "observed_route": "/",
+              "trigger": "Terminal run failure → safe feedback and editable input",
+              "extent": "full-measured-scroll-stitch"
+            },
+            {
+              "id": "05-agent/agent-journey-manual-retry",
+              "image": "05-agent/agent-journey-manual-retry/default.png",
+              "observed_route": "/",
+              "trigger": "Manual retry → same idempotency key",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "会话恢复",
+          "evidence": [
+            {
+              "id": "05-agent/agent-journey-resumed",
+              "image": "05-agent/agent-journey-resumed/default.png",
+              "observed_route": "/",
+              "trigger": "Retry from message menu → resume cursor and final answer",
+              "extent": "viewport"
+            },
+            {
+              "id": "05-agent/agent-history-list",
+              "image": "05-agent/agent-history-list/default.png",
+              "observed_route": null,
+              "trigger": "history states 390.0/1.0",
+              "extent": "full-measured-scroll-stitch"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        }
+      ]
+    },
+    {
+      "id": "schedule",
+      "name": "日程",
+      "routes": [
+        "/schedule"
+      ],
+      "widget": "SchedulePage",
+      "source": "lib/modules/schedule/presentation/schedule_page.dart",
+      "states": [
+        "空日期",
+        "有事项",
+        "月和日期切换",
+        "任务状态",
+        "预约卡",
+        "加载",
+        "错误"
+      ],
+      "entry": "Schedule Tab",
+      "scope": "default",
+      "review_note": "SCHEDULE-FEEDBACK-CURRENT.md：当前主要界面及具名旧反馈状态已核对，其它历史证据保留来源与最终映射边界。",
+      "coverage_review": {
+        "report": "SCHEDULE-FEEDBACK-CURRENT.md",
+        "status": "CURRENT_PRIMARY_AND_NAMED_G11_STATES_VERIFIED; FINAL_STATE_MAPPING_PENDING",
+        "source_hashes": {
+          "lib/modules/schedule/presentation/schedule_page.dart": "87f06c1ea10cfb6ee6b503f7f709015a761f58965d7715bdb93423df33db20ba",
+          "lib/modules/schedule/presentation/personal_schedule_editor.dart": "bd11ff86a30046974ba188131c6f4ca46d2c59c2977c06386d662f71d6200c7f",
+          "test/modules/schedule/schedule_inventory_journey_test.dart": "f3b445573978507f7b149d7b0d298afd6a144bfb3ceb39ca06c69625f02196af",
+          "test/support/ui_inventory_capture.dart": "82306c9f718f93573ee7e0ace5c41fb97706e3fa676187d21fb7183ec1eb0d92"
+        }
+      },
+      "inventory_reports": [
+        "SCHEDULE-CURRENT.md",
+        "SCHEDULE-FEEDBACK-CURRENT.md",
+        "SCHEDULE-JOURNEYS.md"
+      ],
+      "state_evidence_map": [
+        {
+          "state": "空日期",
+          "evidence": [
+            {
+              "id": "06-schedule/schedule-journey-empty",
+              "image": "06-schedule/schedule-journey-empty/default.png",
+              "observed_route": "/schedule",
+              "trigger": "More → Schedule bottom tab",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "有事项",
+          "evidence": [
+            {
+              "id": "06-schedule/schedule-overview",
+              "image": "06-schedule/schedule-overview/default.png",
+              "observed_route": null,
+              "trigger": "published care plan and appointment at 390.0 / 1.0",
+              "extent": "full-measured-scroll-stitch"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "月和日期切换",
+          "evidence": [
+            {
+              "id": "06-schedule/schedule-journey-date-changed",
+              "image": "06-schedule/schedule-journey-date-changed/default.png",
+              "observed_route": "/schedule",
+              "trigger": "Select September 14 → OK",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "任务状态",
+          "evidence": [
+            {
+              "id": "06-schedule/schedule-journey-task-completed",
+              "image": "06-schedule/schedule-journey-task-completed/default.png",
+              "observed_route": "/schedule",
+              "trigger": "Checkbox → completed task and progress count",
+              "extent": "full-measured-scroll-stitch"
+            },
+            {
+              "id": "06-schedule/schedule-journey-task-in-progress",
+              "image": "06-schedule/schedule-journey-task-in-progress/default.png",
+              "observed_route": "/schedule",
+              "trigger": "Mark in progress → refreshed task badge",
+              "extent": "full-measured-scroll-stitch"
+            },
+            {
+              "id": "06-schedule/schedule-journey-task-skipped",
+              "image": "06-schedule/schedule-journey-task-skipped/default.png",
+              "observed_route": "/schedule",
+              "trigger": "Skip → disabled completion checkbox",
+              "extent": "full-measured-scroll-stitch"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "预约卡",
+          "evidence": [
+            {
+              "id": "06-schedule/schedule-journey-appointment-entry",
+              "image": "06-schedule/schedule-journey-appointment-entry/default.png",
+              "observed_route": "/schedule",
+              "trigger": "Schedule → confirmed consultation",
+              "extent": "full-measured-scroll-stitch"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "加载",
+          "evidence": [
+            {
+              "id": "06-schedule/schedule-short-loading",
+              "image": "06-schedule/schedule-short-loading/default.png",
+              "observed_route": null,
+              "trigger": "short large initial load error retries and cached refresh retains agenda",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "错误",
+          "evidence": [
+            {
+              "id": "06-schedule/schedule-short-offline",
+              "image": "06-schedule/schedule-short-offline/default.png",
+              "observed_route": null,
+              "trigger": "short large initial load error retries and cached refresh retains agenda",
+              "extent": "viewport"
+            },
+            {
+              "id": "06-schedule/schedule-journey-current-task-error",
+              "image": "06-schedule/schedule-journey-current-task-error/default.png",
+              "observed_route": "/schedule",
+              "trigger": "Care task write fails → reconciliation feedback",
+              "extent": "full-measured-scroll-stitch"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        }
+      ]
+    },
+    {
+      "id": "more",
+      "name": "More",
+      "routes": [
+        "/more"
+      ],
+      "widget": "MorePage",
+      "source": "lib/modules/profile/presentation/more_page.dart",
+      "states": [
+        "身份完整与缺失",
+        "加载",
+        "未读变化",
+        "退出等待与错误"
+      ],
+      "entry": "More Tab",
+      "scope": "default",
+      "inventory_reports": [
+        "MORE-CURRENT.md"
+      ],
+      "state_evidence_map": [
+        {
+          "state": "身份完整与缺失",
+          "evidence": [
+            {
+              "id": "07-me/more-current-identity-resolved",
+              "image": "07-me/more-current-identity-resolved/default.png",
+              "observed_route": "/more",
+              "trigger": "Both responses arrived → name and email displayed",
+              "extent": "viewport"
+            },
+            {
+              "id": "07-me/more-current-identity-name-only-arrived",
+              "image": "07-me/more-current-identity-name-only-arrived/default.png",
+              "observed_route": "/more",
+              "trigger": "Name response arrived, email pending → combined identity still loading",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "加载",
+          "evidence": [
+            {
+              "id": "07-me/more-current-identity-pending",
+              "image": "07-me/more-current-identity-pending/default.png",
+              "observed_route": "/more",
+              "trigger": "Both identity endpoints pending → loading account card",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "未读变化",
+          "evidence": [
+            {
+              "id": "07-me/more-current-inbox-return",
+              "image": "07-me/more-current-inbox-return/default.png",
+              "observed_route": "/more",
+              "trigger": "Tap page Back → /more",
+              "extent": "viewport"
+            },
+            {
+              "id": "07-me/notification-current-archive-final-more",
+              "image": "07-me/notification-current-archive-final-more/default.png",
+              "observed_route": "/more",
+              "trigger": "Back More → no unread badge; scroll More back to top",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "退出等待与错误",
+          "evidence": [
+            {
+              "id": "07-me/more-current-logout-remote-pending",
+              "image": "07-me/more-current-logout-remote-pending/default.png",
+              "observed_route": "/login",
+              "trigger": "Sign out → local session cleared and login immediately, remote revoke pending",
+              "extent": "viewport"
+            },
+            {
+              "id": "07-me/more-current-logout-error-message",
+              "image": "07-me/more-current-logout-error-message/default.png",
+              "observed_route": "/login",
+              "trigger": "Remote revoke returns 503 → login with sign-out failure Snackbar",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        }
+      ]
+    },
+    {
+      "id": "account",
+      "name": "账号设置",
+      "routes": [
+        "/account"
+      ],
+      "widget": "MomCozyAccountPage",
+      "source": "lib/features/auth/presentation/account_page.dart",
+      "states": [
+        "身份",
+        "密码确认",
+        "Google 绑定反馈",
+        "删除账号",
+        "退出"
+      ],
+      "entry": "More → Account",
+      "scope": "default",
+      "inventory_reports": [
+        "ACCOUNT-CURRENT.md"
+      ],
+      "state_evidence_map": [
+        {
+          "state": "身份",
+          "evidence": [
+            {
+              "id": "07-me/account-current-password-ready",
+              "image": "07-me/account-current-password-ready/default.png",
+              "observed_route": "/account",
+              "trigger": "Email-only account",
+              "extent": "viewport"
+            },
+            {
+              "id": "07-me/account-current-google-only-ready",
+              "image": "07-me/account-current-google-only-ready/default.png",
+              "observed_route": "/account",
+              "trigger": "Account GET google-only → real identity status and provider layout",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "密码确认",
+          "evidence": [
+            {
+              "id": "07-me/account-current-password-entered",
+              "image": "07-me/account-current-password-entered/default.png",
+              "observed_route": "/account",
+              "trigger": "Enter password → obscured input",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "Google 绑定反馈",
+          "evidence": [
+            {
+              "id": "07-me/account-current-google-unavailable",
+              "image": "07-me/account-current-google-unavailable/default.png",
+              "observed_route": "/account",
+              "trigger": "Native gateway lacks build client ID → inline unavailable feedback",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "删除账号",
+          "evidence": [
+            {
+              "id": "07-me/account-current-delete-confirm",
+              "image": "07-me/account-current-delete-confirm/default.png",
+              "observed_route": "/account",
+              "trigger": "Request deletion → confirmation",
+              "extent": "viewport"
+            },
+            {
+              "id": "07-me/account-current-delete-pending",
+              "image": "07-me/account-current-delete-pending/default.png",
+              "observed_route": "/account",
+              "trigger": "Confirm → DELETE pending, account actions disabled",
+              "extent": "viewport"
+            },
+            {
+              "id": "07-me/account-current-delete-error",
+              "image": "07-me/account-current-delete-error/default.png",
+              "observed_route": "/account",
+              "trigger": "DELETE 503 → account retained with inline error",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "退出",
+          "evidence": [
+            {
+              "id": "07-me/account-current-logout-success-result",
+              "image": "07-me/account-current-logout-success-result/default.png",
+              "observed_route": "/login",
+              "trigger": "Remote revoke success → login",
+              "extent": "viewport"
+            },
+            {
+              "id": "07-me/account-current-logout-error-result",
+              "image": "07-me/account-current-logout-error-result/default.png",
+              "observed_route": "/login",
+              "trigger": "Remote revoke 503 → Account-specific sign-out Snackbar",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        }
+      ]
+    },
+    {
+      "id": "privacy",
+      "name": "隐私与授权",
+      "routes": [
+        "/privacy"
+      ],
+      "widget": "PrivacyPage",
+      "source": "lib/modules/profile/presentation/privacy_page.dart",
+      "states": [
+        "无服务",
+        "按服务授权",
+        "开启与关闭",
+        "加载",
+        "保存失败"
+      ],
+      "entry": "More → Privacy",
+      "scope": "default",
+      "inventory_reports": [
+        "PRIVACY-JOURNEYS.md"
+      ],
+      "state_evidence_map": [
+        {
+          "state": "无服务",
+          "evidence": [
+            {
+              "id": "07-me/privacy-journey-empty-services",
+              "image": "07-me/privacy-journey-empty-services/default.png",
+              "observed_route": "/privacy",
+              "trigger": "Retry with no owned services → empty state and no editable defaults",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "按服务授权",
+          "evidence": [
+            {
+              "id": "07-me/privacy-journey-service-picker",
+              "image": "07-me/privacy-journey-service-picker/default.png",
+              "observed_route": "/privacy",
+              "trigger": "Tap service picker → list of owned services",
+              "extent": "viewport"
+            },
+            {
+              "id": "07-me/privacy-journey-second-service-saved",
+              "image": "07-me/privacy-journey-second-service-saved/default.png",
+              "observed_route": "/privacy",
+              "trigger": "Save second service → first service stays unchanged",
+              "extent": "full-measured-scroll-stitch"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "开启与关闭",
+          "evidence": [
+            {
+              "id": "07-me/privacy-journey-granted",
+              "image": "07-me/privacy-journey-granted/default.png",
+              "observed_route": "/privacy",
+              "trigger": "Re-enable three permissions → save without revocation confirmation",
+              "extent": "full-measured-scroll-stitch"
+            },
+            {
+              "id": "07-me/privacy-journey-revoked",
+              "image": "07-me/privacy-journey-revoked/default.png",
+              "observed_route": "/privacy",
+              "trigger": "Confirm required revocation → both HTTP writes and saved state",
+              "extent": "full-measured-scroll-stitch"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "加载",
+          "evidence": [
+            {
+              "id": "07-me/privacy-journey-overview-loading",
+              "image": "07-me/privacy-journey-overview-loading/default.png",
+              "observed_route": "/privacy",
+              "trigger": "Privacy entry → overview HTTP pending",
+              "extent": "viewport"
+            },
+            {
+              "id": "07-me/privacy-journey-consent-loading",
+              "image": "07-me/privacy-journey-consent-loading/default.png",
+              "observed_route": "/privacy",
+              "trigger": "Overview loads → selected consent read pending",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "保存失败",
+          "evidence": [
+            {
+              "id": "07-me/privacy-journey-optional-uncertain",
+              "image": "07-me/privacy-journey-optional-uncertain/default.png",
+              "observed_route": "/privacy",
+              "trigger": "Optional write HTTP failure → uncertain state",
+              "extent": "full-measured-scroll-stitch"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        }
+      ]
+    },
+    {
+      "id": "notifications",
+      "name": "通知中心",
+      "routes": [
+        "/notifications"
+      ],
+      "widget": "NotificationsPage",
+      "source": "lib/features/notifications/presentation/notifications_page.dart",
+      "states": [
+        "空",
+        "未读与已读",
+        "分页",
+        "归档",
+        "加载",
+        "错误",
+        "跳转反馈"
+      ],
+      "entry": "More → Notifications",
+      "scope": "default",
+      "inventory_reports": [
+        "NOTIFICATION-CURRENT.md",
+        "NOTIFICATION-NAVIGATION-CURRENT.md",
+        "AGENT-ENTRY-CURRENT.md"
+      ],
+      "state_evidence_map": [
+        {
+          "state": "空",
+          "evidence": [
+            {
+              "id": "07-me/notification-current-inbox-empty",
+              "image": "07-me/notification-current-inbox-empty/default.png",
+              "observed_route": "/notifications",
+              "trigger": "More notifications entry → empty inbox",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "未读与已读",
+          "evidence": [
+            {
+              "id": "07-me/notification-current-inbox-first-page",
+              "image": "07-me/notification-current-inbox-first-page/default.png",
+              "observed_route": "/notifications",
+              "trigger": "Retry → first three updates with unread count and load more",
+              "extent": "full-measured-scroll-stitch"
+            },
+            {
+              "id": "07-me/notification-current-inbox-all-read",
+              "image": "07-me/notification-current-inbox-all-read/default.png",
+              "observed_route": "/notifications",
+              "trigger": "Mark all read → server state refreshed, unread badge cleared",
+              "extent": "full-measured-scroll-stitch"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "分页",
+          "evidence": [
+            {
+              "id": "07-me/notification-current-inbox-second-page",
+              "image": "07-me/notification-current-inbox-second-page/default.png",
+              "observed_route": "/notifications",
+              "trigger": "Load more → append second page",
+              "extent": "full-measured-scroll-stitch"
+            },
+            {
+              "id": "07-me/notification-current-inbox-last-page",
+              "image": "07-me/notification-current-inbox-last-page/default.png",
+              "observed_route": "/notifications",
+              "trigger": "Load final page → full list, no load-more CTA",
+              "extent": "full-measured-scroll-stitch"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "归档",
+          "evidence": [
+            {
+              "id": "07-me/notification-current-inbox-archived",
+              "image": "07-me/notification-current-inbox-archived/default.png",
+              "observed_route": "/notifications",
+              "trigger": "Archive last update → removed immediately, unread count refreshed",
+              "extent": "full-measured-scroll-stitch"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "加载",
+          "evidence": [
+            {
+              "id": "07-me/notification-current-inbox-loading",
+              "image": "07-me/notification-current-inbox-loading/default.png",
+              "observed_route": "/notifications",
+              "trigger": "Refresh empty inbox → pending response",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "错误",
+          "evidence": [
+            {
+              "id": "07-me/notification-current-inbox-read-error",
+              "image": "07-me/notification-current-inbox-read-error/default.png",
+              "observed_route": "/notifications",
+              "trigger": "Empty inbox read fails → error and retry",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "跳转反馈",
+          "evidence": [
+            {
+              "id": "07-me/notification-current-notification-open-error",
+              "image": "07-me/notification-current-notification-open-error/default.png",
+              "observed_route": "/notifications",
+              "trigger": "Open update request fails → inbox retained with Snackbar",
+              "extent": "full-measured-scroll-stitch"
+            },
+            {
+              "id": "07-me/notification-current-notification-target-unavailable",
+              "image": "07-me/notification-current-notification-target-unavailable/default.png",
+              "observed_route": "/notifications",
+              "trigger": "Retry open → server reports resource unavailable, item read, no navigation",
+              "extent": "full-measured-scroll-stitch"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        }
+      ]
+    },
+    {
+      "id": "notification-settings",
+      "name": "通知设置",
+      "routes": [
+        "/notifications/settings"
+      ],
+      "widget": "NotificationSettingsPage",
+      "source": "lib/features/notifications/presentation/notification_settings_page.dart",
+      "states": [
+        "分类开关",
+        "未申请",
+        "允许",
+        "拒绝",
+        "设备注册中",
+        "注册错误",
+        "不可用"
+      ],
+      "entry": "通知中心 → Settings",
+      "scope": "default",
+      "inventory_reports": [
+        "NOTIFICATION-PERMISSION-CURRENT.md",
+        "NATIVE-NOTIFICATION-PERMISSIONS.md"
+      ],
+      "state_evidence_map": [
+        {
+          "state": "分类开关",
+          "evidence": [
+            {
+              "id": "07-me/notification-permission-current-permission-restored-enabled",
+              "image": "07-me/notification-permission-current-permission-restored-enabled/default.png",
+              "observed_route": "/notifications/settings",
+              "trigger": "Enable after authorization → true persisted without re-request",
+              "extent": "full-measured-scroll-stitch"
+            },
+            {
+              "id": "07-me/notification-permission-current-permission-restored-disabled",
+              "image": "07-me/notification-permission-current-permission-restored-disabled/default.png",
+              "observed_route": "/notifications/settings",
+              "trigger": "Disable appointments → false persisted",
+              "extent": "full-measured-scroll-stitch"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "未申请",
+          "evidence": [
+            {
+              "id": "07-me/notification-permission-current-education-ready",
+              "image": "07-me/notification-permission-current-education-ready/default.png",
+              "observed_route": "/notifications/settings",
+              "trigger": "Notification center settings → preferences",
+              "extent": "full-measured-scroll-stitch"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "允许",
+          "evidence": [
+            {
+              "id": "07-me/notification-permission-current-request-authorized",
+              "image": "07-me/notification-permission-current-request-authorized/default.png",
+              "observed_route": "/notifications/settings",
+              "trigger": "Continue → fake platform grants permission, registration and preference save succeed",
+              "extent": "full-measured-scroll-stitch"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "拒绝",
+          "evidence": [
+            {
+              "id": "07-me/notification-permission-current-education-denied",
+              "image": "07-me/notification-permission-current-education-denied/default.png",
+              "observed_route": "/notifications/settings",
+              "trigger": "Continue → simulated native denial, settings off and Snackbar",
+              "extent": "full-measured-scroll-stitch"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "设备注册中",
+          "evidence": [
+            {
+              "id": "07-me/notification-permission-current-registration-pending",
+              "image": "07-me/notification-permission-current-registration-pending/default.png",
+              "observed_route": "/notifications/settings",
+              "trigger": "Refresh → server returns token binding pending",
+              "extent": "full-measured-scroll-stitch"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "注册错误",
+          "evidence": [
+            {
+              "id": "07-me/notification-permission-current-registration-http-error",
+              "image": "07-me/notification-permission-current-registration-http-error/default.png",
+              "observed_route": "/notifications/settings",
+              "trigger": "Registration 503 → settings error, category values retained",
+              "extent": "full-measured-scroll-stitch"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "不可用",
+          "evidence": [
+            {
+              "id": "07-me/notification-permission-current-registration-sdk-unavailable",
+              "image": "07-me/notification-permission-current-registration-sdk-unavailable/default.png",
+              "observed_route": "/notifications/settings",
+              "trigger": "Refresh → SDK unavailable, in-app inbox remains",
+              "extent": "full-measured-scroll-stitch"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        }
+      ]
+    },
+    {
+      "id": "service-catalog",
+      "name": "专家服务目录",
+      "routes": [
+        "/services"
+      ],
+      "widget": "ServiceCatalogPage",
+      "source": "lib/modules/services/presentation/service_catalog_page.dart",
+      "states": [
+        "四套餐",
+        "空",
+        "加载",
+        "错误"
+      ],
+      "entry": "妈妈首页 → 专家陪伴计划",
+      "scope": "default",
+      "inventory_reports": [
+        "SERVICE-CURRENT.md"
+      ],
+      "state_evidence_map": [
+        {
+          "state": "四套餐",
+          "evidence": [
+            {
+              "id": "08-expert-service/service-current-catalog",
+              "image": "08-expert-service/service-current-catalog/default.png",
+              "observed_route": "/services",
+              "trigger": "Home expert plan → current catalog",
+              "extent": "full-measured-scroll-stitch"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "空",
+          "evidence": [
+            {
+              "id": "08-expert-service/service-current-catalog-empty",
+              "image": "08-expert-service/service-current-catalog-empty/default.png",
+              "observed_route": "/services",
+              "trigger": "Retry → no available packages",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "加载",
+          "evidence": [
+            {
+              "id": "08-expert-service/service-current-catalog-loading",
+              "image": "08-expert-service/service-current-catalog-loading/default.png",
+              "observed_route": "/services",
+              "trigger": "Enter catalog with GET pending",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "错误",
+          "evidence": [
+            {
+              "id": "08-expert-service/service-current-catalog-error",
+              "image": "08-expert-service/service-current-catalog-error/default.png",
+              "observed_route": "/services",
+              "trigger": "Catalog 503 → retry",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        }
+      ]
+    },
+    {
+      "id": "service-package",
+      "name": "服务套餐详情",
+      "routes": [
+        "/services/:packageId"
+      ],
+      "widget": "ServicePackagePage",
+      "source": "lib/modules/services/presentation/service_package_page.dart",
+      "states": [
+        "四套餐内容",
+        "未购",
+        "待付",
+        "已购",
+        "不可购买",
+        "缺失",
+        "加载",
+        "错误"
+      ],
+      "entry": "服务目录 → 查看方案",
+      "scope": "default",
+      "inventory_reports": [
+        "SERVICE-CURRENT.md",
+        "PURCHASE-CURRENT.md",
+        "PURCHASE-BRANCHES-CURRENT.md"
+      ],
+      "state_evidence_map": [
+        {
+          "state": "四套餐内容",
+          "evidence": [
+            {
+              "id": "08-expert-service/service-current-package-better-breastfeeding",
+              "image": "08-expert-service/service-current-package-better-breastfeeding/default.png",
+              "observed_route": "/services/better-breastfeeding",
+              "trigger": "Catalog 亲喂改善 → current package",
+              "extent": "full-measured-scroll-stitch"
+            },
+            {
+              "id": "08-expert-service/service-current-package-comfortable-feeding",
+              "image": "08-expert-service/service-current-package-comfortable-feeding/default.png",
+              "observed_route": "/services/comfortable-feeding",
+              "trigger": "Catalog 舒适哺乳支持 → current package",
+              "extent": "full-measured-scroll-stitch"
+            },
+            {
+              "id": "08-expert-service/service-current-package-feeding-confidence",
+              "image": "08-expert-service/service-current-package-feeding-confidence/default.png",
+              "observed_route": "/services/feeding-confidence",
+              "trigger": "Catalog 喂养安心 → current package",
+              "extent": "full-measured-scroll-stitch"
+            },
+            {
+              "id": "08-expert-service/service-current-package-milk-supply-care",
+              "image": "08-expert-service/service-current-package-milk-supply-care/default.png",
+              "observed_route": "/services/milk-supply-care",
+              "trigger": "Catalog 奶量管理 → current package",
+              "extent": "full-measured-scroll-stitch"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "未购",
+          "evidence": [
+            {
+              "id": "08-expert-service/service-current-package-feeding-confidence",
+              "image": "08-expert-service/service-current-package-feeding-confidence/default.png",
+              "observed_route": "/services/feeding-confidence",
+              "trigger": "Catalog 喂养安心 → current package",
+              "extent": "full-measured-scroll-stitch"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "待付",
+          "evidence": [
+            {
+              "id": "08-expert-service/service-current-pending-package",
+              "image": "08-expert-service/service-current-pending-package/default.png",
+              "observed_route": "/services/feeding-confidence",
+              "trigger": "Pending order → package resume footer",
+              "extent": "full-measured-scroll-stitch"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "已购",
+          "evidence": [
+            {
+              "id": "08-expert-service/service-current-owned-package",
+              "image": "08-expert-service/service-current-owned-package/default.png",
+              "observed_route": "/services/feeding-confidence",
+              "trigger": "Owned package → expert identity, remaining sessions, progress and booking",
+              "extent": "full-measured-scroll-stitch"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "不可购买",
+          "evidence": [
+            {
+              "id": "08-expert-service/service-current-package-purchase-disabled",
+              "image": "08-expert-service/service-current-package-purchase-disabled/default.png",
+              "observed_route": "/services/feeding-confidence",
+              "trigger": "Reenter package when payment disabled",
+              "extent": "full-measured-scroll-stitch"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "缺失",
+          "evidence": [
+            {
+              "id": "08-expert-service/service-current-package-missing",
+              "image": "08-expert-service/service-current-package-missing/default.png",
+              "observed_route": "/services/feeding-confidence",
+              "trigger": "Retry returns removed package → unavailable page",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "加载",
+          "evidence": [
+            {
+              "id": "08-expert-service/service-current-package-loading",
+              "image": "08-expert-service/service-current-package-loading/default.png",
+              "observed_route": "/services/feeding-confidence",
+              "trigger": "Select package with GET pending",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "错误",
+          "evidence": [
+            {
+              "id": "08-expert-service/service-current-package-error",
+              "image": "08-expert-service/service-current-package-error/default.png",
+              "observed_route": "/services/feeding-confidence",
+              "trigger": "Package catalog GET 503 → retry",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        }
+      ]
+    },
+    {
+      "id": "service-progress",
+      "name": "服务详情与时间线",
+      "routes": [
+        "/services/episodes/:episodeId"
+      ],
+      "widget": "ServiceProgressPage",
+      "source": "lib/modules/services/presentation/service_progress_page.dart",
+      "states": [
+        "进行中",
+        "暂停",
+        "到期",
+        "次数用尽",
+        "最近与更早",
+        "加载",
+        "错误"
+      ],
+      "entry": "已购计划 → 服务进度",
+      "scope": "default",
+      "inventory_reports": [
+        "PROGRESS-CURRENT.md"
+      ],
+      "state_evidence_map": [
+        {
+          "state": "进行中",
+          "evidence": [
+            {
+              "id": "08-expert-service/progress-current-active",
+              "image": "08-expert-service/progress-current-active/default.png",
+              "observed_route": "/services/episodes/service-episode",
+              "trigger": "Active plan → appointment action",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "暂停",
+          "evidence": [
+            {
+              "id": "08-expert-service/progress-current-state-paused",
+              "image": "08-expert-service/progress-current-state-paused/default.png",
+              "observed_route": "/services/episodes/service-episode",
+              "trigger": "Refresh server episode paused → supported state and actions",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "到期",
+          "evidence": [
+            {
+              "id": "08-expert-service/progress-current-active-past-end",
+              "image": "08-expert-service/progress-current-active-past-end/default.png",
+              "observed_route": "/services/episodes/service-episode",
+              "trigger": "Server still active after endsAt → current timeline retains booking action",
+              "extent": "viewport"
+            },
+            {
+              "id": "08-expert-service/progress-current-state-completed",
+              "image": "08-expert-service/progress-current-state-completed/default.png",
+              "observed_route": "/services/episodes/service-episode",
+              "trigger": "Refresh server episode completed → supported state and actions",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "次数用尽",
+          "evidence": [
+            {
+              "id": "08-expert-service/progress-current-active-exhausted",
+              "image": "08-expert-service/progress-current-active-exhausted/default.png",
+              "observed_route": "/services/episodes/service-episode",
+              "trigger": "Active service with zero remaining → no new booking or renewal",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "最近与更早",
+          "evidence": [
+            {
+              "id": "08-expert-service/progress-current-events-earlier",
+              "image": "08-expert-service/progress-current-events-earlier/default.png",
+              "observed_route": "/services/episodes/service-episode",
+              "trigger": "Earlier records → identity and first event",
+              "extent": "full-measured-scroll-stitch"
+            },
+            {
+              "id": "08-expert-service/progress-current-events-latest",
+              "image": "08-expert-service/progress-current-events-latest/default.png",
+              "observed_route": "/services/episodes/service-episode",
+              "trigger": "Open multi-event service → latest event",
+              "extent": "full-measured-scroll-stitch"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "加载",
+          "evidence": [
+            {
+              "id": "08-expert-service/progress-current-initial-loading",
+              "image": "08-expert-service/progress-current-initial-loading/default.png",
+              "observed_route": "/services/episodes/service-episode",
+              "trigger": "Service progress → overview pending",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "错误",
+          "evidence": [
+            {
+              "id": "08-expert-service/progress-current-initial-error",
+              "image": "08-expert-service/progress-current-initial-error/default.png",
+              "observed_route": "/services/episodes/service-episode",
+              "trigger": "Overview 503 → retry card",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        }
+      ]
+    },
+    {
+      "id": "service-renew",
+      "name": "续购服务",
+      "routes": [
+        "/services/renew",
+        "/services/episodes/:episodeId/renew"
+      ],
+      "widget": "ServiceRenewPage",
+      "source": "lib/modules/services/presentation/service_renew_page.dart",
+      "states": [
+        "可续购",
+        "暂停",
+        "到期",
+        "无套餐",
+        "加载",
+        "错误",
+        "购买入口"
+      ],
+      "entry": "服务进度或 Agent → 续购",
+      "scope": "default",
+      "review_note": "RENEW-PENDING-CURRENT.md：当前主要界面及具名旧反馈状态已核对，其它历史证据保留来源与最终映射边界。",
+      "coverage_review": {
+        "report": "RENEW-PENDING-CURRENT.md",
+        "status": "CURRENT_PRIMARY_AND_NAMED_G11_STATES_VERIFIED; FINAL_STATE_MAPPING_PENDING",
+        "source_hashes": {
+          "lib/modules/services/presentation/service_renew_page.dart": "f01adf5d24ec28ef69b9c37fc4020acfac26aece466f4395ae0cd829e1fcea47",
+          "test/modules/services/service_renew_test.dart": "1d233b9ead6f18097b5004d6372946276a9326dc2d17439934e6e80b9f1d8e61"
+        }
+      },
+      "inventory_reports": [
+        "RENEW-CURRENT.md",
+        "RENEW-PENDING-CURRENT.md",
+        "RENEW-JOURNEYS.md"
+      ],
+      "state_evidence_map": [
+        {
+          "state": "可续购",
+          "evidence": [
+            {
+              "id": "08-expert-service/renew-list",
+              "image": "08-expert-service/renew-list/default.png",
+              "observed_route": null,
+              "trigger": "renew selection opens existing eligibility flow 390.0/1.0",
+              "extent": "full-measured-scroll-stitch"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "暂停",
+          "evidence": [
+            {
+              "id": "08-expert-service/renew-short-owned-paused",
+              "image": "08-expert-service/renew-short-owned-paused/default.png",
+              "observed_route": null,
+              "trigger": "owned service remains reachable with purchase disabled CareEpisodeStatus.paused",
+              "extent": "full-measured-scroll-stitch"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "到期",
+          "evidence": [
+            {
+              "id": "08-expert-service/renew-journey-list",
+              "image": "08-expert-service/renew-journey-list/default.png",
+              "observed_route": "/services/episodes/completed-episode/renew",
+              "trigger": "Completed timeline continue support → original package highlighted in actual renewal route",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "无套餐",
+          "evidence": [
+            {
+              "id": "08-expert-service/renew-empty",
+              "image": "08-expert-service/renew-empty/default.png",
+              "observed_route": null,
+              "trigger": "disabled purchase, empty catalog, offline retry are explicit",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "加载",
+          "evidence": [
+            {
+              "id": "08-expert-service/renew-short-loading",
+              "image": "08-expert-service/renew-short-loading/default.png",
+              "observed_route": null,
+              "trigger": "short large catalog loads, scrolls and returns without ordering",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "错误",
+          "evidence": [
+            {
+              "id": "08-expert-service/renew-offline",
+              "image": "08-expert-service/renew-offline/default.png",
+              "observed_route": null,
+              "trigger": "disabled purchase, empty catalog, offline retry are explicit",
+              "extent": "viewport"
+            },
+            {
+              "id": "08-expert-service/renew-order-error",
+              "image": "08-expert-service/renew-order-error/default.png",
+              "observed_route": null,
+              "trigger": "pending order reopens without new purchase; retry locks duplicate taps",
+              "extent": "full-measured-scroll-stitch"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "购买入口",
+          "evidence": [
+            {
+              "id": "08-expert-service/renew-eligibility",
+              "image": "08-expert-service/renew-eligibility/default.png",
+              "observed_route": null,
+              "trigger": "renew selection opens existing eligibility flow 390.0/1.0",
+              "extent": "viewport"
+            },
+            {
+              "id": "08-expert-service/renew-pending-listed",
+              "image": "08-expert-service/renew-pending-listed/default.png",
+              "observed_route": null,
+              "trigger": "pending order reopens without new purchase; retry locks duplicate taps",
+              "extent": "full-measured-scroll-stitch"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        }
+      ]
+    },
+    {
+      "id": "booking",
+      "name": "预约与预约内详情",
+      "routes": [
+        "/services/episodes/:episodeId/booking"
+      ],
+      "widget": "BookingPage",
+      "source": "lib/modules/services/presentation/booking_page.dart",
+      "states": [
+        "前确认入口",
+        "时段列表",
+        "保留",
+        "已确认",
+        "咨询中",
+        "业务拒绝",
+        "等待",
+        "错误恢复"
+      ],
+      "entry": "已购计划 → 预约咨询",
+      "scope": "default",
+      "inventory_reports": [
+        "BOOKING-PRECHECK-CURRENT.md",
+        "BOOKING-SELECTION-CURRENT.md",
+        "BOOKING-RECOVERY-CURRENT.md",
+        "BOOKING-REMINDER-ENTRY-CURRENT.md",
+        "STATE-MAP-FINAL.md"
+      ],
+      "state_evidence_map": [
+        {
+          "state": "前确认入口",
+          "evidence": [
+            {
+              "id": "08-expert-service/booking-precheck-current-initial",
+              "image": "08-expert-service/booking-precheck-current-initial/default.png",
+              "observed_route": "/services/episodes/service-episode/booking",
+              "trigger": "Retry booking context → automatic precheck",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "时段列表",
+          "evidence": [
+            {
+              "id": "08-expert-service/booking-selection-current-selection-slots",
+              "image": "08-expert-service/booking-selection-current-selection-slots/default.png",
+              "observed_route": "/services/episodes/service-episode/booking",
+              "trigger": "Complete precheck → available times",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "保留",
+          "evidence": [
+            {
+              "id": "08-expert-service/booking-selection-current-held-review",
+              "image": "08-expert-service/booking-selection-current-held-review/default.png",
+              "observed_route": "/services/episodes/service-episode/booking",
+              "trigger": "Retry same idempotency key → held appointment review",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "已确认",
+          "evidence": [
+            {
+              "id": "08-expert-service/booking-selection-current-confirmed-detail",
+              "image": "08-expert-service/booking-selection-current-confirmed-detail/default.png",
+              "observed_route": "/services/episodes/service-episode/booking",
+              "trigger": "Return from unchanged intake → confirmed booking detail",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "咨询中",
+          "evidence": [
+            {
+              "id": "08-expert-service/booking-recovery-current-cancel-in-progress-return",
+              "image": "08-expert-service/booking-recovery-current-cancel-in-progress-return/default.png",
+              "trigger": "current confirmed appointment cancellation and state recovery false",
+              "extent": "viewport",
+              "observed_route": "/services/episodes/service-episode/booking"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "业务拒绝",
+          "evidence": [
+            {
+              "id": "08-expert-service/booking-recovery-current-hold-service_not_bookable",
+              "image": "08-expert-service/booking-recovery-current-hold-service_not_bookable/default.png",
+              "observed_route": "/services/episodes/service-episode/booking",
+              "trigger": "Select time → HTTP 409 business rejection: service_not_bookable",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "等待",
+          "evidence": [
+            {
+              "id": "08-expert-service/booking-selection-current-confirm-pending",
+              "image": "08-expert-service/booking-selection-current-confirm-pending/default.png",
+              "observed_route": "/services/episodes/service-episode/booking",
+              "trigger": "Confirm held appointment → expected-version request pending",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "错误恢复",
+          "evidence": [
+            {
+              "id": "08-expert-service/booking-recovery-current-cancel-uncertain",
+              "image": "08-expert-service/booking-recovery-current-cancel-uncertain/default.png",
+              "observed_route": "/services/episodes/service-episode/booking",
+              "trigger": "Cancellation HTTP 503 → uncertain, retry or query latest",
+              "extent": "full-measured-scroll-stitch"
+            },
+            {
+              "id": "08-expert-service/booking-selection-current-confirm-error",
+              "image": "08-expert-service/booking-selection-current-confirm-error/default.png",
+              "observed_route": "/services/episodes/service-episode/booking",
+              "trigger": "Pending Back blocked; confirm HTTP 503 → retry",
+              "extent": "full-measured-scroll-stitch"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        }
+      ]
+    },
+    {
+      "id": "appointment",
+      "name": "独立预约详情",
+      "routes": [
+        "/services/appointments/:appointmentId"
+      ],
+      "widget": "AppointmentDetailPage",
+      "source": "lib/modules/services/presentation/appointment_detail_page.dart",
+      "states": [
+        "held",
+        "confirmed",
+        "in_progress",
+        "completed",
+        "cancelled",
+        "expired",
+        "加载",
+        "错误"
+      ],
+      "entry": "通知或日程 → 指定预约",
+      "scope": "default",
+      "inventory_reports": [
+        "BOOKING-RECOVERY-CURRENT.md",
+        "NOTIFICATION-NAVIGATION-CURRENT.md",
+        "STATE-MAP-FINAL.md"
+      ],
+      "state_evidence_map": [
+        {
+          "state": "held",
+          "evidence": [
+            {
+              "id": "08-expert-service/appointment-held",
+              "image": "08-expert-service/appointment-held/default.png",
+              "observed_route": null,
+              "trigger": "appointment actions follow held state",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "confirmed",
+          "evidence": [
+            {
+              "id": "08-expert-service/appointment-detail",
+              "image": "08-expert-service/appointment-detail/default.png",
+              "observed_route": null,
+              "trigger": "appointment detail at 390.0 / 1.0",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "in_progress",
+          "evidence": [
+            {
+              "id": "00-overview/reused-state-evidence/appointment-in-progress",
+              "image": "00-overview/reused-state-evidence/appointment-in-progress/default.png",
+              "observed_route": null,
+              "trigger": "进入咨询中的预约详情 → 返回咨询室；原专项测试点击并断言目标回调。",
+              "extent": "FULL_VIEWPORT; visually inspected, all content visible"
+            }
+          ],
+          "acceptance": "REUSED_RENDERED_EVIDENCE; scoped source hashes match; route proven separately"
+        },
+        {
+          "state": "completed",
+          "evidence": [
+            {
+              "id": "00-overview/reused-state-evidence/appointment-completed",
+              "image": "00-overview/reused-state-evidence/appointment-completed/default.png",
+              "observed_route": null,
+              "trigger": "进入已完成预约详情 → 查看咨询总结；原专项测试点击并断言目标回调。",
+              "extent": "FULL_VIEWPORT; visually inspected, all content visible"
+            }
+          ],
+          "acceptance": "REUSED_RENDERED_EVIDENCE; scoped source hashes match; route proven separately"
+        },
+        {
+          "state": "cancelled",
+          "evidence": [
+            {
+              "id": "08-expert-service/appointment-cancelled",
+              "image": "08-expert-service/appointment-cancelled/default.png",
+              "observed_route": null,
+              "trigger": "appointment actions follow cancelled state",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "expired",
+          "evidence": [
+            {
+              "id": "08-expert-service/appointment-expired",
+              "image": "08-expert-service/appointment-expired/default.png",
+              "observed_route": null,
+              "trigger": "appointment actions follow expired state",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "加载",
+          "evidence": [
+            {
+              "id": "00-overview/reused-state-evidence/appointment-loading",
+              "image": "00-overview/reused-state-evidence/appointment-loading/default.png",
+              "observed_route": null,
+              "trigger": "打开独立预约详情 → 首次请求未返回；同一测试完成请求后出现取消按钮。",
+              "extent": "FULL_VIEWPORT; visually inspected, all content visible"
+            }
+          ],
+          "acceptance": "REUSED_RENDERED_EVIDENCE; scoped source hashes match; route proven separately"
+        },
+        {
+          "state": "错误",
+          "evidence": [
+            {
+              "id": "08-expert-service/appointment-unavailable",
+              "image": "08-expert-service/appointment-unavailable/default.png",
+              "observed_route": null,
+              "trigger": "appointment read failure retries instead of showing stale actions",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        }
+      ]
+    },
+    {
+      "id": "intake",
+      "name": "咨询信息采集表",
+      "routes": [
+        "/services/appointments/:appointmentId/intake"
+      ],
+      "widget": "IntakePage",
+      "source": "lib/modules/services/presentation/intake_page.dart",
+      "states": [
+        "初始",
+        "已填写",
+        "补充展开",
+        "基础信息",
+        "授权",
+        "校验",
+        "保存中",
+        "错误",
+        "已保存"
+      ],
+      "entry": "预约确认 → 信息采集",
+      "scope": "default",
+      "review_note": "[G09 报告](../INTAKE-CURRENT.md) 已归档当前完整表单及两类浮层，保留历史正式入口；其它历史状态版本沿用 G11。",
+      "coverage_review": {
+        "report": "INTAKE-FEEDBACK-CURRENT.md",
+        "status": "G09_AND_NAMED_G11_INTAKE_STATES_VERIFIED; FINAL_STATE_MAPPING_PENDING",
+        "source_hashes": {
+          "lib/modules/services/presentation/intake_page.dart": "8b1beec777fd069e0847ef3680506185534259527eec71b7bd49965b4800f10e",
+          "lib/shared/widgets/product_feedback.dart": "f0e9384b049cfc0e3c0db31f4f751723d3b7faa587a136caee1d0db75b004af1",
+          "lib/shared/widgets/mom_settings_widgets.dart": "271b022cb619641d956e92a5600e5f5585d2a5b469446132d53d402987403025",
+          "test/modules/services/intake_test.dart": "a7937aea09d2824352a7f6e3d16337a8cbf2f99c2b06133bc68750c275104f67"
+        }
+      },
+      "inventory_reports": [
+        "INTAKE-CURRENT.md",
+        "INTAKE-FEEDBACK-CURRENT.md",
+        "STATE-MAP-FINAL.md"
+      ],
+      "state_evidence_map": [
+        {
+          "state": "初始",
+          "evidence": [
+            {
+              "id": "08-expert-service/service-journey-intake-unfilled",
+              "image": "08-expert-service/service-journey-intake-unfilled/default.png",
+              "observed_route": "/services/appointments/service-appointment/intake",
+              "trigger": "Confirmed booking → unfilled intake with profile prefill",
+              "extent": "full-measured-scroll-stitch"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "已填写",
+          "evidence": [
+            {
+              "id": "08-expert-service/service-journey-intake-reopened",
+              "image": "08-expert-service/service-journey-intake-reopened/default.png",
+              "observed_route": "/services/appointments/service-appointment/intake",
+              "trigger": "Reopen saved intake → populated data and granted consent",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "补充展开",
+          "evidence": [
+            {
+              "id": "08-expert-service/intake-optional",
+              "image": "08-expert-service/intake-optional/default.png",
+              "observed_route": null,
+              "trigger": "intake design disclosures consent and save at 390.0 / 1.0",
+              "extent": "full-measured-scroll-stitch"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "基础信息",
+          "evidence": [
+            {
+              "id": "08-expert-service/intake-profile",
+              "image": "08-expert-service/intake-profile/default.png",
+              "observed_route": null,
+              "trigger": "intake design disclosures consent and save at 390.0 / 1.0",
+              "extent": "full-measured-scroll-stitch"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "授权",
+          "evidence": [
+            {
+              "id": "08-expert-service/intake-consent",
+              "image": "08-expert-service/intake-consent/default.png",
+              "observed_route": null,
+              "trigger": "intake design disclosures consent and save at 390.0 / 1.0",
+              "extent": "viewport"
+            },
+            {
+              "id": "08-expert-service/service-journey-intake-consent-withdrawn-draft",
+              "image": "08-expert-service/service-journey-intake-consent-withdrawn-draft/default.png",
+              "observed_route": "/services/appointments/service-appointment/intake",
+              "trigger": "Uncheck draft consent → save disabled without server mutation",
+              "extent": "full-measured-scroll-stitch"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "校验",
+          "evidence": [
+            {
+              "id": "08-expert-service/intake-consent-validation",
+              "image": "08-expert-service/intake-consent-validation/default.png",
+              "observed_route": null,
+              "trigger": "inventory intake server consent validation",
+              "extent": "full-measured-scroll-stitch"
+            }
+          ],
+          "acceptance": "实际提交后的授权冲突反馈已截图；前端必填校验由 canSubmit 禁用提交，不能通过普通点击产生 _validated 内的必填错误文案。"
+        },
+        {
+          "state": "保存中",
+          "evidence": [
+            {
+              "id": "08-expert-service/service-journey-intake-saving",
+              "image": "08-expert-service/service-journey-intake-saving/default.png",
+              "observed_route": "/services/appointments/service-appointment/intake",
+              "trigger": "Save response pending → fields locked",
+              "extent": "full-measured-scroll-stitch"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "错误",
+          "evidence": [
+            {
+              "id": "08-expert-service/intake-uncertain",
+              "image": "08-expert-service/intake-uncertain/default.png",
+              "observed_route": null,
+              "trigger": "intake uncertain save locks fields and retries identical snapshot",
+              "extent": "full-measured-scroll-stitch"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "已保存",
+          "evidence": [
+            {
+              "id": "08-expert-service/intake-saved",
+              "image": "08-expert-service/intake-saved/default.png",
+              "observed_route": null,
+              "trigger": "intake design disclosures consent and save at 390.0 / 1.0",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        }
+      ]
+    },
+    {
+      "id": "consultation",
+      "name": "咨询准备、通话与结束",
+      "routes": [
+        "/services/appointments/:appointmentId/room"
+      ],
+      "widget": "ConsultationRoomPage",
+      "source": "lib/modules/consultation/presentation/room_page.dart",
+      "states": [
+        "准备",
+        "等待专家",
+        "可进入",
+        "通话",
+        "断线与恢复",
+        "离开",
+        "结束",
+        "取消",
+        "过期",
+        "加载",
+        "错误"
+      ],
+      "entry": "预约详情 → 咨询前准备／进入咨询",
+      "scope": "default",
+      "coverage_review": {
+        "report": "CONSULTATION-PREFLIGHT-FEEDBACK-CURRENT.md",
+        "status": "G01_G02_AND_NAMED_G11_PREFLIGHT_STATES_VERIFIED; FINAL_STATE_MAPPING_PENDING",
+        "source_hashes": {
+          "lib/modules/consultation/presentation/room_page.dart": "2431630b028d90bf090d9b7f726fa420d2b1908da23175e4c37a2a6f4a553f35",
+          "lib/modules/consultation/presentation/consultation_start_dialog.dart": "de86de9a8c1abb0143b175feb1a8e595b44d906637e5a636d1f47af7cc98cd0f",
+          "lib/modules/consultation/presentation/device_check_dialog.dart": "6ea94e71e9041f386c7dd5e313fad06743d1ceb013c2a94772d1b036ea4f5f7c",
+          "lib/shared/widgets/product_feedback.dart": "f0e9384b049cfc0e3c0db31f4f751723d3b7faa587a136caee1d0db75b004af1",
+          "test/modules/consultation/consultation_inventory_journey_test.dart": "59b4931e1eb26589ed36f081142b49e17b968e4f2c3b2442e99f59c6adbfe66a",
+          "test/modules/consultation/room_entry_design_test.dart": "c169df75598463a37396739709ebb2d6323da5bb273dcc986861eca921876939"
+        }
+      },
+      "review_note": "G01/G02 与 G11 准备反馈已核对；其余原条目在最终映射保留来源和版本。",
+      "inventory_reports": [
+        "CONSULTATION-PREFLIGHT-FEEDBACK-CURRENT.md",
+        "CONSULTATION-LIVE-CURRENT.md",
+        "CONSULTATION-OUTCOME-CURRENT.md",
+        "STATE-MAP-FINAL.md"
+      ],
+      "state_evidence_map": [
+        {
+          "state": "准备",
+          "evidence": [
+            {
+              "id": "08-expert-service/consultation-journey-preparation-intake-required",
+              "image": "08-expert-service/consultation-journey-preparation-intake-required/default.png",
+              "observed_route": "/services/appointments/service-appointment/room",
+              "trigger": "Booking consultation preparation → missing intake blocks start",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "等待专家",
+          "evidence": [
+            {
+              "id": "08-expert-service/video-waiting",
+              "image": "08-expert-service/video-waiting/default.png",
+              "observed_route": null,
+              "trigger": "user waiting media controls and leave 390.0 x 844.0 / 1.0",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "可进入",
+          "evidence": [
+            {
+              "id": "08-expert-service/consultation-journey-preparation-ready",
+              "image": "08-expert-service/consultation-journey-preparation-ready/default.png",
+              "observed_route": "/services/appointments/service-appointment/room",
+              "trigger": "Booked active service → consultation preparation",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "通话",
+          "evidence": [
+            {
+              "id": "08-expert-service/consultation-journey-current-live-active",
+              "image": "08-expert-service/consultation-journey-current-live-active/default.png",
+              "observed_route": "/services/appointments/service-appointment/room",
+              "trigger": "Stay and close confirmation both retain the room; expert joins → active consultation",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "断线与恢复",
+          "evidence": [
+            {
+              "id": "08-expert-service/video-disconnected",
+              "image": "08-expert-service/video-disconnected/default.png",
+              "observed_route": null,
+              "trigger": "user waiting media controls and leave 390.0 x 844.0 / 1.0",
+              "extent": "viewport"
+            },
+            {
+              "id": "08-expert-service/video-reconnecting",
+              "image": "08-expert-service/video-reconnecting/default.png",
+              "observed_route": null,
+              "trigger": "user waiting media controls and leave 390.0 x 844.0 / 1.0",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "离开",
+          "evidence": [
+            {
+              "id": "08-expert-service/consultation-journey-current-live-leave-confirmation",
+              "image": "08-expert-service/consultation-journey-current-live-leave-confirmation/default.png",
+              "observed_route": "/services/appointments/service-appointment/room",
+              "trigger": "Me → service → booking → preparation → passed checks → room → Leave",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "结束",
+          "evidence": [
+            {
+              "id": "08-expert-service/consultation-journey-current-completed-outcome",
+              "image": "08-expert-service/consultation-journey-current-completed-outcome/default.png",
+              "observed_route": "/services/appointments/service-appointment/room",
+              "trigger": "Me → service → booking → preparation → device check → enter; server completed → result",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "取消",
+          "evidence": [
+            {
+              "id": "08-expert-service/consultation-journey-current-cancelled-outcome",
+              "image": "08-expert-service/consultation-journey-current-cancelled-outcome/default.png",
+              "observed_route": "/services/appointments/service-appointment/room",
+              "trigger": "Me → service → booking → preparation → device check → enter; server cancelled → result",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "过期",
+          "evidence": [
+            {
+              "id": "08-expert-service/consultation-journey-preparation-window-expired",
+              "image": "08-expert-service/consultation-journey-preparation-window-expired/default.png",
+              "observed_route": "/services/appointments/service-appointment/room",
+              "trigger": "Entry window elapsed → rebook action",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "加载",
+          "evidence": [
+            {
+              "id": "08-expert-service/consultation-journey-current-room-loading",
+              "image": "08-expert-service/consultation-journey-current-room-loading/default.png",
+              "observed_route": "/services/appointments/service-appointment/room",
+              "trigger": "Booking → consultation preparation, initial room read pending",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "错误",
+          "evidence": [
+            {
+              "id": "08-expert-service/consultation-journey-current-room-load-error",
+              "image": "08-expert-service/consultation-journey-current-room-load-error/default.png",
+              "observed_route": "/services/appointments/service-appointment/room",
+              "trigger": "Initial room read fails → retry feedback",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        }
+      ]
+    },
+    {
+      "id": "summary",
+      "name": "咨询总结与后续任务",
+      "routes": [
+        "/services/appointments/:appointmentId/summary"
+      ],
+      "widget": "ConsultationSummaryPage",
+      "source": "lib/modules/services/presentation/consultation_summary_page.dart",
+      "states": [
+        "首次加载",
+        "待发布",
+        "尚未产生总结",
+        "咨询未完成",
+        "读取失败及重试",
+        "已发布：当前行动／后续行动／观察目标／更多帮助",
+        "无行动",
+        "服务信息折叠／展开",
+        "行动详情及四种进度",
+        "更新中与关闭禁用",
+        "更新结果不确定及重试",
+        "方案替换及重新载入",
+        "行动移除提示",
+        "刷新失败保留内容",
+        "完整行动计划与服务进度入口"
+      ],
+      "entry": "咨询结束或通知 → 总结",
+      "scope": "default",
+      "review_note": "G03 按实际渲染分支细化状态；未发现总结页独立的“未授权”设计状态，认证跳转或接口失败沿共享登录／错误流程归档，不制造新总结页面。",
+      "coverage_review": {
+        "report": "CONSULTATION-SUMMARY-CURRENT.md",
+        "status": "VERIFIED_FOR_RECORDED_SOURCE",
+        "source_hashes": {
+          "lib/modules/services/presentation/consultation_summary_page.dart": "545bbfa5a4bdb6a23a74f9d782561824ddb9e873dfcb0eab95eed51014dd2531",
+          "lib/modules/services/presentation/consultation_summary_content.dart": "d2f13602e2faae53d5b36179f9d0f806db369fd391247d6f4cbb7f6ad7ab65a5",
+          "lib/modules/services/application/summary_controller.dart": "9d4cb5ec509810478196b258a9e5d69d4daa213794af23e58e450a72b3f8ece1",
+          "lib/shared/widgets/product_feedback.dart": "f0e9384b049cfc0e3c0db31f4f751723d3b7faa587a136caee1d0db75b004af1",
+          "lib/shared/widgets/mom_settings_widgets.dart": "271b022cb619641d956e92a5600e5f5585d2a5b469446132d53d402987403025",
+          "lib/shared/design_system/mom_home_tokens.dart": "9a29742884083678da9dff00c0d5a95da969a899f13e5f6fc2e1ab34232fa3d1",
+          "lib/shared/design_system/mom_settings_theme.dart": "c584f5c1ef469a525857bbbfa38c126d579e7b7068bb597c465e01c117665cd7",
+          "lib/app/mom_module_routes.dart": "8808c92d097a16268bcff5ca793a8054b58ea110e68c339d8c7e0c920a50d1bc"
+        }
+      },
+      "inventory_reports": [
+        "CONSULTATION-SUMMARY-CURRENT.md"
+      ],
+      "state_evidence_map": [
+        {
+          "state": "首次加载",
+          "evidence": [
+            {
+              "id": "08-expert-service/summary-loading",
+              "image": "08-expert-service/summary-loading/default.png",
+              "observed_route": null,
+              "trigger": "loading finishes into pending and refreshed publication",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "待发布",
+          "evidence": [
+            {
+              "id": "08-expert-service/summary-pending",
+              "image": "08-expert-service/summary-pending/default.png",
+              "observed_route": null,
+              "trigger": "summary content task and destinations 390.0 / 1.0",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "尚未产生总结",
+          "evidence": [
+            {
+              "id": "08-expert-service/summary-empty",
+              "image": "08-expert-service/summary-empty/default.png",
+              "observed_route": null,
+              "trigger": "summary content task and destinations 390.0 / 1.0",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "咨询未完成",
+          "evidence": [
+            {
+              "id": "08-expert-service/summary-failed-320-2x-short",
+              "image": "08-expert-service/summary-failed-320-2x-short/default.png",
+              "observed_route": null,
+              "trigger": "empty action list and unsuccessful consultation keep appropriate destinations",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "读取失败及重试",
+          "evidence": [
+            {
+              "id": "08-expert-service/summary-offline",
+              "image": "08-expert-service/summary-offline/default.png",
+              "observed_route": null,
+              "trigger": "summary content task and destinations 390.0 / 1.0",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "已发布：当前行动／后续行动／观察目标／更多帮助",
+          "evidence": [
+            {
+              "id": "08-expert-service/summary-published",
+              "image": "08-expert-service/summary-published/default.png",
+              "observed_route": null,
+              "trigger": "summary content task and destinations 390.0 / 1.0",
+              "extent": "full-measured-scroll-stitch"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "无行动",
+          "evidence": [
+            {
+              "id": "08-expert-service/summary-no-actions-information-320-2x-short",
+              "image": "08-expert-service/summary-no-actions-information-320-2x-short/default.png",
+              "observed_route": null,
+              "trigger": "empty action list and unsuccessful consultation keep appropriate destinations",
+              "extent": "full-measured-scroll-stitch"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "服务信息折叠／展开",
+          "evidence": [
+            {
+              "id": "08-expert-service/summary-metadata",
+              "image": "08-expert-service/summary-metadata/default.png",
+              "observed_route": null,
+              "trigger": "summary content task and destinations 390.0 / 1.0",
+              "extent": "full-measured-scroll-stitch"
+            },
+            {
+              "id": "08-expert-service/consultation-journey-current-summary-service-information",
+              "image": "08-expert-service/consultation-journey-current-summary-service-information/default.png",
+              "observed_route": "/services/appointments/service-appointment/summary",
+              "trigger": "Expand consultation and service information → progress entry",
+              "extent": "full-measured-scroll-stitch"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "行动详情及四种进度",
+          "evidence": [
+            {
+              "id": "08-expert-service/consultation-journey-current-summary-task-detail",
+              "image": "08-expert-service/consultation-journey-current-summary-task-detail/default.png",
+              "observed_route": "/services/appointments/service-appointment/summary",
+              "trigger": "Published task → action detail and progress choices",
+              "extent": "viewport"
+            },
+            {
+              "id": "08-expert-service/consultation-journey-current-summary-task-in-progress",
+              "image": "08-expert-service/consultation-journey-current-summary-task-in-progress/default.png",
+              "observed_route": "/services/appointments/service-appointment/summary",
+              "trigger": "Set task progress → persisted in-progress state",
+              "extent": "viewport"
+            },
+            {
+              "id": "08-expert-service/consultation-journey-current-summary-task-skipped",
+              "image": "08-expert-service/consultation-journey-current-summary-task-skipped/default.png",
+              "observed_route": "/services/appointments/service-appointment/summary",
+              "trigger": "Change completed task to skipped → explicit progress state",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "更新中与关闭禁用",
+          "evidence": [
+            {
+              "id": "08-expert-service/summary-short-updating-320-2x-short",
+              "image": "08-expert-service/summary-short-updating-320-2x-short/default.png",
+              "observed_route": null,
+              "trigger": "short large task keeps pending updates locked and retryable",
+              "extent": "full-measured-scroll-stitch"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "更新结果不确定及重试",
+          "evidence": [
+            {
+              "id": "08-expert-service/summary-short-uncertain-320-2x-short",
+              "image": "08-expert-service/summary-short-uncertain-320-2x-short/default.png",
+              "observed_route": null,
+              "trigger": "short large task keeps pending updates locked and retryable",
+              "extent": "full-measured-scroll-stitch"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "方案替换及重新载入",
+          "evidence": [
+            {
+              "id": "08-expert-service/summary-superseded",
+              "image": "08-expert-service/summary-superseded/default.png",
+              "observed_route": null,
+              "trigger": "superseded action removed by reload remains safely closable at large text",
+              "extent": "full-measured-scroll-stitch"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "行动移除提示",
+          "evidence": [
+            {
+              "id": "08-expert-service/summary-removed-action",
+              "image": "08-expert-service/summary-removed-action/default.png",
+              "observed_route": null,
+              "trigger": "superseded action removed by reload remains safely closable at large text",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "刷新失败保留内容",
+          "evidence": [
+            {
+              "id": "08-expert-service/summary-refresh-error",
+              "image": "08-expert-service/summary-refresh-error/default.png",
+              "observed_route": null,
+              "trigger": "refresh failure retains publication and reloads without a task mutation",
+              "extent": "full-measured-scroll-stitch"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "完整行动计划与服务进度入口",
+          "evidence": [
+            {
+              "id": "08-expert-service/consultation-journey-current-summary-full-plan",
+              "image": "08-expert-service/consultation-journey-current-summary-full-plan/default.png",
+              "observed_route": "/schedule",
+              "trigger": "Summary → full action plan opens Schedule",
+              "extent": "full-measured-scroll-stitch"
+            },
+            {
+              "id": "08-expert-service/consultation-journey-current-summary-to-progress",
+              "image": "08-expert-service/consultation-journey-current-summary-to-progress/default.png",
+              "observed_route": "/services/episodes/service-episode",
+              "trigger": "Summary service progress → episode timeline",
+              "extent": "full-measured-scroll-stitch"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        }
+      ]
+    },
+    {
+      "id": "media",
+      "name": "媒体查看器",
+      "routes": [
+        "/media-viewer"
+      ],
+      "widget": "MediaViewerPage",
+      "source": "lib/features/media/presentation/media_viewer_page.dart",
+      "states": [
+        "图片",
+        "PDF 多页与缩放",
+        "视频",
+        "加载",
+        "解码与网络错误",
+        "资源缺失"
+      ],
+      "entry": "Agent 资源或图片 → 查看",
+      "scope": "default",
+      "inventory_reports": [
+        "AGENT-RESOURCE-JOURNEYS.md",
+        "NATIVE-RESOURCE-JOURNEYS.md",
+        "STATE-MAP-FINAL.md",
+        "SOURCE-VERSION-ACCEPTANCE.md"
+      ],
+      "state_evidence_map": [
+        {
+          "state": "图片",
+          "evidence": [
+            {
+              "id": "05-agent/agent-resource-journey-image-loaded",
+              "image": "05-agent/agent-resource-journey-image-loaded/default.png",
+              "observed_route": "/media-viewer",
+              "trigger": "Retry decodes actual local PNG bytes through ProductAssetRepository",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "PDF 多页与缩放",
+          "evidence": [
+            {
+              "id": "00-overview/reused-state-evidence/pdf-loaded",
+              "image": "00-overview/reused-state-evidence/pdf-loaded/default.png",
+              "trigger": "Local PDFium rendered document: first page / next page / zoom",
+              "extent": "full-viewport; paginated document canvas"
+            },
+            {
+              "id": "00-overview/reused-state-evidence/pdf-page-2",
+              "image": "00-overview/reused-state-evidence/pdf-page-2/default.png",
+              "trigger": "Local PDFium rendered document: first page / next page / zoom",
+              "extent": "full-viewport; paginated document canvas"
+            },
+            {
+              "id": "00-overview/reused-state-evidence/pdf-zoomed",
+              "image": "00-overview/reused-state-evidence/pdf-zoomed/default.png",
+              "trigger": "Local PDFium rendered document: first page / next page / zoom",
+              "extent": "full-viewport; paginated document canvas"
+            },
+            {
+              "id": "11-media/native-resource-pdf-first",
+              "image": "11-media/native-resource-pdf-first/default.png",
+              "observed_route": "/media-viewer",
+              "trigger": "Tap PDF action → native PDFium displays first of two pages",
+              "extent": "full-native-measured-scroll-stitch"
+            },
+            {
+              "id": "11-media/native-resource-pdf-next",
+              "image": "11-media/native-resource-pdf-next/default.png",
+              "observed_route": "/media-viewer",
+              "trigger": "Tap next page → page two",
+              "extent": "full-native-measured-scroll-stitch"
+            },
+            {
+              "id": "11-media/native-resource-pdf-zoom",
+              "image": "11-media/native-resource-pdf-zoom/default.png",
+              "observed_route": "/media-viewer",
+              "trigger": "Zoom PDF → actual rendered zoom and complete document",
+              "extent": "full-native-measured-scroll-stitch"
+            }
+          ],
+          "acceptance": "Current PDF controls rendered in PDFium tests; native earlier-version document/gesture evidence retained separately."
+        },
+        {
+          "state": "视频",
+          "evidence": [
+            {
+              "id": "05-agent/agent-resource-journey-video-playing",
+              "image": "05-agent/agent-resource-journey-video-playing/default.png",
+              "observed_route": "/media-viewer",
+              "trigger": "Tap play → controller playing state",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "加载",
+          "evidence": [
+            {
+              "id": "05-agent/agent-resource-journey-image-loading",
+              "image": "05-agent/agent-resource-journey-image-loading/default.png",
+              "observed_route": "/media-viewer",
+              "trigger": "Tap stable image asset action → actual viewer waiting for authenticated bytes",
+              "extent": "viewport"
+            },
+            {
+              "id": "05-agent/agent-resource-journey-pdf-loading",
+              "image": "05-agent/agent-resource-journey-pdf-loading/default.png",
+              "observed_route": "/media-viewer",
+              "trigger": "Tap stable PDF action → viewer requests authenticated PDF",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "解码与网络错误",
+          "evidence": [
+            {
+              "id": "05-agent/agent-resource-journey-image-error",
+              "image": "05-agent/agent-resource-journey-image-error/default.png",
+              "observed_route": "/media-viewer",
+              "trigger": "Image HTTP 503 → retry state in actual viewer",
+              "extent": "viewport"
+            },
+            {
+              "id": "05-agent/agent-resource-journey-video-runtime-error",
+              "image": "05-agent/agent-resource-journey-video-runtime-error/default.png",
+              "observed_route": "/media-viewer",
+              "trigger": "Platform playback error → retry state; failed controller disposed",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "资源缺失",
+          "evidence": [
+            {
+              "id": "11-media/media-unavailable-missing",
+              "image": "11-media/media-unavailable-missing/default.png",
+              "observed_route": null,
+              "trigger": "media missing unavailable and return 390.0 / 1.0",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        }
+      ]
+    },
+    {
+      "id": "video-fullscreen",
+      "name": "视频全屏",
+      "routes": [],
+      "widget": "_ProductAssetVideoFullscreenPage",
+      "source": "lib/features/media/presentation/product_asset_video_player.dart",
+      "states": [
+        "播放",
+        "暂停",
+        "进度",
+        "控件显示与隐藏",
+        "返回"
+      ],
+      "entry": "媒体视频 → 全屏",
+      "scope": "navigator",
+      "inventory_reports": [
+        "AGENT-RESOURCE-JOURNEYS.md",
+        "NATIVE-RESOURCE-JOURNEYS.md",
+        "STATE-MAP-FINAL.md"
+      ],
+      "state_evidence_map": [
+        {
+          "state": "播放",
+          "evidence": [
+            {
+              "id": "11-media/media-fullscreen-playing",
+              "image": "11-media/media-fullscreen-playing/default.png",
+              "observed_route": null,
+              "trigger": "video long duration, controls and fullscreen 390.0 / 1.0",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "暂停",
+          "evidence": [
+            {
+              "id": "11-media/media-fullscreen",
+              "image": "11-media/media-fullscreen/default.png",
+              "observed_route": null,
+              "trigger": "video long duration, controls and fullscreen 390.0 / 1.0",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "进度",
+          "evidence": [
+            {
+              "id": "11-media/media-fullscreen",
+              "image": "11-media/media-fullscreen/default.png",
+              "observed_route": null,
+              "trigger": "video long duration, controls and fullscreen 390.0 / 1.0",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "控件显示与隐藏",
+          "evidence": [
+            {
+              "id": "11-media/media-fullscreen",
+              "image": "11-media/media-fullscreen/default.png",
+              "observed_route": null,
+              "trigger": "video long duration, controls and fullscreen 390.0 / 1.0",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "SUPPORTED_STATE_BOUNDARY: 控件在正常播放/暂停时常驻；当前没有自动隐藏或点击隐藏的实现，不制造隐藏态截图。"
+        },
+        {
+          "state": "返回",
+          "evidence": [
+            {
+              "id": "11-media/native-resource-video-inline",
+              "image": "11-media/native-resource-video-inline/default.png",
+              "observed_route": "/media-viewer",
+              "trigger": "Exit immersive player retains paused position",
+              "extent": "native-viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        }
+      ]
+    },
+    {
+      "id": "invite",
+      "name": "邀请登录",
+      "routes": [
+        "/login"
+      ],
+      "widget": "MomCozyInviteAuthPage",
+      "source": "lib/features/auth/presentation/invite_auth_page.dart",
+      "states": [
+        "输入",
+        "校验",
+        "提交",
+        "错误"
+      ],
+      "entry": "internalInviteOnly 配置",
+      "scope": "configured",
+      "review_note": "CONFIGURED-PAGES-CURRENT.md：配置条件和当前代表图已核对；默认入口不计缺失，历史其它状态版本见 G11。 当前提交中、上传中和生成交接弹窗见 [具名缺图报告](../CONFIGURED-SUBMISSION-CURRENT.md)；失败反馈与最终状态对应仍待收尾。 [具名失败反馈已核对](../CONFIGURED-ERRORS-CURRENT.md)，最终全状态映射另行验收。",
+      "coverage_review": {
+        "report": "CONFIGURED-PAGES-CURRENT.md",
+        "status": "CONFIGURED_REPRESENTATIVE_IMAGES_AND_CAPABILITY_GATE_VERIFIED; HISTORICAL_STATES_PENDING_G11",
+        "source_hashes": {
+          "lib/features/auth/presentation/auth_login_chrome.dart": "3808b5484b0cda026e8007c5ce940027bc672e1185ba2fc4ac354d3d385ab7bb",
+          "lib/features/auth/presentation/auth_page.dart": "77bf0ab04f1599f353bbb66c4a3dab2fe826d5e5e04f7f1b106f0b73ec07475f",
+          "lib/features/auth/presentation/invite_auth_page.dart": "51b02cb9d3c973aa931abbeb7e9ec3352476b889db496b7cd583ef757732c51b",
+          "lib/features/onboarding/presentation/avatar_task_banner.dart": "38ba39c2419ef2b34c8c0993862106d2c19d77c18a474cf8a8fd374fea77946e",
+          "lib/features/onboarding/presentation/onboarding_page.dart": "2d5ec507c926086540c9bbdc770e3aa68c319dbe3357a7b57d7a0ff1a28487dc",
+          "lib/shared/widgets/mom_companion_widgets.dart": "93c5cc4e022ac56ee5ca31dc5208f6c3a8df03d08e39ace0d761b101e04571ab",
+          "lib/shared/widgets/mom_settings_widgets.dart": "271b022cb619641d956e92a5600e5f5585d2a5b469446132d53d402987403025",
+          "lib/shared/widgets/momcozy_components.dart": "5477eff325acaa95e4ac6036fe3aedda03d15104b49b6ba772e586fe8ffb1157",
+          "test/features/auth/auth_design_test.dart": "21a46fbbab3b280eac940b685659cace8021dea887b0aa0472297d424d39a4ca",
+          "test/features/onboarding/onboarding_design_test.dart": "7433288e6092533856f303b01adf2c41d2f0ef08fee05b6fd19e34040447670e"
+        }
+      },
+      "inventory_reports": [
+        "CONFIGURED-PAGES-CURRENT.md",
+        "CONFIGURED-SUBMISSION-CURRENT.md",
+        "CONFIGURED-ERRORS-CURRENT.md"
+      ],
+      "state_evidence_map": [
+        {
+          "state": "输入",
+          "evidence": [
+            {
+              "id": "01-auth/auth-invite",
+              "image": "01-auth/auth-invite/default.png",
+              "observed_route": null,
+              "trigger": "invite entry with short keyboard viewport at 390.0 / 1.0",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "校验",
+          "evidence": [
+            {
+              "id": "01-auth/auth-invite-validation",
+              "image": "01-auth/auth-invite-validation/default.png",
+              "observed_route": null,
+              "trigger": "invite entry with short keyboard viewport at 390.0 / 1.0",
+              "extent": "full-measured-scroll-stitch"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "提交",
+          "evidence": [
+            {
+              "id": "01-auth/auth-invite-submit-pending",
+              "image": "01-auth/auth-invite-submit-pending/default.png",
+              "observed_route": "/login",
+              "trigger": "Configured invitation login → enter code → submit; response pending",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "错误",
+          "evidence": [
+            {
+              "id": "01-auth/auth-invite-device-error",
+              "image": "01-auth/auth-invite-device-error/default.png",
+              "observed_route": "/login",
+              "trigger": "Invite submit rejected → code retained and device message displayed",
+              "extent": "viewport"
+            },
+            {
+              "id": "01-auth/auth-invite-storage-error",
+              "image": "01-auth/auth-invite-storage-error/default.png",
+              "observed_route": "/login",
+              "trigger": "Retry accepted by server → local session save fails; remains logged out",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        }
+      ]
+    },
+    {
+      "id": "onboarding",
+      "name": "首次使用资料",
+      "routes": [
+        "/onboarding"
+      ],
+      "widget": "OnboardingPage",
+      "source": "lib/features/onboarding/presentation/onboarding_page.dart",
+      "states": [
+        "加载",
+        "错误",
+        "基本资料",
+        "分娩资料",
+        "宝宝资料",
+        "校验与保存"
+      ],
+      "entry": "开启 onboarding 后按引导进入",
+      "scope": "configured",
+      "review_note": "CONFIGURED-PAGES-CURRENT.md：配置条件和当前代表图已核对；默认入口不计缺失，历史其它状态版本见 G11。",
+      "coverage_review": {
+        "report": "CONFIGURED-PAGES-CURRENT.md",
+        "status": "CONFIGURED_REPRESENTATIVE_IMAGES_AND_CAPABILITY_GATE_VERIFIED; HISTORICAL_STATES_PENDING_G11",
+        "source_hashes": {
+          "lib/features/auth/presentation/auth_login_chrome.dart": "3808b5484b0cda026e8007c5ce940027bc672e1185ba2fc4ac354d3d385ab7bb",
+          "lib/features/auth/presentation/auth_page.dart": "77bf0ab04f1599f353bbb66c4a3dab2fe826d5e5e04f7f1b106f0b73ec07475f",
+          "lib/features/auth/presentation/invite_auth_page.dart": "51b02cb9d3c973aa931abbeb7e9ec3352476b889db496b7cd583ef757732c51b",
+          "lib/features/onboarding/presentation/avatar_task_banner.dart": "38ba39c2419ef2b34c8c0993862106d2c19d77c18a474cf8a8fd374fea77946e",
+          "lib/features/onboarding/presentation/onboarding_page.dart": "2d5ec507c926086540c9bbdc770e3aa68c319dbe3357a7b57d7a0ff1a28487dc",
+          "lib/shared/widgets/mom_companion_widgets.dart": "93c5cc4e022ac56ee5ca31dc5208f6c3a8df03d08e39ace0d761b101e04571ab",
+          "lib/shared/widgets/mom_settings_widgets.dart": "271b022cb619641d956e92a5600e5f5585d2a5b469446132d53d402987403025",
+          "lib/shared/widgets/momcozy_components.dart": "5477eff325acaa95e4ac6036fe3aedda03d15104b49b6ba772e586fe8ffb1157",
+          "test/features/auth/auth_design_test.dart": "21a46fbbab3b280eac940b685659cace8021dea887b0aa0472297d424d39a4ca",
+          "test/features/onboarding/onboarding_design_test.dart": "7433288e6092533856f303b01adf2c41d2f0ef08fee05b6fd19e34040447670e"
+        }
+      },
+      "inventory_reports": [
+        "CONFIGURED-PAGES-CURRENT.md"
+      ],
+      "state_evidence_map": [
+        {
+          "state": "加载",
+          "evidence": [
+            {
+              "id": "01-auth/onboarding-loading",
+              "image": "01-auth/onboarding-loading/default.png",
+              "observed_route": null,
+              "trigger": "onboarding load failure retries at 390.0 / 1.0",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "错误",
+          "evidence": [
+            {
+              "id": "01-auth/onboarding-load-error",
+              "image": "01-auth/onboarding-load-error/default.png",
+              "observed_route": null,
+              "trigger": "onboarding load failure retries at 390.0 / 1.0",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "基本资料",
+          "evidence": [
+            {
+              "id": "01-auth/onboarding-basics",
+              "image": "01-auth/onboarding-basics/default.png",
+              "observed_route": null,
+              "trigger": "onboarding profile forms at 390.0 / 1.0",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "分娩资料",
+          "evidence": [
+            {
+              "id": "01-auth/onboarding-delivery",
+              "image": "01-auth/onboarding-delivery/default.png",
+              "observed_route": null,
+              "trigger": "onboarding profile forms at 390.0 / 1.0",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "宝宝资料",
+          "evidence": [
+            {
+              "id": "01-auth/onboarding-birth",
+              "image": "01-auth/onboarding-birth/default.png",
+              "observed_route": null,
+              "trigger": "onboarding profile forms at 390.0 / 1.0",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "校验与保存",
+          "evidence": [
+            {
+              "id": "01-auth/onboarding-birth-error",
+              "image": "01-auth/onboarding-birth-error/default.png",
+              "observed_route": null,
+              "trigger": "onboarding profile forms at 390.0 / 1.0",
+              "extent": "viewport"
+            },
+            {
+              "id": "01-auth/onboarding-short-busy",
+              "image": "01-auth/onboarding-short-busy/default.png",
+              "observed_route": null,
+              "trigger": "profile short viewport keeps save pending and recovers draft",
+              "extent": "full-measured-scroll-stitch"
+            },
+            {
+              "id": "01-auth/onboarding-short-error",
+              "image": "01-auth/onboarding-short-error/default.png",
+              "observed_route": null,
+              "trigger": "profile short viewport keeps save pending and recovers draft",
+              "extent": "full-measured-scroll-stitch"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        }
+      ]
+    },
+    {
+      "id": "avatar-create",
+      "name": "数字形象创建",
+      "routes": [
+        "/avatar/create"
+      ],
+      "widget": "OnboardingPage",
+      "source": "lib/features/onboarding/presentation/onboarding_page.dart",
+      "states": [
+        "默认选择",
+        "照片",
+        "上传",
+        "生成中",
+        "失败",
+        "重试"
+      ],
+      "entry": "开启 onboarding 后按引导进入",
+      "scope": "configured",
+      "review_note": "CONFIGURED-PAGES-CURRENT.md：配置条件和当前代表图已核对；默认入口不计缺失，历史其它状态版本见 G11。 当前提交中、上传中和生成交接弹窗见 [具名缺图报告](../CONFIGURED-SUBMISSION-CURRENT.md)；失败反馈与最终状态对应仍待收尾。 [具名失败反馈已核对](../CONFIGURED-ERRORS-CURRENT.md)，最终全状态映射另行验收。",
+      "coverage_review": {
+        "report": "CONFIGURED-PAGES-CURRENT.md",
+        "status": "CONFIGURED_REPRESENTATIVE_IMAGES_AND_CAPABILITY_GATE_VERIFIED; HISTORICAL_STATES_PENDING_G11",
+        "source_hashes": {
+          "lib/features/auth/presentation/auth_login_chrome.dart": "3808b5484b0cda026e8007c5ce940027bc672e1185ba2fc4ac354d3d385ab7bb",
+          "lib/features/auth/presentation/auth_page.dart": "77bf0ab04f1599f353bbb66c4a3dab2fe826d5e5e04f7f1b106f0b73ec07475f",
+          "lib/features/auth/presentation/invite_auth_page.dart": "51b02cb9d3c973aa931abbeb7e9ec3352476b889db496b7cd583ef757732c51b",
+          "lib/features/onboarding/presentation/avatar_task_banner.dart": "38ba39c2419ef2b34c8c0993862106d2c19d77c18a474cf8a8fd374fea77946e",
+          "lib/features/onboarding/presentation/onboarding_page.dart": "2d5ec507c926086540c9bbdc770e3aa68c319dbe3357a7b57d7a0ff1a28487dc",
+          "lib/shared/widgets/mom_companion_widgets.dart": "93c5cc4e022ac56ee5ca31dc5208f6c3a8df03d08e39ace0d761b101e04571ab",
+          "lib/shared/widgets/mom_settings_widgets.dart": "271b022cb619641d956e92a5600e5f5585d2a5b469446132d53d402987403025",
+          "lib/shared/widgets/momcozy_components.dart": "5477eff325acaa95e4ac6036fe3aedda03d15104b49b6ba772e586fe8ffb1157",
+          "test/features/auth/auth_design_test.dart": "21a46fbbab3b280eac940b685659cace8021dea887b0aa0472297d424d39a4ca",
+          "test/features/onboarding/onboarding_design_test.dart": "7433288e6092533856f303b01adf2c41d2f0ef08fee05b6fd19e34040447670e"
+        }
+      },
+      "inventory_reports": [
+        "CONFIGURED-PAGES-CURRENT.md",
+        "CONFIGURED-SUBMISSION-CURRENT.md",
+        "CONFIGURED-ERRORS-CURRENT.md"
+      ],
+      "state_evidence_map": [
+        {
+          "state": "默认选择",
+          "evidence": [
+            {
+              "id": "01-auth/onboarding-required",
+              "image": "01-auth/onboarding-required/default.png",
+              "observed_route": null,
+              "trigger": "onboarding avatar required at 390.0 / 1.0",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "照片",
+          "evidence": [
+            {
+              "id": "01-auth/onboarding-required-source",
+              "image": "01-auth/onboarding-required-source/default.png",
+              "observed_route": null,
+              "trigger": "onboarding avatar required at 390.0 / 1.0",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "上传",
+          "evidence": [
+            {
+              "id": "01-auth/onboarding-upload-pending",
+              "image": "01-auth/onboarding-upload-pending/default.png",
+              "observed_route": "/onboarding",
+              "trigger": "Configured onboarding → Upload a photo → Choose from library → upload pending",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "生成中",
+          "evidence": [
+            {
+              "id": "01-auth/onboarding-generating",
+              "image": "01-auth/onboarding-generating/default.png",
+              "observed_route": null,
+              "trigger": "onboarding avatar generating at 390.0 / 1.0",
+              "extent": "viewport"
+            },
+            {
+              "id": "01-auth/onboarding-generation-handoff",
+              "image": "01-auth/onboarding-generation-handoff/default.png",
+              "observed_route": "/onboarding",
+              "trigger": "Portrait accepted and generation queued → handoff dialog",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "失败",
+          "evidence": [
+            {
+              "id": "01-auth/onboarding-photo-error",
+              "image": "01-auth/onboarding-photo-error/default.png",
+              "observed_route": null,
+              "trigger": "avatar photo failure and default confirmation at 390.0 / 1.0",
+              "extent": "viewport"
+            },
+            {
+              "id": "01-auth/onboarding-request-error",
+              "image": "01-auth/onboarding-request-error/default.png",
+              "observed_route": "/onboarding",
+              "trigger": "Default-avatar confirmation also fails → same inline error and available retry/default buttons; shared with upload failure",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "重试",
+          "evidence": [
+            {
+              "id": "01-auth/onboarding-generation-handoff",
+              "image": "01-auth/onboarding-generation-handoff/default.png",
+              "observed_route": "/onboarding",
+              "trigger": "Portrait accepted and generation queued → handoff dialog",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        }
+      ]
+    },
+    {
+      "id": "avatar-review",
+      "name": "数字形象确认",
+      "routes": [
+        "/avatar/review"
+      ],
+      "widget": "OnboardingPage",
+      "source": "lib/features/onboarding/presentation/onboarding_page.dart",
+      "states": [
+        "候选选择",
+        "默认确认",
+        "激活中",
+        "失败",
+        "完成"
+      ],
+      "entry": "开启 onboarding 后按引导进入",
+      "scope": "configured",
+      "review_note": "CONFIGURED-PAGES-CURRENT.md：配置条件和当前代表图已核对；默认入口不计缺失，历史其它状态版本见 G11。",
+      "coverage_review": {
+        "report": "CONFIGURED-PAGES-CURRENT.md",
+        "status": "CONFIGURED_REPRESENTATIVE_IMAGES_AND_CAPABILITY_GATE_VERIFIED; HISTORICAL_STATES_PENDING_G11",
+        "source_hashes": {
+          "lib/features/auth/presentation/auth_login_chrome.dart": "3808b5484b0cda026e8007c5ce940027bc672e1185ba2fc4ac354d3d385ab7bb",
+          "lib/features/auth/presentation/auth_page.dart": "77bf0ab04f1599f353bbb66c4a3dab2fe826d5e5e04f7f1b106f0b73ec07475f",
+          "lib/features/auth/presentation/invite_auth_page.dart": "51b02cb9d3c973aa931abbeb7e9ec3352476b889db496b7cd583ef757732c51b",
+          "lib/features/onboarding/presentation/avatar_task_banner.dart": "38ba39c2419ef2b34c8c0993862106d2c19d77c18a474cf8a8fd374fea77946e",
+          "lib/features/onboarding/presentation/onboarding_page.dart": "2d5ec507c926086540c9bbdc770e3aa68c319dbe3357a7b57d7a0ff1a28487dc",
+          "lib/shared/widgets/mom_companion_widgets.dart": "93c5cc4e022ac56ee5ca31dc5208f6c3a8df03d08e39ace0d761b101e04571ab",
+          "lib/shared/widgets/mom_settings_widgets.dart": "271b022cb619641d956e92a5600e5f5585d2a5b469446132d53d402987403025",
+          "lib/shared/widgets/momcozy_components.dart": "5477eff325acaa95e4ac6036fe3aedda03d15104b49b6ba772e586fe8ffb1157",
+          "test/features/auth/auth_design_test.dart": "21a46fbbab3b280eac940b685659cace8021dea887b0aa0472297d424d39a4ca",
+          "test/features/onboarding/onboarding_design_test.dart": "7433288e6092533856f303b01adf2c41d2f0ef08fee05b6fd19e34040447670e"
+        }
+      },
+      "inventory_reports": [
+        "CONFIGURED-PAGES-CURRENT.md",
+        "CONFIGURED-SUBMISSION-CURRENT.md"
+      ],
+      "state_evidence_map": [
+        {
+          "state": "候选选择",
+          "evidence": [
+            {
+              "id": "01-auth/onboarding-review-selected",
+              "image": "01-auth/onboarding-review-selected/default.png",
+              "observed_route": null,
+              "trigger": "onboarding avatar review at 390.0 / 1.0",
+              "extent": "full-measured-scroll-stitch"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "默认确认",
+          "evidence": [
+            {
+              "id": "01-auth/onboarding-default-confirm",
+              "image": "01-auth/onboarding-default-confirm/default.png",
+              "observed_route": null,
+              "trigger": "avatar photo failure and default confirmation at 390.0 / 1.0",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "激活中",
+          "evidence": [
+            {
+              "id": "01-auth/onboarding-avatar-short-confirm-busy",
+              "image": "01-auth/onboarding-avatar-short-confirm-busy/default.png",
+              "observed_route": null,
+              "trigger": "avatar short screen retries thumbnail and locks confirmation",
+              "extent": "full-measured-scroll-stitch"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "失败",
+          "evidence": [
+            {
+              "id": "01-auth/onboarding-avatar-short-confirm-error",
+              "image": "01-auth/onboarding-avatar-short-confirm-error/default.png",
+              "observed_route": null,
+              "trigger": "avatar short screen retries thumbnail and locks confirmation",
+              "extent": "full-measured-scroll-stitch"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "完成",
+          "evidence": [
+            {
+              "id": "01-auth/onboarding-reading-activation",
+              "image": "01-auth/onboarding-reading-activation/default.png",
+              "observed_route": null,
+              "trigger": "onboarding reading 390.0/1.0",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        }
+      ]
+    },
+    {
+      "id": "not-found",
+      "name": "无效路由提示",
+      "routes": [],
+      "widget": "MomCozyNotFoundPage",
+      "source": "lib/app/momcozy_app.dart",
+      "states": [
+        "未找到页面",
+        "返回"
+      ],
+      "entry": "无效深链 / errorBuilder",
+      "scope": "fallback",
+      "inventory_reports": [
+        "ENTRY-STATUS.md"
+      ],
+      "state_evidence_map": [
+        {
+          "state": "未找到页面",
+          "evidence": [
+            {
+              "id": "10-global-modals/not-found",
+              "image": "10-global-modals/not-found/default.png",
+              "observed_route": null,
+              "trigger": "unknown route shows a recoverable page at 390.0/1.0",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        },
+        {
+          "state": "返回",
+          "evidence": [
+            {
+              "id": "10-global-modals/not-found",
+              "image": "10-global-modals/not-found/default.png",
+              "observed_route": null,
+              "trigger": "unknown route shows a recoverable page at 390.0/1.0",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained"
+        }
+      ]
+    },
+    {
+      "id": "motion",
+      "name": "动作评估",
+      "routes": [],
+      "widget": "MotionAssessmentPage",
+      "source": "lib/features/motion_assessment/presentation/motion_assessment_page.dart",
+      "states": [
+        "预览",
+        "评估",
+        "结果"
+      ],
+      "entry": "Agent 动作卡当前目的路由未注册",
+      "scope": "unreachable",
+      "inventory_reports": [
+        "ENTRY-STATUS.md",
+        "STATE-MAP-FINAL.md"
+      ],
+      "state_evidence_map": [
+        {
+          "state": "预览",
+          "evidence": [
+            {
+              "id": "09-motion/motion-guide",
+              "image": "09-motion/motion-guide/default.png",
+              "observed_route": null,
+              "trigger": "motion responsive failure retry and exit 390.0 / 1.0",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "NO_NORMAL_USER_ENTRY: code documented in ENTRY-STATUS.md; not a required reachable capture"
+        },
+        {
+          "state": "评估",
+          "evidence": [],
+          "acceptance": "NO_NORMAL_USER_ENTRY: code documented in ENTRY-STATUS.md; not a required reachable capture"
+        },
+        {
+          "state": "结果",
+          "evidence": [
+            {
+              "id": "09-motion/motion-failure",
+              "image": "09-motion/motion-failure/default.png",
+              "observed_route": null,
+              "trigger": "motion responsive failure retry and exit 390.0 / 1.0",
+              "extent": "viewport"
+            }
+          ],
+          "acceptance": "NO_NORMAL_USER_ENTRY: code documented in ENTRY-STATUS.md; not a required reachable capture"
+        }
+      ]
+    }
+  ],
+  "overlays": [
+    {
+      "id": "mom-diary-editor",
+      "name": "妈妈记录弹窗",
+      "owners": [
+        "mom-home",
+        "mom-diary"
+      ],
+      "widgets": [
+        "MotherDiaryEditor"
+      ],
+      "source": "lib/modules/mom/presentation/mother_diary_editor.dart",
+      "states": [
+        "身体",
+        "休息",
+        "心情",
+        "编辑",
+        "校验",
+        "保存",
+        "放弃"
+      ],
+      "entry": "今日状态卡／快捷心情"
+    },
+    {
+      "id": "lactation-editor",
+      "name": "泌乳记录弹窗",
+      "owners": [
+        "mom-home",
+        "mom-lactation"
+      ],
+      "widgets": [
+        "_LactationFields"
+      ],
+      "source": "lib/modules/mom/presentation/lactation_panel.dart",
+      "states": [
+        "新增",
+        "编辑",
+        "左右侧",
+        "泵奶与亲喂",
+        "校验",
+        "保存错误"
+      ],
+      "entry": "记录一次泌乳／编辑"
+    },
+    {
+      "id": "baby-profile",
+      "name": "宝宝资料弹窗",
+      "owners": [
+        "baby-home"
+      ],
+      "widgets": [
+        "BabyProfileEditor"
+      ],
+      "source": "lib/modules/baby/presentation/baby_profile_editor.dart",
+      "states": [
+        "新增",
+        "编辑",
+        "校验",
+        "保存",
+        "关闭确认"
+      ],
+      "entry": "添加宝宝／编辑资料"
+    },
+    {
+      "id": "baby-record",
+      "name": "宝宝记录弹窗",
+      "owners": [
+        "baby-home",
+        "baby-records"
+      ],
+      "widgets": [
+        "BabyRecordEditor"
+      ],
+      "source": "lib/modules/baby/presentation/baby_record_editor.dart",
+      "states": [
+        "喂养",
+        "睡眠",
+        "尿布",
+        "生长",
+        "发育",
+        "编辑",
+        "校验",
+        "保存"
+      ],
+      "entry": "对应记录按钮／历史编辑"
+    },
+    {
+      "id": "baby-saved",
+      "name": "宝宝保存反馈",
+      "owners": [
+        "baby-home",
+        "baby-records"
+      ],
+      "widgets": [
+        "BabySavedFeedbackView"
+      ],
+      "source": "lib/modules/baby/presentation/baby_saved_feedback.dart",
+      "states": [
+        "保存成功",
+        "后续记录"
+      ],
+      "entry": "记录保存成功"
+    },
+    {
+      "id": "baby-switcher",
+      "name": "宝宝切换",
+      "owners": [
+        "baby-home"
+      ],
+      "widgets": [],
+      "source": "lib/modules/baby/presentation/baby_home_page.dart",
+      "states": [
+        "列表",
+        "当前选择",
+        "取消"
+      ],
+      "entry": "首页宝宝名称"
+    },
+    {
+      "id": "knowledge",
+      "name": "知识来源与说明",
+      "owners": [
+        "mom-home",
+        "baby-home"
+      ],
+      "widgets": [
+        "KnowledgeBanner"
+      ],
+      "source": "lib/shared/widgets/knowledge_banner.dart",
+      "states": [
+        "来源说明",
+        "关闭"
+      ],
+      "entry": "知识卡来源入口；当前妈妈首页已移除旧知识卡"
+    },
+    {
+      "id": "agent-history",
+      "name": "对话历史抽屉",
+      "owners": [
+        "agent-home"
+      ],
+      "widgets": [
+        "_AgentConversationPanel"
+      ],
+      "source": "lib/features/agent_hub/presentation/agent_conversation_panel.dart",
+      "states": [
+        "列表／当前会话",
+        "空",
+        "加载",
+        "加载错误",
+        "回复锁定",
+        "切换中",
+        "切换失败",
+        "关闭"
+      ],
+      "entry": "全局历史能力开启，或从通知进入带 conversationId 的会话 → 历史按钮"
+    },
+    {
+      "id": "agent-menu",
+      "name": "消息操作菜单",
+      "owners": [
+        "agent-home"
+      ],
+      "widgets": [
+        "AgentMessageMenu"
+      ],
+      "source": "lib/features/agent_hub/presentation/agent_message_menu.dart",
+      "states": [
+        "操作项",
+        "复制反馈"
+      ],
+      "entry": "长按消息"
+    },
+    {
+      "id": "agent-form",
+      "name": "Agent 结构化表单",
+      "owners": [
+        "agent-home"
+      ],
+      "widgets": [
+        "AgentArtifactFormDialog"
+      ],
+      "source": "lib/features/agent_hub/artifacts/forms/agent_artifact_form_dialog.dart",
+      "states": [
+        "各表单 schema",
+        "校验",
+        "提交",
+        "失败"
+      ],
+      "entry": "结构化卡 → 填写"
+    },
+    {
+      "id": "agent-image",
+      "name": "对话图片预览",
+      "owners": [
+        "agent-home"
+      ],
+      "widgets": [
+        "_AgentFullScreenImage"
+      ],
+      "source": "lib/features/agent_hub/presentation/agent_image_previews.dart",
+      "states": [
+        "加载",
+        "图片",
+        "失败",
+        "关闭"
+      ],
+      "entry": "已发送或草稿图片"
+    },
+    {
+      "id": "schedule-editor",
+      "name": "个人日程表单",
+      "owners": [
+        "schedule"
+      ],
+      "widgets": [
+        "PersonalScheduleEditor"
+      ],
+      "source": "lib/modules/schedule/presentation/personal_schedule_editor.dart",
+      "states": [
+        "新增",
+        "编辑",
+        "时间",
+        "校验",
+        "保存",
+        "错误"
+      ],
+      "entry": "添加／编辑日程"
+    },
+    {
+      "id": "schedule-delete",
+      "name": "日程删除确认",
+      "owners": [
+        "schedule"
+      ],
+      "widgets": [
+        "PersonalScheduleDeleteDialog"
+      ],
+      "source": "lib/modules/schedule/presentation/personal_schedule_editor.dart",
+      "states": [
+        "确认",
+        "取消",
+        "等待",
+        "失败"
+      ],
+      "entry": "事项菜单 → 删除"
+    },
+    {
+      "id": "provider-team",
+      "name": "专家团队介绍",
+      "owners": [
+        "service-catalog",
+        "service-package"
+      ],
+      "widgets": [
+        "_MomProviderTeamDialog",
+        "_ProviderTeamDialog"
+      ],
+      "source": "lib/modules/services/presentation/mom_service_widgets.dart",
+      "states": [
+        "团队",
+        "空",
+        "关闭"
+      ],
+      "entry": "查看专家团队"
+    },
+    {
+      "id": "purchase",
+      "name": "购买服务流程",
+      "owners": [
+        "service-package",
+        "service-renew"
+      ],
+      "widgets": [
+        "ServicePurchaseDialog"
+      ],
+      "source": "lib/modules/services/presentation/service_purchase_dialog.dart",
+      "states": [
+        "资格",
+        "付款",
+        "校验",
+        "拒付",
+        "额外验证",
+        "待付",
+        "取消",
+        "成功",
+        "同步权益",
+        "错误"
+      ],
+      "entry": "购买／继续付款"
+    },
+    {
+      "id": "booking-precheck",
+      "name": "预约前确认",
+      "owners": [
+        "booking"
+      ],
+      "widgets": [
+        "BookingPrecheckDialog"
+      ],
+      "source": "lib/modules/services/presentation/booking_flow_dialogs.dart",
+      "states": [
+        "州选择",
+        "适用性",
+        "风险",
+        "等待",
+        "拒绝",
+        "重试"
+      ],
+      "entry": "预约入口／开始确认"
+    },
+    {
+      "id": "booking-review",
+      "name": "确认预约时间",
+      "owners": [
+        "booking"
+      ],
+      "widgets": [
+        "BookingSelectionDialog"
+      ],
+      "source": "lib/modules/services/presentation/booking_flow_dialogs.dart",
+      "states": [
+        "held",
+        "提醒草稿",
+        "过期",
+        "确认中",
+        "错误",
+        "已确认"
+      ],
+      "entry": "选时段／查看所选时间"
+    },
+    {
+      "id": "appointment-cancel",
+      "name": "取消预约",
+      "owners": [
+        "booking",
+        "appointment",
+        "consultation",
+        "mom-home"
+      ],
+      "widgets": [
+        "AppointmentCancelDialog"
+      ],
+      "source": "lib/modules/services/presentation/appointment_cancel_dialog.dart",
+      "states": [
+        "确认",
+        "保留",
+        "等待",
+        "未知",
+        "状态变化",
+        "恢复"
+      ],
+      "entry": "取消预约"
+    },
+    {
+      "id": "home-consultation",
+      "name": "首页预约浮层",
+      "owners": [
+        "mom-home"
+      ],
+      "widgets": [
+        "ConsultationRoomPage"
+      ],
+      "source": "lib/modules/consultation/presentation/home_consultation_dialog.dart",
+      "states": [
+        "准备",
+        "信息采集入口",
+        "取消",
+        "过期",
+        "错误"
+      ],
+      "entry": "首页 → 查看预约"
+    },
+    {
+      "id": "intake-consent",
+      "name": "信息使用说明",
+      "owners": [
+        "intake"
+      ],
+      "widgets": [
+        "ProductFlowDialog",
+        "MomSettingsFlowDialog"
+      ],
+      "source": "lib/modules/services/presentation/intake_page.dart",
+      "states": [
+        "说明",
+        "关闭"
+      ],
+      "entry": "信息使用 → 查看说明",
+      "required_text_any": [
+        "信息使用说明"
+      ]
+    },
+    {
+      "id": "intake-saved",
+      "name": "信息采集保存成功",
+      "owners": [
+        "intake"
+      ],
+      "widgets": [
+        "ProductFlowDialog",
+        "MomSettingsFlowDialog"
+      ],
+      "source": "lib/modules/services/presentation/intake_page.dart",
+      "states": [
+        "保存成功",
+        "预咨询",
+        "稍后"
+      ],
+      "entry": "保存信息采集表成功",
+      "required_text_any": [
+        "信息采集已完成"
+      ]
+    },
+    {
+      "id": "device-check",
+      "name": "咨询设备检查",
+      "owners": [
+        "consultation",
+        "mom-home"
+      ],
+      "widgets": [
+        "ConsultationDeviceCheckDialog"
+      ],
+      "source": "lib/modules/consultation/presentation/device_check_dialog.dart",
+      "states": [
+        "权限未授权",
+        "检查中",
+        "预览",
+        "错误",
+        "通过"
+      ],
+      "entry": "咨询准备 → 设备检查"
+    },
+    {
+      "id": "video-consent",
+      "name": "视频咨询授权",
+      "owners": [
+        "consultation",
+        "mom-home"
+      ],
+      "widgets": [
+        "ConsultationVideoConsentDialog"
+      ],
+      "source": "lib/modules/consultation/presentation/consultation_start_dialog.dart",
+      "states": [
+        "未勾选",
+        "勾选",
+        "同意",
+        "关闭"
+      ],
+      "entry": "准备进入视频咨询"
+    },
+    {
+      "id": "consultation-start",
+      "name": "进入咨询确认",
+      "owners": [
+        "consultation",
+        "mom-home"
+      ],
+      "widgets": [
+        "ConsultationStartDialog"
+      ],
+      "source": "lib/modules/consultation/presentation/consultation_start_dialog.dart",
+      "states": [
+        "准备",
+        "确认",
+        "等待",
+        "失败"
+      ],
+      "entry": "设备检查后进入"
+    },
+    {
+      "id": "consultation-leave",
+      "name": "暂时离开咨询",
+      "owners": [
+        "consultation"
+      ],
+      "widgets": [],
+      "source": "lib/modules/consultation/presentation/room_page.dart",
+      "states": [
+        "确认",
+        "留下",
+        "处理中",
+        "失败"
+      ],
+      "entry": "咨询中返回"
+    },
+    {
+      "id": "notification-education",
+      "name": "通知授权说明",
+      "owners": [
+        "notification-settings",
+        "booking",
+        "appointment"
+      ],
+      "widgets": [],
+      "source": "lib/features/notifications/presentation/notification_permission_dialogs.dart",
+      "states": [
+        "说明",
+        "暂不",
+        "继续",
+        "拒绝后去设置"
+      ],
+      "entry": "开启提醒"
+    },
+    {
+      "id": "auth-language",
+      "name": "登录语言选择",
+      "owners": [
+        "auth-login"
+      ],
+      "widgets": [],
+      "source": "lib/features/auth/presentation/auth_login_chrome.dart",
+      "states": [
+        "语言列表",
+        "选中",
+        "取消"
+      ],
+      "entry": "登录页语言按钮；源码改动需核对"
+    },
+    {
+      "id": "account-confirm",
+      "name": "账号敏感操作确认",
+      "owners": [
+        "account"
+      ],
+      "widgets": [],
+      "source": "lib/features/auth/presentation/account_page.dart",
+      "states": [
+        "密码确认",
+        "绑定 Google",
+        "删除账号",
+        "错误"
+      ],
+      "entry": "账号页对应操作"
+    },
+    {
+      "id": "date-time",
+      "name": "日期／时间选择器",
+      "owners": [
+        "shared"
+      ],
+      "widgets": [
+        "DatePickerDialog",
+        "TimePickerDialog",
+        "_LargeTimeInput"
+      ],
+      "source": "lib/shared/widgets/date_time_picker.dart",
+      "states": [
+        "日历",
+        "年份",
+        "输入",
+        "时钟",
+        "校验",
+        "取消",
+        "确认"
+      ],
+      "entry": "各表单日期时间字段，共享实现按上下文引用"
+    },
+    {
+      "id": "discard",
+      "name": "放弃修改确认",
+      "owners": [
+        "shared"
+      ],
+      "widgets": [],
+      "source": "lib/shared/widgets/confirm_discard.dart",
+      "states": [
+        "脏草稿",
+        "未知保存结果",
+        "留下",
+        "放弃"
+      ],
+      "entry": "修改表单后返回"
+    },
+    {
+      "id": "snackbar",
+      "name": "操作反馈条",
+      "owners": [
+        "shared"
+      ],
+      "widgets": [
+        "SnackBar"
+      ],
+      "source": "lib/shared/widgets/product_feedback.dart",
+      "states": [
+        "成功",
+        "错误",
+        "撤销",
+        "自动消失"
+      ],
+      "entry": "对应操作产生反馈；具体来源保留在证据"
+    },
+    {
+      "id": "tooltip",
+      "name": "控件提示",
+      "owners": [
+        "shared"
+      ],
+      "widgets": [
+        "Tooltip"
+      ],
+      "source": "lib/app/momcozy_app.dart",
+      "states": [
+        "出现",
+        "消失"
+      ],
+      "entry": "支持提示的图标长按；挂载 Tooltip 不等于提示已显示"
+    },
+    {
+      "id": "system",
+      "name": "原生系统浮层",
+      "owners": [
+        "shared"
+      ],
+      "widgets": [],
+      "source": "lib/native/p0_platform_interfaces.dart",
+      "states": [
+        "键盘",
+        "照片／文件选择",
+        "通知",
+        "相机",
+        "麦克风",
+        "系统设置"
+      ],
+      "entry": "App 操作触发系统 UI；原生证据独立核对"
+    },
+    {
+      "id": "avatar-dialogs",
+      "name": "数字形象选择与确认",
+      "owners": [
+        "onboarding",
+        "avatar-create",
+        "avatar-review"
+      ],
+      "widgets": [
+        "BottomSheet",
+        "MomSettingsFlowDialog"
+      ],
+      "source": "lib/features/onboarding/presentation/onboarding_page.dart",
+      "states": [
+        "照片来源",
+        "默认确认",
+        "生成交接（等待／进入 App）",
+        "生成完成",
+        "激活确认"
+      ],
+      "entry": "配置开启时的引导入口",
+      "required_text_any": [
+        "Choose a photo",
+        "Use the MomCozy character for now",
+        "Your digital companion is being created"
+      ]
+    },
+    {
+      "id": "summary-task-detail",
+      "name": "咨询行动详情",
+      "owners": [
+        "summary"
+      ],
+      "widgets": [
+        "MomSettingsFlowDialog"
+      ],
+      "required_text_any": [
+        "我的进度",
+        "方案已更新"
+      ],
+      "source": "lib/modules/services/presentation/consultation_summary_page.dart",
+      "states": [
+        "待完成",
+        "进行中",
+        "已完成",
+        "暂时跳过",
+        "更新中",
+        "结果不确定／重试",
+        "方案替换／重新载入",
+        "行动移除／关闭"
+      ],
+      "entry": "本次咨询总结 → 查看怎么做／后续行动卡"
+    }
+  ]
+}

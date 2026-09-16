@@ -1,0 +1,36 @@
+{
+  "entry": "Bottom navigation",
+  "trigger": "Baby",
+  "controls": [
+    {
+      "text": "Me",
+      "class": "android.widget.Button",
+      "bounds": "[24,2571][270,2766]",
+      "scrollable": "false"
+    },
+    {
+      "text": "Baby",
+      "class": "android.widget.Button",
+      "bounds": "[270,2571][517,2766]",
+      "scrollable": "false"
+    },
+    {
+      "text": "Cozymate",
+      "class": "android.widget.Button",
+      "bounds": "[517,2571][763,2766]",
+      "scrollable": "false"
+    },
+    {
+      "text": "Schedule",
+      "class": "android.widget.Button",
+      "bounds": "[763,2571][1010,2766]",
+      "scrollable": "false"
+    },
+    {
+      "text": "More",
+      "class": "android.widget.Button",
+      "bounds": "[1010,2571][1256,2766]",
+      "scrollable": "false"
+    }
+  ]
+}

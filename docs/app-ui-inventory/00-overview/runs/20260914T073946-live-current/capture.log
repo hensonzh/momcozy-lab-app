@@ -1,0 +1,6 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_inventory_journey_test.dart
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/modules/consultation/user_video_test.dart: user waiting media controls and leave 390.0 x 844.0 / 1.0
+00:00 +1: /Users/lute/project/momcozy-lab/app/test/modules/consultation/user_video_test.dart: user waiting media controls and leave 390.0 x 844.0 / 1.0
+00:01 +2: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_inventory_journey_test.dart: inventory consultation current live leave route
+00:02 +3: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_inventory_journey_test.dart: (tearDownAll)
+00:02 +3: All tests passed!

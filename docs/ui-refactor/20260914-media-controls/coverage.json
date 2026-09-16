@@ -1,0 +1,173 @@
+[
+  {
+    "id": "11-media/media-fullscreen",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "291:1438",
+      "291:1573"
+    ],
+    "note": "Video controls implemented and widget/platform-command verified. Existing native screenshot is a design input; no new native decoder or network verification in this stage."
+  },
+  {
+    "id": "11-media/media-video",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "291:1334",
+      "291:1495"
+    ],
+    "note": "Video controls implemented and widget/platform-command verified. Existing native screenshot is a design input; no new native decoder or network verification in this stage."
+  },
+  {
+    "id": "11-media/native-media-pdf-page-1",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "291:1086",
+      "291:1210"
+    ],
+    "note": "PDF toolbar verified with actual local PDFium rendering and page/zoom/gesture checks. Document content is not restyled."
+  },
+  {
+    "id": "11-media/native-media-pdf-page-2",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "291:1117",
+      "291:1241"
+    ],
+    "note": "PDF toolbar verified with actual local PDFium rendering and page/zoom/gesture checks. Document content is not restyled."
+  },
+  {
+    "id": "11-media/native-media-pdf-zoomed",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "291:1148",
+      "291:1272"
+    ],
+    "note": "PDF toolbar verified with actual local PDFium rendering and page/zoom/gesture checks. Document content is not restyled."
+  },
+  {
+    "id": "11-media/native-media-video-ready",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "291:1334",
+      "291:1495"
+    ],
+    "note": "Video controls implemented and widget/platform-command verified. Existing native screenshot is a design input; no new native decoder or network verification in this stage."
+  },
+  {
+    "id": "11-media/native-media-video-playing",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "291:1360",
+      "291:1521"
+    ],
+    "note": "Video controls implemented and widget/platform-command verified. Existing native screenshot is a design input; no new native decoder or network verification in this stage."
+  },
+  {
+    "id": "11-media/native-media-video",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "291:1412",
+      "291:1547"
+    ],
+    "note": "Video controls implemented and widget/platform-command verified. Existing native screenshot is a design input; no new native decoder or network verification in this stage."
+  },
+  {
+    "id": "11-media/native-media-video-fullscreen",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "291:1438",
+      "291:1573"
+    ],
+    "note": "Video controls implemented and widget/platform-command verified. Existing native screenshot is a design input; no new native decoder or network verification in this stage."
+  },
+  {
+    "id": "11-media/native-resource-pdf-first",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "291:1086",
+      "291:1210"
+    ],
+    "note": "PDF toolbar verified with actual local PDFium rendering and page/zoom/gesture checks. Document content is not restyled."
+  },
+  {
+    "id": "11-media/native-resource-pdf-next",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "291:1117",
+      "291:1241"
+    ],
+    "note": "PDF toolbar verified with actual local PDFium rendering and page/zoom/gesture checks. Document content is not restyled."
+  },
+  {
+    "id": "11-media/native-resource-pdf-zoom",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "291:1148",
+      "291:1272"
+    ],
+    "note": "PDF toolbar verified with actual local PDFium rendering and page/zoom/gesture checks. Document content is not restyled."
+  },
+  {
+    "id": "11-media/native-resource-pdf-reset",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "291:1086",
+      "291:1210"
+    ],
+    "note": "PDF toolbar verified with actual local PDFium rendering and page/zoom/gesture checks. Document content is not restyled."
+  },
+  {
+    "id": "11-media/native-resource-video-ready",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "291:1334",
+      "291:1495"
+    ],
+    "note": "Video controls implemented and widget/platform-command verified. Existing native screenshot is a design input; no new native decoder or network verification in this stage."
+  },
+  {
+    "id": "11-media/native-resource-video-playing",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "291:1360",
+      "291:1521"
+    ],
+    "note": "Video controls implemented and widget/platform-command verified. Existing native screenshot is a design input; no new native decoder or network verification in this stage."
+  },
+  {
+    "id": "11-media/native-resource-video-paused",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "291:1386",
+      "291:1495"
+    ],
+    "note": "Video controls implemented and widget/platform-command verified. Existing native screenshot is a design input; no new native decoder or network verification in this stage."
+  },
+  {
+    "id": "11-media/native-resource-video-seek-mute",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "291:1412",
+      "291:1547"
+    ],
+    "note": "Video controls implemented and widget/platform-command verified. Existing native screenshot is a design input; no new native decoder or network verification in this stage."
+  },
+  {
+    "id": "11-media/native-resource-video-fullscreen",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "291:1438",
+      "291:1573"
+    ],
+    "note": "Video controls implemented and widget/platform-command verified. Existing native screenshot is a design input; no new native decoder or network verification in this stage."
+  },
+  {
+    "id": "11-media/native-resource-video-inline",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "291:1334",
+      "291:1495"
+    ],
+    "note": "Video controls implemented and widget/platform-command verified. Existing native screenshot is a design input; no new native decoder or network verification in this stage."
+  }
+]

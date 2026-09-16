@@ -1,0 +1,13 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/modules/profile/privacy_inventory_journey_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: inventory privacy grant revoke confirm and notification roundtrip 393.0
+00:01 +1: inventory privacy service switch discards correctly 393.0
+00:01 +2: inventory privacy pending uncertain retry and partial save 393.0
+00:01 +3: inventory privacy grant revoke confirm and notification roundtrip 320.0
+00:02 +4: inventory privacy service switch discards correctly 320.0
+00:03 +5: inventory privacy pending uncertain retry and partial save 320.0
+00:03 +6: inventory privacy overview loading error and empty entry
+00:03 +7: inventory privacy consent read loading error retry and reread
+00:03 +8: inventory privacy conflict requires reloading before edit
+00:03 +9: (tearDownAll)
+00:03 +9: All tests passed!

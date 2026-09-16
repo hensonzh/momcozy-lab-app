@@ -732,7 +732,8 @@ class MomCozyRuntimeController extends ChangeNotifier {
     }
     final generation = _sessionGeneration;
     await _serializeSessionWrite(() async {
-      if (generation != _sessionGeneration || !_currentSession.isAuthenticated) {
+      if (generation != _sessionGeneration ||
+          !_currentSession.isAuthenticated) {
         return;
       }
       final next = _currentSession.copyWith(babyId: selectedBabyId);

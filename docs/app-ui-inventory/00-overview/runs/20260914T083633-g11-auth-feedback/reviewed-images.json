@@ -1,0 +1,219 @@
+[
+  {
+    "metadata": "raw/test/goldens/ui_inventory/auth-followup-register-pending-393-1x.png.json",
+    "image": "raw/test/goldens/ui_inventory/auth-followup-register-pending-393-1x.png",
+    "sha256": "f3f39c9ee964a781f0a7d34ffa55bc3530c8ba48e3c4b761f1a599137072c537",
+    "long": {
+      "status": "no-active-vertical-overflow"
+    },
+    "scenario": "auth registration and verification visible submit states",
+    "texts": [
+      "Momcozy",
+      "Create your account",
+      "A little support, made for you.",
+      "Email address",
+      "you@example.com",
+      "Set password",
+      "Enter your password",
+      "8–128 characters, including a letter and a number",
+      "Back to sign in",
+      "By continuing, you agree to our",
+      "Terms of Use",
+      "and",
+      "Privacy Policy."
+    ]
+  },
+  {
+    "metadata": "raw/test/goldens/ui_inventory/auth-followup-register-email-unavailable-393-1x.png.json",
+    "image": "raw/test/goldens/ui_inventory/auth-followup-register-email-unavailable-393-1x.png",
+    "sha256": "e260f0ea9fd7111fa913b66d806f84c469ca7514664ac4cdc7c1b82a135ef604",
+    "long": {
+      "status": "no-active-vertical-overflow"
+    },
+    "scenario": "auth registration and verification visible submit states",
+    "texts": [
+      "Momcozy",
+      "Create your account",
+      "A little support, made for you.",
+      "Email verification is temporarily unavailable. Please try again later.",
+      "Email address",
+      "you@example.com",
+      "Set password",
+      "Enter your password",
+      "8–128 characters, including a letter and a number",
+      "Create account",
+      "Back to sign in",
+      "By continuing, you agree to our",
+      "Terms of Use",
+      "and",
+      "Privacy Policy."
+    ]
+  },
+  {
+    "metadata": "raw/test/goldens/ui_inventory/auth-followup-verify-submit-pending-393-1x.png.json",
+    "image": "raw/test/goldens/ui_inventory/auth-followup-verify-submit-pending-393-1x.png",
+    "sha256": "a1edee0671cf8d0639a6062de6296c63adab7beff7bf6f19622135aa93841668",
+    "long": {
+      "status": "no-active-vertical-overflow"
+    },
+    "scenario": "auth registration and verification visible submit states",
+    "texts": [
+      "Momcozy",
+      "Verify your email",
+      "Enter the code we sent to your email.",
+      "If verification is needed, a code is on its way. Check your inbox and spam folder. Codes expire in 15 minutes.",
+      "Email address",
+      "you@example.com",
+      "8-digit email code",
+      "Enter your code",
+      "Set password",
+      "Enter your password",
+      "8–128 characters, including a letter and a number",
+      "Resend code",
+      "Back to sign in"
+    ]
+  },
+  {
+    "metadata": "raw/test/goldens/design_system/feedback-loading-390.png.json",
+    "image": "raw/test/goldens/design_system/feedback-loading-390.png",
+    "sha256": "687ebca86da3ad54827f16d4a8827636b8ddef66c1bbf4532a3dd3fb7e4b38b6",
+    "long": {
+      "status": "no-active-vertical-overflow"
+    },
+    "scenario": "feedback layout and retry callbacks 390.0/1.0",
+    "texts": [
+      "正在载入记录",
+      "记录"
+    ]
+  },
+  {
+    "metadata": "raw/test/goldens/design_system/feedback-empty-390.png.json",
+    "image": "raw/test/goldens/design_system/feedback-empty-390.png",
+    "sha256": "65f5e6da79c1386bb18be057cb62138e778e9e86047cfc5f9783a3e111e5e248",
+    "long": {
+      "status": "no-active-vertical-overflow"
+    },
+    "scenario": "feedback layout and retry callbacks 390.0/1.0",
+    "texts": [
+      "还没有记录",
+      "记录会显示在这里。",
+      "添加记录",
+      "记录"
+    ]
+  },
+  {
+    "metadata": "raw/test/goldens/design_system/feedback-offline-390.png.json",
+    "image": "raw/test/goldens/design_system/feedback-offline-390.png",
+    "sha256": "889fda9e4af4ae4a1d9c06d8fa2b4239978fa9e6b1f18525fef334989466ce27",
+    "long": {
+      "status": "no-active-vertical-overflow"
+    },
+    "scenario": "feedback layout and retry callbacks 390.0/1.0",
+    "texts": [
+      "网络未连接，请连接后重试",
+      "这次填写的内容仍然保留。",
+      "重试",
+      "记录"
+    ]
+  },
+  {
+    "metadata": "raw/test/goldens/design_system/feedback-conflict-390.png.json",
+    "image": "raw/test/goldens/design_system/feedback-conflict-390.png",
+    "sha256": "a4280ef4d2595c0433ad5340d2ce604d14934446ecbdeafa0d8c52ae47c26ae3",
+    "long": {
+      "status": "no-active-vertical-overflow"
+    },
+    "scenario": "feedback layout and retry callbacks 390.0/1.0",
+    "texts": [
+      "记录已在其他页面更新，请重新载入后核对",
+      "这次填写的内容仍然保留。",
+      "重新载入",
+      "记录"
+    ]
+  },
+  {
+    "metadata": "raw/test/goldens/design_system/schedule-short-refresh-error.png.json",
+    "image": "raw/test/goldens/design_system/schedule-short-refresh-error.long.png",
+    "sha256": "14ab9214e564f2e32abb1d24e61bf5d6cd764333854c5cde46f5725fc2cb8087",
+    "long": {
+      "status": "complete-measured-scroll-stitch",
+      "file": "/Users/lute/project/momcozy-lab/app/docs/app-ui-inventory/raw/test/goldens/design_system/schedule-short-refresh-error.long.png",
+      "offsets": [
+        0.0,
+        214.0,
+        428.0,
+        642.0,
+        731.0
+      ],
+      "scroll_bounds": [
+        0.0,
+        0.0,
+        320.0,
+        492.0
+      ],
+      "frame_scroll_bounds": [
+        [
+          0.0,
+          0.0,
+          320.0,
+          492.0
+        ],
+        [
+          0.0,
+          0.0,
+          320.0,
+          492.0
+        ],
+        [
+          0.0,
+          0.0,
+          320.0,
+          492.0
+        ],
+        [
+          0.0,
+          0.0,
+          320.0,
+          492.0
+        ],
+        [
+          0.0,
+          0.0,
+          320.0,
+          492.0
+        ]
+      ],
+      "content_height": 1223.0,
+      "interior_strip_edge_guard": 64.0,
+      "fixed_bottom_overlay_bounds": [],
+      "original_scroll_offset": 731.0,
+      "tooltip_preserved_from_matched_viewport": false
+    },
+    "scenario": "short large initial load error retries and cached refresh retains agenda",
+    "texts": [
+      "09:30",
+      "宝宝体检",
+      "带好成长记录",
+      "网络未连接，请连接后重试",
+      "重试"
+    ],
+    "reused": "G05/G06"
+  },
+  {
+    "metadata": "raw/test/goldens/design_system/renew-empty-390.png.json",
+    "image": "raw/test/goldens/design_system/renew-empty-390.png",
+    "sha256": "292794c2fc6912b020d829ea0db209c3cb9dc2e76282c41d38c4d1c0270907c9",
+    "long": {
+      "status": "no-active-vertical-overflow"
+    },
+    "scenario": "disabled purchase, empty catalog, offline retry are explicit",
+    "texts": [
+      "选择适合当前需要的陪伴方案",
+      "暂无可选的支持方案",
+      "稍后再来看看，已有服务记录仍可查看。",
+      "刷新方案",
+      "继续支持"
+    ],
+    "reused": "G05/G06"
+  }
+]

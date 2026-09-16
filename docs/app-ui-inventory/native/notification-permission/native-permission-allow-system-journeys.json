@@ -1,0 +1,34 @@
+[
+  {
+    "state": "native-permission-allow-system-request",
+    "file": "native-permission-allow-system-request.png",
+    "xml": "native-permission-allow-system-request.xml",
+    "phase": "system-request",
+    "previous": "native-permission-allow-education",
+    "trigger": "App Continue → actual Android request; choose allow",
+    "route": "/notifications/settings",
+    "sha256": "b92e9f31c965183344276a61c64cb697d0dd09d98586c75b2ab85728e9e1e408",
+    "xml_sha256": "151a04136f4d480478625cbb604090efad921e6373e38e23de442cca4d46a86d",
+    "clicked_control": {
+      "index": "0",
+      "text": "Allow",
+      "resource-id": "com.android.permissioncontroller:id/permission_allow_button",
+      "class": "android.widget.Button",
+      "package": "com.google.android.permissioncontroller",
+      "content-desc": "",
+      "checkable": "false",
+      "checked": "false",
+      "clickable": "true",
+      "enabled": "true",
+      "focusable": "true",
+      "focused": "false",
+      "scrollable": "false",
+      "long-clickable": "false",
+      "password": "false",
+      "selected": "false",
+      "bounds": "[152,1518][1128,1662]",
+      "drawing-order": "2",
+      "hint": ""
+    }
+  }
+]

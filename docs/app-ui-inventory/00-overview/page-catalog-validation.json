@@ -1,0 +1,15 @@
+{
+  "catalog_integrity": "PASS",
+  "definitions": 34,
+  "overlays": 35,
+  "assignments": 2807,
+  "links_checked": 4274,
+  "source_changes_since_catalogue": [
+    "lib/modules/mom/presentation/lactation_panel.dart"
+  ],
+  "auth_pending_owner_check": "PASS",
+  "auth_states_mapped": 26,
+  "overlay_families_with_named_evidence": 35,
+  "scope": "Mapping and file-link integrity; not complete per-state acceptance",
+  "goal_completion": "NOT_PROVEN"
+}

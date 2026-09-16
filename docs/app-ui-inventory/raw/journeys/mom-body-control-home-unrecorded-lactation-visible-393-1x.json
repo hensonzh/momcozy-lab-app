@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/mom-body-control-home-unrecorded-lactation-visible-393-1x.png",
+  "previous_source": "test/goldens/ui_inventory/mom-body-control-home-refreshed-393-1x.png",
+  "route": "/me",
+  "trigger": "Scroll refreshed home to unrecorded lactation card after saving body data",
+  "root_entry": "Authenticated More → tap Me bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/mom/mom_body_control_inventory_test.dart"
+}

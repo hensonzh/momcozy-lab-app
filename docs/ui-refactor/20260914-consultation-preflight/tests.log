@@ -1,0 +1,53 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/modules/consultation/device_check_design_test.dart
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/modules/consultation/room_design_test.dart: (setUpAll)
+00:00 +1: /Users/lute/project/momcozy-lab/app/test/modules/consultation/room_design_test.dart: (setUpAll)
+00:00 +1: /Users/lute/project/momcozy-lab/app/test/modules/consultation/device_check_test.dart: opening the device dialog requests once and releases tracks after the check
+00:00 +2: /Users/lute/project/momcozy-lab/app/test/modules/consultation/device_check_design_test.dart: preflight continues only after readiness and an explicit tap
+00:00 +3: /Users/lute/project/momcozy-lab/app/test/modules/consultation/device_check_design_test.dart: preflight continues only after readiness and an explicit tap
+00:00 +4: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_start_test.dart: device consent region and enter 320.0 / 1.0
+00:00 +5: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_start_test.dart: device consent region and enter 320.0 / 1.0
+00:00 +6: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_start_test.dart: device consent region and enter 320.0 / 1.0
+00:00 +7: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_start_test.dart: device consent region and enter 320.0 / 1.0
+00:00 +8: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_start_test.dart: device consent region and enter 320.0 / 1.0
+00:00 +9: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_start_test.dart: device consent region and enter 320.0 / 1.0
+00:00 +10: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_start_test.dart: device consent region and enter 320.0 / 1.0
+00:01 +11: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_start_test.dart: device consent region and enter 320.0 / 1.0
+00:01 +12: /Users/lute/project/momcozy-lab/app/test/modules/consultation/device_check_design_test.dart: device check pending partial failure retry ready 390.0 / 1.0
+00:01 +13: /Users/lute/project/momcozy-lab/app/test/modules/consultation/room_design_test.dart: room location and consent 320.0 / 2.0
+00:01 +14: /Users/lute/project/momcozy-lab/app/test/modules/consultation/room_design_test.dart: room location and consent 320.0 / 2.0
+00:01 +15: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_start_test.dart: device consent region and enter 320.0 / 2.0
+00:01 +16: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_start_test.dart: device consent region and enter 320.0 / 2.0
+00:01 +17: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_start_test.dart: device consent region and enter 320.0 / 2.0
+00:01 +18: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_start_test.dart: device consent region and enter 320.0 / 2.0
+00:01 +19: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_start_test.dart: device consent region and enter 320.0 / 2.0
+00:01 +20: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_start_test.dart: device consent region and enter 320.0 / 2.0
+00:01 +21: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_start_test.dart: device consent region and enter 320.0 / 2.0
+00:01 +22: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_start_test.dart: device consent region and enter 320.0 / 2.0
+00:01 +23: /Users/lute/project/momcozy-lab/app/test/modules/consultation/room_design_test.dart: room location and consent 390.0 / 1.0
+00:01 +24: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_start_test.dart: device consent region and enter 390.0 / 1.0
+00:01 +25: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_start_test.dart: device consent region and enter 390.0 / 1.0
+00:01 +26: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_start_test.dart: device consent region and enter 390.0 / 1.0
+00:01 +27: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_start_test.dart: device consent region and enter 390.0 / 1.0
+00:01 +28: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_start_test.dart: device consent region and enter 390.0 / 1.0
+00:01 +29: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_start_test.dart: device consent region and enter 390.0 / 1.0
+00:01 +30: /Users/lute/project/momcozy-lab/app/test/modules/consultation/room_design_test.dart: ended room destinations 390.0 / 2.0
+00:01 +31: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_start_test.dart: device consent region and enter 390.0 / 2.0
+00:01 +32: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_start_test.dart: device consent region and enter 390.0 / 2.0
+00:01 +33: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_start_test.dart: device consent region and enter 390.0 / 2.0
+00:02 +34: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_start_test.dart: device consent region and enter 390.0 / 2.0
+00:02 +35: /Users/lute/project/momcozy-lab/app/test/modules/consultation/room_design_test.dart: ended room destinations 430.0 / 1.0
+00:02 +36: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_start_test.dart: device consent region and enter 430.0 / 1.0
+00:02 +37: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_start_test.dart: device consent region and enter 430.0 / 1.0
+00:02 +38: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_start_test.dart: device consent region and enter 430.0 / 1.0
+00:02 +39: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_start_test.dart: device consent region and enter 430.0 / 1.0
+00:02 +40: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_start_test.dart: device consent region and enter 430.0 / 1.0
+00:02 +41: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_start_test.dart: device consent region and enter 430.0 / 2.0
+00:02 +42: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_start_test.dart: open preflight reflects changed prerequisites and restores entry without submitting
+00:02 +43: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_start_test.dart: location request blocks edits duplicate entry and back
+00:02 +44: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_start_test.dart: short screen enlarged text keeps consent and region reachable
+00:03 +45: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_start_test.dart: revoked consent during location lookup prevents room entry
+00:03 +46: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_start_test.dart: closing a preparing room cancels pending automatic join
+00:03 +47: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_start_test.dart: location network failure retries without joining prematurely
+00:03 +48: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_start_test.dart: consent retry preserves video scope and original version
+00:03 +49: /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_start_test.dart: a server approved region outside the design demo can enter
+00:03 +50: All tests passed!

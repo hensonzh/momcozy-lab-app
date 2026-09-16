@@ -1,10 +1,17 @@
+import 'artifacts/cards/agent_result_card.dart';
+import 'package:momcozy_flutter_app/shared/design_system/mom_home_tokens.dart';
+import 'package:momcozy_flutter_app/shared/widgets/mom_settings_widgets.dart';
+import 'presentation/agent_voice_notice.dart';
 import 'dart:async';
+import 'presentation/agent_message_menu.dart';
+import 'package:momcozy_flutter_app/shared/widgets/momcozy_line_icon.dart';
 import 'dart:convert';
 import 'dart:math' as math;
 
 import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:momcozy_flutter_app/shared/design_system/momcozy_motion.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
@@ -72,8 +79,8 @@ String _agentAssistantTextForState(
       state.cancelAcknowledged ? '已停止本次回复。' : '本地已停止，服务端取消未确认。',
     AgentStreamRunPhase.waitingForConfirmation => '需要你确认后继续。',
     AgentStreamRunPhase.finished => '我已经处理完成，但这次没有返回可见内容。',
-    AgentStreamRunPhase.error => '这次处理没有成功，暂时没有生成回复。你可以重试一次。',
-    AgentStreamRunPhase.disconnected => '这次没有拿到回复，可能是连接中断了。你再发一次就好。',
+    AgentStreamRunPhase.error ||
+    AgentStreamRunPhase.disconnected => '这次没有拿到回复。',
   };
 }
 
@@ -293,7 +300,11 @@ class _AgentHubPageState extends State<AgentHubPage> {
   bool _olderConversationHistoryLoadArmed = false;
   Object? _olderConversationHistoryError;
   AgentStreamRequest? _activeRequest;
+  String? _submittedComposerText;
   AgentVoiceState _voiceState = const AgentVoiceState();
+  final _voiceStateNotifier = ValueNotifier<AgentVoiceState>(
+    const AgentVoiceState(),
+  );
   final List<AgentStreamImageInput> _attachedImages = <AgentStreamImageInput>[];
   final List<AgentStreamFileInput> _attachedFiles = <AgentStreamFileInput>[];
   final Set<String> _pendingActionIds = <String>{};
@@ -441,6 +452,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _conversationSwitchEnabledNotifier.dispose();
     _responseLightRailModeNotifier.dispose();
     _activeVoicePlaybackIdNotifier.dispose();
+    _voiceStateNotifier.dispose();
     _actionStateRevisionNotifier.dispose();
     _formSubmissionsNotifier.dispose();
     _formPresentationSession.clear();
@@ -489,6 +501,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
 
   void _setVoiceState(AgentVoiceState nextState) {
     _voiceState = nextState;
+    _voiceStateNotifier.value = nextState;
     _setNotifierValue(
       _activeVoicePlaybackIdNotifier,
       nextState.isPlaybackActive ? nextState.playbackId : null,
@@ -1111,7 +1124,9 @@ class _AgentHubPageState extends State<AgentHubPage> {
   Future<void> _scrollToLatest({bool smooth = true}) async {
     if (!_chatScrollController.hasClients) return;
     if (smooth) {
-      await _chatScrollController.animateTo(
+      await MomCozyMotion.scrollTo(
+        context,
+        _chatScrollController,
         _chatScrollController.position.maxScrollExtent,
         duration: const Duration(milliseconds: 220),
         curve: Curves.easeOutCubic,
@@ -1175,13 +1190,13 @@ class _AgentHubPageState extends State<AgentHubPage> {
             position.maxScrollExtent,
           );
       unawaited(
-        _chatScrollController
-            .animateTo(
-              targetOffset,
-              duration: const Duration(milliseconds: 220),
-              curve: Curves.easeOutCubic,
-            )
-            .then((_) => _updateLatestButtonVisibility()),
+        MomCozyMotion.scrollTo(
+          context,
+          _chatScrollController,
+          targetOffset,
+          duration: const Duration(milliseconds: 220),
+          curve: Curves.easeOutCubic,
+        ).then((_) => _updateLatestButtonVisibility()),
       );
     });
   }
@@ -1321,7 +1336,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
     _persistInteractionState();
     _scheduleScrollToLatest();
     _dismissComposerKeyboardOnRunAccepted = true;
-    await _startRun(request);
+    await _startRun(request, submittedComposerText: message);
   }
 
   Future<bool> _sendSyntheticUserMessage({
@@ -1593,7 +1608,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
     if (failure != null) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('图片上传失败，请重试。')));
+      ).showSnackBar(_attachmentFeedback('图片上传失败，请重试。'));
       return;
     }
     if (image == null) return;
@@ -1661,9 +1676,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
           '暂仅支持 PDF 文件。',
         _ => '文件上传失败，请重试。',
       };
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(message)));
+      ScaffoldMessenger.of(context).showSnackBar(_attachmentFeedback(message));
       return;
     }
     if (file == null) return;
@@ -1784,11 +1797,21 @@ class _AgentHubPageState extends State<AgentHubPage> {
     return results.every((deleted) => deleted);
   }
 
+  SnackBar _attachmentFeedback(String message) => SnackBar(
+    elevation: 0,
+    backgroundColor: MomHomeTokens.ink,
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+    content: Text(
+      message,
+      style: MomHomeTokens.text(14, color: MomHomeTokens.surface),
+    ),
+  );
+
   void _showAttachmentCleanupFailure() {
     if (!mounted) return;
     ScaffoldMessenger.of(
       context,
-    ).showSnackBar(const SnackBar(content: Text('附件清理失败，已保留草稿，请重试。')));
+    ).showSnackBar(_attachmentFeedback('附件清理失败，已保留草稿，请重试。'));
   }
 
   Future<void> _openConversationHistory() async {
@@ -2109,6 +2132,10 @@ class _AgentHubPageState extends State<AgentHubPage> {
   Future<void> _retryRun() async {
     final request = _activeRequest;
     if (request == null || widget.runner == null || !_state.canRetry) return;
+    final submittedText = _submittedComposerText;
+    if (submittedText != null && _composerController.text == submittedText) {
+      _composerController.clear();
+    }
     final runId = _state.runId?.trim();
     if (runId != null && runId.isNotEmpty) {
       await _startRun(
@@ -2120,10 +2147,11 @@ class _AgentHubPageState extends State<AgentHubPage> {
         ),
         initialState: _state.copyWith(phase: AgentStreamRunPhase.streaming),
         preserveActionState: true,
+        submittedComposerText: submittedText,
       );
       return;
     }
-    await _startRun(request);
+    await _startRun(request, submittedComposerText: submittedText);
   }
 
   Future<void> _resumeCurrentRun({bool preserveActionState = false}) async {
@@ -2147,6 +2175,18 @@ class _AgentHubPageState extends State<AgentHubPage> {
 
   void _handleRunStateUpdate(AgentStreamRunState nextState) {
     if (!mounted || !_state.isActive) return;
+    final submittedText = _submittedComposerText;
+    if ((nextState.phase == AgentStreamRunPhase.error ||
+            nextState.phase == AgentStreamRunPhase.disconnected) &&
+        _composerController.text.isEmpty &&
+        submittedText != null &&
+        submittedText.isNotEmpty &&
+        _activeRequest?.message == submittedText) {
+      _composerController.value = TextEditingValue(
+        text: submittedText,
+        selection: TextSelection.collapsed(offset: submittedText.length),
+      );
+    }
     _forwardNewApplicationEvents(_state, nextState);
     _updateComposerFocusForRun(nextState);
     final shouldFollowLatest = _isNearLatest() || nextState.isActive;
@@ -2206,6 +2246,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
 
   Future<bool> _startRun(
     AgentStreamRequest request, {
+    String? submittedComposerText,
     AgentStreamRunState? initialState,
     bool preserveActionState = false,
     bool awaitServerRunSignal = false,
@@ -2222,6 +2263,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
     final requestWithThread = _requestWithConversationThread(
       requestWithIdempotency,
     );
+    _submittedComposerText = submittedComposerText;
 
     _cancelRunSubscription();
     final acceptance = awaitServerRunSignal ? Completer<bool>() : null;
@@ -2349,6 +2391,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
 
     final session = _autoVoiceSession ?? _startAutoVoiceSession(playbackId);
     if (session == null) {
+      if (_voiceState.phase == AgentVoicePhase.error) return;
       if (coordinator.activeSource != AgentVoicePlaybackSource.autoReply ||
           coordinator.activeId != playbackId) {
         _queueBlockedAutoVoiceReplay(nextState);
@@ -2400,10 +2443,17 @@ class _AgentHubPageState extends State<AgentHubPage> {
       return null;
     }
 
-    final session = player.startRealtimeSession(
-      mediaNarrationResolver: ({required url, required alt}) =>
-          _resolveMediaVoiceNarration(url: url),
-    );
+    final AgentVoiceRealtimePlaybackSession session;
+    try {
+      session = player.startRealtimeSession(
+        mediaNarrationResolver: ({required url, required alt}) =>
+            _resolveMediaVoiceNarration(url: url),
+      );
+    } catch (error) {
+      handle.finish();
+      _setVoiceState(_voiceState.fail(error));
+      return null;
+    }
     _autoVoiceSession = session;
     _autoVoiceSessionFinished = false;
     _setVoiceState(_voiceState.startPlayback(handle.id));
@@ -2487,8 +2537,7 @@ class _AgentHubPageState extends State<AgentHubPage> {
     if (player == null) return;
 
     unawaited(
-      player
-          .playText(text)
+      Future<void>.sync(() => player.playText(text))
           .then((_) {
             if (!mounted || !handle.isCurrent) return;
             handle.finish();
@@ -2557,6 +2606,9 @@ class _AgentHubPageState extends State<AgentHubPage> {
   }
 
   void _resetAutoVoiceProgress() {
+    if (_voiceState.phase == AgentVoicePhase.error) {
+      _setVoiceState(const AgentVoiceState());
+    }
     unawaited(_cancelActiveAutoVoiceSession());
     _activeAutoVoicePlaybackId = null;
     _autoVoiceAppendedText = '';
@@ -2615,6 +2667,29 @@ class _AgentHubPageState extends State<AgentHubPage> {
     } else {
       _setRunState(_state.applyCancelResult(acknowledged: true));
       _persistInteractionState();
+    }
+  }
+
+  bool get _canReplayVoice =>
+      _autoVoiceEnabled &&
+      !_state.isActive &&
+      !_isComposerLocked &&
+      !_attachmentUploadPending &&
+      widget.voicePlaybackCoordinator != null &&
+      widget.voicePlaybackPlayer != null &&
+      !widget.voicePlaybackCoordinator!.isSuspended &&
+      (_isShowingFreshGreeting ||
+          (_canAutoVoicePlayback(_state.phase) &&
+              _hasAutoVoicePlaybackContent(_state)));
+
+  void _replayVoice() {
+    if (!_canReplayVoice) return;
+    _pendingAutoVoiceReplay = null;
+    _resetAutoVoiceProgress();
+    if (_isShowingFreshGreeting) {
+      _maybeStartGreetingVoicePlayback();
+    } else {
+      _maybeStartAutoVoicePlayback(_state);
     }
   }
 
@@ -2820,286 +2895,378 @@ class _AgentHubPageState extends State<AgentHubPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    final page = ColoredBox(
-      key: const ValueKey('agent-hub-page'),
-      color: MomCozyColors.background,
-      child: Stack(
-        children: [
-          ValueListenableBuilder<_AgentResponseLightRailMode>(
-            valueListenable: _responseLightRailModeNotifier,
-            builder: (context, mode, child) {
-              if (mode == _AgentResponseLightRailMode.idle) {
-                return const SizedBox.shrink();
-              }
-              return Positioned.fill(
-                child: _AgentResponseLightRail(mode: mode),
-              );
-            },
-          ),
-          Column(
-            children: [
-              ListenableBuilder(
-                listenable: Listenable.merge([
-                  _visibleReplyRunningNotifier,
-                  _sessionMutationPendingNotifier,
-                ]),
-                builder: (context, child) {
-                  final isVisibleReplyRunning =
-                      _visibleReplyRunningNotifier.value;
-                  final isSessionMutationPending =
-                      _sessionMutationPendingNotifier.value;
-                  return AgentHubTopBar(
-                    showControls: _interactionRestoreResolved,
-                    autoVoiceEnabled: _autoVoiceEnabled,
-                    isRunning:
-                        isVisibleReplyRunning ||
-                        isSessionMutationPending ||
-                        _attachmentUploadPending,
-                    onOpenConversations:
-                        widget.conversationRepository == null ||
-                            isSessionMutationPending ||
-                            _attachmentUploadPending
-                        ? null
-                        : _openConversationHistory,
-                    onToggleAutoVoice: _toggleAutoVoice,
-                    onNewSession: _startNewSession,
-                  );
-                },
-              ),
-              if (_externalConversationRefreshPending)
-                Container(
-                  key: const ValueKey('motion-feedback-pending'),
-                  width: double.infinity,
-                  margin: const EdgeInsets.fromLTRB(12, 0, 12, 8),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 14,
-                    vertical: 10,
-                  ),
-                  decoration: BoxDecoration(
-                    color: MomCozyColors.roseSoft,
-                    borderRadius: BorderRadius.circular(MomCozyRadii.card),
-                    border: Border.all(color: MomCozyColors.border),
-                  ),
-                  child: const Row(
-                    children: [
-                      SizedBox(
-                        width: 16,
-                        height: 16,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: MomCozyColors.primary,
-                        ),
-                      ),
-                      SizedBox(width: 10),
-                      Expanded(
-                        child: Text(
-                          '正在生成本次体态评估反馈…',
-                          style: TextStyle(
-                            color: MomCozyColors.foreground,
-                            fontSize: MomCozyTypography.secondarySize,
-                            fontWeight: FontWeight.w600,
+  Widget build(BuildContext context) => LayoutBuilder(
+    builder: (context, pageConstraints) {
+      final page = ColoredBox(
+        key: const ValueKey('agent-hub-page'),
+        color: MomHomeTokens.background,
+        child: Stack(
+          children: [
+            const Positioned.fill(child: _AgentPageBackground()),
+            ValueListenableBuilder<_AgentResponseLightRailMode>(
+              valueListenable: _responseLightRailModeNotifier,
+              builder: (context, mode, child) {
+                if (mode == _AgentResponseLightRailMode.idle) {
+                  return const SizedBox.shrink();
+                }
+                return Positioned.fill(
+                  child: _AgentResponseLightRail(mode: mode),
+                );
+              },
+            ),
+            Column(
+              children: [
+                ListenableBuilder(
+                  listenable: Listenable.merge([
+                    _visibleReplyRunningNotifier,
+                    _sessionMutationPendingNotifier,
+                  ]),
+                  builder: (context, child) {
+                    final isVisibleReplyRunning =
+                        _visibleReplyRunningNotifier.value;
+                    final isSessionMutationPending =
+                        _sessionMutationPendingNotifier.value;
+                    return AgentHubTopBar(
+                      showControls: _interactionRestoreResolved,
+                      autoVoiceEnabled: _autoVoiceEnabled,
+                      isRunning:
+                          isVisibleReplyRunning ||
+                          isSessionMutationPending ||
+                          _attachmentUploadPending,
+                      onOpenConversations:
+                          widget.conversationRepository == null ||
+                              isSessionMutationPending ||
+                              _attachmentUploadPending
+                          ? null
+                          : _openConversationHistory,
+                      onToggleAutoVoice: _toggleAutoVoice,
+                      onNewSession: _startNewSession,
+                    );
+                  },
+                ),
+                if (_externalConversationRefreshPending)
+                  Container(
+                    key: const ValueKey('motion-feedback-pending'),
+                    width: double.infinity,
+                    margin: const EdgeInsets.fromLTRB(12, 0, 12, 8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 10,
+                    ),
+                    decoration: BoxDecoration(
+                      color: MomCozyColors.roseSoft,
+                      borderRadius: BorderRadius.circular(MomCozyRadii.card),
+                      border: Border.all(color: MomCozyColors.border),
+                    ),
+                    child: const Row(
+                      children: [
+                        SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: MomCozyColors.primary,
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                ),
-              Expanded(
-                child: LayoutBuilder(
-                  builder: (context, constraints) {
-                    const verticalTranscriptPadding = 14.0 + 24.0;
-                    final transcriptMinHeight =
-                        constraints.maxHeight > verticalTranscriptPadding
-                        ? constraints.maxHeight - verticalTranscriptPadding
-                        : 0.0;
-
-                    return Stack(
-                      children: [
-                        CustomScrollView(
-                          key: const ValueKey('agent-chat-scroll-view'),
-                          controller: _chatScrollController,
-                          slivers: [
-                            if (_conversationHistoryBeforeSequence != null ||
-                                _olderConversationHistoryLoading ||
-                                _olderConversationHistoryError != null)
-                              SliverToBoxAdapter(
-                                child: _AgentOlderConversationHistoryControl(
-                                  loading: _olderConversationHistoryLoading,
-                                  failed:
-                                      _olderConversationHistoryError != null,
-                                  onLoad: _loadOlderConversationHistory,
-                                ),
-                              ),
-                            if (_historyMessages.isNotEmpty)
-                              SliverPadding(
-                                padding: const EdgeInsets.fromLTRB(
-                                  MomCozySpacing.pageGutter,
-                                  MomCozySpacing.headingGap,
-                                  MomCozySpacing.pageGutter,
-                                  0,
-                                ),
-                                sliver: AgentHubHistorySliver(
-                                  messages: _historyMessages,
-                                  loadImageThumbnail: widget.loadImageThumbnail,
-                                  loadImageContent: widget.loadImageContent,
-                                  productAssetRepository:
-                                      widget.productAssetRepository,
-                                  onArtifactAction: _handleArtifactAction,
-                                  onFormSubmit: _handleArtifactFormSubmit,
-                                  formSubmissionsListenable:
-                                      _formSubmissionsNotifier,
-                                  formPresentationSession:
-                                      _formPresentationSession,
-                                ),
-                              ),
-                            if (_historyMessages.isNotEmpty)
-                              const SliverToBoxAdapter(
-                                child: SizedBox(height: 18),
-                              ),
-                            if (_interactionRestoreResolved)
-                              SliverPadding(
-                                padding: EdgeInsets.fromLTRB(
-                                  MomCozySpacing.pageGutter,
-                                  _historyMessages.isEmpty
-                                      ? MomCozySpacing.headingGap
-                                      : 0,
-                                  MomCozySpacing.pageGutter,
-                                  MomCozySpacing.section,
-                                ),
-                                sliver: SliverToBoxAdapter(
-                                  child: ConstrainedBox(
-                                    constraints: BoxConstraints(
-                                      minHeight: _historyMessages.isEmpty
-                                          ? transcriptMinHeight
-                                          : 0,
-                                    ),
-                                    child: _AgentRunTranscriptListenable(
-                                      greeting: _greeting,
-                                      stateListenable: _runStateNotifier,
-                                      activeVoicePlaybackIdListenable:
-                                          _activeVoicePlaybackIdNotifier,
-                                      actionStateRevisionListenable:
-                                          _actionStateRevisionNotifier,
-                                      artifactPanelKey: _activeArtifactPanelKey,
-                                      canRetryForState: _canRetryForState,
-                                      onRetry: _retryRun,
-                                      onArtifactAction: _handleArtifactAction,
-                                      onFormSubmit: _handleArtifactFormSubmit,
-                                      formSubmissionsListenable:
-                                          _formSubmissionsNotifier,
-                                      formPresentationSession:
-                                          _formPresentationSession,
-                                      // Generated quick replies are temporarily hidden
-                                      // while the follow-up interaction is redesigned.
-                                      onQuickReplySelected: null,
-                                      pendingActionIds: _pendingActionIds,
-                                      localActionStatuses: _localActionStatuses,
-                                      productAssetRepository:
-                                          widget.productAssetRepository,
-                                      onConfirmAction:
-                                          widget.actionClient == null
-                                          ? null
-                                          : _confirmAction,
-                                      onRejectAction:
-                                          widget.actionClient == null
-                                          ? null
-                                          : _rejectAction,
-                                    ),
-                                  ),
-                                ),
-                              )
-                            else
-                              SliverToBoxAdapter(
-                                child: SizedBox(height: transcriptMinHeight),
-                              ),
-                          ],
-                        ),
-                        const Positioned(
-                          left: 0,
-                          right: 0,
-                          top: 0,
-                          height: 24,
-                          child: IgnorePointer(child: _AgentHubTopFade()),
-                        ),
-                        if (_showLatestButton)
-                          Positioned(
-                            right: 12,
-                            bottom: 12,
-                            child: FilledButton.tonalIcon(
-                              key: const ValueKey('agent-scroll-latest-button'),
-                              onPressed: _scrollToLatestFromUser,
-                              icon: const Icon(
-                                Icons.keyboard_arrow_down_rounded,
-                              ),
-                              label: const Text('回到最新消息'),
+                        SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            '正在生成本次体态评估反馈…',
+                            style: TextStyle(
+                              color: MomCozyColors.foreground,
+                              fontSize: MomCozyTypography.secondarySize,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
+                        ),
+                      ],
+                    ),
+                  ),
+                Expanded(
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      const verticalTranscriptPadding = 22.0 + 28.0;
+                      final transcriptMinHeight =
+                          constraints.maxHeight > verticalTranscriptPadding
+                          ? constraints.maxHeight - verticalTranscriptPadding
+                          : 0.0;
+
+                      return Stack(
+                        children: [
+                          CustomScrollView(
+                            key: const ValueKey('agent-chat-scroll-view'),
+                            controller: _chatScrollController,
+                            slivers: [
+                              if (_conversationHistoryBeforeSequence != null ||
+                                  _olderConversationHistoryLoading ||
+                                  _olderConversationHistoryError != null)
+                                SliverToBoxAdapter(
+                                  child: _AgentOlderConversationHistoryControl(
+                                    loading: _olderConversationHistoryLoading,
+                                    failed:
+                                        _olderConversationHistoryError != null,
+                                    onLoad: _loadOlderConversationHistory,
+                                  ),
+                                ),
+                              if (_historyMessages.isNotEmpty)
+                                SliverPadding(
+                                  padding: const EdgeInsets.fromLTRB(
+                                    16,
+                                    22,
+                                    16,
+                                    0,
+                                  ),
+                                  sliver: AgentHubHistorySliver(
+                                    messages: _historyMessages,
+                                    loadImageThumbnail:
+                                        widget.loadImageThumbnail,
+                                    loadImageContent: widget.loadImageContent,
+                                    productAssetRepository:
+                                        widget.productAssetRepository,
+                                    onArtifactAction: _handleArtifactAction,
+                                    onFormSubmit: _handleArtifactFormSubmit,
+                                    formSubmissionsListenable:
+                                        _formSubmissionsNotifier,
+                                    formPresentationSession:
+                                        _formPresentationSession,
+                                  ),
+                                ),
+                              if (_historyMessages.isNotEmpty)
+                                const SliverToBoxAdapter(
+                                  child: SizedBox(height: 18),
+                                ),
+                              if (_interactionRestoreResolved)
+                                SliverPadding(
+                                  padding: EdgeInsets.fromLTRB(
+                                    16,
+                                    _historyMessages.isEmpty ? 22 : 0,
+                                    16,
+                                    28,
+                                  ),
+                                  sliver: SliverToBoxAdapter(
+                                    child: ConstrainedBox(
+                                      constraints: BoxConstraints(
+                                        minHeight: _historyMessages.isEmpty
+                                            ? transcriptMinHeight
+                                            : 0,
+                                      ),
+                                      child: _AgentRunTranscriptListenable(
+                                        greeting: _greeting,
+                                        stateListenable: _runStateNotifier,
+                                        activeVoicePlaybackIdListenable:
+                                            _activeVoicePlaybackIdNotifier,
+                                        actionStateRevisionListenable:
+                                            _actionStateRevisionNotifier,
+                                        artifactPanelKey:
+                                            _activeArtifactPanelKey,
+                                        canRetryForState: _canRetryForState,
+                                        onRetry: _retryRun,
+                                        onArtifactAction: _handleArtifactAction,
+                                        onFormSubmit: _handleArtifactFormSubmit,
+                                        formSubmissionsListenable:
+                                            _formSubmissionsNotifier,
+                                        formPresentationSession:
+                                            _formPresentationSession,
+                                        // Generated quick replies are temporarily hidden
+                                        // while the follow-up interaction is redesigned.
+                                        onQuickReplySelected: null,
+                                        pendingActionIds: _pendingActionIds,
+                                        localActionStatuses:
+                                            _localActionStatuses,
+                                        productAssetRepository:
+                                            widget.productAssetRepository,
+                                        onConfirmAction:
+                                            widget.actionClient == null
+                                            ? null
+                                            : _confirmAction,
+                                        onRejectAction:
+                                            widget.actionClient == null
+                                            ? null
+                                            : _rejectAction,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              else
+                                SliverToBoxAdapter(
+                                  child: SizedBox(height: transcriptMinHeight),
+                                ),
+                            ],
+                          ),
+                          if (_showLatestButton)
+                            Positioned(
+                              right: 12,
+                              bottom: 12,
+                              child: FilledButton.tonalIcon(
+                                key: const ValueKey(
+                                  'agent-scroll-latest-button',
+                                ),
+                                onPressed: _scrollToLatestFromUser,
+                                icon: const Icon(
+                                  Icons.keyboard_arrow_down_rounded,
+                                ),
+                                label: const Text('回到最新消息'),
+                                style: FilledButton.styleFrom(
+                                  backgroundColor: MomHomeTokens.rose,
+                                  foregroundColor: Colors.white,
+                                  minimumSize: const Size(44, 44),
+                                  textStyle: MomHomeTokens.text(
+                                    13,
+                                    weight: FontWeight.w700,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                ),
+                              ),
+                            ),
+                        ],
+                      );
+                    },
+                  ),
+                ),
+                AnimatedBuilder(
+                  animation: Listenable.merge([
+                    _visibleReplyRunningNotifier,
+                    _composerLockedNotifier,
+                    _voiceStateNotifier,
+                  ]),
+                  builder: (context, child) {
+                    final isVisibleReplyRunning =
+                        _visibleReplyRunningNotifier.value;
+                    final isComposerLocked = _composerLockedNotifier.value;
+                    final isRestoring = !_interactionRestoreResolved;
+                    return Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Semantics(
+                          liveRegion: true,
+                          label: _voiceState.isPlaybackActive
+                              ? '\u8bed\u97f3\u64ad\u62a5\u5df2\u542f\u52a8\uff08AI \u5408\u6210\u8bed\u97f3\uff09'
+                              : '',
+                          child: const SizedBox.shrink(),
+                        ),
+                        if (_voiceState.phase == AgentVoicePhase.error)
+                          AgentVoiceNotice(
+                            onReplay: _canReplayVoice ? _replayVoice : null,
+                            onDismiss: () =>
+                                _setVoiceState(const AgentVoiceState()),
+                          ),
+                        if (_voiceState.phase != AgentVoicePhase.error ||
+                            pageConstraints.maxHeight >= 600)
+                          _AgentHomeShortcuts(
+                            onSelected:
+                                widget.runner == null ||
+                                    isComposerLocked ||
+                                    isRestoring ||
+                                    isVisibleReplyRunning ||
+                                    _attachmentUploadPending
+                                ? null
+                                : (prompt) {
+                                    _composerController.text = prompt;
+                                    unawaited(_sendMessage());
+                                  },
+                          ),
+                        AgentComposerBar(
+                          controller: _composerController,
+                          focusNode: _composerFocusNode,
+                          canSend:
+                              widget.runner != null &&
+                              !isComposerLocked &&
+                              !isRestoring,
+                          isRunning: isVisibleReplyRunning,
+                          isInputLocked: isComposerLocked || isRestoring,
+                          images: List<AgentStreamImageInput>.unmodifiable(
+                            _attachedImages,
+                          ),
+                          files: List<AgentStreamFileInput>.unmodifiable(
+                            _attachedFiles,
+                          ),
+                          canAttachImage:
+                              widget.pickImage != null &&
+                              !_attachmentUploadPending &&
+                              _canAddAttachment &&
+                              !isComposerLocked &&
+                              !isRestoring,
+                          canAttachFile:
+                              widget.pickDocument != null &&
+                              widget.mediaRepository != null &&
+                              !_attachmentUploadPending &&
+                              _canAddAttachment &&
+                              !isComposerLocked &&
+                              !isRestoring,
+                          isAttachmentPending: _attachmentUploadPending,
+                          attachmentUploadProgress: _attachmentUploadProgress,
+                          onChanged: (_) {},
+                          onSend: _sendMessage,
+                          onCancel: _cancelRun,
+                          onTakePhoto: () => unawaited(
+                            _attachImage(AgentImageInputSource.camera),
+                          ),
+                          onPickPhoto: () => unawaited(
+                            _attachImage(AgentImageInputSource.gallery),
+                          ),
+                          onPickFile: () => unawaited(_attachDocument()),
+                          onRemoveImage: _removeAttachedImage,
+                          onRemoveFile: _removeAttachedFile,
+                        ),
                       ],
                     );
                   },
                 ),
+              ],
+            ),
+          ],
+        ),
+      );
+      return page;
+    },
+  );
+}
+
+class _AgentHomeShortcuts extends StatelessWidget {
+  const _AgentHomeShortcuts({required this.onSelected});
+  final ValueChanged<String>? onSelected;
+
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+    child: Align(
+      alignment: Alignment.centerLeft,
+      child: Wrap(
+        spacing: 8,
+        runSpacing: 4,
+        children: [
+          for (final action in const [
+            ('奶量分析', '帮我分析最近的奶量记录，告诉我可以先关注哪些变化。'),
+            ('产后康复评估', '我想做一次产后身体恢复评估，请先从最重要的问题开始问我。'),
+          ])
+            OutlinedButton(
+              onPressed: onSelected == null
+                  ? null
+                  : () => onSelected!(action.$2),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: MomHomeTokens.rose,
+                backgroundColor: MomHomeTokens.surface,
+                side: const BorderSide(color: MomHomeTokens.border),
+                minimumSize: const Size(0, 44),
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                textStyle: const TextStyle(
+                  fontFamily: 'NotoSansSCHome',
+                  fontFamilyFallback: MomCozyTypography.fontFamilyFallback,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
-              AnimatedBuilder(
-                animation: Listenable.merge([
-                  _visibleReplyRunningNotifier,
-                  _composerLockedNotifier,
-                ]),
-                builder: (context, child) {
-                  final isVisibleReplyRunning =
-                      _visibleReplyRunningNotifier.value;
-                  final isComposerLocked = _composerLockedNotifier.value;
-                  final isRestoring = !_interactionRestoreResolved;
-                  return AgentComposerBar(
-                    controller: _composerController,
-                    focusNode: _composerFocusNode,
-                    canSend:
-                        widget.runner != null &&
-                        !isComposerLocked &&
-                        !isRestoring,
-                    isRunning: isVisibleReplyRunning,
-                    isInputLocked: isComposerLocked || isRestoring,
-                    images: List<AgentStreamImageInput>.unmodifiable(
-                      _attachedImages,
-                    ),
-                    files: List<AgentStreamFileInput>.unmodifiable(
-                      _attachedFiles,
-                    ),
-                    canAttachImage:
-                        widget.pickImage != null &&
-                        !_attachmentUploadPending &&
-                        _canAddAttachment &&
-                        !isComposerLocked &&
-                        !isRestoring,
-                    canAttachFile:
-                        widget.pickDocument != null &&
-                        widget.mediaRepository != null &&
-                        !_attachmentUploadPending &&
-                        _canAddAttachment &&
-                        !isComposerLocked &&
-                        !isRestoring,
-                    isAttachmentPending: _attachmentUploadPending,
-                    attachmentUploadProgress: _attachmentUploadProgress,
-                    onChanged: (_) {},
-                    onSend: _sendMessage,
-                    onCancel: _cancelRun,
-                    onTakePhoto: () =>
-                        unawaited(_attachImage(AgentImageInputSource.camera)),
-                    onPickPhoto: () =>
-                        unawaited(_attachImage(AgentImageInputSource.gallery)),
-                    onPickFile: () => unawaited(_attachDocument()),
-                    onRemoveImage: _removeAttachedImage,
-                    onRemoveFile: _removeAttachedFile,
-                  );
-                },
-              ),
-            ],
-          ),
+              child: Text(action.$1),
+            ),
         ],
       ),
-    );
-    return page;
-  }
+    ),
+  );
 }
 
 class AgentHubTopBar extends StatelessWidget {
@@ -3122,104 +3289,122 @@ class AgentHubTopBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: MomCozyColors.background.withValues(alpha: 0.9),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(
-          MomCozySpacing.pageGutter,
-          MomCozySpacing.section,
-          MomCozySpacing.pageGutter,
-          MomCozySpacing.compact,
-        ),
-        child: Row(
+    final largeText = MediaQuery.textScalerOf(context).scale(21) > 28;
+    final buttonStyle = IconButton.styleFrom(
+      foregroundColor: MomHomeTokens.rose,
+      backgroundColor: MomHomeTokens.surface,
+      side: BorderSide(color: MomHomeTokens.border),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      fixedSize: const Size.square(44),
+      padding: EdgeInsets.zero,
+    );
+    final controls = Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        if (showControls && onOpenConversations != null)
+          IconButton(
+            key: const ValueKey('agent-conversation-history-button'),
+            onPressed: onOpenConversations,
+            icon: const Icon(Icons.menu_rounded, size: 20),
+            tooltip: '打开会话历史',
+            style: buttonStyle,
+          )
+        else
+          const SizedBox.square(dimension: 44),
+        Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            SizedBox(
-              width: 96,
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: showControls && onOpenConversations != null
-                    ? IconButton(
-                        key: const ValueKey(
-                          'agent-conversation-history-button',
-                        ),
-                        onPressed: onOpenConversations,
-                        icon: const Icon(Icons.menu_rounded, size: 20),
-                        tooltip: '打开会话历史',
-                        color: MomCozyColors.foreground,
-                        style: IconButton.styleFrom(
-                          backgroundColor: Colors.transparent,
-                          fixedSize: const Size.square(
-                            MomCozyTapTargets.minimum,
-                          ),
-                          minimumSize: const Size.square(
-                            MomCozyTapTargets.minimum,
-                          ),
-                          padding: EdgeInsets.zero,
-                        ),
-                      )
-                    : const SizedBox.square(
-                        dimension: MomCozyTapTargets.minimum,
+            if (showControls) ...[
+              Semantics(
+                toggled: autoVoiceEnabled,
+                label: autoVoiceEnabled
+                    ? '\u5173\u95ed\u5b9e\u65f6\u8bed\u97f3\u64ad\u62a5'
+                    : '\u5f00\u542f\u5b9e\u65f6\u8bed\u97f3\u64ad\u62a5',
+                onTap: onToggleAutoVoice,
+                child: ExcludeSemantics(
+                  child: IconButton(
+                    key: const ValueKey('agent-auto-voice-button'),
+                    onPressed: onToggleAutoVoice,
+                    tooltip: autoVoiceEnabled ? '关闭实时语音播报' : '开启实时语音播报',
+                    isSelected: autoVoiceEnabled,
+                    style: IconButton.styleFrom(
+                      fixedSize: const Size.square(44),
+                      padding: EdgeInsets.zero,
+                    ),
+                    icon: Container(
+                      width: 40,
+                      height: 24,
+                      padding: const EdgeInsets.all(3),
+                      alignment: autoVoiceEnabled
+                          ? Alignment.centerRight
+                          : Alignment.centerLeft,
+                      decoration: BoxDecoration(
+                        color: autoVoiceEnabled
+                            ? MomHomeTokens.rose
+                            : MomHomeTokens.neutralSurface,
+                        borderRadius: BorderRadius.circular(12),
                       ),
-              ),
-            ),
-            const Spacer(),
-            SizedBox(
-              width: 96,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  if (showControls) ...[
-                    IconButton(
-                      key: const ValueKey('agent-auto-voice-button'),
-                      onPressed: onToggleAutoVoice,
-                      icon: Icon(
-                        autoVoiceEnabled
-                            ? Icons.volume_up_outlined
-                            : Icons.volume_off_outlined,
-                        size: 16,
-                      ),
-                      tooltip: autoVoiceEnabled ? '关闭语音模式' : '开启语音模式',
-                      color: autoVoiceEnabled
-                          ? MomCozyColors.foreground
-                          : MomCozyColors.background,
-                      style: IconButton.styleFrom(
-                        backgroundColor: autoVoiceEnabled
-                            ? Colors.transparent
-                            : MomCozyColors.mutedForeground,
-                        fixedSize: const Size.square(MomCozyTapTargets.minimum),
-                        minimumSize: const Size.square(
-                          MomCozyTapTargets.minimum,
+                      child: DecoratedBox(
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
                         ),
-                        padding: EdgeInsets.zero,
-                        visualDensity: VisualDensity.compact,
+                        child: SizedBox.square(
+                          dimension: 18,
+                          child: Icon(
+                            autoVoiceEnabled
+                                ? Icons.volume_up_outlined
+                                : Icons.volume_off_outlined,
+                            size: 12,
+                            color: MomHomeTokens.rose,
+                          ),
+                        ),
                       ),
                     ),
-                    const SizedBox(width: 4),
-                    IconButton(
-                      key: const ValueKey('agent-new-session-button'),
-                      onPressed: isRunning ? null : onNewSession,
-                      icon: const Icon(Icons.add_rounded, size: 16),
-                      tooltip: '新建会话',
-                      color: MomCozyColors.foreground,
-                      style: IconButton.styleFrom(
-                        backgroundColor: Colors.transparent,
-                        fixedSize: const Size.square(MomCozyTapTargets.minimum),
-                        minimumSize: const Size.square(
-                          MomCozyTapTargets.minimum,
-                        ),
-                        padding: EdgeInsets.zero,
-                        visualDensity: VisualDensity.compact,
-                      ),
-                    ),
-                  ],
-                ],
+                  ),
+                ),
               ),
-            ),
+              const SizedBox(width: 6),
+              IconButton(
+                key: const ValueKey('agent-new-session-button'),
+                onPressed: isRunning ? null : onNewSession,
+                icon: const Icon(Icons.add_rounded, size: 20),
+                tooltip: '新建会话',
+                style: buttonStyle,
+              ),
+            ],
           ],
         ),
-      ),
+      ],
+    );
+    final title = Text(
+      'Cozymate',
+      style: MomHomeTokens.text(22, weight: FontWeight.w700),
+    );
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: largeText
+          ? Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [title, const SizedBox(height: 8), controls],
+            )
+          : Row(
+              children: [
+                if (showControls && onOpenConversations != null) ...[
+                  IconButton(
+                    key: const ValueKey('agent-conversation-history-button'),
+                    onPressed: onOpenConversations,
+                    icon: const Icon(Icons.menu_rounded, size: 20),
+                    tooltip: '打开会话历史',
+                    style: buttonStyle,
+                  ),
+                  const SizedBox(width: 8),
+                ],
+                Expanded(child: title),
+                const SizedBox(width: 8),
+                controls.children.last,
+              ],
+            ),
     );
   }
 }
@@ -3288,6 +3473,19 @@ bool _hasRunningToolWork(AgentStreamRunState state) {
   );
 }
 
+void _syncAgentDecoration(
+  BuildContext context,
+  AnimationController controller,
+) {
+  if (MediaQuery.disableAnimationsOf(context) ||
+      !TickerMode.valuesOf(context).enabled) {
+    controller.stop();
+    controller.value = 0;
+  } else if (!controller.isAnimating) {
+    controller.repeat();
+  }
+}
+
 class _AgentResponseLightRail extends StatefulWidget {
   const _AgentResponseLightRail({required this.mode});
 
@@ -3308,7 +3506,13 @@ class _AgentResponseLightRailState extends State<_AgentResponseLightRail>
     _controller = AnimationController(
       vsync: this,
       duration: _durationForMode(widget.mode),
-    )..repeat();
+    );
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _syncAgentDecoration(context, _controller);
   }
 
   @override
@@ -3316,7 +3520,8 @@ class _AgentResponseLightRailState extends State<_AgentResponseLightRail>
     super.didUpdateWidget(oldWidget);
     if (widget.mode == oldWidget.mode) return;
     _controller.duration = _durationForMode(widget.mode);
-    _controller.repeat();
+    _controller.stop();
+    _syncAgentDecoration(context, _controller);
   }
 
   @override
@@ -3456,25 +3661,116 @@ class _AgentResponseLightRailPainter extends CustomPainter {
   }
 }
 
-class _AgentHubTopFade extends StatelessWidget {
-  const _AgentHubTopFade();
+class _AgentPageBackground extends StatelessWidget {
+  const _AgentPageBackground();
+  @override
+  Widget build(BuildContext context) =>
+      const ColoredBox(color: MomHomeTokens.background);
+}
 
+class _AgentAssistantTurn extends StatelessWidget {
+  const _AgentAssistantTurn({
+    super.key,
+    required this.avatar,
+    required this.child,
+    this.fullWidth = false,
+  });
+  final Widget avatar;
+  final Widget child;
+  final bool fullWidth;
   @override
   Widget build(BuildContext context) {
-    return const DecoratedBox(
-      key: ValueKey('agent-top-fade'),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            MomCozyColors.background,
-            MomCozyColors.transparentBackground,
-          ],
-        ),
-      ),
+    if (fullWidth) return child;
+    if (MediaQuery.textScalerOf(context).scale(16) > 21) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            children: [
+              avatar,
+              const SizedBox(width: 8),
+              Text(
+                'Cozymate',
+                style: MomHomeTokens.text(12, color: MomHomeTokens.secondary),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          child,
+        ],
+      );
+    }
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        avatar,
+        const SizedBox(width: 10),
+        Expanded(child: child),
+      ],
     );
   }
+}
+
+class _AgentWelcomeCard extends StatelessWidget {
+  const _AgentWelcomeCard({required this.text, required this.avatar});
+  final String text;
+  final Widget avatar;
+  @override
+  Widget build(BuildContext context) {
+    final split = text.indexOf('\n');
+    final heading = split < 0 ? text : text.substring(0, split);
+    final body = split < 0 ? '' : text.substring(split).trim();
+    return MomSettingsCard(
+      backgroundDecoration: MomCardDecoration.ai,
+      gradient: MomHomeTokens.ai,
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Text(
+                heading,
+                style: MomHomeTokens.text(22, weight: FontWeight.w700),
+              ),
+            ),
+            const SizedBox(width: 12),
+            avatar,
+          ],
+        ),
+        if (body.isNotEmpty)
+          Text(body, style: MomHomeTokens.text(14, height: 1.55)),
+      ],
+    );
+  }
+}
+
+class _AgentAssistantBubble extends StatelessWidget {
+  const _AgentAssistantBubble({required this.child});
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => Container(
+    width: double.infinity,
+    padding: EdgeInsets.all(MediaQuery.sizeOf(context).width < 360 ? 13 : 16),
+    decoration: BoxDecoration(
+      color: MomHomeTokens.surface,
+      border: Border.all(color: MomHomeTokens.border),
+      borderRadius: const BorderRadius.only(
+        topLeft: Radius.circular(22),
+        topRight: Radius.circular(22),
+        bottomLeft: Radius.circular(22),
+        bottomRight: Radius.circular(22),
+      ),
+      boxShadow: const [
+        BoxShadow(
+          color: Color(0x032B2826),
+          blurRadius: 20,
+          offset: Offset(0, 5),
+        ),
+      ],
+    ),
+    child: child,
+  );
 }
 
 AgentStreamRequest _requestWithImages(
@@ -3856,10 +4152,10 @@ class _AgentHistoryBubble extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isUser = message.role == AgentHubHistoryRole.user;
-    final textStyle = Theme.of(context).textTheme.bodyMedium?.copyWith(
-      height: 1.45,
-      color: isUser ? MomCozyColors.primaryDark : MomCozyColors.foreground,
-      fontWeight: FontWeight.w500,
+    final textStyle = MomHomeTokens.text(
+      16,
+      height: 1.65,
+      color: isUser ? Colors.white : MomHomeTokens.ink,
     );
 
     if (!isUser) {
@@ -3876,12 +4172,11 @@ class _AgentHistoryBubble extends StatelessWidget {
         );
       }
 
-      return Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const _AgentAssistantAvatar(),
-          const SizedBox(width: 10),
-          Expanded(
+      return _AgentAssistantTurn(
+        avatar: const _AgentAssistantAvatar(),
+        child: _AgentAssistantBubble(
+          child: AgentMessageMenu(
+            text: message.content,
             child: AgentMarkdownText(
               message.content,
               style: textStyle,
@@ -3889,7 +4184,7 @@ class _AgentHistoryBubble extends StatelessWidget {
               productAssetRepository: productAssetRepository,
             ),
           ),
-        ],
+        ),
       );
     }
 
@@ -3897,20 +4192,25 @@ class _AgentHistoryBubble extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
         ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 294),
+          constraints: BoxConstraints(
+            maxWidth: math.min(
+              340,
+              MediaQuery.sizeOf(context).width -
+                  (MediaQuery.textScalerOf(context).scale(16) > 21 ? 32 : 78),
+            ),
+          ),
           child: DecoratedBox(
             decoration: BoxDecoration(
-              color: MomCozyColors.roseSoft,
+              color: MomHomeTokens.rose,
               borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(MomCozyRadii.card),
-                topRight: Radius.circular(MomCozyRadii.card),
-                bottomLeft: Radius.circular(MomCozyRadii.card),
-                bottomRight: Radius.circular(MomCozyRadii.badge),
+                topLeft: Radius.circular(22),
+                topRight: Radius.circular(22),
+                bottomLeft: Radius.circular(22),
+                bottomRight: Radius.circular(6),
               ),
-              border: Border.all(color: MomCozyColors.border),
             ),
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 17, vertical: 13),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
@@ -3928,7 +4228,10 @@ class _AgentHistoryBubble extends StatelessWidget {
                       message.content.isNotEmpty)
                     const SizedBox(height: 8),
                   if (message.content.isNotEmpty)
-                    Text(message.content, style: textStyle),
+                    AgentMessageMenu(
+                      text: message.content,
+                      child: Text(message.content, style: textStyle),
+                    ),
                 ],
               ),
             ),
@@ -4221,9 +4524,6 @@ class AgentRunTranscript extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
-    final isDefaultGreeting =
-        state.phase == AgentStreamRunPhase.idle &&
-        state.textContent.trim().isEmpty;
     final text = _primaryText;
     final allowsSupplementaryContent =
         state.phase != AgentStreamRunPhase.error &&
@@ -4270,124 +4570,159 @@ class AgentRunTranscript extends StatelessWidget {
     final thinkingNoteTitle = loopDecor.thinkingTitle;
     final statusLineTitle = loopDecor.statusTitle;
     final shouldRenderPrimaryText = _shouldRenderPrimaryText;
-    final primaryTextStyle = textTheme.bodyMedium?.copyWith(
-      height: 1.40,
-      color:
-          state.phase == AgentStreamRunPhase.error ||
-              state.phase == AgentStreamRunPhase.disconnected
-          ? MomCozyColors.danger
-          : MomCozyColors.foreground,
-      fontWeight: FontWeight.w400,
-    );
+    final isFailure =
+        state.phase == AgentStreamRunPhase.error ||
+        state.phase == AgentStreamRunPhase.disconnected;
+    final showFailureFallback = isFailure && state.textContent.trim().isEmpty;
+    final primaryTextStyle = MomHomeTokens.text(16, height: 1.65);
+    final isGreeting =
+        state.phase == AgentStreamRunPhase.idle &&
+        state.textContent.trim().isEmpty;
 
-    return Row(
+    return _AgentAssistantTurn(
       key: const ValueKey('agent-run-transcript'),
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _AgentAssistantAvatar(mode: avatarMode),
-        const SizedBox(width: 10),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (statusLineTitle != null) ...[
-                AgentRunStatusLine(title: statusLineTitle),
-                if (thinkingNoteTitle != null || shouldRenderPrimaryText)
-                  const SizedBox(height: 5),
-              ],
-              if (thinkingNoteTitle != null) ...[
-                AgentThinkingNote(title: thinkingNoteTitle),
-                if (shouldRenderPrimaryText) const SizedBox(height: 8),
-              ],
-              if (shouldRenderPrimaryText)
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      maxWidth: isDefaultGreeting ? 260 : double.infinity,
-                    ),
-                    child: AgentMarkdownText(
-                      text,
-                      style: primaryTextStyle,
-                      onArtifactAction: onArtifactAction,
-                      productAssetRepository: productAssetRepository,
-                      citations: citations,
-                    ),
-                  ),
+      avatar: _AgentAssistantAvatar(mode: avatarMode),
+      fullWidth: isGreeting,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (statusLineTitle != null) ...[
+            AgentRunStatusLine(title: statusLineTitle),
+            if (thinkingNoteTitle != null || shouldRenderPrimaryText)
+              const SizedBox(height: 5),
+          ],
+          if (thinkingNoteTitle != null) ...[
+            AgentThinkingNote(title: thinkingNoteTitle),
+            if (shouldRenderPrimaryText) const SizedBox(height: 8),
+          ],
+          if (showFailureFallback)
+            Semantics(
+              liveRegion: true,
+              child: const Text(
+                '这次没有拿到回复。',
+                key: ValueKey('agent-run-failure-fallback'),
+                style: TextStyle(
+                  fontSize: 14,
+                  height: 1.45,
+                  color: MomCozyColors.danger,
                 ),
-              if (_supportingText != null) ...[
-                const SizedBox(height: 14),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Icon(
-                      _supportingIcon,
-                      size: 18,
-                      color: _supportingColor(colorScheme),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        _supportingText!,
-                        style: textTheme.bodySmall?.copyWith(
-                          height: 1.35,
-                          color: MomCozyColors.mutedForeground,
+              ),
+            )
+          else if (shouldRenderPrimaryText)
+            Align(
+              alignment: Alignment.centerLeft,
+              child: isGreeting
+                  ? _AgentWelcomeCard(
+                      text: text,
+                      avatar: _AgentAssistantAvatar(mode: avatarMode),
+                    )
+                  : _AgentAssistantBubble(
+                      child: AgentMessageMenu(
+                        text: state.textContent,
+                        enabled:
+                            !state.isActive &&
+                            state.phase !=
+                                AgentStreamRunPhase.waitingForConfirmation,
+                        onRetry: allowsSupplementaryContent && canRetry
+                            ? onRetry
+                            : null,
+                        child: AgentMarkdownText(
+                          text,
+                          style: primaryTextStyle,
+                          onArtifactAction: onArtifactAction,
+                          productAssetRepository: productAssetRepository,
+                          citations: citations,
                         ),
                       ),
                     ),
-                  ],
+            ),
+          if (_supportingText != null) ...[
+            const SizedBox(height: 9),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(
+                  _supportingIcon,
+                  size: 18,
+                  color: _supportingColor(colorScheme),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    _supportingText!,
+                    style: textTheme.bodySmall?.copyWith(
+                      fontSize: 12,
+                      height: 1.4,
+                      color: _supportingColor(colorScheme),
+                    ),
+                  ),
                 ),
               ],
-              if (allowsSupplementaryContent && canRetry) ...[
-                const SizedBox(height: 12),
-                FilledButton.tonalIcon(
-                  key: const ValueKey('agent-retry-button'),
-                  onPressed: onRetry,
-                  icon: const Icon(Icons.refresh_rounded),
-                  label: const Text('重试'),
+            ),
+          ],
+          if (allowsSupplementaryContent && canRetry) ...[
+            const SizedBox(height: 12),
+            FilledButton.tonalIcon(
+              key: const ValueKey('agent-retry-button'),
+              onPressed: onRetry,
+              icon: const Icon(Icons.refresh_rounded),
+              label: const Text('重试'),
+              style: FilledButton.styleFrom(
+                backgroundColor: MomHomeTokens.surface,
+                foregroundColor: MomHomeTokens.rose,
+                minimumSize: const Size(44, 44),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 10,
                 ),
-              ],
-              if (visibleArtifactCards.isNotEmpty) ...[
-                const SizedBox(height: 16),
-                AgentArtifactPanel(
-                  key: artifactPanelKey,
-                  cards: visibleArtifactCards,
-                  onAction: artifactActionForState,
-                  onFormSubmit: onFormSubmit,
-                  formSubmissionsListenable: formSubmissionsListenable,
-                  formPresentationSession: formPresentationSession,
-                  autoPresentForms:
-                      allowFormAutoPresentation &&
-                      state.hasCompletedAssistantMessage,
+                textStyle: const TextStyle(
+                  fontFamily: MomCozyTypography.fontFamily,
+                  fontFamilyFallback: MomCozyTypography.fontFamilyFallback,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
                 ),
-              ],
-              if (actionCards.isNotEmpty) ...[
-                const SizedBox(height: 16),
-                AgentActionPanel(
-                  actions: actionCards,
-                  pendingActionIds: pendingActionIds,
-                  onConfirm: onConfirmAction,
-                  onReject: onRejectAction,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
                 ),
-              ],
-              if (citations.isNotEmpty) ...[
-                const SizedBox(height: 16),
-                AgentCitationList(
-                  citations: citations,
-                  onAction: onArtifactAction,
-                ),
-              ],
-              if (shouldRenderQuickReplies) ...[
-                SizedBox(height: citations.isNotEmpty ? 20 : 16),
-                AgentQuickRepliesBar(
-                  replies: quickReplies,
-                  onSelected: onQuickReplySelected!,
-                ),
-              ],
-            ],
-          ),
-        ),
-      ],
+              ),
+            ),
+          ],
+          if (visibleArtifactCards.isNotEmpty) ...[
+            const SizedBox(height: 16),
+            AgentArtifactPanel(
+              key: artifactPanelKey,
+              cards: visibleArtifactCards,
+              onAction: artifactActionForState,
+              onFormSubmit: onFormSubmit,
+              formSubmissionsListenable: formSubmissionsListenable,
+              formPresentationSession: formPresentationSession,
+              autoPresentForms:
+                  allowFormAutoPresentation &&
+                  state.hasCompletedAssistantMessage,
+            ),
+          ],
+          if (actionCards.isNotEmpty) ...[
+            const SizedBox(height: 16),
+            AgentActionPanel(
+              actions: actionCards,
+              pendingActionIds: pendingActionIds,
+              onConfirm: onConfirmAction,
+              onReject: onRejectAction,
+            ),
+          ],
+          if (citations.isNotEmpty) ...[
+            const SizedBox(height: 16),
+            AgentCitationList(citations: citations, onAction: onArtifactAction),
+          ],
+          if (shouldRenderQuickReplies) ...[
+            SizedBox(height: citations.isNotEmpty ? 20 : 16),
+            AgentQuickRepliesBar(
+              replies: quickReplies,
+              onSelected: onQuickReplySelected!,
+            ),
+          ],
+        ],
+      ),
     );
   }
 
@@ -4768,7 +5103,7 @@ class AgentMarkdownText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final normalized = text.trim();
-    final baseStyle = style ?? Theme.of(context).textTheme.bodyMedium;
+    final baseStyle = style ?? MomHomeTokens.text(16, height: 1.65);
     if (!parseMarkdown) {
       return Text(normalized, style: baseStyle);
     }
@@ -4843,15 +5178,14 @@ class AgentMarkdownText extends StatelessWidget {
     TextStyle? baseStyle,
   ) {
     final theme = Theme.of(context);
-    final paragraphStyle = theme.textTheme.bodyMedium
-        ?.merge(baseStyle)
-        .copyWith(height: 1.42);
+    final paragraphStyle = theme.textTheme.bodyMedium?.merge(baseStyle);
     final mutedStyle = paragraphStyle?.copyWith(
       color: MomCozyColors.mutedForeground,
     );
     final headingBase = paragraphStyle?.copyWith(
-      height: 1.28,
-      color: MomCozyColors.foreground,
+      fontFamily: 'NotoSansSCHome',
+      fontSize: 18,
+      height: 1.4,
       fontWeight: FontWeight.w700,
     );
     final codeStyle = paragraphStyle?.copyWith(
@@ -4866,25 +5200,25 @@ class AgentMarkdownText extends StatelessWidget {
       p: paragraphStyle,
       pPadding: EdgeInsets.zero,
       a: paragraphStyle?.copyWith(
-        color: MomCozyColors.primary,
-        fontWeight: FontWeight.w700,
-        decoration: TextDecoration.none,
+        color: MomHomeTokens.teal,
+        decoration: TextDecoration.underline,
+        decorationColor: MomHomeTokens.teal,
       ),
       strong: paragraphStyle?.copyWith(
-        color: MomCozyColors.foreground,
+        fontFamily: 'NotoSansSCHome',
         fontWeight: FontWeight.w700,
       ),
       em: paragraphStyle?.copyWith(fontStyle: FontStyle.italic),
       del: mutedStyle?.copyWith(decoration: TextDecoration.lineThrough),
-      h1: headingBase?.copyWith(fontSize: MomCozyTypography.headingSize),
-      h2: headingBase?.copyWith(fontSize: MomCozyTypography.sectionSize),
-      h3: headingBase?.copyWith(fontSize: MomCozyTypography.titleSize),
+      h1: headingBase,
+      h2: headingBase,
+      h3: headingBase,
       h4: headingBase?.copyWith(fontSize: MomCozyTypography.bodySize),
       h5: headingBase,
       h6: headingBase,
-      h1Padding: const EdgeInsets.only(bottom: 6),
-      h2Padding: const EdgeInsets.only(bottom: 6),
-      h3Padding: const EdgeInsets.only(bottom: 4),
+      h1Padding: EdgeInsets.zero,
+      h2Padding: EdgeInsets.zero,
+      h3Padding: EdgeInsets.zero,
       h4Padding: const EdgeInsets.only(bottom: 4),
       h5Padding: const EdgeInsets.only(bottom: 4),
       h6Padding: const EdgeInsets.only(bottom: 4),
@@ -4897,7 +5231,7 @@ class AgentMarkdownText extends StatelessWidget {
       ),
       blockSpacing: 10,
       listIndent: 20,
-      listBullet: mutedStyle,
+      listBullet: paragraphStyle,
       listBulletPadding: const EdgeInsets.only(right: 6),
       blockquote: mutedStyle,
       blockquotePadding: const EdgeInsets.fromLTRB(12, 8, 10, 8),
@@ -5150,7 +5484,13 @@ class _AgentRunStatusLineState extends State<AgentRunStatusLine>
     _sweepController = AnimationController(
       vsync: this,
       duration: _sweepDuration,
-    )..repeat();
+    );
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _syncAgentDecoration(context, _sweepController);
   }
 
   @override
@@ -5166,6 +5506,7 @@ class _AgentRunStatusLineState extends State<AgentRunStatusLine>
 
     return Semantics(
       label: title,
+      excludeSemantics: true,
       child: Container(
         key: const ValueKey('agent-run-status-line'),
         constraints: const BoxConstraints(maxWidth: double.infinity),
@@ -5224,12 +5565,7 @@ class _AgentSweepText extends StatelessWidget {
           child: child,
         );
       },
-      child: Text(
-        text,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-        style: style,
-      ),
+      child: Text(text, style: style),
     );
   }
 }
@@ -5255,7 +5591,13 @@ class _AgentThinkingNoteState extends State<AgentThinkingNote>
     _sweepController = AnimationController(
       vsync: this,
       duration: _sweepDuration,
-    )..repeat();
+    );
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _syncAgentDecoration(context, _sweepController);
   }
 
   @override
@@ -5269,6 +5611,7 @@ class _AgentThinkingNoteState extends State<AgentThinkingNote>
     final textTheme = Theme.of(context).textTheme;
     return Semantics(
       label: widget.title,
+      excludeSemantics: true,
       child: Padding(
         padding: EdgeInsets.zero,
         child: _AgentSweepText(
@@ -5451,9 +5794,7 @@ class _AgentAssistantAvatarState extends State<_AgentAssistantAvatar>
     final isActiveMode = isSpeakingMode || isThinkingMode;
     final showSpeakingVideo = shouldAnimate && isSpeakingMode;
     final showThinkingVideo = shouldAnimate && isThinkingMode;
-    final ringColor = isSpeakingMode
-        ? MomCozyColors.violet
-        : MomCozyColors.care;
+    final ringColor = isSpeakingMode ? MomHomeTokens.rose : MomCozyColors.care;
     final activeAvatarKey = showSpeakingVideo
         ? 'agent-assistant-avatar-speaking-media'
         : showThinkingVideo
@@ -5464,7 +5805,7 @@ class _AgentAssistantAvatarState extends State<_AgentAssistantAvatar>
 
     return SizedBox.square(
       key: const ValueKey('agent-assistant-avatar'),
-      dimension: 32,
+      dimension: MediaQuery.sizeOf(context).width < 360 ? 36 : 40,
       child: Stack(
         clipBehavior: Clip.none,
         alignment: Alignment.center,
@@ -5518,36 +5859,42 @@ class _AgentAssistantAvatarState extends State<_AgentAssistantAvatar>
           DecoratedBox(
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              boxShadow: MomCozyShadows.soft,
+              border: Border.all(color: Colors.white, width: 2),
+              boxShadow: const [
+                BoxShadow(color: Color(0xffdfcbed), spreadRadius: 1),
+              ],
             ),
-            child: ClipOval(
-              child: Stack(
-                fit: StackFit.passthrough,
-                children: [
-                  Image.asset(
-                    MomCozyAssets.agentAvatar,
-                    key: const ValueKey('agent-assistant-avatar-static'),
-                    width: 32,
-                    height: 32,
-                    fit: BoxFit.cover,
-                  ),
-                  if (videoReady &&
-                      videoController != null &&
-                      activeAvatarKey != null)
-                    Positioned.fill(
-                      child: FittedBox(
-                        fit: BoxFit.cover,
-                        child: SizedBox(
-                          width: videoController.value.size.width,
-                          height: videoController.value.size.height,
-                          child: VideoPlayer(
-                            videoController,
-                            key: ValueKey(activeAvatarKey),
+            child: Padding(
+              padding: const EdgeInsets.all(2),
+              child: ClipOval(
+                child: Stack(
+                  fit: StackFit.passthrough,
+                  children: [
+                    Image.asset(
+                      MomCozyAssets.agentAvatar,
+                      key: const ValueKey('agent-assistant-avatar-static'),
+                      width: MediaQuery.sizeOf(context).width < 360 ? 32 : 36,
+                      height: MediaQuery.sizeOf(context).width < 360 ? 32 : 36,
+                      fit: BoxFit.cover,
+                    ),
+                    if (videoReady &&
+                        videoController != null &&
+                        activeAvatarKey != null)
+                      Positioned.fill(
+                        child: FittedBox(
+                          fit: BoxFit.cover,
+                          child: SizedBox(
+                            width: videoController.value.size.width,
+                            height: videoController.value.size.height,
+                            child: VideoPlayer(
+                              videoController,
+                              key: ValueKey(activeAvatarKey),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
@@ -5572,169 +5919,161 @@ class AgentActionPanel extends StatelessWidget {
   final ValueChanged<AgentActionCardView>? onReject;
 
   @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
-
-    return Column(
-      key: const ValueKey('agent-action-panel'),
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          '待处理动作',
-          style: textTheme.labelLarge?.copyWith(
-            color: colorScheme.onSurface,
-            fontWeight: FontWeight.w700,
+  Widget build(BuildContext context) => Column(
+    key: const ValueKey('agent-action-panel'),
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: [
+      Semantics(
+        header: true,
+        child: Text(
+          '操作事项',
+          style: MomHomeTokens.text(
+            13,
+            color: MomHomeTokens.secondary,
+            weight: FontWeight.w700,
           ),
         ),
-        const SizedBox(height: 8),
-        for (final action in actions) ...[
-          DecoratedBox(
-            key: ValueKey('agent-action-card-${action.id}'),
-            decoration: BoxDecoration(
-              color: colorScheme.tertiaryContainer.withValues(alpha: 0.38),
-              borderRadius: BorderRadius.circular(MomCozyRadii.thumbnail),
-              border: Border.all(color: colorScheme.outlineVariant),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Icon(
-                        action.icon,
-                        size: 18,
-                        color: action.color(colorScheme),
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          action.title,
-                          style: textTheme.titleSmall?.copyWith(
-                            color: colorScheme.onSurface,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        action.statusLabel,
-                        style: textTheme.labelSmall?.copyWith(
-                          color: action.color(colorScheme),
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ],
+      ),
+      const SizedBox(height: 14),
+      for (final action in actions) ...[
+        _buildCard(context, action),
+        if (action != actions.last) const SizedBox(height: 14),
+      ],
+    ],
+  );
+
+  Widget _buildCard(BuildContext context, AgentActionCardView action) {
+    final color = action.color(
+      Theme.of(context).colorScheme.copyWith(
+        primary: MomHomeTokens.teal,
+        tertiary: MomHomeTokens.teal,
+        onSurfaceVariant: MomHomeTokens.secondary,
+      ),
+    );
+    return AgentResultCard(
+      key: ValueKey('agent-action-card-${action.id}'),
+      title: action.title,
+      icon: Icon(action.icon, size: 22, color: color),
+      children: [
+        Wrap(
+          spacing: 10,
+          runSpacing: 8,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: [
+            Semantics(
+              liveRegion: true,
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 6,
+                ),
+                decoration: BoxDecoration(
+                  color:
+                      action.status == 'failed' || action.status == 'rejected'
+                      ? MomHomeTokens.neutralSurface
+                      : MomHomeTokens.mint,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Text(
+                  action.statusLabel,
+                  style: MomHomeTokens.text(
+                    13,
+                    color: color,
+                    weight: FontWeight.w600,
                   ),
-                  if (action.actionTypeLabel != null) ...[
-                    const SizedBox(height: 8),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: DecoratedBox(
-                        decoration: BoxDecoration(
-                          color: MomCozyColors.roseSoft,
-                          borderRadius: BorderRadius.circular(
-                            MomCozyRadii.pill,
-                          ),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 5,
-                          ),
-                          child: Text(
-                            action.actionTypeLabel!,
-                            style: const TextStyle(
-                              color: MomCozyColors.primaryDark,
-                              fontSize: MomCozyTypography.labelSize,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                  if (action.subtitle != null) ...[
-                    const SizedBox(height: 8),
-                    Text(
-                      action.subtitle!,
-                      style: textTheme.bodySmall?.copyWith(
-                        height: 1.35,
-                        color: colorScheme.onSurfaceVariant,
-                      ),
-                    ),
-                  ],
-                  if (action.previewRows.isNotEmpty) ...[
-                    const SizedBox(height: 10),
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: MomCozyColors.raised,
-                        borderRadius: BorderRadius.circular(
-                          MomCozyRadii.control,
-                        ),
-                        border: Border.all(color: MomCozyColors.roseSoft),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          for (
-                            var index = 0;
-                            index < action.previewRows.length;
-                            index++
-                          ) ...[
-                            Text(
-                              action.previewRows[index],
-                              style: textTheme.bodySmall?.copyWith(
-                                color: MomCozyColors.foreground,
-                                height: 1.4,
-                              ),
-                            ),
-                            if (index < action.previewRows.length - 1)
-                              const SizedBox(height: 4),
-                          ],
-                        ],
-                      ),
-                    ),
-                  ],
-                  if (action.canConfirm) ...[
-                    const SizedBox(height: 10),
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: [
-                        FilledButton.icon(
-                          key: ValueKey('agent-action-confirm-${action.id}'),
-                          onPressed:
-                              pendingActionIds.contains(action.id) ||
-                                  onConfirm == null
-                              ? null
-                              : () => onConfirm?.call(action),
-                          icon: const Icon(Icons.check_rounded),
-                          label: const Text('确认'),
-                        ),
-                        OutlinedButton.icon(
-                          key: ValueKey('agent-action-reject-${action.id}'),
-                          onPressed:
-                              pendingActionIds.contains(action.id) ||
-                                  onReject == null
-                              ? null
-                              : () => onReject?.call(action),
-                          icon: const Icon(Icons.close_rounded),
-                          label: const Text('拒绝'),
-                        ),
-                      ],
-                    ),
-                  ],
-                ],
+                ),
               ),
             ),
+            if (action.actionTypeLabel != null)
+              Text(
+                action.actionTypeLabel!,
+                style: MomHomeTokens.text(13, color: MomHomeTokens.secondary),
+              ),
+          ],
+        ),
+        if (action.subtitle != null) ...[
+          const SizedBox(height: 14),
+          Text(action.subtitle!, style: agentResultBodyStyle),
+        ],
+        if (action.previewRows.isNotEmpty) ...[
+          const SizedBox(height: 14),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: MomHomeTokens.background,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                for (
+                  var index = 0;
+                  index < action.previewRows.length;
+                  index++
+                ) ...[
+                  Text(
+                    action.previewRows[index],
+                    style: MomHomeTokens.text(14),
+                  ),
+                  if (index < action.previewRows.length - 1)
+                    const SizedBox(height: 8),
+                ],
+              ],
+            ),
           ),
-          if (action != actions.last) const SizedBox(height: 10),
+        ],
+        if (action.canConfirm) ...[
+          const SizedBox(height: 14),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final confirm = FilledButton.icon(
+                key: ValueKey('agent-action-confirm-${action.id}'),
+                style: agentResultButtonStyle(primary: true),
+                onPressed:
+                    pendingActionIds.contains(action.id) || onConfirm == null
+                    ? null
+                    : () => onConfirm?.call(action),
+                icon: const Icon(Icons.check_rounded, size: 18),
+                label: const Text('确认'),
+              );
+              final reject = OutlinedButton.icon(
+                key: ValueKey('agent-action-reject-${action.id}'),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: MomHomeTokens.rose,
+                  disabledForegroundColor: MomHomeTokens.secondary,
+                  backgroundColor: MomHomeTokens.surface,
+                  minimumSize: const Size(44, 44),
+                  padding: const EdgeInsets.all(12),
+                  side: const BorderSide(color: MomHomeTokens.border),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  textStyle: MomHomeTokens.text(13, weight: FontWeight.w600),
+                ),
+                onPressed:
+                    pendingActionIds.contains(action.id) || onReject == null
+                    ? null
+                    : () => onReject?.call(action),
+                icon: const Icon(Icons.close_rounded, size: 18),
+                label: const Text('拒绝'),
+              );
+              if (constraints.maxWidth < 300 ||
+                  MediaQuery.textScalerOf(context).scale(14) > 17.5) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [confirm, const SizedBox(height: 8), reject],
+                );
+              }
+              return Row(
+                children: [
+                  Expanded(child: confirm),
+                  const SizedBox(width: 8),
+                  Expanded(child: reject),
+                ],
+              );
+            },
+          ),
         ],
       ],
     );
@@ -5848,12 +6187,12 @@ class AgentComposerBar extends StatefulWidget {
 }
 
 class _AgentComposerBarState extends State<AgentComposerBar> {
-  static const double _controlSize = 32;
-  static const double _attachmentControlSize = 40;
-  static const double _surfaceMinHeight = 48;
-  static const double _surfaceHorizontalInset = 12;
-  static const double _surfaceVerticalInset = 8;
-  static const double _controlGap = 8;
+  static const double _controlSize = 44;
+  static const double _attachmentControlSize = 44;
+  static const double _surfaceMinHeight = 56;
+  static const double _surfaceHorizontalInset = 5;
+  static const double _surfaceVerticalInset = 5;
+  static const double _controlGap = 6;
   static const double _inputLeftInset =
       _surfaceHorizontalInset + _attachmentControlSize + _controlGap;
   static const double _expandedInputHorizontalInset = 20;
@@ -5899,7 +6238,8 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
   Widget _attachmentMenuItem({
     required Key key,
     required String label,
-    required IconData icon,
+    required String description,
+    required MomCozyLineGlyph glyph,
     required VoidCallback? onPressed,
   }) {
     return MenuItemButton(
@@ -5911,33 +6251,52 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
               onPressed();
             },
       style: MenuItemButton.styleFrom(
-        minimumSize: const Size(220, 60),
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(MomCozyRadii.control),
-        ),
+        minimumSize: const Size(0, 56),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
       ),
       child: Row(
         children: [
           DecoratedBox(
             decoration: const BoxDecoration(
-              color: MomCozyColors.muted,
-              shape: BoxShape.circle,
+              color: MomHomeTokens.mint,
+              borderRadius: BorderRadius.all(Radius.circular(12)),
             ),
             child: SizedBox.square(
-              dimension: 44,
-              child: Icon(icon, size: 24, color: MomCozyColors.foreground),
+              dimension: 40,
+              child: Center(
+                child: MomCozyLineIcon(
+                  glyph,
+                  size: 22,
+                  color: onPressed == null
+                      ? MomHomeTokens.muted
+                      : MomHomeTokens.teal,
+                ),
+              ),
             ),
           ),
-          const SizedBox(width: 16),
-          Text(
-            label,
-            style: const TextStyle(
-              fontFamily: MomCozyTypography.fontFamily,
-              fontFamilyFallback: MomCozyTypography.fontFamilyFallback,
-              fontSize: MomCozyTypography.bodyLargeSize,
-              fontWeight: FontWeight.w600,
-              color: MomCozyColors.foreground,
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  label,
+                  style: MomHomeTokens.text(
+                    15,
+                    weight: FontWeight.w600,
+                    color: onPressed == null
+                        ? MomHomeTokens.muted
+                        : MomHomeTokens.ink,
+                  ),
+                ),
+                const SizedBox(height: 3),
+                Text(
+                  description,
+                  style: MomHomeTokens.text(12, color: MomHomeTokens.secondary),
+                ),
+              ],
             ),
           ),
         ],
@@ -5966,107 +6325,98 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
     final sendIsStop = isRunning && !canSend;
     final sendLooksActive = canSend || sendIsStop;
     const inputTextStyle = TextStyle(
-      fontFamily: MomCozyTypography.fontFamily,
+      fontFamily: 'NotoSansSCHome',
       fontFamilyFallback: MomCozyTypography.fontFamilyFallback,
-      fontSize: MomCozyTypography.bodySize,
+      fontSize: 16,
       height: 1.6,
     );
 
     return Padding(
       key: const ValueKey('agent-composer-bar'),
-      padding: const EdgeInsets.symmetric(
-        horizontal: MomCozySpacing.pageGutter,
-      ),
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
       child: DecoratedBox(
-        decoration: const BoxDecoration(color: MomCozyColors.background),
+        decoration: const BoxDecoration(),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            if (imageCount > 0) ...[
-              SizedBox(
-                key: const ValueKey('agent-image-attachment-chip'),
-                height: 78,
-                child: Row(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(right: 8),
-                      child: Text(
-                        '图片 $imageCount',
-                        style: Theme.of(context).textTheme.labelMedium
-                            ?.copyWith(
-                              color: MomCozyColors.mutedForeground,
-                              fontWeight: FontWeight.w700,
-                            ),
-                      ),
+            if (imageCount + fileCount > 0) ...[
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  final largeText =
+                      MediaQuery.textScalerOf(context).scale(14) > 20;
+                  final width = math.min(
+                    largeText ? 320.0 : 252.0,
+                    constraints.maxWidth * .92,
+                  );
+                  return SingleChildScrollView(
+                    key: const ValueKey('agent-pending-attachments'),
+                    scrollDirection: Axis.horizontal,
+                    padding: const EdgeInsets.all(2),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (imageCount > 0)
+                          Row(
+                            key: const ValueKey('agent-image-attachment-chip'),
+                            children: [
+                              for (var index = 0; index < imageCount; index++)
+                                Padding(
+                                  padding: const EdgeInsets.only(right: 8),
+                                  child: SizedBox(
+                                    width: width,
+                                    child: AgentComposerImageAttachment(
+                                      key: ValueKey(
+                                        'agent-image-attachment-$index',
+                                      ),
+                                      image: images[index],
+                                      removeButtonKey: ValueKey(
+                                        index == 0
+                                            ? 'agent-remove-image-button'
+                                            : 'agent-remove-image-$index',
+                                      ),
+                                      onRemove: isInputLocked
+                                          ? null
+                                          : () => widget.onRemoveImage(index),
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ),
+                        if (fileCount > 0)
+                          Row(
+                            key: const ValueKey('agent-file-attachment-chip'),
+                            children: [
+                              for (var index = 0; index < fileCount; index++)
+                                Padding(
+                                  padding: EdgeInsets.only(
+                                    right: index == fileCount - 1 ? 0 : 8,
+                                  ),
+                                  child: SizedBox(
+                                    width: width,
+                                    child: AgentComposerFileAttachment(
+                                      key: ValueKey(
+                                        'agent-file-attachment-$index',
+                                      ),
+                                      file: files[index],
+                                      removeButtonKey: ValueKey(
+                                        index == 0
+                                            ? 'agent-remove-file-button'
+                                            : 'agent-remove-file-$index',
+                                      ),
+                                      onRemove: isInputLocked
+                                          ? null
+                                          : () => widget.onRemoveFile(index),
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ),
+                      ],
                     ),
-                    Expanded(
-                      child: ListView.separated(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: imageCount,
-                        separatorBuilder: (_, _) => const SizedBox(width: 8),
-                        itemBuilder: (context, index) {
-                          return AgentComposerImageAttachment(
-                            key: ValueKey('agent-image-attachment-$index'),
-                            image: images[index],
-                            removeButtonKey: ValueKey(
-                              index == 0
-                                  ? 'agent-remove-image-button'
-                                  : 'agent-remove-image-$index',
-                            ),
-                            onRemove: isInputLocked
-                                ? null
-                                : () => widget.onRemoveImage(index),
-                          );
-                        },
-                      ),
-                    ),
-                  ],
-                ),
+                  );
+                },
               ),
-              const SizedBox(height: 8),
-            ],
-            if (fileCount > 0) ...[
-              SizedBox(
-                key: const ValueKey('agent-file-attachment-chip'),
-                height: 78,
-                child: Row(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(right: 8),
-                      child: Text(
-                        '文件 $fileCount',
-                        style: Theme.of(context).textTheme.labelMedium
-                            ?.copyWith(
-                              color: MomCozyColors.mutedForeground,
-                              fontWeight: FontWeight.w700,
-                            ),
-                      ),
-                    ),
-                    Expanded(
-                      child: ListView.separated(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: fileCount,
-                        separatorBuilder: (_, _) => const SizedBox(width: 8),
-                        itemBuilder: (context, index) {
-                          return AgentComposerFileAttachment(
-                            key: ValueKey('agent-file-attachment-$index'),
-                            file: files[index],
-                            removeButtonKey: ValueKey(
-                              index == 0
-                                  ? 'agent-remove-file-button'
-                                  : 'agent-remove-file-$index',
-                            ),
-                            onRemove: isInputLocked
-                                ? null
-                                : () => widget.onRemoveFile(index),
-                          );
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 7),
             ],
             LayoutBuilder(
               builder: (context, constraints) {
@@ -6122,6 +6472,7 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
 
                 final composerInput = TextField(
                   key: const ValueKey('agent-composer-input'),
+                  onTap: _attachmentMenuController.close,
                   controller: controller,
                   focusNode: widget.focusNode,
                   minLines: 1,
@@ -6142,13 +6493,11 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
                     isCollapsed: true,
                     contentPadding: EdgeInsets.zero,
                     hintStyle: TextStyle(
-                      fontFamily: MomCozyTypography.fontFamily,
+                      fontFamily: 'NotoSansSCHome',
                       fontFamilyFallback: MomCozyTypography.fontFamilyFallback,
-                      fontSize: MomCozyTypography.bodySize,
+                      fontSize: 16,
                       height: 1.6,
-                      color: MomCozyColors.mutedForeground.withValues(
-                        alpha: 0.82,
-                      ),
+                      color: MomHomeTokens.secondary,
                     ),
                   ),
                 );
@@ -6158,203 +6507,214 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
                   child: composerInput,
                 );
 
-                return DecoratedBox(
-                  key: const ValueKey('agent-composer-surface'),
-                  decoration: BoxDecoration(
-                    color: MomCozyColors.card.withValues(alpha: 0.88),
-                    borderRadius: BorderRadius.circular(MomCozyRadii.featured),
-                    border: Border.all(
-                      color: MomCozyColors.border.withValues(alpha: 0.64),
+                return MenuAnchor(
+                  controller: _attachmentMenuController,
+                  consumeOutsideTap: true,
+                  alignmentOffset: const Offset(4, 4),
+                  style: MenuStyle(
+                    backgroundColor: const WidgetStatePropertyAll(
+                      MomHomeTokens.surface,
                     ),
-                    boxShadow: MomCozyShadows.soft,
+                    padding: const WidgetStatePropertyAll(EdgeInsets.all(8)),
+                    shape: WidgetStatePropertyAll(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(22),
+                        side: const BorderSide(color: MomHomeTokens.border),
+                      ),
+                    ),
+                    elevation: const WidgetStatePropertyAll(4),
+                    shadowColor: WidgetStatePropertyAll(
+                      MomHomeTokens.ink.withValues(alpha: 0.12),
+                    ),
                   ),
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(
-                      minHeight: _surfaceMinHeight,
+                  menuChildren: [
+                    SizedBox(
+                      key: const ValueKey('agent-attachment-menu'),
+                      width:
+                          math.min(
+                            MediaQuery.sizeOf(context).width - 32,
+                            260 *
+                                (MediaQuery.textScalerOf(context).scale(15) /
+                                        15)
+                                    .clamp(1, 1.2),
+                          ) -
+                          16,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          _attachmentMenuItem(
+                            key: const ValueKey(
+                              'agent-attachment-camera-button',
+                            ),
+                            label: '相机',
+                            description: '拍摄一张照片',
+                            glyph: MomCozyLineGlyph.camera,
+                            onPressed: canAttachImage
+                                ? widget.onTakePhoto
+                                : null,
+                          ),
+                          _attachmentMenuItem(
+                            key: const ValueKey(
+                              'agent-attachment-photo-button',
+                            ),
+                            label: '照片',
+                            description: 'JPG、PNG、WebP',
+                            glyph: MomCozyLineGlyph.image,
+                            onPressed: canAttachImage
+                                ? widget.onPickPhoto
+                                : null,
+                          ),
+                          _attachmentMenuItem(
+                            key: const ValueKey('agent-attachment-file-button'),
+                            label: '文件',
+                            description: 'PDF · 最大 10 MB',
+                            glyph: MomCozyLineGlyph.file,
+                            onPressed: canAttachFile ? widget.onPickFile : null,
+                          ),
+                        ],
+                      ),
                     ),
-                    child: Stack(
-                      alignment: Alignment.centerLeft,
-                      clipBehavior: Clip.none,
-                      children: [
-                        inputFrame,
-                        positionControl(
-                          left: _surfaceHorizontalInset,
-                          child: MenuAnchor(
-                            controller: _attachmentMenuController,
-                            consumeOutsideTap: true,
-                            alignmentOffset: const Offset(-12, -8),
-                            style: MenuStyle(
-                              backgroundColor: const WidgetStatePropertyAll(
-                                MomCozyColors.card,
-                              ),
-                              padding: const WidgetStatePropertyAll(
-                                EdgeInsets.all(8),
-                              ),
-                              shape: WidgetStatePropertyAll(
-                                RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(
-                                    MomCozyRadii.sheet,
-                                  ),
-                                  side: BorderSide(
-                                    color: MomCozyColors.border.withValues(
-                                      alpha: 0.62,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              elevation: const WidgetStatePropertyAll(12),
-                              shadowColor: WidgetStatePropertyAll(
-                                MomCozyColors.foreground.withValues(alpha: 0.2),
-                              ),
-                            ),
-                            menuChildren: [
-                              SizedBox(
-                                key: const ValueKey('agent-attachment-menu'),
-                                width: 228,
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    _attachmentMenuItem(
-                                      key: const ValueKey(
-                                        'agent-attachment-camera-button',
-                                      ),
-                                      label: '相机',
-                                      icon: Icons.photo_camera_outlined,
-                                      onPressed: canAttachImage
-                                          ? widget.onTakePhoto
-                                          : null,
-                                    ),
-                                    _attachmentMenuItem(
-                                      key: const ValueKey(
-                                        'agent-attachment-photo-button',
-                                      ),
-                                      label: '照片',
-                                      icon: Icons.photo_library_outlined,
-                                      onPressed: canAttachImage
-                                          ? widget.onPickPhoto
-                                          : null,
-                                    ),
-                                    _attachmentMenuItem(
-                                      key: const ValueKey(
-                                        'agent-attachment-file-button',
-                                      ),
-                                      label: '文件',
-                                      icon: Icons.attach_file_rounded,
-                                      onPressed: canAttachFile
-                                          ? widget.onPickFile
-                                          : null,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                            builder: (context, menuController, child) {
-                              final canOpenMenu =
-                                  canAttachImage || canAttachFile;
-                              return IconButton(
-                                key: const ValueKey('agent-attachment-button'),
-                                onPressed:
-                                    canOpenMenu && !widget.isAttachmentPending
-                                    ? () {
-                                        if (menuController.isOpen) {
-                                          menuController.close();
-                                        } else {
-                                          menuController.open();
-                                        }
-                                      }
-                                    : null,
-                                icon: widget.isAttachmentPending
-                                    ? SizedBox.square(
-                                        dimension: 18,
-                                        child: CircularProgressIndicator(
-                                          strokeWidth: 2,
-                                          value:
-                                              widget.attachmentUploadProgress,
-                                        ),
-                                      )
-                                    : const Icon(Icons.add_rounded, size: 28),
-                                tooltip: '添加附件',
-                                color: MomCozyColors.foreground,
-                                visualDensity: VisualDensity.compact,
-                                constraints: const BoxConstraints.tightFor(
-                                  width: _attachmentControlSize,
-                                  height: _attachmentControlSize,
-                                ),
-                                padding: EdgeInsets.zero,
-                                style: IconButton.styleFrom(
-                                  fixedSize: const Size.square(
-                                    _attachmentControlSize,
-                                  ),
-                                  minimumSize: const Size.square(
-                                    _attachmentControlSize,
-                                  ),
-                                  maximumSize: const Size.square(
-                                    _attachmentControlSize,
-                                  ),
-                                  tapTargetSize:
-                                      MaterialTapTargetSize.shrinkWrap,
-                                  padding: EdgeInsets.zero,
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                        positionControl(
-                          right: _surfaceHorizontalInset,
-                          child: IconButton(
-                            key: ValueKey(
-                              sendIsStop
-                                  ? 'agent-stop-button'
-                                  : 'agent-send-button',
-                            ),
-                            onPressed: sendIsStop
-                                ? onCancel
-                                : (canSend ? onSend : null),
-                            icon: DecoratedBox(
-                              key: const ValueKey('agent-send-button-visual'),
-                              decoration: BoxDecoration(
-                                color: sendLooksActive
-                                    ? colorScheme.primary
-                                    : MomCozyColors.muted,
-                                shape: BoxShape.circle,
-                              ),
-                              child: SizedBox.square(
-                                dimension: _controlSize,
-                                child: Center(
-                                  child: Icon(
-                                    sendIsStop
-                                        ? Icons.stop_rounded
-                                        : Icons.send_rounded,
-                                    size: sendIsStop ? 18 : 16,
-                                    color: sendLooksActive
-                                        ? colorScheme.onPrimary
-                                        : MomCozyColors.mutedForeground,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            tooltip: sendIsStop ? '停止' : '发送',
-                            visualDensity: VisualDensity.compact,
-                            constraints: const BoxConstraints.tightFor(
-                              width: _controlSize,
-                              height: _controlSize,
-                            ),
-                            padding: EdgeInsets.zero,
-                            style: IconButton.styleFrom(
-                              backgroundColor: Colors.transparent,
-                              disabledBackgroundColor: Colors.transparent,
-                              overlayColor: colorScheme.primary.withValues(
-                                alpha: 0.08,
-                              ),
-                              fixedSize: const Size.square(_controlSize),
-                              minimumSize: const Size.square(_controlSize),
-                              maximumSize: const Size.square(_controlSize),
-                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                              padding: EdgeInsets.zero,
-                            ),
-                          ),
+                  ],
+                  child: DecoratedBox(
+                    key: const ValueKey('agent-composer-surface'),
+                    decoration: BoxDecoration(
+                      color: MomHomeTokens.surface,
+                      borderRadius: BorderRadius.circular(24),
+                      border: Border.all(color: MomHomeTokens.border),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Color(0x052B2826),
+                          blurRadius: 24,
+                          offset: Offset(0, 5),
                         ),
                       ],
+                    ),
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(
+                        minHeight: _surfaceMinHeight,
+                      ),
+                      child: Stack(
+                        alignment: Alignment.centerLeft,
+                        clipBehavior: Clip.none,
+                        children: [
+                          inputFrame,
+                          positionControl(
+                            left: _surfaceHorizontalInset,
+                            child: Builder(
+                              builder: (context) {
+                                final menuController =
+                                    _attachmentMenuController;
+                                final canOpenMenu =
+                                    canAttachImage || canAttachFile;
+                                return IconButton(
+                                  key: const ValueKey(
+                                    'agent-attachment-button',
+                                  ),
+                                  onPressed:
+                                      canOpenMenu && !widget.isAttachmentPending
+                                      ? () {
+                                          if (menuController.isOpen) {
+                                            menuController.close();
+                                          } else {
+                                            FocusManager.instance.primaryFocus
+                                                ?.unfocus();
+                                            menuController.open();
+                                          }
+                                        }
+                                      : null,
+                                  icon: widget.isAttachmentPending
+                                      ? SizedBox.square(
+                                          dimension: 18,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                            value:
+                                                widget.attachmentUploadProgress,
+                                          ),
+                                        )
+                                      : const Icon(Icons.add_rounded, size: 28),
+                                  tooltip: '添加附件',
+                                  color: MomHomeTokens.secondary,
+                                  visualDensity: VisualDensity.compact,
+                                  constraints: const BoxConstraints.tightFor(
+                                    width: _attachmentControlSize,
+                                    height: _attachmentControlSize,
+                                  ),
+                                  padding: EdgeInsets.zero,
+                                  style: IconButton.styleFrom(
+                                    fixedSize: const Size.square(
+                                      _attachmentControlSize,
+                                    ),
+                                    minimumSize: const Size.square(
+                                      _attachmentControlSize,
+                                    ),
+                                    maximumSize: const Size.square(
+                                      _attachmentControlSize,
+                                    ),
+                                    tapTargetSize:
+                                        MaterialTapTargetSize.shrinkWrap,
+                                    padding: EdgeInsets.zero,
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                          positionControl(
+                            right: _surfaceHorizontalInset,
+                            child: IconButton(
+                              key: ValueKey(
+                                sendIsStop
+                                    ? 'agent-stop-button'
+                                    : 'agent-send-button',
+                              ),
+                              onPressed: sendIsStop
+                                  ? onCancel
+                                  : (canSend ? onSend : null),
+                              icon: DecoratedBox(
+                                key: const ValueKey('agent-send-button-visual'),
+                                decoration: BoxDecoration(
+                                  color: sendLooksActive
+                                      ? MomHomeTokens.rose
+                                      : MomHomeTokens.neutralSurface,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: SizedBox.square(
+                                  dimension: _controlSize,
+                                  child: Center(
+                                    child: Icon(
+                                      sendIsStop
+                                          ? Icons.stop_rounded
+                                          : Icons.send_outlined,
+                                      size: sendIsStop ? 18 : 16,
+                                      color: sendLooksActive
+                                          ? colorScheme.onPrimary
+                                          : MomCozyColors.mutedForeground,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              tooltip: sendIsStop ? '停止' : '发送',
+                              visualDensity: VisualDensity.compact,
+                              constraints: const BoxConstraints.tightFor(
+                                width: _controlSize,
+                                height: _controlSize,
+                              ),
+                              padding: EdgeInsets.zero,
+                              style: IconButton.styleFrom(
+                                backgroundColor: Colors.transparent,
+                                disabledBackgroundColor: Colors.transparent,
+                                overlayColor: colorScheme.primary.withValues(
+                                  alpha: 0.08,
+                                ),
+                                fixedSize: const Size.square(_controlSize),
+                                minimumSize: const Size.square(_controlSize),
+                                maximumSize: const Size.square(_controlSize),
+                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                padding: EdgeInsets.zero,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 );
@@ -6393,10 +6753,13 @@ class _AgentComposerBarState extends State<AgentComposerBar> {
     double maxWidth,
     TextStyle style,
   ) {
-    final text = widget.controller.text.isEmpty ? ' ' : widget.controller.text;
+    final text = widget.controller.text.isEmpty
+        ? '和 Cozymate 聊聊...'
+        : widget.controller.text;
     final painter = TextPainter(
       text: TextSpan(text: text, style: style),
       textDirection: Directionality.of(context),
+      textScaler: MediaQuery.textScalerOf(context),
       maxLines: 100,
     )..layout(maxWidth: maxWidth.clamp(1.0, double.infinity));
     return painter.computeLineMetrics().length.clamp(1, 100);

@@ -1,0 +1,24 @@
+{
+  "source_hashes": {
+    "lib/features/auth/presentation/invite_auth_page.dart": "51b02cb9d3c973aa931abbeb7e9ec3352476b889db496b7cd583ef757732c51b",
+    "lib/features/auth/presentation/auth_page.dart": "77bf0ab04f1599f353bbb66c4a3dab2fe826d5e5e04f7f1b106f0b73ec07475f",
+    "lib/features/onboarding/presentation/onboarding_page.dart": "2d5ec507c926086540c9bbdc770e3aa68c319dbe3357a7b57d7a0ff1a28487dc",
+    "lib/features/onboarding/presentation/onboarding_controller.dart": "f6695f43ca276446fd95189345799825e454cee72bc780f1d96a69208fca582f",
+    "lib/features/onboarding/data/onboarding_api_repository.dart": "7f062d7cae3bf7188063fe291c0abc8f2d6399c0162d40d3ae4d3d7cc39acd38",
+    "lib/app/momcozy_app.dart": "4e28954f3c930728bd0efd196e2a59a374ab3962675bf9305ca7ad8b77e57627",
+    "lib/shared/widgets/mom_settings_widgets.dart": "271b022cb619641d956e92a5600e5f5585d2a5b469446132d53d402987403025",
+    "test/features/onboarding/configured_submission_inventory_test.dart": "eea468112b73020c0a8c300ddd5a938bd03443aa97432abe2e4cfb10e8f76902",
+    "test/support/ui_inventory_capture.dart": "82306c9f718f93573ee7e0ace5c41fb97706e3fa676187d21fb7183ec1eb0d92"
+  },
+  "new_images": 3,
+  "strict_scenarios_passed": 2,
+  "full_images_reviewed": 3,
+  "long_images": 0,
+  "config": "MOMCOZY_INTERNAL_INVITE_LOGIN=true; onboarding controller supplied to production router",
+  "routes_verified": [
+    "/login → /more",
+    "/more → /onboarding → Wait here → /onboarding",
+    "/more → /onboarding → Enter the app → /more"
+  ],
+  "scope": "Only the 3 named pending visual gaps; not all configured states or default build acceptance"
+}

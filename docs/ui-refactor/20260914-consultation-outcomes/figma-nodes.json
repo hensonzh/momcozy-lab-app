@@ -1,0 +1,82 @@
+[
+  {
+    "id": "198:1108",
+    "name": "Consultation outcome / completed",
+    "x": 0,
+    "y": 62800,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "198:1134",
+    "name": "Consultation outcome / pending-record",
+    "x": 460,
+    "y": 62800,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "198:1162",
+    "name": "Consultation outcome / technical",
+    "x": 920,
+    "y": 62800,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "198:1190",
+    "name": "Consultation outcome / no-show",
+    "x": 1380,
+    "y": 62800,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "198:1219",
+    "name": "Consultation outcome / safety",
+    "x": 1840,
+    "y": 62800,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "198:1248",
+    "name": "Consultation outcome / cancelled",
+    "x": 0,
+    "y": 64400,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "198:1276",
+    "name": "Consultation outcome / large-technical",
+    "x": 460,
+    "y": 64400,
+    "width": 320,
+    "height": 844
+  },
+  {
+    "id": "198:1304",
+    "name": "Consultation outcome / large-completed",
+    "x": 920,
+    "y": 64400,
+    "width": 320,
+    "height": 844
+  },
+  {
+    "id": "198:1330",
+    "name": "Consultation outcome / large-safety",
+    "x": 1380,
+    "y": 64400,
+    "width": 320,
+    "height": 844
+  },
+  {
+    "id": "198:1359",
+    "name": "Consultation outcome / short-no-show-actions",
+    "x": 1840,
+    "y": 64400,
+    "width": 320,
+    "height": 568
+  }
+]

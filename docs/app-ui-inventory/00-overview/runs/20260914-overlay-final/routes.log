@@ -1,0 +1,3 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/app/ui_inventory_routes_test.dart
+00:00 +0: inventory exports the actual registered user routes, including auth gates
+00:00 +1: All tests passed!

@@ -1,0 +1,256 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart
+00:00 +0: summary content task and destinations 320.0 / 1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: FlutterError:<Golden "../../goldens/design_system/summary-published-320.png": Pixel test
+failed, 99.96%, 269973px diff detected.
+          Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/modules/services/failures>
+
+When the exception was thrown, this was the stack:
+#4      shot (file:///Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart:94:3)
+<asynchronous suspension>
+#5      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart:129:9)
+<asynchronous suspension>
+#6      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#7      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart line 94
+The test description was:
+  summary content task and destinations 320.0 / 1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +0 -1: summary content task and destinations 320.0 / 1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: summary content task and destinations 320.0 / 1.0
+  
+00:00 +0 -1: summary content task and destinations 320.0 / 2.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: FlutterError:<Golden "../../goldens/design_system/summary-published-320-2x.png": Pixel
+test failed, 99.99%, 270060px diff detected.
+          Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/modules/services/failures>
+
+When the exception was thrown, this was the stack:
+#4      shot (file:///Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart:94:3)
+<asynchronous suspension>
+#5      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart:129:9)
+<asynchronous suspension>
+#6      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#7      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart line 94
+The test description was:
+  summary content task and destinations 320.0 / 2.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +0 -2: summary content task and destinations 320.0 / 2.0 [E]
+  Test failed. See exception logs above.
+  The test description was: summary content task and destinations 320.0 / 2.0
+  
+00:00 +0 -2: summary content task and destinations 390.0 / 1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: FlutterError:<Golden "../../goldens/design_system/summary-published-390.png": Pixel test
+failed, 99.96%, 329030px diff detected.
+          Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/modules/services/failures>
+
+When the exception was thrown, this was the stack:
+#4      shot (file:///Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart:94:3)
+<asynchronous suspension>
+#5      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart:129:9)
+<asynchronous suspension>
+#6      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#7      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart line 94
+The test description was:
+  summary content task and destinations 390.0 / 1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +0 -3: summary content task and destinations 390.0 / 1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: summary content task and destinations 390.0 / 1.0
+  
+00:01 +0 -3: summary content task and destinations 390.0 / 2.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following StateError was thrown running a test:
+Bad state: No element
+
+When the exception was thrown, this was the stack:
+#0      Iterable.last (dart:core/iterable.dart:679:7)
+#1      _LastFinderMixin.filter (package:flutter_test/src/finders.dart:1410:28)
+#3      Iterable.single (dart:core/iterable.dart:694:13)
+#4      WidgetController.element (package:flutter_test/src/controller.dart:888:30)
+#5      WidgetController.ensureVisible (package:flutter_test/src/controller.dart:2389:32)
+#6      click (file:///Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart:81:16)
+#7      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart:130:15)
+<asynchronous suspension>
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 2 frames from dart:async-patch and package:stack_trace)
+
+The test description was:
+  summary content task and destinations 390.0 / 2.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +0 -4: summary content task and destinations 390.0 / 2.0 [E]
+  Test failed. See exception logs above.
+  The test description was: summary content task and destinations 390.0 / 2.0
+  
+00:01 +0 -4: summary content task and destinations 430.0 / 1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: FlutterError:<Golden "../../goldens/design_system/summary-published-430.png": Pixel test
+failed, 99.96%, 362789px diff detected.
+          Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/modules/services/failures>
+
+When the exception was thrown, this was the stack:
+#4      shot (file:///Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart:94:3)
+<asynchronous suspension>
+#5      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart:129:9)
+<asynchronous suspension>
+#6      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#7      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart line 94
+The test description was:
+  summary content task and destinations 430.0 / 1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +0 -5: summary content task and destinations 430.0 / 1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: summary content task and destinations 430.0 / 1.0
+  
+00:01 +0 -5: summary content task and destinations 430.0 / 2.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following StateError was thrown running a test:
+Bad state: No element
+
+When the exception was thrown, this was the stack:
+#0      Iterable.last (dart:core/iterable.dart:679:7)
+#1      _LastFinderMixin.filter (package:flutter_test/src/finders.dart:1410:28)
+#3      Iterable.single (dart:core/iterable.dart:694:13)
+#4      WidgetController.element (package:flutter_test/src/controller.dart:888:30)
+#5      WidgetController.ensureVisible (package:flutter_test/src/controller.dart:2389:32)
+#6      click (file:///Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart:81:16)
+#7      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart:130:15)
+<asynchronous suspension>
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 2 frames from dart:async-patch and package:stack_trace)
+
+The test description was:
+  summary content task and destinations 430.0 / 2.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +0 -6: summary content task and destinations 430.0 / 2.0 [E]
+  Test failed. See exception logs above.
+  The test description was: summary content task and destinations 430.0 / 2.0
+  
+00:01 +0 -6: task uncertainty retries original version and locks competing updates
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/summary-uncertain-390.png": Pixel test failed, 92.00%, 302827px
+diff detected.
+Failure feedback can be found at /Users/lute/project/momcozy-lab/app/test/modules/services/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      shot (file:///Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart:96:5)
+<asynchronous suspension>
+#7      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart:190:7)
+<asynchronous suspension>
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +0 -7: task uncertainty retries original version and locks competing updates [E]
+  Test failed. See exception logs above.
+  The test description was: task uncertainty retries original version and locks competing updates
+  
+00:01 +0 -7: loading finishes into pending and refreshed publication
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/summary-loading-390.png": Pixel test failed, 100.00%, 329147px
+diff detected.
+Failure feedback can be found at /Users/lute/project/momcozy-lab/app/test/modules/services/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      shot (file:///Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart:96:5)
+<asynchronous suspension>
+#7      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart:221:5)
+<asynchronous suspension>
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +0 -8: loading finishes into pending and refreshed publication [E]
+  Test failed. See exception logs above.
+  The test description was: loading finishes into pending and refreshed publication
+  
+00:01 +0 -8: superseded plan reloads before accepting another task update
+00:01 +1 -8: Some tests failed.
+
+Failing tests:
+  /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: loading finishes into pending and refreshed publication
+  /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 320.0 / 1.0
+  /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 320.0 / 2.0
+  /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 390.0 / 1.0
+  ... and 4 more

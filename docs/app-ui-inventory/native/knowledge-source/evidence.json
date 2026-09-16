@@ -1,0 +1,90 @@
+{
+  "result": "PASS",
+  "scope": "actual Android external-browser handoff and return; browser landing viewport only, not a complete external-site inventory",
+  "device": "emulator-5554",
+  "app": "com.momcozymai.app.flutterpoc.local",
+  "native_images_reviewed": 8,
+  "actions_sha256": "af7a98ef77cfb28e8a0fe7cf412cc0424acfea8a0a126c36e6115b194ced3e04",
+  "states": [
+    {
+      "state": "original-mom",
+      "previous": null,
+      "trigger": "当前已登录 Mia 首页",
+      "png": "original-mom.png",
+      "xml": "original-mom.xml",
+      "png_sha256": "eea6a2d17eecc5d8ccd5af9a3538463e8ab5b56308f877b230b588a02f973458",
+      "xml_sha256": "674f1053c9f95cda22dc220f3818cba51356b13e38eab10a9978eb1315e2a5d9",
+      "captured_at": "2026-09-13T21:13:50.725110+00:00"
+    },
+    {
+      "state": "baby-entry",
+      "previous": "original-mom",
+      "trigger": "点击 Baby",
+      "png": "baby-entry.png",
+      "xml": "baby-entry.xml",
+      "png_sha256": "90923ef4dfb358d3aff014beab8faedeef5e1769f4868e9d059cbecc76823918",
+      "xml_sha256": "6ebaf71bc79c0da6344644784048e53eece2af6a2551d022e90f16b5cccd14f4",
+      "captured_at": "2026-09-13T21:13:53.280245+00:00"
+    },
+    {
+      "state": "knowledge-detail",
+      "previous": "baby-entry",
+      "trigger": "点击 更好地了解 Luna / 看成长，关键是同一口径下的连续变化 / 体重、身长和头围需要结合年龄与连续测量来理解，单独一个数字不能说明宝宝的生长状态。",
+      "png": "knowledge-detail.png",
+      "xml": "knowledge-detail.xml",
+      "png_sha256": "c2c060db883b2b8bce088a680fd78b628474afaa0ca05e6214e9fa056f6ab6d9",
+      "xml_sha256": "c83b5c96f801bf53dcf6c7a560fc8650a0ec1a266c1f9555a18ad12c45cbf9ef",
+      "captured_at": "2026-09-13T21:14:18.619149+00:00"
+    },
+    {
+      "state": "external-open",
+      "previous": "knowledge-detail",
+      "trigger": "点击 WHO · 儿童生长标准",
+      "png": "external-open.png",
+      "xml": "external-open.xml",
+      "png_sha256": "45f6013e80ec63a972b5e8c1ad956a097009320382af1b0106c87d1f75921910",
+      "xml_sha256": "d0cb838f96a22642529b2a9e4c767f8cf19952dba434384394c8b26a60ecd6e0",
+      "captured_at": "2026-09-13T21:14:45.709070+00:00"
+    },
+    {
+      "state": "external-page",
+      "previous": "external-open",
+      "trigger": "点击 Close",
+      "png": "external-page.png",
+      "xml": "external-page.xml",
+      "png_sha256": "4051a9a29552d76b6a9686951c45e75bf0536864f040763a6452ff7332e5cc92",
+      "xml_sha256": "71368967a461d176dce67c5526c88c859c90f069e29787c419497b99967fa559",
+      "captured_at": "2026-09-13T21:15:06.605327+00:00"
+    },
+    {
+      "state": "source-return",
+      "previous": "external-page",
+      "trigger": "Android 系统返回键",
+      "png": "source-return.png",
+      "xml": "source-return.xml",
+      "png_sha256": "916421e99eac9a0c11d0fe09b16484014a382d451e6dda9eccf61811b5114c91",
+      "xml_sha256": "c83b5c96f801bf53dcf6c7a560fc8650a0ec1a266c1f9555a18ad12c45cbf9ef",
+      "captured_at": "2026-09-13T21:15:31.754050+00:00"
+    },
+    {
+      "state": "baby-return",
+      "previous": "source-return",
+      "trigger": "点击 关闭",
+      "png": "baby-return.png",
+      "xml": "baby-return.xml",
+      "png_sha256": "d6b5a3e59f835624c4fc24208fb24f56b6bad4bf400e748447416573cee00868",
+      "xml_sha256": "6ebaf71bc79c0da6344644784048e53eece2af6a2551d022e90f16b5cccd14f4",
+      "captured_at": "2026-09-13T21:15:34.066651+00:00"
+    },
+    {
+      "state": "restored-mom",
+      "previous": "baby-return",
+      "trigger": "点击 Me",
+      "png": "restored-mom.png",
+      "xml": "restored-mom.xml",
+      "png_sha256": "f21a4ef5b7358757bf8718fb093192b453a7434aa8d873ff3d4ddbf3f35aae09",
+      "xml_sha256": "674f1053c9f95cda22dc220f3818cba51356b13e38eab10a9978eb1315e2a5d9",
+      "captured_at": "2026-09-13T21:15:36.591389+00:00"
+    }
+  ]
+}

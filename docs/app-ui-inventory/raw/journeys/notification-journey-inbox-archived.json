@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/notification-journey-inbox-archived-393.png",
+  "previous_source": "test/goldens/ui_inventory/notification-journey-inbox-last-page-393.png",
+  "route": "/notifications",
+  "trigger": "Archive last update → removed immediately, unread count refreshed",
+  "root_entry": "Authenticated More page",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production notification coordinator/repository/controller; isolated HTTP, push gateway and permission platform; real router.go and ScaffoldMessenger callbacks, no native OS dialog or remote push",
+  "test": "test/features/notifications/notification_inventory_journey_test.dart"
+}

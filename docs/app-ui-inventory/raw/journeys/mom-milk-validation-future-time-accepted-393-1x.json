@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/mom-milk-validation-future-time-accepted-393-1x.png",
+  "previous_source": "test/goldens/ui_inventory/mom-milk-validation-future-time-input-393-1x.png",
+  "route": "/me",
+  "trigger": "Accept valid clock 17:00 → record draft has future time",
+  "root_entry": "Authenticated More → tap Me bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/mom/mom_milk_validation_inventory_test.dart"
+}

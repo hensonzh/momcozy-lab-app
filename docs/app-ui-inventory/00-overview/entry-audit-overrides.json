@@ -1,0 +1,86 @@
+{
+  "lib/features/motion_assessment/presentation/motion_assessment_page.dart": {
+    "entry": "code-exists-no-registered-route",
+    "note": "Both supported motion artifacts rendered through actual Agent route; clicking start leaves / unchanged without notice. Dispatcher excludes unregistered /motion-assessment. Guide/failure previews are not normal-entry evidence.",
+    "evidence_states": [
+      "05-agent/agent-entry-journey-forward_head-no-navigation",
+      "05-agent/agent-entry-journey-posture_screen-no-navigation"
+    ],
+    "source_sha256": "106f73f6db6af89ffae3437063cf83f8f4653ae6fe70404ee6bd0536de5a10a3",
+    "audit_report": "00-overview/ENTRY-STATUS.md"
+  },
+  "lib/modules/mom/presentation/mother_status_card.dart": {
+    "entry": "code-exists-no-normal-entry",
+    "note": "Only its definition and accessibility test reference it; current home uses MomRecoveryStatus."
+  },
+  "lib/modules/consultation/presentation/device_preview_dialog.dart": {
+    "entry": "workbench-role-only",
+    "note": "RoomPage._expertPreparation displays this dialog; current user preparation uses ConsultationDeviceCheckView."
+  },
+  "lib/modules/services/presentation/appointment_summary.dart": {
+    "entry": "workbench-role-only",
+    "note": "Rendered by RoomPage._expertPreparation; not an independent user page."
+  },
+  "lib/features/app_pages/momcozy_feature_pages.dart": {
+    "entry": "dispatcher-no-independent-visual",
+    "note": "Normal route adapter for Schedule, More, Notifications and Media; native Tab captures cover the dispatched UI."
+  },
+  "lib/features/media/presentation/pdf_document_toolbar.dart": {
+    "entry": "native-pdf-viewer",
+    "note": "Native PDF integration must supply the loaded viewer and toolbar evidence; ordinary host suite skips PDFium."
+  },
+  "lib/features/motion_assessment/data/motion_pose_platform.dart": {
+    "entry": "code-exists-no-normal-entry",
+    "note": "Native MotionPosePreview belongs to motion assessment; /motion-assessment is currently unregistered.",
+    "evidence_states": [
+      "05-agent/agent-entry-journey-forward_head-no-navigation"
+    ],
+    "source_sha256": "834cda02d33e88bea1d9c704c9e263d3a148ed30967c46774541877408207b44",
+    "audit_report": "00-overview/ENTRY-STATUS.md"
+  },
+  "lib/modules/mom/presentation/lactation_page.dart": {
+    "entry": "normal-entry-observed",
+    "note": "Mom home → 查看记录 → /me/lactation. Existing live-lactation handoff evidence is a current installed-App capture."
+  },
+  "lib/features/notifications/presentation/notification_permission_dialogs.dart": {
+    "entry": "function-overlay",
+    "note": "Notification settings reminder switch opens the education dialog; notifications-consent capture. Native OS permission still needs a separate capture.",
+    "evidence_states": [
+      "07-me/notification-journey-reminder-education",
+      "07-me/notification-journey-reminder-education-declined"
+    ],
+    "source_sha256": "8dcdc816ed8d7ce75081dae9b08811ba56bb0e16b003c15bf03dd16cc27ee2ab",
+    "audit_report": "00-overview/ENTRY-STATUS.md"
+  },
+  "lib/modules/consultation/presentation/home_consultation_dialog.dart": {
+    "entry": "function-overlay",
+    "note": "Actual Mom home View appointment → over-home preparation; cancel/keep closes both layers, intake pushes after modal dismissal. See home-consultation-journey states.",
+    "evidence_states": [
+      "08-expert-service/home-consultation-journey-preparation",
+      "08-expert-service/home-consultation-journey-cancel-confirm",
+      "08-expert-service/home-consultation-journey-intake"
+    ],
+    "source_sha256": "3dbdb738d6ece01ce28abee281fc5f200cb3f3f1a4b23160b19857276e03237a",
+    "audit_report": "00-overview/ENTRY-STATUS.md"
+  },
+  "lib/shared/widgets/confirm_discard.dart": {
+    "entry": "function-overlay",
+    "note": "Dirty form close opens the confirmation; input-confirm captures and executed discard actions.",
+    "evidence_states": [
+      "03-mom/mom-journey-diary-discard-confirm",
+      "06-schedule/schedule-journey-uncertain-discard"
+    ],
+    "source_sha256": "f772ad366b4b880c4db433ae469fd0c81c952afb6b1d0bd33813d2bee9c9487b",
+    "audit_report": "00-overview/ENTRY-STATUS.md"
+  },
+  "lib/features/agent_hub/presentation/agent_conversation_panel.dart": {
+    "entry": "default-hidden-target-route-initialization-error",
+    "note": "Default / omits history. Actual More → notification with valid conversationId reaches /?conversationId but default Agent builder supplies a String to Expando state cache and crashes before history HTTP. More → Cozymate recovers default /. History panel remains component-only for this default build; alternate flag-enabled build not covered by this entry.",
+    "evidence_states": [
+      "05-agent/agent-history-journey-target-error",
+      "05-agent/agent-history-journey-default-recovered"
+    ],
+    "source_sha256": "467324622921e92712ac7bcf8aa7ea5c7a3b43cd5aea330d5983c1326e6a2005",
+    "audit_report": "00-overview/AGENT-TARGET-ENTRY.md"
+  }
+}

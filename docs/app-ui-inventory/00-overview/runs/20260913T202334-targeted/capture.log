@@ -1,0 +1,32 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/features/auth/auth_inventory_journey_test.dart
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: (setUpAll)
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: (setUpAll)
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: inventory schedule calendar create edit delete
+00:01 +1: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: inventory schedule calendar create edit delete
+00:01 +2: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby feeding save edit delete restore and history filters
+00:02 +3: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby feeding save edit delete restore and history filters
+00:02 +4: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby feeding save edit delete restore and history filters
+00:02 +5: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: inventory schedule read and delete failure recovery
+00:02 +6: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby profile switch editing and discard
+00:03 +7: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby profile switch editing and discard
+00:03 +8: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: inventory schedule care task statuses and plan
+00:03 +9: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby sleep stool knowledge and growth interactions
+00:04 +10: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby sleep stool knowledge and growth interactions
+00:04 +11: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby sleep stool knowledge and growth interactions
+00:04 +12: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby sleep stool knowledge and growth interactions
+00:05 +13: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: inventory schedule picker validation and changed time 2.0
+00:05 +14: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby no profile creation and missing demographic data
+00:05 +15: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: inventory schedule calendar year and tooltips
+00:05 +16: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby local record failure and pull refresh recovery
+00:05 +17: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: inventory schedule task pending and personal conflict reconciliation
+00:06 +18: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby loading and pending save states
+00:06 +19: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: inventory schedule confirmed appointment entry and return
+00:06 +20: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby growth batch date validation and undo recovery
+00:06 +21: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby growth batch date validation and undo recovery
+00:07 +22: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: inventory schedule appointment held entry
+00:07 +23: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby history mutation failures privacy and return
+00:07 +24: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby history mutation failures privacy and return
+00:07 +25: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: inventory schedule appointment expired entry
+00:07 +26: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby history pagination loading failure recovery
+00:08 +27: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: (tearDownAll)
+00:08 +27: All tests passed!

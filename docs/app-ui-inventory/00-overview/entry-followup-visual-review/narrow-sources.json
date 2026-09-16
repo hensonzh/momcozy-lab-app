@@ -1,0 +1,450 @@
+[
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-entry-journey-external-accepted-320-2x.long.png",
+    "sha256": "484527326b9108ea2fbf806e2bbd72f9e4b94465075a6d3d0d7629a8b7e4f2be",
+    "y_start": 0,
+    "y_end": 950,
+    "sheet": "narrow-1.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-entry-journey-external-accepted-320-2x.long.png",
+    "sha256": "484527326b9108ea2fbf806e2bbd72f9e4b94465075a6d3d0d7629a8b7e4f2be",
+    "y_start": 950,
+    "y_end": 1754,
+    "sheet": "narrow-1.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-entry-journey-external-accepted-320-2x.png",
+    "sha256": "080a8556f457c6a839483699022e439a8323a4d75dd2af6a56d0f961af8047f2",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-1.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-entry-journey-external-card-320-2x.long.png",
+    "sha256": "484527326b9108ea2fbf806e2bbd72f9e4b94465075a6d3d0d7629a8b7e4f2be",
+    "y_start": 0,
+    "y_end": 950,
+    "sheet": "narrow-1.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-entry-journey-external-card-320-2x.long.png",
+    "sha256": "484527326b9108ea2fbf806e2bbd72f9e4b94465075a6d3d0d7629a8b7e4f2be",
+    "y_start": 950,
+    "y_end": 1754,
+    "sheet": "narrow-1.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-entry-journey-external-card-320-2x.png",
+    "sha256": "080a8556f457c6a839483699022e439a8323a4d75dd2af6a56d0f961af8047f2",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-1.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-entry-journey-external-dismissed-320-2x.long.png",
+    "sha256": "484527326b9108ea2fbf806e2bbd72f9e4b94465075a6d3d0d7629a8b7e4f2be",
+    "y_start": 0,
+    "y_end": 950,
+    "sheet": "narrow-1.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-entry-journey-external-dismissed-320-2x.long.png",
+    "sha256": "484527326b9108ea2fbf806e2bbd72f9e4b94465075a6d3d0d7629a8b7e4f2be",
+    "y_start": 950,
+    "y_end": 1754,
+    "sheet": "narrow-1.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-entry-journey-external-dismissed-320-2x.png",
+    "sha256": "080a8556f457c6a839483699022e439a8323a4d75dd2af6a56d0f961af8047f2",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-2.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-entry-journey-external-failed-320-2x.long.png",
+    "sha256": "551e62880f9e8e5f547acdb1711c455733c597275b63f78277716a4a5b884209",
+    "y_start": 0,
+    "y_end": 950,
+    "sheet": "narrow-2.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-entry-journey-external-failed-320-2x.long.png",
+    "sha256": "551e62880f9e8e5f547acdb1711c455733c597275b63f78277716a4a5b884209",
+    "y_start": 950,
+    "y_end": 1754,
+    "sheet": "narrow-2.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-entry-journey-external-failed-320-2x.png",
+    "sha256": "46caed95da57c9fe1e8d7a425186d319870315d478d8383a63ab64e9e45460a2",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-2.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-entry-journey-external-pending-320-2x.long.png",
+    "sha256": "484527326b9108ea2fbf806e2bbd72f9e4b94465075a6d3d0d7629a8b7e4f2be",
+    "y_start": 0,
+    "y_end": 950,
+    "sheet": "narrow-2.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-entry-journey-external-pending-320-2x.long.png",
+    "sha256": "484527326b9108ea2fbf806e2bbd72f9e4b94465075a6d3d0d7629a8b7e4f2be",
+    "y_start": 950,
+    "y_end": 1754,
+    "sheet": "narrow-2.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-entry-journey-external-pending-320-2x.png",
+    "sha256": "080a8556f457c6a839483699022e439a8323a4d75dd2af6a56d0f961af8047f2",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-2.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-entry-journey-external-thrown-320-2x.long.png",
+    "sha256": "551e62880f9e8e5f547acdb1711c455733c597275b63f78277716a4a5b884209",
+    "y_start": 0,
+    "y_end": 950,
+    "sheet": "narrow-2.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-entry-journey-external-thrown-320-2x.long.png",
+    "sha256": "551e62880f9e8e5f547acdb1711c455733c597275b63f78277716a4a5b884209",
+    "y_start": 950,
+    "y_end": 1754,
+    "sheet": "narrow-3.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-entry-journey-external-thrown-320-2x.png",
+    "sha256": "46caed95da57c9fe1e8d7a425186d319870315d478d8383a63ab64e9e45460a2",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-3.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-entry-journey-forward_head-away-320-2x.png",
+    "sha256": "feee4d506ac1bef973428daf2906121e24ef6412509098c203c180d745777dd0",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-3.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-entry-journey-forward_head-card-320-2x.long.png",
+    "sha256": "c15128d1f2eafc7f9c85f68efaed0bb777b10cdada34679d081e06d79bfae4c5",
+    "y_start": 0,
+    "y_end": 950,
+    "sheet": "narrow-3.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-entry-journey-forward_head-card-320-2x.long.png",
+    "sha256": "c15128d1f2eafc7f9c85f68efaed0bb777b10cdada34679d081e06d79bfae4c5",
+    "y_start": 950,
+    "y_end": 1663,
+    "sheet": "narrow-3.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-entry-journey-forward_head-card-320-2x.png",
+    "sha256": "5e164659feef8078b64b8871c1be6b21eb4e70787802983a2f78ad7dd43b60ec",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-3.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-entry-journey-forward_head-no-navigation-320-2x.long.png",
+    "sha256": "c15128d1f2eafc7f9c85f68efaed0bb777b10cdada34679d081e06d79bfae4c5",
+    "y_start": 0,
+    "y_end": 950,
+    "sheet": "narrow-3.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-entry-journey-forward_head-no-navigation-320-2x.long.png",
+    "sha256": "c15128d1f2eafc7f9c85f68efaed0bb777b10cdada34679d081e06d79bfae4c5",
+    "y_start": 950,
+    "y_end": 1663,
+    "sheet": "narrow-3.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-entry-journey-forward_head-no-navigation-320-2x.png",
+    "sha256": "5e164659feef8078b64b8871c1be6b21eb4e70787802983a2f78ad7dd43b60ec",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-4.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-entry-journey-forward_head-return-320-2x.long.png",
+    "sha256": "c15128d1f2eafc7f9c85f68efaed0bb777b10cdada34679d081e06d79bfae4c5",
+    "y_start": 0,
+    "y_end": 950,
+    "sheet": "narrow-4.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-entry-journey-forward_head-return-320-2x.long.png",
+    "sha256": "c15128d1f2eafc7f9c85f68efaed0bb777b10cdada34679d081e06d79bfae4c5",
+    "y_start": 950,
+    "y_end": 1663,
+    "sheet": "narrow-4.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-entry-journey-forward_head-return-320-2x.png",
+    "sha256": "5e164659feef8078b64b8871c1be6b21eb4e70787802983a2f78ad7dd43b60ec",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-4.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-entry-journey-posture_screen-away-320-2x.png",
+    "sha256": "feee4d506ac1bef973428daf2906121e24ef6412509098c203c180d745777dd0",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-4.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-entry-journey-posture_screen-card-320-2x.long.png",
+    "sha256": "e739bd7948e1031719c1280e71c3ba664b9e3e7d9253d271e16559a115fdec46",
+    "y_start": 0,
+    "y_end": 950,
+    "sheet": "narrow-4.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-entry-journey-posture_screen-card-320-2x.long.png",
+    "sha256": "e739bd7948e1031719c1280e71c3ba664b9e3e7d9253d271e16559a115fdec46",
+    "y_start": 950,
+    "y_end": 1625,
+    "sheet": "narrow-4.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-entry-journey-posture_screen-card-320-2x.png",
+    "sha256": "d183dbea3e6e47897937e66ce5a79afaff2c0ac3c955e959960fe2f392941e79",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-4.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-entry-journey-posture_screen-no-navigation-320-2x.long.png",
+    "sha256": "e739bd7948e1031719c1280e71c3ba664b9e3e7d9253d271e16559a115fdec46",
+    "y_start": 0,
+    "y_end": 950,
+    "sheet": "narrow-5.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-entry-journey-posture_screen-no-navigation-320-2x.long.png",
+    "sha256": "e739bd7948e1031719c1280e71c3ba664b9e3e7d9253d271e16559a115fdec46",
+    "y_start": 950,
+    "y_end": 1625,
+    "sheet": "narrow-5.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-entry-journey-posture_screen-no-navigation-320-2x.png",
+    "sha256": "d183dbea3e6e47897937e66ce5a79afaff2c0ac3c955e959960fe2f392941e79",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-5.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-entry-journey-posture_screen-return-320-2x.long.png",
+    "sha256": "e739bd7948e1031719c1280e71c3ba664b9e3e7d9253d271e16559a115fdec46",
+    "y_start": 0,
+    "y_end": 950,
+    "sheet": "narrow-5.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-entry-journey-posture_screen-return-320-2x.long.png",
+    "sha256": "e739bd7948e1031719c1280e71c3ba664b9e3e7d9253d271e16559a115fdec46",
+    "y_start": 950,
+    "y_end": 1625,
+    "sheet": "narrow-5.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-entry-journey-posture_screen-return-320-2x.png",
+    "sha256": "d183dbea3e6e47897937e66ce5a79afaff2c0ac3c955e959960fe2f392941e79",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-5.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/home-consultation-journey-cancel-confirm-320-2x.long.png",
+    "sha256": "d77b47ae9d270a9213ca7cdb0f982925670fb805049ab9d803774fc5490e9548",
+    "y_start": 0,
+    "y_end": 931,
+    "sheet": "narrow-5.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/home-consultation-journey-cancel-confirm-320-2x.png",
+    "sha256": "309100ec28d3fa9258f2a8873791716d53e86b4246c8ff6336a03300715f153a",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-5.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/home-consultation-journey-cancel-kept-home-320-2x.long.png",
+    "sha256": "5651e712afed5d85eb5bc4ac2dc543a63785ec175c8d929d29549cdf881225c1",
+    "y_start": 0,
+    "y_end": 950,
+    "sheet": "narrow-6.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/home-consultation-journey-cancel-kept-home-320-2x.long.png",
+    "sha256": "5651e712afed5d85eb5bc4ac2dc543a63785ec175c8d929d29549cdf881225c1",
+    "y_start": 950,
+    "y_end": 1900,
+    "sheet": "narrow-6.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/home-consultation-journey-cancel-kept-home-320-2x.long.png",
+    "sha256": "5651e712afed5d85eb5bc4ac2dc543a63785ec175c8d929d29549cdf881225c1",
+    "y_start": 1900,
+    "y_end": 2632,
+    "sheet": "narrow-6.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/home-consultation-journey-cancel-kept-home-320-2x.png",
+    "sha256": "b1dbf1e8ed417790c5ea803c1a72e62a40a8313fc58eea20778973cbb387042d",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-6.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/home-consultation-journey-closed-home-320-2x.long.png",
+    "sha256": "5651e712afed5d85eb5bc4ac2dc543a63785ec175c8d929d29549cdf881225c1",
+    "y_start": 0,
+    "y_end": 950,
+    "sheet": "narrow-6.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/home-consultation-journey-closed-home-320-2x.long.png",
+    "sha256": "5651e712afed5d85eb5bc4ac2dc543a63785ec175c8d929d29549cdf881225c1",
+    "y_start": 950,
+    "y_end": 1900,
+    "sheet": "narrow-6.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/home-consultation-journey-closed-home-320-2x.long.png",
+    "sha256": "5651e712afed5d85eb5bc4ac2dc543a63785ec175c8d929d29549cdf881225c1",
+    "y_start": 1900,
+    "y_end": 2632,
+    "sheet": "narrow-6.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/home-consultation-journey-closed-home-320-2x.png",
+    "sha256": "b1dbf1e8ed417790c5ea803c1a72e62a40a8313fc58eea20778973cbb387042d",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-6.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/home-consultation-journey-intake-320-2x.long.png",
+    "sha256": "6ecb3aed0854c0b92cd01d9366445424e83dd279e420af8f52a9393f7b7efabd",
+    "y_start": 0,
+    "y_end": 950,
+    "sheet": "narrow-7.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/home-consultation-journey-intake-320-2x.long.png",
+    "sha256": "6ecb3aed0854c0b92cd01d9366445424e83dd279e420af8f52a9393f7b7efabd",
+    "y_start": 950,
+    "y_end": 1755,
+    "sheet": "narrow-7.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/home-consultation-journey-intake-320-2x.png",
+    "sha256": "479f662deb47d953d11afb3931d7f197d2e22f5ef049a263b5c18272f214ac89",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-7.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/home-consultation-journey-intake-required-320-2x.long.png",
+    "sha256": "a31325fc73bb7f61884a6e4793e09d7ba4a1705a10a78d5ee0db557a093f9715",
+    "y_start": 0,
+    "y_end": 950,
+    "sheet": "narrow-7.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/home-consultation-journey-intake-required-320-2x.long.png",
+    "sha256": "a31325fc73bb7f61884a6e4793e09d7ba4a1705a10a78d5ee0db557a093f9715",
+    "y_start": 950,
+    "y_end": 1030,
+    "sheet": "narrow-7.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/home-consultation-journey-intake-required-320-2x.png",
+    "sha256": "69ff68ccb5710fdf176b4cab409146227f9776bd35a2b269f6cf6d4551bb103e",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-7.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/home-consultation-journey-intake-return-home-320-2x.long.png",
+    "sha256": "5651e712afed5d85eb5bc4ac2dc543a63785ec175c8d929d29549cdf881225c1",
+    "y_start": 0,
+    "y_end": 950,
+    "sheet": "narrow-7.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/home-consultation-journey-intake-return-home-320-2x.long.png",
+    "sha256": "5651e712afed5d85eb5bc4ac2dc543a63785ec175c8d929d29549cdf881225c1",
+    "y_start": 950,
+    "y_end": 1900,
+    "sheet": "narrow-7.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/home-consultation-journey-intake-return-home-320-2x.long.png",
+    "sha256": "5651e712afed5d85eb5bc4ac2dc543a63785ec175c8d929d29549cdf881225c1",
+    "y_start": 1900,
+    "y_end": 2632,
+    "sheet": "narrow-8.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/home-consultation-journey-intake-return-home-320-2x.png",
+    "sha256": "6b61a480f7a3fd5ddb29685624aed748a99b94ad55016153855b11225ef09868",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-8.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/home-consultation-journey-outside-dismiss-blocked-320-2x.long.png",
+    "sha256": "aded8c55782706a9779769a798c6c67beee30cb65bfb3c31ba58d5dfdc18a3ea",
+    "y_start": 0,
+    "y_end": 846,
+    "sheet": "narrow-8.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/home-consultation-journey-outside-dismiss-blocked-320-2x.png",
+    "sha256": "cff59a875102606e42d3d346385169b7a79669e6c00bf8fc34408c340cae9517",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-8.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/home-consultation-journey-preparation-320-2x.long.png",
+    "sha256": "aded8c55782706a9779769a798c6c67beee30cb65bfb3c31ba58d5dfdc18a3ea",
+    "y_start": 0,
+    "y_end": 846,
+    "sheet": "narrow-8.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/home-consultation-journey-preparation-320-2x.png",
+    "sha256": "cff59a875102606e42d3d346385169b7a79669e6c00bf8fc34408c340cae9517",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-8.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/home-consultation-journey-reopened-320-2x.long.png",
+    "sha256": "aded8c55782706a9779769a798c6c67beee30cb65bfb3c31ba58d5dfdc18a3ea",
+    "y_start": 0,
+    "y_end": 846,
+    "sheet": "narrow-8.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/home-consultation-journey-reopened-320-2x.png",
+    "sha256": "cff59a875102606e42d3d346385169b7a79669e6c00bf8fc34408c340cae9517",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-8.jpg"
+  }
+]

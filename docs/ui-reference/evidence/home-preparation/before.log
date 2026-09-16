@@ -1,0 +1,20 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/modules/consultation/home_consultation_dialog_test.dart
+test/modules/consultation/home_consultation_dialog_test.dart:5:8: Error: Error when reading 'lib/modules/consultation/presentation/home_consultation_dialog.dart': No such file or directory
+import 'package:momcozy_flutter_app/modules/consultation/presentation/home_consultation_dialog.dart';
+       ^
+test/modules/consultation/home_consultation_dialog_test.dart:39:17: Error: Method not found: 'showHomeConsultationDialog'.
+          await showHomeConsultationDialog(context,createController:()=>testController(rooms,current),appointments:appointments,createDeviceCheck:TestReadyDeviceCheck.new);
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^
+00:00 +0 -1: loading /Users/lute/project/momcozy-lab/app/test/modules/consultation/home_consultation_dialog_test.dart [E]
+  Failed to load "/Users/lute/project/momcozy-lab/app/test/modules/consultation/home_consultation_dialog_test.dart":
+  Compilation failed for testPath=/Users/lute/project/momcozy-lab/app/test/modules/consultation/home_consultation_dialog_test.dart: test/modules/consultation/home_consultation_dialog_test.dart:5:8: Error: Error when reading 'lib/modules/consultation/presentation/home_consultation_dialog.dart': No such file or directory
+  import 'package:momcozy_flutter_app/modules/consultation/presentation/home_consultation_dialog.dart';
+         ^
+  test/modules/consultation/home_consultation_dialog_test.dart:39:17: Error: Method not found: 'showHomeConsultationDialog'.
+            await showHomeConsultationDialog(context,createController:()=>testController(rooms,current),appointments:appointments,createDeviceCheck:TestReadyDeviceCheck.new);
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  .
+00:00 +0 -1: Some tests failed.
+
+Failing tests:
+  /Users/lute/project/momcozy-lab/app/test/modules/consultation/home_consultation_dialog_test.dart: loading /Users/lute/project/momcozy-lab/app/test/modules/consultation/home_consultation_dialog_test.dart

@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/baby-knowledge-source-feedingCues-source-dispatched-393-1x.png",
+  "previous_source": "test/goldens/ui_inventory/baby-knowledge-source-feedingCues-detail-393-1x.png",
+  "route": "/baby",
+  "trigger": "Tap CDC · 饥饿与饱足信号 → platform accepts external URL; host does not render browser",
+  "root_entry": "Authenticated More → tap Baby bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/baby/baby_knowledge_source_inventory_test.dart"
+}

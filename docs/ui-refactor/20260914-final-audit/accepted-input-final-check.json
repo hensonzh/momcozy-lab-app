@@ -1,0 +1,13 @@
+{
+  "README.md": true,
+  "00-overview/AUDIT.md": true,
+  "00-overview/final-acceptance.json": true,
+  "00-overview/PAGE-CATALOG.md": true,
+  "00-overview/OVERLAY-CATALOG.md": true,
+  "00-overview/page-catalog.json": true,
+  "00-overview/page-catalog-definition.json": true,
+  "00-overview/overlay-state-evidence-map.json": true,
+  "00-overview/STATE-MAP-FINAL.md": true,
+  "00-overview/ENTRY-STATUS.md": true,
+  "manifest.json": true
+}

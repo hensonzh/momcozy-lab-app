@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/mom-journey-diary-modal-saved-393.png",
+  "previous_source": "test/goldens/ui_inventory/mom-journey-diary-save-error-393.png",
+  "route": "/me",
+  "trigger": "Retry save → saved feedback in quick editor",
+  "root_entry": "Authenticated More → tap Me bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/mom/mom_inventory_journey_test.dart"
+}

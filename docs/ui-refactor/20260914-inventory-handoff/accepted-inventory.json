@@ -1,0 +1,37 @@
+{
+  "accepted_at": "2026-09-14T10:41:08.307759+00:00",
+  "producer_status": "complete",
+  "user_confirmation": "User supplied completed Session A result and requested context update before continuation.",
+  "source_root": "docs/app-ui-inventory",
+  "authoritative_acceptance": "00-overview/final-acceptance.json",
+  "counts": {
+    "page_definitions": 34,
+    "normal_pages": 28,
+    "configured_pages": 4,
+    "fallback_pages": 1,
+    "unreachable_pages": 1,
+    "page_state_rows": 213,
+    "overlay_families": 35,
+    "overlay_state_rows": 166,
+    "raw_entries": 2837
+  },
+  "pixel_groups": 1928,
+  "duplicates_folded": 909,
+  "read_only": true,
+  "source_hashes": {
+    "README.md": "0d772edf16b4564be0289d37e55534ef54e904c560eb59747bba5216377a3299",
+    "00-overview/AUDIT.md": "9579fb859c941249aa46fb09dd88067893f1c0641b8eedce0c49cc869e30502c",
+    "00-overview/final-acceptance.json": "9e8aa6a4cccac3aba11830832696277392790005817a36dd7b05dfad21bc922d",
+    "00-overview/PAGE-CATALOG.md": "42197be5b9cef27b043711f6a827c308e1b37c525fb3e5f694f01f06b25b461a",
+    "00-overview/OVERLAY-CATALOG.md": "9e90af56cee484fd3d0596c4eaa10bfbcbc9ad94a0a35b0f9cb2f82d9044b3c1",
+    "00-overview/page-catalog.json": "75c4ba7d5de07e648c71f1df9d8d751e9782b6f3c1eb2826e85482eb022c2e2e",
+    "00-overview/page-catalog-definition.json": "d62df4408ec9ec2444e7257d7e56d989038597dfa04febf3bdd938f79f0a8c2e",
+    "00-overview/overlay-state-evidence-map.json": "31ddec33baa18508b4b77a8ea4a1902385e8e5435819d60e637c5b031a8d4b33",
+    "00-overview/STATE-MAP-FINAL.md": "6e4a6b7dfcc756948a8ae0526c92f2b23d91ddda9f51d91d469dbb139d9b47bc",
+    "00-overview/ENTRY-STATUS.md": "957c7e6615cb945ce22bd0e665538e5bbd756a574c292bd9694ae53c4cb5f951",
+    "manifest.json": "97d886931c1a73f553c8eddee19a8f2abed1c96dc23cf9084b26ba8f1a35cae5"
+  },
+  "refactor_goal_status": "active",
+  "legacy_implemented_scope_count": 34,
+  "legacy_scope_count_is_not_page_count": true
+}

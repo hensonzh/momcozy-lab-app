@@ -1,0 +1,20 @@
+{
+  "08-expert-service/consultation-journey-consultation-active": "e3570edefd889c463fda87cb97ab2cd2d5f8c42769fe846cf1c6f56ebac8fbd2",
+  "08-expert-service/consultation-journey-join-poll-recovered": "495dd48df845829ae1fd83fcc7c6ad10a0819ab21d0e0e92812eb03134cf4380",
+  "08-expert-service/consultation-journey-leave-confirmation": "93053024b8c85d9cc390a52f54aed6bcd8ff4b93b0c00129b7fe15c81e338db4",
+  "08-expert-service/consultation-journey-leave-retained": "495dd48df845829ae1fd83fcc7c6ad10a0819ab21d0e0e92812eb03134cf4380",
+  "08-expert-service/consultation-journey-safety-before-outcome": "495dd48df845829ae1fd83fcc7c6ad10a0819ab21d0e0e92812eb03134cf4380",
+  "08-expert-service/consultation-journey-summary-consultation-started": "e3570edefd889c463fda87cb97ab2cd2d5f8c42769fe846cf1c6f56ebac8fbd2",
+  "08-expert-service/consultation-journey-summary-entry-waiting-room": "495dd48df845829ae1fd83fcc7c6ad10a0819ab21d0e0e92812eb03134cf4380",
+  "08-expert-service/consultation-journey-technical-before-outcome": "495dd48df845829ae1fd83fcc7c6ad10a0819ab21d0e0e92812eb03134cf4380",
+  "08-expert-service/consultation-journey-waiting-room": "495dd48df845829ae1fd83fcc7c6ad10a0819ab21d0e0e92812eb03134cf4380",
+  "08-expert-service/room-leave-failure": "a48ac8f30dcb32246c7a40a19419e12bff009a75756dd71709602775bee21374",
+  "08-expert-service/room-leave-retry-confirmation": "a8a69b773a1040392cf7c78208ae6537021b5873e77b077a4a6e9911dad10d00",
+  "08-expert-service/room-waiting": "a700ae2a326cf10fb5004ec27c2b61965e5c7e17f18a06b6fa11389c63524e26",
+  "08-expert-service/video-camera-off": "d58a33dbad6dac95bfede7d1fdb4981c0d42863e63b3ddb77013ec191198d65b",
+  "08-expert-service/video-expert-ready": "a6879cd1613d8748aba4a4ecd7d2be12158350363e9dbb080e086a00defab61e",
+  "08-expert-service/video-leave": "47a4845f54874795578b3b3d7f53a44c119b641f306cda377d7c8239022c5b8b",
+  "08-expert-service/video-media-error": "b0e24d2fa54255acd925273704ae9413792531aa8d89094cad5121213f777127",
+  "08-expert-service/video-reconnecting": "f1cf614e621f916733ebde8344e1b6d858e93b4e3db964216d18b4ddb5b7264d",
+  "08-expert-service/video-waiting": "cf337679fada435f41372c3f0b1732ee0a203be18ccf48152d287cfc2c55a45a"
+}

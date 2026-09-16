@@ -1,0 +1,122 @@
+[
+  {
+    "id": "188:1108",
+    "name": "Live room / waiting",
+    "x": 0,
+    "y": 58000,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "188:1146",
+    "name": "Live room / expert-ready",
+    "x": 460,
+    "y": 58000,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "188:1184",
+    "name": "Live room / camera-off",
+    "x": 920,
+    "y": 58000,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "188:1222",
+    "name": "Live room / reconnecting",
+    "x": 1380,
+    "y": 58000,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "188:1260",
+    "name": "Live room / media-error",
+    "x": 1840,
+    "y": 58000,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "188:1304",
+    "name": "Live room / disconnected",
+    "x": 0,
+    "y": 59600,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "188:1346",
+    "name": "Live room / leave",
+    "x": 460,
+    "y": 59600,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "188:1395",
+    "name": "Live room / leave-failure",
+    "x": 920,
+    "y": 59600,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "188:1435",
+    "name": "Live room / large-waiting",
+    "x": 1380,
+    "y": 59600,
+    "width": 320,
+    "height": 844
+  },
+  {
+    "id": "188:1473",
+    "name": "Live room / large-leave",
+    "x": 1840,
+    "y": 59600,
+    "width": 320,
+    "height": 844
+  },
+  {
+    "id": "192:1108",
+    "name": "Live room / large-controls",
+    "x": 0,
+    "y": 61200,
+    "width": 320,
+    "height": 844
+  },
+  {
+    "id": "192:1163",
+    "name": "Live room / large-media-error",
+    "x": 460,
+    "y": 61200,
+    "width": 320,
+    "height": 844
+  },
+  {
+    "id": "192:1222",
+    "name": "Live room / large-disconnected",
+    "x": 920,
+    "y": 61200,
+    "width": 320,
+    "height": 844
+  },
+  {
+    "id": "192:1281",
+    "name": "Live room / short-large-leave",
+    "x": 1380,
+    "y": 61200,
+    "width": 320,
+    "height": 568
+  },
+  {
+    "id": "195:1108",
+    "name": "Live room / sandbox",
+    "x": 1840,
+    "y": 61200,
+    "width": 393,
+    "height": 844
+  }
+]

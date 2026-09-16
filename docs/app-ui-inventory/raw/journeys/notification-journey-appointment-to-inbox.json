@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/notification-journey-appointment-to-inbox-393.png",
+  "previous_source": "test/goldens/ui_inventory/notification-journey-notification-to-appointment-393.png",
+  "route": "/notifications",
+  "trigger": "Appointment back → notification center with read state",
+  "root_entry": "Authenticated More page",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production notification coordinator/repository/controller; isolated HTTP, push gateway and permission platform; real router.go and ScaffoldMessenger callbacks, no native OS dialog or remote push",
+  "test": "test/features/notifications/notification_inventory_journey_test.dart"
+}

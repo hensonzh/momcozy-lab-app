@@ -1,0 +1,621 @@
+[
+  {
+    "path": "/app/home",
+    "component": "HomePage",
+    "line": 3920,
+    "native_candidates": [
+      {
+        "id": "mom/home",
+        "route": "/me"
+      },
+      {
+        "id": "mom/record-picker",
+        "route": "/me"
+      },
+      {
+        "id": "mom/diary-rest",
+        "route": "/me"
+      },
+      {
+        "id": "mom/diary-body",
+        "route": "/me"
+      },
+      {
+        "id": "mom/diary-mood",
+        "route": "/me"
+      },
+      {
+        "id": "mom/lactation",
+        "route": "/me /me/lactation"
+      },
+      {
+        "id": "mom/lactation-edit",
+        "route": "/me /me/lactation"
+      },
+      {
+        "id": "mom/other-functions",
+        "route": "/me"
+      }
+    ],
+    "notes": "设计别名；同组件多状态需按页面条目核查，未代表逐路由验收。"
+  },
+  {
+    "path": "/app/me",
+    "component": "MorePage",
+    "line": 3920,
+    "native_candidates": [
+      {
+        "id": "profile/more",
+        "route": "/more"
+      }
+    ],
+    "notes": "设计别名；同组件多状态需按页面条目核查，未代表逐路由验收。"
+  },
+  {
+    "path": "/app/baby",
+    "component": "BabyPage",
+    "line": 3920,
+    "native_candidates": [
+      {
+        "id": "baby/home",
+        "route": "/baby"
+      },
+      {
+        "id": "baby/switcher",
+        "route": "/baby"
+      },
+      {
+        "id": "baby/profile",
+        "route": "/baby"
+      },
+      {
+        "id": "baby/sleep",
+        "route": "/baby /babies/:babyId/records"
+      },
+      {
+        "id": "baby/wet",
+        "route": "/baby /babies/:babyId/records"
+      },
+      {
+        "id": "baby/stool",
+        "route": "/baby /babies/:babyId/records"
+      },
+      {
+        "id": "baby/feeding",
+        "route": "/baby /babies/:babyId/records"
+      },
+      {
+        "id": "baby/growth-entry",
+        "route": "/baby /babies/:babyId/records"
+      },
+      {
+        "id": "baby/development",
+        "route": "/baby /babies/:babyId/records"
+      }
+    ],
+    "notes": "设计别名；同组件多状态需按页面条目核查，未代表逐路由验收。"
+  },
+  {
+    "path": "/app/records",
+    "component": "RecordsPage",
+    "line": 3920,
+    "native_candidates": [
+      {
+        "id": "baby/records",
+        "route": "/babies/:babyId/records"
+      }
+    ],
+    "notes": "设计别名；同组件多状态需按页面条目核查，未代表逐路由验收。"
+  },
+  {
+    "path": "/app/privacy",
+    "component": "PrivacyPage",
+    "line": 3920,
+    "native_candidates": [
+      {
+        "id": "profile/privacy",
+        "route": "/privacy"
+      }
+    ],
+    "notes": "设计别名；同组件多状态需按页面条目核查，未代表逐路由验收。"
+  },
+  {
+    "path": "/app/settings",
+    "component": "PrivacyPage",
+    "line": 3920,
+    "native_candidates": [
+      {
+        "id": "profile/privacy",
+        "route": "/privacy"
+      }
+    ],
+    "notes": "设计别名；同组件多状态需按页面条目核查，未代表逐路由验收。"
+  },
+  {
+    "path": "/app/plan",
+    "component": "PlanPage",
+    "line": 3920,
+    "native_candidates": [
+      {
+        "id": "schedule/home",
+        "route": "/schedule"
+      },
+      {
+        "id": "schedule/create",
+        "route": "/schedule"
+      },
+      {
+        "id": "schedule/edit",
+        "route": "/schedule"
+      },
+      {
+        "id": "schedule/task",
+        "route": "/schedule"
+      }
+    ],
+    "notes": "设计别名；同组件多状态需按页面条目核查，未代表逐路由验收。"
+  },
+  {
+    "path": "/app/more",
+    "component": "MorePage",
+    "line": 3920,
+    "native_candidates": [
+      {
+        "id": "profile/more",
+        "route": "/more"
+      }
+    ],
+    "notes": "设计别名；同组件多状态需按页面条目核查，未代表逐路由验收。"
+  },
+  {
+    "path": "/app/services",
+    "component": "ServicesPage",
+    "line": 3921,
+    "native_candidates": [
+      {
+        "id": "services/catalog",
+        "route": "/services"
+      }
+    ],
+    "notes": "设计别名；同组件多状态需按页面条目核查，未代表逐路由验收。"
+  },
+  {
+    "path": "/app/services/:packageId",
+    "component": "ServiceDetailPage",
+    "line": 3921,
+    "native_candidates": [
+      {
+        "id": "services/package",
+        "route": "/services/:packageId"
+      },
+      {
+        "id": "services/purchase",
+        "route": "/services/:packageId"
+      }
+    ],
+    "notes": "设计别名；同组件多状态需按页面条目核查，未代表逐路由验收。"
+  },
+  {
+    "path": "/app/service-detail",
+    "component": "ServiceDetailPage",
+    "line": 3921,
+    "native_candidates": [
+      {
+        "id": "services/package",
+        "route": "/services/:packageId"
+      },
+      {
+        "id": "services/purchase",
+        "route": "/services/:packageId"
+      }
+    ],
+    "notes": "设计别名；同组件多状态需按页面条目核查，未代表逐路由验收。"
+  },
+  {
+    "path": "/app/services/:packageId/eligibility",
+    "component": "ServiceDetailPage",
+    "line": 3921,
+    "native_candidates": [
+      {
+        "id": "services/package",
+        "route": "/services/:packageId"
+      },
+      {
+        "id": "services/purchase",
+        "route": "/services/:packageId"
+      }
+    ],
+    "notes": "设计别名；同组件多状态需按页面条目核查，未代表逐路由验收。"
+  },
+  {
+    "path": "/app/eligibility",
+    "component": "ServiceDetailPage",
+    "line": 3921,
+    "native_candidates": [
+      {
+        "id": "services/package",
+        "route": "/services/:packageId"
+      },
+      {
+        "id": "services/purchase",
+        "route": "/services/:packageId"
+      }
+    ],
+    "notes": "设计别名；同组件多状态需按页面条目核查，未代表逐路由验收。"
+  },
+  {
+    "path": "/app/checkout",
+    "component": "ServiceDetailPage",
+    "line": 3921,
+    "native_candidates": [
+      {
+        "id": "services/package",
+        "route": "/services/:packageId"
+      },
+      {
+        "id": "services/purchase",
+        "route": "/services/:packageId"
+      }
+    ],
+    "notes": "设计别名；同组件多状态需按页面条目核查，未代表逐路由验收。"
+  },
+  {
+    "path": "/app/checkout/:orderId",
+    "component": "ServiceDetailPage",
+    "line": 3921,
+    "native_candidates": [
+      {
+        "id": "services/package",
+        "route": "/services/:packageId"
+      },
+      {
+        "id": "services/purchase",
+        "route": "/services/:packageId"
+      }
+    ],
+    "notes": "设计别名；同组件多状态需按页面条目核查，未代表逐路由验收。"
+  },
+  {
+    "path": "/app/intake",
+    "component": "IntakePage",
+    "line": 3921,
+    "native_candidates": [
+      {
+        "id": "services/intake",
+        "route": "/services/appointments/:appointmentId/intake"
+      },
+      {
+        "id": "services/consent-detail",
+        "route": "/services/appointments/:appointmentId/intake"
+      },
+      {
+        "id": "services/intake-saved",
+        "route": "/services/appointments/:appointmentId/intake"
+      }
+    ],
+    "notes": "设计别名；同组件多状态需按页面条目核查，未代表逐路由验收。"
+  },
+  {
+    "path": "/app/intake/:episodeId",
+    "component": "IntakePage",
+    "line": 3921,
+    "native_candidates": [
+      {
+        "id": "services/intake",
+        "route": "/services/appointments/:appointmentId/intake"
+      },
+      {
+        "id": "services/consent-detail",
+        "route": "/services/appointments/:appointmentId/intake"
+      },
+      {
+        "id": "services/intake-saved",
+        "route": "/services/appointments/:appointmentId/intake"
+      }
+    ],
+    "notes": "设计别名；同组件多状态需按页面条目核查，未代表逐路由验收。"
+  },
+  {
+    "path": "/app/appointment",
+    "component": "AppointmentPage",
+    "line": 3921,
+    "native_candidates": [
+      {
+        "id": "services/booking",
+        "route": "/services/episodes/:episodeId/booking"
+      },
+      {
+        "id": "services/appointment",
+        "route": "/services/appointments/:appointmentId"
+      },
+      {
+        "id": "services/state-37",
+        "route": "/services/episodes/:episodeId/booking"
+      }
+    ],
+    "notes": "设计别名；同组件多状态需按页面条目核查，未代表逐路由验收。"
+  },
+  {
+    "path": "/app/appointments",
+    "component": "AppointmentPage",
+    "line": 3921,
+    "native_candidates": [
+      {
+        "id": "services/booking",
+        "route": "/services/episodes/:episodeId/booking"
+      },
+      {
+        "id": "services/appointment",
+        "route": "/services/appointments/:appointmentId"
+      },
+      {
+        "id": "services/state-37",
+        "route": "/services/episodes/:episodeId/booking"
+      }
+    ],
+    "notes": "设计别名；同组件多状态需按页面条目核查，未代表逐路由验收。"
+  },
+  {
+    "path": "/app/appointments/:appointmentId",
+    "component": "AppointmentPage",
+    "line": 3921,
+    "native_candidates": [
+      {
+        "id": "services/booking",
+        "route": "/services/episodes/:episodeId/booking"
+      },
+      {
+        "id": "services/appointment",
+        "route": "/services/appointments/:appointmentId"
+      },
+      {
+        "id": "services/state-37",
+        "route": "/services/episodes/:episodeId/booking"
+      }
+    ],
+    "notes": "设计别名；同组件多状态需按页面条目核查，未代表逐路由验收。"
+  },
+  {
+    "path": "/app/consult/:appointmentId/prep",
+    "component": "ConsultPrepPage",
+    "line": 3921,
+    "native_candidates": [],
+    "notes": "设计别名；同组件多状态需按页面条目核查，未代表逐路由验收。"
+  },
+  {
+    "path": "/app/consult/:appointmentId/room",
+    "component": "VideoPage",
+    "line": 3921,
+    "native_candidates": [
+      {
+        "id": "services/room",
+        "route": "/services/appointments/:appointmentId/room"
+      },
+      {
+        "id": "services/room-leave",
+        "route": "/services/appointments/:appointmentId/room"
+      }
+    ],
+    "notes": "设计别名；同组件多状态需按页面条目核查，未代表逐路由验收。"
+  },
+  {
+    "path": "/app/video",
+    "component": "VideoPage",
+    "line": 3921,
+    "native_candidates": [
+      {
+        "id": "services/room",
+        "route": "/services/appointments/:appointmentId/room"
+      },
+      {
+        "id": "services/room-leave",
+        "route": "/services/appointments/:appointmentId/room"
+      }
+    ],
+    "notes": "设计别名；同组件多状态需按页面条目核查，未代表逐路由验收。"
+  },
+  {
+    "path": "/app/summary",
+    "component": "SummaryPage",
+    "line": 3921,
+    "native_candidates": [
+      {
+        "id": "services/summary",
+        "route": "/services/appointments/:appointmentId/summary"
+      }
+    ],
+    "notes": "设计别名；同组件多状态需按页面条目核查，未代表逐路由验收。"
+  },
+  {
+    "path": "/app/consultations/:appointmentId/summary",
+    "component": "SummaryPage",
+    "line": 3921,
+    "native_candidates": [
+      {
+        "id": "services/summary",
+        "route": "/services/appointments/:appointmentId/summary"
+      }
+    ],
+    "notes": "设计别名；同组件多状态需按页面条目核查，未代表逐路由验收。"
+  },
+  {
+    "path": "/app/care-episodes/:episodeId/summary",
+    "component": "SummaryPage",
+    "line": 3921,
+    "native_candidates": [
+      {
+        "id": "services/summary",
+        "route": "/services/appointments/:appointmentId/summary"
+      }
+    ],
+    "notes": "设计别名；同组件多状态需按页面条目核查，未代表逐路由验收。"
+  },
+  {
+    "path": "/app/care-episodes/:episodeId/progress",
+    "component": "ServiceProgressPage",
+    "line": 3921,
+    "native_candidates": [
+      {
+        "id": "services/progress",
+        "route": "/services/episodes/:episodeId"
+      }
+    ],
+    "notes": "设计别名；同组件多状态需按页面条目核查，未代表逐路由验收。"
+  },
+  {
+    "path": "/app/care-episodes/:episodeId/care-plan",
+    "component": "PlanPage",
+    "line": 3921,
+    "native_candidates": [
+      {
+        "id": "schedule/home",
+        "route": "/schedule"
+      },
+      {
+        "id": "schedule/create",
+        "route": "/schedule"
+      },
+      {
+        "id": "schedule/edit",
+        "route": "/schedule"
+      },
+      {
+        "id": "schedule/task",
+        "route": "/schedule"
+      }
+    ],
+    "notes": "设计别名；同组件多状态需按页面条目核查，未代表逐路由验收。"
+  },
+  {
+    "path": "/app/renew",
+    "component": "RenewPage",
+    "line": 3921,
+    "native_candidates": [
+      {
+        "id": "services/renew",
+        "route": "/services/renew /services/episodes/:episodeId/renew"
+      }
+    ],
+    "notes": "设计别名；同组件多状态需按页面条目核查，未代表逐路由验收。"
+  },
+  {
+    "path": "/app/care-episodes/:episodeId/renew",
+    "component": "RenewPage",
+    "line": 3921,
+    "native_candidates": [
+      {
+        "id": "services/renew",
+        "route": "/services/renew /services/episodes/:episodeId/renew"
+      }
+    ],
+    "notes": "设计别名；同组件多状态需按页面条目核查，未代表逐路由验收。"
+  },
+  {
+    "path": "/app/self-management",
+    "component": "SelfManagementPage",
+    "line": 3921,
+    "native_candidates": [
+      {
+        "id": "services/self-management",
+        "route": "未实现；设计入口 /app/self-management"
+      }
+    ],
+    "notes": "设计别名；同组件多状态需按页面条目核查，未代表逐路由验收。"
+  },
+  {
+    "path": "/app/care-episodes/:episodeId/self-management",
+    "component": "SelfManagementPage",
+    "line": 3921,
+    "native_candidates": [
+      {
+        "id": "services/self-management",
+        "route": "未实现；设计入口 /app/self-management"
+      }
+    ],
+    "notes": "设计别名；同组件多状态需按页面条目核查，未代表逐路由验收。"
+  },
+  {
+    "path": "/app/referral",
+    "component": "ReferralPage",
+    "line": 3921,
+    "native_candidates": [
+      {
+        "id": "services/referral",
+        "route": "未实现；设计入口 /app/referral"
+      }
+    ],
+    "notes": "设计别名；同组件多状态需按页面条目核查，未代表逐路由验收。"
+  },
+  {
+    "path": "/app/referrals/:referralId",
+    "component": "ReferralPage",
+    "line": 3921,
+    "native_candidates": [
+      {
+        "id": "services/referral",
+        "route": "未实现；设计入口 /app/referral"
+      }
+    ],
+    "notes": "设计别名；同组件多状态需按页面条目核查，未代表逐路由验收。"
+  },
+  {
+    "path": "/app/*",
+    "component": "HomePage",
+    "line": 3922,
+    "native_candidates": [
+      {
+        "id": "mom/home",
+        "route": "/me"
+      },
+      {
+        "id": "mom/record-picker",
+        "route": "/me"
+      },
+      {
+        "id": "mom/diary-rest",
+        "route": "/me"
+      },
+      {
+        "id": "mom/diary-body",
+        "route": "/me"
+      },
+      {
+        "id": "mom/diary-mood",
+        "route": "/me"
+      },
+      {
+        "id": "mom/lactation",
+        "route": "/me /me/lactation"
+      },
+      {
+        "id": "mom/lactation-edit",
+        "route": "/me /me/lactation"
+      },
+      {
+        "id": "mom/other-functions",
+        "route": "/me"
+      }
+    ],
+    "notes": "设计别名；同组件多状态需按页面条目核查，未代表逐路由验收。"
+  },
+  {
+    "path": "/app/agent",
+    "component": "AgentPage",
+    "native_candidates": [
+      {
+        "id": "agent/home",
+        "route": "/"
+      }
+    ]
+  },
+  {
+    "path": "/auth",
+    "component": "AuthPage",
+    "native_candidates": [
+      {
+        "id": "auth/login",
+        "route": "/login"
+      }
+    ]
+  }
+]

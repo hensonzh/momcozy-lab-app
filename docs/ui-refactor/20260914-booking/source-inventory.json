@@ -1,0 +1,3414 @@
+[
+  {
+    "id": "03-mom/mom-journey-purchased-booking-cancel-precheck",
+    "module": "妈妈",
+    "label": "先做个预约前确认",
+    "state": "mom-journey-purchased-booking-cancel-precheck",
+    "image": "03-mom/mom-journey-purchased-booking-cancel-precheck/default.png",
+    "viewport": "03-mom/mom-journey-purchased-booking-cancel-precheck/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/inventory-episode/booking"
+    ],
+    "mapped_design_candidates": [
+      "services/booking",
+      "common/not-found",
+      "services/state-32",
+      "services/state-33",
+      "services/state-34",
+      "services/state-35",
+      "services/state-36",
+      "services/state-37"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/booking_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/mom/mom_inventory_journey_test.dart",
+    "test_case": "inventory Mom purchased home service progress and booking entry",
+    "metadata": "raw/test/goldens/ui_inventory/mom-journey-purchased-booking-cancel-precheck-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/mom-journey-purchased-booking-cancel-precheck-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/mom-journey-purchased-booking-cancel-precheck-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/inventory-episode/booking",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Cancel suitability check → booking page",
+    "journey": {
+      "source": "test/goldens/ui_inventory/mom-journey-purchased-booking-cancel-precheck-393.png",
+      "previous_source": "test/goldens/ui_inventory/mom-journey-purchased-booking-precheck-393.png",
+      "route": "/services/episodes/inventory-episode/booking",
+      "trigger": "Cancel suitability check → booking page",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/mom/mom_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "03-mom/mom-journey-purchased-booking-precheck",
+    "module": "妈妈",
+    "label": "先做个预约前确认",
+    "state": "mom-journey-purchased-booking-precheck",
+    "image": "03-mom/mom-journey-purchased-booking-precheck/default.png",
+    "viewport": "03-mom/mom-journey-purchased-booking-precheck/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/inventory-episode/booking"
+    ],
+    "mapped_design_candidates": [
+      "services/booking",
+      "common/not-found",
+      "services/state-32",
+      "services/state-33",
+      "services/state-34",
+      "services/state-35",
+      "services/state-36",
+      "services/state-37"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/booking_flow_dialogs.dart",
+      "lib/modules/services/presentation/booking_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/mom/mom_inventory_journey_test.dart",
+    "test_case": "inventory Mom purchased home service progress and booking entry",
+    "metadata": "raw/test/goldens/ui_inventory/mom-journey-purchased-booking-precheck-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/mom-journey-purchased-booking-precheck-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/mom-journey-purchased-booking-precheck-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/inventory-episode/booking",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Book from home → actual booking route and suitability dialog",
+    "journey": {
+      "source": "test/goldens/ui_inventory/mom-journey-purchased-booking-precheck-393.png",
+      "previous_source": "test/goldens/ui_inventory/mom-journey-purchased-progress-return-393.png",
+      "route": "/services/episodes/inventory-episode/booking",
+      "trigger": "Book from home → actual booking route and suitability dialog",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/mom/mom_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "07-me/notification-followup-registration-disabled",
+    "module": "账号与隐私",
+    "label": "已确认 · IBCLC 咨询",
+    "state": "notification-followup-registration-disabled",
+    "image": "07-me/notification-followup-registration-disabled/default.png",
+    "viewport": "07-me/notification-followup-registration-disabled/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode/booking"
+    ],
+    "mapped_design_candidates": [
+      "services/booking",
+      "common/not-found",
+      "services/state-32",
+      "services/state-33",
+      "services/state-34",
+      "services/state-35",
+      "services/state-36",
+      "services/state-37"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/notifications/presentation/appointment_reminder_tile.dart",
+      "lib/modules/services/presentation/appointment_detail_card.dart",
+      "lib/modules/services/presentation/booking_page.dart",
+      "lib/modules/services/presentation/service_expert_identity.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/notifications/notification_followup_inventory_test.dart",
+    "test_case": "notification registration waiting failure pending and retry from booking",
+    "metadata": "raw/test/goldens/ui_inventory/notification-followup-registration-disabled-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/notification-followup-registration-disabled-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/notification-followup-registration-disabled-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode/booking",
+    "entry": "Authenticated More page",
+    "trigger": "Turn reminder off → saved disabled",
+    "journey": {
+      "source": "test/goldens/ui_inventory/notification-followup-registration-disabled-393.png",
+      "previous_source": "test/goldens/ui_inventory/notification-followup-registration-retry-enabled-393.png",
+      "route": "/services/episodes/service-episode/booking",
+      "trigger": "Turn reminder off → saved disabled",
+      "root_entry": "Authenticated More page",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production notification coordinator/repository/controller; isolated HTTP, push gateway and permission platform; real router.go and ScaffoldMessenger callbacks, no native OS dialog or remote push",
+      "test": "test/features/notifications/notification_followup_inventory_test.dart"
+    }
+  },
+  {
+    "id": "07-me/notification-followup-registration-http-error",
+    "module": "账号与隐私",
+    "label": "已确认 · IBCLC 咨询",
+    "state": "notification-followup-registration-http-error",
+    "image": "07-me/notification-followup-registration-http-error/default.png",
+    "viewport": "07-me/notification-followup-registration-http-error/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode/booking"
+    ],
+    "mapped_design_candidates": [
+      "services/booking",
+      "common/not-found",
+      "services/state-32",
+      "services/state-33",
+      "services/state-34",
+      "services/state-35",
+      "services/state-36",
+      "services/state-37"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/notifications/presentation/appointment_reminder_tile.dart",
+      "lib/modules/services/presentation/appointment_detail_card.dart",
+      "lib/modules/services/presentation/booking_page.dart",
+      "lib/modules/services/presentation/service_expert_identity.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/notifications/notification_followup_inventory_test.dart",
+    "test_case": "notification registration waiting failure pending and retry from booking",
+    "metadata": "raw/test/goldens/ui_inventory/notification-followup-registration-http-error-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/notification-followup-registration-http-error-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/notification-followup-registration-http-error-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode/booking",
+    "entry": "Authenticated More page",
+    "trigger": "Retry reminder → installation HTTP error and feedback",
+    "journey": {
+      "source": "test/goldens/ui_inventory/notification-followup-registration-http-error-393.png",
+      "previous_source": "test/goldens/ui_inventory/notification-followup-registration-pending-393.png",
+      "route": "/services/episodes/service-episode/booking",
+      "trigger": "Retry reminder → installation HTTP error and feedback",
+      "root_entry": "Authenticated More page",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production notification coordinator/repository/controller; isolated HTTP, push gateway and permission platform; real router.go and ScaffoldMessenger callbacks, no native OS dialog or remote push",
+      "test": "test/features/notifications/notification_followup_inventory_test.dart"
+    }
+  },
+  {
+    "id": "07-me/notification-followup-registration-pending",
+    "module": "账号与隐私",
+    "label": "已确认 · IBCLC 咨询",
+    "state": "notification-followup-registration-pending",
+    "image": "07-me/notification-followup-registration-pending/default.png",
+    "viewport": "07-me/notification-followup-registration-pending/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode/booking"
+    ],
+    "mapped_design_candidates": [
+      "services/booking",
+      "common/not-found",
+      "services/state-32",
+      "services/state-33",
+      "services/state-34",
+      "services/state-35",
+      "services/state-36",
+      "services/state-37"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/notifications/presentation/appointment_reminder_tile.dart",
+      "lib/modules/services/presentation/appointment_detail_card.dart",
+      "lib/modules/services/presentation/booking_page.dart",
+      "lib/modules/services/presentation/service_expert_identity.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/notifications/notification_followup_inventory_test.dart",
+    "test_case": "notification registration waiting failure pending and retry from booking",
+    "metadata": "raw/test/goldens/ui_inventory/notification-followup-registration-pending-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/notification-followup-registration-pending-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/notification-followup-registration-pending-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode/booking",
+    "entry": "Authenticated More page",
+    "trigger": "Registration returned no token binding → reminder remains off with Snackbar",
+    "journey": {
+      "source": "test/goldens/ui_inventory/notification-followup-registration-pending-393.png",
+      "previous_source": "test/goldens/ui_inventory/notification-followup-registration-waiting-393.png",
+      "route": "/services/episodes/service-episode/booking",
+      "trigger": "Registration returned no token binding → reminder remains off with Snackbar",
+      "root_entry": "Authenticated More page",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production notification coordinator/repository/controller; isolated HTTP, push gateway and permission platform; real router.go and ScaffoldMessenger callbacks, no native OS dialog or remote push",
+      "test": "test/features/notifications/notification_followup_inventory_test.dart"
+    }
+  },
+  {
+    "id": "07-me/notification-followup-registration-retry-enabled",
+    "module": "账号与隐私",
+    "label": "已确认 · IBCLC 咨询",
+    "state": "notification-followup-registration-retry-enabled",
+    "image": "07-me/notification-followup-registration-retry-enabled/default.png",
+    "viewport": "07-me/notification-followup-registration-retry-enabled/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode/booking"
+    ],
+    "mapped_design_candidates": [
+      "services/booking",
+      "common/not-found",
+      "services/state-32",
+      "services/state-33",
+      "services/state-34",
+      "services/state-35",
+      "services/state-36",
+      "services/state-37"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/notifications/presentation/appointment_reminder_tile.dart",
+      "lib/modules/services/presentation/appointment_detail_card.dart",
+      "lib/modules/services/presentation/booking_page.dart",
+      "lib/modules/services/presentation/service_expert_identity.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/notifications/notification_followup_inventory_test.dart",
+    "test_case": "notification registration waiting failure pending and retry from booking",
+    "metadata": "raw/test/goldens/ui_inventory/notification-followup-registration-retry-enabled-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/notification-followup-registration-retry-enabled-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/notification-followup-registration-retry-enabled-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode/booking",
+    "entry": "Authenticated More page",
+    "trigger": "Retry after token recovery → reminder saved and enabled",
+    "journey": {
+      "source": "test/goldens/ui_inventory/notification-followup-registration-retry-enabled-393.png",
+      "previous_source": "test/goldens/ui_inventory/notification-followup-registration-token-error-393.png",
+      "route": "/services/episodes/service-episode/booking",
+      "trigger": "Retry after token recovery → reminder saved and enabled",
+      "root_entry": "Authenticated More page",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production notification coordinator/repository/controller; isolated HTTP, push gateway and permission platform; real router.go and ScaffoldMessenger callbacks, no native OS dialog or remote push",
+      "test": "test/features/notifications/notification_followup_inventory_test.dart"
+    }
+  },
+  {
+    "id": "07-me/notification-followup-registration-token-error",
+    "module": "账号与隐私",
+    "label": "已确认 · IBCLC 咨询",
+    "state": "notification-followup-registration-token-error",
+    "image": "07-me/notification-followup-registration-token-error/default.png",
+    "viewport": "07-me/notification-followup-registration-token-error/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode/booking"
+    ],
+    "mapped_design_candidates": [
+      "services/booking",
+      "common/not-found",
+      "services/state-32",
+      "services/state-33",
+      "services/state-34",
+      "services/state-35",
+      "services/state-36",
+      "services/state-37"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/notifications/presentation/appointment_reminder_tile.dart",
+      "lib/modules/services/presentation/appointment_detail_card.dart",
+      "lib/modules/services/presentation/booking_page.dart",
+      "lib/modules/services/presentation/service_expert_identity.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/notifications/notification_followup_inventory_test.dart",
+    "test_case": "notification registration waiting failure pending and retry from booking",
+    "metadata": "raw/test/goldens/ui_inventory/notification-followup-registration-token-error-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/notification-followup-registration-token-error-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/notification-followup-registration-token-error-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode/booking",
+    "entry": "Authenticated More page",
+    "trigger": "Retry reminder → push token error and feedback",
+    "journey": {
+      "source": "test/goldens/ui_inventory/notification-followup-registration-token-error-393.png",
+      "previous_source": "test/goldens/ui_inventory/notification-followup-registration-http-error-393.png",
+      "route": "/services/episodes/service-episode/booking",
+      "trigger": "Retry reminder → push token error and feedback",
+      "root_entry": "Authenticated More page",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production notification coordinator/repository/controller; isolated HTTP, push gateway and permission platform; real router.go and ScaffoldMessenger callbacks, no native OS dialog or remote push",
+      "test": "test/features/notifications/notification_followup_inventory_test.dart"
+    }
+  },
+  {
+    "id": "07-me/notification-followup-registration-waiting",
+    "module": "账号与隐私",
+    "label": "已确认 · IBCLC 咨询",
+    "state": "notification-followup-registration-waiting",
+    "image": "07-me/notification-followup-registration-waiting/default.png",
+    "viewport": "07-me/notification-followup-registration-waiting/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode/booking"
+    ],
+    "mapped_design_candidates": [
+      "services/booking",
+      "common/not-found",
+      "services/state-32",
+      "services/state-33",
+      "services/state-34",
+      "services/state-35",
+      "services/state-36",
+      "services/state-37"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/notifications/presentation/appointment_reminder_tile.dart",
+      "lib/modules/services/presentation/appointment_detail_card.dart",
+      "lib/modules/services/presentation/booking_page.dart",
+      "lib/modules/services/presentation/service_expert_identity.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/notifications/notification_followup_inventory_test.dart",
+    "test_case": "notification registration waiting failure pending and retry from booking",
+    "metadata": "raw/test/goldens/ui_inventory/notification-followup-registration-waiting-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/notification-followup-registration-waiting-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/notification-followup-registration-waiting-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode/booking",
+    "entry": "Authenticated More page",
+    "trigger": "Enable reminder → device registration request pending",
+    "journey": {
+      "source": "test/goldens/ui_inventory/notification-followup-registration-waiting-393.png",
+      "previous_source": "test/goldens/ui_inventory/notification-followup-reminder-ready-393.png",
+      "route": "/services/episodes/service-episode/booking",
+      "trigger": "Enable reminder → device registration request pending",
+      "root_entry": "Authenticated More page",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production notification coordinator/repository/controller; isolated HTTP, push gateway and permission platform; real router.go and ScaffoldMessenger callbacks, no native OS dialog or remote push",
+      "test": "test/features/notifications/notification_followup_inventory_test.dart"
+    }
+  },
+  {
+    "id": "07-me/notification-followup-reminder-ready",
+    "module": "账号与隐私",
+    "label": "已确认 · IBCLC 咨询",
+    "state": "notification-followup-reminder-ready",
+    "image": "07-me/notification-followup-reminder-ready/default.png",
+    "viewport": "07-me/notification-followup-reminder-ready/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode/booking"
+    ],
+    "mapped_design_candidates": [
+      "services/booking",
+      "common/not-found",
+      "services/state-32",
+      "services/state-33",
+      "services/state-34",
+      "services/state-35",
+      "services/state-36",
+      "services/state-37"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/notifications/presentation/appointment_reminder_tile.dart",
+      "lib/modules/services/presentation/appointment_detail_card.dart",
+      "lib/modules/services/presentation/booking_page.dart",
+      "lib/modules/services/presentation/service_expert_identity.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/notifications/notification_followup_inventory_test.dart",
+    "test_case": "notification registration waiting failure pending and retry from booking",
+    "metadata": "raw/test/goldens/ui_inventory/notification-followup-reminder-ready-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/notification-followup-reminder-ready-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/notification-followup-reminder-ready-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode/booking",
+    "entry": "Authenticated More page",
+    "trigger": "Appointment booking → reminder off",
+    "journey": {
+      "source": "test/goldens/ui_inventory/notification-followup-reminder-ready-393.png",
+      "previous_source": "test/goldens/ui_inventory/notification-followup-booking-package-393.png",
+      "route": "/services/episodes/service-episode/booking",
+      "trigger": "Appointment booking → reminder off",
+      "root_entry": "Authenticated More page",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production notification coordinator/repository/controller; isolated HTTP, push gateway and permission platform; real router.go and ScaffoldMessenger callbacks, no native OS dialog or remote push",
+      "test": "test/features/notifications/notification_followup_inventory_test.dart"
+    }
+  },
+  {
+    "id": "07-me/notification-journey-notification-preference-disabled",
+    "module": "账号与隐私",
+    "label": "已确认 · IBCLC 咨询",
+    "state": "notification-journey-notification-preference-disabled",
+    "image": "07-me/notification-journey-notification-preference-disabled/default.png",
+    "viewport": "07-me/notification-journey-notification-preference-disabled/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode/booking"
+    ],
+    "mapped_design_candidates": [
+      "services/booking",
+      "common/not-found",
+      "services/state-32",
+      "services/state-33",
+      "services/state-34",
+      "services/state-35",
+      "services/state-36",
+      "services/state-37"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/notifications/presentation/appointment_reminder_tile.dart",
+      "lib/modules/services/presentation/appointment_detail_card.dart",
+      "lib/modules/services/presentation/booking_page.dart",
+      "lib/modules/services/presentation/service_expert_identity.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/notifications/notification_inventory_journey_test.dart",
+    "test_case": "inventory notification reminder failures and unavailable push",
+    "metadata": "raw/test/goldens/ui_inventory/notification-journey-notification-preference-disabled-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/notification-journey-notification-preference-disabled-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/notification-journey-notification-preference-disabled-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode/booking",
+    "entry": "Authenticated More page",
+    "trigger": "Reminder rejected by server: notification_preference_disabled",
+    "journey": {
+      "source": "test/goldens/ui_inventory/notification-journey-notification-preference-disabled-393.png",
+      "previous_source": "test/goldens/ui_inventory/notification-journey-reminder-read-retry-393.png",
+      "route": "/services/episodes/service-episode/booking",
+      "trigger": "Reminder rejected by server: notification_preference_disabled",
+      "root_entry": "Authenticated More page",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production notification coordinator/repository/controller; isolated HTTP, push gateway and permission platform; real router.go and ScaffoldMessenger callbacks, no native OS dialog or remote push",
+      "test": "test/features/notifications/notification_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "07-me/notification-journey-permission-denied",
+    "module": "账号与隐私",
+    "label": "已确认 · IBCLC 咨询",
+    "state": "notification-journey-permission-denied",
+    "image": "07-me/notification-journey-permission-denied/default.png",
+    "viewport": "07-me/notification-journey-permission-denied/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode/booking"
+    ],
+    "mapped_design_candidates": [
+      "services/booking",
+      "common/not-found",
+      "services/state-32",
+      "services/state-33",
+      "services/state-34",
+      "services/state-35",
+      "services/state-36",
+      "services/state-37"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/notifications/presentation/appointment_reminder_tile.dart",
+      "lib/modules/services/presentation/appointment_detail_card.dart",
+      "lib/modules/services/presentation/booking_page.dart",
+      "lib/modules/services/presentation/service_expert_identity.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/notifications/notification_inventory_journey_test.dart",
+    "test_case": "inventory notification denied permission settings restoration and preference failures",
+    "metadata": "raw/test/goldens/ui_inventory/notification-journey-permission-denied-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/notification-journey-permission-denied-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/notification-journey-permission-denied-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode/booking",
+    "entry": "Authenticated More page",
+    "trigger": "Platform denies permission → reminder stays off with feedback",
+    "journey": {
+      "source": "test/goldens/ui_inventory/notification-journey-permission-denied-393.png",
+      "previous_source": null,
+      "route": "/services/episodes/service-episode/booking",
+      "trigger": "Platform denies permission → reminder stays off with feedback",
+      "root_entry": "Authenticated More page",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production notification coordinator/repository/controller; isolated HTTP, push gateway and permission platform; real router.go and ScaffoldMessenger callbacks, no native OS dialog or remote push",
+      "test": "test/features/notifications/notification_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "07-me/notification-journey-permission-settings-offer",
+    "module": "账号与隐私",
+    "label": "已确认 · IBCLC 咨询",
+    "state": "notification-journey-permission-settings-offer",
+    "image": "07-me/notification-journey-permission-settings-offer/default.png",
+    "viewport": "07-me/notification-journey-permission-settings-offer/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode/booking"
+    ],
+    "mapped_design_candidates": [
+      "services/booking",
+      "common/not-found",
+      "services/state-32",
+      "services/state-33",
+      "services/state-34",
+      "services/state-35",
+      "services/state-36",
+      "services/state-37"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/notifications/presentation/appointment_reminder_tile.dart",
+      "lib/modules/services/presentation/appointment_detail_card.dart",
+      "lib/modules/services/presentation/booking_page.dart",
+      "lib/modules/services/presentation/service_expert_identity.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/notifications/notification_inventory_journey_test.dart",
+    "test_case": "inventory notification denied permission settings restoration and preference failures",
+    "metadata": "raw/test/goldens/ui_inventory/notification-journey-permission-settings-offer-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/notification-journey-permission-settings-offer-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/notification-journey-permission-settings-offer-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode/booking",
+    "entry": "Authenticated More page",
+    "trigger": "Enable after denial → offer system settings",
+    "journey": {
+      "source": "test/goldens/ui_inventory/notification-journey-permission-settings-offer-393.png",
+      "previous_source": "test/goldens/ui_inventory/notification-journey-permission-denied-393.png",
+      "route": "/services/episodes/service-episode/booking",
+      "trigger": "Enable after denial → offer system settings",
+      "root_entry": "Authenticated More page",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production notification coordinator/repository/controller; isolated HTTP, push gateway and permission platform; real router.go and ScaffoldMessenger callbacks, no native OS dialog or remote push",
+      "test": "test/features/notifications/notification_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "07-me/notification-journey-permission-settings-requested",
+    "module": "账号与隐私",
+    "label": "已确认 · IBCLC 咨询",
+    "state": "notification-journey-permission-settings-requested",
+    "image": "07-me/notification-journey-permission-settings-requested/default.png",
+    "viewport": "07-me/notification-journey-permission-settings-requested/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode/booking"
+    ],
+    "mapped_design_candidates": [
+      "services/booking",
+      "common/not-found",
+      "services/state-32",
+      "services/state-33",
+      "services/state-34",
+      "services/state-35",
+      "services/state-36",
+      "services/state-37"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/notifications/presentation/appointment_reminder_tile.dart",
+      "lib/modules/services/presentation/appointment_detail_card.dart",
+      "lib/modules/services/presentation/booking_page.dart",
+      "lib/modules/services/presentation/service_expert_identity.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/notifications/notification_inventory_journey_test.dart",
+    "test_case": "inventory notification denied permission settings restoration and preference failures",
+    "metadata": "raw/test/goldens/ui_inventory/notification-journey-permission-settings-requested-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/notification-journey-permission-settings-requested-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/notification-journey-permission-settings-requested-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode/booking",
+    "entry": "Authenticated More page",
+    "trigger": "Open settings invokes isolated platform → reminder remains off until permission restored",
+    "journey": {
+      "source": "test/goldens/ui_inventory/notification-journey-permission-settings-requested-393.png",
+      "previous_source": "test/goldens/ui_inventory/notification-journey-permission-settings-offer-393.png",
+      "route": "/services/episodes/service-episode/booking",
+      "trigger": "Open settings invokes isolated platform → reminder remains off until permission restored",
+      "root_entry": "Authenticated More page",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production notification coordinator/repository/controller; isolated HTTP, push gateway and permission platform; real router.go and ScaffoldMessenger callbacks, no native OS dialog or remote push",
+      "test": "test/features/notifications/notification_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "07-me/notification-journey-push-unavailable",
+    "module": "账号与隐私",
+    "label": "已确认 · IBCLC 咨询",
+    "state": "notification-journey-push-unavailable",
+    "image": "07-me/notification-journey-push-unavailable/default.png",
+    "viewport": "07-me/notification-journey-push-unavailable/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode/booking"
+    ],
+    "mapped_design_candidates": [
+      "services/booking",
+      "common/not-found",
+      "services/state-32",
+      "services/state-33",
+      "services/state-34",
+      "services/state-35",
+      "services/state-36",
+      "services/state-37"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/notifications/presentation/appointment_reminder_tile.dart",
+      "lib/modules/services/presentation/appointment_detail_card.dart",
+      "lib/modules/services/presentation/booking_page.dart",
+      "lib/modules/services/presentation/service_expert_identity.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/notifications/notification_inventory_journey_test.dart",
+    "test_case": "inventory notification reminder failures and unavailable push",
+    "metadata": "raw/test/goldens/ui_inventory/notification-journey-push-unavailable-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/notification-journey-push-unavailable-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/notification-journey-push-unavailable-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode/booking",
+    "entry": "Authenticated More page",
+    "trigger": "Server push delivery unavailable → no reminder write and explanation",
+    "journey": {
+      "source": "test/goldens/ui_inventory/notification-journey-push-unavailable-393.png",
+      "previous_source": "test/goldens/ui_inventory/notification-journey-reminder-expired-393.png",
+      "route": "/services/episodes/service-episode/booking",
+      "trigger": "Server push delivery unavailable → no reminder write and explanation",
+      "root_entry": "Authenticated More page",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production notification coordinator/repository/controller; isolated HTTP, push gateway and permission platform; real router.go and ScaffoldMessenger callbacks, no native OS dialog or remote push",
+      "test": "test/features/notifications/notification_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "07-me/notification-journey-reminder-disabled",
+    "module": "账号与隐私",
+    "label": "已确认 · IBCLC 咨询",
+    "state": "notification-journey-reminder-disabled",
+    "image": "07-me/notification-journey-reminder-disabled/default.png",
+    "viewport": "07-me/notification-journey-reminder-disabled/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode/booking"
+    ],
+    "mapped_design_candidates": [
+      "services/booking",
+      "common/not-found",
+      "services/state-32",
+      "services/state-33",
+      "services/state-34",
+      "services/state-35",
+      "services/state-36",
+      "services/state-37"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/notifications/presentation/appointment_reminder_tile.dart",
+      "lib/modules/services/presentation/appointment_detail_card.dart",
+      "lib/modules/services/presentation/booking_page.dart",
+      "lib/modules/services/presentation/service_expert_identity.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/notifications/notification_inventory_journey_test.dart",
+    "test_case": "inventory notification reminder education grant toggle settings",
+    "metadata": "raw/test/goldens/ui_inventory/notification-journey-reminder-disabled-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/notification-journey-reminder-disabled-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/notification-journey-reminder-disabled-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode/booking",
+    "entry": "Authenticated More page",
+    "trigger": "Turn reminder off → persisted disabled state",
+    "journey": {
+      "source": "test/goldens/ui_inventory/notification-journey-reminder-disabled-393.png",
+      "previous_source": "test/goldens/ui_inventory/notification-journey-reminder-enabled-393.png",
+      "route": "/services/episodes/service-episode/booking",
+      "trigger": "Turn reminder off → persisted disabled state",
+      "root_entry": "Authenticated More page",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production notification coordinator/repository/controller; isolated HTTP, push gateway and permission platform; real router.go and ScaffoldMessenger callbacks, no native OS dialog or remote push",
+      "test": "test/features/notifications/notification_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "07-me/notification-journey-reminder-education",
+    "module": "账号与隐私",
+    "label": "已确认 · IBCLC 咨询",
+    "state": "notification-journey-reminder-education",
+    "image": "07-me/notification-journey-reminder-education/default.png",
+    "viewport": "07-me/notification-journey-reminder-education/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode/booking"
+    ],
+    "mapped_design_candidates": [
+      "services/booking",
+      "common/not-found",
+      "services/state-32",
+      "services/state-33",
+      "services/state-34",
+      "services/state-35",
+      "services/state-36",
+      "services/state-37"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/notifications/presentation/appointment_reminder_tile.dart",
+      "lib/modules/services/presentation/appointment_detail_card.dart",
+      "lib/modules/services/presentation/booking_page.dart",
+      "lib/modules/services/presentation/service_expert_identity.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/notifications/notification_inventory_journey_test.dart",
+    "test_case": "inventory notification reminder education grant toggle settings",
+    "metadata": "raw/test/goldens/ui_inventory/notification-journey-reminder-education-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/notification-journey-reminder-education-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/notification-journey-reminder-education-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode/booking",
+    "entry": "Authenticated More page",
+    "trigger": "Enable appointment reminder → permission education",
+    "journey": {
+      "source": "test/goldens/ui_inventory/notification-journey-reminder-education-393.png",
+      "previous_source": "test/goldens/ui_inventory/notification-journey-reminder-not-requested-393.png",
+      "route": "/services/episodes/service-episode/booking",
+      "trigger": "Enable appointment reminder → permission education",
+      "root_entry": "Authenticated More page",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production notification coordinator/repository/controller; isolated HTTP, push gateway and permission platform; real router.go and ScaffoldMessenger callbacks, no native OS dialog or remote push",
+      "test": "test/features/notifications/notification_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "07-me/notification-journey-reminder-education-declined",
+    "module": "账号与隐私",
+    "label": "已确认 · IBCLC 咨询",
+    "state": "notification-journey-reminder-education-declined",
+    "image": "07-me/notification-journey-reminder-education-declined/default.png",
+    "viewport": "07-me/notification-journey-reminder-education-declined/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode/booking"
+    ],
+    "mapped_design_candidates": [
+      "services/booking",
+      "common/not-found",
+      "services/state-32",
+      "services/state-33",
+      "services/state-34",
+      "services/state-35",
+      "services/state-36",
+      "services/state-37"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/notifications/presentation/appointment_reminder_tile.dart",
+      "lib/modules/services/presentation/appointment_detail_card.dart",
+      "lib/modules/services/presentation/booking_page.dart",
+      "lib/modules/services/presentation/service_expert_identity.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/notifications/notification_inventory_journey_test.dart",
+    "test_case": "inventory notification reminder education grant toggle settings",
+    "metadata": "raw/test/goldens/ui_inventory/notification-journey-reminder-education-declined-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/notification-journey-reminder-education-declined-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/notification-journey-reminder-education-declined-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode/booking",
+    "entry": "Authenticated More page",
+    "trigger": "Decline education → reminder off and Snackbar",
+    "journey": {
+      "source": "test/goldens/ui_inventory/notification-journey-reminder-education-declined-393.png",
+      "previous_source": "test/goldens/ui_inventory/notification-journey-reminder-education-393.png",
+      "route": "/services/episodes/service-episode/booking",
+      "trigger": "Decline education → reminder off and Snackbar",
+      "root_entry": "Authenticated More page",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production notification coordinator/repository/controller; isolated HTTP, push gateway and permission platform; real router.go and ScaffoldMessenger callbacks, no native OS dialog or remote push",
+      "test": "test/features/notifications/notification_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "07-me/notification-journey-reminder-enabled",
+    "module": "账号与隐私",
+    "label": "已确认 · IBCLC 咨询",
+    "state": "notification-journey-reminder-enabled",
+    "image": "07-me/notification-journey-reminder-enabled/default.png",
+    "viewport": "07-me/notification-journey-reminder-enabled/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode/booking"
+    ],
+    "mapped_design_candidates": [
+      "services/booking",
+      "common/not-found",
+      "services/state-32",
+      "services/state-33",
+      "services/state-34",
+      "services/state-35",
+      "services/state-36",
+      "services/state-37"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/notifications/presentation/appointment_reminder_tile.dart",
+      "lib/modules/services/presentation/appointment_detail_card.dart",
+      "lib/modules/services/presentation/booking_page.dart",
+      "lib/modules/services/presentation/service_expert_identity.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/notifications/notification_inventory_journey_test.dart",
+    "test_case": "inventory notification reminder education grant toggle settings",
+    "metadata": "raw/test/goldens/ui_inventory/notification-journey-reminder-enabled-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/notification-journey-reminder-enabled-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/notification-journey-reminder-enabled-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode/booking",
+    "entry": "Authenticated More page",
+    "trigger": "Continue education → isolated platform grants permission and reminder persists",
+    "journey": {
+      "source": "test/goldens/ui_inventory/notification-journey-reminder-enabled-393.png",
+      "previous_source": "test/goldens/ui_inventory/notification-journey-reminder-education-declined-393.png",
+      "route": "/services/episodes/service-episode/booking",
+      "trigger": "Continue education → isolated platform grants permission and reminder persists",
+      "root_entry": "Authenticated More page",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production notification coordinator/repository/controller; isolated HTTP, push gateway and permission platform; real router.go and ScaffoldMessenger callbacks, no native OS dialog or remote push",
+      "test": "test/features/notifications/notification_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "07-me/notification-journey-reminder-expired",
+    "module": "账号与隐私",
+    "label": "已确认 · IBCLC 咨询",
+    "state": "notification-journey-reminder-expired",
+    "image": "07-me/notification-journey-reminder-expired/default.png",
+    "viewport": "07-me/notification-journey-reminder-expired/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode/booking"
+    ],
+    "mapped_design_candidates": [
+      "services/booking",
+      "common/not-found",
+      "services/state-32",
+      "services/state-33",
+      "services/state-34",
+      "services/state-35",
+      "services/state-36",
+      "services/state-37"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/notifications/presentation/appointment_reminder_tile.dart",
+      "lib/modules/services/presentation/appointment_detail_card.dart",
+      "lib/modules/services/presentation/booking_page.dart",
+      "lib/modules/services/presentation/service_expert_identity.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/notifications/notification_inventory_journey_test.dart",
+    "test_case": "inventory notification reminder failures and unavailable push",
+    "metadata": "raw/test/goldens/ui_inventory/notification-journey-reminder-expired-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/notification-journey-reminder-expired-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/notification-journey-reminder-expired-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode/booking",
+    "entry": "Authenticated More page",
+    "trigger": "Reminder rejected by server: reminder_expired",
+    "journey": {
+      "source": "test/goldens/ui_inventory/notification-journey-reminder-expired-393.png",
+      "previous_source": "test/goldens/ui_inventory/notification-journey-notification-preference-disabled-393.png",
+      "route": "/services/episodes/service-episode/booking",
+      "trigger": "Reminder rejected by server: reminder_expired",
+      "root_entry": "Authenticated More page",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production notification coordinator/repository/controller; isolated HTTP, push gateway and permission platform; real router.go and ScaffoldMessenger callbacks, no native OS dialog or remote push",
+      "test": "test/features/notifications/notification_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "07-me/notification-journey-reminder-not-requested",
+    "module": "账号与隐私",
+    "label": "已确认 · IBCLC 咨询",
+    "state": "notification-journey-reminder-not-requested",
+    "image": "07-me/notification-journey-reminder-not-requested/default.png",
+    "viewport": "07-me/notification-journey-reminder-not-requested/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode/booking"
+    ],
+    "mapped_design_candidates": [
+      "services/booking",
+      "common/not-found",
+      "services/state-32",
+      "services/state-33",
+      "services/state-34",
+      "services/state-35",
+      "services/state-36",
+      "services/state-37"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/notifications/presentation/appointment_reminder_tile.dart",
+      "lib/modules/services/presentation/appointment_detail_card.dart",
+      "lib/modules/services/presentation/booking_page.dart",
+      "lib/modules/services/presentation/service_expert_identity.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/notifications/notification_inventory_journey_test.dart",
+    "test_case": "inventory notification reminder education grant toggle settings",
+    "metadata": "raw/test/goldens/ui_inventory/notification-journey-reminder-not-requested-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/notification-journey-reminder-not-requested-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/notification-journey-reminder-not-requested-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode/booking",
+    "entry": "Authenticated More page",
+    "trigger": "Booking → reminder not requested",
+    "journey": {
+      "source": "test/goldens/ui_inventory/notification-journey-reminder-not-requested-393.png",
+      "previous_source": null,
+      "route": "/services/episodes/service-episode/booking",
+      "trigger": "Booking → reminder not requested",
+      "root_entry": "Authenticated More page",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production notification coordinator/repository/controller; isolated HTTP, push gateway and permission platform; real router.go and ScaffoldMessenger callbacks, no native OS dialog or remote push",
+      "test": "test/features/notifications/notification_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "07-me/notification-journey-reminder-read-error",
+    "module": "账号与隐私",
+    "label": "已确认 · IBCLC 咨询",
+    "state": "notification-journey-reminder-read-error",
+    "image": "07-me/notification-journey-reminder-read-error/default.png",
+    "viewport": "07-me/notification-journey-reminder-read-error/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode/booking"
+    ],
+    "mapped_design_candidates": [
+      "services/booking",
+      "common/not-found",
+      "services/state-32",
+      "services/state-33",
+      "services/state-34",
+      "services/state-35",
+      "services/state-36",
+      "services/state-37"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/notifications/presentation/appointment_reminder_tile.dart",
+      "lib/modules/services/presentation/appointment_detail_card.dart",
+      "lib/modules/services/presentation/booking_page.dart",
+      "lib/modules/services/presentation/service_expert_identity.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/notifications/notification_inventory_journey_test.dart",
+    "test_case": "inventory notification reminder failures and unavailable push",
+    "metadata": "raw/test/goldens/ui_inventory/notification-journey-reminder-read-error-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/notification-journey-reminder-read-error-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/notification-journey-reminder-read-error-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode/booking",
+    "entry": "Authenticated More page",
+    "trigger": "Booking reminder read fails → localized retry",
+    "journey": {
+      "source": "test/goldens/ui_inventory/notification-journey-reminder-read-error-393.png",
+      "previous_source": null,
+      "route": "/services/episodes/service-episode/booking",
+      "trigger": "Booking reminder read fails → localized retry",
+      "root_entry": "Authenticated More page",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production notification coordinator/repository/controller; isolated HTTP, push gateway and permission platform; real router.go and ScaffoldMessenger callbacks, no native OS dialog or remote push",
+      "test": "test/features/notifications/notification_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "07-me/notification-journey-reminder-read-retry",
+    "module": "账号与隐私",
+    "label": "已确认 · IBCLC 咨询",
+    "state": "notification-journey-reminder-read-retry",
+    "image": "07-me/notification-journey-reminder-read-retry/default.png",
+    "viewport": "07-me/notification-journey-reminder-read-retry/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode/booking"
+    ],
+    "mapped_design_candidates": [
+      "services/booking",
+      "common/not-found",
+      "services/state-32",
+      "services/state-33",
+      "services/state-34",
+      "services/state-35",
+      "services/state-36",
+      "services/state-37"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/notifications/presentation/appointment_reminder_tile.dart",
+      "lib/modules/services/presentation/appointment_detail_card.dart",
+      "lib/modules/services/presentation/booking_page.dart",
+      "lib/modules/services/presentation/service_expert_identity.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/notifications/notification_inventory_journey_test.dart",
+    "test_case": "inventory notification reminder failures and unavailable push",
+    "metadata": "raw/test/goldens/ui_inventory/notification-journey-reminder-read-retry-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/notification-journey-reminder-read-retry-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/notification-journey-reminder-read-retry-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode/booking",
+    "entry": "Authenticated More page",
+    "trigger": "Retry reminder read → off and available",
+    "journey": {
+      "source": "test/goldens/ui_inventory/notification-journey-reminder-read-retry-393.png",
+      "previous_source": "test/goldens/ui_inventory/notification-journey-reminder-read-error-393.png",
+      "route": "/services/episodes/service-episode/booking",
+      "trigger": "Retry reminder read → off and available",
+      "root_entry": "Authenticated More page",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production notification coordinator/repository/controller; isolated HTTP, push gateway and permission platform; real router.go and ScaffoldMessenger callbacks, no native OS dialog or remote push",
+      "test": "test/features/notifications/notification_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/booking",
+    "module": "专家服务与咨询",
+    "label": "日期",
+    "state": "booking",
+    "image": "08-expert-service/booking/default.png",
+    "viewport": "08-expert-service/booking/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/:episodeId/booking"
+    ],
+    "mapped_design_candidates": [
+      "services/booking",
+      "services/state-32",
+      "services/state-33",
+      "services/state-34",
+      "services/state-35",
+      "services/state-36",
+      "services/state-37"
+    ],
+    "production_widget_files": [
+      "lib/modules/services/presentation/booking_page.dart",
+      "lib/modules/services/presentation/service_expert_identity.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/services/booking_test.dart",
+    "test_case": "booking date and expert selection at 390.0 / 1.0",
+    "metadata": "raw/test/goldens/product_baseline/booking-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/product_baseline/booking-320.png",
+        "metadata": "raw/test/goldens/product_baseline/booking-320.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/product_baseline/booking-390.png",
+        "metadata": "raw/test/goldens/product_baseline/booking-390.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/product_baseline/booking-430.png",
+        "metadata": "raw/test/goldens/product_baseline/booking-430.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "08-expert-service/booking-confirm-uncertain",
+    "module": "专家服务与咨询",
+    "label": "网络未连接，请连接后重试",
+    "state": "booking-confirm-uncertain",
+    "image": "08-expert-service/booking-confirm-uncertain/default.png",
+    "viewport": "08-expert-service/booking-confirm-uncertain/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/:episodeId/booking"
+    ],
+    "mapped_design_candidates": [
+      "services/booking",
+      "common/loading",
+      "common/empty",
+      "common/error",
+      "services/state-32",
+      "services/state-33",
+      "services/state-34",
+      "services/state-35",
+      "services/state-36",
+      "services/state-37"
+    ],
+    "production_widget_files": [
+      "lib/modules/services/presentation/booking_flow_dialogs.dart",
+      "lib/modules/services/presentation/booking_page.dart",
+      "lib/modules/services/presentation/service_expert_identity.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/product_feedback.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/services/booking_test.dart",
+    "test_case": "held confirmation blocks back, retries original version then opens intake once",
+    "metadata": "raw/test/goldens/design_system/booking-confirm-uncertain-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/booking-confirm-uncertain-390.png",
+        "metadata": "raw/test/goldens/design_system/booking-confirm-uncertain-390.png.json",
+        "width": 390,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "08-expert-service/booking-emergency",
+    "module": "专家服务与咨询",
+    "label": "先做个预约前确认",
+    "state": "booking-emergency",
+    "image": "08-expert-service/booking-emergency/default.png",
+    "viewport": "08-expert-service/booking-emergency/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/:episodeId/booking"
+    ],
+    "mapped_design_candidates": [
+      "services/booking",
+      "services/state-32",
+      "services/state-33",
+      "services/state-34",
+      "services/state-35",
+      "services/state-36",
+      "services/state-37"
+    ],
+    "production_widget_files": [
+      "lib/modules/services/presentation/booking_flow_dialogs.dart",
+      "lib/modules/services/presentation/booking_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/services/booking_test.dart",
+    "test_case": "booking precheck and held dialog flow at 390.0 / 1.0",
+    "metadata": "raw/test/goldens/design_system/booking-emergency-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/booking-emergency-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/booking-emergency-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/booking-emergency-320.png",
+        "metadata": "raw/test/goldens/design_system/booking-emergency-320.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/booking-emergency-390.png",
+        "metadata": "raw/test/goldens/design_system/booking-emergency-390.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/booking-emergency-430.png",
+        "metadata": "raw/test/goldens/design_system/booking-emergency-430.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "08-expert-service/booking-held",
+    "module": "专家服务与咨询",
+    "label": "日期",
+    "state": "booking-held",
+    "image": "08-expert-service/booking-held/default.png",
+    "viewport": "08-expert-service/booking-held/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/:episodeId/booking"
+    ],
+    "mapped_design_candidates": [
+      "services/booking",
+      "services/state-32",
+      "services/state-33",
+      "services/state-34",
+      "services/state-35",
+      "services/state-36",
+      "services/state-37"
+    ],
+    "production_widget_files": [
+      "lib/modules/services/presentation/booking_flow_dialogs.dart",
+      "lib/modules/services/presentation/booking_page.dart",
+      "lib/modules/services/presentation/service_expert_identity.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/services/booking_test.dart",
+    "test_case": "booking precheck and held dialog flow at 390.0 / 1.0",
+    "metadata": "raw/test/goldens/design_system/booking-held-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/booking-held-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/booking-held-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/booking-held-320.png",
+        "metadata": "raw/test/goldens/design_system/booking-held-320.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/booking-held-390.png",
+        "metadata": "raw/test/goldens/design_system/booking-held-390.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/booking-held-430.png",
+        "metadata": "raw/test/goldens/design_system/booking-held-430.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "08-expert-service/booking-hold-expired",
+    "module": "专家服务与咨询",
+    "label": "日期",
+    "state": "booking-hold-expired",
+    "image": "08-expert-service/booking-hold-expired/default.png",
+    "viewport": "08-expert-service/booking-hold-expired/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/:episodeId/booking"
+    ],
+    "mapped_design_candidates": [
+      "services/booking",
+      "common/loading",
+      "common/empty",
+      "common/error",
+      "services/state-32",
+      "services/state-33",
+      "services/state-34",
+      "services/state-35",
+      "services/state-36",
+      "services/state-37"
+    ],
+    "production_widget_files": [
+      "lib/modules/services/presentation/booking_flow_dialogs.dart",
+      "lib/modules/services/presentation/booking_page.dart",
+      "lib/modules/services/presentation/service_expert_identity.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/product_feedback.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/services/booking_test.dart",
+    "test_case": "expired hold removes confirm and reselect does not cancel expired data",
+    "metadata": "raw/test/goldens/design_system/booking-hold-expired-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/booking-hold-expired-390.png",
+        "metadata": "raw/test/goldens/design_system/booking-hold-expired-390.png.json",
+        "width": 390,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "08-expert-service/booking-precheck",
+    "module": "专家服务与咨询",
+    "label": "先做个预约前确认",
+    "state": "booking-precheck",
+    "image": "08-expert-service/booking-precheck/default.png",
+    "viewport": "08-expert-service/booking-precheck/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/:episodeId/booking"
+    ],
+    "mapped_design_candidates": [
+      "services/booking",
+      "services/state-32",
+      "services/state-33",
+      "services/state-34",
+      "services/state-35",
+      "services/state-36",
+      "services/state-37"
+    ],
+    "production_widget_files": [
+      "lib/modules/services/presentation/booking_flow_dialogs.dart",
+      "lib/modules/services/presentation/booking_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/services/booking_test.dart",
+    "test_case": "booking precheck and held dialog flow at 390.0 / 1.0",
+    "metadata": "raw/test/goldens/design_system/booking-precheck-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/booking-precheck-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/booking-precheck-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/booking-precheck-320.png",
+        "metadata": "raw/test/goldens/design_system/booking-precheck-320.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/booking-precheck-390.png",
+        "metadata": "raw/test/goldens/design_system/booking-precheck-390.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/booking-precheck-430.png",
+        "metadata": "raw/test/goldens/design_system/booking-precheck-430.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "08-expert-service/booking-unavailable",
+    "module": "专家服务与咨询",
+    "label": "先做个预约前确认",
+    "state": "booking-unavailable",
+    "image": "08-expert-service/booking-unavailable/default.png",
+    "viewport": "08-expert-service/booking-unavailable/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/:episodeId/booking"
+    ],
+    "mapped_design_candidates": [
+      "services/booking",
+      "services/state-32",
+      "services/state-33",
+      "services/state-34",
+      "services/state-35",
+      "services/state-36",
+      "services/state-37"
+    ],
+    "production_widget_files": [
+      "lib/modules/services/presentation/booking_flow_dialogs.dart",
+      "lib/modules/services/presentation/booking_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/services/booking_test.dart",
+    "test_case": "booking precheck and held dialog flow at 390.0 / 1.0",
+    "metadata": "raw/test/goldens/design_system/booking-unavailable-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/booking-unavailable-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/booking-unavailable-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/booking-unavailable-320.png",
+        "metadata": "raw/test/goldens/design_system/booking-unavailable-320.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/booking-unavailable-390.png",
+        "metadata": "raw/test/goldens/design_system/booking-unavailable-390.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/booking-unavailable-430.png",
+        "metadata": "raw/test/goldens/design_system/booking-unavailable-430.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "08-expert-service/consultation-journey-left-to-booking",
+    "module": "专家服务与咨询",
+    "label": "咨询中 · IBCLC 咨询",
+    "state": "consultation-journey-left-to-booking",
+    "image": "08-expert-service/consultation-journey-left-to-booking/default.png",
+    "viewport": "08-expert-service/consultation-journey-left-to-booking/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode/booking"
+    ],
+    "mapped_design_candidates": [
+      "services/booking",
+      "common/not-found",
+      "services/state-32",
+      "services/state-33",
+      "services/state-34",
+      "services/state-35",
+      "services/state-36",
+      "services/state-37"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/appointment_detail_card.dart",
+      "lib/modules/services/presentation/booking_page.dart",
+      "lib/modules/services/presentation/service_expert_identity.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/consultation/consultation_inventory_journey_test.dart",
+    "test_case": "inventory consultation device failure retry consent and room entry",
+    "metadata": "raw/test/goldens/ui_inventory/consultation-journey-left-to-booking-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/consultation-journey-left-to-booking-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/consultation-journey-left-to-booking-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode/booking",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Confirm temporary leave → actual booking route; consultation not ended",
+    "journey": {
+      "source": "test/goldens/ui_inventory/consultation-journey-left-to-booking-393.png",
+      "previous_source": "test/goldens/ui_inventory/consultation-journey-consultation-active-393.png",
+      "route": "/services/episodes/service-episode/booking",
+      "trigger": "Confirm temporary leave → actual booking route; consultation not ended",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories/codecs and LiveKit device checks; isolated HTTP and native method channels, sandbox room, fixed clock/timezone; no real OS permission dialog or remote media",
+      "test": "test/modules/consultation/consultation_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/consultation-journey-preparation-rebook",
+    "module": "专家服务与咨询",
+    "label": "已确认 · IBCLC 咨询",
+    "state": "consultation-journey-preparation-rebook",
+    "image": "08-expert-service/consultation-journey-preparation-rebook/default.png",
+    "viewport": "08-expert-service/consultation-journey-preparation-rebook/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode/booking"
+    ],
+    "mapped_design_candidates": [
+      "services/booking",
+      "common/not-found",
+      "services/state-32",
+      "services/state-33",
+      "services/state-34",
+      "services/state-35",
+      "services/state-36",
+      "services/state-37"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/notifications/presentation/appointment_reminder_tile.dart",
+      "lib/modules/services/presentation/appointment_detail_card.dart",
+      "lib/modules/services/presentation/booking_page.dart",
+      "lib/modules/services/presentation/service_expert_identity.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/consultation/consultation_inventory_journey_test.dart",
+    "test_case": "inventory consultation preparation gates and intake route",
+    "metadata": "raw/test/goldens/ui_inventory/consultation-journey-preparation-rebook-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/consultation-journey-preparation-rebook-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/consultation-journey-preparation-rebook-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode/booking",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Expired preparation rebook → actual booking route",
+    "journey": {
+      "source": "test/goldens/ui_inventory/consultation-journey-preparation-rebook-393.png",
+      "previous_source": "test/goldens/ui_inventory/consultation-journey-preparation-window-expired-393.png",
+      "route": "/services/episodes/service-episode/booking",
+      "trigger": "Expired preparation rebook → actual booking route",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories/codecs and LiveKit device checks; isolated HTTP and native method channels, sandbox room, fixed clock/timezone; no real OS permission dialog or remote media",
+      "test": "test/modules/consultation/consultation_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/consultation-journey-technical-rebook",
+    "module": "专家服务与咨询",
+    "label": "先做个预约前确认",
+    "state": "consultation-journey-technical-rebook",
+    "image": "08-expert-service/consultation-journey-technical-rebook/default.png",
+    "viewport": "08-expert-service/consultation-journey-technical-rebook/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode/booking"
+    ],
+    "mapped_design_candidates": [
+      "services/booking",
+      "common/not-found",
+      "services/state-32",
+      "services/state-33",
+      "services/state-34",
+      "services/state-35",
+      "services/state-36",
+      "services/state-37"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/booking_flow_dialogs.dart",
+      "lib/modules/services/presentation/booking_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/consultation/consultation_inventory_journey_test.dart",
+    "test_case": "inventory consultation technical outcome onward routes",
+    "metadata": "raw/test/goldens/ui_inventory/consultation-journey-technical-rebook-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/consultation-journey-technical-rebook-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/consultation-journey-technical-rebook-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode/booking",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Technical failure → rebooking route",
+    "journey": {
+      "source": "test/goldens/ui_inventory/consultation-journey-technical-rebook-393.png",
+      "previous_source": "test/goldens/ui_inventory/consultation-journey-technical-outcome-393.png",
+      "route": "/services/episodes/service-episode/booking",
+      "trigger": "Technical failure → rebooking route",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories/codecs and LiveKit device checks; isolated HTTP and native method channels, sandbox room, fixed clock/timezone; no real OS permission dialog or remote media",
+      "test": "test/modules/consultation/consultation_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/renew-journey-booking",
+    "module": "专家服务与咨询",
+    "label": "先做个预约前确认",
+    "state": "renew-journey-booking",
+    "image": "08-expert-service/renew-journey-booking/default.png",
+    "viewport": "08-expert-service/renew-journey-booking/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode/booking"
+    ],
+    "mapped_design_candidates": [
+      "services/booking",
+      "common/not-found",
+      "services/state-32",
+      "services/state-33",
+      "services/state-34",
+      "services/state-35",
+      "services/state-36",
+      "services/state-37"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/booking_flow_dialogs.dart",
+      "lib/modules/services/presentation/booking_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/renew_inventory_journey_test.dart",
+    "test_case": "inventory completed service renewal purchase and return 393.0",
+    "metadata": "raw/test/goldens/ui_inventory/renew-journey-booking-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/renew-journey-booking-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/renew-journey-booking-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/renew-journey-booking-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/renew-journey-booking-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode/booking",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Purchase success → actual new service booking/precheck",
+    "journey": {
+      "source": "test/goldens/ui_inventory/renew-journey-booking-393.png",
+      "previous_source": "test/goldens/ui_inventory/renew-journey-paid-393.png",
+      "route": "/services/episodes/service-episode/booking",
+      "trigger": "Purchase success → actual new service booking/precheck",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production home/timeline/renew/purchase pages and repositories; isolated HTTP with completed original service preserved independently; fixed clock and timezone, no remote order/payment",
+      "test": "test/modules/services/renew_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-current-owned-booking",
+    "module": "专家服务与咨询",
+    "label": "先做个预约前确认",
+    "state": "service-current-owned-booking",
+    "image": "08-expert-service/service-current-owned-booking/default.png",
+    "viewport": "08-expert-service/service-current-owned-booking/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode/booking"
+    ],
+    "mapped_design_candidates": [
+      "services/booking",
+      "common/not-found",
+      "services/state-32",
+      "services/state-33",
+      "services/state-34",
+      "services/state-35",
+      "services/state-36",
+      "services/state-37"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/booking_flow_dialogs.dart",
+      "lib/modules/services/presentation/booking_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_current_inventory_test.dart",
+    "test_case": "current owned service progress and booking entries false",
+    "metadata": "raw/test/goldens/ui_inventory/service-current-owned-booking-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-current-owned-booking-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-current-owned-booking-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/service-current-owned-booking-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-current-owned-booking-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode/booking",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Owned package booking → actual booking preparation",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-current-owned-booking-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/service-current-owned-progress-return-393-1x.png",
+      "route": "/services/episodes/service-episode/booking",
+      "trigger": "Owned package booking → actual booking preparation",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-current-paused-booking",
+    "module": "专家服务与咨询",
+    "label": "当前没有可用的咨询次数",
+    "state": "service-current-paused-booking",
+    "image": "08-expert-service/service-current-paused-booking/default.png",
+    "viewport": "08-expert-service/service-current-paused-booking/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode/booking"
+    ],
+    "mapped_design_candidates": [
+      "services/booking",
+      "common/not-found",
+      "common/loading",
+      "common/empty",
+      "common/error",
+      "services/state-32",
+      "services/state-33",
+      "services/state-34",
+      "services/state-35",
+      "services/state-36",
+      "services/state-37"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/booking_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/product_feedback.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_current_inventory_test.dart",
+    "test_case": "current owned service progress and booking entries false",
+    "metadata": "raw/test/goldens/ui_inventory/service-current-paused-booking-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-current-paused-booking-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-current-paused-booking-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/service-current-paused-booking-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-current-paused-booking-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode/booking",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Package booking action on paused plan → actual eligibility block",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-current-paused-booking-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/service-current-paused-package-393-1x.png",
+      "route": "/services/episodes/service-episode/booking",
+      "trigger": "Package booking action on paused plan → actual eligibility block",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-journey-booking-availability-error",
+    "module": "专家服务与咨询",
+    "label": "日期",
+    "state": "service-journey-booking-availability-error",
+    "image": "08-expert-service/service-journey-booking-availability-error/default.png",
+    "viewport": "08-expert-service/service-journey-booking-availability-error/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode/booking"
+    ],
+    "mapped_design_candidates": [
+      "services/booking",
+      "common/not-found",
+      "common/loading",
+      "common/empty",
+      "common/error",
+      "services/state-32",
+      "services/state-33",
+      "services/state-34",
+      "services/state-35",
+      "services/state-36",
+      "services/state-37"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/booking_page.dart",
+      "lib/modules/services/presentation/service_expert_identity.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/product_feedback.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_inventory_journey_test.dart",
+    "test_case": "inventory Services booking availability error empty picker and hold recovery",
+    "metadata": "raw/test/goldens/ui_inventory/service-journey-booking-availability-error-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-journey-booking-availability-error-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-journey-booking-availability-error-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode/booking",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Refresh with slot read failure → error and retained selection",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-journey-booking-availability-error-393.png",
+      "previous_source": "test/goldens/ui_inventory/service-journey-booking-provider-menu-393.png",
+      "route": "/services/episodes/service-episode/booking",
+      "trigger": "Refresh with slot read failure → error and retained selection",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-journey-booking-cancel-confirm",
+    "module": "专家服务与咨询",
+    "label": "已确认 · IBCLC 咨询",
+    "state": "service-journey-booking-cancel-confirm",
+    "image": "08-expert-service/service-journey-booking-cancel-confirm/default.png",
+    "viewport": "08-expert-service/service-journey-booking-cancel-confirm/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode/booking"
+    ],
+    "mapped_design_candidates": [
+      "services/booking",
+      "common/not-found",
+      "services/state-32",
+      "services/state-33",
+      "services/state-34",
+      "services/state-35",
+      "services/state-36",
+      "services/state-37"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/notifications/presentation/appointment_reminder_tile.dart",
+      "lib/modules/services/presentation/appointment_cancel_dialog.dart",
+      "lib/modules/services/presentation/appointment_detail_card.dart",
+      "lib/modules/services/presentation/booking_page.dart",
+      "lib/modules/services/presentation/service_expert_identity.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_inventory_journey_test.dart",
+    "test_case": "inventory Services booking eligibility hold confirm intake and cancellation",
+    "metadata": "raw/test/goldens/ui_inventory/service-journey-booking-cancel-confirm-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-journey-booking-cancel-confirm-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-journey-booking-cancel-confirm-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode/booking",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Cancel appointment → cancellation confirmation",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-journey-booking-cancel-confirm-393.png",
+      "previous_source": "test/goldens/ui_inventory/service-journey-booking-confirmed-details-393.png",
+      "route": "/services/episodes/service-episode/booking",
+      "trigger": "Cancel appointment → cancellation confirmation",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-journey-booking-cancel-error",
+    "module": "专家服务与咨询",
+    "label": "已确认 · IBCLC 咨询",
+    "state": "service-journey-booking-cancel-error",
+    "image": "08-expert-service/service-journey-booking-cancel-error/default.png",
+    "viewport": "08-expert-service/service-journey-booking-cancel-error/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode/booking"
+    ],
+    "mapped_design_candidates": [
+      "services/booking",
+      "common/not-found",
+      "services/state-32",
+      "services/state-33",
+      "services/state-34",
+      "services/state-35",
+      "services/state-36",
+      "services/state-37"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/notifications/presentation/appointment_reminder_tile.dart",
+      "lib/modules/services/presentation/appointment_cancel_dialog.dart",
+      "lib/modules/services/presentation/appointment_detail_card.dart",
+      "lib/modules/services/presentation/booking_page.dart",
+      "lib/modules/services/presentation/service_expert_identity.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_inventory_journey_test.dart",
+    "test_case": "inventory Services booking eligibility hold confirm intake and cancellation",
+    "metadata": "raw/test/goldens/ui_inventory/service-journey-booking-cancel-error-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-journey-booking-cancel-error-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-journey-booking-cancel-error-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode/booking",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Cancel request fails → original operation retained",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-journey-booking-cancel-error-393.png",
+      "previous_source": "test/goldens/ui_inventory/service-journey-booking-cancel-retained-393.png",
+      "route": "/services/episodes/service-episode/booking",
+      "trigger": "Cancel request fails → original operation retained",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-journey-booking-cancel-retained",
+    "module": "专家服务与咨询",
+    "label": "已确认 · IBCLC 咨询",
+    "state": "service-journey-booking-cancel-retained",
+    "image": "08-expert-service/service-journey-booking-cancel-retained/default.png",
+    "viewport": "08-expert-service/service-journey-booking-cancel-retained/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode/booking"
+    ],
+    "mapped_design_candidates": [
+      "services/booking",
+      "common/not-found",
+      "services/state-32",
+      "services/state-33",
+      "services/state-34",
+      "services/state-35",
+      "services/state-36",
+      "services/state-37"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/notifications/presentation/appointment_reminder_tile.dart",
+      "lib/modules/services/presentation/appointment_detail_card.dart",
+      "lib/modules/services/presentation/booking_page.dart",
+      "lib/modules/services/presentation/service_expert_identity.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_inventory_journey_test.dart",
+    "test_case": "inventory Services booking eligibility hold confirm intake and cancellation",
+    "metadata": "raw/test/goldens/ui_inventory/service-journey-booking-cancel-retained-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-journey-booking-cancel-retained-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-journey-booking-cancel-retained-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode/booking",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Keep appointment → confirmed details unchanged",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-journey-booking-cancel-retained-393.png",
+      "previous_source": "test/goldens/ui_inventory/service-journey-booking-cancel-confirm-393.png",
+      "route": "/services/episodes/service-episode/booking",
+      "trigger": "Keep appointment → confirmed details unchanged",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-journey-booking-confirm-error",
+    "module": "专家服务与咨询",
+    "label": "暂时无法载入，请稍后重试",
+    "state": "service-journey-booking-confirm-error",
+    "image": "08-expert-service/service-journey-booking-confirm-error/default.png",
+    "viewport": "08-expert-service/service-journey-booking-confirm-error/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode/booking"
+    ],
+    "mapped_design_candidates": [
+      "services/booking",
+      "common/not-found",
+      "common/loading",
+      "common/empty",
+      "common/error",
+      "services/state-32",
+      "services/state-33",
+      "services/state-34",
+      "services/state-35",
+      "services/state-36",
+      "services/state-37"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/booking_flow_dialogs.dart",
+      "lib/modules/services/presentation/booking_page.dart",
+      "lib/modules/services/presentation/service_expert_identity.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/product_feedback.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_inventory_journey_test.dart",
+    "test_case": "inventory Services booking availability error empty picker and hold recovery",
+    "metadata": "raw/test/goldens/ui_inventory/service-journey-booking-confirm-error-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-journey-booking-confirm-error-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-journey-booking-confirm-error-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode/booking",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Confirm hold unavailable → retry original confirmation",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-journey-booking-confirm-error-393.png",
+      "previous_source": "test/goldens/ui_inventory/service-journey-booking-hold-recovered-393.png",
+      "route": "/services/episodes/service-episode/booking",
+      "trigger": "Confirm hold unavailable → retry original confirmation",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-journey-booking-confirmed-details",
+    "module": "专家服务与咨询",
+    "label": "已确认 · IBCLC 咨询",
+    "state": "service-journey-booking-confirmed-details",
+    "image": "08-expert-service/service-journey-booking-confirmed-details/default.png",
+    "viewport": "08-expert-service/service-journey-booking-confirmed-details/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode/booking"
+    ],
+    "mapped_design_candidates": [
+      "services/booking",
+      "common/not-found",
+      "services/state-32",
+      "services/state-33",
+      "services/state-34",
+      "services/state-35",
+      "services/state-36",
+      "services/state-37"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/notifications/presentation/appointment_reminder_tile.dart",
+      "lib/modules/services/presentation/appointment_detail_card.dart",
+      "lib/modules/services/presentation/booking_page.dart",
+      "lib/modules/services/presentation/service_expert_identity.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_inventory_journey_test.dart",
+    "test_case": "inventory Services booking eligibility hold confirm intake and cancellation",
+    "metadata": "raw/test/goldens/ui_inventory/service-journey-booking-confirmed-details-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-journey-booking-confirmed-details-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-journey-booking-confirmed-details-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode/booking",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Intake back → confirmed appointment details",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-journey-booking-confirmed-details-393.png",
+      "previous_source": "test/goldens/ui_inventory/service-journey-booking-intake-entry-393.png",
+      "route": "/services/episodes/service-episode/booking",
+      "trigger": "Intake back → confirmed appointment details",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-journey-booking-date-applied",
+    "module": "专家服务与咨询",
+    "label": "日期",
+    "state": "service-journey-booking-date-applied",
+    "image": "08-expert-service/service-journey-booking-date-applied/default.png",
+    "viewport": "08-expert-service/service-journey-booking-date-applied/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode/booking"
+    ],
+    "mapped_design_candidates": [
+      "services/booking",
+      "common/not-found",
+      "services/state-32",
+      "services/state-33",
+      "services/state-34",
+      "services/state-35",
+      "services/state-36",
+      "services/state-37"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/booking_page.dart",
+      "lib/modules/services/presentation/service_expert_identity.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_inventory_journey_test.dart",
+    "test_case": "inventory Services date pickers intake retry profile and preconsult",
+    "metadata": "raw/test/goldens/ui_inventory/service-journey-booking-date-applied-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-journey-booking-date-applied-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-journey-booking-date-applied-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode/booking",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Confirm another date → availability reloaded",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-journey-booking-date-applied-393.png",
+      "previous_source": "test/goldens/ui_inventory/service-journey-booking-date-selected-393.png",
+      "route": "/services/episodes/service-episode/booking",
+      "trigger": "Confirm another date → availability reloaded",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-journey-booking-date-calendar",
+    "module": "专家服务与咨询",
+    "label": "日期",
+    "state": "service-journey-booking-date-calendar",
+    "image": "08-expert-service/service-journey-booking-date-calendar/default.png",
+    "viewport": "08-expert-service/service-journey-booking-date-calendar/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode/booking"
+    ],
+    "mapped_design_candidates": [
+      "services/booking",
+      "common/not-found",
+      "services/state-32",
+      "services/state-33",
+      "services/state-34",
+      "services/state-35",
+      "services/state-36",
+      "services/state-37"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/booking_page.dart",
+      "lib/modules/services/presentation/service_expert_identity.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_inventory_journey_test.dart",
+    "test_case": "inventory Services date pickers intake retry profile and preconsult",
+    "metadata": "raw/test/goldens/ui_inventory/service-journey-booking-date-calendar-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-journey-booking-date-calendar-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-journey-booking-date-calendar-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode/booking",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Open appointment date calendar",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-journey-booking-date-calendar-393.png",
+      "previous_source": null,
+      "route": "/services/episodes/service-episode/booking",
+      "trigger": "Open appointment date calendar",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-journey-booking-date-cancelled",
+    "module": "专家服务与咨询",
+    "label": "日期",
+    "state": "service-journey-booking-date-cancelled",
+    "image": "08-expert-service/service-journey-booking-date-cancelled/default.png",
+    "viewport": "08-expert-service/service-journey-booking-date-cancelled/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode/booking"
+    ],
+    "mapped_design_candidates": [
+      "services/booking",
+      "common/not-found",
+      "services/state-32",
+      "services/state-33",
+      "services/state-34",
+      "services/state-35",
+      "services/state-36",
+      "services/state-37"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/booking_page.dart",
+      "lib/modules/services/presentation/service_expert_identity.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_inventory_journey_test.dart",
+    "test_case": "inventory Services date pickers intake retry profile and preconsult",
+    "metadata": "raw/test/goldens/ui_inventory/service-journey-booking-date-cancelled-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-journey-booking-date-cancelled-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-journey-booking-date-cancelled-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode/booking",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Cancel invalid date → original slot date retained",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-journey-booking-date-cancelled-393.png",
+      "previous_source": "test/goldens/ui_inventory/service-journey-booking-date-invalid-393.png",
+      "route": "/services/episodes/service-episode/booking",
+      "trigger": "Cancel invalid date → original slot date retained",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-journey-booking-date-input",
+    "module": "专家服务与咨询",
+    "label": "日期",
+    "state": "service-journey-booking-date-input",
+    "image": "08-expert-service/service-journey-booking-date-input/default.png",
+    "viewport": "08-expert-service/service-journey-booking-date-input/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode/booking"
+    ],
+    "mapped_design_candidates": [
+      "services/booking",
+      "common/not-found",
+      "services/state-32",
+      "services/state-33",
+      "services/state-34",
+      "services/state-35",
+      "services/state-36",
+      "services/state-37"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/booking_page.dart",
+      "lib/modules/services/presentation/service_expert_identity.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_inventory_journey_test.dart",
+    "test_case": "inventory Services date pickers intake retry profile and preconsult",
+    "metadata": "raw/test/goldens/ui_inventory/service-journey-booking-date-input-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-journey-booking-date-input-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-journey-booking-date-input-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode/booking",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Switch appointment date picker to typed input",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-journey-booking-date-input-393.png",
+      "previous_source": "test/goldens/ui_inventory/service-journey-booking-date-calendar-393.png",
+      "route": "/services/episodes/service-episode/booking",
+      "trigger": "Switch appointment date picker to typed input",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-journey-booking-date-invalid",
+    "module": "专家服务与咨询",
+    "label": "日期",
+    "state": "service-journey-booking-date-invalid",
+    "image": "08-expert-service/service-journey-booking-date-invalid/default.png",
+    "viewport": "08-expert-service/service-journey-booking-date-invalid/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode/booking"
+    ],
+    "mapped_design_candidates": [
+      "services/booking",
+      "common/not-found",
+      "services/state-32",
+      "services/state-33",
+      "services/state-34",
+      "services/state-35",
+      "services/state-36",
+      "services/state-37"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/booking_page.dart",
+      "lib/modules/services/presentation/service_expert_identity.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_inventory_journey_test.dart",
+    "test_case": "inventory Services date pickers intake retry profile and preconsult",
+    "metadata": "raw/test/goldens/ui_inventory/service-journey-booking-date-invalid-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-journey-booking-date-invalid-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-journey-booking-date-invalid-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode/booking",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Submit malformed appointment date → inline validation",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-journey-booking-date-invalid-393.png",
+      "previous_source": "test/goldens/ui_inventory/service-journey-booking-date-input-393.png",
+      "route": "/services/episodes/service-episode/booking",
+      "trigger": "Submit malformed appointment date → inline validation",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-journey-booking-date-selected",
+    "module": "专家服务与咨询",
+    "label": "日期",
+    "state": "service-journey-booking-date-selected",
+    "image": "08-expert-service/service-journey-booking-date-selected/default.png",
+    "viewport": "08-expert-service/service-journey-booking-date-selected/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode/booking"
+    ],
+    "mapped_design_candidates": [
+      "services/booking",
+      "common/not-found",
+      "services/state-32",
+      "services/state-33",
+      "services/state-34",
+      "services/state-35",
+      "services/state-36",
+      "services/state-37"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/booking_page.dart",
+      "lib/modules/services/presentation/service_expert_identity.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_inventory_journey_test.dart",
+    "test_case": "inventory Services date pickers intake retry profile and preconsult",
+    "metadata": "raw/test/goldens/ui_inventory/service-journey-booking-date-selected-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-journey-booking-date-selected-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-journey-booking-date-selected-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode/booking",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Select September 14 in calendar before confirmation",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-journey-booking-date-selected-393.png",
+      "previous_source": "test/goldens/ui_inventory/service-journey-booking-date-cancelled-393.png",
+      "route": "/services/episodes/service-episode/booking",
+      "trigger": "Select September 14 in calendar before confirmation",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-journey-booking-emergency",
+    "module": "专家服务与咨询",
+    "label": "先做个预约前确认",
+    "state": "service-journey-booking-emergency",
+    "image": "08-expert-service/service-journey-booking-emergency/default.png",
+    "viewport": "08-expert-service/service-journey-booking-emergency/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode/booking"
+    ],
+    "mapped_design_candidates": [
+      "services/booking",
+      "common/not-found",
+      "services/state-32",
+      "services/state-33",
+      "services/state-34",
+      "services/state-35",
+      "services/state-36",
+      "services/state-37"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/booking_flow_dialogs.dart",
+      "lib/modules/services/presentation/booking_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_inventory_journey_test.dart",
+    "test_case": "inventory Services booking eligibility hold confirm intake and cancellation",
+    "metadata": "raw/test/goldens/ui_inventory/service-journey-booking-emergency-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-journey-booking-emergency-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-journey-booking-emergency-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode/booking",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Potential emergency selected → guidance and disabled booking",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-journey-booking-emergency-393.png",
+      "previous_source": "test/goldens/ui_inventory/service-journey-booking-region-blocked-393.png",
+      "route": "/services/episodes/service-episode/booking",
+      "trigger": "Potential emergency selected → guidance and disabled booking",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-journey-booking-held",
+    "module": "专家服务与咨询",
+    "label": "日期",
+    "state": "service-journey-booking-held",
+    "image": "08-expert-service/service-journey-booking-held/default.png",
+    "viewport": "08-expert-service/service-journey-booking-held/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode/booking"
+    ],
+    "mapped_design_candidates": [
+      "services/booking",
+      "common/not-found",
+      "services/state-32",
+      "services/state-33",
+      "services/state-34",
+      "services/state-35",
+      "services/state-36",
+      "services/state-37"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/booking_flow_dialogs.dart",
+      "lib/modules/services/presentation/booking_page.dart",
+      "lib/modules/services/presentation/service_expert_identity.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_inventory_journey_test.dart",
+    "test_case": "inventory Services booking eligibility hold confirm intake and cancellation",
+    "metadata": "raw/test/goldens/ui_inventory/service-journey-booking-held-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-journey-booking-held-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-journey-booking-held-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode/booking",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Select slot → server hold and confirm time dialog",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-journey-booking-held-393.png",
+      "previous_source": "test/goldens/ui_inventory/service-journey-booking-slots-393.png",
+      "route": "/services/episodes/service-episode/booking",
+      "trigger": "Select slot → server hold and confirm time dialog",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-journey-booking-held-collapsed",
+    "module": "专家服务与咨询",
+    "label": "日期",
+    "state": "service-journey-booking-held-collapsed",
+    "image": "08-expert-service/service-journey-booking-held-collapsed/default.png",
+    "viewport": "08-expert-service/service-journey-booking-held-collapsed/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode/booking"
+    ],
+    "mapped_design_candidates": [
+      "services/booking",
+      "common/not-found",
+      "services/state-32",
+      "services/state-33",
+      "services/state-34",
+      "services/state-35",
+      "services/state-36",
+      "services/state-37"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/booking_page.dart",
+      "lib/modules/services/presentation/service_expert_identity.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_inventory_journey_test.dart",
+    "test_case": "inventory Services booking eligibility hold confirm intake and cancellation",
+    "metadata": "raw/test/goldens/ui_inventory/service-journey-booking-held-collapsed-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-journey-booking-held-collapsed-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-journey-booking-held-collapsed-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode/booking",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Close time confirmation → hold retained on booking page",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-journey-booking-held-collapsed-393.png",
+      "previous_source": "test/goldens/ui_inventory/service-journey-booking-held-393.png",
+      "route": "/services/episodes/service-episode/booking",
+      "trigger": "Close time confirmation → hold retained on booking page",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-journey-booking-hold-error",
+    "module": "专家服务与咨询",
+    "label": "暂时无法载入，请稍后重试",
+    "state": "service-journey-booking-hold-error",
+    "image": "08-expert-service/service-journey-booking-hold-error/default.png",
+    "viewport": "08-expert-service/service-journey-booking-hold-error/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode/booking"
+    ],
+    "mapped_design_candidates": [
+      "services/booking",
+      "common/not-found",
+      "common/loading",
+      "common/empty",
+      "common/error",
+      "services/state-32",
+      "services/state-33",
+      "services/state-34",
+      "services/state-35",
+      "services/state-36",
+      "services/state-37"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/booking_page.dart",
+      "lib/modules/services/presentation/service_expert_identity.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/product_feedback.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_inventory_journey_test.dart",
+    "test_case": "inventory Services booking availability error empty picker and hold recovery",
+    "metadata": "raw/test/goldens/ui_inventory/service-journey-booking-hold-error-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-journey-booking-hold-error-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-journey-booking-hold-error-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode/booking",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Hold unavailable → uncertain submission and retry CTA",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-journey-booking-hold-error-393.png",
+      "previous_source": "test/goldens/ui_inventory/service-journey-booking-no-slots-393.png",
+      "route": "/services/episodes/service-episode/booking",
+      "trigger": "Hold unavailable → uncertain submission and retry CTA",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-journey-booking-hold-recovered",
+    "module": "专家服务与咨询",
+    "label": "日期",
+    "state": "service-journey-booking-hold-recovered",
+    "image": "08-expert-service/service-journey-booking-hold-recovered/default.png",
+    "viewport": "08-expert-service/service-journey-booking-hold-recovered/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode/booking"
+    ],
+    "mapped_design_candidates": [
+      "services/booking",
+      "common/not-found",
+      "services/state-32",
+      "services/state-33",
+      "services/state-34",
+      "services/state-35",
+      "services/state-36",
+      "services/state-37"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/booking_flow_dialogs.dart",
+      "lib/modules/services/presentation/booking_page.dart",
+      "lib/modules/services/presentation/service_expert_identity.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_inventory_journey_test.dart",
+    "test_case": "inventory Services booking availability error empty picker and hold recovery",
+    "metadata": "raw/test/goldens/ui_inventory/service-journey-booking-hold-recovered-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-journey-booking-hold-recovered-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-journey-booking-hold-recovered-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode/booking",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Retry original hold → confirmation dialog",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-journey-booking-hold-recovered-393.png",
+      "previous_source": "test/goldens/ui_inventory/service-journey-booking-hold-error-393.png",
+      "route": "/services/episodes/service-episode/booking",
+      "trigger": "Retry original hold → confirmation dialog",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-journey-booking-no-slots",
+    "module": "专家服务与咨询",
+    "label": "日期",
+    "state": "service-journey-booking-no-slots",
+    "image": "08-expert-service/service-journey-booking-no-slots/default.png",
+    "viewport": "08-expert-service/service-journey-booking-no-slots/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode/booking"
+    ],
+    "mapped_design_candidates": [
+      "services/booking",
+      "common/not-found",
+      "common/loading",
+      "common/empty",
+      "common/error",
+      "services/state-32",
+      "services/state-33",
+      "services/state-34",
+      "services/state-35",
+      "services/state-36",
+      "services/state-37"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/booking_page.dart",
+      "lib/modules/services/presentation/service_expert_identity.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/product_feedback.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_inventory_journey_test.dart",
+    "test_case": "inventory Services booking availability error empty picker and hold recovery",
+    "metadata": "raw/test/goldens/ui_inventory/service-journey-booking-no-slots-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-journey-booking-no-slots-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-journey-booking-no-slots-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode/booking",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Slot retry returns no availability → empty state",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-journey-booking-no-slots-393.png",
+      "previous_source": "test/goldens/ui_inventory/service-journey-booking-availability-error-393.png",
+      "route": "/services/episodes/service-episode/booking",
+      "trigger": "Slot retry returns no availability → empty state",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-journey-booking-precheck",
+    "module": "专家服务与咨询",
+    "label": "先做个预约前确认",
+    "state": "service-journey-booking-precheck",
+    "image": "08-expert-service/service-journey-booking-precheck/default.png",
+    "viewport": "08-expert-service/service-journey-booking-precheck/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode/booking"
+    ],
+    "mapped_design_candidates": [
+      "services/booking",
+      "common/not-found",
+      "services/state-32",
+      "services/state-33",
+      "services/state-34",
+      "services/state-35",
+      "services/state-36",
+      "services/state-37"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/booking_flow_dialogs.dart",
+      "lib/modules/services/presentation/booking_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_inventory_journey_test.dart",
+    "test_case": "inventory Services booking eligibility hold confirm intake and cancellation",
+    "metadata": "raw/test/goldens/ui_inventory/service-journey-booking-precheck-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-journey-booking-precheck-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-journey-booking-precheck-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode/booking",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Owned package → booking precheck",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-journey-booking-precheck-393.png",
+      "previous_source": null,
+      "route": "/services/episodes/service-episode/booking",
+      "trigger": "Owned package → booking precheck",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-journey-booking-provider-menu",
+    "module": "专家服务与咨询",
+    "label": "日期",
+    "state": "service-journey-booking-provider-menu",
+    "image": "08-expert-service/service-journey-booking-provider-menu/default.png",
+    "viewport": "08-expert-service/service-journey-booking-provider-menu/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode/booking"
+    ],
+    "mapped_design_candidates": [
+      "services/booking",
+      "common/not-found",
+      "services/state-32",
+      "services/state-33",
+      "services/state-34",
+      "services/state-35",
+      "services/state-36",
+      "services/state-37"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/booking_page.dart",
+      "lib/modules/services/presentation/service_expert_identity.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_inventory_journey_test.dart",
+    "test_case": "inventory Services booking availability error empty picker and hold recovery",
+    "metadata": "raw/test/goldens/ui_inventory/service-journey-booking-provider-menu-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-journey-booking-provider-menu-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-journey-booking-provider-menu-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode/booking",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Open provider selector",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-journey-booking-provider-menu-393.png",
+      "previous_source": null,
+      "route": "/services/episodes/service-episode/booking",
+      "trigger": "Open provider selector",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-journey-booking-region-blocked",
+    "module": "专家服务与咨询",
+    "label": "先做个预约前确认",
+    "state": "service-journey-booking-region-blocked",
+    "image": "08-expert-service/service-journey-booking-region-blocked/default.png",
+    "viewport": "08-expert-service/service-journey-booking-region-blocked/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode/booking"
+    ],
+    "mapped_design_candidates": [
+      "services/booking",
+      "common/not-found",
+      "services/state-32",
+      "services/state-33",
+      "services/state-34",
+      "services/state-35",
+      "services/state-36",
+      "services/state-37"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/booking_flow_dialogs.dart",
+      "lib/modules/services/presentation/booking_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_inventory_journey_test.dart",
+    "test_case": "inventory Services booking eligibility hold confirm intake and cancellation",
+    "metadata": "raw/test/goldens/ui_inventory/service-journey-booking-region-blocked-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-journey-booking-region-blocked-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-journey-booking-region-blocked-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode/booking",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Unsupported booking region → cannot continue",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-journey-booking-region-blocked-393.png",
+      "previous_source": "test/goldens/ui_inventory/service-journey-booking-precheck-393.png",
+      "route": "/services/episodes/service-episode/booking",
+      "trigger": "Unsupported booking region → cannot continue",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-journey-booking-slots",
+    "module": "专家服务与咨询",
+    "label": "日期",
+    "state": "service-journey-booking-slots",
+    "image": "08-expert-service/service-journey-booking-slots/default.png",
+    "viewport": "08-expert-service/service-journey-booking-slots/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode/booking"
+    ],
+    "mapped_design_candidates": [
+      "services/booking",
+      "common/not-found",
+      "services/state-32",
+      "services/state-33",
+      "services/state-34",
+      "services/state-35",
+      "services/state-36",
+      "services/state-37"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/booking_page.dart",
+      "lib/modules/services/presentation/service_expert_identity.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_inventory_journey_test.dart",
+    "test_case": "inventory Services booking eligibility hold confirm intake and cancellation",
+    "metadata": "raw/test/goldens/ui_inventory/service-journey-booking-slots-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-journey-booking-slots-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-journey-booking-slots-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode/booking",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Suitable and eligible → available and unavailable slots",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-journey-booking-slots-393.png",
+      "previous_source": "test/goldens/ui_inventory/service-journey-booking-emergency-393.png",
+      "route": "/services/episodes/service-episode/booking",
+      "trigger": "Suitable and eligible → available and unavailable slots",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-journey-intake-saved-return",
+    "module": "专家服务与咨询",
+    "label": "已确认 · IBCLC 咨询",
+    "state": "service-journey-intake-saved-return",
+    "image": "08-expert-service/service-journey-intake-saved-return/default.png",
+    "viewport": "08-expert-service/service-journey-intake-saved-return/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode/booking"
+    ],
+    "mapped_design_candidates": [
+      "services/booking",
+      "common/not-found",
+      "services/state-32",
+      "services/state-33",
+      "services/state-34",
+      "services/state-35",
+      "services/state-36",
+      "services/state-37"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/notifications/presentation/appointment_reminder_tile.dart",
+      "lib/modules/services/presentation/appointment_detail_card.dart",
+      "lib/modules/services/presentation/booking_page.dart",
+      "lib/modules/services/presentation/service_expert_identity.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_inventory_journey_test.dart",
+    "test_case": "inventory Services intake fields consent uncertain save and update",
+    "metadata": "raw/test/goldens/ui_inventory/service-journey-intake-saved-return-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-journey-intake-saved-return-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-journey-intake-saved-return-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode/booking",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Save complete then view appointment → confirmed detail",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-journey-intake-saved-return-393.png",
+      "previous_source": "test/goldens/ui_inventory/service-journey-intake-saved-393.png",
+      "route": "/services/episodes/service-episode/booking",
+      "trigger": "Save complete then view appointment → confirmed detail",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-journey-intake-update-saved",
+    "module": "专家服务与咨询",
+    "label": "已确认 · IBCLC 咨询",
+    "state": "service-journey-intake-update-saved",
+    "image": "08-expert-service/service-journey-intake-update-saved/default.png",
+    "viewport": "08-expert-service/service-journey-intake-update-saved/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode/booking"
+    ],
+    "mapped_design_candidates": [
+      "services/booking",
+      "common/not-found",
+      "services/state-32",
+      "services/state-33",
+      "services/state-34",
+      "services/state-35",
+      "services/state-36",
+      "services/state-37"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/notifications/presentation/appointment_reminder_tile.dart",
+      "lib/modules/services/presentation/appointment_detail_card.dart",
+      "lib/modules/services/presentation/booking_page.dart",
+      "lib/modules/services/presentation/service_expert_identity.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_inventory_journey_test.dart",
+    "test_case": "inventory Services intake fields consent uncertain save and update",
+    "metadata": "raw/test/goldens/ui_inventory/service-journey-intake-update-saved-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-journey-intake-update-saved-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-journey-intake-update-saved-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode/booking",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Modify saved intake → return to confirmed appointment",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-journey-intake-update-saved-393.png",
+      "previous_source": "test/goldens/ui_inventory/service-journey-intake-reopened-393.png",
+      "route": "/services/episodes/service-episode/booking",
+      "trigger": "Modify saved intake → return to confirmed appointment",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-journey-purchase-to-booking",
+    "module": "专家服务与咨询",
+    "label": "先做个预约前确认",
+    "state": "service-journey-purchase-to-booking",
+    "image": "08-expert-service/service-journey-purchase-to-booking/default.png",
+    "viewport": "08-expert-service/service-journey-purchase-to-booking/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode/booking"
+    ],
+    "mapped_design_candidates": [
+      "services/booking",
+      "common/not-found",
+      "services/state-32",
+      "services/state-33",
+      "services/state-34",
+      "services/state-35",
+      "services/state-36",
+      "services/state-37"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/booking_flow_dialogs.dart",
+      "lib/modules/services/presentation/booking_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_inventory_journey_test.dart",
+    "test_case": "inventory Services purchase validation decline challenge success and booking",
+    "metadata": "raw/test/goldens/ui_inventory/service-journey-purchase-to-booking-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-journey-purchase-to-booking-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-journey-purchase-to-booking-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode/booking",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Purchase success CTA → booking route and precheck",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-journey-purchase-to-booking-393.png",
+      "previous_source": "test/goldens/ui_inventory/service-journey-purchase-success-393.png",
+      "route": "/services/episodes/service-episode/booking",
+      "trigger": "Purchase success CTA → booking route and precheck",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_inventory_journey_test.dart"
+    }
+  }
+]

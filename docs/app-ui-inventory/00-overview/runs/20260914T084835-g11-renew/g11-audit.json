@@ -1,0 +1,12 @@
+{
+  "source_hashes": {
+    "lib/modules/services/presentation/service_renew_page.dart": "f01adf5d24ec28ef69b9c37fc4020acfac26aece466f4395ae0cd829e1fcea47",
+    "test/modules/services/service_renew_test.dart": "1d233b9ead6f18097b5004d6372946276a9326dc2d17439934e6e80b9f1d8e61"
+  },
+  "new_images": 2,
+  "reused_images": 1,
+  "strict_scenarios_passed": 1,
+  "full_images_reviewed": 3,
+  "long_images": 3,
+  "scope": "本次实际点击生产页面及购买弹窗，仓储使用隔离实现；原路由来源继续由 RENEW-JOURNEYS 保留，不将回调测试冒充新 App 路由。首次新增返回断言未找到已滚出视口的第一张套餐卡；实际读取当前文本后改为向上滚动查找，再严格通过。原订单错误视口与 G06 相同。未修改产品代码或扩大套餐／错误码矩阵。"
+}

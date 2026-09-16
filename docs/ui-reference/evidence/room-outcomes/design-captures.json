@@ -1,0 +1,24 @@
+{
+  "captures": [
+    {
+      "id": "services/user_no_show",
+      "route": "http://127.0.0.1:4181/app/consult/apt-1789218165905/room",
+      "capturedAt": "2026-09-12T13:02:46.997Z",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "note": "Current design source; isolated browser demo state, all API and external requests blocked; controlled getUserMedia promise for pending/denied/live-track render states."
+    },
+    {
+      "id": "services/technical_failure",
+      "route": "http://127.0.0.1:4181/app/consult/apt-1789218165905/room",
+      "capturedAt": "2026-09-12T13:02:47.386Z",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "note": "Current design source; isolated browser demo state, all API and external requests blocked; controlled getUserMedia promise for pending/denied/live-track render states."
+    }
+  ]
+}

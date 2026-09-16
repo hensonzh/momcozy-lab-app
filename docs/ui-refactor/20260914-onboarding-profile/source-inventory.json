@@ -1,0 +1,316 @@
+[
+  {
+    "id": "01-auth/onboarding-basics",
+    "module": "登录与首次使用",
+    "label": "1/4",
+    "state": "onboarding-basics",
+    "image": "01-auth/onboarding-basics/default.png",
+    "viewport": "01-auth/onboarding-basics/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/onboarding /avatar/create /avatar/review"
+    ],
+    "mapped_design_candidates": [
+      "auth/onboarding-load",
+      "auth/onboarding-profile",
+      "auth/onboarding-delivery",
+      "auth/onboarding-birth",
+      "auth/onboarding-avatar-choice",
+      "auth/onboarding-avatar-create",
+      "auth/onboarding-avatar-review"
+    ],
+    "production_widget_files": [
+      "lib/features/onboarding/presentation/onboarding_page.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/features/onboarding/onboarding_design_test.dart",
+    "test_case": "onboarding profile forms at 390.0 / 1.0",
+    "metadata": "raw/test/goldens/design_system/onboarding-basics-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/onboarding-basics-320.png",
+        "metadata": "raw/test/goldens/design_system/onboarding-basics-320.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/onboarding-basics-390.png",
+        "metadata": "raw/test/goldens/design_system/onboarding-basics-390.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/onboarding-basics-430.png",
+        "metadata": "raw/test/goldens/design_system/onboarding-basics-430.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "01-auth/onboarding-birth",
+    "module": "登录与首次使用",
+    "label": "3/4",
+    "state": "onboarding-birth",
+    "image": "01-auth/onboarding-birth/default.png",
+    "viewport": "01-auth/onboarding-birth/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/onboarding /avatar/create /avatar/review"
+    ],
+    "mapped_design_candidates": [
+      "auth/onboarding-load",
+      "auth/onboarding-profile",
+      "auth/onboarding-delivery",
+      "auth/onboarding-birth",
+      "auth/onboarding-avatar-choice",
+      "auth/onboarding-avatar-create",
+      "auth/onboarding-avatar-review"
+    ],
+    "production_widget_files": [
+      "lib/features/onboarding/presentation/onboarding_page.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/features/onboarding/onboarding_design_test.dart",
+    "test_case": "onboarding profile forms at 390.0 / 1.0",
+    "metadata": "raw/test/goldens/design_system/onboarding-birth-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/onboarding-birth-320.png",
+        "metadata": "raw/test/goldens/design_system/onboarding-birth-320.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/onboarding-birth-390.png",
+        "metadata": "raw/test/goldens/design_system/onboarding-birth-390.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/onboarding-birth-430.png",
+        "metadata": "raw/test/goldens/design_system/onboarding-birth-430.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "01-auth/onboarding-birth-error",
+    "module": "登录与首次使用",
+    "label": "3/4",
+    "state": "onboarding-birth-error",
+    "image": "01-auth/onboarding-birth-error/default.png",
+    "viewport": "01-auth/onboarding-birth-error/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/onboarding /avatar/create /avatar/review"
+    ],
+    "mapped_design_candidates": [
+      "auth/onboarding-load",
+      "auth/onboarding-profile",
+      "auth/onboarding-delivery",
+      "auth/onboarding-birth",
+      "auth/onboarding-avatar-choice",
+      "auth/onboarding-avatar-create",
+      "auth/onboarding-avatar-review"
+    ],
+    "production_widget_files": [
+      "lib/features/onboarding/presentation/onboarding_page.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/features/onboarding/onboarding_design_test.dart",
+    "test_case": "onboarding profile forms at 390.0 / 1.0",
+    "metadata": "raw/test/goldens/design_system/onboarding-birth-error-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/onboarding-birth-error-320.png",
+        "metadata": "raw/test/goldens/design_system/onboarding-birth-error-320.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/onboarding-birth-error-390.png",
+        "metadata": "raw/test/goldens/design_system/onboarding-birth-error-390.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/onboarding-birth-error-430.png",
+        "metadata": "raw/test/goldens/design_system/onboarding-birth-error-430.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "01-auth/onboarding-delivery",
+    "module": "登录与首次使用",
+    "label": "2/4",
+    "state": "onboarding-delivery",
+    "image": "01-auth/onboarding-delivery/default.png",
+    "viewport": "01-auth/onboarding-delivery/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/onboarding /avatar/create /avatar/review"
+    ],
+    "mapped_design_candidates": [
+      "auth/onboarding-load",
+      "auth/onboarding-profile",
+      "auth/onboarding-delivery",
+      "auth/onboarding-birth",
+      "auth/onboarding-avatar-choice",
+      "auth/onboarding-avatar-create",
+      "auth/onboarding-avatar-review"
+    ],
+    "production_widget_files": [
+      "lib/features/onboarding/presentation/onboarding_page.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/features/onboarding/onboarding_design_test.dart",
+    "test_case": "onboarding profile forms at 390.0 / 1.0",
+    "metadata": "raw/test/goldens/design_system/onboarding-delivery-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/onboarding-delivery-320.png",
+        "metadata": "raw/test/goldens/design_system/onboarding-delivery-320.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/onboarding-delivery-390.png",
+        "metadata": "raw/test/goldens/design_system/onboarding-delivery-390.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/onboarding-delivery-430.png",
+        "metadata": "raw/test/goldens/design_system/onboarding-delivery-430.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "01-auth/onboarding-load-error",
+    "module": "登录与首次使用",
+    "label": "We couldn’t load your setup",
+    "state": "onboarding-load-error",
+    "image": "01-auth/onboarding-load-error/default.png",
+    "viewport": "01-auth/onboarding-load-error/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/onboarding /avatar/create /avatar/review"
+    ],
+    "mapped_design_candidates": [
+      "common/loading",
+      "common/empty",
+      "common/error",
+      "auth/onboarding-load",
+      "auth/onboarding-profile",
+      "auth/onboarding-delivery",
+      "auth/onboarding-birth",
+      "auth/onboarding-avatar-choice",
+      "auth/onboarding-avatar-create",
+      "auth/onboarding-avatar-review"
+    ],
+    "production_widget_files": [
+      "lib/features/onboarding/presentation/onboarding_page.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/product_feedback.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/features/onboarding/onboarding_design_test.dart",
+    "test_case": "onboarding load failure retries at 390.0 / 1.0",
+    "metadata": "raw/test/goldens/design_system/onboarding-load-error-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/onboarding-load-error-320.png",
+        "metadata": "raw/test/goldens/design_system/onboarding-load-error-320.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/onboarding-load-error-390.png",
+        "metadata": "raw/test/goldens/design_system/onboarding-load-error-390.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/onboarding-load-error-430.png",
+        "metadata": "raw/test/goldens/design_system/onboarding-load-error-430.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "01-auth/onboarding-loading",
+    "module": "登录与首次使用",
+    "label": "onboarding-loading",
+    "state": "onboarding-loading",
+    "image": "01-auth/onboarding-loading/default.png",
+    "viewport": "01-auth/onboarding-loading/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/onboarding /avatar/create /avatar/review"
+    ],
+    "mapped_design_candidates": [
+      "common/loading",
+      "common/empty",
+      "common/error",
+      "auth/onboarding-load",
+      "auth/onboarding-profile",
+      "auth/onboarding-delivery",
+      "auth/onboarding-birth",
+      "auth/onboarding-avatar-choice",
+      "auth/onboarding-avatar-create",
+      "auth/onboarding-avatar-review"
+    ],
+    "production_widget_files": [
+      "lib/features/onboarding/presentation/onboarding_page.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/product_feedback.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/features/onboarding/onboarding_design_test.dart",
+    "test_case": "onboarding load failure retries at 390.0 / 1.0",
+    "metadata": "raw/test/goldens/design_system/onboarding-loading-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/onboarding-loading-320.png",
+        "metadata": "raw/test/goldens/design_system/onboarding-loading-320.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/onboarding-loading-390.png",
+        "metadata": "raw/test/goldens/design_system/onboarding-loading-390.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/onboarding-loading-430.png",
+        "metadata": "raw/test/goldens/design_system/onboarding-loading-430.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  }
+]

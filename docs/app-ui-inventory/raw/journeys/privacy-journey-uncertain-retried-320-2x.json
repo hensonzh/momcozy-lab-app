@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/privacy-journey-uncertain-retried-320-2x.png",
+  "previous_source": "test/goldens/ui_inventory/privacy-journey-uncertain-leave-confirm-320-2x.png",
+  "route": "/privacy",
+  "trigger": "Retry only unresolved optional write with same version; saved required scope not resent",
+  "root_entry": "Authenticated More page",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production privacy page/controllers and Care/Intake API repositories; isolated HTTP with versioned per-service consent storage; actual More/privacy/notification routes and notification coordinator, no real user permissions mutated",
+  "test": "test/modules/profile/privacy_inventory_journey_test.dart"
+}

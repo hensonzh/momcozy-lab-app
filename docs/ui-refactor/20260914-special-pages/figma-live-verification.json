@@ -1,0 +1,8 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "[{\"id\":\"336:1086\",\"name\":\"Special / Not found / 1x\",\"width\":390,\"height\":568,\"textCount\":3},{\"id\":\"336:1096\",\"name\":\"Special / Not found / 2x\",\"width\":320,\"height\":568,\"textCount\":3},{\"id\":\"336:1106\",\"name\":\"Special / Motion guide / 1x\",\"width\":390,\"height\":720,\"textCount\":2},{\"id\":\"336:1118\",\"name\":\"Special / Motion failure / 1x\",\"width\":390,\"height\":720,\"textCount\":6},{\"id\":\"336:1138\",\"name\":\"Special / Motion guide / 2x\",\"width\":320,\"height\":320,\"textCount\":2},{\"id\":\"336:1150\",\"name\":\"Special / Motion failure / 2x\",\"width\":320,\"height\":320,\"textCount\":6},{\"id\":\"336:1170\",\"name\":\"Special / Motion failure / 2x / full failure scroll reference\",\"width\":320,\"height\":720,\"textCount\":6}]"
+    }
+  ]
+}

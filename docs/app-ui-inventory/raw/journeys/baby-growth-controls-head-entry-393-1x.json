@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/baby-growth-controls-head-entry-393-1x.png",
+  "previous_source": "test/goldens/ui_inventory/baby-growth-controls-length-closed-393-1x.png",
+  "route": "/baby",
+  "trigger": "Tap 头围 home card → matching measurement selected",
+  "root_entry": "Authenticated More → tap Baby bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/baby/baby_growth_control_inventory_test.dart"
+}

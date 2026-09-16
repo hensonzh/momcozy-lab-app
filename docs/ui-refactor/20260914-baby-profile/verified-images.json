@@ -1,0 +1,527 @@
+[
+  {
+    "path": "verified/baby-profile-current-birth-picker-320-1x.png",
+    "source": "test/goldens/design_system/baby-profile-current-birth-picker-320-1x.png",
+    "sha256": "3c066b9e01bb040131649b07f0fb61b978babd0107e846095b693ccc691a3165"
+  },
+  {
+    "path": "verified/baby-profile-current-birth-picker-320-2x.png",
+    "source": "test/goldens/design_system/baby-profile-current-birth-picker-320-2x.png",
+    "sha256": "f481a51f3c70beb892bd15341e942fa61fbc742d131c2cf9e32a147eb7940032"
+  },
+  {
+    "path": "verified/baby-profile-current-birth-picker-390-1x.png",
+    "source": "test/goldens/design_system/baby-profile-current-birth-picker-390-1x.png",
+    "sha256": "8fa9d005e6c423540e351163338b95fd7e7c0ec79dfbf3c386fd5afc99b03e0d"
+  },
+  {
+    "path": "verified/baby-profile-current-birth-picker-390-2x.png",
+    "source": "test/goldens/design_system/baby-profile-current-birth-picker-390-2x.png",
+    "sha256": "1004deba61ac19cf1c1e8fd0d21abf3d96d0bfe0d46d2591f97482fc3e775f77"
+  },
+  {
+    "path": "verified/baby-profile-current-birth-picker-430-1x.png",
+    "source": "test/goldens/design_system/baby-profile-current-birth-picker-430-1x.png",
+    "sha256": "ae7677a546963aa0602339db4e5b43484c0bc12a97ba206e0e8a634ecf547aa8"
+  },
+  {
+    "path": "verified/baby-profile-current-birth-picker-430-2x.png",
+    "source": "test/goldens/design_system/baby-profile-current-birth-picker-430-2x.png",
+    "sha256": "02cfa3814016a9fec3a91cf536735491d0c61fefba28e5de2063837f29092cdf"
+  },
+  {
+    "path": "verified/baby-profile-current-cleared-320-1x.png",
+    "source": "test/goldens/design_system/baby-profile-current-cleared-320-1x.png",
+    "sha256": "3fab7d4335d25cac37f35ec85729f74bcedab4c1081e7289a5dbd22986f8e01c"
+  },
+  {
+    "path": "verified/baby-profile-current-cleared-320-2x.png",
+    "source": "test/goldens/design_system/baby-profile-current-cleared-320-2x.png",
+    "sha256": "67f2294c083716a4214c242b52f0648cba4345ec886c907d3eceebcce1852645"
+  },
+  {
+    "path": "verified/baby-profile-current-cleared-390-1x.png",
+    "source": "test/goldens/design_system/baby-profile-current-cleared-390-1x.png",
+    "sha256": "dbe968a3972526f6547188e24a6d4bf3095068491c50b7a8f8aac6009aec645d"
+  },
+  {
+    "path": "verified/baby-profile-current-cleared-390-2x.png",
+    "source": "test/goldens/design_system/baby-profile-current-cleared-390-2x.png",
+    "sha256": "28018d05ca1c6c26db9e38008e39a2a5aecdef13a4dbd516b92d5494baaf51e2"
+  },
+  {
+    "path": "verified/baby-profile-current-cleared-430-1x.png",
+    "source": "test/goldens/design_system/baby-profile-current-cleared-430-1x.png",
+    "sha256": "3c1b956c4548625453d03c4fc3fcdb31d572e7b130e98528f24f4c8bd6c45f7e"
+  },
+  {
+    "path": "verified/baby-profile-current-cleared-430-2x.png",
+    "source": "test/goldens/design_system/baby-profile-current-cleared-430-2x.png",
+    "sha256": "b0f2144b1b6ca34205144a6ad4c54bbb7c4d3956c78e1dcbbd9fdb2d106d9578"
+  },
+  {
+    "path": "verified/baby-profile-current-conflict-320-1x.png",
+    "source": "test/goldens/design_system/baby-profile-current-conflict-320-1x.png",
+    "sha256": "b25b455ee8ba4e824b986c0411352deb7f04528369cb17643f0aa75d4990b909"
+  },
+  {
+    "path": "verified/baby-profile-current-conflict-320-2x.png",
+    "source": "test/goldens/design_system/baby-profile-current-conflict-320-2x.png",
+    "sha256": "da83092b94d4eed5112a2de77ff39f9b2597e49d3f7215944b5dd74220271267"
+  },
+  {
+    "path": "verified/baby-profile-current-conflict-390-1x.png",
+    "source": "test/goldens/design_system/baby-profile-current-conflict-390-1x.png",
+    "sha256": "0c00d14a4c25ce584e710b6616789b9eb255258d4dcb23d398d77f3170e06642"
+  },
+  {
+    "path": "verified/baby-profile-current-conflict-390-2x.png",
+    "source": "test/goldens/design_system/baby-profile-current-conflict-390-2x.png",
+    "sha256": "2c5c0c218e5c89290d4baf161f7c6704c2384a9a199443db2e674cae01c6596e"
+  },
+  {
+    "path": "verified/baby-profile-current-conflict-430-1x.png",
+    "source": "test/goldens/design_system/baby-profile-current-conflict-430-1x.png",
+    "sha256": "e6ab972de71f903b46d6fb44b755211d438ab8a1f340040d0c7e388a73989f0b"
+  },
+  {
+    "path": "verified/baby-profile-current-conflict-430-2x.png",
+    "source": "test/goldens/design_system/baby-profile-current-conflict-430-2x.png",
+    "sha256": "148e4adf6aa2de45f2c984bf7f9435cea16381d20a373a28043ee2a4d0a20768"
+  },
+  {
+    "path": "verified/baby-profile-current-date-out-of-range-320-1x.png",
+    "source": "test/goldens/design_system/baby-profile-current-date-out-of-range-320-1x.png",
+    "sha256": "a3cb35f789d74676a730dad931f4d4e6b1058fb3cbe59cd46cd69112196dad7c"
+  },
+  {
+    "path": "verified/baby-profile-current-date-out-of-range-320-2x.png",
+    "source": "test/goldens/design_system/baby-profile-current-date-out-of-range-320-2x.png",
+    "sha256": "c74f96b7c391c435e379cc4505481f534148f883a795be639630a0ea801f83f8"
+  },
+  {
+    "path": "verified/baby-profile-current-date-out-of-range-390-1x.png",
+    "source": "test/goldens/design_system/baby-profile-current-date-out-of-range-390-1x.png",
+    "sha256": "6a41b7a4c1a81e9abfc195b54ac1aad7d1ae8c61cce7e85af4a4f7ea5f47ddb7"
+  },
+  {
+    "path": "verified/baby-profile-current-date-out-of-range-390-2x.png",
+    "source": "test/goldens/design_system/baby-profile-current-date-out-of-range-390-2x.png",
+    "sha256": "eacc8b5267fc4665e5cc9ad3139f54d8e77c343b456b9b47ddaceb690dd9516d"
+  },
+  {
+    "path": "verified/baby-profile-current-date-out-of-range-430-1x.png",
+    "source": "test/goldens/design_system/baby-profile-current-date-out-of-range-430-1x.png",
+    "sha256": "b4407db71d1587115a4ac6c9657e5b5d621753a54f2e66ed69b16730ceb6997e"
+  },
+  {
+    "path": "verified/baby-profile-current-date-out-of-range-430-2x.png",
+    "source": "test/goldens/design_system/baby-profile-current-date-out-of-range-430-2x.png",
+    "sha256": "89d71c78651eeea5d5cc73057aa5e5554a381805152568856de045654480ca83"
+  },
+  {
+    "path": "verified/baby-profile-current-discard-320-1x.png",
+    "source": "test/goldens/design_system/baby-profile-current-discard-320-1x.png",
+    "sha256": "9450c4c69b783ee13119a39513b7719d21787e3fceb6ee7e607c2ca72495506e"
+  },
+  {
+    "path": "verified/baby-profile-current-discard-320-2x.png",
+    "source": "test/goldens/design_system/baby-profile-current-discard-320-2x.png",
+    "sha256": "e29f224ced1dfbf07e37438605986b249cb5b34a3bb86b1934d4ae0aac5d07d3"
+  },
+  {
+    "path": "verified/baby-profile-current-discard-390-1x.png",
+    "source": "test/goldens/design_system/baby-profile-current-discard-390-1x.png",
+    "sha256": "61a62d8ac1a1c61c07be51761a5ca7e48b9a5237b814bbd9a02cce2088009b7b"
+  },
+  {
+    "path": "verified/baby-profile-current-discard-390-2x.png",
+    "source": "test/goldens/design_system/baby-profile-current-discard-390-2x.png",
+    "sha256": "d7552731219372ddb9c90b0f2bda4a8d64680982e5e8bb11205f4a8abd449fdf"
+  },
+  {
+    "path": "verified/baby-profile-current-discard-430-1x.png",
+    "source": "test/goldens/design_system/baby-profile-current-discard-430-1x.png",
+    "sha256": "62304be6d5136d6e68f0b2a52be2570f069e344ddc09a9aa0823f1e79445302d"
+  },
+  {
+    "path": "verified/baby-profile-current-discard-430-2x.png",
+    "source": "test/goldens/design_system/baby-profile-current-discard-430-2x.png",
+    "sha256": "051770b7cdd1b27d9c936481b39879c805b61f26dc20fd3aeef92c0da16e9d98"
+  },
+  {
+    "path": "verified/baby-profile-current-existing-320-1x.png",
+    "source": "test/goldens/design_system/baby-profile-current-existing-320-1x.png",
+    "sha256": "3d4f0e5fb7ba192544bac19487335af0aec80e49c97a1fb46bc5dcc487dcef2a"
+  },
+  {
+    "path": "verified/baby-profile-current-existing-320-2x.png",
+    "source": "test/goldens/design_system/baby-profile-current-existing-320-2x.png",
+    "sha256": "bfa91519ed97a03c08b21c172dd5de1488b95892ba106ff33fcab1994eac3eb5"
+  },
+  {
+    "path": "verified/baby-profile-current-existing-390-1x.png",
+    "source": "test/goldens/design_system/baby-profile-current-existing-390-1x.png",
+    "sha256": "553f27f87f45a326bf4519f9cb617d64d358f84ca3c06159ecfbb016a81aa669"
+  },
+  {
+    "path": "verified/baby-profile-current-existing-390-2x.png",
+    "source": "test/goldens/design_system/baby-profile-current-existing-390-2x.png",
+    "sha256": "b4ecac3a09af8b29650008fa3fafcc2b26618fd0cdfb458ea16dcc3861c5128e"
+  },
+  {
+    "path": "verified/baby-profile-current-existing-430-1x.png",
+    "source": "test/goldens/design_system/baby-profile-current-existing-430-1x.png",
+    "sha256": "68f4f6d288fc7cdfd150c1f62f9031c84b2f8e642d33b2ef824abfceb1623b5e"
+  },
+  {
+    "path": "verified/baby-profile-current-existing-430-2x.png",
+    "source": "test/goldens/design_system/baby-profile-current-existing-430-2x.png",
+    "sha256": "590a9783e544832bf258fb4cd73565051a0ebcc7df78339ace5a4009ead51ca5"
+  },
+  {
+    "path": "verified/baby-profile-current-feeding-menu-320-1x.png",
+    "source": "test/goldens/design_system/baby-profile-current-feeding-menu-320-1x.png",
+    "sha256": "0fa5f65ad6f8d25ac637b2240da6628f2d6cf417d2164f03c32db7afd7a097a7"
+  },
+  {
+    "path": "verified/baby-profile-current-feeding-menu-320-2x.png",
+    "source": "test/goldens/design_system/baby-profile-current-feeding-menu-320-2x.png",
+    "sha256": "61f47b96e108495b6ab0cb4d7e95613db38b393d029e22cc9c848b074b4e0c3e"
+  },
+  {
+    "path": "verified/baby-profile-current-feeding-menu-390-1x.png",
+    "source": "test/goldens/design_system/baby-profile-current-feeding-menu-390-1x.png",
+    "sha256": "30a3b9ea4e5ceeb0dace4270cd4cf9c98eae00562f767c5d45c7eb0175f8a14c"
+  },
+  {
+    "path": "verified/baby-profile-current-feeding-menu-390-2x.png",
+    "source": "test/goldens/design_system/baby-profile-current-feeding-menu-390-2x.png",
+    "sha256": "847f56e41e710d6a61e29e734f53ca94911d79c5bddfd1ec0ceafb9ebdecb208"
+  },
+  {
+    "path": "verified/baby-profile-current-feeding-menu-430-1x.png",
+    "source": "test/goldens/design_system/baby-profile-current-feeding-menu-430-1x.png",
+    "sha256": "3ee057f4d427785708d15ef83298b627134ddf293e6ee8d4a89dc02d5cb894a1"
+  },
+  {
+    "path": "verified/baby-profile-current-feeding-menu-430-2x.png",
+    "source": "test/goldens/design_system/baby-profile-current-feeding-menu-430-2x.png",
+    "sha256": "be4c4ff42d675470bf391c0d0c41a5c7368ba761f671fb74b55d4d0fea197c8d"
+  },
+  {
+    "path": "verified/baby-profile-current-feeding-selected-320-1x.png",
+    "source": "test/goldens/design_system/baby-profile-current-feeding-selected-320-1x.png",
+    "sha256": "d117ee3ae712a8db74a886431e3f32c8506e0bdeee6861cba97cf41e7f19701d"
+  },
+  {
+    "path": "verified/baby-profile-current-feeding-selected-320-2x.png",
+    "source": "test/goldens/design_system/baby-profile-current-feeding-selected-320-2x.png",
+    "sha256": "d44d64af7473fd7dd5ea226ec7d65879f908da3e396e871a5e7fa14aa4eb2f95"
+  },
+  {
+    "path": "verified/baby-profile-current-feeding-selected-390-1x.png",
+    "source": "test/goldens/design_system/baby-profile-current-feeding-selected-390-1x.png",
+    "sha256": "29b0bbb0592ca27ba57168bf366fcc04f27cc973cd9243c1525a579314b6190c"
+  },
+  {
+    "path": "verified/baby-profile-current-feeding-selected-390-2x.png",
+    "source": "test/goldens/design_system/baby-profile-current-feeding-selected-390-2x.png",
+    "sha256": "42ce378008103c38733e23b8dca59416c9a48328fd0ecae1036c172b3267e5d8"
+  },
+  {
+    "path": "verified/baby-profile-current-feeding-selected-430-1x.png",
+    "source": "test/goldens/design_system/baby-profile-current-feeding-selected-430-1x.png",
+    "sha256": "34b687ee7fbab62987add49a87a63310672cc6106abad673d202e752256f2e48"
+  },
+  {
+    "path": "verified/baby-profile-current-feeding-selected-430-2x.png",
+    "source": "test/goldens/design_system/baby-profile-current-feeding-selected-430-2x.png",
+    "sha256": "b3aba4969c00bab7664a70291684c789769da8b869249f92e65a7ea49621e266"
+  },
+  {
+    "path": "verified/baby-profile-current-maximum-name-320-1x.png",
+    "source": "test/goldens/design_system/baby-profile-current-maximum-name-320-1x.png",
+    "sha256": "ad224ffc679eaf337efe2b5bb6bf0b498ee855b3f1b0845102a94dc688dfc994"
+  },
+  {
+    "path": "verified/baby-profile-current-maximum-name-320-2x.png",
+    "source": "test/goldens/design_system/baby-profile-current-maximum-name-320-2x.png",
+    "sha256": "20a98200e6d9da4ea67e19d2a53708bc61e98f330833d7eea2c60bbe06db2773"
+  },
+  {
+    "path": "verified/baby-profile-current-maximum-name-390-1x.png",
+    "source": "test/goldens/design_system/baby-profile-current-maximum-name-390-1x.png",
+    "sha256": "fe769b4c2bb096de2a90679262476a064d043dcb02553070d7295ebb7733adf3"
+  },
+  {
+    "path": "verified/baby-profile-current-maximum-name-390-2x.png",
+    "source": "test/goldens/design_system/baby-profile-current-maximum-name-390-2x.png",
+    "sha256": "6a32b98d1149fd6ce763827f823a64c3fe7c82c46078aea7f54d2ae87ce7390f"
+  },
+  {
+    "path": "verified/baby-profile-current-maximum-name-430-1x.png",
+    "source": "test/goldens/design_system/baby-profile-current-maximum-name-430-1x.png",
+    "sha256": "d9da5ce73a6b3526c74784fcfa93866502c7335ebe5f1cd7c3128a91ed647f05"
+  },
+  {
+    "path": "verified/baby-profile-current-maximum-name-430-2x.png",
+    "source": "test/goldens/design_system/baby-profile-current-maximum-name-430-2x.png",
+    "sha256": "3381cabf7282664a831426dfd80579d9e9e72b2568e4ed554e8c72ee6c935869"
+  },
+  {
+    "path": "verified/baby-profile-current-pending-320-1x.png",
+    "source": "test/goldens/design_system/baby-profile-current-pending-320-1x.png",
+    "sha256": "0dec8cbffa0f19653f83311a1b5445a2a82a580db7a4190faae56c3727b40b9f"
+  },
+  {
+    "path": "verified/baby-profile-current-pending-320-2x.png",
+    "source": "test/goldens/design_system/baby-profile-current-pending-320-2x.png",
+    "sha256": "621ed88b85d7ead5e46ab6b492ae41c182de535733190e8f8e39e92f2b29586c"
+  },
+  {
+    "path": "verified/baby-profile-current-pending-390-1x.png",
+    "source": "test/goldens/design_system/baby-profile-current-pending-390-1x.png",
+    "sha256": "a658e2323a3cb480fff3b06cecd5e79beaf1a02b58ef3110b1435f490467f914"
+  },
+  {
+    "path": "verified/baby-profile-current-pending-390-2x.png",
+    "source": "test/goldens/design_system/baby-profile-current-pending-390-2x.png",
+    "sha256": "090067faaf574330a691d78694c313759d852c86c8947fae0b69b2a0790da95f"
+  },
+  {
+    "path": "verified/baby-profile-current-pending-430-1x.png",
+    "source": "test/goldens/design_system/baby-profile-current-pending-430-1x.png",
+    "sha256": "2d26e58bbc549cc79b8efc99b11c5376b3fbab145ef17d29ffb4eca6f85d7598"
+  },
+  {
+    "path": "verified/baby-profile-current-pending-430-2x.png",
+    "source": "test/goldens/design_system/baby-profile-current-pending-430-2x.png",
+    "sha256": "1f7fa58a1712463a9cbc45cf9295191561e59e806f1f80c899619a64219738a1"
+  },
+  {
+    "path": "verified/baby-profile-current-reload-pending-320-1x.png",
+    "source": "test/goldens/design_system/baby-profile-current-reload-pending-320-1x.png",
+    "sha256": "a4cb92d500535a14c1e831b84a1a44900259b6afefea2b5c668c38d5e0c8d1d4"
+  },
+  {
+    "path": "verified/baby-profile-current-reload-pending-320-2x.png",
+    "source": "test/goldens/design_system/baby-profile-current-reload-pending-320-2x.png",
+    "sha256": "69e227b806bba027a9b1964a4eef93fee1cfb7153c869d493ff094fda6522988"
+  },
+  {
+    "path": "verified/baby-profile-current-reload-pending-390-1x.png",
+    "source": "test/goldens/design_system/baby-profile-current-reload-pending-390-1x.png",
+    "sha256": "28cd00f5ed46cf712113e2125a86f53fc6312f99d6912f943f8058fd50823817"
+  },
+  {
+    "path": "verified/baby-profile-current-reload-pending-390-2x.png",
+    "source": "test/goldens/design_system/baby-profile-current-reload-pending-390-2x.png",
+    "sha256": "d77015f1df08d99bf9e7b66eccd796de11f00c5023083a6813da9df71343c3e1"
+  },
+  {
+    "path": "verified/baby-profile-current-reload-pending-430-1x.png",
+    "source": "test/goldens/design_system/baby-profile-current-reload-pending-430-1x.png",
+    "sha256": "ad3d84cc32d28d3c18945ceb614a4319ebc748f5dd049a56db5ecb16a6e74de4"
+  },
+  {
+    "path": "verified/baby-profile-current-reload-pending-430-2x.png",
+    "source": "test/goldens/design_system/baby-profile-current-reload-pending-430-2x.png",
+    "sha256": "71b2e536d020b123e6027b0433b07f53c72b59eef0a31a3f32a503ec5ff55de0"
+  },
+  {
+    "path": "verified/baby-profile-current-reloaded-320-1x.png",
+    "source": "test/goldens/design_system/baby-profile-current-reloaded-320-1x.png",
+    "sha256": "cf905c422fdaed2349d98b8be2a6c9a0ec62cdd5c6126dddeefec53b01766b66"
+  },
+  {
+    "path": "verified/baby-profile-current-reloaded-320-2x.png",
+    "source": "test/goldens/design_system/baby-profile-current-reloaded-320-2x.png",
+    "sha256": "1036d55eb82028c3663730af2b52e3fe0ce56ef9c90772c6725b1ade26ae4659"
+  },
+  {
+    "path": "verified/baby-profile-current-reloaded-390-1x.png",
+    "source": "test/goldens/design_system/baby-profile-current-reloaded-390-1x.png",
+    "sha256": "16a0054a4416dd3e8e5a65c9388567048f5a0667862492d7b02b3dcd72c40a7f"
+  },
+  {
+    "path": "verified/baby-profile-current-reloaded-390-2x.png",
+    "source": "test/goldens/design_system/baby-profile-current-reloaded-390-2x.png",
+    "sha256": "c36ac6a07378394ceff532c7e34f42a3d295949a30dfc1b66407740cff3f7712"
+  },
+  {
+    "path": "verified/baby-profile-current-reloaded-430-1x.png",
+    "source": "test/goldens/design_system/baby-profile-current-reloaded-430-1x.png",
+    "sha256": "acf469cd665cbf87cf3ba6c7dec166b93000681f8804229568fc981b3c196fa8"
+  },
+  {
+    "path": "verified/baby-profile-current-reloaded-430-2x.png",
+    "source": "test/goldens/design_system/baby-profile-current-reloaded-430-2x.png",
+    "sha256": "ffbf1896750d1d2ca7b6ff4f1721ec16da9c43a1f33933fdafcbd0a5e6f4d543"
+  },
+  {
+    "path": "verified/baby-profile-current-removed-320-1x.png",
+    "source": "test/goldens/design_system/baby-profile-current-removed-320-1x.png",
+    "sha256": "5310caaaee393bdd2e75c04cad1fa01585990e3213acb551bc44dd5455766499"
+  },
+  {
+    "path": "verified/baby-profile-current-removed-320-2x.png",
+    "source": "test/goldens/design_system/baby-profile-current-removed-320-2x.png",
+    "sha256": "165c2f7e49e2d175b7d238c841bccbbd4a82b988082fea492b90232a7279db2d"
+  },
+  {
+    "path": "verified/baby-profile-current-removed-390-1x.png",
+    "source": "test/goldens/design_system/baby-profile-current-removed-390-1x.png",
+    "sha256": "236bed2e166ae83e0d024560ce378a068c662fc1cdfaee08e5681c2ad8268a7e"
+  },
+  {
+    "path": "verified/baby-profile-current-removed-390-2x.png",
+    "source": "test/goldens/design_system/baby-profile-current-removed-390-2x.png",
+    "sha256": "43b4a19ec9d132b7bbd7991345e24c07d32855c45dfbe673a6f59cefea106c42"
+  },
+  {
+    "path": "verified/baby-profile-current-removed-430-1x.png",
+    "source": "test/goldens/design_system/baby-profile-current-removed-430-1x.png",
+    "sha256": "3765f716460fdfe6d169ca0e5d13d2a394628a793e734145a3623d84ea708319"
+  },
+  {
+    "path": "verified/baby-profile-current-removed-430-2x.png",
+    "source": "test/goldens/design_system/baby-profile-current-removed-430-2x.png",
+    "sha256": "0664fada7bde98f107550923a4153acaee2eb69a5c0a7e4155bb5df8f8a653d0"
+  },
+  {
+    "path": "verified/baby-profile-current-uncertain-320-1x.png",
+    "source": "test/goldens/design_system/baby-profile-current-uncertain-320-1x.png",
+    "sha256": "0bafbbb80ce932c0808b1d7539ec66b126bdd0b5620814e5b6d7fbc8117f32ce"
+  },
+  {
+    "path": "verified/baby-profile-current-uncertain-320-2x.png",
+    "source": "test/goldens/design_system/baby-profile-current-uncertain-320-2x.png",
+    "sha256": "816088deabc7baa0a6cbd16974487ab2492f6c39632837cd5ed72a052bcc2f90"
+  },
+  {
+    "path": "verified/baby-profile-current-uncertain-390-1x.png",
+    "source": "test/goldens/design_system/baby-profile-current-uncertain-390-1x.png",
+    "sha256": "d78e2936a68a9921b5b37e905c1554590f8f64e81193142f320d2f06dd92b87c"
+  },
+  {
+    "path": "verified/baby-profile-current-uncertain-390-2x.png",
+    "source": "test/goldens/design_system/baby-profile-current-uncertain-390-2x.png",
+    "sha256": "b6beeeabd500ab10075995266c24d6e232158317cc41624f5af9f75552fb0ede"
+  },
+  {
+    "path": "verified/baby-profile-current-uncertain-430-1x.png",
+    "source": "test/goldens/design_system/baby-profile-current-uncertain-430-1x.png",
+    "sha256": "de53a3eb2dbb531ccf4e0fdddfebd8a7d7f3312bbf211054ef399d8c431f1292"
+  },
+  {
+    "path": "verified/baby-profile-current-uncertain-430-2x.png",
+    "source": "test/goldens/design_system/baby-profile-current-uncertain-430-2x.png",
+    "sha256": "8ce09aaa62e5f135e7083abc3a83188d95283a9589878651fa886e9fd9c2ae1d"
+  },
+  {
+    "path": "verified/baby-profile-current-uncertain-leave-320-1x.png",
+    "source": "test/goldens/design_system/baby-profile-current-uncertain-leave-320-1x.png",
+    "sha256": "3ed7bf8971e71210796bc43bcd6f02b38a22c2ca3856e39c82a0fe3281fcf237"
+  },
+  {
+    "path": "verified/baby-profile-current-uncertain-leave-320-2x.png",
+    "source": "test/goldens/design_system/baby-profile-current-uncertain-leave-320-2x.png",
+    "sha256": "57eafbb3ce1d7c5b08c8b8e33e05ff438480c5523e86bc61442ded9df3100731"
+  },
+  {
+    "path": "verified/baby-profile-current-uncertain-leave-390-1x.png",
+    "source": "test/goldens/design_system/baby-profile-current-uncertain-leave-390-1x.png",
+    "sha256": "d2159e61540dd7812603add74cc1bd4f251a6dd94c729230a81e25ba89ff965c"
+  },
+  {
+    "path": "verified/baby-profile-current-uncertain-leave-390-2x.png",
+    "source": "test/goldens/design_system/baby-profile-current-uncertain-leave-390-2x.png",
+    "sha256": "42c3df1d0568b961c8dcbc650c990a5529b3aa11b3d844b74e86fc1499bbedc5"
+  },
+  {
+    "path": "verified/baby-profile-current-uncertain-leave-430-1x.png",
+    "source": "test/goldens/design_system/baby-profile-current-uncertain-leave-430-1x.png",
+    "sha256": "e296a2e25be78aa502f5e16b2b67bfe4b97c7fd542a650518529eee7b7d1d3fe"
+  },
+  {
+    "path": "verified/baby-profile-current-uncertain-leave-430-2x.png",
+    "source": "test/goldens/design_system/baby-profile-current-uncertain-leave-430-2x.png",
+    "sha256": "ab53061fe07469bbee08419b871e342734063dec5c112181f0a9a2b1c4a95fb2"
+  },
+  {
+    "path": "verified/baby-profile-current-validation-320-1x.png",
+    "source": "test/goldens/design_system/baby-profile-current-validation-320-1x.png",
+    "sha256": "6c2817ddece9513d43894c4ba9ccdb17a20fd98f1a49e701c868dea0131f1e4c"
+  },
+  {
+    "path": "verified/baby-profile-current-validation-320-2x.png",
+    "source": "test/goldens/design_system/baby-profile-current-validation-320-2x.png",
+    "sha256": "0758de6ebc2a7e4ddefad0d1cd7d76adbdbfc945d355a28626ee12d377e27870"
+  },
+  {
+    "path": "verified/baby-profile-current-validation-390-1x.png",
+    "source": "test/goldens/design_system/baby-profile-current-validation-390-1x.png",
+    "sha256": "8577f4e2a5b895211c5873e040430d1e9c789879cb205686dbb987b954793e06"
+  },
+  {
+    "path": "verified/baby-profile-current-validation-390-2x.png",
+    "source": "test/goldens/design_system/baby-profile-current-validation-390-2x.png",
+    "sha256": "213790bad1a21520c1078de498ced45898ffddf2178867779d0a319283171ceb"
+  },
+  {
+    "path": "verified/baby-profile-current-validation-430-1x.png",
+    "source": "test/goldens/design_system/baby-profile-current-validation-430-1x.png",
+    "sha256": "d68fec660316a316adaf4abd6a244d59b13b6a09976ffe97489747cace216636"
+  },
+  {
+    "path": "verified/baby-profile-current-validation-430-2x.png",
+    "source": "test/goldens/design_system/baby-profile-current-validation-430-2x.png",
+    "sha256": "707991c14313d620d3044c194104d1b245baf3964a555832e4c9b05f3e91cc37"
+  },
+  {
+    "path": "verified/baby-profile-editor-320.png",
+    "source": "test/goldens/design_system/baby-profile-editor-320.png",
+    "sha256": "e36ffe83cfc03029e18a853e6494048b1013f224bd87ee740045850c490c36ee"
+  },
+  {
+    "path": "verified/baby-profile-editor-390.png",
+    "source": "test/goldens/design_system/baby-profile-editor-390.png",
+    "sha256": "858a2106d8a60a70ccc09fa16b2fd266e6750f046438fbd9ced830be169f6de2"
+  },
+  {
+    "path": "verified/baby-profile-editor-430.png",
+    "source": "test/goldens/design_system/baby-profile-editor-430.png",
+    "sha256": "180d27e665f95d3791a16c7849b4a27ef9b2730ce00f79dcf1153773a2dcc268"
+  },
+  {
+    "path": "verified/baby-profile-existing-320.png",
+    "source": "test/goldens/design_system/baby-profile-existing-320.png",
+    "sha256": "2fafcb216024bc5257acda0da78727e2d342cf75185ccf664ec38fdd8f5a9d1a"
+  },
+  {
+    "path": "verified/baby-profile-existing-390.png",
+    "source": "test/goldens/design_system/baby-profile-existing-390.png",
+    "sha256": "2d97b9c59b2cc0c538ec1a182eff73e322e4d2dce1b5c4be2d9cd688062aad5d"
+  },
+  {
+    "path": "verified/baby-profile-existing-430.png",
+    "source": "test/goldens/design_system/baby-profile-existing-430.png",
+    "sha256": "9c0e16be7b07b6397c8696e037db69f1735adeedadf4f62e00f9d3a748316e96"
+  },
+  {
+    "path": "verified/baby-profile-short-320.png",
+    "source": "test/goldens/design_system/baby-profile-short-320.png",
+    "sha256": "33a7348e7e0833f4e13d381c02bb86266dff86a0160080aeb7e09a5fd69d4b3d"
+  },
+  {
+    "path": "verified/baby-profile-short-390.png",
+    "source": "test/goldens/design_system/baby-profile-short-390.png",
+    "sha256": "2c736d4680d46eb98162004b63faca7c3af6a99a491721569ac7560eda4f609c"
+  },
+  {
+    "path": "verified/baby-profile-short-430.png",
+    "source": "test/goldens/design_system/baby-profile-short-430.png",
+    "sha256": "9b84706ae01862314e63b1bff5908b09fa961a40245e49146207428282a13a9a"
+  }
+]

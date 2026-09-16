@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/mom-body-control-optional-collapsed-393-1x.png",
+  "previous_source": "test/goldens/ui_inventory/mom-body-control-bowel-restored-393-1x.png",
+  "route": "/me",
+  "trigger": "Collapse filled toileting options",
+  "root_entry": "Authenticated More → tap Me bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/mom/mom_body_control_inventory_test.dart"
+}

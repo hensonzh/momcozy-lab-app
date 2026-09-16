@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/schedule-journey-current-create-conflict-393.png",
+  "previous_source": "test/goldens/ui_inventory/schedule-journey-current-create-invalid-393.png",
+  "route": "/schedule",
+  "trigger": "Create conflicts → conflict message with draft retained",
+  "root_entry": "Authenticated More → tap Schedule bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/schedule/schedule_inventory_journey_test.dart"
+}

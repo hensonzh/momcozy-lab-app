@@ -1,0 +1,16 @@
+{
+  "command": [
+    "/Users/lute/.local/share/momcozy-toolchains/flutter/bin/flutter",
+    "--suppress-analytics",
+    "test",
+    "--no-pub",
+    "test/modules/schedule/schedule_page_golden_test.dart",
+    "test/modules/schedule/personal_schedule_editor_test.dart",
+    "test/modules/services/service_renew_test.dart",
+    "--name",
+    "390\\.0/1\\.0|390\\.0 / 1\\.0|short large initial load|task write disables|hundred loaded entries|failed save preserves|pending personal save|large editor date|pending order reopens|ongoing service navigates|disabled purchase, empty|short large catalog|owned service remains|refresh prevents selection",
+    "--reporter",
+    "expanded"
+  ],
+  "scope": "Existing current golden scenarios; one standard viewport plus existing unique state cases; full scroll capture only, no baseline update or added tests"
+}

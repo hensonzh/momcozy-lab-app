@@ -1,0 +1,59 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/shared/product_feedback_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: loading has a single accessible status when label is omitted
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: exactly one matching candidate
+  Actual: _ElementPredicateWidgetFinder:<Found 0 widgets with a semantics label named "正在载入": []>
+   Which: means none were found but one was expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/shared/product_feedback_test.dart:14:5)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/shared/product_feedback_test.dart line 14
+The test description was:
+  loading has a single accessible status when label is omitted
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +0 -1: loading has a single accessible status when label is omitted [E]
+  Test failed. See exception logs above.
+  The test description was: loading has a single accessible status when label is omitted
+  
+00:00 +0 -1: loading remains readable in a short region at 2x
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: FlutterError:<A RenderFlex overflowed by 80 pixels on the bottom.>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/shared/product_feedback_test.dart:21:5)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/shared/product_feedback_test.dart line 21
+The test description was:
+  loading remains readable in a short region at 2x
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +0 -2: loading remains readable in a short region at 2x [E]
+  Test failed. See exception logs above.
+  The test description was: loading remains readable in a short region at 2x
+  
+00:00 +0 -2: (tearDownAll)
+00:00 +0 -2: Some tests failed.
+
+Failing tests:
+  /Users/lute/project/momcozy-lab/app/test/shared/product_feedback_test.dart: loading has a single accessible status when label is omitted
+  /Users/lute/project/momcozy-lab/app/test/shared/product_feedback_test.dart: loading remains readable in a short region at 2x

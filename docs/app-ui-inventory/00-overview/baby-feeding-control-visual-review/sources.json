@@ -1,0 +1,2464 @@
+{
+  "method": "full-width continuous 650px strips; identical pixels reference prior reviewed Mom or Baby controls; remaining segments reviewed at native width",
+  "sources": [
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-duration-fraction-320-2x.long.png",
+      "sha256": "939856c8f63bd964457042a86c41babe37eaddd1a6b62cae0c7f51e6330e2fa2",
+      "width": 320,
+      "height": 1537,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "af9e23c4f64f3c4b0a5a3dcda976f32d18708e267dcc1202288faa43bbe7c307",
+          "review": "sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "d7e40777f7c67d0c535cbbc7af04231a72f7a411b7c8825de069b1031197ba11",
+          "review": "sheet-01.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1537,
+          "pixel_sha256": "ac871f43bbb3db7228a17b89eb68e91614c45101ddc1a578ff04317ae28ec239",
+          "review": "sheet-01.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-duration-fraction-320-2x.png",
+      "sha256": "921577bdccf91455f1abb3687fca9181a31a48b846b24833938d350b56557bc8",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9adb85d44737c8a91bb6c515b59b2b048a0a082330a4203f16e37fcf453212a4",
+          "review": "sheet-01.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "7b98cfcca4adb69db01963bf723d335160cc09e76f4b4022d81e4f4c67646898",
+          "review": "sheet-01.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-duration-fraction-393-1x.long.png",
+      "sha256": "542eddb029892709c4d61e59a872b85f773856261598ed8797f1599af8eeeaf3",
+      "width": 393,
+      "height": 885,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9f5d4ac0e2d42692002049b6370881a93e24bbf3157ac7a7cbf84838ac5642a2",
+          "review": "sheet-01.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 885,
+          "pixel_sha256": "079dd930397fa38e3c2d904d6e7b11921b7ef2d5bd664872d158151be4613167",
+          "review": "sheet-02.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-duration-fraction-393-1x.png",
+      "sha256": "3bf83ec7273a059737333e19436f7c57a0faa5f5b04c30d4f4d8dc78e1437925",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "487bb585511f30ebe62dd1792a8c35c412171f999d2426cf5fb121b57a8e3559",
+          "review": "sheet-02.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a972e48928acf6cf8af803d0b579beabe5877b9e56b0fed5a0045ca7979b6b74",
+          "review": "sheet-02.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-duration-over-limit-320-2x.long.png",
+      "sha256": "2e0020ff33835d76f1ad618408ce1ee2cc55f0f2abd0e1de4b338e68bd4fd764",
+      "width": 320,
+      "height": 1539,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "af9e23c4f64f3c4b0a5a3dcda976f32d18708e267dcc1202288faa43bbe7c307",
+          "review": "sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "0c6cff388b9f35b8f38e2f68decedc86f09d97a8e56e39f6ca8f97f0675f5896",
+          "review": "sheet-02.png#tile-3"
+        },
+        {
+          "y0": 1300,
+          "y1": 1539,
+          "pixel_sha256": "2577dd172fe728624d1ff98fc5bc41f3fe4f1700ad0204e3f75a96d5ad29bba3",
+          "review": "sheet-02.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-duration-over-limit-320-2x.png",
+      "sha256": "88ed2ee91c8ec9396465d77ebfc2ff1df808044a00d6675df18397e2383108a6",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "e8e6e6395d3640d0333aff7c1dea94f88eeed6be5a83792e6b0729530db1cdf6",
+          "review": "sheet-02.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "4a7744eaae548547b4ea47f908b46703f8979412f3f84add31aa17fe54f9b9cc",
+          "review": "sheet-03.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-duration-over-limit-393-1x.long.png",
+      "sha256": "4083a792a0d6b3081085c0555f8b2216ce2b0e78de24ce97d63761afd6f07116",
+      "width": 393,
+      "height": 886,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "d6b7a710e9bb8117c885a58a55b1d562871426721b41dae7614c77e4df1a94b7",
+          "review": "sheet-03.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 886,
+          "pixel_sha256": "7f3336a985075ce4ce1000fdb5d0cd19864eac35a67e885712843f4b196f0de3",
+          "review": "sheet-03.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-duration-over-limit-393-1x.png",
+      "sha256": "62429daf5f8d9d4935c6a53fb3e3c844e8822b3dff3cb529cde89d1c4a8f32bb",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "81b258d914d5849c1faba21e25e4037d951bae2f261f2c8847a53c81f050657b",
+          "review": "sheet-03.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "6b07bd603f5da3cb1fca000c784528b6d1ae797403edc51d5b2519f6ced351c3",
+          "review": "sheet-03.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-duration-upper-bound-320-2x.long.png",
+      "sha256": "0a8c5e65c96e7aae77a363b1a39c5240d1d5aba4608369608ec43bf70bbf406f",
+      "width": 320,
+      "height": 1443,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "af9e23c4f64f3c4b0a5a3dcda976f32d18708e267dcc1202288faa43bbe7c307",
+          "review": "sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "233c7c6a1202e99d12b56387866829094939b8b5b4d14c3f2a9b96469f627c02",
+          "review": "sheet-03.png#tile-5"
+        },
+        {
+          "y0": 1300,
+          "y1": 1443,
+          "pixel_sha256": "729b245c56036ab2034ae0b27e528197ceb8b75ad6814f56484196b127840528",
+          "review": "sheet-04.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-duration-upper-bound-320-2x.png",
+      "sha256": "15dc30b93bbba9176259ea002966e88e61c2008ec79c21f25e604a0635c1da2c",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "5fb9c133ee39d6f6a30d6f203c467320bcf82fdcfde0497520fc42ddc477bed7",
+          "review": "sheet-04.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "edbc1bf40e285485d59b3019c15bd3aa35c1115a8062d1c9626de869d251ffd4",
+          "review": "sheet-04.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-duration-upper-bound-393-1x.png",
+      "sha256": "49e52d5a2525bdbc07c7fbe141fb7cb3a00c685aa8950822180c8c75eec41de8",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "36dfc2ed0b4b48679a08ba73cbc8fba6e66efbafc593438e7d983093f4b8a774",
+          "review": "sheet-04.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "18208b73a0a24766cee5ce14dfedee6ecd8766c22fd185d3de032b10e5b804a1",
+          "review": "sheet-04.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-duration-zero-320-2x.long.png",
+      "sha256": "81f9771b7eb11b26be62f64dd63baf925270f6e37f92402ff3fe105a58abe671",
+      "width": 320,
+      "height": 1539,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "af9e23c4f64f3c4b0a5a3dcda976f32d18708e267dcc1202288faa43bbe7c307",
+          "review": "sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "f29bfc48d0028cc9556eb16f9477715f73d263ffef6f3a633e3113262efb1e61",
+          "review": "sheet-04.png#tile-5"
+        },
+        {
+          "y0": 1300,
+          "y1": 1539,
+          "pixel_sha256": "2577dd172fe728624d1ff98fc5bc41f3fe4f1700ad0204e3f75a96d5ad29bba3",
+          "review": "sheet-02.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-duration-zero-320-2x.png",
+      "sha256": "7654db4635cec3e06472041e185e960c19283fcdb55d779f610403b618591f41",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2c23283f57f1250046be262c4181aadc5089e931858a42532a79bc8f0022fd00",
+          "review": "sheet-05.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "4a7744eaae548547b4ea47f908b46703f8979412f3f84add31aa17fe54f9b9cc",
+          "review": "sheet-03.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-duration-zero-393-1x.long.png",
+      "sha256": "4ccf1b3514f65cbcb8436df80df4489dca0ea2956c2459584f4070aef76ff0c4",
+      "width": 393,
+      "height": 886,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6ff310fcdcfe914691c1a4e46939724983d31720b618dfbef7ba673bed5402f4",
+          "review": "sheet-05.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 886,
+          "pixel_sha256": "7f3336a985075ce4ce1000fdb5d0cd19864eac35a67e885712843f4b196f0de3",
+          "review": "sheet-03.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-duration-zero-393-1x.png",
+      "sha256": "b8f0f1bc6f7b8da00443261f638180a9effb3696555d1c2da8fb0bcf91080db1",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "61ec63d65ff643760296c43119a9a88f2b194f13827d1ebc25b5df8751df9d92",
+          "review": "sheet-05.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "6b07bd603f5da3cb1fca000c784528b6d1ae797403edc51d5b2519f6ced351c3",
+          "review": "sheet-03.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-edit-formula-decimal-320-2x.long.png",
+      "sha256": "86948a967641d93b836079345235a99da81c0bed28beac46d901b18081b487e3",
+      "width": 320,
+      "height": 1443,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "3f001dc02297a18569739b278f6d3ee957d472f402c6b06adcfe27c85687f527",
+          "review": "sheet-05.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "85e1ddc606df2c915614e5a96b7132c3270fa9cf7951f23f54f0e7f48b5dd597",
+          "review": "sheet-05.png#tile-4"
+        },
+        {
+          "y0": 1300,
+          "y1": 1443,
+          "pixel_sha256": "45e197c4eb9eb8a5a2d4f1ed8871edeceee2946971382520182b00e2a7fe2589",
+          "review": "sheet-05.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-edit-formula-decimal-320-2x.png",
+      "sha256": "21914f433c94c58dd3061f59cb276f01a92ef80bf936d6646e130f71aa118ada",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "86658435fa566e06e0a92a80c326f95a79aae0b4c4ef26b310df8ee57a3e8c3e",
+          "review": "sheet-06.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "5437f9d437be0bca409b15caf0c5d5f0b7949974fef0fbd01fe4156eb853bb42",
+          "review": "sheet-06.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-edit-formula-decimal-393-1x.long.png",
+      "sha256": "1e90693bb34a6b1732d08a62f4b7d6c89c44cb613ac67b612ea31184682012d2",
+      "width": 393,
+      "height": 869,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "74dea5639e50401ae5a7208ec54824645b24b160bbacb5148c24572f64f56860",
+          "review": "sheet-06.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 869,
+          "pixel_sha256": "bc00d480292d2e76c5ed35ce3760314a0d97f95fd7e8807c678214b5fde98979",
+          "review": "sheet-06.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-edit-formula-decimal-393-1x.png",
+      "sha256": "87906ef243d4dc70ba794fca018a00ed7213fbe1a8774c4847b3033ce86e675e",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "77188e38601e7217b6540636f51fdc8a35a66428d968890e494968f86033c127",
+          "review": "sheet-06.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "f39791da6e862e1258feb9fff5f679ea8acada33c3c0faa3e19359e6e3c21eef",
+          "review": "sheet-06.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-expressed-milk-selected-320-2x.long.png",
+      "sha256": "702f923c46bcf55f7cf32d7fd4f5da675573f24030cf9c23f60a3b99a01d027c",
+      "width": 320,
+      "height": 1209,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "e7c938bb17685ec46b9c5c1b84bd9f28a7ef8e846e9c21fefa3f876aeb28fcb9",
+          "review": "sheet-07.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1209,
+          "pixel_sha256": "723e12a2d2fde4bac30fa6d57e79c552cf1e5217eb44d84c0844d5a7276a84f0",
+          "review": "sheet-07.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-expressed-milk-selected-320-2x.png",
+      "sha256": "11354a67cb226fb347fe7e892e0f9bf14b258d8f9af1b68a2ac2fcf455e5b9ab",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "7928dc434e6d479c8ed5f616168675dc746389e31a4b8488b3bd357cb87d6ee4",
+          "review": "sheet-07.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "9f18a7807dad2d282d9c2f37fc7b890d9d86e9522b847797077edc8c65a82f5c",
+          "review": "sheet-07.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-expressed-milk-selected-393-1x.png",
+      "sha256": "062b2f47d8725b143cb1efe75972cda537d7e21a6108ca4114a16ebb0822f4bc",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "bf42f1765b3fe73c5483521a7eb713e319cf4c9e269a8f5cb557c76e7176bf50",
+          "review": "sheet-07.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "5def93d9c4a66411ce58d289ed665e41d9064f977a0028b7ebcdc0df89e6ff05",
+          "review": "sheet-07.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-formula-history-reopened-320-2x.long.png",
+      "sha256": "27a70a41a917abc7c1e9c0d46e2625f18c7d11d08b79e9f3544ba8d3d5233e20",
+      "width": 320,
+      "height": 1443,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "3f001dc02297a18569739b278f6d3ee957d472f402c6b06adcfe27c85687f527",
+          "review": "sheet-05.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "85e1ddc606df2c915614e5a96b7132c3270fa9cf7951f23f54f0e7f48b5dd597",
+          "review": "sheet-05.png#tile-4"
+        },
+        {
+          "y0": 1300,
+          "y1": 1443,
+          "pixel_sha256": "da4f70e0ad071f328d6a5576414376e7473792eed694c481ec8976efb9fb795c",
+          "review": "sheet-08.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-formula-history-reopened-320-2x.png",
+      "sha256": "eafbec684b1281a2a27f329066d5f98d2275070a1244cf92f278beb9a7ed6e1d",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "3f001dc02297a18569739b278f6d3ee957d472f402c6b06adcfe27c85687f527",
+          "review": "sheet-05.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "44ab496b1d95348cdac3e042cde97680d2f29324217cc54076731bfb7a548c9a",
+          "review": "sheet-08.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-formula-history-reopened-393-1x.long.png",
+      "sha256": "1e90693bb34a6b1732d08a62f4b7d6c89c44cb613ac67b612ea31184682012d2",
+      "width": 393,
+      "height": 869,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "74dea5639e50401ae5a7208ec54824645b24b160bbacb5148c24572f64f56860",
+          "review": "sheet-06.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 869,
+          "pixel_sha256": "bc00d480292d2e76c5ed35ce3760314a0d97f95fd7e8807c678214b5fde98979",
+          "review": "sheet-06.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-formula-history-reopened-393-1x.png",
+      "sha256": "2dba4681b0ad2f8053535bdc7c8527489491ab7fa407bde89d3c75514d135d33",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "74dea5639e50401ae5a7208ec54824645b24b160bbacb5148c24572f64f56860",
+          "review": "sheet-06.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "b815390947e01b7c77ddf226b820c9d5192d32dde127ce53d375c4a1db915af8",
+          "review": "sheet-08.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-formula-history-saved-320-2x.png",
+      "sha256": "f46d029c56ad5b37a7143172877f017c523599cb9e0285905980743a0af618b2",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "1cf3a8ea9768856bb092d79162d6b90e33fb5e6b62f1f15a827088c2c14d0692",
+          "review": "sheet-08.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2a6709cc5bad40a3f0d63222de65a7f906839e2eb066f8ae481c3600165901ec",
+          "review": "sheet-08.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-formula-history-saved-393-1x.png",
+      "sha256": "dc57b5fa5c16e46a44ed051a6bbbe78c61b33fbf3cc364e335970d381ede93b5",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "88c08e1ce858656b9b7148ed1c783743e6e99330666850370fc57924b046b17c",
+          "review": "sheet-08.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "6a5a78b0156f5d4fa1018d72fc617139ab47cbd88d0c51728ccdb569d098ce8f",
+          "review": "sheet-09.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-formula-selected-320-2x.long.png",
+      "sha256": "1cc1df81325cac9b8aa85ba0a132a9b9cd5af487119d3e1ec68131ca6a179557",
+      "width": 320,
+      "height": 1209,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "96e20206c84866fd923df49b4397e3530473cece673a793e9b3bc42bf22215b8",
+          "review": "sheet-09.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1209,
+          "pixel_sha256": "18c116c99749937011f088a7afe5bb500e2819599053e9e83e3354403f268ab9",
+          "review": "sheet-09.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-formula-selected-320-2x.png",
+      "sha256": "4d68dc8f4646855207059f4ff2a2f4bf49871fb0f9041edfd430e3a3f2fe9c88",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "76b4860235ba6e6c7c83c3274cd271178681ff2ed9d3501decedb3b74c0964ec",
+          "review": "sheet-09.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "0cecffd1f00d4de440c2223ccc0b0c50a0c272f2f73c81a3d20f4717b1ee865a",
+          "review": "sheet-09.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-formula-selected-393-1x.png",
+      "sha256": "7ec659c9e90803013cb4b61bb152640d0a8c14189b0c3c33fe27e05fc4069407",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "fa43d5f092bb2cbd06c9c9c9442ad5e713abe744861f54fd11fa5b578b6151e9",
+          "review": "sheet-09.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "5def93d9c4a66411ce58d289ed665e41d9064f977a0028b7ebcdc0df89e6ff05",
+          "review": "sheet-07.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-home-count-only-320-2x.long.png",
+      "sha256": "c6e2ee4813bf73b0728280e5a68dd19913e0f1f6a2ddc41af436571348ba6e7c",
+      "width": 320,
+      "height": 3467,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "58578630282c08ed070b330c5092b2346554d47e291ecce03bfa1790d2ebdd62",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "034c398b12fe2df5aaef1e8fd2e151d4092f4bc550a8179f7524acfdf8572a5d",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "6880f8a20e94d8723b6b4b402b30f117f0c3ba3b75d3d745c9c647a904da36f8",
+          "review": "sheet-10.png#tile-0"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "6758738cc91ebd9d3ec55dfbe78e1ae564175064133320157147dbd3711df612",
+          "review": "sheet-10.png#tile-1"
+        },
+        {
+          "y0": 2600,
+          "y1": 3250,
+          "pixel_sha256": "6569e3946a7c2b2c522bb3f79a58e747dc9903bb919a747ec5156fe3108297db",
+          "review": "sheet-10.png#tile-2"
+        },
+        {
+          "y0": 3250,
+          "y1": 3467,
+          "pixel_sha256": "fddf3adf02cd9de0110aec1ec45f90e2bcc2ec39389042d0428725cfbfed83f4",
+          "review": "sheet-10.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-home-count-only-320-2x.png",
+      "sha256": "32e02297eb960cf9da693d3ed9a4e380131ba98e63d64680e1c452112635af75",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "58578630282c08ed070b330c5092b2346554d47e291ecce03bfa1790d2ebdd62",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "98ef9a2ad09f8a3c8229ac286c7eb3cb28273ffd01708531c25ae3c0ce531fd2",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-home-count-only-393-1x.long.png",
+      "sha256": "a924415e4071ed31f38abe3a6ed3c86c9e5b562503753f68b449b7bbf1a9c78e",
+      "width": 393,
+      "height": 1752,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "120c58019c39b6088ba17217dd94c86ac4ab807a7b5569f38be04131bf6c69a2",
+          "review": "sheet-10.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "b99aba8757d53ab1c3f34b3d3924b3e2fb907226ad7a321c93bc14669b620081",
+          "review": "sheet-10.png#tile-5"
+        },
+        {
+          "y0": 1300,
+          "y1": 1752,
+          "pixel_sha256": "5d1142fe86ef6e5a8664871afce9928bf15cf58f7b773ac5f1080f1b7fead23c",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-home-count-only-393-1x.png",
+      "sha256": "d2dfc4790b258f238a8614607e13c806610b472c458e9744671b1c157257e80b",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "120c58019c39b6088ba17217dd94c86ac4ab807a7b5569f38be04131bf6c69a2",
+          "review": "sheet-10.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "5488088e742af15243d7dc40af3f87b911fdbdef29373919ee4807c777767fe0",
+          "review": "sheet-11.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-home-entry-320-2x.long.png",
+      "sha256": "2a7eed3eaa881740523730a74f99487a3935cee5f5e500fdea7e513a60082fc7",
+      "width": 320,
+      "height": 3460,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "58578630282c08ed070b330c5092b2346554d47e291ecce03bfa1790d2ebdd62",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "034c398b12fe2df5aaef1e8fd2e151d4092f4bc550a8179f7524acfdf8572a5d",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "fa27bf1b8f7135cf78bb1380036cbe25b805799678f9c6338d1b09862168215b",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "cf7b9827ee12ea5f4ce473b5b04736e9eca7e63163a06350e8ad0569b0e9a58a",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-3"
+        },
+        {
+          "y0": 2600,
+          "y1": 3250,
+          "pixel_sha256": "830120be56be43c6e4e4a7527c94577138b4175b12f8b7b606a89d5ff059987b",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-4"
+        },
+        {
+          "y0": 3250,
+          "y1": 3460,
+          "pixel_sha256": "347ac7ec17d5bdaf8c362c53e6be84275398444203824d119dff6d55c72c68e4",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-home-entry-320-2x.png",
+      "sha256": "32e02297eb960cf9da693d3ed9a4e380131ba98e63d64680e1c452112635af75",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "58578630282c08ed070b330c5092b2346554d47e291ecce03bfa1790d2ebdd62",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "98ef9a2ad09f8a3c8229ac286c7eb3cb28273ffd01708531c25ae3c0ce531fd2",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-home-entry-393-1x.long.png",
+      "sha256": "f0cba396e8a9efa775fb9fbb71adccd863e4ce8dace888759be74db253f099a6",
+      "width": 393,
+      "height": 1752,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2541e10f43029eb71329290bf405fa83fabe418cf9eb6676ed4e3eb8498f6856",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "462243825730002d5a7b26fe7e1bbdb2f381ea57afabfc7a0cad762ed9541c1e",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1752,
+          "pixel_sha256": "5d1142fe86ef6e5a8664871afce9928bf15cf58f7b773ac5f1080f1b7fead23c",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-home-entry-393-1x.png",
+      "sha256": "f7c02c89b1acb7e0cd4ab4adc0593819b05f05ed599398d49ea569c924ea6a82",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2541e10f43029eb71329290bf405fa83fabe418cf9eb6676ed4e3eb8498f6856",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a1f9a5a5f828e0a335129ce0d0a8a7cf54c1ab1e6b87423f882a64c1946d8f9e",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-method-deselected-320-2x.long.png",
+      "sha256": "db69d351a998058be7a95df18911c61661c3e3ba342f4f9c5b1a427e30405e1f",
+      "width": 320,
+      "height": 1111,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "84c4889241d457f9564fc7afa1758319f45c26ba32ab033c9b8b1f053e022ad3",
+          "review": "sheet-11.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1111,
+          "pixel_sha256": "6c7f482a24e483ece34055c3decf3395894ff18e07273bb05d5cf1281c69ae6c",
+          "review": "sheet-11.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-method-deselected-320-2x.png",
+      "sha256": "59cd769936cc10090211b5e0d79de84da18134d83dede107f04e4ec3ee5623c9",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "1978ca202f86a76a6bfec30a03c0d2aaed8fbe3414b797be7f90b03ac4129ccb",
+          "review": "sheet-11.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "cd68e1db6ae8fe5a8720902c79a9b6526b2e4fa940cfcb1407e769556c81d27e",
+          "review": "sheet-11.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-method-deselected-393-1x.png",
+      "sha256": "146d4a72e3de636e176ac041d4ed8104ae9d49925c7c796577f667ffb6e6316f",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "0236a7383f73560eae09bc5e797525099209084b5cd076278cb57f7d04366770",
+          "review": "sheet-11.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "9fe12f9efe69665dabf215a1964bf5ec9bdfca6bf7a543c56879c85ea0f635bf",
+          "review": "sheet-12.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-more-return-320-2x.png",
+      "sha256": "90ff3249f64fc7750a5da2a6bac0e2e90a64014893d9e85c3df4c76dbe8dea38",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "7925ed8e5939f589376b72745969839e14c7fb166cfb48866eed469fa66c4d02",
+          "review": "../baby-profile-control-visual-review/sheet-19.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "f95aac7cc67095efb73a4ae0b9ee5dc9518b86f20195158e860fce9621ec483a",
+          "review": "../mom-rest-control-visual-review/sheet-19.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-more-return-393-1x.png",
+      "sha256": "1905827f337ce2fe60b46266600cce9aa8dea3b9aac6828fb6a1d3f67f020b35",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c8e12900bddbe318fd8d03ad9b384466fc1af1f6c371f72f999f20bc96cac1d6",
+          "review": "../baby-profile-control-visual-review/sheet-19.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "ae62a60cadfc8bfb09e3e94acb0dc8f7d481c4c260eae5960e33ebdc5f0799db",
+          "review": "../mom-rest-control-visual-review/sheet-20.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-note-collapsed-320-2x.long.png",
+      "sha256": "e50a115989e357bf6bc50c6572dd755a8184f7396ef4988ff4871c5d13a8467e",
+      "width": 320,
+      "height": 1410,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "af9e23c4f64f3c4b0a5a3dcda976f32d18708e267dcc1202288faa43bbe7c307",
+          "review": "sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "fa164f47e9512219eca147141c6a5473a9a1a24219de86ce4c5c359d87b7d6ee",
+          "review": "sheet-12.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1410,
+          "pixel_sha256": "139703cd72411dd736d8766c432484fd4f59e7d39ad4c7a1e960ba8424922025",
+          "review": "sheet-12.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-note-collapsed-320-2x.png",
+      "sha256": "13a26edec7e3ad5c9a0f2b2ce2d2cccae24992f7fd6f0c9b41e92ddf5448606c",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "dde46023fed46953bb0d1323075647e4259e5520b94d45fbb1337173776131c5",
+          "review": "sheet-12.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "edbc1bf40e285485d59b3019c15bd3aa35c1115a8062d1c9626de869d251ffd4",
+          "review": "sheet-04.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-note-collapsed-393-1x.png",
+      "sha256": "7482fb9bd23bf6e406cd8524f4c7c1f6cdad63e39b9f11cafa7bbe303d8aabe4",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "590ffe4d8960dd1244d955c191b0b112f63941f22cb104728736b9afd38df388",
+          "review": "sheet-12.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "18208b73a0a24766cee5ce14dfedee6ecd8766c22fd185d3de032b10e5b804a1",
+          "review": "sheet-04.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-note-expanded-320-2x.long.png",
+      "sha256": "2f1af1c263e6f972699b3e7df817e0e5e45bd9b9ab762b777b4828673b27405b",
+      "width": 320,
+      "height": 1637,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "af9e23c4f64f3c4b0a5a3dcda976f32d18708e267dcc1202288faa43bbe7c307",
+          "review": "sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "8a7b557612be7ecf62cf65425f996bfe1c8e42a2a2609ef7617ca03fb22b6ea9",
+          "review": "sheet-12.png#tile-5"
+        },
+        {
+          "y0": 1300,
+          "y1": 1637,
+          "pixel_sha256": "bbebeef0e04e9160f9829cbd8c43637f637bba0973bc7b9157d323030ddaa6bf",
+          "review": "sheet-13.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-note-expanded-320-2x.png",
+      "sha256": "25b69fd8f94e4c64ddbd60cf865d8143cc080b3a87792bb9e9d736d1bc37ee7a",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a16118ee24aff266f57df3181322ae419911db166d6f79fea161d82084ffba68",
+          "review": "sheet-13.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "5e53c109b707fd5d170f7948c9600470f4b5249db482a9e5a760b251d045a2d5",
+          "review": "sheet-13.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-note-expanded-393-1x.long.png",
+      "sha256": "a952bd68e844081e31d3ef6d4af78207229075fa755e8565e0232b299c276db8",
+      "width": 393,
+      "height": 967,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "094108674bc6d6ff14e7971ec07c5797b785eaaf2d6b2ae3010227a64c5546e4",
+          "review": "sheet-13.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 967,
+          "pixel_sha256": "154bd57d8266e21703dd2b018fd6bf30a0e152abda56896e8657000af92c91a6",
+          "review": "sheet-13.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-note-expanded-393-1x.png",
+      "sha256": "df9cdf9b95742441d56faeacdbc88f306f5f468946bc59e187b3ca537d9efac3",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9a49474384da772755fdc8be9172fcec24b0edb04a3693e054aee2b31fb3c29f",
+          "review": "sheet-13.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "bd993d4e2daab0b5c1a8c4f99a1edf915a58de6df8b82d5161c36d91ef561dcd",
+          "review": "sheet-14.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-note-filled-320-2x.long.png",
+      "sha256": "a4738968feccdc025d4810c5eb76b3269b7f5d738ca78e86df139c54c42c0bb1",
+      "width": 320,
+      "height": 1706,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "af9e23c4f64f3c4b0a5a3dcda976f32d18708e267dcc1202288faa43bbe7c307",
+          "review": "sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "1c0c6a00d8c10489181c516065f17fa1792fa5d79690564bc8fed55a8c9c5256",
+          "review": "sheet-14.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1706,
+          "pixel_sha256": "ee1b98aeeaa249884d9e96ff0d780d243c22015c1613ad5ee0568848288ca9d7",
+          "review": "sheet-14.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-note-filled-320-2x.png",
+      "sha256": "5fd4cb090e3b991c8d2bdcbcbc9280f0778fe6b7039256430fff66a6382700cb",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "04afc964e96269ad848d8b36fccf7f93de13139bdbb61c5311350c18b906fd44",
+          "review": "sheet-14.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "c045eb305e3a40be3b294fab9926f8a8c883a53a9a00e9a952578542115097e2",
+          "review": "sheet-14.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-note-filled-393-1x.long.png",
+      "sha256": "a26e086e783d70eb56343f25deb4ee610da3248ceaf581606b2e0e881111ae3c",
+      "width": 393,
+      "height": 967,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "7eb2646fd3d6b9803aa30c86a5a0f99ea374d1a453855cefdf08d5943cafb215",
+          "review": "sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 967,
+          "pixel_sha256": "877e0a0b3159371d8df066204f7e1058d1291d0d51dc58cd38989a4f3468b7b4",
+          "review": "sheet-15.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-note-filled-393-1x.png",
+      "sha256": "63733d75248285e5c2f8910d431f236c47320734c449804858c4ec06500533d3",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "3c0d5cf8aa382a4a9057ad2123e77db3beb6f0a81fc7eab38aa42fe723e5042f",
+          "review": "sheet-15.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3e7d019ced7c567901a167085dddd3e628e44c53f2e5258a2cfd45b1af29041a",
+          "review": "sheet-15.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-nursing-draft-restored-320-2x.long.png",
+      "sha256": "e50a115989e357bf6bc50c6572dd755a8184f7396ef4988ff4871c5d13a8467e",
+      "width": 320,
+      "height": 1410,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "af9e23c4f64f3c4b0a5a3dcda976f32d18708e267dcc1202288faa43bbe7c307",
+          "review": "sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "fa164f47e9512219eca147141c6a5473a9a1a24219de86ce4c5c359d87b7d6ee",
+          "review": "sheet-12.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1410,
+          "pixel_sha256": "139703cd72411dd736d8766c432484fd4f59e7d39ad4c7a1e960ba8424922025",
+          "review": "sheet-12.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-nursing-draft-restored-320-2x.png",
+      "sha256": "4c0a837d02bb7a74ba877a2bd32f3c8f38d0487c91c6db4cb362fdca75ba5191",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "514680463b5327118c2d4f53f115598874167662888d7778c03185267cadf77a",
+          "review": "sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3719eccb47ae5610b2d213c9cd822fd73faf8113510eb4feb81b7c3e5d1ea9e3",
+          "review": "sheet-15.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-nursing-draft-restored-393-1x.png",
+      "sha256": "7482fb9bd23bf6e406cd8524f4c7c1f6cdad63e39b9f11cafa7bbe303d8aabe4",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "590ffe4d8960dd1244d955c191b0b112f63941f22cb104728736b9afd38df388",
+          "review": "sheet-12.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "18208b73a0a24766cee5ce14dfedee6ecd8766c22fd185d3de032b10e5b804a1",
+          "review": "sheet-04.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-nursing-history-320-2x.png",
+      "sha256": "7d16c24ef5ef985143a4864a58f781d005aaf389c539a1c301039e835be03191",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "67491b3a3164d588446e1c1926b0518a89fa055daf059d526af954c76e9db0d7",
+          "review": "sheet-15.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "ebf081b20b3566876598e95b998cd7cc5897827a3532577aaac359b3b63ca23f",
+          "review": "sheet-16.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-nursing-history-393-1x.png",
+      "sha256": "5f5a8916c6c90ead534e91d69988e2cecaef5c123c5a556b21dddb2a5b79d514",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2e0d4aba4c4d6c2572dd8596182d353ee8065d92c51753753e4e006e0b87ea3c",
+          "review": "sheet-16.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "8bdeffc41d4a3f4c9ce4bf04d242795fab314a5a6f5ce005f84e01795430343f",
+          "review": "sheet-16.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-nursing-history-edit-320-2x.long.png",
+      "sha256": "2114d1530c56fba08c4054ad2e6b54e56f174aa1b0fe10682910262b1e4edff3",
+      "width": 320,
+      "height": 1644,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "df3792ad4b6380be86f6fc628e023420b0a52aea90cc5e522c3b04cf0a5ea59d",
+          "review": "sheet-16.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "8babee25e04c20ff82f5d559cb80ca7d9563d63478909e93e16d2d739a44c5b0",
+          "review": "sheet-16.png#tile-4"
+        },
+        {
+          "y0": 1300,
+          "y1": 1644,
+          "pixel_sha256": "ab44df1b4eef912e329365451905f07bb5d72e275a0ced798fcd9feb4601b22f",
+          "review": "sheet-16.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-nursing-history-edit-320-2x.png",
+      "sha256": "bb8900da35b3576af8a3ae2a7720979926fb358e93f584d90a238d9a8c0a5c4b",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "df3792ad4b6380be86f6fc628e023420b0a52aea90cc5e522c3b04cf0a5ea59d",
+          "review": "sheet-16.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "e3674f9dd5f81b0c7c62e5aec91fa1b3962ad7f15de229606e83db7de4513864",
+          "review": "sheet-17.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-nursing-history-edit-393-1x.long.png",
+      "sha256": "76b194d158a48857e1f3bfd8970f13714e1264ff036decb50e05c0e46bfacba3",
+      "width": 393,
+      "height": 967,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "89337adb13aa03040046f7ec3166375901c1dae21c6c63c135d21903ab4ddf4e",
+          "review": "sheet-17.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 967,
+          "pixel_sha256": "35411b7931d72e69d639a92e0059ac423e66fe1e14bef8ce65e40ff2f19f1b2a",
+          "review": "sheet-17.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-nursing-history-edit-393-1x.png",
+      "sha256": "d918c7e4d11cdc25e3f63be97e6f21d07d23412c6c377e50bbd61a75488b5f19",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "89337adb13aa03040046f7ec3166375901c1dae21c6c63c135d21903ab4ddf4e",
+          "review": "sheet-17.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "5c56662c137d9d2349c0a6d6f2e60fdfaafead46d5dcb249d14ec0a7566bfa9e",
+          "review": "sheet-17.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-nursing-saved-320-2x.long.png",
+      "sha256": "af9e61a0c71380b530c59f2f02f4f214466b3d9c2809313e527605fc10c2a2ac",
+      "width": 320,
+      "height": 3681,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "58578630282c08ed070b330c5092b2346554d47e291ecce03bfa1790d2ebdd62",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "034c398b12fe2df5aaef1e8fd2e151d4092f4bc550a8179f7524acfdf8572a5d",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "5690369b304d7ba9631375249928c8e435a98988eea940dca506473010596b00",
+          "review": "sheet-17.png#tile-4"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "d804b0ab559b409f0dd5fdca030066712ae0591e340c780c73f625935686b014",
+          "review": "../baby-knowledge-source-visual-review/sheet-08.png#tile-5"
+        },
+        {
+          "y0": 2600,
+          "y1": 3250,
+          "pixel_sha256": "12c2b7abd9d10a50dddd3e108de4abba42883afba40fe2891cefdee5e472fd24",
+          "review": "../baby-knowledge-source-visual-review/sheet-09.png#tile-0"
+        },
+        {
+          "y0": 3250,
+          "y1": 3681,
+          "pixel_sha256": "7eb391314c6032cafb5db58f2e564dc7c2b0ba0bcc151777b72b54b915f845eb",
+          "review": "sheet-17.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-nursing-saved-320-2x.png",
+      "sha256": "d82183d9b88e9350096a7def7f0c006ce3da1f40b334e5144e8a5e0439d7c3bb",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "0f881286e2153955b9d0b297db61869b25611b7acef985924f2e2bffcfb71ae7",
+          "review": "sheet-18.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "563dd0eb6127eff7c02d4cf0854f116747677cf072bd11574cc7adf5267526f7",
+          "review": "sheet-18.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-nursing-saved-393-1x.long.png",
+      "sha256": "4b9833726cd646e19f988d1d8cf966db38e3ee2261a8983b333739052b877e1f",
+      "width": 393,
+      "height": 1841,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "120c58019c39b6088ba17217dd94c86ac4ab807a7b5569f38be04131bf6c69a2",
+          "review": "sheet-10.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "1f9ffc31a97fddfd9499a4c32335a292a573f555e425a0cde16c5e2b5b821b7b",
+          "review": "sheet-18.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1841,
+          "pixel_sha256": "75297bd830f1b613525f40d02316fe120141d080568e34dea58ee69652044a77",
+          "review": "sheet-18.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-nursing-saved-393-1x.png",
+      "sha256": "72304b3ff5c5fb58f4289dba113527a142ccff6a32a62e561f36e4427582fcef",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "f21fdebce37f5d558803b7ec7d2ca335fa3d01ce46990f9f0f1b5ba027c5afc9",
+          "review": "sheet-18.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "fa89fc35c134e2b3ed02a70a1f9d3864370f0c315bb200f409eb54a07652e2d5",
+          "review": "sheet-18.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-nursing-selected-320-2x.long.png",
+      "sha256": "8da85320f2350d1332e5de9cdba6ff889426a74268815b9f20cd3f45bc02b005",
+      "width": 320,
+      "height": 1443,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "af9e23c4f64f3c4b0a5a3dcda976f32d18708e267dcc1202288faa43bbe7c307",
+          "review": "sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "ab59304b10fbc4a7baee4b4d4075605364abef4c371023f1772daaede04f349a",
+          "review": "sheet-19.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1443,
+          "pixel_sha256": "729b245c56036ab2034ae0b27e528197ceb8b75ad6814f56484196b127840528",
+          "review": "sheet-04.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-nursing-selected-320-2x.png",
+      "sha256": "9961aad170ddceb47e1549f166252cbec33108bcd93b73780dcdb22d3e029c84",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "5a863907719d76bcf2763291b2f6e541ca9e20fbf491d7c70800ed2fadd4616d",
+          "review": "sheet-19.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "7bf3e9bb49fba80aeca1b1f74a594ef1d43862c7fe610af65880b6daa553345e",
+          "review": "sheet-19.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-nursing-selected-393-1x.png",
+      "sha256": "59ae298d514fb60815d81d5fb65bf8620c89018bb7ba3ff17a037b6cf65e7399",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "19004f83f57a3ca3edb3523be70962906f60bfb75794004d6a9574aae54948d5",
+          "review": "sheet-19.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "18208b73a0a24766cee5ce14dfedee6ecd8766c22fd185d3de032b10e5b804a1",
+          "review": "sheet-04.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-optional-volume-cleared-320-2x.long.png",
+      "sha256": "b17219615323a9c2669cfab7b5e2392ec2f0ec5c36e7bf8d785f4a8dd5c79d65",
+      "width": 320,
+      "height": 1443,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "3f001dc02297a18569739b278f6d3ee957d472f402c6b06adcfe27c85687f527",
+          "review": "sheet-05.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "844c83670db7c0ea75f614c248c1d84fbbfd785c42b1b572bbdc6c9074afd6be",
+          "review": "sheet-19.png#tile-4"
+        },
+        {
+          "y0": 1300,
+          "y1": 1443,
+          "pixel_sha256": "da4f70e0ad071f328d6a5576414376e7473792eed694c481ec8976efb9fb795c",
+          "review": "sheet-08.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-optional-volume-cleared-320-2x.png",
+      "sha256": "04a8580bb663318bfab764154c4346d074f58e64dc3e7ff32a6702fda60ebfbd",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "e087b47938dba93f47a6998071eae0f19169471a21cac00a05da4c1c2c8a5886",
+          "review": "sheet-19.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "214f1806e922442da78d9d9efa6d231f4907e6c22ec0f76d8c0bf42b1d9256c0",
+          "review": "sheet-20.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-optional-volume-cleared-393-1x.long.png",
+      "sha256": "8d7b80ffce3c78332825710838d7f8d670f048a85efe6a112790205049672f71",
+      "width": 393,
+      "height": 869,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "4403b688c8c7f3f00ddb5d622f0714a5d1d52bfca79dfc72e61d80614c533704",
+          "review": "sheet-20.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 869,
+          "pixel_sha256": "bc00d480292d2e76c5ed35ce3760314a0d97f95fd7e8807c678214b5fde98979",
+          "review": "sheet-06.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-optional-volume-cleared-393-1x.png",
+      "sha256": "ef17304f2b15cb0656f9c8c61945642f766485c1a1368d5a48e74603ea17c885",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "fbb74df8dab23f5f86440344ff572eaf6145976a84c4c0920f9d99376d766235",
+          "review": "sheet-20.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "f39791da6e862e1258feb9fff5f679ea8acada33c3c0faa3e19359e6e3c21eef",
+          "review": "sheet-06.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-optional-volume-reopened-320-2x.long.png",
+      "sha256": "b17219615323a9c2669cfab7b5e2392ec2f0ec5c36e7bf8d785f4a8dd5c79d65",
+      "width": 320,
+      "height": 1443,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "3f001dc02297a18569739b278f6d3ee957d472f402c6b06adcfe27c85687f527",
+          "review": "sheet-05.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "844c83670db7c0ea75f614c248c1d84fbbfd785c42b1b572bbdc6c9074afd6be",
+          "review": "sheet-19.png#tile-4"
+        },
+        {
+          "y0": 1300,
+          "y1": 1443,
+          "pixel_sha256": "da4f70e0ad071f328d6a5576414376e7473792eed694c481ec8976efb9fb795c",
+          "review": "sheet-08.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-optional-volume-reopened-320-2x.png",
+      "sha256": "eafbec684b1281a2a27f329066d5f98d2275070a1244cf92f278beb9a7ed6e1d",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "3f001dc02297a18569739b278f6d3ee957d472f402c6b06adcfe27c85687f527",
+          "review": "sheet-05.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "44ab496b1d95348cdac3e042cde97680d2f29324217cc54076731bfb7a548c9a",
+          "review": "sheet-08.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-optional-volume-reopened-393-1x.long.png",
+      "sha256": "8d7b80ffce3c78332825710838d7f8d670f048a85efe6a112790205049672f71",
+      "width": 393,
+      "height": 869,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "4403b688c8c7f3f00ddb5d622f0714a5d1d52bfca79dfc72e61d80614c533704",
+          "review": "sheet-20.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 869,
+          "pixel_sha256": "bc00d480292d2e76c5ed35ce3760314a0d97f95fd7e8807c678214b5fde98979",
+          "review": "sheet-06.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-optional-volume-reopened-393-1x.png",
+      "sha256": "4bf0d979fb25e58d4a77ce2fc0430b887a17aca6ec0f7f671e99305f4b2c5aee",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "4403b688c8c7f3f00ddb5d622f0714a5d1d52bfca79dfc72e61d80614c533704",
+          "review": "sheet-20.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "b815390947e01b7c77ddf226b820c9d5192d32dde127ce53d375c4a1db915af8",
+          "review": "sheet-08.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-optional-volume-saved-320-2x.png",
+      "sha256": "42ba368dc5dfb6ceb639fec2eb58abb6103a35e236e6a529328a622df613cb49",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "1b8034ff6b46dad7bfe27b32c96179c6b2747497f112b34327c4e9f8aa2d6e83",
+          "review": "sheet-20.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2a6709cc5bad40a3f0d63222de65a7f906839e2eb066f8ae481c3600165901ec",
+          "review": "sheet-08.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-optional-volume-saved-393-1x.png",
+      "sha256": "d8d348219e60e9f8f8b25abe64034b8508b76858d3898474d6b736375a5e0b2b",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "0d05fb19250857ef5f4736b6495fb77a9a2bb0b825b7a98e4fc7d247a17777da",
+          "review": "sheet-20.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "6a5a78b0156f5d4fa1018d72fc617139ab47cbd88d0c51728ccdb569d098ce8f",
+          "review": "sheet-09.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-side-both-320-2x.long.png",
+      "sha256": "2206ce1ed8f7a4ead4250cf8a565fce1161af46ac96f148deb963e9709051149",
+      "width": 320,
+      "height": 1443,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "af9e23c4f64f3c4b0a5a3dcda976f32d18708e267dcc1202288faa43bbe7c307",
+          "review": "sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "0ee1f577cfec818a3f6908d796419ecb6d4a96e83b65ab099578064b2837e763",
+          "review": "sheet-20.png#tile-5"
+        },
+        {
+          "y0": 1300,
+          "y1": 1443,
+          "pixel_sha256": "729b245c56036ab2034ae0b27e528197ceb8b75ad6814f56484196b127840528",
+          "review": "sheet-04.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-side-both-320-2x.png",
+      "sha256": "83d17f57f463a54fe1cd3f91e7398e961eaf39ad92615bf3b13976f4d8bc0045",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "8a6da7b7e5e8c733de3999f22b5999f6e617baef88579d7e873356c5c7d7b50b",
+          "review": "sheet-21.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "edbc1bf40e285485d59b3019c15bd3aa35c1115a8062d1c9626de869d251ffd4",
+          "review": "sheet-04.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-side-both-393-1x.png",
+      "sha256": "bc19e49222a2a44553908b3413f42b0264e05f371799ab385b0ce0c64b0e5629",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b4a84215ca6c537395d092e19389d487e57cde4468897e5e495f9fe924b6b147",
+          "review": "sheet-21.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "18208b73a0a24766cee5ce14dfedee6ecd8766c22fd185d3de032b10e5b804a1",
+          "review": "sheet-04.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-side-deselected-320-2x.long.png",
+      "sha256": "1d463c5e830752b3d128ca23a8d57a0e0754457c292baa9f9b982b3ebacf45f9",
+      "width": 320,
+      "height": 1537,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "af9e23c4f64f3c4b0a5a3dcda976f32d18708e267dcc1202288faa43bbe7c307",
+          "review": "sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "79f57b1568e868b641191a603ae79f3f940f9dacb8ec4a233b5162fa652d5499",
+          "review": "sheet-21.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1537,
+          "pixel_sha256": "34f61579174c12b6a4b3b47fbe30cbdcf035b7ff501640c4d4e18edc46ca4030",
+          "review": "sheet-21.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-side-deselected-320-2x.png",
+      "sha256": "3a222a31b7348e790f7af2fb6cfcf310cb81e62a6c83046f5cfcd8115ee548f5",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ea208a28555ceeb0c05dfba9476f7100e788f596df5af655e447294cd518d98e",
+          "review": "sheet-21.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "c47b0fd83515f5a46a874a447dbc81f3afff4810767ff777514ace0ee0b01dfe",
+          "review": "sheet-21.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-side-deselected-393-1x.long.png",
+      "sha256": "3f226bf0e4c3b872ed86c6e0bce665c950eace194f0244c9a6f9025fe83a7122",
+      "width": 393,
+      "height": 885,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c88b85ea919eb9c36826ebe84c8428663896d3a8c9a7dfc5afb6146fe403a8df",
+          "review": "sheet-22.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 885,
+          "pixel_sha256": "fda45f4a26ca64adedde5e1cd1684847895501618d21cff40d26708a8a294674",
+          "review": "sheet-22.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-side-deselected-393-1x.png",
+      "sha256": "673433735241273c15763ad54dd6814dee242957cb29f35b2c0ee060bc0e354e",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "22aadd7796831a0ed3a12af6fe5c4659dedbd70f9aea713242eba7ce2fd2c19a",
+          "review": "sheet-22.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "0fe740cb3f27fa5e568a0710a34c8af6c667980389a783f1a412c37a9320e5fc",
+          "review": "sheet-22.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-side-left-320-2x.long.png",
+      "sha256": "e55c8c4756949eff4a28f6b8343339db8b9d50036dc5caaab83541b9fe87b39d",
+      "width": 320,
+      "height": 1443,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "af9e23c4f64f3c4b0a5a3dcda976f32d18708e267dcc1202288faa43bbe7c307",
+          "review": "sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "f49c0e2fcb13d78473b35eaa25a476e2cc06c47cc3ee5fba93caf21875502d8f",
+          "review": "sheet-22.png#tile-4"
+        },
+        {
+          "y0": 1300,
+          "y1": 1443,
+          "pixel_sha256": "729b245c56036ab2034ae0b27e528197ceb8b75ad6814f56484196b127840528",
+          "review": "sheet-04.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-side-left-320-2x.png",
+      "sha256": "e414c4cfd6d65192f92d316be573684abb65edcc5b203113a7d0d7d753090d3b",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "93d3bfdb517dde6ef355a660b71a5b3a2fd6611eaf7e94eac3a3e87be43fc191",
+          "review": "sheet-22.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "6b7cef07ea3e0b1d76365df2b00c6ac21095b93977609253490064e851b74799",
+          "review": "sheet-23.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-side-left-393-1x.png",
+      "sha256": "5506e06a0cd47f5952f6c15fcd4f692cce3541ecdf51208d735c59d5dc9011f7",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b8bbd01373ef810c812bc714515060523c3cd2bebd56e8f7145910ff91cd5e3e",
+          "review": "sheet-23.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "18208b73a0a24766cee5ce14dfedee6ecd8766c22fd185d3de032b10e5b804a1",
+          "review": "sheet-04.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-side-required-320-2x.long.png",
+      "sha256": "1d463c5e830752b3d128ca23a8d57a0e0754457c292baa9f9b982b3ebacf45f9",
+      "width": 320,
+      "height": 1537,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "af9e23c4f64f3c4b0a5a3dcda976f32d18708e267dcc1202288faa43bbe7c307",
+          "review": "sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "79f57b1568e868b641191a603ae79f3f940f9dacb8ec4a233b5162fa652d5499",
+          "review": "sheet-21.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1537,
+          "pixel_sha256": "34f61579174c12b6a4b3b47fbe30cbdcf035b7ff501640c4d4e18edc46ca4030",
+          "review": "sheet-21.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-side-required-320-2x.png",
+      "sha256": "3a222a31b7348e790f7af2fb6cfcf310cb81e62a6c83046f5cfcd8115ee548f5",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ea208a28555ceeb0c05dfba9476f7100e788f596df5af655e447294cd518d98e",
+          "review": "sheet-21.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "c47b0fd83515f5a46a874a447dbc81f3afff4810767ff777514ace0ee0b01dfe",
+          "review": "sheet-21.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-side-required-393-1x.long.png",
+      "sha256": "3f226bf0e4c3b872ed86c6e0bce665c950eace194f0244c9a6f9025fe83a7122",
+      "width": 393,
+      "height": 885,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c88b85ea919eb9c36826ebe84c8428663896d3a8c9a7dfc5afb6146fe403a8df",
+          "review": "sheet-22.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 885,
+          "pixel_sha256": "fda45f4a26ca64adedde5e1cd1684847895501618d21cff40d26708a8a294674",
+          "review": "sheet-22.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-side-required-393-1x.png",
+      "sha256": "673433735241273c15763ad54dd6814dee242957cb29f35b2c0ee060bc0e354e",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "22aadd7796831a0ed3a12af6fe5c4659dedbd70f9aea713242eba7ce2fd2c19a",
+          "review": "sheet-22.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "0fe740cb3f27fa5e568a0710a34c8af6c667980389a783f1a412c37a9320e5fc",
+          "review": "sheet-22.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-side-right-320-2x.long.png",
+      "sha256": "3ac1f98d36cfeb3f44cfe40f01e64970359e99cece8332a35c48eea5656cc236",
+      "width": 320,
+      "height": 1443,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "af9e23c4f64f3c4b0a5a3dcda976f32d18708e267dcc1202288faa43bbe7c307",
+          "review": "sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "ef57412c94ec34a662104efb740b6bde1637cc5016d579f984683c9b547067f6",
+          "review": "sheet-23.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1443,
+          "pixel_sha256": "729b245c56036ab2034ae0b27e528197ceb8b75ad6814f56484196b127840528",
+          "review": "sheet-04.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-side-right-320-2x.png",
+      "sha256": "8debf1652a81ed67af0f503fff01b30438bd7f1aa87bf69e04aefd13cc9765c6",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "da10205f38966b60ba7bfb8e2d5b19ca15762b9b0c55d28ceb548a1155c0b15b",
+          "review": "sheet-23.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "5179af0ea3d5cdb977a7ee0d02d6b19ef9a7f8bb23fc3763983bd5c75fac6a8f",
+          "review": "sheet-23.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-side-right-393-1x.png",
+      "sha256": "8a80527d7b2fbdf980bf89c96887a8428a5fdf95a226a7b1e7eaed266410819d",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "f5336536e0f5753b053a9c6d967e6e7b364b32e1a99f26b9da5d8cc185794dad",
+          "review": "sheet-23.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "18208b73a0a24766cee5ce14dfedee6ecd8766c22fd185d3de032b10e5b804a1",
+          "review": "sheet-04.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-unchanged-editor-closed-320-2x.png",
+      "sha256": "32b25336b155d97240c85a780ffbdef36576f5b378350b3be2da8c2a63273305",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "1b8034ff6b46dad7bfe27b32c96179c6b2747497f112b34327c4e9f8aa2d6e83",
+          "review": "sheet-20.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a71bf15c765cf5edd2ef39e645bcf1b67f96e84b73aa969ff24bcecbf41e2f14",
+          "review": "sheet-24.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-unchanged-editor-closed-393-1x.png",
+      "sha256": "2a738027c64b6f4d22127fdf4aca42cb2853d9e391734970f7ef81e4f3b3a292",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "0d05fb19250857ef5f4736b6495fb77a9a2bb0b825b7a98e4fc7d247a17777da",
+          "review": "sheet-20.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "8bdeffc41d4a3f4c9ce4bf04d242795fab314a5a6f5ce005f84e01795430343f",
+          "review": "sheet-16.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-volume-not-number-320-2x.long.png",
+      "sha256": "5b8108b5f6ababa6f25fdb387deba668bd25cb897701a1c125474756c52b2ee4",
+      "width": 320,
+      "height": 1271,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "e7c938bb17685ec46b9c5c1b84bd9f28a7ef8e846e9c21fefa3f876aeb28fcb9",
+          "review": "sheet-07.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1271,
+          "pixel_sha256": "10a1213b2ebec970afce908a7f43b18454af30fdeb977d6beb2ea7af7ed5a779",
+          "review": "sheet-24.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-volume-not-number-320-2x.png",
+      "sha256": "67d585aa1f251e3e8256d85cb2a6b420da80791a785710f136aae81f6385dea9",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "0c8a816e0d647193ec91c261ed04ee363a17cd497fc967dca03345b954da0ab4",
+          "review": "sheet-24.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "08bbcb383258ab83a8be13182116517bdcd9ea60f9feb5ecafc1655146943413",
+          "review": "sheet-24.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-volume-not-number-393-1x.png",
+      "sha256": "2e6be88c482e1690bbb5a649437a7b7163f6b672097f9ac8fdf4a6ce784c93f2",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "d986faa7ca4dfd82130f6779e628fd756e73022b7855a8a992bc7bee227b9ad8",
+          "review": "sheet-24.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "eda5a62d8bdf7a2ed782b72435e6a43aad29386c57e10dd720f5e02a8e128195",
+          "review": "sheet-24.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-volume-over-limit-320-2x.long.png",
+      "sha256": "3474633d95dc7d518bd3fd26611d12c3a90fb8b3b17235e9e73360f3d01ad72f",
+      "width": 320,
+      "height": 1339,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "e7c938bb17685ec46b9c5c1b84bd9f28a7ef8e846e9c21fefa3f876aeb28fcb9",
+          "review": "sheet-07.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "966ffcaed850ece2ba120c4cfac900bf0454050eea1e328db460d93d9d0b3550",
+          "review": "sheet-25.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1339,
+          "pixel_sha256": "555b0cfa0cfa978a0c131a1152d6c093e6d163e59013bf584ccff5aa70b7b2ed",
+          "review": "sheet-25.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-volume-over-limit-320-2x.png",
+      "sha256": "190a3e933ca91a647ea643ad673bd1eb15df3aca82882a52a641c22fce0b7ba1",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "371c52c7ddbfd359caa7d32db924a4513431bd1401e7b7b97148ec45941d0420",
+          "review": "sheet-25.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1f4d90fb0d73c777e62e0398b636a2613d0bdca75ffb3a2dda8edbda846c50c2",
+          "review": "sheet-25.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-volume-over-limit-393-1x.png",
+      "sha256": "457ea2e85ce4599bf2cb101a49f5c90115232333470d23df802f91675e637c76",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ac18ad198a26d63712c08aa0d82866bd4dcde347b92a32d65a2327601c95d457",
+          "review": "sheet-25.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3247b51176f2d4690a053ff2369cd8e13ca912b703decc9d636993b039d92478",
+          "review": "sheet-25.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-volume-upper-bound-320-2x.long.png",
+      "sha256": "7183e1c83f3d50341e0e56aa460cb96b88a3f44e9655b0a8338483c791dd880f",
+      "width": 320,
+      "height": 1209,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "e7c938bb17685ec46b9c5c1b84bd9f28a7ef8e846e9c21fefa3f876aeb28fcb9",
+          "review": "sheet-07.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1209,
+          "pixel_sha256": "18c116c99749937011f088a7afe5bb500e2819599053e9e83e3354403f268ab9",
+          "review": "sheet-09.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-volume-upper-bound-320-2x.png",
+      "sha256": "0db6f2593c6ec258f1becae8b948c592df067990788e3724b3c97132076857a6",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "49578c59130bc839960ff833a86bece3d7a61197e011d3eb12c29a8433ec854c",
+          "review": "sheet-26.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "edbc1bf40e285485d59b3019c15bd3aa35c1115a8062d1c9626de869d251ffd4",
+          "review": "sheet-04.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-volume-upper-bound-393-1x.png",
+      "sha256": "087b01b1b9e0c79256071a2019912f00c4dc39c34ccc59b03b52e4bdf812bbe9",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b9c6454e68e2af4f1f400245c43644888186add60aedd49bacea0634f30c76d0",
+          "review": "sheet-26.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "5def93d9c4a66411ce58d289ed665e41d9064f977a0028b7ebcdc0df89e6ff05",
+          "review": "sheet-07.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-volume-zero-320-2x.long.png",
+      "sha256": "7112a55d3fbf32fdcb308dd45c848f18d9ae5e763e44cab312dcfef5a62ee973",
+      "width": 320,
+      "height": 1339,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "e7c938bb17685ec46b9c5c1b84bd9f28a7ef8e846e9c21fefa3f876aeb28fcb9",
+          "review": "sheet-07.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "c50ef0c2c507756bbda5b52a252516a656a82883b60d264d94540ac6030237d7",
+          "review": "sheet-26.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1339,
+          "pixel_sha256": "555b0cfa0cfa978a0c131a1152d6c093e6d163e59013bf584ccff5aa70b7b2ed",
+          "review": "sheet-25.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-volume-zero-320-2x.png",
+      "sha256": "978b7976ab8a365cb32dec6b24419749d0671cd4b3a1e7bd472a7761c1a57bbb",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b03b52823496f1797709da6c9c011cd7ecc6cd7c63e6c7b6b5c4defddfa404da",
+          "review": "sheet-26.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1f4d90fb0d73c777e62e0398b636a2613d0bdca75ffb3a2dda8edbda846c50c2",
+          "review": "sheet-25.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-feeding-controls-volume-zero-393-1x.png",
+      "sha256": "601651450d2719ba723f478b7ea72c49741c35edc7a6057bb73ce951b45ad486",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "80f8e3f7466094b5c642b77c526fd60a009b04d559b438db2974152bbcddf1b3",
+          "review": "sheet-26.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3247b51176f2d4690a053ff2369cd8e13ca912b703decc9d636993b039d92478",
+          "review": "sheet-25.png#tile-5"
+        }
+      ]
+    }
+  ],
+  "unique_segments": 172,
+  "new_segments": 155,
+  "new_sheets": 26
+}

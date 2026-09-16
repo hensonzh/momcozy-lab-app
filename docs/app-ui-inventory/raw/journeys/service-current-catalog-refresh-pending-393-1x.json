@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/service-current-catalog-refresh-pending-393-1x.png",
+  "previous_source": "test/goldens/ui_inventory/service-current-catalog-refresh-filled-393-1x.png",
+  "route": "/services",
+  "trigger": "Pull refresh pending → retained catalog with progress",
+  "root_entry": "Authenticated More → tap Me bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/services/service_current_inventory_test.dart"
+}

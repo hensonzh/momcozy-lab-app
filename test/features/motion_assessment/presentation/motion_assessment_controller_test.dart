@@ -1410,6 +1410,45 @@ void main() {
     );
   });
 
+  testWidgets('permission denial stops before camera or session creation', (
+    tester,
+  ) async {
+    final repository = _FakeRepository(immediateSession: _session());
+    final pose = _FakePosePlatform(permissionGranted: false);
+    final controller = MotionAssessmentController(
+      target: 'forward_head',
+      locale: 'zh-CN',
+      repository: repository,
+      posePlatform: pose,
+      voice: _FakeVoice(),
+    );
+    await tester.runAsync(controller.start);
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: momCozyTheme(),
+        home: MotionAssessmentPage(
+          controllerIdentity: 'permission-denied',
+          controllerFactory: () => controller,
+          previewBuilder: (_) => const ColoredBox(color: Colors.black),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('请允许摄像头权限后重试。'), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('motion-assessment-retry')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('motion-assessment-exit')),
+      findsOneWidget,
+    );
+    expect(pose.startCalls, 0);
+    expect(repository.createCalls, 0);
+    expect(controller.canEnd, isFalse);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('keeps live guidance focused without technical keypoint labels', (
     tester,
   ) async {
@@ -1575,11 +1614,11 @@ void main() {
         );
         await tester.pumpAndSettle();
         expect(tester.takeException(), isNull);
-        if (scale == 1) {
+        {
           await expectLater(
             find.byKey(const ValueKey('motion-design')),
             matchesGoldenFile(
-              '../../../goldens/design_system/motion-failure-${width.toInt()}.png',
+              '../../../goldens/design_system/motion-failure-${width.toInt()}${scale == 2 ? '-2x' : ''}.png',
             ),
           );
         }
@@ -1602,11 +1641,11 @@ void main() {
           greaterThanOrEqualTo(44),
         );
         expect(tester.takeException(), isNull);
-        if (scale == 1) {
+        {
           await expectLater(
             find.byKey(const ValueKey('motion-design')),
             matchesGoldenFile(
-              '../../../goldens/design_system/motion-guide-${width.toInt()}.png',
+              '../../../goldens/design_system/motion-guide-${width.toInt()}${scale == 2 ? '-2x' : ''}.png',
             ),
           );
         }
@@ -1619,6 +1658,15 @@ void main() {
         await tester.ensureVisible(
           find.byKey(const ValueKey('motion-assessment-exit')),
         );
+        if (width == 320 && scale == 2) {
+          await tester.pumpAndSettle();
+          await expectLater(
+            find.byKey(const ValueKey('motion-design')),
+            matchesGoldenFile(
+              '../../../goldens/design_system/motion-failure-actions-320-2x.png',
+            ),
+          );
+        }
         await tester.tap(find.byKey(const ValueKey('motion-assessment-exit')));
         await tester.pumpAndSettle();
         expect(find.text('评估返回页'), findsOneWidget);
@@ -1747,7 +1795,13 @@ class _FakeRepository implements MotionAssessmentRepository {
 }
 
 class _FakePosePlatform implements MotionPosePlatform {
-  _FakePosePlatform({this.startCompleter, this.startError});
+  _FakePosePlatform({
+    this.startCompleter,
+    this.startError,
+    this.permissionGranted = true,
+  });
+
+  final bool permissionGranted;
 
   final Completer<void>? startCompleter;
   final Object? startError;
@@ -1763,7 +1817,7 @@ class _FakePosePlatform implements MotionPosePlatform {
   Stream<MotionPoseObservation> get observations => _observations.stream;
 
   @override
-  Future<bool> requestCameraPermission() async => true;
+  Future<bool> requestCameraPermission() async => permissionGranted;
 
   @override
   Future<void> start() {

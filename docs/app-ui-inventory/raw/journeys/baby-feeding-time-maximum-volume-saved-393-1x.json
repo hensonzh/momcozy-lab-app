@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/baby-feeding-time-maximum-volume-saved-393-1x.png",
+  "previous_source": "test/goldens/ui_inventory/baby-feeding-time-maximum-volume-ready-393-1x.png",
+  "route": "/babies/inventory-baby/records",
+  "trigger": "Save maximum bottle volume; nursing fields removed",
+  "root_entry": "Authenticated More → tap Baby bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/baby/baby_feeding_time_inventory_test.dart"
+}

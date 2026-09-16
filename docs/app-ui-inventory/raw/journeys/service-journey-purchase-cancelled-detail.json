@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/service-journey-purchase-cancelled-detail-393.png",
+  "previous_source": "test/goldens/ui_inventory/service-journey-purchase-challenge-cancelled-393.png",
+  "route": "/services/feeding-confidence",
+  "trigger": "Cancelled order back → package can be purchased again",
+  "root_entry": "Authenticated More → tap Me bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/services/service_inventory_journey_test.dart"
+}

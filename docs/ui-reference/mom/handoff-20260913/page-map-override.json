@@ -1,0 +1,54 @@
+{
+  "mom/home": {
+    "design": {
+      "file": "mom/handoff-20260913/HANDOFF.md",
+      "symbol": "Mom homepage handoff",
+      "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+      "nodes": [
+        "19:2",
+        "88:2",
+        "88:111"
+      ],
+      "line": 1,
+      "end_line": 288
+    },
+    "reference_images": [
+      {
+        "file": "mom/handoff-20260913/regular-figma.png",
+        "original": "Figma ePIoJkiMiXiug9ibpcgRbl node 19:2",
+        "sha256": "fffd6cb78ae7bedbcb051a1db9855e7518b71dc0152236754c9d9e55fc45ca5a",
+        "extent": "Figma full frame"
+      },
+      {
+        "file": "mom/handoff-20260913/initial-figma.png",
+        "original": "Figma ePIoJkiMiXiug9ibpcgRbl node 88:2",
+        "sha256": "2c4771beec41745fc4f3c2b6153af055c24740a0aa6445823213f49b44407504",
+        "extent": "Figma full frame"
+      },
+      {
+        "file": "mom/handoff-20260913/purchased-figma.png",
+        "original": "Figma ePIoJkiMiXiug9ibpcgRbl node 88:111",
+        "sha256": "ae83749ed7b4b5735906f1567e49daaa49302543c69601f59d1789ea9b30d165",
+        "extent": "Figma full frame"
+      }
+    ],
+    "related_implementation": [
+      "lib/modules/mom/presentation/mom_home_sections.dart",
+      "lib/modules/services/presentation/expert_support_section.dart",
+      "lib/modules/mom/application/mom_home_view_data.dart",
+      "lib/shared/design_system/mom_home_tokens.dart"
+    ],
+    "notes": "2026-09-13 用户交付包为当前首页基准；旧参考归档于 previous-home-map.json。初始/记录/购买三个状态见 DELIVERY.md。",
+    "review_notes": "See mom/handoff-20260913/DELIVERY.md for current verification and API limits.",
+    "functional_evidence": [
+      "mom/handoff-20260913/DELIVERY.md",
+      "mom/handoff-20260913/evidence/native.log",
+      "mom/handoff-20260913/evidence/full-tests.log"
+    ],
+    "visual_evidence": [
+      "mom/handoff-20260913/evidence/native-mom-handoff-initial-top-1x.png",
+      "mom/handoff-20260913/evidence/native-mom-handoff-recorded-top-1x.png",
+      "mom/handoff-20260913/evidence/native-mom-handoff-purchased-top-1x.png"
+    ]
+  }
+}

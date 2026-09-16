@@ -1,0 +1,6 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_boundary_inventory_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: inventory Baby profile boundaries 393/1x
+00:02 +1: inventory Baby profile boundaries 320/2x
+00:04 +2: (tearDownAll)
+00:04 +2: All tests passed!

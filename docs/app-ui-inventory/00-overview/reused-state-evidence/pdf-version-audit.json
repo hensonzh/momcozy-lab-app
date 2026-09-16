@@ -1,0 +1,29 @@
+{
+  "source_checks": {
+    "lib/features/media/presentation/pdf_document_toolbar.dart": true,
+    "lib/features/media/presentation/product_asset_video_player.dart": true,
+    "lib/features/media/presentation/media_viewer_page.dart": true,
+    "lib/features/media/presentation/media_viewer_feedback.dart": true
+  },
+  "refs": [
+    {
+      "id": "00-overview/reused-state-evidence/pdf-loaded",
+      "image": "00-overview/reused-state-evidence/pdf-loaded/default.png",
+      "trigger": "Local PDFium rendered document: first page / next page / zoom",
+      "extent": "full-viewport; paginated document canvas"
+    },
+    {
+      "id": "00-overview/reused-state-evidence/pdf-page-2",
+      "image": "00-overview/reused-state-evidence/pdf-page-2/default.png",
+      "trigger": "Local PDFium rendered document: first page / next page / zoom",
+      "extent": "full-viewport; paginated document canvas"
+    },
+    {
+      "id": "00-overview/reused-state-evidence/pdf-zoomed",
+      "image": "00-overview/reused-state-evidence/pdf-zoomed/default.png",
+      "trigger": "Local PDFium rendered document: first page / next page / zoom",
+      "extent": "full-viewport; paginated document canvas"
+    }
+  ],
+  "test_change_note": "Video test gained a scoped extra capture; production media sources remain identical to the verified package."
+}

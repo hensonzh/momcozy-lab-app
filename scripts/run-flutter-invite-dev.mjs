@@ -162,10 +162,12 @@ const flutterArgs = [
   ...process.argv.slice(2),
 ];
 
-console.log(`Starting Flutter invite-login dev app on ${deviceId}`);
+console.log(`Starting Flutter local dev app on ${deviceId}`);
 console.log(`Backend API: ${apiBaseUrl}`);
 console.log(`Agent Runtime API: ${agentApiBaseUrl}`);
-console.log("No bootstrap API token will be passed; the app should open the invite login page.");
+console.log(resetApp
+  ? "No bootstrap API token will be passed; sign in with your local test account."
+  : "Keeping app data; the app will restore its saved login session if available.");
 
 const result = spawnSync("flutter", flutterArgs, {
   cwd: flutterAppDir,

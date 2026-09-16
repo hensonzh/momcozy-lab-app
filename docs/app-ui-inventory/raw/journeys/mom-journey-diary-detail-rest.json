@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/mom-journey-diary-detail-rest-393.png",
+  "previous_source": "test/goldens/ui_inventory/mom-journey-diary-home-complete-393.png",
+  "route": "/me/diary",
+  "trigger": "Completed daily status → standalone diary detail",
+  "root_entry": "Authenticated More → tap Me bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/mom/mom_inventory_journey_test.dart"
+}

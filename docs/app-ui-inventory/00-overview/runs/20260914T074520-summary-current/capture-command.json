@@ -1,0 +1,15 @@
+{
+  "command": [
+    "/Users/lute/.local/share/momcozy-toolchains/flutter/bin/flutter",
+    "--suppress-analytics",
+    "test",
+    "--no-pub",
+    "test/modules/consultation/consultation_inventory_journey_test.dart",
+    "test/modules/services/consultation_summary_test.dart",
+    "--name",
+    "inventory consultation current summary publication|summary content task and destinations 390\\.0 / 1\\.0|task uncertainty retries|loading finishes|superseded plan reloads|short large task|superseded action removed|refresh failure retains|empty action list",
+    "--reporter",
+    "expanded"
+  ],
+  "scope": "G03: reuse one representative per existing visual branch; one actual App summary-task-destinations chain; no size/error matrix"
+}

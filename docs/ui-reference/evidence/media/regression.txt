@@ -1,0 +1,108 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_test.dart: ProductAssetReference parses the production asset route into a typed reference
+00:00 +1: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_test.dart: ProductAssetReference accepts an absolute production URL and an explicit kind
+00:00 +2: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_test.dart: ProductAssetReference rejects retired and malformed asset routes
+00:00 +3: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_test.dart: ProductAssetKind maps supported content types without guessing unknown files
+00:00 +4: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_image_test.dart: switching resources hides the previous image while loading
+00:00 +5: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_image_test.dart: switching resources hides the previous image while loading
+00:00 +6: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_image_test.dart: switching resources hides the previous image while loading
+00:00 +7: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_image_test.dart: switching resources hides the previous image while loading
+00:00 +8: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_image_test.dart: switching resources hides the previous image while loading
+00:00 +9: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_image_test.dart: switching resources hides the previous image while loading
+00:00 +10: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_image_test.dart: switching resources hides the previous image while loading
+00:00 +11: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_image_test.dart: switching resources hides the previous image while loading
+00:00 +12: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_image_test.dart: switching resources hides the previous image while loading
+00:00 +13: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_image_test.dart: switching resources hides the previous image while loading
+00:00 +14: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_image_test.dart: switching resources hides the previous image while loading
+00:00 +15: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_image_test.dart: switching resources hides the previous image while loading
+00:00 +16: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_image_test.dart: switching resources hides the previous image while loading
+00:00 +17: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_image_test.dart: switching resources hides the previous image while loading
+00:00 +18: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_image_test.dart: switching resources hides the previous image while loading
+00:00 +19: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_image_test.dart: switching resources hides the previous image while loading
+00:00 +20: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_image_test.dart: switching resources hides the previous image while loading
+00:00 +21: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: video long duration, controls and fullscreen 320.0 / 1.0
+00:00 +22: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: video long duration, controls and fullscreen 320.0 / 1.0
+00:00 +23: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: video long duration, controls and fullscreen 320.0 / 1.0
+00:00 +24: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: video long duration, controls and fullscreen 320.0 / 1.0
+00:00 +25: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: video long duration, controls and fullscreen 320.0 / 1.0
+00:00 +26: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: video long duration, controls and fullscreen 320.0 / 1.0
+00:00 +27: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: video long duration, controls and fullscreen 320.0 / 1.0
+00:00 +28: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media missing unavailable and return 320.0 / 1.0
+00:01 +29: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media missing unavailable and return 320.0 / 1.0
+00:01 +30: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_previews_test.dart: history image loads its authenticated thumbnail by file id
+00:01 +31: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_previews_test.dart: history image loads its authenticated thumbnail by file id
+00:01 +32: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_previews_test.dart: history image loads its authenticated thumbnail by file id
+00:01 +33: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_previews_test.dart: history image loads its authenticated thumbnail by file id
+00:01 +34: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_previews_test.dart: history image loads its authenticated thumbnail by file id
+00:01 +35: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_previews_test.dart: history image loads its authenticated thumbnail by file id
+00:01 +36: /Users/lute/project/momcozy-lab/app/test/native/media_pdf_design_test.dart: native PDF preview, scroll and zoom 320.0 / 1.0
+00:01 +37: /Users/lute/project/momcozy-lab/app/test/native/media_pdf_design_test.dart: native PDF preview, scroll and zoom 320.0 / 1.0
+00:01 +38: /Users/lute/project/momcozy-lab/app/test/native/media_pdf_design_test.dart: native PDF preview, scroll and zoom 320.0 / 1.0
+00:01 +39: /Users/lute/project/momcozy-lab/app/test/native/media_pdf_design_test.dart: native PDF preview, scroll and zoom 320.0 / 1.0
+00:01 +40: /Users/lute/project/momcozy-lab/app/test/native/media_pdf_design_test.dart: native PDF preview, scroll and zoom 320.0 / 1.0
+00:01 +41: /Users/lute/project/momcozy-lab/app/test/native/media_pdf_design_test.dart: native PDF preview, scroll and zoom 320.0 / 1.0
+00:01 +42: /Users/lute/project/momcozy-lab/app/test/native/media_pdf_design_test.dart: native PDF preview, scroll and zoom 320.0 / 1.0
+00:01 +43: /Users/lute/project/momcozy-lab/app/test/native/media_pdf_design_test.dart: native PDF preview, scroll and zoom 320.0 / 1.0
+00:01 +44: /Users/lute/project/momcozy-lab/app/test/native/media_pdf_design_test.dart: native PDF preview, scroll and zoom 320.0 / 1.0
+00:01 +45: /Users/lute/project/momcozy-lab/app/test/native/media_pdf_design_test.dart: native PDF preview, scroll and zoom 320.0 / 1.0
+00:01 +46: /Users/lute/project/momcozy-lab/app/test/native/media_pdf_design_test.dart: native PDF preview, scroll and zoom 320.0 / 1.0
+00:01 +47: /Users/lute/project/momcozy-lab/app/test/native/media_pdf_design_test.dart: native PDF preview, scroll and zoom 320.0 / 1.0
+00:01 +48: /Users/lute/project/momcozy-lab/app/test/native/media_pdf_design_test.dart: native PDF preview, scroll and zoom 320.0 / 1.0
+00:01 +49: /Users/lute/project/momcozy-lab/app/test/native/media_pdf_design_test.dart: native PDF preview, scroll and zoom 320.0 / 1.0
+PdfDocument initial load: PdfDocumentRefKey(local-pdf) (205 ms)
+00:01 +50: /Users/lute/project/momcozy-lab/app/test/native/media_pdf_design_test.dart: native PDF preview, scroll and zoom 320.0 / 1.0
+00:01 +51: /Users/lute/project/momcozy-lab/app/test/native/media_pdf_design_test.dart: native PDF preview, scroll and zoom 320.0 / 1.0
+00:01 +52: /Users/lute/project/momcozy-lab/app/test/native/media_pdf_design_test.dart: native PDF preview, scroll and zoom 320.0 / 1.0
+00:01 +53: /Users/lute/project/momcozy-lab/app/test/native/media_pdf_design_test.dart: native PDF preview, scroll and zoom 320.0 / 1.0
+00:01 +54: /Users/lute/project/momcozy-lab/app/test/native/media_pdf_design_test.dart: native PDF preview, scroll and zoom 320.0 / 1.0
+00:01 +55: /Users/lute/project/momcozy-lab/app/test/native/media_pdf_design_test.dart: native PDF preview, scroll and zoom 320.0 / 1.0
+00:01 +56: /Users/lute/project/momcozy-lab/app/test/native/media_pdf_design_test.dart: native PDF preview, scroll and zoom 320.0 / 1.0
+00:01 +57: /Users/lute/project/momcozy-lab/app/test/native/media_pdf_design_test.dart: native PDF preview, scroll and zoom 320.0 / 1.0
+00:02 +58: /Users/lute/project/momcozy-lab/app/test/native/media_pdf_design_test.dart: native PDF preview, scroll and zoom 320.0 / 1.0
+PdfViewer: Loaded page 2 of 2 in 65 ms
+00:02 +59: /Users/lute/project/momcozy-lab/app/test/native/media_pdf_design_test.dart: native PDF preview, scroll and zoom 320.0 / 1.0
+00:02 +60: /Users/lute/project/momcozy-lab/app/test/native/media_pdf_design_test.dart: native PDF preview, scroll and zoom 320.0 / 1.0
+00:02 +61: /Users/lute/project/momcozy-lab/app/test/native/media_pdf_design_test.dart: native PDF preview, scroll and zoom 320.0 / 1.0
+00:02 +62: /Users/lute/project/momcozy-lab/app/test/native/media_pdf_design_test.dart: native PDF preview, scroll and zoom 320.0 / 1.0
+00:02 +63: /Users/lute/project/momcozy-lab/app/test/native/media_pdf_design_test.dart: native PDF preview, scroll and zoom 320.0 / 1.0
+00:02 +64: /Users/lute/project/momcozy-lab/app/test/native/media_pdf_design_test.dart: native PDF preview, scroll and zoom 320.0 / 1.0
+00:02 +65: /Users/lute/project/momcozy-lab/app/test/native/media_pdf_design_test.dart: native PDF preview, scroll and zoom 320.0 / 1.0
+00:02 +66: /Users/lute/project/momcozy-lab/app/test/native/media_pdf_design_test.dart: native PDF preview, scroll and zoom 320.0 / 1.0
+00:02 +67: /Users/lute/project/momcozy-lab/app/test/native/media_pdf_design_test.dart: native PDF preview, scroll and zoom 320.0 / 1.0
+00:02 +68: /Users/lute/project/momcozy-lab/app/test/native/media_pdf_design_test.dart: native PDF preview, scroll and zoom 320.0 / 1.0
+00:02 +69: /Users/lute/project/momcozy-lab/app/test/native/media_pdf_design_test.dart: native PDF preview, scroll and zoom 320.0 / 1.0
+00:02 +70: /Users/lute/project/momcozy-lab/app/test/native/media_pdf_design_test.dart: native PDF preview, scroll and zoom 320.0 / 1.0
+00:02 +71: /Users/lute/project/momcozy-lab/app/test/native/media_pdf_design_test.dart: native PDF preview, scroll and zoom 320.0 / 1.0
+00:02 +72: /Users/lute/project/momcozy-lab/app/test/native/media_pdf_design_test.dart: native PDF preview, scroll and zoom 320.0 / 1.0
+00:02 +73: /Users/lute/project/momcozy-lab/app/test/native/media_pdf_design_test.dart: native PDF preview, scroll and zoom 320.0 / 1.0
+00:02 +74: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: image loading failure retry and zoom 430.0 / 1.0
+00:02 +75: /Users/lute/project/momcozy-lab/app/test/native/media_pdf_design_test.dart: native PDF preview, scroll and zoom 320.0 / 2.0
+00:02 +76: /Users/lute/project/momcozy-lab/app/test/native/media_pdf_design_test.dart: native PDF preview, scroll and zoom 320.0 / 2.0
+PdfDocument initial load: PdfDocumentRefKey(local-pdf) (100 ms)
+00:02 +77: /Users/lute/project/momcozy-lab/app/test/native/media_pdf_design_test.dart: native PDF preview, scroll and zoom 320.0 / 2.0
+00:02 +78: /Users/lute/project/momcozy-lab/app/test/native/media_pdf_design_test.dart: native PDF preview, scroll and zoom 320.0 / 2.0
+00:02 +79: /Users/lute/project/momcozy-lab/app/test/native/media_pdf_design_test.dart: native PDF preview, scroll and zoom 320.0 / 2.0
+00:02 +80: /Users/lute/project/momcozy-lab/app/test/native/media_pdf_design_test.dart: native PDF preview, scroll and zoom 320.0 / 2.0
+00:02 +81: /Users/lute/project/momcozy-lab/app/test/native/media_pdf_design_test.dart: native PDF preview, scroll and zoom 320.0 / 2.0
+00:02 +82: /Users/lute/project/momcozy-lab/app/test/native/media_pdf_design_test.dart: native PDF preview, scroll and zoom 320.0 / 2.0
+00:02 +83: /Users/lute/project/momcozy-lab/app/test/native/media_pdf_design_test.dart: native PDF preview, scroll and zoom 320.0 / 2.0
+00:02 +84: /Users/lute/project/momcozy-lab/app/test/native/media_pdf_design_test.dart: native PDF preview, scroll and zoom 320.0 / 2.0
+00:02 +85: /Users/lute/project/momcozy-lab/app/test/native/media_pdf_design_test.dart: native PDF preview, scroll and zoom 320.0 / 2.0
+00:02 +86: /Users/lute/project/momcozy-lab/app/test/native/media_pdf_design_test.dart: native PDF preview, scroll and zoom 320.0 / 2.0
+PdfViewer: Loaded page 2 of 2 in 16 ms
+00:02 +87: /Users/lute/project/momcozy-lab/app/test/native/media_pdf_design_test.dart: native PDF preview, scroll and zoom 320.0 / 2.0
+00:02 +88: /Users/lute/project/momcozy-lab/app/test/native/media_pdf_design_test.dart: native PDF preview, scroll and zoom 320.0 / 2.0
+00:03 +89: /Users/lute/project/momcozy-lab/app/test/native/media_pdf_design_test.dart: native PDF preview, scroll and zoom 390.0 / 1.0
+PdfDocument initial load: PdfDocumentRefKey(local-pdf) (99 ms)
+PdfViewer: Loaded page 2 of 2 in 18 ms
+00:03 +90: /Users/lute/project/momcozy-lab/app/test/native/media_pdf_design_test.dart: native PDF preview, scroll and zoom 390.0 / 2.0
+PdfDocument initial load: PdfDocumentRefKey(local-pdf) (98 ms)
+PdfViewer: Loaded page 2 of 2 in 24 ms
+00:04 +91: /Users/lute/project/momcozy-lab/app/test/native/media_pdf_design_test.dart: native PDF preview, scroll and zoom 430.0 / 1.0
+PdfDocument initial load: PdfDocumentRefKey(local-pdf) (99 ms)
+PdfViewer: Loaded page 2 of 2 in 30 ms
+00:05 +92: /Users/lute/project/momcozy-lab/app/test/native/media_pdf_design_test.dart: native PDF preview, scroll and zoom 430.0 / 2.0
+PdfDocument initial load: PdfDocumentRefKey(local-pdf) (97 ms)
+PdfViewer: Loaded page 2 of 2 in 28 ms
+00:06 +93: /Users/lute/project/momcozy-lab/app/test/native/media_pdf_design_test.dart: (tearDownAll)
+00:06 +93: All tests passed!

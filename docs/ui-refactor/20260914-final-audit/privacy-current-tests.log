@@ -1,0 +1,27 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/modules/profile/privacy_test.dart
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/modules/profile/privacy_test.dart: partial save retries same identity/version, then resumes remaining changes
+00:00 +1: /Users/lute/project/momcozy-lab/app/test/modules/profile/privacy_test.dart: acknowledged partial save never repeats an already completed scope
+00:00 +2: /Users/lute/project/momcozy-lab/app/test/modules/profile/privacy_test.dart: conflict requires reload and picks current version before new write
+00:00 +3: /Users/lute/project/momcozy-lab/app/test/modules/profile/privacy_test.dart: reloading an uncertain operation resolves authoritative state without more writes
+00:00 +4: /Users/lute/project/momcozy-lab/app/test/modules/profile/privacy_test.dart: privacy scopes, revoke confirmation and notifications 320.0/1.0
+00:00 +5: /Users/lute/project/momcozy-lab/app/test/modules/profile/privacy_test.dart: privacy scopes, revoke confirmation and notifications 320.0/2.0
+00:00 +6: /Users/lute/project/momcozy-lab/app/test/modules/profile/privacy_test.dart: privacy scopes, revoke confirmation and notifications 390.0/1.0
+00:00 +7: /Users/lute/project/momcozy-lab/app/test/modules/profile/privacy_test.dart: privacy scopes, revoke confirmation and notifications 390.0/2.0
+00:01 +8: /Users/lute/project/momcozy-lab/app/test/modules/profile/privacy_test.dart: privacy scopes, revoke confirmation and notifications 430.0/1.0
+00:01 +9: /Users/lute/project/momcozy-lab/app/test/modules/profile/privacy_test.dart: privacy scopes, revoke confirmation and notifications 430.0/2.0
+00:01 +10: /Users/lute/project/momcozy-lab/app/test/modules/profile/privacy_test.dart: no service and failed read never expose editable fake defaults
+00:01 +11: /Users/lute/project/momcozy-lab/app/test/modules/profile/privacy_test.dart: discarding a service switch keeps displayed and saved scope aligned
+00:01 +12: /Users/lute/project/momcozy-lab/app/test/modules/profile/privacy_test.dart: unknown requested service does not silently edit another service
+00:01 +13: /Users/lute/project/momcozy-lab/app/test/modules/profile/privacy_test.dart: pending save locks edits and read retry can resolve uncertain result
+00:01 +14: loading /Users/lute/project/momcozy-lab/app/test/modules/profile/privacy_redesign_states_test.dart
+00:02 +14: /Users/lute/project/momcozy-lab/app/test/modules/profile/privacy_redesign_states_test.dart: overview and consent loads never show editable defaults (393.0, 1.0)
+00:02 +15: /Users/lute/project/momcozy-lab/app/test/modules/profile/privacy_redesign_states_test.dart: long service selection and large consent copy remain readable (393.0, 1.0)
+00:03 +16: /Users/lute/project/momcozy-lab/app/test/modules/profile/privacy_redesign_states_test.dart: explicit dialog close and cancel retain unsaved consent (393.0, 1.0)
+00:03 +17: /Users/lute/project/momcozy-lab/app/test/modules/profile/privacy_redesign_states_test.dart: partially committed required consent only retries unresolved scope (393.0, 1.0)
+00:03 +18: /Users/lute/project/momcozy-lab/app/test/modules/profile/privacy_redesign_states_test.dart: pending uncertain and conflict keep recovery actions usable (393.0, 1.0)
+00:03 +19: /Users/lute/project/momcozy-lab/app/test/modules/profile/privacy_redesign_states_test.dart: overview and consent loads never show editable defaults (320.0, 2.0)
+00:03 +20: /Users/lute/project/momcozy-lab/app/test/modules/profile/privacy_redesign_states_test.dart: long service selection and large consent copy remain readable (320.0, 2.0)
+00:03 +21: /Users/lute/project/momcozy-lab/app/test/modules/profile/privacy_redesign_states_test.dart: explicit dialog close and cancel retain unsaved consent (320.0, 2.0)
+00:04 +22: /Users/lute/project/momcozy-lab/app/test/modules/profile/privacy_redesign_states_test.dart: partially committed required consent only retries unresolved scope (320.0, 2.0)
+00:04 +23: /Users/lute/project/momcozy-lab/app/test/modules/profile/privacy_redesign_states_test.dart: pending uncertain and conflict keep recovery actions usable (320.0, 2.0)
+00:04 +24: All tests passed!

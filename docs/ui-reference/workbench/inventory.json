@@ -1,0 +1,326 @@
+[
+  {
+    "file": "lib/app/ibclc/workbench_shell.dart",
+    "sha256": "bd2b8215cde98be2da520942d25eeaadfb271fda8c6854d3c3ed0c6f932363a4",
+    "widgets": [
+      "WorkbenchShell"
+    ],
+    "overlays": [
+      {
+        "line": 41,
+        "call": "showDialog"
+      }
+    ],
+    "routes": [],
+    "scope": "workbench-excluded",
+    "mapped_views": []
+  },
+  {
+    "file": "lib/app/ibclc/workbench_app.dart",
+    "sha256": "13d976a83c13e9409438c8d15f90bc75b1bf2b45f6c379793aa7f7d1ea04c28d",
+    "widgets": [
+      "MomCozyWorkbenchApp",
+      "_MomCozyWorkbenchAppState"
+    ],
+    "overlays": [],
+    "routes": [
+      {
+        "line": 92,
+        "path": "/ibclc/login"
+      },
+      {
+        "line": 114,
+        "path": "/"
+      },
+      {
+        "line": 115,
+        "path": "/ibclc"
+      },
+      {
+        "line": 117,
+        "path": "/ibclc/login"
+      },
+      {
+        "line": 123,
+        "path": "/ibclc/appointments/:appointmentId/room"
+      },
+      {
+        "line": 147,
+        "path": "/ibclc/appointments/:appointmentId/:document(note|plan)"
+      },
+      {
+        "line": 183,
+        "path": "/ibclc/followups"
+      },
+      {
+        "line": 201,
+        "path": "/ibclc/followups"
+      },
+      {
+        "line": 215,
+        "path": "/ibclc/followups/:patientRef"
+      },
+      {
+        "line": 235,
+        "path": "/ibclc/followups/$id"
+      },
+      {
+        "line": 246,
+        "path": "/ibclc/reminders"
+      },
+      {
+        "line": 258,
+        "path": "/ibclc/appointments"
+      },
+      {
+        "line": 270,
+        "path": "/ibclc/calendar"
+      },
+      {
+        "line": 282,
+        "path": "/ibclc/clients"
+      },
+      {
+        "line": 293,
+        "path": "/ibclc/clients/:patientRef"
+      },
+      {
+        "line": 304,
+        "path": "/ibclc/followups/$id"
+      },
+      {
+        "line": 313,
+        "path": "/ibclc/appointments/:appointmentId/intake"
+      }
+    ],
+    "scope": "workbench-excluded",
+    "mapped_views": []
+  },
+  {
+    "file": "lib/shared/widgets/month_selector.dart",
+    "sha256": "5582175e761caa93e2a6084c35220689aafa7c9d70655b1798062d8ee8642b8f",
+    "widgets": [
+      "MonthSelector"
+    ],
+    "overlays": [],
+    "routes": [],
+    "scope": "workbench-excluded",
+    "mapped_views": []
+  },
+  {
+    "file": "lib/modules/consultation/presentation/device_preview_dialog.dart",
+    "sha256": "2417d0a50171f0506232341d600ffc8da06c1dda4f47a43cbdb268c681bf70e3",
+    "widgets": [
+      "ConsultationDevicePreviewDialog",
+      "_ConsultationDevicePreviewDialogState"
+    ],
+    "overlays": [],
+    "routes": [],
+    "scope": "workbench-excluded",
+    "mapped_views": []
+  },
+  {
+    "file": "lib/modules/ibclc/documentation/presentation/documentation_editors.dart",
+    "sha256": "9b44c1dd2d4f59c7561c7e2bab3ef5c669367b84e3312573f080724057d95642",
+    "widgets": [
+      "DocumentationField",
+      "ClinicalNoteEditor",
+      "CarePlanEditor",
+      "_PlanTaskEditor"
+    ],
+    "overlays": [
+      {
+        "line": 214,
+        "call": "showDatePicker"
+      }
+    ],
+    "routes": [],
+    "scope": "workbench-excluded",
+    "mapped_views": []
+  },
+  {
+    "file": "lib/modules/ibclc/documentation/presentation/documentation_page.dart",
+    "sha256": "3f44dee55cb8a60f323d94d93557083ed9352fae640d7e99ce267665e78ee9b5",
+    "widgets": [
+      "DocumentationPage",
+      "_DocumentationPageState",
+      "_AmendDialog",
+      "_AmendDialogState"
+    ],
+    "overlays": [
+      {
+        "line": 72,
+        "call": "showDialog"
+      },
+      {
+        "line": 136,
+        "call": "showDialog"
+      },
+      {
+        "line": 150,
+        "call": "showDialog"
+      }
+    ],
+    "routes": [],
+    "scope": "workbench-excluded",
+    "mapped_views": []
+  },
+  {
+    "file": "lib/modules/ibclc/schedule/presentation/calendar_page.dart",
+    "sha256": "93caf4323684137194435290c99ef0f1ddbe00e5ddf1758932c583781efbd949",
+    "widgets": [
+      "WorkbenchCalendarPage",
+      "_WorkbenchCalendarPageState",
+      "_WeekTimeline",
+      "_CalendarEvent"
+    ],
+    "overlays": [],
+    "routes": [],
+    "scope": "workbench-excluded",
+    "mapped_views": []
+  },
+  {
+    "file": "lib/modules/ibclc/followup/presentation/followups_page.dart",
+    "sha256": "ef263e046920f988a8042e89539db32caf89cba512d44cd71b72deb165fa5daa",
+    "widgets": [
+      "WorkbenchFollowupsPage",
+      "_WorkbenchFollowupsPageState",
+      "_ClientRow"
+    ],
+    "overlays": [],
+    "routes": [],
+    "scope": "workbench-excluded",
+    "mapped_views": []
+  },
+  {
+    "file": "lib/modules/ibclc/appointments/presentation/intake_review_page.dart",
+    "sha256": "6b924223540c9453c60819bfada723e320eec15dbe2f75b3a3e92c918b4c3ec8",
+    "widgets": [
+      "IntakeReviewPage",
+      "_IntakeReviewPageState",
+      "_Field"
+    ],
+    "overlays": [],
+    "routes": [],
+    "scope": "workbench-excluded",
+    "mapped_views": []
+  },
+  {
+    "file": "lib/modules/ibclc/appointments/presentation/appointments_page.dart",
+    "sha256": "1aa13a089ad400d8663d3f2a73cc770dc932e00a08e4469952c78de106293883",
+    "widgets": [
+      "WorkbenchAppointmentsPage",
+      "_WorkbenchAppointmentsPageState",
+      "WorkbenchAppointmentList"
+    ],
+    "overlays": [
+      {
+        "line": 64,
+        "call": "showDatePicker"
+      }
+    ],
+    "routes": [],
+    "scope": "workbench-excluded",
+    "mapped_views": []
+  },
+  {
+    "file": "lib/modules/ibclc/auth/presentation/workbench_login_page.dart",
+    "sha256": "86a354f219ec5908da365ecb3598371b0efe1c1b37d028f5403a12e472962dae",
+    "widgets": [
+      "WorkbenchLoginPage",
+      "_WorkbenchLoginPageState"
+    ],
+    "overlays": [],
+    "routes": [],
+    "scope": "workbench-excluded",
+    "mapped_views": []
+  },
+  {
+    "file": "lib/modules/ibclc/shared/workbench_widgets.dart",
+    "sha256": "23278b6ab2b478e878bd0ca1a07d94eae88d633bed15cd6f2049754220a1796f",
+    "widgets": [
+      "WorkbenchPageBody",
+      "WorkbenchHeading",
+      "WorkbenchPagination",
+      "WorkbenchBadge"
+    ],
+    "overlays": [],
+    "routes": [],
+    "scope": "workbench-excluded",
+    "mapped_views": []
+  },
+  {
+    "file": "lib/modules/ibclc/users/presentation/clients_page.dart",
+    "sha256": "204298d1b1587f060285eaecb4390a5b2ceeddda861ed48e6a2ff23c0ead4379",
+    "widgets": [
+      "WorkbenchClientsPage",
+      "_WorkbenchClientsPageState",
+      "WorkbenchClientPage",
+      "_WorkbenchClientPageState",
+      "_ServiceCard"
+    ],
+    "overlays": [],
+    "routes": [],
+    "scope": "workbench-excluded",
+    "mapped_views": []
+  },
+  {
+    "file": "lib/modules/ibclc/reminders/presentation/reminders_page.dart",
+    "sha256": "6eea0b0a52a24d4c7bb9f72c16ef34cedd11bdd958387491ab197a941adc1a6d",
+    "widgets": [
+      "WorkbenchRemindersPage",
+      "_WorkbenchRemindersPageState"
+    ],
+    "overlays": [],
+    "routes": [],
+    "scope": "workbench-excluded",
+    "mapped_views": []
+  },
+  {
+    "file": "lib/modules/ibclc/reports/presentation/report_page.dart",
+    "sha256": "a7e7f74f6af8c7ebd7a8b8c11345637a2d170114deb4c43acb8639cf714bd90b",
+    "widgets": [
+      "WorkbenchReportPage",
+      "_WorkbenchReportPageState"
+    ],
+    "overlays": [
+      {
+        "line": 63,
+        "call": "showDialog"
+      }
+    ],
+    "routes": [],
+    "scope": "workbench-excluded",
+    "mapped_views": []
+  },
+  {
+    "file": "lib/modules/ibclc/reports/presentation/feedback_dialog.dart",
+    "sha256": "1b624d48c23f04bd8b6c9016b50faf7941b23bebd5410c09898020ac9a6cf899",
+    "widgets": [
+      "ReportFeedbackDialog",
+      "_ReportFeedbackDialogState"
+    ],
+    "overlays": [],
+    "routes": [],
+    "scope": "workbench-excluded",
+    "mapped_views": []
+  },
+  {
+    "file": "lib/modules/ibclc/reports/presentation/report_content.dart",
+    "sha256": "32f69f94bb3311c211e1033a84b24786733b04065597ab00fdd74b0394d4e98f",
+    "widgets": [
+      "ReportSection",
+      "ReportFindings",
+      "ReportDialogueList"
+    ],
+    "overlays": [
+      {
+        "line": 57,
+        "call": "showDialog"
+      }
+    ],
+    "routes": [],
+    "scope": "workbench-excluded",
+    "mapped_views": []
+  }
+]

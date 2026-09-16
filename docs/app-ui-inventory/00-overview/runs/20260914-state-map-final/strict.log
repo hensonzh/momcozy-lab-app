@@ -1,0 +1,5 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/modules/mom/diary_loading_inventory_test.dart
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: video long duration, controls and fullscreen 390.0 / 1.0
+00:00 +1: /Users/lute/project/momcozy-lab/app/test/modules/services/intake_test.dart: inventory intake server consent validation
+00:00 +2: /Users/lute/project/momcozy-lab/app/test/modules/services/intake_test.dart: inventory intake server consent validation
+00:01 +3: All tests passed!

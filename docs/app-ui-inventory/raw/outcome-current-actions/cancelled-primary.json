@@ -1,0 +1,11 @@
+{
+  "outcome": "cancelled",
+  "source": "test/goldens/ui_inventory/consultation-journey-current-cancelled-outcome-393.png",
+  "destinations": [
+    {
+      "button": "查看咨询总结",
+      "route": "/services/appointments/service-appointment/summary"
+    }
+  ],
+  "evidence": "Actual visible CTA taps and production router assertions; isolated HTTP/device boundaries"
+}

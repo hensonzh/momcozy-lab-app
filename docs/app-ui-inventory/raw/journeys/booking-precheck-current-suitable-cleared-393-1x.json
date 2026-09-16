@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/booking-precheck-current-suitable-cleared-393-1x.png",
+  "previous_source": "test/goldens/ui_inventory/booking-precheck-current-ready-393-1x.png",
+  "route": "/services/episodes/service-episode/booking",
+  "trigger": "Uncheck service suitability → continue disabled",
+  "root_entry": "Authenticated More → tap Me bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/services/booking_precheck_current_inventory_test.dart"
+}

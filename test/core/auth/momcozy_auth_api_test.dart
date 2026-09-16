@@ -33,22 +33,25 @@ void main() {
       expect(tokens.user.displayName, 'Test User');
     });
 
-    test('register sends mailbox verification request without profile fields', () async {
-      final transport = FixtureApiJsonTransport(_tokenResponse());
-      final repository = MomCozyAuthApiRepository(transport: transport);
+    test(
+      'register sends mailbox verification request without profile fields',
+      () async {
+        final transport = FixtureApiJsonTransport(_tokenResponse());
+        final repository = MomCozyAuthApiRepository(transport: transport);
 
-      await repository.register(
-        email: 'new@example.test',
-        password: 'strong-password',
-      );
+        await repository.register(
+          email: 'new@example.test',
+          password: 'strong-password',
+        );
 
-      expect(transport.lastPath, '/v1/auth/register');
-      expect(transport.lastBody, {
-        'email': 'new@example.test',
-        'password': 'strong-password',
-      });
-      expect(transport.lastBody, isNot(containsPair('device_id', anything)));
-    });
+        expect(transport.lastPath, '/v1/auth/register');
+        expect(transport.lastBody, {
+          'email': 'new@example.test',
+          'password': 'strong-password',
+        });
+        expect(transport.lastBody, isNot(containsPair('device_id', anything)));
+      },
+    );
 
     test('invite login posts invite code and device id', () async {
       final transport = FixtureApiJsonTransport(_tokenResponse());

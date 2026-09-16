@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/schedule-journey-appointment-expired-intake-393.png",
+  "previous_source": "test/goldens/ui_inventory/schedule-journey-appointment-expired-route-393.png",
+  "route": "/services/appointments/service-appointment/intake",
+  "trigger": "Preparation intake link → actual intake route for expired",
+  "root_entry": "Authenticated More → tap Schedule bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/schedule/schedule_inventory_journey_test.dart"
+}

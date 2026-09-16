@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/baby-journey-stool-red-393.png",
+  "previous_source": "test/goldens/ui_inventory/baby-journey-stool-tab-393.png",
+  "route": "/baby",
+  "trigger": "Choose red stool color → recorded color and guidance",
+  "root_entry": "Authenticated More → tap Baby bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/baby/baby_inventory_journey_test.dart"
+}

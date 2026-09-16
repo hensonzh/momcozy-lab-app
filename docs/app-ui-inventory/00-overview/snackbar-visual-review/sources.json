@@ -1,0 +1,258 @@
+{
+  "sources": [
+    {
+      "source": "raw/test/goldens/ui_inventory/agent-attachment-journey-image-remove-failed-320-2x.png",
+      "sha256": "df4a6217e9c84ecb2af220577085f08aeeea3a2406296bfad6889902514e6308",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b8f236a7a128784c310da3c3641f88cea01733996a220d7ff467b49ab53a46e4",
+          "review": "sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a0b141e1c0f2ded3c22a5b66814d6c7c2818a122e453279224244f5565c446fd",
+          "review": "sheet-01.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/agent-attachment-journey-image-remove-failed-320-2x.long.png",
+      "sha256": "97c468cc08dfc946e54885223df53f49ce8cc0e13ec4df18549aa517bfaa80a5",
+      "width": 320,
+      "height": 1252,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "4454991eeb69aa898b36bbd7cda2d37bc62dd3062d738da6699d21ebdf3e2ba0",
+          "review": "sheet-01.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1252,
+          "pixel_sha256": "4a5ee36455d6844a72df48f806dadbf234235dab87c84cbb5a9d4f3a5fee2d4d",
+          "review": "sheet-01.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/schedule-journey-delete-conflict-393.png",
+      "sha256": "343db153c83bae29adea9fd9740c8c0d852e4d2dbf90a7724f50acc4a0caf1cf",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "fe8740f4afa44123ecb365aeb4ccc78ce2a98164cd09a1eae2b0954533cce856",
+          "review": "sheet-01.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "4fb83cd44f91585bd939049346ea73c7b731560819bfda893ebb77709c140c93",
+          "review": "sheet-01.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/schedule-journey-delete-conflict-393.long.png",
+      "sha256": "a3524bf135e90e39accb6d36c1e92b1daf7c2aa7cfb1670de14a38e04122609f",
+      "width": 393,
+      "height": 942,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "56f40cffc931a1e67eda827899f28df8646e9de2d8d7c996f40a6197b3ad0239",
+          "review": "sheet-02.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 942,
+          "pixel_sha256": "671f46f81eb8e86c2b7cb41814b43dc3a14e41c01c94732c18bde9bdd4392ead",
+          "review": "sheet-02.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/agent-entry-journey-external-thrown-393.png",
+      "sha256": "e799a8af072ddcc271ec4972f47c56e2ed7eb6baa7872c6d4809ef264010c926",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "178dc86c28565ed5040023ba478d8bb15d2715525594da42307989b1e04b06d9",
+          "review": "sheet-02.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "69e9ab2a30a58a4a78744c3f693ef44068314db7de3be1958073b91d893d0134",
+          "review": "sheet-02.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/agent-entry-journey-external-thrown-393.long.png",
+      "sha256": "8225768108a60b8650b2d9a63dbfaccd7d64a4cd869a9fa82e127bfaa3dffd58",
+      "width": 393,
+      "height": 858,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "d305375a304588267da70be3fa1a223711255a1cfd0eb9ba267a56d848aa1615",
+          "review": "sheet-02.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 858,
+          "pixel_sha256": "7ba1f77f96bfe4ddc191242f794778e0d0d405d905fdb479a49499aae113fa07",
+          "review": "sheet-02.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/agent-entry-journey-external-failed-393.png",
+      "sha256": "e799a8af072ddcc271ec4972f47c56e2ed7eb6baa7872c6d4809ef264010c926",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "178dc86c28565ed5040023ba478d8bb15d2715525594da42307989b1e04b06d9",
+          "review": "sheet-02.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "69e9ab2a30a58a4a78744c3f693ef44068314db7de3be1958073b91d893d0134",
+          "review": "sheet-02.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/agent-entry-journey-external-failed-393.long.png",
+      "sha256": "8225768108a60b8650b2d9a63dbfaccd7d64a4cd869a9fa82e127bfaa3dffd58",
+      "width": 393,
+      "height": 858,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "d305375a304588267da70be3fa1a223711255a1cfd0eb9ba267a56d848aa1615",
+          "review": "sheet-02.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 858,
+          "pixel_sha256": "7ba1f77f96bfe4ddc191242f794778e0d0d405d905fdb479a49499aae113fa07",
+          "review": "sheet-02.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/agent-entry-journey-external-failed-320-2x.png",
+      "sha256": "46caed95da57c9fe1e8d7a425186d319870315d478d8383a63ab64e9e45460a2",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "1025e96edc082db224e1ad9d196e990eda3ff6ede0ef9102f221f77eebfe668b",
+          "review": "sheet-03.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "9a7cf38326dc15d83ba8cbf88533f39bbc0ae89f3c99e4efcb1512fe8871744f",
+          "review": "sheet-03.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/agent-entry-journey-external-failed-320-2x.long.png",
+      "sha256": "551e62880f9e8e5f547acdb1711c455733c597275b63f78277716a4a5b884209",
+      "width": 320,
+      "height": 1754,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "1cf80a5c50068b2e7a70353093b89b71c4bf0054d97c9a0db2b8b6bd564b6139",
+          "review": "sheet-03.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "1082e604b58ad0a23df99dd1148ea70d4ab1444e87e0554c9b7c118fadf78f89",
+          "review": "sheet-03.png#tile-3"
+        },
+        {
+          "y0": 1300,
+          "y1": 1754,
+          "pixel_sha256": "1e81cf4b45ca559be1bc213a9ec5cfa272c66665eecb4d2d3e5e5a1825c1aa78",
+          "review": "sheet-03.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/agent-entry-journey-external-thrown-320-2x.png",
+      "sha256": "46caed95da57c9fe1e8d7a425186d319870315d478d8383a63ab64e9e45460a2",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "1025e96edc082db224e1ad9d196e990eda3ff6ede0ef9102f221f77eebfe668b",
+          "review": "sheet-03.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "9a7cf38326dc15d83ba8cbf88533f39bbc0ae89f3c99e4efcb1512fe8871744f",
+          "review": "sheet-03.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/agent-entry-journey-external-thrown-320-2x.long.png",
+      "sha256": "551e62880f9e8e5f547acdb1711c455733c597275b63f78277716a4a5b884209",
+      "width": 320,
+      "height": 1754,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "1cf80a5c50068b2e7a70353093b89b71c4bf0054d97c9a0db2b8b6bd564b6139",
+          "review": "sheet-03.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "1082e604b58ad0a23df99dd1148ea70d4ab1444e87e0554c9b7c118fadf78f89",
+          "review": "sheet-03.png#tile-3"
+        },
+        {
+          "y0": 1300,
+          "y1": 1754,
+          "pixel_sha256": "1e81cf4b45ca559be1bc213a9ec5cfa272c66665eecb4d2d3e5e5a1825c1aa78",
+          "review": "sheet-03.png#tile-4"
+        }
+      ]
+    }
+  ],
+  "unique_segments": 17,
+  "new_sheets": 3
+}

@@ -1,0 +1,401 @@
+[
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-voice-journey-greeting-failed-320-2x.long.png",
+    "sha256": "eada90c50ed0630ad413224e882bb454eef898e9b4bf8da6aa07885cea2cab9c",
+    "y_start": 0,
+    "y_end": 950,
+    "sheet": "narrow-1.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-voice-journey-greeting-failed-320-2x.long.png",
+    "sha256": "eada90c50ed0630ad413224e882bb454eef898e9b4bf8da6aa07885cea2cab9c",
+    "y_start": 950,
+    "y_end": 1307,
+    "sheet": "narrow-1.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-voice-journey-greeting-failed-320-2x.png",
+    "sha256": "ec2c2f6b57504563507d8376944c208729f3d1a665934906c63a63ede5dfb65c",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-1.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-voice-journey-greeting-finished-320-2x.long.png",
+    "sha256": "bce13849d62422f3724239ce20d23a22d5e32d5a7d5434b9c5185e3341acf869",
+    "y_start": 0,
+    "y_end": 950,
+    "sheet": "narrow-1.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-voice-journey-greeting-finished-320-2x.long.png",
+    "sha256": "bce13849d62422f3724239ce20d23a22d5e32d5a7d5434b9c5185e3341acf869",
+    "y_start": 950,
+    "y_end": 1173,
+    "sheet": "narrow-1.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-voice-journey-greeting-finished-320-2x.png",
+    "sha256": "ab4fb06747d5d8335988e84f020033d0372dd9c97cd4d31856ddadcf39a512ac",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-1.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-voice-journey-greeting-finished-away-320-2x.png",
+    "sha256": "feee4d506ac1bef973428daf2906121e24ef6412509098c203c180d745777dd0",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-1.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-voice-journey-greeting-finished-return-320-2x.long.png",
+    "sha256": "bce13849d62422f3724239ce20d23a22d5e32d5a7d5434b9c5185e3341acf869",
+    "y_start": 0,
+    "y_end": 950,
+    "sheet": "narrow-1.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-voice-journey-greeting-finished-return-320-2x.long.png",
+    "sha256": "bce13849d62422f3724239ce20d23a22d5e32d5a7d5434b9c5185e3341acf869",
+    "y_start": 950,
+    "y_end": 1173,
+    "sheet": "narrow-2.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-voice-journey-greeting-finished-return-320-2x.png",
+    "sha256": "ab4fb06747d5d8335988e84f020033d0372dd9c97cd4d31856ddadcf39a512ac",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-2.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-voice-journey-greeting-playing-320-2x.long.png",
+    "sha256": "9c442884de5b6a5b487a260eb427e28dc74850382a82b7cbfbd955b5fc3e9e21",
+    "y_start": 0,
+    "y_end": 950,
+    "sheet": "narrow-2.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-voice-journey-greeting-playing-320-2x.long.png",
+    "sha256": "9c442884de5b6a5b487a260eb427e28dc74850382a82b7cbfbd955b5fc3e9e21",
+    "y_start": 950,
+    "y_end": 1173,
+    "sheet": "narrow-2.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-voice-journey-greeting-playing-320-2x.png",
+    "sha256": "d8e249243bdb3fb2a93a018808660471d37864308dcee1dfd0375e654b73e236",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-2.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-voice-journey-greeting-replaying-320-2x.long.png",
+    "sha256": "9c442884de5b6a5b487a260eb427e28dc74850382a82b7cbfbd955b5fc3e9e21",
+    "y_start": 0,
+    "y_end": 950,
+    "sheet": "narrow-2.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-voice-journey-greeting-replaying-320-2x.long.png",
+    "sha256": "9c442884de5b6a5b487a260eb427e28dc74850382a82b7cbfbd955b5fc3e9e21",
+    "y_start": 950,
+    "y_end": 1173,
+    "sheet": "narrow-2.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-voice-journey-greeting-replaying-320-2x.png",
+    "sha256": "d8e249243bdb3fb2a93a018808660471d37864308dcee1dfd0375e654b73e236",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-2.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-voice-journey-keyboard-dismissed-320-2x.long.png",
+    "sha256": "378715fc6e3a2d2bc3aba20ca3e97465831d85741bc3ff244ceff7593fb48cff",
+    "y_start": 0,
+    "y_end": 950,
+    "sheet": "narrow-3.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-voice-journey-keyboard-dismissed-320-2x.long.png",
+    "sha256": "378715fc6e3a2d2bc3aba20ca3e97465831d85741bc3ff244ceff7593fb48cff",
+    "y_start": 950,
+    "y_end": 1355,
+    "sheet": "narrow-3.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-voice-journey-keyboard-dismissed-320-2x.png",
+    "sha256": "8b08c2e4546db197f68927efa460908fe746e43b83cb6022b40faa719e1b0c84",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-3.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-voice-journey-keyboard-failed-320-2x.long.png",
+    "sha256": "6ee0b24b3d2d368f96ff560b18a5a5a3bf52781ed229346883b3e39d95edc24a",
+    "y_start": 0,
+    "y_end": 950,
+    "sheet": "narrow-3.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-voice-journey-keyboard-failed-320-2x.long.png",
+    "sha256": "6ee0b24b3d2d368f96ff560b18a5a5a3bf52781ed229346883b3e39d95edc24a",
+    "y_start": 950,
+    "y_end": 1381,
+    "sheet": "narrow-3.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-voice-journey-keyboard-failed-320-2x.png",
+    "sha256": "a99dc2f8347a33a802ac1b091960f35273bba20ad75bb56a0bdc46a9ea70b3c7",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-3.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-voice-journey-new-greeting-off-320-2x.long.png",
+    "sha256": "960904bcda5457929c8cf0aedca96e3892caee651dc3adf1f4cae6d7854cf8ef",
+    "y_start": 0,
+    "y_end": 950,
+    "sheet": "narrow-3.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-voice-journey-new-greeting-off-320-2x.long.png",
+    "sha256": "960904bcda5457929c8cf0aedca96e3892caee651dc3adf1f4cae6d7854cf8ef",
+    "y_start": 950,
+    "y_end": 1173,
+    "sheet": "narrow-3.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-voice-journey-new-greeting-off-320-2x.png",
+    "sha256": "27028a8488a3d19e323920be48a5f490721a9fa40bb64973c6690319454009f1",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-4.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-voice-journey-new-greeting-off-away-320-2x.png",
+    "sha256": "feee4d506ac1bef973428daf2906121e24ef6412509098c203c180d745777dd0",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-4.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-voice-journey-new-greeting-off-return-320-2x.long.png",
+    "sha256": "960904bcda5457929c8cf0aedca96e3892caee651dc3adf1f4cae6d7854cf8ef",
+    "y_start": 0,
+    "y_end": 950,
+    "sheet": "narrow-4.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-voice-journey-new-greeting-off-return-320-2x.long.png",
+    "sha256": "960904bcda5457929c8cf0aedca96e3892caee651dc3adf1f4cae6d7854cf8ef",
+    "y_start": 950,
+    "y_end": 1173,
+    "sheet": "narrow-4.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-voice-journey-new-greeting-off-return-320-2x.png",
+    "sha256": "27028a8488a3d19e323920be48a5f490721a9fa40bb64973c6690319454009f1",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-4.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-voice-journey-new-greeting-playing-320-2x.long.png",
+    "sha256": "9c442884de5b6a5b487a260eb427e28dc74850382a82b7cbfbd955b5fc3e9e21",
+    "y_start": 0,
+    "y_end": 950,
+    "sheet": "narrow-4.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-voice-journey-new-greeting-playing-320-2x.long.png",
+    "sha256": "9c442884de5b6a5b487a260eb427e28dc74850382a82b7cbfbd955b5fc3e9e21",
+    "y_start": 950,
+    "y_end": 1173,
+    "sheet": "narrow-4.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-voice-journey-new-greeting-playing-320-2x.png",
+    "sha256": "d8e249243bdb3fb2a93a018808660471d37864308dcee1dfd0375e654b73e236",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-4.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-voice-journey-reply-ended-failed-320-2x.long.png",
+    "sha256": "3258818d233bedc2745f79028a0b641f3997cfb06495b146bb4be4844ae26910",
+    "y_start": 0,
+    "y_end": 950,
+    "sheet": "narrow-5.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-voice-journey-reply-ended-failed-320-2x.long.png",
+    "sha256": "3258818d233bedc2745f79028a0b641f3997cfb06495b146bb4be4844ae26910",
+    "y_start": 950,
+    "y_end": 1611,
+    "sheet": "narrow-5.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-voice-journey-reply-ended-failed-320-2x.png",
+    "sha256": "483faf9279d02b34d3fa25fb152bab35d5fb6ea77087eecf8987756bc3589767",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-5.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-voice-journey-reply-off-320-2x.long.png",
+    "sha256": "00775c08ea3108fb01a1101adb16dbbfc8e0dba4ee995939c0dae7c366ceaf72",
+    "y_start": 0,
+    "y_end": 950,
+    "sheet": "narrow-5.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-voice-journey-reply-off-320-2x.long.png",
+    "sha256": "00775c08ea3108fb01a1101adb16dbbfc8e0dba4ee995939c0dae7c366ceaf72",
+    "y_start": 950,
+    "y_end": 1477,
+    "sheet": "narrow-5.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-voice-journey-reply-off-320-2x.png",
+    "sha256": "d22ed0bffc00f8dee0328dd698f4d550a719be7d52d44e047ad03225e54649dd",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-5.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-voice-journey-reply-on-320-2x.long.png",
+    "sha256": "c8bead666eec7b90235348b4262306cd01de76fd6ec2bf6fb7e514dcb7157c15",
+    "y_start": 0,
+    "y_end": 950,
+    "sheet": "narrow-5.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-voice-journey-reply-on-320-2x.long.png",
+    "sha256": "c8bead666eec7b90235348b4262306cd01de76fd6ec2bf6fb7e514dcb7157c15",
+    "y_start": 950,
+    "y_end": 1477,
+    "sheet": "narrow-5.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-voice-journey-reply-on-320-2x.png",
+    "sha256": "eb9cc8d7518f6703f0e8e2caaec19edd26e59cd48e131d6b06899af7d0046b20",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-6.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-voice-journey-reply-on-away-320-2x.png",
+    "sha256": "feee4d506ac1bef973428daf2906121e24ef6412509098c203c180d745777dd0",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-6.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-voice-journey-reply-on-return-320-2x.long.png",
+    "sha256": "c8bead666eec7b90235348b4262306cd01de76fd6ec2bf6fb7e514dcb7157c15",
+    "y_start": 0,
+    "y_end": 950,
+    "sheet": "narrow-6.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-voice-journey-reply-on-return-320-2x.long.png",
+    "sha256": "c8bead666eec7b90235348b4262306cd01de76fd6ec2bf6fb7e514dcb7157c15",
+    "y_start": 950,
+    "y_end": 1477,
+    "sheet": "narrow-6.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-voice-journey-reply-on-return-320-2x.png",
+    "sha256": "eb9cc8d7518f6703f0e8e2caaec19edd26e59cd48e131d6b06899af7d0046b20",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-6.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-voice-journey-reply-replaying-320-2x.long.png",
+    "sha256": "c7603d14bfa2ed548534d3f4f636958e5a68c4458d99f4758815e9adee5d7690",
+    "y_start": 0,
+    "y_end": 950,
+    "sheet": "narrow-6.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-voice-journey-reply-replaying-320-2x.long.png",
+    "sha256": "c7603d14bfa2ed548534d3f4f636958e5a68c4458d99f4758815e9adee5d7690",
+    "y_start": 950,
+    "y_end": 1477,
+    "sheet": "narrow-6.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-voice-journey-reply-replaying-320-2x.png",
+    "sha256": "656d4e8235d4d32ce260cb7c036c442a531278aa7d35e3f6ec5a4b58b55966ad",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-6.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-voice-journey-reply-stream-failed-320-2x.long.png",
+    "sha256": "ae41271260b35c08974fb7120561ee2c4dc1d948bd7cf5c920ca08cfd77c4054",
+    "y_start": 0,
+    "y_end": 950,
+    "sheet": "narrow-7.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-voice-journey-reply-stream-failed-320-2x.long.png",
+    "sha256": "ae41271260b35c08974fb7120561ee2c4dc1d948bd7cf5c920ca08cfd77c4054",
+    "y_start": 950,
+    "y_end": 1656,
+    "sheet": "narrow-7.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-voice-journey-reply-stream-failed-320-2x.png",
+    "sha256": "256b18c8208f6d261c8f94e4421fa3563d20e80c70790c5ba23ebef98197200f",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-7.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-voice-journey-reply-stream-playing-320-2x.long.png",
+    "sha256": "4a9f3afc0492a24e5963ac06c510ad4c7c2f4eece6eab8b2fff0a2bf2ce407b9",
+    "y_start": 0,
+    "y_end": 950,
+    "sheet": "narrow-7.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-voice-journey-reply-stream-playing-320-2x.long.png",
+    "sha256": "4a9f3afc0492a24e5963ac06c510ad4c7c2f4eece6eab8b2fff0a2bf2ce407b9",
+    "y_start": 950,
+    "y_end": 1522,
+    "sheet": "narrow-7.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-voice-journey-reply-stream-playing-320-2x.png",
+    "sha256": "426228f70b49d549975e7c0a5bcaa33e2ab9f03e635c2db8763b88c260c37ea8",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-7.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-voice-journey-reply-waiting-320-2x.long.png",
+    "sha256": "9ff45db3ea5dd50bc0ea8d00e04274ab58afd33dc2a2320eb4e6ff92b4f4a890",
+    "y_start": 0,
+    "y_end": 950,
+    "sheet": "narrow-7.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-voice-journey-reply-waiting-320-2x.long.png",
+    "sha256": "9ff45db3ea5dd50bc0ea8d00e04274ab58afd33dc2a2320eb4e6ff92b4f4a890",
+    "y_start": 950,
+    "y_end": 1415,
+    "sheet": "narrow-7.jpg"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/agent-voice-journey-reply-waiting-320-2x.png",
+    "sha256": "e139a45eff4d965265a5526ed33a562726b29d78722652135fd6e26f94cd7ea8",
+    "y_start": 0,
+    "y_end": 844,
+    "sheet": "narrow-8.jpg"
+  }
+]

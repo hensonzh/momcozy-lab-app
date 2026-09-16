@@ -1,0 +1,67 @@
+{
+  "ro.build.version.release": "17",
+  "ro.build.version.sdk": "37",
+  "ro.product.model": "sdk_gphone16k_arm64",
+  "package": "com.momcozymai.app.flutterpoc.local",
+  "package_versions": [
+    "versionCode=57 minSdk=24 targetSdk=36",
+    "versionName=1.0.0"
+  ],
+  "steps": [
+    {
+      "state": "more-entry",
+      "action": "Baby tab → tap More bottom navigation",
+      "previous": null,
+      "scope": "Current App",
+      "png": "more-entry.png",
+      "xml": "more-entry.xml",
+      "sha256": "5c462212e802c19ea7865f290f61df6d95e2b84df1d41ff8519688a1edeb4b7f"
+    },
+    {
+      "state": "inbox-empty",
+      "action": "More → tap 通知",
+      "previous": "more-entry",
+      "scope": "Current App",
+      "png": "inbox-empty.png",
+      "xml": "inbox-empty.xml",
+      "sha256": "f0910bc88c3cc8911afb20eedbcc16ee966149bbdc24a34b6a977c4faa68573a"
+    },
+    {
+      "state": "settings-not-requested",
+      "action": "Inbox toolbar → Notification settings",
+      "previous": "inbox-empty",
+      "scope": "Current App",
+      "png": "settings-not-requested.png",
+      "xml": "settings-not-requested.xml",
+      "sha256": "543c2545f8089483fd5f400ecabc677e3df510d1118cfdf067ef9bde8a1b3ad9"
+    },
+    {
+      "state": "android-notifications-off",
+      "action": "App Settings button → Android app notification settings",
+      "previous": "settings-not-requested",
+      "scope": "Android system",
+      "png": "android-notifications-off.png",
+      "xml": "android-notifications-off.xml",
+      "sha256": "fe715e31f528dfef6b7155e64ca1f2676676b475ca90a1cfa2026e269686e1c3"
+    },
+    {
+      "state": "settings-return",
+      "action": "Android Back → App notification settings",
+      "previous": "android-notifications-off",
+      "scope": "Current App",
+      "png": "settings-return.png",
+      "xml": "settings-return.xml",
+      "sha256": "10811341a0c3cb7bb209e98fc497dbeb1e847c3b816c593a997edc9f76048db9"
+    },
+    {
+      "state": "returned-baby",
+      "action": "App back → inbox back → More → Baby",
+      "previous": "settings-return",
+      "scope": "Restoration viewport only",
+      "png": "returned-baby.png",
+      "xml": "returned-baby.xml",
+      "sha256": "1709869490d0872737c6a053b9efc678aaea34ce7e561e22c9c8be88e4bf0579"
+    }
+  ],
+  "restored": "Original Baby tab; no account logout, preference changes, permission toggle or notification sends."
+}

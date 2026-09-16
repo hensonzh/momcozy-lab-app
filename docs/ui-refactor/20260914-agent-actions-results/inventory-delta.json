@@ -1,0 +1,16 @@
+{
+  "observed_states": 2772,
+  "added": [],
+  "changed": [
+    "05-agent/agent-cards",
+    "05-agent/agent-form",
+    "05-agent/agent-markdown-link",
+    "05-agent/agent-voice-dismissed",
+    "05-agent/agent-voice-greeting-error",
+    "05-agent/agent-voice-off",
+    "05-agent/agent-voice-on",
+    "05-agent/agent-voice-reply-error",
+    "05-agent/agent-voice-stream-error"
+  ],
+  "removed": []
+}

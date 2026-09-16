@@ -1,0 +1,17 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/app/me_theme_test.dart
+00:00 +0: all native control families inherit the current Me visual language
+00:00 +0 -1: all native control families inherit the current Me visual language [E]
+  Expected: <21>
+    Actual: <22.0>
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 473:18  expect
+  test/app/me_theme_test.dart 13:7                    main.<fn>
+  
+00:00 +0 -1: Me-themed form remains usable at 320.0 with large text and keyboard
+00:00 +1 -1: Me-themed form remains usable at 390.0 with large text and keyboard
+00:00 +2 -1: Me-themed form remains usable at 430.0 with large text and keyboard
+00:00 +3 -1: Some tests failed.
+
+Failing tests:
+  /Users/lute/project/momcozy-lab/app/test/app/me_theme_test.dart: all native control families inherit the current Me visual language

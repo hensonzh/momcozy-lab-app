@@ -1,0 +1,16 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_entry_inventory_journey_test.dart
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/modules/consultation/home_consultation_inventory_journey_test.dart: (setUpAll)
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_entry_inventory_journey_test.dart: (setUpAll)
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/modules/consultation/home_consultation_inventory_journey_test.dart: inventory home consultation nested cancellation 393/1
+00:01 +1: /Users/lute/project/momcozy-lab/app/test/modules/consultation/home_consultation_inventory_journey_test.dart: inventory home consultation nested cancellation 393/1
+00:01 +2: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_entry_inventory_journey_test.dart: inventory artifact motion dead end posture_screen 393/1
+00:01 +3: /Users/lute/project/momcozy-lab/app/test/modules/consultation/home_consultation_inventory_journey_test.dart: inventory home consultation intake route and return 393/1
+00:01 +4: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_entry_inventory_journey_test.dart: inventory artifact external link failure and retry 393/1
+00:02 +5: /Users/lute/project/momcozy-lab/app/test/modules/consultation/home_consultation_inventory_journey_test.dart: inventory home consultation nested cancellation 320/2
+00:02 +6: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_entry_inventory_journey_test.dart: inventory artifact motion dead end forward_head 320/2
+00:02 +7: /Users/lute/project/momcozy-lab/app/test/modules/consultation/home_consultation_inventory_journey_test.dart: inventory home consultation intake route and return 320/2
+00:02 +8: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_entry_inventory_journey_test.dart: inventory artifact motion dead end posture_screen 320/2
+00:02 +9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_entry_inventory_journey_test.dart: inventory artifact motion dead end posture_screen 320/2
+00:03 +10: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_entry_inventory_journey_test.dart: inventory artifact external link failure and retry 320/2
+00:03 +11: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_entry_inventory_journey_test.dart: (tearDownAll)
+00:03 +11: All tests passed!

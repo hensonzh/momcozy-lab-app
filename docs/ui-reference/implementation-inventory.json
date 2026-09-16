@@ -1,0 +1,2251 @@
+[
+  {
+    "file": "lib/core/observability/momcozy_observability.dart",
+    "sha256": "f9e8e964dbab041804babc1038c5be0c2e04b4175ec0f2c12ad8c77625385f4f",
+    "widgets": [
+      "MomCozyRouteTelemetry",
+      "_MomCozyRouteTelemetryState"
+    ],
+    "overlays": [],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "common/navigation"
+    ]
+  },
+  {
+    "file": "lib/app/mom_module_routes.dart",
+    "sha256": "02b8f0d9fe9b08a9e5ad5c9f06faa5ce2ae72c26b91c00b521152589c15a40d0",
+    "widgets": [],
+    "overlays": [],
+    "routes": [
+      {
+        "line": 102,
+        "path": "/privacy"
+      },
+      {
+        "line": 109,
+        "path": "/notifications/settings"
+      },
+      {
+        "line": 110,
+        "path": "/services/appointments/:appointmentId"
+      },
+      {
+        "line": 115,
+        "path": "/services/appointments/:appointmentId/summary"
+      },
+      {
+        "line": 137,
+        "path": "/services/appointments/:appointmentId/room"
+      },
+      {
+        "line": 172,
+        "path": "/services/episodes/:episodeId/booking"
+      },
+      {
+        "line": 191,
+        "path": "/services/appointments/:appointmentId/intake"
+      },
+      {
+        "line": 211,
+        "path": "/me/diary"
+      },
+      {
+        "line": 227,
+        "path": "/me/lactation"
+      },
+      {
+        "line": 242,
+        "path": "/services"
+      },
+      {
+        "line": 252,
+        "path": "/services/episodes/:episodeId"
+      },
+      {
+        "line": 274,
+        "path": "/services/renew"
+      },
+      {
+        "line": 278,
+        "path": "/services/episodes/:episodeId/renew"
+      },
+      {
+        "line": 282,
+        "path": "/services/:packageId"
+      }
+    ],
+    "scope": "user-app",
+    "mapped_views": [
+      "common/navigation"
+    ]
+  },
+  {
+    "file": "lib/app/mom_bottom_navigation.dart",
+    "sha256": "b762f1e2b67b9febb2e5662d1d29125556dd8d08a6b485f64e42b08a63759dff",
+    "widgets": [
+      "MomCozyBottomNavigation"
+    ],
+    "overlays": [],
+    "routes": [
+      {
+        "line": 13,
+        "path": "/me"
+      },
+      {
+        "line": 14,
+        "path": "/baby"
+      },
+      {
+        "line": 15,
+        "path": "/"
+      },
+      {
+        "line": 18,
+        "path": "/schedule"
+      },
+      {
+        "line": 21,
+        "path": "/more"
+      }
+    ],
+    "scope": "user-app",
+    "mapped_views": [
+      "common/navigation"
+    ]
+  },
+  {
+    "file": "lib/app/momcozy_app.dart",
+    "sha256": "67c3e576f1cef9d7552e590057e097e401b2d6e89bc506632b6d6d714c23c0c4",
+    "widgets": [
+      "MomCozyFlutterApp",
+      "_MomCozyFlutterAppState",
+      "_BackendCapabilityUnavailablePage",
+      "MomCozyRouteShell",
+      "_MomCozyRouteShellState",
+      "MomCozyRoutePage",
+      "MomCozyNotFoundPage"
+    ],
+    "overlays": [],
+    "routes": [
+      {
+        "line": 300,
+        "path": "/account"
+      },
+      {
+        "line": 303,
+        "path": "/login"
+      },
+      {
+        "line": 313,
+        "path": "/onboarding"
+      },
+      {
+        "line": 323,
+        "path": "/avatar/review"
+      },
+      {
+        "line": 335,
+        "path": "/avatar/create"
+      },
+      {
+        "line": 459,
+        "path": "/onboarding"
+      },
+      {
+        "line": 483,
+        "path": "/login"
+      },
+      {
+        "line": 605,
+        "path": "/avatar/review"
+      },
+      {
+        "line": 871,
+        "path": "/404"
+      },
+      {
+        "line": 881,
+        "path": "/"
+      },
+      {
+        "line": 889,
+        "path": "/me"
+      },
+      {
+        "line": 897,
+        "path": "/baby"
+      },
+      {
+        "line": 905,
+        "path": "/schedule"
+      },
+      {
+        "line": 913,
+        "path": "/more"
+      },
+      {
+        "line": 921,
+        "path": "/notifications"
+      },
+      {
+        "line": 929,
+        "path": "/media-viewer"
+      }
+    ],
+    "scope": "user-app",
+    "mapped_views": [
+      "common/navigation",
+      "common/not-found"
+    ]
+  },
+  {
+    "file": "lib/app/baby_module_routes.dart",
+    "sha256": "7eb3022491b781b451e91ac8084b86b020ec71702991fc3ccef3f1866fa72ce6",
+    "widgets": [],
+    "overlays": [],
+    "routes": [
+      {
+        "line": 40,
+        "path": "/babies/:babyId/records"
+      }
+    ],
+    "scope": "user-app",
+    "mapped_views": [
+      "common/navigation"
+    ]
+  },
+  {
+    "file": "lib/app/ibclc/workbench_shell.dart",
+    "sha256": "bd2b8215cde98be2da520942d25eeaadfb271fda8c6854d3c3ed0c6f932363a4",
+    "widgets": [
+      "WorkbenchShell"
+    ],
+    "overlays": [
+      {
+        "line": 41,
+        "call": "showDialog"
+      }
+    ],
+    "routes": [],
+    "scope": "workbench-excluded",
+    "mapped_views": []
+  },
+  {
+    "file": "lib/app/ibclc/workbench_app.dart",
+    "sha256": "13d976a83c13e9409438c8d15f90bc75b1bf2b45f6c379793aa7f7d1ea04c28d",
+    "widgets": [
+      "MomCozyWorkbenchApp",
+      "_MomCozyWorkbenchAppState"
+    ],
+    "overlays": [],
+    "routes": [
+      {
+        "line": 92,
+        "path": "/ibclc/login"
+      },
+      {
+        "line": 114,
+        "path": "/"
+      },
+      {
+        "line": 115,
+        "path": "/ibclc"
+      },
+      {
+        "line": 117,
+        "path": "/ibclc/login"
+      },
+      {
+        "line": 123,
+        "path": "/ibclc/appointments/:appointmentId/room"
+      },
+      {
+        "line": 147,
+        "path": "/ibclc/appointments/:appointmentId/:document(note|plan)"
+      },
+      {
+        "line": 183,
+        "path": "/ibclc/followups"
+      },
+      {
+        "line": 201,
+        "path": "/ibclc/followups"
+      },
+      {
+        "line": 215,
+        "path": "/ibclc/followups/:patientRef"
+      },
+      {
+        "line": 235,
+        "path": "/ibclc/followups/$id"
+      },
+      {
+        "line": 246,
+        "path": "/ibclc/reminders"
+      },
+      {
+        "line": 258,
+        "path": "/ibclc/appointments"
+      },
+      {
+        "line": 270,
+        "path": "/ibclc/calendar"
+      },
+      {
+        "line": 282,
+        "path": "/ibclc/clients"
+      },
+      {
+        "line": 293,
+        "path": "/ibclc/clients/:patientRef"
+      },
+      {
+        "line": 304,
+        "path": "/ibclc/followups/$id"
+      },
+      {
+        "line": 313,
+        "path": "/ibclc/appointments/:appointmentId/intake"
+      }
+    ],
+    "scope": "workbench-excluded",
+    "mapped_views": []
+  },
+  {
+    "file": "lib/features/motion_assessment/data/motion_pose_platform.dart",
+    "sha256": "834cda02d33e88bea1d9c704c9e263d3a148ed30967c46774541877408207b44",
+    "widgets": [
+      "MotionPosePreview"
+    ],
+    "overlays": [],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "common/motion"
+    ]
+  },
+  {
+    "file": "lib/features/motion_assessment/presentation/motion_pose_overlay.dart",
+    "sha256": "3f70cf1eda17b7747e6de8d7f4c6a2613f1debe5a288bd4f6384c0fd5df0c4c8",
+    "widgets": [
+      "MotionPoseOverlay"
+    ],
+    "overlays": [],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "common/motion"
+    ]
+  },
+  {
+    "file": "lib/features/motion_assessment/presentation/motion_assessment_page.dart",
+    "sha256": "d468b161ab730a59add1646f94554099f1cc2caf21bc557ead4c06d3cecfc48e",
+    "widgets": [
+      "MotionAssessmentPage",
+      "_MotionAssessmentPageState"
+    ],
+    "overlays": [],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "common/motion"
+    ]
+  },
+  {
+    "file": "lib/features/app_pages/momcozy_feature_pages.dart",
+    "sha256": "3c0730ee31ab0b335b975e8fe9c3cc58d82c769e9e037d021794d89862ee2757",
+    "widgets": [
+      "MomCozyFeaturePage",
+      "_UnsupportedRoutePage"
+    ],
+    "overlays": [],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "common/navigation"
+    ]
+  },
+  {
+    "file": "lib/features/auth/presentation/invite_auth_page.dart",
+    "sha256": "c806e62fa3ee795b832d8598d99d56182fad5a3cf91ce574322fd1706b933783",
+    "widgets": [
+      "MomCozyInviteAuthPage",
+      "_MomCozyInviteAuthPageState"
+    ],
+    "overlays": [],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "auth/invite"
+    ]
+  },
+  {
+    "file": "lib/features/auth/presentation/auth_page.dart",
+    "sha256": "541f47f492ac2ea25786055e4c95ba3eabf85789e347c6420c2cfbd135d98cd3",
+    "widgets": [
+      "MomCozyAuthPage",
+      "_MomCozyAuthPageState",
+      "_AuthField"
+    ],
+    "overlays": [],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "auth/login",
+      "auth/register",
+      "auth/verify",
+      "auth/forgot",
+      "auth/reset",
+      "auth/language",
+      "auth/legal"
+    ]
+  },
+  {
+    "file": "lib/features/auth/presentation/account_page.dart",
+    "sha256": "c5371ccaa24b4722f4e0b8d8e8defb4a2151861eef832b941de95298190cb40a",
+    "widgets": [
+      "MomCozyAccountPage",
+      "_MomCozyAccountPageState"
+    ],
+    "overlays": [
+      {
+        "line": 230,
+        "call": "showDialog"
+      },
+      {
+        "line": 281,
+        "call": "showDialog"
+      }
+    ],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "profile/account"
+    ]
+  },
+  {
+    "file": "lib/features/auth/presentation/auth_login_chrome.dart",
+    "sha256": "d0dbfff06cc107e088e8101d858b71cc15b59ce48d02f6b3f29ad1bfe75d11f5",
+    "widgets": [
+      "AuthLoginHeader",
+      "AuthLegalFooter"
+    ],
+    "overlays": [
+      {
+        "line": 56,
+        "call": "showModalBottomSheet"
+      }
+    ],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "auth/login"
+    ]
+  },
+  {
+    "file": "lib/features/agent_hub/agent_hub_page.dart",
+    "sha256": "74d225d0e209a2fc6e772ccd9407d61ff5a5950238a99fecde9f317249af1ee1",
+    "widgets": [
+      "AgentHubPage",
+      "_AgentHubPageState",
+      "_AgentHomeShortcuts",
+      "AgentHubTopBar",
+      "_AgentOlderConversationHistoryControl",
+      "_AgentResponseLightRail",
+      "_AgentResponseLightRailState",
+      "_AgentPageBackground",
+      "_AgentAssistantBubble",
+      "AgentHubHistoryPanel",
+      "AgentHubHistorySliver",
+      "_AgentHistoryBubble",
+      "AgentRunPhaseBadge",
+      "_AgentRunTranscriptListenable",
+      "_AgentRunTranscriptListenableState",
+      "AgentRunTranscript",
+      "AgentQuickRepliesBar",
+      "_AgentQuickReplyPill",
+      "AgentCitationList",
+      "_AgentCitationLink",
+      "AgentMarkdownText",
+      "_AgentMarkdownImage",
+      "_AgentMarkdownImagePlaceholder",
+      "AgentRunStatusLine",
+      "_AgentRunStatusLineState",
+      "_AgentSweepText",
+      "AgentThinkingNote",
+      "_AgentThinkingNoteState",
+      "_AgentAssistantAvatar",
+      "_AgentAssistantAvatarState",
+      "AgentActionPanel",
+      "AgentComposerBar",
+      "_AgentComposerBarState"
+    ],
+    "overlays": [],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "agent/home",
+      "agent/attachments",
+      "agent/message-menu",
+      "agent/voice",
+      "agent/state-03",
+      "agent/12-agent-error",
+      "agent/12b-agent-conversation"
+    ]
+  },
+  {
+    "file": "lib/features/agent_hub/artifacts/agent_artifact_panel.dart",
+    "sha256": "210d2fb39fbef8ce9e3b50a52eef74736e51c6107ccb2540400d2ce9cdecb198",
+    "widgets": [
+      "AgentArtifactPanel",
+      "_AgentArtifactGenericCard",
+      "_AgentUnsupportedArtifactCard"
+    ],
+    "overlays": [],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "agent/structured-card"
+    ]
+  },
+  {
+    "file": "lib/features/agent_hub/artifacts/forms/agent_artifact_form.dart",
+    "sha256": "cf3279292d0125286d6708db8c35858f6ca44cd8e9a8b7b2af82f2927eecdc46",
+    "widgets": [
+      "AgentArtifactForm",
+      "AgentArtifactFormState",
+      "_ArtifactFormFieldLabel",
+      "_ArtifactFormOptionRow",
+      "_ArtifactFormGroup"
+    ],
+    "overlays": [
+      {
+        "line": 329,
+        "call": "showMomCozyDatePicker"
+      }
+    ],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "agent/form"
+    ]
+  },
+  {
+    "file": "lib/features/agent_hub/artifacts/forms/agent_artifact_form_dialog.dart",
+    "sha256": "a8d1968c76d9badd5a76806bcfd3ed4c409c128b74a4986b6d9f9e03cf87b904",
+    "widgets": [
+      "AgentArtifactFormEntry",
+      "_AgentArtifactFormEntryState",
+      "AgentArtifactFormDialog",
+      "_AgentArtifactFormDialogState"
+    ],
+    "overlays": [
+      {
+        "line": 176,
+        "call": "showDialog"
+      }
+    ],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "agent/form"
+    ]
+  },
+  {
+    "file": "lib/features/agent_hub/artifacts/cards/agent_artifact_card_registry.dart",
+    "sha256": "aa6e80c37ffe4b6aa1c005c8c29c641cf713c483879740843370ffe365bf68e4",
+    "widgets": [
+      "_MotionAssessmentCard",
+      "_IbclcConsultCard",
+      "_IbclcConsultCardState"
+    ],
+    "overlays": [],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "agent/structured-card"
+    ]
+  },
+  {
+    "file": "lib/features/agent_hub/artifacts/cards/agent_result_card.dart",
+    "sha256": "52ef69e7d857b839fe612f9d41489494951a7c52dd9af5a98b266ead71367c7e",
+    "widgets": [
+      "AgentResultCard"
+    ],
+    "overlays": [],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "agent/structured-card"
+    ]
+  },
+  {
+    "file": "lib/features/agent_hub/presentation/agent_attachment_tile.dart",
+    "sha256": "13b5496ca8d0ed12fdb104200d502e8ac38661c4058c20a429fa7fd6209e7daf",
+    "widgets": [
+      "AgentAttachmentTile",
+      "AgentAttachmentMetadata"
+    ],
+    "overlays": [],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "agent/attachments",
+      "agent/image-preview",
+      "agent/file-preview"
+    ]
+  },
+  {
+    "file": "lib/features/agent_hub/presentation/agent_file_previews.dart",
+    "sha256": "e871522a862ab11fa2fceab64fb8364c5e0dfd9459c114ab6d5b10e1c246d354",
+    "widgets": [
+      "AgentComposerFileAttachment",
+      "AgentSentFiles"
+    ],
+    "overlays": [],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "agent/attachments",
+      "agent/file-preview"
+    ]
+  },
+  {
+    "file": "lib/features/agent_hub/presentation/agent_voice_notice.dart",
+    "sha256": "cc89aae8a58dd409b670e2c76f24ad0e2dc6faff6593062c26b39baab641bd88",
+    "widgets": [
+      "AgentVoiceNotice"
+    ],
+    "overlays": [],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "agent/voice"
+    ]
+  },
+  {
+    "file": "lib/features/agent_hub/presentation/agent_conversation_panel.dart",
+    "sha256": "467324622921e92712ac7bcf8aa7ea5c7a3b43cd5aea330d5983c1326e6a2005",
+    "widgets": [
+      "_AgentConversationPanel",
+      "_AgentConversationPanelState"
+    ],
+    "overlays": [
+      {
+        "line": 31,
+        "call": "showGeneralDialog"
+      }
+    ],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "agent/history"
+    ]
+  },
+  {
+    "file": "lib/features/agent_hub/presentation/agent_message_menu.dart",
+    "sha256": "3f35bb5ebe418297d4cb31e24ae614dcf40e120cb148600ccb1d125a2b4694d3",
+    "widgets": [
+      "AgentMessageMenu",
+      "_AgentMessageMenuState"
+    ],
+    "overlays": [
+      {
+        "line": 52,
+        "call": "showMenu"
+      }
+    ],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "agent/message-menu"
+    ]
+  },
+  {
+    "file": "lib/features/agent_hub/presentation/agent_image_previews.dart",
+    "sha256": "f687422544616e67bebfbb3adcea2bc16e05462d0aca754390da8f9dcad9e69d",
+    "widgets": [
+      "AgentSentImages",
+      "AgentComposerImageAttachment",
+      "_AgentFullScreenImage",
+      "_AgentFullScreenImageState",
+      "_AgentDataUrlImage",
+      "_AgentDataUrlImageState",
+      "_AgentImageFallback"
+    ],
+    "overlays": [
+      {
+        "line": 119,
+        "call": "showDialog"
+      }
+    ],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "agent/attachments",
+      "agent/image-preview"
+    ]
+  },
+  {
+    "file": "lib/features/notifications/presentation/notifications_page.dart",
+    "sha256": "e4efb223ed3ee4f519af9bb61c9f4539e53cdae7a7b1007497d4a902ff418fa7",
+    "widgets": [
+      "NotificationsPage",
+      "_NotificationsPageState",
+      "_NotificationCard",
+      "_NotificationsErrorBanner"
+    ],
+    "overlays": [],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "profile/notifications"
+    ]
+  },
+  {
+    "file": "lib/features/notifications/presentation/notification_settings_page.dart",
+    "sha256": "b45e9efcc576247dc48505058e2441fc344e7935116aec8a1850988ebb726ce6",
+    "widgets": [
+      "NotificationSettingsPage",
+      "_NotificationSettingsPageState"
+    ],
+    "overlays": [],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "profile/notification-settings"
+    ]
+  },
+  {
+    "file": "lib/features/notifications/presentation/notification_permission_dialogs.dart",
+    "sha256": "8dcdc816ed8d7ce75081dae9b08811ba56bb0e16b003c15bf03dd16cc27ee2ab",
+    "widgets": [],
+    "overlays": [
+      {
+        "line": 22,
+        "call": "showDialog"
+      }
+    ],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "profile/notification-settings"
+    ]
+  },
+  {
+    "file": "lib/features/notifications/presentation/appointment_reminder_tile.dart",
+    "sha256": "9475d3e118e07f17d880ba17ce49cf24bc4bf5e9b78bfd32dbbbfd1b410e8218",
+    "widgets": [
+      "AppointmentReminderTile",
+      "_AppointmentReminderTileState"
+    ],
+    "overlays": [],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "profile/notifications"
+    ]
+  },
+  {
+    "file": "lib/features/onboarding/presentation/onboarding_page.dart",
+    "sha256": "2fe105f7377a131ab921bb2cc77f8bf08b90e55a4fb65090e576e18c0ac4eda6",
+    "widgets": [
+      "OnboardingPage",
+      "_OnboardingPageState",
+      "_OnboardingHeader",
+      "_AvatarTaskHeader",
+      "_AvatarActivationSuccessView",
+      "_StepPrompt",
+      "_AvatarGenerationWaitingView",
+      "_AvatarGenerationRecipe",
+      "_AvatarGenerationRecipeNode",
+      "_AvatarGenerationOperator",
+      "_AvatarPhotoReceivedVisual",
+      "_AvatarReferenceStyleVisual",
+      "_AvatarOptionsVisual",
+      "_AvatarOptionPlaceholder",
+      "_AvatarGenerationTimeline",
+      "_AvatarGenerationStep",
+      "_AvatarGenerationConnector",
+      "_AvatarGenerationWaitNote",
+      "_DateField",
+      "_CountField",
+      "_ReferenceAvatar",
+      "_AvatarCandidateCard",
+      "_AvatarCandidateCardState",
+      "_DefaultAvatarChoiceCard",
+      "_AvatarSelectedMark",
+      "_GeneratedAvatar",
+      "_GeneratedAvatarState"
+    ],
+    "overlays": [
+      {
+        "line": 237,
+        "call": "showMomCozyDatePicker"
+      },
+      {
+        "line": 458,
+        "call": "showModalBottomSheet"
+      },
+      {
+        "line": 502,
+        "call": "showDialog"
+      },
+      {
+        "line": 554,
+        "call": "showDialog"
+      }
+    ],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "auth/onboarding-load",
+      "auth/onboarding-profile",
+      "auth/onboarding-delivery",
+      "auth/onboarding-birth",
+      "auth/onboarding-avatar-choice",
+      "auth/onboarding-avatar-create",
+      "auth/onboarding-avatar-review"
+    ]
+  },
+  {
+    "file": "lib/features/onboarding/presentation/avatar_task_banner.dart",
+    "sha256": "4f503a6700dfa3131da0640cd911947349cc19adf59d4b9a397a04aebe6a97d0",
+    "widgets": [
+      "AvatarTaskBanner",
+      "_AvatarTaskBannerState",
+      "_TaskStatusIcon"
+    ],
+    "overlays": [],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "auth/onboarding-avatar-review"
+    ]
+  },
+  {
+    "file": "lib/features/media/presentation/media_viewer_feedback.dart",
+    "sha256": "8018da8728de7accaa18f562e7c54224de9036da39197a9188f24ccced8f0fd4",
+    "widgets": [
+      "MediaViewerLoading",
+      "MediaViewerLoadError"
+    ],
+    "overlays": [],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "agent/image-preview",
+      "common/media"
+    ]
+  },
+  {
+    "file": "lib/features/media/presentation/product_asset_image.dart",
+    "sha256": "73307d3bb44e5a87d00cfc47120b465df3e8408c56ff7a70a86ed695ef49c5d0",
+    "widgets": [
+      "ProductAssetImage",
+      "_ProductAssetImageState",
+      "_DefaultProductAssetImageLoading",
+      "_DefaultProductAssetImageError"
+    ],
+    "overlays": [],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "common/media"
+    ]
+  },
+  {
+    "file": "lib/features/media/presentation/media_viewer_header.dart",
+    "sha256": "56e837d9e1fd601987a8106ad399c754e6705d5159decf2240e03315570828df",
+    "widgets": [
+      "MediaViewerHeader"
+    ],
+    "overlays": [],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "agent/image-preview",
+      "common/media"
+    ]
+  },
+  {
+    "file": "lib/features/media/presentation/pdf_document_toolbar.dart",
+    "sha256": "12411036e8a1dc2e725d139e36832045deb4d5de303ae06835c36819b6907212",
+    "widgets": [
+      "PdfDocumentToolbar"
+    ],
+    "overlays": [],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "common/pdf"
+    ]
+  },
+  {
+    "file": "lib/features/media/presentation/product_asset_video_player.dart",
+    "sha256": "053f4b899035ba94cdb345ab6687d88c6d888f8e0c143faff3e599d69bf1d223",
+    "widgets": [
+      "ProductAssetVideoPlayer",
+      "_ProductAssetVideoPlayerState",
+      "_VideoLoadingState",
+      "_VideoErrorState",
+      "_ProductAssetVideoFullscreenPage",
+      "_ProductAssetVideoViewport",
+      "_ProductAssetVideoCanvas",
+      "_ProductAssetVideoControls"
+    ],
+    "overlays": [],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "common/media"
+    ]
+  },
+  {
+    "file": "lib/features/media/presentation/media_viewer_page.dart",
+    "sha256": "45c10b5c378953ed8a4347761bd1bd95ff7b5d822b8d3e65082bd7ada1f3cab2",
+    "widgets": [
+      "MediaViewerPage",
+      "_MediaViewerPageState",
+      "_MediaViewerMissingResource",
+      "_MediaViewerContent",
+      "_PdfViewerStage",
+      "_PdfViewerStageState",
+      "_ImageViewerStage",
+      "_ImageViewerStageState",
+      "_VideoViewerStage"
+    ],
+    "overlays": [],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "common/media",
+      "common/pdf"
+    ]
+  },
+  {
+    "file": "lib/shared/widgets/momcozy_components.dart",
+    "sha256": "5477eff325acaa95e4ac6036fe3aedda03d15104b49b6ba772e586fe8ffb1157",
+    "widgets": [
+      "MomCozyPageBody",
+      "MomCozyPageHeader",
+      "MomCozySectionHeading",
+      "MomCozySurface",
+      "MomCozyBadge",
+      "MomCozyPrimaryButton"
+    ],
+    "overlays": [],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "common/loading"
+    ]
+  },
+  {
+    "file": "lib/shared/widgets/momcozy_wordmark.dart",
+    "sha256": "2a22ffff64fd9e4d06769502004294160bc839cd263ce2b9b0fc7e7f67081d12",
+    "widgets": [
+      "MomCozyWordmark"
+    ],
+    "overlays": [],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "auth/login"
+    ]
+  },
+  {
+    "file": "lib/shared/widgets/confirm_discard.dart",
+    "sha256": "f772ad366b4b880c4db433ae469fd0c81c952afb6b1d0bd33813d2bee9c9487b",
+    "widgets": [],
+    "overlays": [
+      {
+        "line": 9,
+        "call": "showDialog"
+      }
+    ],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "common/confirm"
+    ]
+  },
+  {
+    "file": "lib/shared/widgets/month_selector.dart",
+    "sha256": "5582175e761caa93e2a6084c35220689aafa7c9d70655b1798062d8ee8642b8f",
+    "widgets": [
+      "MonthSelector"
+    ],
+    "overlays": [],
+    "routes": [],
+    "scope": "workbench-excluded",
+    "mapped_views": []
+  },
+  {
+    "file": "lib/shared/widgets/momcozy_line_icon.dart",
+    "sha256": "5d4442b930359144e47316073efd7b99e8779abdadf1df6c965fe061d9de6eb6",
+    "widgets": [
+      "MomCozyLineIcon"
+    ],
+    "overlays": [],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "common/theme"
+    ]
+  },
+  {
+    "file": "lib/shared/widgets/knowledge_banner.dart",
+    "sha256": "43db57de555b0e11f4223de4757f96685ef8fa7904bbc6627590d581587e6655",
+    "widgets": [
+      "KnowledgeBanner"
+    ],
+    "overlays": [
+      {
+        "line": 153,
+        "call": "showDialog"
+      }
+    ],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "mom/knowledge",
+      "baby/knowledge",
+      "mom/state-02"
+    ]
+  },
+  {
+    "file": "lib/shared/widgets/product_flow_dialog.dart",
+    "sha256": "b9e5b47b30c0dff17a15daee73571368126c3ebf5cac61f1781cbaa42d6e47d1",
+    "widgets": [
+      "ProductFlowDialog"
+    ],
+    "overlays": [],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "services/purchase",
+      "services/intake",
+      "services/preparation"
+    ]
+  },
+  {
+    "file": "lib/shared/widgets/product_feedback.dart",
+    "sha256": "8bcc723b5feac8bf3737702c83758c17c1238f5213bea11a77e07cb64368f0e2",
+    "widgets": [
+      "ProductErrorView",
+      "ProductEmptyView",
+      "ProductLoadingView",
+      "ProductSkeleton"
+    ],
+    "overlays": [],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "common/loading",
+      "common/empty",
+      "common/error"
+    ]
+  },
+  {
+    "file": "lib/shared/widgets/warm_editor_header.dart",
+    "sha256": "2468addbd353b7386e02d0ea6b03ffc12647fbd2ea13c4364e6828f778083d18",
+    "widgets": [
+      "WarmEditorHeader"
+    ],
+    "overlays": [],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "common/theme"
+    ]
+  },
+  {
+    "file": "lib/shared/widgets/date_time_picker.dart",
+    "sha256": "1e7d24c3665c86b9684eb9994b75f98ff6a3de0da0327e05cce50fe6aca3e403",
+    "widgets": [
+      "_LargeTimeInput",
+      "_LargeTimeInputState"
+    ],
+    "overlays": [
+      {
+        "line": 6,
+        "call": "showMomCozyDatePicker"
+      },
+      {
+        "line": 32,
+        "call": "showDialog"
+      },
+      {
+        "line": 39,
+        "call": "showMomCozyTimePicker"
+      },
+      {
+        "line": 53,
+        "call": "showDialog"
+      }
+    ],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "common/input"
+    ]
+  },
+  {
+    "file": "lib/shared/widgets/zoned_datetime_field.dart",
+    "sha256": "29d248c9986068be68bb2451be9a1cabe805dc27f95d14ec1a075f03edf23159",
+    "widgets": [
+      "ZonedDateTimeField"
+    ],
+    "overlays": [
+      {
+        "line": 32,
+        "call": "showMomCozyDatePicker"
+      },
+      {
+        "line": 40,
+        "call": "showMomCozyTimePicker"
+      },
+      {
+        "line": 65,
+        "call": "showDialog"
+      }
+    ],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "common/input"
+    ]
+  },
+  {
+    "file": "lib/modules/schedule/presentation/schedule_page.dart",
+    "sha256": "7d29c9aab882c60f35323529f7de883af3bb92ee917975a8e3a20d15323a0312",
+    "widgets": [
+      "SchedulePage",
+      "_SchedulePageState",
+      "_Header",
+      "_MonthGrid",
+      "_ServicePeriods",
+      "_DayAgenda",
+      "_CurrentPlanSummary",
+      "_AgendaRow",
+      "_AgendaIcon",
+      "_AppointmentCard",
+      "_TaskCard",
+      "_PersonalCard"
+    ],
+    "overlays": [
+      {
+        "line": 233,
+        "call": "showDialog"
+      },
+      {
+        "line": 243,
+        "call": "showDialog"
+      }
+    ],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "schedule/home",
+      "schedule/create",
+      "schedule/edit",
+      "schedule/task"
+    ]
+  },
+  {
+    "file": "lib/modules/schedule/presentation/personal_schedule_editor.dart",
+    "sha256": "3232787d57caf82ee7fe4ce6fca186b6c2e696b06645fb3692155b1ae71b2cda",
+    "widgets": [
+      "PersonalScheduleEditor",
+      "_PersonalScheduleEditorState",
+      "_ScheduleField",
+      "_ScheduleDialogFrame",
+      "PersonalScheduleDeleteDialog"
+    ],
+    "overlays": [
+      {
+        "line": 96,
+        "call": "showMomCozyDatePicker"
+      },
+      {
+        "line": 108,
+        "call": "showMomCozyTimePicker"
+      }
+    ],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "schedule/create",
+      "schedule/edit"
+    ]
+  },
+  {
+    "file": "lib/modules/consultation/presentation/video_stage.dart",
+    "sha256": "08b3dbaa8708413259d8e89925b4d3560c7860f4a28ffc2ccbb4c8724144cf04",
+    "widgets": [
+      "ConsultationVideoStage",
+      "ConsultationMediaControls",
+      "_Control"
+    ],
+    "overlays": [],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "services/room"
+    ]
+  },
+  {
+    "file": "lib/modules/consultation/presentation/device_check_dialog.dart",
+    "sha256": "1db5a34c82c10dc42d3a360c30bf315fc51eb861c63e26b4bbf89e2424fee433",
+    "widgets": [
+      "ConsultationDeviceCheckDialog",
+      "_ConsultationDeviceCheckDialogState"
+    ],
+    "overlays": [],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "services/device-check",
+      "services/state-44",
+      "services/state-45",
+      "services/state-46"
+    ]
+  },
+  {
+    "file": "lib/modules/consultation/presentation/consultation_start_dialog.dart",
+    "sha256": "8bc5b07d9768c44827502e2f808419faf8601483903aaaf5c63bb3bc02b65072",
+    "widgets": [
+      "ConsultationStartDialog",
+      "_ConsultationStartDialogState",
+      "ConsultationVideoConsentDialog",
+      "_ConsultationVideoConsentDialogState"
+    ],
+    "overlays": [
+      {
+        "line": 122,
+        "call": "showDialog"
+      }
+    ],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "services/video-consent",
+      "services/state-47",
+      "services/state-48",
+      "services/state-49"
+    ]
+  },
+  {
+    "file": "lib/modules/consultation/presentation/device_preview_dialog.dart",
+    "sha256": "2417d0a50171f0506232341d600ffc8da06c1dda4f47a43cbdb268c681bf70e3",
+    "widgets": [
+      "ConsultationDevicePreviewDialog",
+      "_ConsultationDevicePreviewDialogState"
+    ],
+    "overlays": [],
+    "routes": [],
+    "scope": "workbench-excluded",
+    "mapped_views": []
+  },
+  {
+    "file": "lib/modules/consultation/presentation/home_consultation_dialog.dart",
+    "sha256": "3dbdb738d6ece01ce28abee281fc5f200cb3f3f1a4b23160b19857276e03237a",
+    "widgets": [],
+    "overlays": [
+      {
+        "line": 19,
+        "call": "showDialog"
+      }
+    ],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "mom/state-43"
+    ]
+  },
+  {
+    "file": "lib/modules/consultation/presentation/user_video_stage.dart",
+    "sha256": "58c4d6085726ef7caa624ddb18d0cb832bbffd6963a08a762a6ace39197fc010",
+    "widgets": [
+      "UserConsultationVideoStage"
+    ],
+    "overlays": [],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "services/room"
+    ]
+  },
+  {
+    "file": "lib/modules/consultation/presentation/room_page.dart",
+    "sha256": "63735fa676f4344e218670e680d3017117e6def10cc120bdfed8348616839173",
+    "widgets": [
+      "ConsultationRoomPage",
+      "_ConsultationRoomPageState"
+    ],
+    "overlays": [
+      {
+        "line": 88,
+        "call": "showDialog"
+      },
+      {
+        "line": 631,
+        "call": "showDialog"
+      },
+      {
+        "line": 696,
+        "call": "showDialog"
+      },
+      {
+        "line": 705,
+        "call": "showDialog"
+      },
+      {
+        "line": 794,
+        "call": "showModalBottomSheet"
+      },
+      {
+        "line": 838,
+        "call": "showDialog"
+      }
+    ],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "services/preparation",
+      "services/room",
+      "services/room-leave",
+      "mom/state-43",
+      "services/state-53"
+    ]
+  },
+  {
+    "file": "lib/modules/consultation/presentation/consultation_preparation.dart",
+    "sha256": "650ecf39739a6b8cbc88d1fcfcbe50c0cc8d37ec73a6cb99bec7ff50b45b4cb1",
+    "widgets": [
+      "ConsultationPreparation",
+      "_ConsultationPreparationState"
+    ],
+    "overlays": [],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "services/preparation",
+      "mom/state-43"
+    ]
+  },
+  {
+    "file": "lib/modules/ibclc/documentation/presentation/documentation_editors.dart",
+    "sha256": "9b44c1dd2d4f59c7561c7e2bab3ef5c669367b84e3312573f080724057d95642",
+    "widgets": [
+      "DocumentationField",
+      "ClinicalNoteEditor",
+      "CarePlanEditor",
+      "_PlanTaskEditor"
+    ],
+    "overlays": [
+      {
+        "line": 214,
+        "call": "showDatePicker"
+      }
+    ],
+    "routes": [],
+    "scope": "workbench-excluded",
+    "mapped_views": []
+  },
+  {
+    "file": "lib/modules/ibclc/documentation/presentation/documentation_page.dart",
+    "sha256": "3f44dee55cb8a60f323d94d93557083ed9352fae640d7e99ce267665e78ee9b5",
+    "widgets": [
+      "DocumentationPage",
+      "_DocumentationPageState",
+      "_AmendDialog",
+      "_AmendDialogState"
+    ],
+    "overlays": [
+      {
+        "line": 72,
+        "call": "showDialog"
+      },
+      {
+        "line": 136,
+        "call": "showDialog"
+      },
+      {
+        "line": 150,
+        "call": "showDialog"
+      }
+    ],
+    "routes": [],
+    "scope": "workbench-excluded",
+    "mapped_views": []
+  },
+  {
+    "file": "lib/modules/ibclc/schedule/presentation/calendar_page.dart",
+    "sha256": "93caf4323684137194435290c99ef0f1ddbe00e5ddf1758932c583781efbd949",
+    "widgets": [
+      "WorkbenchCalendarPage",
+      "_WorkbenchCalendarPageState",
+      "_WeekTimeline",
+      "_CalendarEvent"
+    ],
+    "overlays": [],
+    "routes": [],
+    "scope": "workbench-excluded",
+    "mapped_views": []
+  },
+  {
+    "file": "lib/modules/ibclc/followup/presentation/followups_page.dart",
+    "sha256": "ef263e046920f988a8042e89539db32caf89cba512d44cd71b72deb165fa5daa",
+    "widgets": [
+      "WorkbenchFollowupsPage",
+      "_WorkbenchFollowupsPageState",
+      "_ClientRow"
+    ],
+    "overlays": [],
+    "routes": [],
+    "scope": "workbench-excluded",
+    "mapped_views": []
+  },
+  {
+    "file": "lib/modules/ibclc/appointments/presentation/intake_review_page.dart",
+    "sha256": "6b924223540c9453c60819bfada723e320eec15dbe2f75b3a3e92c918b4c3ec8",
+    "widgets": [
+      "IntakeReviewPage",
+      "_IntakeReviewPageState",
+      "_Field"
+    ],
+    "overlays": [],
+    "routes": [],
+    "scope": "workbench-excluded",
+    "mapped_views": []
+  },
+  {
+    "file": "lib/modules/ibclc/appointments/presentation/appointments_page.dart",
+    "sha256": "1aa13a089ad400d8663d3f2a73cc770dc932e00a08e4469952c78de106293883",
+    "widgets": [
+      "WorkbenchAppointmentsPage",
+      "_WorkbenchAppointmentsPageState",
+      "WorkbenchAppointmentList"
+    ],
+    "overlays": [
+      {
+        "line": 64,
+        "call": "showDatePicker"
+      }
+    ],
+    "routes": [],
+    "scope": "workbench-excluded",
+    "mapped_views": []
+  },
+  {
+    "file": "lib/modules/ibclc/auth/presentation/workbench_login_page.dart",
+    "sha256": "86a354f219ec5908da365ecb3598371b0efe1c1b37d028f5403a12e472962dae",
+    "widgets": [
+      "WorkbenchLoginPage",
+      "_WorkbenchLoginPageState"
+    ],
+    "overlays": [],
+    "routes": [],
+    "scope": "workbench-excluded",
+    "mapped_views": []
+  },
+  {
+    "file": "lib/modules/ibclc/shared/workbench_widgets.dart",
+    "sha256": "23278b6ab2b478e878bd0ca1a07d94eae88d633bed15cd6f2049754220a1796f",
+    "widgets": [
+      "WorkbenchPageBody",
+      "WorkbenchHeading",
+      "WorkbenchPagination",
+      "WorkbenchBadge"
+    ],
+    "overlays": [],
+    "routes": [],
+    "scope": "workbench-excluded",
+    "mapped_views": []
+  },
+  {
+    "file": "lib/modules/ibclc/users/presentation/clients_page.dart",
+    "sha256": "204298d1b1587f060285eaecb4390a5b2ceeddda861ed48e6a2ff23c0ead4379",
+    "widgets": [
+      "WorkbenchClientsPage",
+      "_WorkbenchClientsPageState",
+      "WorkbenchClientPage",
+      "_WorkbenchClientPageState",
+      "_ServiceCard"
+    ],
+    "overlays": [],
+    "routes": [],
+    "scope": "workbench-excluded",
+    "mapped_views": []
+  },
+  {
+    "file": "lib/modules/ibclc/reminders/presentation/reminders_page.dart",
+    "sha256": "6eea0b0a52a24d4c7bb9f72c16ef34cedd11bdd958387491ab197a941adc1a6d",
+    "widgets": [
+      "WorkbenchRemindersPage",
+      "_WorkbenchRemindersPageState"
+    ],
+    "overlays": [],
+    "routes": [],
+    "scope": "workbench-excluded",
+    "mapped_views": []
+  },
+  {
+    "file": "lib/modules/ibclc/reports/presentation/report_page.dart",
+    "sha256": "a7e7f74f6af8c7ebd7a8b8c11345637a2d170114deb4c43acb8639cf714bd90b",
+    "widgets": [
+      "WorkbenchReportPage",
+      "_WorkbenchReportPageState"
+    ],
+    "overlays": [
+      {
+        "line": 63,
+        "call": "showDialog"
+      }
+    ],
+    "routes": [],
+    "scope": "workbench-excluded",
+    "mapped_views": []
+  },
+  {
+    "file": "lib/modules/ibclc/reports/presentation/feedback_dialog.dart",
+    "sha256": "1b624d48c23f04bd8b6c9016b50faf7941b23bebd5410c09898020ac9a6cf899",
+    "widgets": [
+      "ReportFeedbackDialog",
+      "_ReportFeedbackDialogState"
+    ],
+    "overlays": [],
+    "routes": [],
+    "scope": "workbench-excluded",
+    "mapped_views": []
+  },
+  {
+    "file": "lib/modules/ibclc/reports/presentation/report_content.dart",
+    "sha256": "32f69f94bb3311c211e1033a84b24786733b04065597ab00fdd74b0394d4e98f",
+    "widgets": [
+      "ReportSection",
+      "ReportFindings",
+      "ReportDialogueList"
+    ],
+    "overlays": [
+      {
+        "line": 57,
+        "call": "showDialog"
+      }
+    ],
+    "routes": [],
+    "scope": "workbench-excluded",
+    "mapped_views": []
+  },
+  {
+    "file": "lib/modules/profile/presentation/more_page.dart",
+    "sha256": "1f5124c767c6f8d8f88e4093bff3d7565179a9086945d137ecb684e65ae7e345",
+    "widgets": [
+      "MorePage",
+      "_MorePageState",
+      "_AccountCard",
+      "_ActionRow"
+    ],
+    "overlays": [],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "profile/more"
+    ]
+  },
+  {
+    "file": "lib/modules/profile/presentation/privacy_page.dart",
+    "sha256": "ab3cee6084bc6d79a69c0bc1ce5285735cd4ae18ae21120d5502092e726156a4",
+    "widgets": [
+      "PrivacyPage",
+      "_PrivacyPageState",
+      "_Heading",
+      "_ScopeRow"
+    ],
+    "overlays": [
+      {
+        "line": 107,
+        "call": "showDialog"
+      },
+      {
+        "line": 152,
+        "call": "showDialog"
+      }
+    ],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "profile/privacy",
+      "services/state-50"
+    ]
+  },
+  {
+    "file": "lib/modules/baby/presentation/baby_records_page.dart",
+    "sha256": "50fa536d43663ff26974591aee41501a99e8cb534acade665d90f5f7c544924a",
+    "widgets": [
+      "BabyRecordsPage",
+      "_BabyRecordsPageState",
+      "_RecordCard"
+    ],
+    "overlays": [
+      {
+        "line": 121,
+        "call": "showDialog"
+      },
+      {
+        "line": 148,
+        "call": "showMomCozyDatePicker"
+      }
+    ],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "baby/records"
+    ]
+  },
+  {
+    "file": "lib/modules/baby/presentation/baby_growth_curve.dart",
+    "sha256": "5c92a7e4c55deadb7dd8bc9feaba09665a3706b0c34481f768d34c728e1cdf34",
+    "widgets": [
+      "BabyGrowthCurve"
+    ],
+    "overlays": [],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "baby/growth",
+      "baby/empty-growth-320"
+    ]
+  },
+  {
+    "file": "lib/modules/baby/presentation/baby_record_editor.dart",
+    "sha256": "9c7c74703cb534f7d0fa1dc54d0c8efed98bcc56ce55b062c8553482e0038453",
+    "widgets": [
+      "BabyRecordEditor",
+      "_BabyRecordEditorState"
+    ],
+    "overlays": [
+      {
+        "line": 39,
+        "call": "showDialog"
+      }
+    ],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "baby/sleep",
+      "baby/wet",
+      "baby/stool",
+      "baby/feeding",
+      "baby/growth-entry",
+      "baby/development",
+      "baby/feeding-validation",
+      "baby/sleep-active"
+    ]
+  },
+  {
+    "file": "lib/modules/baby/presentation/baby_saved_feedback.dart",
+    "sha256": "ea54b352fca22ed433a72d35baf8a69e9b312b65c885298b72b90f3de5894eae",
+    "widgets": [
+      "BabySavedFeedbackView"
+    ],
+    "overlays": [],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "baby/home",
+      "common/success",
+      "baby/feeding-saved"
+    ]
+  },
+  {
+    "file": "lib/modules/baby/presentation/baby_record_fields.dart",
+    "sha256": "f08d8093a3682dc310f3cd7291e5e682b53ad0241470fdb2c05fe699b7a5f30c",
+    "widgets": [
+      "BabyRecordFields",
+      "_BabyRecordFieldsState"
+    ],
+    "overlays": [
+      {
+        "line": 34,
+        "call": "showMomCozyDatePicker"
+      }
+    ],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "baby/sleep",
+      "baby/sleep-active"
+    ]
+  },
+  {
+    "file": "lib/modules/baby/presentation/baby_profile_editor.dart",
+    "sha256": "b897a72ef333853f6d1f2b7e52bca2edc0781f50bbdf586bb79ecf7a92b84fcd",
+    "widgets": [
+      "BabyProfileEditor",
+      "_BabyProfileEditorState"
+    ],
+    "overlays": [
+      {
+        "line": 29,
+        "call": "showDialog"
+      },
+      {
+        "line": 74,
+        "call": "showMomCozyDatePicker"
+      }
+    ],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "baby/profile",
+      "baby/profile-short-viewport"
+    ]
+  },
+  {
+    "file": "lib/modules/baby/presentation/baby_overview_cards.dart",
+    "sha256": "ebc93176a5b547f27ebe63cfdddb7312b19a04096f69202552dd9bc6ba6bb14d",
+    "widgets": [
+      "BabyFeedingSummary",
+      "BabySleepMonitor",
+      "BabyStatusCard",
+      "BabyGrowthMetrics"
+    ],
+    "overlays": [],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "baby/home"
+    ]
+  },
+  {
+    "file": "lib/modules/baby/presentation/baby_home_page.dart",
+    "sha256": "f1edb3e226737d95fe0b8197c67ef3b093de1ccf0eb55f7cf8dcbc21a6c97f62",
+    "widgets": [
+      "BabyHomePage",
+      "_BabyHomePageState"
+    ],
+    "overlays": [
+      {
+        "line": 124,
+        "call": "showDialog"
+      }
+    ],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "baby/home",
+      "baby/switcher",
+      "baby/feeding-saved"
+    ]
+  },
+  {
+    "file": "lib/modules/services/presentation/consultation_summary_content.dart",
+    "sha256": "7d6f68fc0ba5e77a6ad770bf7580c6c17a90108db732bbf68a656d10584d8bfc",
+    "widgets": [
+      "ConsultationSummaryContent",
+      "SummaryStateCard"
+    ],
+    "overlays": [],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "services/summary"
+    ]
+  },
+  {
+    "file": "lib/modules/services/presentation/service_timeline.dart",
+    "sha256": "0e17bc305af5267fbbb624a089b02ba65456536c219edfaf7c256fa22fd9beed",
+    "widgets": [
+      "ServiceTimeline",
+      "_ServiceTimelineState",
+      "_EventTile"
+    ],
+    "overlays": [],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "services/progress"
+    ]
+  },
+  {
+    "file": "lib/modules/services/presentation/service_renew_page.dart",
+    "sha256": "517e8e4a97fa7180c6e4df18bf48d5ab079f1c6ce4e9486407b87e9ffb5e0761",
+    "widgets": [
+      "ServiceRenewPage",
+      "_ServiceRenewPageState",
+      "_RenewPackageCard"
+    ],
+    "overlays": [],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "services/renew"
+    ]
+  },
+  {
+    "file": "lib/modules/services/presentation/consultation_summary_page.dart",
+    "sha256": "0fe77f419a4d24428c7934d2ababee1dc331ba38d5c43ca59c9e696797a44706",
+    "widgets": [
+      "ConsultationSummaryPage",
+      "_ConsultationSummaryPageState"
+    ],
+    "overlays": [
+      {
+        "line": 158,
+        "call": "showDialog"
+      }
+    ],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "services/summary",
+      "services/summary-task"
+    ]
+  },
+  {
+    "file": "lib/modules/services/presentation/service_catalog_page.dart",
+    "sha256": "59481853b4c7c7af6e43f8f9e16a6e1496891b511957d9afa64f7acce2305b20",
+    "widgets": [
+      "ServiceCatalogPage",
+      "_ServiceCatalogPageState",
+      "_ServiceDirections",
+      "_PackageCard",
+      "ServicePackageFacts",
+      "ServicePrice",
+      "ProviderTeamTile",
+      "_ProviderTeamDialog"
+    ],
+    "overlays": [
+      {
+        "line": 384,
+        "call": "showDialog"
+      }
+    ],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "services/catalog",
+      "services/team",
+      "services/state-20"
+    ]
+  },
+  {
+    "file": "lib/modules/services/presentation/appointment_summary.dart",
+    "sha256": "c740da88f401612a4464f3b2acdeab257b2cbe5d24d177b7321b888996ab3a59",
+    "widgets": [
+      "AppointmentSummary"
+    ],
+    "overlays": [],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "services/room"
+    ]
+  },
+  {
+    "file": "lib/modules/services/presentation/service_flow_theme.dart",
+    "sha256": "9edc8f830a5b2e7e5a9b8a81ae0c8e9d20a5d834d3c9bfef8d11d65435b98354",
+    "widgets": [
+      "ServiceFlowTheme"
+    ],
+    "overlays": [],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "services/booking",
+      "services/intake"
+    ]
+  },
+  {
+    "file": "lib/modules/services/presentation/appointment_cancel_dialog.dart",
+    "sha256": "39da4c0fd2c1b237d4dcbb6ee8cabb1a1cd1fb376c33b8ac03c7b9815a65f416",
+    "widgets": [
+      "AppointmentCancelDialog",
+      "_AppointmentCancelDialogState"
+    ],
+    "overlays": [
+      {
+        "line": 15,
+        "call": "showDialog"
+      }
+    ],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "services/appointment"
+    ]
+  },
+  {
+    "file": "lib/modules/services/presentation/appointment_detail_card.dart",
+    "sha256": "a74815cc3f0818773ef304e24774f47bd891baa2c8078dd6d76d2f2286a5c988",
+    "widgets": [
+      "AppointmentDetailCard"
+    ],
+    "overlays": [],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "services/appointment"
+    ]
+  },
+  {
+    "file": "lib/modules/services/presentation/service_package_page.dart",
+    "sha256": "5ec0611ce322b8470f74856e80edb68bb1eb5526033b56221f8bb6ae3f024cc1",
+    "widgets": [
+      "ServicePackagePage",
+      "_ServicePackagePageState",
+      "_DeliveryList"
+    ],
+    "overlays": [],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "services/package",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24"
+    ]
+  },
+  {
+    "file": "lib/modules/services/presentation/booking_page.dart",
+    "sha256": "ea47f0578ae7a6e87bb508b029a42869a327d9a5af1261d43a5136d1af821086",
+    "widgets": [
+      "BookingPage",
+      "_BookingPageState"
+    ],
+    "overlays": [
+      {
+        "line": 521,
+        "call": "showDialog"
+      },
+      {
+        "line": 542,
+        "call": "showDialog"
+      },
+      {
+        "line": 580,
+        "call": "showMomCozyDatePicker"
+      }
+    ],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "services/booking",
+      "services/state-32",
+      "services/state-33",
+      "services/state-34",
+      "services/state-35",
+      "services/state-36",
+      "services/state-37"
+    ]
+  },
+  {
+    "file": "lib/modules/services/presentation/service_purchase_dialog.dart",
+    "sha256": "b15fa13822ec0a6620196214bd4fad097525e921d933185d14f3106134149008",
+    "widgets": [
+      "ServicePurchaseDialog",
+      "_ServicePurchaseDialogState"
+    ],
+    "overlays": [
+      {
+        "line": 26,
+        "call": "showDialog"
+      }
+    ],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "services/purchase",
+      "services/state-25",
+      "services/state-26",
+      "services/state-27",
+      "services/state-28",
+      "services/state-29",
+      "services/state-30"
+    ]
+  },
+  {
+    "file": "lib/modules/services/presentation/service_expert_identity.dart",
+    "sha256": "fde448e14656e949db0d2370b3b3d4a4d1b5d85737d693dadfecf9008494e1bd",
+    "widgets": [
+      "ServiceExpertIdentity"
+    ],
+    "overlays": [],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "services/booking",
+      "services/intake"
+    ]
+  },
+  {
+    "file": "lib/modules/services/presentation/intake_page.dart",
+    "sha256": "2b406d4983e18f79184b89d41a5ac9eae382c467f83742bc104d1254a519bd42",
+    "widgets": [
+      "IntakePage",
+      "_IntakePageState"
+    ],
+    "overlays": [
+      {
+        "line": 646,
+        "call": "showMomCozyDatePicker"
+      },
+      {
+        "line": 659,
+        "call": "showDialog"
+      },
+      {
+        "line": 725,
+        "call": "showDialog"
+      }
+    ],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "services/intake",
+      "services/consent-detail",
+      "services/intake-saved",
+      "services/state-39",
+      "services/state-40",
+      "services/state-41",
+      "services/state-42"
+    ]
+  },
+  {
+    "file": "lib/modules/services/presentation/expert_support_section.dart",
+    "sha256": "1abb0499e118338c2abf92eaa396b3415a6ca202487d2396c8152750ae0df5d6",
+    "widgets": [
+      "ExpertSupportSection",
+      "_ExpertSupportSectionState",
+      "ExpertServiceCard"
+    ],
+    "overlays": [],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "mom/home",
+      "mom/state-31",
+      "mom/state-38",
+      "mom/state-43"
+    ]
+  },
+  {
+    "file": "lib/modules/services/presentation/booking_flow_dialogs.dart",
+    "sha256": "bfa1d18375e7fa93f44e7fc308bb7b8f4a2baf7569c702935e1069b51441092d",
+    "widgets": [
+      "BookingNotice",
+      "BookingPrecheckDialog",
+      "_BookingPrecheckDialogState",
+      "BookingSelectionDialog"
+    ],
+    "overlays": [],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "services/booking"
+    ]
+  },
+  {
+    "file": "lib/modules/services/presentation/service_progress_page.dart",
+    "sha256": "720aadac558c3ebdc23aff28a5bc9820492d2a9d7a72d11cfc5613d855b735f9",
+    "widgets": [
+      "ServiceProgressPage",
+      "_ServiceProgressPageState"
+    ],
+    "overlays": [],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "services/progress"
+    ]
+  },
+  {
+    "file": "lib/modules/services/presentation/appointment_detail_page.dart",
+    "sha256": "68555a9eb9450443633962efd61a167f4b850678fe833d669db6e184f6a5241f",
+    "widgets": [
+      "AppointmentDetailPage",
+      "_AppointmentDetailPageState"
+    ],
+    "overlays": [],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "services/appointment",
+      "services/state-51",
+      "services/state-52"
+    ]
+  },
+  {
+    "file": "lib/modules/mom/presentation/mother_home_page.dart",
+    "sha256": "b67aeeefaeb2d0efa52c948ef722cef8ad91c16eed5213f1a7af7fd9afe15961",
+    "widgets": [
+      "MotherHomePage",
+      "_MotherHomePageState",
+      "_UpcomingTools",
+      "_UpcomingTool"
+    ],
+    "overlays": [
+      {
+        "line": 106,
+        "call": "showDialog"
+      }
+    ],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "mom/home",
+      "mom/record-picker",
+      "mom/other-functions",
+      "mom/state-01",
+      "mom/state-11",
+      "mom/state-31",
+      "mom/state-38",
+      "mom/state-43"
+    ]
+  },
+  {
+    "file": "lib/modules/mom/presentation/mother_diary_page.dart",
+    "sha256": "7bfeb3387bd035341eab27c0e053a3ec7cbcfc17c246535f522ceb81ab72ff62",
+    "widgets": [
+      "MotherDiaryPage",
+      "_MotherDiaryPageState"
+    ],
+    "overlays": [],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "mom/diary-history"
+    ]
+  },
+  {
+    "file": "lib/modules/mom/presentation/diary_fields.dart",
+    "sha256": "f89a12bf4e975c1f5323dfce6c9fb142c0b11d35c8802685a63d63c355fbdf30",
+    "widgets": [
+      "RestFields",
+      "BodyFields",
+      "MoodFields",
+      "_OptionalTitle"
+    ],
+    "overlays": [],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "mom/diary-rest"
+    ]
+  },
+  {
+    "file": "lib/modules/mom/presentation/mother_status_card.dart",
+    "sha256": "2efd7724a165b59d70df0e8af2c89c93a8d482a572fcc75c6254e57a1db4a685",
+    "widgets": [
+      "MotherStatusCard"
+    ],
+    "overlays": [],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "mom/home"
+    ]
+  },
+  {
+    "file": "lib/modules/mom/presentation/mother_diary_editor.dart",
+    "sha256": "3b23033937f8b7b593e9b53dde73f1f866ffb6fa087db62cde5e6a56d23d68ef",
+    "widgets": [
+      "MotherDiaryEditor",
+      "_MotherDiaryEditorState",
+      "_DiaryHeader",
+      "_DiaryTabs"
+    ],
+    "overlays": [
+      {
+        "line": 30,
+        "call": "showDialog"
+      }
+    ],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "mom/diary-rest",
+      "mom/diary-body",
+      "mom/diary-mood",
+      "common/confirm",
+      "mom/state-04",
+      "mom/state-05",
+      "mom/state-06",
+      "mom/state-07",
+      "mom/state-08",
+      "mom/state-09",
+      "mom/state-10"
+    ]
+  },
+  {
+    "file": "lib/modules/mom/presentation/lactation_page.dart",
+    "sha256": "174ccdf91ff3e9a03f15f0b49fae2e28fd921c5c38491981e5ac1bcfe7681e60",
+    "widgets": [
+      "LactationPage",
+      "_LactationPageState"
+    ],
+    "overlays": [],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "mom/lactation"
+    ]
+  },
+  {
+    "file": "lib/modules/mom/presentation/lactation_panel.dart",
+    "sha256": "bafc981a2aca86692cd64c6ce0fb5bea8e86af7da6ddb6911a3be8190f8bd9a6",
+    "widgets": [
+      "LactationPanel",
+      "_LactationPanelState",
+      "_LactationFields",
+      "_DaySummary",
+      "_RecordRow",
+      "_LactationFeedback"
+    ],
+    "overlays": [
+      {
+        "line": 50,
+        "call": "showDialog"
+      },
+      {
+        "line": 617,
+        "call": "showMomCozyTimePicker"
+      }
+    ],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "mom/lactation",
+      "mom/lactation-edit",
+      "common/success",
+      "mom/state-12",
+      "mom/state-13",
+      "mom/state-14",
+      "mom/state-15",
+      "mom/state-16",
+      "mom/state-17",
+      "mom/state-18",
+      "mom/state-19"
+    ]
+  },
+  {
+    "file": "lib/modules/mom/presentation/lactation_chart.dart",
+    "sha256": "d9a6ff839191df8dad5247600ec6d10e63d9956c621783f346b66e4e21e53da5",
+    "widgets": [
+      "LactationTrendChart",
+      "_LactationTrendChartState"
+    ],
+    "overlays": [],
+    "routes": [],
+    "scope": "user-app",
+    "mapped_views": [
+      "mom/lactation"
+    ]
+  }
+]

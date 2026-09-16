@@ -1,0 +1,11 @@
+[
+  "/Users/lute/.local/share/momcozy-toolchains/flutter/bin/flutter",
+  "--suppress-analytics",
+  "test",
+  "--no-pub",
+  "test/features/agent_hub/agent_markdown_design_test.dart",
+  "--name",
+  "markdown reading 390\\.0/1\\.0",
+  "--reporter",
+  "expanded"
+]

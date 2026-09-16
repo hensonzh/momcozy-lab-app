@@ -1,0 +1,213 @@
+[
+  {
+    "image": "raw/test/goldens/design_system/renew-pending-listed-390.long.png",
+    "sha256": "c31e7663751ecf1ac5d1df2a79b1ca8d5f650342b3afb84d704ba3fdf2168c35",
+    "metadata": "raw/test/goldens/design_system/renew-pending-listed-390.png.json",
+    "long": {
+      "status": "complete-measured-scroll-stitch",
+      "file": "/Users/lute/project/momcozy-lab/app/docs/app-ui-inventory/raw/test/goldens/design_system/renew-pending-listed-390.long.png",
+      "offsets": [
+        0.0,
+        358.0,
+        574.0
+      ],
+      "scroll_bounds": [
+        0.0,
+        64.0,
+        390.0,
+        780.0
+      ],
+      "frame_scroll_bounds": [
+        [
+          0.0,
+          64.0,
+          390.0,
+          780.0
+        ],
+        [
+          0.0,
+          64.0,
+          390.0,
+          780.0
+        ],
+        [
+          0.0,
+          64.0,
+          390.0,
+          780.0
+        ]
+      ],
+      "content_height": 1354.0,
+      "interior_strip_edge_guard": 64.0,
+      "fixed_bottom_overlay_bounds": [],
+      "original_scroll_offset": 0.0,
+      "tooltip_preserved_from_matched_viewport": false
+    },
+    "scenario": "pending order reopens without new purchase; retry locks duplicate taps",
+    "texts": [
+      "选择适合当前需要的陪伴方案",
+      "喂养安心",
+      "订单尚未完成，可继续查看付款。",
+      "判断宝宝当前是否吃够，明确是否需要调整喂养，并形成 Feeding Plan。",
+      "2 次 IBCLC 在线咨询",
+      "7 天持续陪伴",
+      "$219 USD",
+      "继续付款",
+      "亲喂改善",
+      "找到影响亲喂的主要问题，改善含乳、吸吮和喂养体验。",
+      "2 次 IBCLC 在线咨询",
+      "14 天持续陪伴",
+      "$239 USD",
+      "选择",
+      "奶量管理",
+      "判断奶量问题，建立并持续调整个性化奶量管理方案。",
+      "3 次 IBCLC 在线咨询",
+      "14 天持续陪伴",
+      "$299 USD",
+      "选择",
+      "继续支持"
+    ]
+  },
+  {
+    "image": "raw/test/goldens/design_system/renew-order-loading-390.long.png",
+    "sha256": "d870637311b6b6546885dc7366a3c6dc68c688551d101b0dc4a2d08e35509b60",
+    "metadata": "raw/test/goldens/design_system/renew-order-loading-390.png.json",
+    "long": {
+      "status": "complete-measured-scroll-stitch",
+      "file": "/Users/lute/project/momcozy-lab/app/docs/app-ui-inventory/raw/test/goldens/design_system/renew-order-loading-390.long.png",
+      "offsets": [
+        0.0,
+        358.0,
+        576.0
+      ],
+      "scroll_bounds": [
+        0.0,
+        64.0,
+        390.0,
+        780.0
+      ],
+      "frame_scroll_bounds": [
+        [
+          0.0,
+          64.0,
+          390.0,
+          780.0
+        ],
+        [
+          0.0,
+          64.0,
+          390.0,
+          780.0
+        ],
+        [
+          0.0,
+          64.0,
+          390.0,
+          780.0
+        ]
+      ],
+      "content_height": 1356.0,
+      "interior_strip_edge_guard": 64.0,
+      "fixed_bottom_overlay_bounds": [],
+      "original_scroll_offset": 402.0,
+      "tooltip_preserved_from_matched_viewport": false
+    },
+    "scenario": "pending order reopens without new purchase; retry locks duplicate taps",
+    "texts": [
+      "亲喂改善",
+      "找到影响亲喂的主要问题，改善含乳、吸吮和喂养体验。",
+      "2 次 IBCLC 在线咨询",
+      "14 天持续陪伴",
+      "$239 USD",
+      "选择",
+      "奶量管理",
+      "判断奶量问题，建立并持续调整个性化奶量管理方案。",
+      "3 次 IBCLC 在线咨询",
+      "14 天持续陪伴",
+      "$299 USD",
+      "选择",
+      "舒适哺乳支持",
+      "找到影响舒适度的主要因素，改善不适并及时识别医疗转介需求。",
+      "2 次 IBCLC 在线咨询",
+      "3 天持续陪伴",
+      "$219 USD",
+      "选择",
+      "继续支持"
+    ]
+  },
+  {
+    "image": "raw/test/goldens/design_system/renew-order-error-390.long.png",
+    "sha256": "853b3fa04c83fc2d56e72e633b72ec486775b3fd611f88c48c5ef2c1f9c32afc",
+    "metadata": "raw/test/goldens/design_system/renew-order-error-390.png.json",
+    "long": {
+      "status": "complete-measured-scroll-stitch",
+      "file": "/Users/lute/project/momcozy-lab/app/docs/app-ui-inventory/raw/test/goldens/design_system/renew-order-error-390.long.png",
+      "offsets": [
+        0.0,
+        358.0,
+        642.0
+      ],
+      "scroll_bounds": [
+        0.0,
+        64.0,
+        390.0,
+        780.0
+      ],
+      "frame_scroll_bounds": [
+        [
+          0.0,
+          64.0,
+          390.0,
+          780.0
+        ],
+        [
+          0.0,
+          64.0,
+          390.0,
+          780.0
+        ],
+        [
+          0.0,
+          64.0,
+          390.0,
+          780.0
+        ]
+      ],
+      "content_height": 1422.0,
+      "interior_strip_edge_guard": 64.0,
+      "fixed_bottom_overlay_bounds": [],
+      "original_scroll_offset": 334.0,
+      "tooltip_preserved_from_matched_viewport": false
+    },
+    "scenario": "pending order reopens without new purchase; retry locks duplicate taps",
+    "texts": [
+      "喂养安心",
+      "订单尚未完成，可继续查看付款。",
+      "判断宝宝当前是否吃够，明确是否需要调整喂养，并形成 Feeding Plan。",
+      "2 次 IBCLC 在线咨询",
+      "7 天持续陪伴",
+      "$219 USD",
+      "暂时无法打开订单，请重新选择方案重试。",
+      "继续付款",
+      "亲喂改善",
+      "找到影响亲喂的主要问题，改善含乳、吸吮和喂养体验。",
+      "2 次 IBCLC 在线咨询",
+      "14 天持续陪伴",
+      "$239 USD",
+      "选择",
+      "奶量管理",
+      "判断奶量问题，建立并持续调整个性化奶量管理方案。",
+      "3 次 IBCLC 在线咨询",
+      "14 天持续陪伴",
+      "$299 USD",
+      "选择",
+      "舒适哺乳支持",
+      "找到影响舒适度的主要因素，改善不适并及时识别医疗转介需求。",
+      "2 次 IBCLC 在线咨询",
+      "3 天持续陪伴",
+      "$219 USD",
+      "选择",
+      "继续支持"
+    ]
+  }
+]

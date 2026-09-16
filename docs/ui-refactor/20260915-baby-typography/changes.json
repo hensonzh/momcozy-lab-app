@@ -1,0 +1,592 @@
+{
+  "sources": [
+    {
+      "id": "326:1086",
+      "name": "Baby home / recorded / 1x",
+      "texts": [
+        {
+          "id": "326:1136",
+          "text": "1 次",
+          "size": 22,
+          "parent": "Feeding count",
+          "grandparent": "Feeding summary",
+          "font": {
+            "family": "Noto Sans SC",
+            "style": "Bold",
+            "variationSettings": {
+              "wght": 700
+            }
+          },
+          "lineHeight": {
+            "unit": "PERCENT",
+            "value": 139.9999976158142
+          },
+          "autoResize": "HEIGHT",
+          "width": 254,
+          "height": 31
+        },
+        {
+          "id": "326:1112",
+          "text": "2 小时",
+          "size": 22,
+          "parent": "Value",
+          "grandparent": "睡眠 summary",
+          "font": {
+            "family": "Noto Sans SC",
+            "style": "Bold",
+            "variationSettings": {
+              "wght": 700
+            }
+          },
+          "lineHeight": {
+            "unit": "PERCENT",
+            "value": 139.9999976158142
+          },
+          "autoResize": "HEIGHT",
+          "width": 88.66666412353516,
+          "height": 31
+        },
+        {
+          "id": "326:1119",
+          "text": "1 次",
+          "size": 22,
+          "parent": "Value",
+          "grandparent": "尿湿 summary",
+          "font": {
+            "family": "Noto Sans SC",
+            "style": "Bold",
+            "variationSettings": {
+              "wght": 700
+            }
+          },
+          "lineHeight": {
+            "unit": "PERCENT",
+            "value": 139.9999976158142
+          },
+          "autoResize": "HEIGHT",
+          "width": 88.66666412353516,
+          "height": 31
+        },
+        {
+          "id": "326:1127",
+          "text": "1 次",
+          "size": 22,
+          "parent": "Value",
+          "grandparent": "便便 summary",
+          "font": {
+            "family": "Noto Sans SC",
+            "style": "Bold",
+            "variationSettings": {
+              "wght": 700
+            }
+          },
+          "lineHeight": {
+            "unit": "PERCENT",
+            "value": 139.9999976158142
+          },
+          "autoResize": "HEIGHT",
+          "width": 88.66666412353516,
+          "height": 31
+        },
+        {
+          "id": "326:1146",
+          "text": "4.2 kg",
+          "size": 22,
+          "parent": "体重",
+          "grandparent": "Latest measurements",
+          "font": {
+            "family": "Noto Sans SC",
+            "style": "Bold",
+            "variationSettings": {
+              "wght": 700
+            }
+          },
+          "lineHeight": {
+            "unit": "PERCENT",
+            "value": 139.9999976158142
+          },
+          "autoResize": "HEIGHT",
+          "width": 88.66666412353516,
+          "height": 31
+        },
+        {
+          "id": "326:1150",
+          "text": "54 cm",
+          "size": 22,
+          "parent": "身长",
+          "grandparent": "Latest measurements",
+          "font": {
+            "family": "Noto Sans SC",
+            "style": "Bold",
+            "variationSettings": {
+              "wght": 700
+            }
+          },
+          "lineHeight": {
+            "unit": "PERCENT",
+            "value": 139.9999976158142
+          },
+          "autoResize": "HEIGHT",
+          "width": 88.66666412353516,
+          "height": 31
+        },
+        {
+          "id": "326:1154",
+          "text": "36 cm",
+          "size": 22,
+          "parent": "头围",
+          "grandparent": "Latest measurements",
+          "font": {
+            "family": "Noto Sans SC",
+            "style": "Bold",
+            "variationSettings": {
+              "wght": 700
+            }
+          },
+          "lineHeight": {
+            "unit": "PERCENT",
+            "value": 139.9999976158142
+          },
+          "autoResize": "HEIGHT",
+          "width": 88.66666412353516,
+          "height": 31
+        }
+      ]
+    },
+    {
+      "id": "327:1086",
+      "name": "Baby home / empty / 1x",
+      "texts": [
+        {
+          "id": "327:1135",
+          "text": "未记录",
+          "size": 18,
+          "parent": "Feeding count",
+          "grandparent": "Feeding summary",
+          "font": {
+            "family": "Noto Sans SC",
+            "style": "Bold",
+            "variationSettings": {
+              "wght": 700
+            }
+          },
+          "lineHeight": {
+            "unit": "PERCENT",
+            "value": 139.9999976158142
+          },
+          "autoResize": "HEIGHT",
+          "width": 254,
+          "height": 25
+        },
+        {
+          "id": "327:1111",
+          "text": "未记录",
+          "size": 18,
+          "parent": "Value",
+          "grandparent": "睡眠 summary",
+          "font": {
+            "family": "Noto Sans SC",
+            "style": "Bold",
+            "variationSettings": {
+              "wght": 700
+            }
+          },
+          "lineHeight": {
+            "unit": "PERCENT",
+            "value": 139.9999976158142
+          },
+          "autoResize": "HEIGHT",
+          "width": 88.66666412353516,
+          "height": 25
+        },
+        {
+          "id": "327:1118",
+          "text": "未记录",
+          "size": 18,
+          "parent": "Value",
+          "grandparent": "尿湿 summary",
+          "font": {
+            "family": "Noto Sans SC",
+            "style": "Bold",
+            "variationSettings": {
+              "wght": 700
+            }
+          },
+          "lineHeight": {
+            "unit": "PERCENT",
+            "value": 139.9999976158142
+          },
+          "autoResize": "HEIGHT",
+          "width": 88.66666412353516,
+          "height": 25
+        },
+        {
+          "id": "327:1126",
+          "text": "未记录",
+          "size": 18,
+          "parent": "Value",
+          "grandparent": "便便 summary",
+          "font": {
+            "family": "Noto Sans SC",
+            "style": "Bold",
+            "variationSettings": {
+              "wght": 700
+            }
+          },
+          "lineHeight": {
+            "unit": "PERCENT",
+            "value": 139.9999976158142
+          },
+          "autoResize": "HEIGHT",
+          "width": 88.66666412353516,
+          "height": 25
+        },
+        {
+          "id": "327:1145",
+          "text": "未记录",
+          "size": 18,
+          "parent": "体重",
+          "grandparent": "Latest measurements",
+          "font": {
+            "family": "Noto Sans SC",
+            "style": "Bold",
+            "variationSettings": {
+              "wght": 700
+            }
+          },
+          "lineHeight": {
+            "unit": "PERCENT",
+            "value": 139.9999976158142
+          },
+          "autoResize": "HEIGHT",
+          "width": 88.66666412353516,
+          "height": 25
+        },
+        {
+          "id": "327:1148",
+          "text": "未记录",
+          "size": 18,
+          "parent": "身长",
+          "grandparent": "Latest measurements",
+          "font": {
+            "family": "Noto Sans SC",
+            "style": "Bold",
+            "variationSettings": {
+              "wght": 700
+            }
+          },
+          "lineHeight": {
+            "unit": "PERCENT",
+            "value": 139.9999976158142
+          },
+          "autoResize": "HEIGHT",
+          "width": 88.66666412353516,
+          "height": 25
+        },
+        {
+          "id": "327:1151",
+          "text": "未记录",
+          "size": 18,
+          "parent": "头围",
+          "grandparent": "Latest measurements",
+          "font": {
+            "family": "Noto Sans SC",
+            "style": "Bold",
+            "variationSettings": {
+              "wght": 700
+            }
+          },
+          "lineHeight": {
+            "unit": "PERCENT",
+            "value": 139.9999976158142
+          },
+          "autoResize": "HEIGHT",
+          "width": 88.66666412353516,
+          "height": 25
+        }
+      ]
+    }
+  ],
+  "changes": [
+    {
+      "frame": "327:1378",
+      "name": "Baby home / loading / 1x",
+      "id": "327:1427",
+      "text": "载入中…",
+      "before": 24,
+      "after": 18
+    },
+    {
+      "frame": "327:1378",
+      "name": "Baby home / loading / 1x",
+      "id": "327:1403",
+      "text": "载入中…",
+      "before": 20,
+      "after": 18
+    },
+    {
+      "frame": "327:1378",
+      "name": "Baby home / loading / 1x",
+      "id": "327:1410",
+      "text": "载入中…",
+      "before": 20,
+      "after": 18
+    },
+    {
+      "frame": "327:1378",
+      "name": "Baby home / loading / 1x",
+      "id": "327:1418",
+      "text": "载入中…",
+      "before": 20,
+      "after": 18
+    },
+    {
+      "frame": "327:1378",
+      "name": "Baby home / loading / 1x",
+      "id": "327:1437",
+      "text": "载入中…",
+      "before": 20,
+      "after": 18
+    },
+    {
+      "frame": "327:1378",
+      "name": "Baby home / loading / 1x",
+      "id": "327:1440",
+      "text": "载入中…",
+      "before": 20,
+      "after": 18
+    },
+    {
+      "frame": "327:1378",
+      "name": "Baby home / loading / 1x",
+      "id": "327:1443",
+      "text": "载入中…",
+      "before": 20,
+      "after": 18
+    },
+    {
+      "frame": "327:1632",
+      "name": "Baby home / error / 1x",
+      "id": "327:1686",
+      "text": "暂未载入",
+      "before": 24,
+      "after": 18
+    },
+    {
+      "frame": "327:1632",
+      "name": "Baby home / error / 1x",
+      "id": "327:1662",
+      "text": "暂未载入",
+      "before": 20,
+      "after": 18
+    },
+    {
+      "frame": "327:1632",
+      "name": "Baby home / error / 1x",
+      "id": "327:1669",
+      "text": "暂未载入",
+      "before": 20,
+      "after": 18
+    },
+    {
+      "frame": "327:1632",
+      "name": "Baby home / error / 1x",
+      "id": "327:1677",
+      "text": "暂未载入",
+      "before": 20,
+      "after": 18
+    },
+    {
+      "frame": "327:1632",
+      "name": "Baby home / error / 1x",
+      "id": "327:1701",
+      "text": "暂未载入",
+      "before": 20,
+      "after": 18
+    },
+    {
+      "frame": "327:1632",
+      "name": "Baby home / error / 1x",
+      "id": "327:1704",
+      "text": "暂未载入",
+      "before": 20,
+      "after": 18
+    },
+    {
+      "frame": "327:1632",
+      "name": "Baby home / error / 1x",
+      "id": "327:1707",
+      "text": "暂未载入",
+      "before": 20,
+      "after": 18
+    },
+    {
+      "frame": "327:1912",
+      "name": "Baby home / missing / 1x",
+      "id": "327:1961",
+      "text": "未记录",
+      "before": 24,
+      "after": 18
+    },
+    {
+      "frame": "327:1912",
+      "name": "Baby home / missing / 1x",
+      "id": "327:1937",
+      "text": "未记录",
+      "before": 20,
+      "after": 18
+    },
+    {
+      "frame": "327:1912",
+      "name": "Baby home / missing / 1x",
+      "id": "327:1944",
+      "text": "未记录",
+      "before": 20,
+      "after": 18
+    },
+    {
+      "frame": "327:1912",
+      "name": "Baby home / missing / 1x",
+      "id": "327:1952",
+      "text": "未记录",
+      "before": 20,
+      "after": 18
+    },
+    {
+      "frame": "327:1912",
+      "name": "Baby home / missing / 1x",
+      "id": "327:1971",
+      "text": "未记录",
+      "before": 20,
+      "after": 18
+    },
+    {
+      "frame": "327:1912",
+      "name": "Baby home / missing / 1x",
+      "id": "327:1974",
+      "text": "未记录",
+      "before": 20,
+      "after": 18
+    },
+    {
+      "frame": "327:1912",
+      "name": "Baby home / missing / 1x",
+      "id": "327:1977",
+      "text": "未记录",
+      "before": 20,
+      "after": 18
+    },
+    {
+      "frame": "327:2170",
+      "name": "Baby home / active / 1x",
+      "id": "327:2220",
+      "text": "1 次",
+      "before": 24,
+      "after": 22
+    },
+    {
+      "frame": "327:2170",
+      "name": "Baby home / active / 1x",
+      "id": "327:2195",
+      "text": "正在睡",
+      "before": 20,
+      "after": 22
+    },
+    {
+      "frame": "327:2170",
+      "name": "Baby home / active / 1x",
+      "id": "327:2203",
+      "text": "1 次",
+      "before": 20,
+      "after": 22
+    },
+    {
+      "frame": "327:2170",
+      "name": "Baby home / active / 1x",
+      "id": "327:2211",
+      "text": "1 次",
+      "before": 20,
+      "after": 22
+    },
+    {
+      "frame": "327:2170",
+      "name": "Baby home / active / 1x",
+      "id": "327:2230",
+      "text": "4.2 kg",
+      "before": 20,
+      "after": 22
+    },
+    {
+      "frame": "327:2170",
+      "name": "Baby home / active / 1x",
+      "id": "327:2234",
+      "text": "54 cm",
+      "before": 20,
+      "after": 22
+    },
+    {
+      "frame": "327:2170",
+      "name": "Baby home / active / 1x",
+      "id": "327:2238",
+      "text": "36 cm",
+      "before": 20,
+      "after": 22
+    },
+    {
+      "frame": "327:2958",
+      "name": "Baby home / long-name / 1x",
+      "id": "327:3007",
+      "text": "未记录",
+      "before": 24,
+      "after": 18
+    },
+    {
+      "frame": "327:2958",
+      "name": "Baby home / long-name / 1x",
+      "id": "327:2983",
+      "text": "未记录",
+      "before": 20,
+      "after": 18
+    },
+    {
+      "frame": "327:2958",
+      "name": "Baby home / long-name / 1x",
+      "id": "327:2990",
+      "text": "未记录",
+      "before": 20,
+      "after": 18
+    },
+    {
+      "frame": "327:2958",
+      "name": "Baby home / long-name / 1x",
+      "id": "327:2998",
+      "text": "未记录",
+      "before": 20,
+      "after": 18
+    },
+    {
+      "frame": "327:2958",
+      "name": "Baby home / long-name / 1x",
+      "id": "327:3017",
+      "text": "未记录",
+      "before": 20,
+      "after": 18
+    },
+    {
+      "frame": "327:2958",
+      "name": "Baby home / long-name / 1x",
+      "id": "327:3020",
+      "text": "未记录",
+      "before": 20,
+      "after": 18
+    },
+    {
+      "frame": "327:2958",
+      "name": "Baby home / long-name / 1x",
+      "id": "327:3023",
+      "text": "未记录",
+      "before": 20,
+      "after": 18
+    }
+  ]
+}

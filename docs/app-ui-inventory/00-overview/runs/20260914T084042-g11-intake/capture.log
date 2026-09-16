@@ -1,0 +1,6 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/modules/services/intake_test.dart
+00:00 +0: intake uncertain save locks fields and retries identical snapshot
+00:01 +1: intake load failure can recover without stale form actions
+00:01 +2: intake consent withdrawal and discard preserve edits at 1.0
+00:01 +3: intake profile menus and birth date preserve draft at 1.0
+00:01 +4: All tests passed!

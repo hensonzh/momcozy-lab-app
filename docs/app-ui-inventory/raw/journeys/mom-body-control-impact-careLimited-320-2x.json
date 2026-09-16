@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/mom-body-control-impact-careLimited-320-2x.png",
+  "previous_source": "test/goldens/ui_inventory/mom-body-control-severity-restored-320-2x.png",
+  "route": "/me",
+  "trigger": "Body / 这种不适影响到你了吗？ → select 影响走路 / 抱宝宝",
+  "root_entry": "Authenticated More → tap Me bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/mom/mom_body_control_inventory_test.dart"
+}

@@ -1,0 +1,26 @@
+[
+  {
+    "state": "agent-journey-long-followup-completed",
+    "source": "05-agent/agent-journey-long-followup-completed/default.png",
+    "sha256": "71a223fd121ae78fe3d5f5d897f83d84b721a390a0de5c9b7702087aaa6791e6",
+    "sheet": "long-1.jpg"
+  },
+  {
+    "state": "agent-journey-long-followup-sent",
+    "source": "05-agent/agent-journey-long-followup-sent/default.png",
+    "sha256": "764a010599ed5dcf5c7c82ded0f9eeac79c51e1270be8a68b4d501211f4328cd",
+    "sheet": "long-1.jpg"
+  },
+  {
+    "state": "agent-journey-long-reply",
+    "source": "05-agent/agent-journey-long-reply/default.png",
+    "sha256": "563d84115d0a4dd0bae778b6fbdc16ab38115e339b87dce99b9cf391f019598f",
+    "sheet": "long-1.jpg"
+  },
+  {
+    "state": "agent-journey-terminal-error",
+    "source": "05-agent/agent-journey-terminal-error/default.png",
+    "sha256": "68f649793a117925ed3bda9654c65fa7285b6fcff7d2a757a3d3b3e11baf5257",
+    "sheet": "long-1.jpg"
+  }
+]

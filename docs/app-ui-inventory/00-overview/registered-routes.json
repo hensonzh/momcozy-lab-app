@@ -1,0 +1,313 @@
+{
+  "default_local_build": [
+    {
+      "path": "/account",
+      "name": null,
+      "has_redirect": false,
+      "has_builder": true
+    },
+    {
+      "path": "/login",
+      "name": null,
+      "has_redirect": false,
+      "has_builder": true
+    },
+    {
+      "path": "/privacy",
+      "name": null,
+      "has_redirect": false,
+      "has_builder": true
+    },
+    {
+      "path": "/notifications/settings",
+      "name": null,
+      "has_redirect": false,
+      "has_builder": true
+    },
+    {
+      "path": "/services/appointments/:appointmentId",
+      "name": null,
+      "has_redirect": false,
+      "has_builder": true
+    },
+    {
+      "path": "/services/appointments/:appointmentId/summary",
+      "name": null,
+      "has_redirect": false,
+      "has_builder": true
+    },
+    {
+      "path": "/services/appointments/:appointmentId/room",
+      "name": null,
+      "has_redirect": false,
+      "has_builder": true
+    },
+    {
+      "path": "/services/episodes/:episodeId/booking",
+      "name": null,
+      "has_redirect": false,
+      "has_builder": true
+    },
+    {
+      "path": "/services/appointments/:appointmentId/intake",
+      "name": null,
+      "has_redirect": false,
+      "has_builder": true
+    },
+    {
+      "path": "/me/diary",
+      "name": null,
+      "has_redirect": false,
+      "has_builder": true
+    },
+    {
+      "path": "/me/lactation",
+      "name": null,
+      "has_redirect": false,
+      "has_builder": true
+    },
+    {
+      "path": "/services",
+      "name": null,
+      "has_redirect": false,
+      "has_builder": true
+    },
+    {
+      "path": "/services/episodes/:episodeId",
+      "name": null,
+      "has_redirect": false,
+      "has_builder": true
+    },
+    {
+      "path": "/services/renew",
+      "name": null,
+      "has_redirect": false,
+      "has_builder": true
+    },
+    {
+      "path": "/services/episodes/:episodeId/renew",
+      "name": null,
+      "has_redirect": false,
+      "has_builder": true
+    },
+    {
+      "path": "/services/:packageId",
+      "name": null,
+      "has_redirect": false,
+      "has_builder": true
+    },
+    {
+      "path": "/babies/:babyId/records",
+      "name": null,
+      "has_redirect": false,
+      "has_builder": true
+    },
+    {
+      "path": "/",
+      "name": null,
+      "has_redirect": false,
+      "has_builder": true
+    },
+    {
+      "path": "/me",
+      "name": null,
+      "has_redirect": false,
+      "has_builder": true
+    },
+    {
+      "path": "/baby",
+      "name": null,
+      "has_redirect": false,
+      "has_builder": true
+    },
+    {
+      "path": "/schedule",
+      "name": null,
+      "has_redirect": false,
+      "has_builder": true
+    },
+    {
+      "path": "/more",
+      "name": null,
+      "has_redirect": false,
+      "has_builder": true
+    },
+    {
+      "path": "/notifications",
+      "name": null,
+      "has_redirect": false,
+      "has_builder": true
+    },
+    {
+      "path": "/media-viewer",
+      "name": null,
+      "has_redirect": false,
+      "has_builder": true
+    }
+  ],
+  "onboarding_enabled_build": [
+    {
+      "path": "/account",
+      "name": null,
+      "has_redirect": false,
+      "has_builder": true
+    },
+    {
+      "path": "/login",
+      "name": null,
+      "has_redirect": false,
+      "has_builder": true
+    },
+    {
+      "path": "/onboarding",
+      "name": null,
+      "has_redirect": false,
+      "has_builder": true
+    },
+    {
+      "path": "/avatar/review",
+      "name": null,
+      "has_redirect": false,
+      "has_builder": true
+    },
+    {
+      "path": "/avatar/create",
+      "name": null,
+      "has_redirect": false,
+      "has_builder": true
+    },
+    {
+      "path": "/privacy",
+      "name": null,
+      "has_redirect": false,
+      "has_builder": true
+    },
+    {
+      "path": "/notifications/settings",
+      "name": null,
+      "has_redirect": false,
+      "has_builder": true
+    },
+    {
+      "path": "/services/appointments/:appointmentId",
+      "name": null,
+      "has_redirect": false,
+      "has_builder": true
+    },
+    {
+      "path": "/services/appointments/:appointmentId/summary",
+      "name": null,
+      "has_redirect": false,
+      "has_builder": true
+    },
+    {
+      "path": "/services/appointments/:appointmentId/room",
+      "name": null,
+      "has_redirect": false,
+      "has_builder": true
+    },
+    {
+      "path": "/services/episodes/:episodeId/booking",
+      "name": null,
+      "has_redirect": false,
+      "has_builder": true
+    },
+    {
+      "path": "/services/appointments/:appointmentId/intake",
+      "name": null,
+      "has_redirect": false,
+      "has_builder": true
+    },
+    {
+      "path": "/me/diary",
+      "name": null,
+      "has_redirect": false,
+      "has_builder": true
+    },
+    {
+      "path": "/me/lactation",
+      "name": null,
+      "has_redirect": false,
+      "has_builder": true
+    },
+    {
+      "path": "/services",
+      "name": null,
+      "has_redirect": false,
+      "has_builder": true
+    },
+    {
+      "path": "/services/episodes/:episodeId",
+      "name": null,
+      "has_redirect": false,
+      "has_builder": true
+    },
+    {
+      "path": "/services/renew",
+      "name": null,
+      "has_redirect": false,
+      "has_builder": true
+    },
+    {
+      "path": "/services/episodes/:episodeId/renew",
+      "name": null,
+      "has_redirect": false,
+      "has_builder": true
+    },
+    {
+      "path": "/services/:packageId",
+      "name": null,
+      "has_redirect": false,
+      "has_builder": true
+    },
+    {
+      "path": "/babies/:babyId/records",
+      "name": null,
+      "has_redirect": false,
+      "has_builder": true
+    },
+    {
+      "path": "/",
+      "name": null,
+      "has_redirect": false,
+      "has_builder": true
+    },
+    {
+      "path": "/me",
+      "name": null,
+      "has_redirect": false,
+      "has_builder": true
+    },
+    {
+      "path": "/baby",
+      "name": null,
+      "has_redirect": false,
+      "has_builder": true
+    },
+    {
+      "path": "/schedule",
+      "name": null,
+      "has_redirect": false,
+      "has_builder": true
+    },
+    {
+      "path": "/more",
+      "name": null,
+      "has_redirect": false,
+      "has_builder": true
+    },
+    {
+      "path": "/notifications",
+      "name": null,
+      "has_redirect": false,
+      "has_builder": true
+    },
+    {
+      "path": "/media-viewer",
+      "name": null,
+      "has_redirect": false,
+      "has_builder": true
+    }
+  ],
+  "notes": "The local build uses default false capability flags. Onboarding/avatar routes require an OnboardingController. History is an in-page capability, not an independent GoRoute."
+}

@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/service-journey-booking-slots-393.png",
+  "previous_source": "test/goldens/ui_inventory/service-journey-booking-emergency-393.png",
+  "route": "/services/episodes/service-episode/booking",
+  "trigger": "Suitable and eligible → available and unavailable slots",
+  "root_entry": "Authenticated More → tap Me bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/services/service_inventory_journey_test.dart"
+}

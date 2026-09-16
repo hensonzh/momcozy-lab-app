@@ -1,0 +1,10 @@
+{
+  "images": 351,
+  "matched_prior_images": 351,
+  "changed_images": [],
+  "metadata": 216,
+  "long_variants": 135,
+  "tests_passed": 7,
+  "tests_failed": 3,
+  "failure_reason": "Existing More return baselines predate More redesign; no baselines updated"
+}

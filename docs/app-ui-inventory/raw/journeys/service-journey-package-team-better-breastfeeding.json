@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/service-journey-package-team-better-breastfeeding-393.png",
+  "previous_source": "test/goldens/ui_inventory/service-journey-package-better-breastfeeding-393.png",
+  "route": "/services/better-breastfeeding",
+  "trigger": "Package detail → team information",
+  "root_entry": "Authenticated More → tap Me bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/services/service_inventory_journey_test.dart"
+}

@@ -1,0 +1,222 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/features/notifications/notification_design_test.dart
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: (setUpAll)
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/features/notifications/notification_design_test.dart: (setUpAll)
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: email entry and registration at 320.0 / 1.0
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/features/notifications/notification_design_test.dart: inbox and retained-content error at 320.0 / 1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: FlutterError:<Golden "../../goldens/design_system/notifications-inbox-320.png": Pixel test
+failed, 4.14%, 11182px diff detected.
+          Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/features/notifications/failures>
+
+When the exception was thrown, this was the stack:
+#4      main.capture (file:///Users/lute/project/momcozy-lab/app/test/features/notifications/notification_design_test.dart:40:9)
+#5      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/notifications/notification_design_test.dart:90:15)
+<asynchronous suspension>
+#6      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#7      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/features/notifications/notification_design_test.dart line 40
+The test description was:
+  inbox and retained-content error at 320.0 / 1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +0 -1: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: email entry and registration at 320.0 / 1.0
+00:00 +0 -1: /Users/lute/project/momcozy-lab/app/test/features/notifications/notification_design_test.dart: inbox and retained-content error at 320.0 / 1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: inbox and retained-content error at 320.0 / 1.0
+  
+00:00 +1 -1: /Users/lute/project/momcozy-lab/app/test/features/notifications/notification_design_test.dart: notification settings and consent at 320.0 / 1.0
+00:00 +2 -1: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: reset form with keyboard at 320.0 / 1.0
+00:00 +3 -1: /Users/lute/project/momcozy-lab/app/test/features/notifications/notification_design_test.dart: inbox and retained-content error at 320.0 / 2.0
+00:00 +4 -1: /Users/lute/project/momcozy-lab/app/test/features/notifications/notification_design_test.dart: inbox and retained-content error at 320.0 / 2.0
+00:00 +5 -1: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: account and confirmations at 320.0 / 1.0
+00:00 +6 -1: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: account and confirmations at 320.0 / 1.0
+00:01 +6 -1: /Users/lute/project/momcozy-lab/app/test/features/notifications/notification_design_test.dart: inbox and retained-content error at 390.0 / 1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: FlutterError:<Golden "../../goldens/design_system/notifications-inbox-390.png": Pixel test
+failed, 3.29%, 10825px diff detected.
+          Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/features/notifications/failures>
+
+When the exception was thrown, this was the stack:
+#4      main.capture (file:///Users/lute/project/momcozy-lab/app/test/features/notifications/notification_design_test.dart:40:9)
+#5      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/notifications/notification_design_test.dart:90:15)
+<asynchronous suspension>
+#6      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#7      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/features/notifications/notification_design_test.dart line 40
+The test description was:
+  inbox and retained-content error at 390.0 / 1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +6 -2: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: account and confirmations at 320.0 / 1.0
+00:01 +6 -2: /Users/lute/project/momcozy-lab/app/test/features/notifications/notification_design_test.dart: inbox and retained-content error at 390.0 / 1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: inbox and retained-content error at 390.0 / 1.0
+  
+00:01 +6 -2: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: account and confirmations at 320.0 / 1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: FlutterError:<Golden "../../goldens/design_system/account-320.png": Pixel test failed,
+1.94%, 5234px diff detected.
+          Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/features/auth/failures>
+
+When the exception was thrown, this was the stack:
+#4      main.tap (file:///Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart:61:9)
+<asynchronous suspension>
+#5      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart:230:9)
+<asynchronous suspension>
+#6      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#7      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart line 61
+The test description was:
+  account and confirmations at 320.0 / 1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +6 -3: /Users/lute/project/momcozy-lab/app/test/features/notifications/notification_design_test.dart: notification settings and consent at 390.0 / 1.0
+00:01 +6 -3: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: account and confirmations at 320.0 / 1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: account and confirmations at 320.0 / 1.0
+  
+00:01 +7 -3: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: email entry and registration at 320.0 / 2.0
+00:01 +8 -3: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: email entry and registration at 320.0 / 2.0
+00:01 +9 -3: /Users/lute/project/momcozy-lab/app/test/features/notifications/notification_design_test.dart: notification settings and consent at 390.0 / 2.0
+00:01 +10 -3: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: reset form with keyboard at 320.0 / 2.0
+00:01 +11 -3: /Users/lute/project/momcozy-lab/app/test/features/notifications/notification_design_test.dart: inbox and retained-content error at 430.0 / 1.0
+00:01 +12 -3: /Users/lute/project/momcozy-lab/app/test/features/notifications/notification_design_test.dart: inbox and retained-content error at 430.0 / 1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: FlutterError:<Golden "../../goldens/design_system/notifications-inbox-430.png": Pixel test
+failed, 2.74%, 9953px diff detected.
+          Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/features/notifications/failures>
+
+When the exception was thrown, this was the stack:
+#4      main.capture (file:///Users/lute/project/momcozy-lab/app/test/features/notifications/notification_design_test.dart:40:9)
+#5      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/notifications/notification_design_test.dart:90:15)
+<asynchronous suspension>
+#6      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#7      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/features/notifications/notification_design_test.dart line 40
+The test description was:
+  inbox and retained-content error at 430.0 / 1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +12 -4: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: account and confirmations at 320.0 / 2.0
+00:01 +12 -4: /Users/lute/project/momcozy-lab/app/test/features/notifications/notification_design_test.dart: inbox and retained-content error at 430.0 / 1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: inbox and retained-content error at 430.0 / 1.0
+  
+00:01 +13 -4: /Users/lute/project/momcozy-lab/app/test/features/notifications/notification_design_test.dart: notification settings and consent at 430.0 / 1.0
+00:01 +14 -4: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: email entry and registration at 390.0 / 1.0
+00:01 +15 -4: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: email entry and registration at 390.0 / 1.0
+00:01 +16 -4: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: email entry and registration at 390.0 / 1.0
+00:01 +17 -4: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: reset form with keyboard at 390.0 / 1.0
+00:01 +18 -4: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: invite entry with short keyboard viewport at 390.0 / 1.0
+00:01 +19 -4: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: account and confirmations at 390.0 / 1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: FlutterError:<Golden "../../goldens/design_system/account-390.png": Pixel test failed,
+1.59%, 5234px diff detected.
+          Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/features/auth/failures>
+
+When the exception was thrown, this was the stack:
+#4      main.tap (file:///Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart:61:9)
+<asynchronous suspension>
+#5      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart:230:9)
+<asynchronous suspension>
+#6      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#7      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart line 61
+The test description was:
+  account and confirmations at 390.0 / 1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +19 -5: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: account and confirmations at 390.0 / 1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: account and confirmations at 390.0 / 1.0
+  
+00:01 +19 -5: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: email entry and registration at 390.0 / 2.0
+00:02 +20 -5: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: reset form with keyboard at 390.0 / 2.0
+00:02 +21 -5: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: invite entry with short keyboard viewport at 390.0 / 2.0
+00:02 +22 -5: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: account and confirmations at 390.0 / 2.0
+00:02 +23 -5: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: email entry and registration at 430.0 / 1.0
+00:02 +24 -5: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: reset form with keyboard at 430.0 / 1.0
+00:02 +25 -5: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: invite entry with short keyboard viewport at 430.0 / 1.0
+00:02 +26 -5: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: account and confirmations at 430.0 / 1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: FlutterError:<Golden "../../goldens/design_system/account-430.png": Pixel test failed,
+1.45%, 5259px diff detected.
+          Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/features/auth/failures>
+
+When the exception was thrown, this was the stack:
+#4      main.tap (file:///Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart:61:9)
+<asynchronous suspension>
+#5      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart:230:9)
+<asynchronous suspension>
+#6      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#7      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart line 61
+The test description was:
+  account and confirmations at 430.0 / 1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:02 +26 -6: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: account and confirmations at 430.0 / 1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: account and confirmations at 430.0 / 1.0
+  
+00:02 +26 -6: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: email entry and registration at 430.0 / 2.0
+00:02 +27 -6: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: reset form with keyboard at 430.0 / 2.0
+00:02 +28 -6: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: invite entry with short keyboard viewport at 430.0 / 2.0
+00:02 +29 -6: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: account and confirmations at 430.0 / 2.0
+00:02 +30 -6: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: (tearDownAll)
+00:02 +30 -6: Some tests failed.
+
+Failing tests:
+  /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: account and confirmations at 320.0 / 1.0
+  /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: account and confirmations at 390.0 / 1.0
+  /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: account and confirmations at 430.0 / 1.0
+  /Users/lute/project/momcozy-lab/app/test/features/notifications/notification_design_test.dart: inbox and retained-content error at 320.0 / 1.0
+  ... and 2 more

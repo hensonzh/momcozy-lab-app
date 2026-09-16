@@ -4,14 +4,32 @@ import 'package:momcozy_flutter_app/shared/design_system/momcozy_design_system.d
 import 'package:momcozy_flutter_app/shared/design_system/momcozy_theme.dart';
 
 void main() {
+  test('workbench retains its existing typography', () {
+    final theme = momCozyTheme(isWorkbench: true);
+    expect(theme.textTheme.headlineMedium?.fontSize, 26);
+    expect(theme.textTheme.headlineMedium?.fontFamily, 'DMSans');
+    expect(theme.textTheme.headlineMedium?.height, 1.43);
+    expect(theme.appBarTheme.titleTextStyle?.fontSize, 22);
+    expect(theme.dialogTheme.titleTextStyle?.fontSize, 22);
+  });
   test(
     'all native control families inherit the current Me visual language',
     () {
       final theme = momCozyTheme();
       expect(theme.colorScheme.error, MomCozyColors.danger);
       expect(theme.appBarTheme.backgroundColor, MomCozyColors.background);
-      expect(theme.appBarTheme.titleTextStyle?.fontSize, 22);
-      expect(theme.textTheme.headlineMedium?.fontSize, 26);
+      expect(theme.appBarTheme.titleTextStyle?.fontSize, 21);
+      expect(theme.textTheme.headlineMedium?.fontSize, 28);
+      expect(theme.textTheme.headlineMedium?.fontFamily, 'Manrope');
+      expect(theme.textTheme.headlineMedium?.height, 1.1);
+      expect(theme.textTheme.headlineSmall?.fontSize, 21);
+      expect(theme.textTheme.headlineSmall?.height, 1.2);
+      expect(theme.textTheme.titleLarge?.fontSize, 18);
+      expect(theme.textTheme.titleLarge?.height, 1.2);
+      expect(theme.textTheme.titleMedium?.fontSize, 16);
+      expect(theme.textTheme.titleMedium?.fontFamily, 'DMSans');
+      expect(theme.textTheme.titleMedium?.fontWeight, FontWeight.w600);
+      expect(theme.textTheme.bodyMedium?.fontFamily, 'DMSans');
       expect(theme.dialogTheme.backgroundColor, MomCozyColors.background);
       expect(theme.bottomSheetTheme.backgroundColor, MomCozyColors.background);
       expect(theme.snackBarTheme.backgroundColor, MomCozyColors.foreground);

@@ -1,0 +1,31 @@
+[
+  [
+    "new-renew-baselines",
+    [
+      "/Users/lute/.local/share/momcozy-toolchains/flutter/bin/flutter",
+      "--suppress-analytics",
+      "test",
+      "--no-pub",
+      "--reporter",
+      "expanded",
+      "test/modules/services/service_renew_test.dart",
+      "--name",
+      "pending order reopens without new purchase",
+      "--update-goldens"
+    ]
+  ],
+  [
+    "strict-capture",
+    [
+      "/Users/lute/.local/share/momcozy-toolchains/flutter/bin/flutter",
+      "--suppress-analytics",
+      "test",
+      "--no-pub",
+      "--reporter",
+      "expanded",
+      "test/modules/services/service_renew_test.dart",
+      "--name",
+      "pending order reopens without new purchase"
+    ]
+  ]
+]

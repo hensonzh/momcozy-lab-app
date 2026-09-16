@@ -1,0 +1,45 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/app/notification_conversation_route_test.dart
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_history_design_test.dart: (setUpAll)
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_history_design_test.dart: history states 390.0/1.0
+00:01 +1: /Users/lute/project/momcozy-lab/app/test/app/notification_conversation_route_test.dart: notification conversation opens and keeps drafts scoped to its runtime and thread 393.0 / 1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: no matching candidates
+  Actual: _WidgetPredicateWidgetFinder:<Found 1 widget with widget matching predicate: [
+            RawTooltip-[LabeledGlobalKey<RawTooltipState>#64acc]("打开会话历史", hover delay:
+0:00:00.000000, touch delay: 0:00:01.500000, dismiss delay: 0:00:00.100000, triggerMode:
+TooltipTriggerMode.longPress, enableFeedback: true, positionDelegate: Closure:
+(TooltipPositionContext) => Offset from Function '_getDefaultPositionDelegate@2785220820':., state:
+RawTooltipState#f6ed3(ticker inactive)),
+          ]>
+   Which: means one was found but none were expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/app/notification_conversation_route_test.dart:137:9)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/app/notification_conversation_route_test.dart line 137
+The test description was:
+  notification conversation opens and keeps drafts scoped to its runtime and thread 393.0 / 1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +1 -1: /Users/lute/project/momcozy-lab/app/test/app/notification_conversation_route_test.dart: notification conversation opens and keeps drafts scoped to its runtime and thread 393.0 / 1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: notification conversation opens and keeps drafts scoped to its runtime and thread 393.0 / 1.0
+  
+Warning: At least one test in this suite creates an HttpClient. When running a test suite that uses
+TestWidgetsFlutterBinding, all HTTP requests will return status code 400, and no network request
+will actually be made. Any test expecting a real network connection and status code will fail.
+To test code that needs an HttpClient, provide your own HttpClient implementation to the code under
+test, so that your test can consistently provide a testable response to the code under test.
+00:01 +1 -1: /Users/lute/project/momcozy-lab/app/test/app/notification_conversation_route_test.dart: (tearDownAll)
+00:01 +1 -1: Some tests failed.
+
+Failing tests:
+  /Users/lute/project/momcozy-lab/app/test/app/notification_conversation_route_test.dart: notification conversation opens and keeps drafts scoped to its runtime and thread 393.0 / 1.0

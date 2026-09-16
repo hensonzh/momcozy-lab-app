@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/baby-feeding-time-more-return-320-2x.png",
+  "previous_source": "test/goldens/ui_inventory/baby-feeding-time-home-volume-refreshed-320-2x.png",
+  "route": "/more",
+  "trigger": "Baby → More after time and valid-boundary chain",
+  "root_entry": "Authenticated More → tap Baby bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/baby/baby_feeding_time_inventory_test.dart"
+}

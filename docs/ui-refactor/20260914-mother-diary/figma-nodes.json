@@ -1,0 +1,334 @@
+{
+  "fileKey": "ePIoJkiMiXiug9ibpcgRbl",
+  "nodes": [
+    {
+      "id": "306:1086",
+      "name": "MomCozy Diary / rest empty / 1x",
+      "width": 390,
+      "height": 844,
+      "type": "FRAME"
+    },
+    {
+      "id": "306:1156",
+      "name": "MomCozy Diary / rest selected / 1x",
+      "width": 390,
+      "height": 844,
+      "type": "FRAME"
+    },
+    {
+      "id": "306:1226",
+      "name": "MomCozy Diary / rest optional / 1x",
+      "width": 390,
+      "height": 844,
+      "type": "FRAME"
+    },
+    {
+      "id": "306:1353",
+      "name": "MomCozy Diary / body empty / 1x",
+      "width": 390,
+      "height": 844,
+      "type": "FRAME"
+    },
+    {
+      "id": "306:1425",
+      "name": "MomCozy Diary / body dependent / 1x",
+      "width": 390,
+      "height": 844,
+      "type": "FRAME"
+    },
+    {
+      "id": "306:1517",
+      "name": "MomCozy Diary / body optional / 1x",
+      "width": 390,
+      "height": 844,
+      "type": "FRAME"
+    },
+    {
+      "id": "306:1629",
+      "name": "MomCozy Diary / mood empty / 1x",
+      "width": 390,
+      "height": 844,
+      "type": "FRAME"
+    },
+    {
+      "id": "306:1716",
+      "name": "MomCozy Diary / mood multiple / 1x",
+      "width": 390,
+      "height": 844,
+      "type": "FRAME"
+    },
+    {
+      "id": "306:1803",
+      "name": "MomCozy Diary / rest empty / 2x",
+      "width": 320,
+      "height": 844,
+      "type": "FRAME"
+    },
+    {
+      "id": "306:1882",
+      "name": "MomCozy Diary / rest selected / 2x",
+      "width": 320,
+      "height": 844,
+      "type": "FRAME"
+    },
+    {
+      "id": "306:1961",
+      "name": "MomCozy Diary / rest optional / 2x",
+      "width": 320,
+      "height": 844,
+      "type": "FRAME"
+    },
+    {
+      "id": "306:2107",
+      "name": "MomCozy Diary / body empty / 2x",
+      "width": 320,
+      "height": 844,
+      "type": "FRAME"
+    },
+    {
+      "id": "306:2186",
+      "name": "MomCozy Diary / body dependent / 2x",
+      "width": 320,
+      "height": 844,
+      "type": "FRAME"
+    },
+    {
+      "id": "306:2289",
+      "name": "MomCozy Diary / body optional / 2x",
+      "width": 320,
+      "height": 844,
+      "type": "FRAME"
+    },
+    {
+      "id": "306:2416",
+      "name": "MomCozy Diary / mood empty / 2x",
+      "width": 320,
+      "height": 844,
+      "type": "FRAME"
+    },
+    {
+      "id": "306:2513",
+      "name": "MomCozy Diary / mood multiple / 2x",
+      "width": 320,
+      "height": 844,
+      "type": "FRAME"
+    },
+    {
+      "id": "308:1086",
+      "name": "MomCozy Diary / body validation / 1x",
+      "width": 390,
+      "height": 844,
+      "type": "FRAME"
+    },
+    {
+      "id": "308:1160",
+      "name": "MomCozy Diary / body save-error / 1x",
+      "width": 390,
+      "height": 844,
+      "type": "FRAME"
+    },
+    {
+      "id": "308:1235",
+      "name": "MomCozy Diary / body conflict / 1x",
+      "width": 390,
+      "height": 844,
+      "type": "FRAME"
+    },
+    {
+      "id": "308:1312",
+      "name": "MomCozy Diary / body saving / 1x",
+      "width": 390,
+      "height": 844,
+      "type": "FRAME"
+    },
+    {
+      "id": "308:1384",
+      "name": "MomCozy Diary / body saved / 1x",
+      "width": 390,
+      "height": 844,
+      "type": "FRAME"
+    },
+    {
+      "id": "308:1457",
+      "name": "MomCozy Diary / body read-error / 1x",
+      "width": 390,
+      "height": 844,
+      "type": "FRAME"
+    },
+    {
+      "id": "308:1479",
+      "name": "MomCozy Diary / body loading / 1x",
+      "width": 390,
+      "height": 844,
+      "type": "FRAME"
+    },
+    {
+      "id": "308:1499",
+      "name": "MomCozy Diary / body note / 1x",
+      "width": 390,
+      "height": 844,
+      "type": "FRAME"
+    },
+    {
+      "id": "308:1571",
+      "name": "MomCozy Diary / body long-note / 1x",
+      "width": 390,
+      "height": 844,
+      "type": "FRAME"
+    },
+    {
+      "id": "308:1643",
+      "name": "MomCozy Diary / body validation / 2x",
+      "width": 320,
+      "height": 844,
+      "type": "FRAME"
+    },
+    {
+      "id": "308:1724",
+      "name": "MomCozy Diary / body save-error / 2x",
+      "width": 320,
+      "height": 844,
+      "type": "FRAME"
+    },
+    {
+      "id": "308:1806",
+      "name": "MomCozy Diary / body conflict / 2x",
+      "width": 320,
+      "height": 844,
+      "type": "FRAME"
+    },
+    {
+      "id": "308:1890",
+      "name": "MomCozy Diary / body saving / 2x",
+      "width": 320,
+      "height": 844,
+      "type": "FRAME"
+    },
+    {
+      "id": "308:1969",
+      "name": "MomCozy Diary / body saved / 2x",
+      "width": 320,
+      "height": 844,
+      "type": "FRAME"
+    },
+    {
+      "id": "308:2049",
+      "name": "MomCozy Diary / body read-error / 2x",
+      "width": 320,
+      "height": 844,
+      "type": "FRAME"
+    },
+    {
+      "id": "308:2071",
+      "name": "MomCozy Diary / body loading / 2x",
+      "width": 320,
+      "height": 844,
+      "type": "FRAME"
+    },
+    {
+      "id": "308:2091",
+      "name": "MomCozy Diary / body note / 2x",
+      "width": 320,
+      "height": 844,
+      "type": "FRAME"
+    },
+    {
+      "id": "308:2170",
+      "name": "MomCozy Diary / body long-note / 2x",
+      "width": 320,
+      "height": 844,
+      "type": "FRAME"
+    },
+    {
+      "id": "308:2249",
+      "name": "MomCozy Diary / mood exclusive / 1x",
+      "width": 390,
+      "height": 844,
+      "type": "FRAME"
+    },
+    {
+      "id": "308:2336",
+      "name": "MomCozy Diary / mood exclusive / 2x",
+      "width": 320,
+      "height": 844,
+      "type": "FRAME"
+    },
+    {
+      "id": "308:2433",
+      "name": "MomCozy Diary / mood quick-low / 1x",
+      "width": 390,
+      "height": 844,
+      "type": "FRAME"
+    },
+    {
+      "id": "308:2520",
+      "name": "MomCozy Diary / mood quick-low / 2x",
+      "width": 320,
+      "height": 844,
+      "type": "FRAME"
+    },
+    {
+      "id": "308:2617",
+      "name": "MomCozy Diary / mood quick-unclear / 1x",
+      "width": 390,
+      "height": 844,
+      "type": "FRAME"
+    },
+    {
+      "id": "308:2704",
+      "name": "MomCozy Diary / mood quick-unclear / 2x",
+      "width": 320,
+      "height": 844,
+      "type": "FRAME"
+    },
+    {
+      "id": "308:2801",
+      "name": "MomCozy Diary / mood cleared / 1x",
+      "width": 390,
+      "height": 844,
+      "type": "FRAME"
+    },
+    {
+      "id": "308:2888",
+      "name": "MomCozy Diary / mood cleared / 2x",
+      "width": 320,
+      "height": 844,
+      "type": "FRAME"
+    },
+    {
+      "id": "308:2985",
+      "name": "MomCozy Diary / body keyboard / 1x",
+      "width": 390,
+      "height": 460,
+      "type": "FRAME"
+    },
+    {
+      "id": "308:3057",
+      "name": "MomCozy Diary / body keyboard / 2x",
+      "width": 320,
+      "height": 308,
+      "type": "FRAME"
+    },
+    {
+      "id": "309:1086",
+      "name": "MomCozy Diary / discard confirmation / 1x",
+      "width": 390,
+      "height": 844,
+      "type": "FRAME"
+    },
+    {
+      "id": "309:1094",
+      "name": "MomCozy Diary / discard confirmation / 2x",
+      "width": 320,
+      "height": 844,
+      "type": "FRAME"
+    },
+    {
+      "id": "309:1102",
+      "name": "MomCozy/DiaryQuestion",
+      "width": 358,
+      "height": 162,
+      "type": "COMPONENT"
+    }
+  ]
+}

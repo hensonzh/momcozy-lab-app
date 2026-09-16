@@ -1,0 +1,32 @@
+[
+  [
+    "new-consultation-baselines",
+    [
+      "/Users/lute/.local/share/momcozy-toolchains/flutter/bin/flutter",
+      "--suppress-analytics",
+      "test",
+      "--no-pub",
+      "--reporter",
+      "expanded",
+      "test/modules/consultation/consultation_inventory_journey_test.dart",
+      "--name",
+      "inventory consultation current preflight feedback gaps",
+      "--update-goldens"
+    ]
+  ],
+  [
+    "strict-capture",
+    [
+      "/Users/lute/.local/share/momcozy-toolchains/flutter/bin/flutter",
+      "--suppress-analytics",
+      "test",
+      "--no-pub",
+      "--reporter",
+      "expanded",
+      "test/modules/consultation/consultation_inventory_journey_test.dart",
+      "test/modules/consultation/room_entry_design_test.dart",
+      "--name",
+      "inventory consultation current preflight feedback gaps|entry loads, retries one request and recovers (false|true)/390\\.0/1\\.0"
+    ]
+  ]
+]

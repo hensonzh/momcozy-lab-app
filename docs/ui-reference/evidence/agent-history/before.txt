@@ -1,0 +1,30 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_panel_test.dart
+00:00 +0: dismissal invalidates a pending switch exactly once
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: <1>
+  Actual: <2>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_panel_test.dart:29:5)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_panel_test.dart line 29
+The test description was:
+  dismissal invalidates a pending switch exactly once
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +0 -1: dismissal invalidates a pending switch exactly once [E]
+  Test failed. See exception logs above.
+  The test description was: dismissal invalidates a pending switch exactly once
+  
+00:00 +0 -1: Some tests failed.
+
+Failing tests:
+  /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_panel_test.dart: dismissal invalidates a pending switch exactly once

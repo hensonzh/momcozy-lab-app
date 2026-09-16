@@ -1,0 +1,17 @@
+{
+  "command": [
+    "/Users/lute/.local/share/momcozy-toolchains/flutter/bin/flutter",
+    "--suppress-analytics",
+    "test",
+    "--no-pub",
+    "test/features/auth/auth_design_test.dart",
+    "test/features/auth/auth_redesign_states_test.dart",
+    "test/features/auth/auth_followup_inventory_test.dart",
+    "test/features/auth/auth_inventory_journey_test.dart",
+    "--name",
+    "email entry and registration at 390\\.0 / 1\\.0|reset form with keyboard at 390\\.0 / 1\\.0|short large|session persistence failure|auth normal password recovery chain 393\\.0/1\\.0|inventory registration verification resend and real sign out",
+    "--reporter",
+    "expanded"
+  ],
+  "scope": "G04 reuse existing form/state scenarios, normal recovery and registration routes; select one size per scenario, no new combinations"
+}

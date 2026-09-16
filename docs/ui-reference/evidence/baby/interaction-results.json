@@ -1,0 +1,18 @@
+{
+  "environment": "local simulator; dev@example.test",
+  "profile": {
+    "name": "Luna",
+    "birth_date": "2026-08-22",
+    "sex": "female"
+  },
+  "steps": [
+    "从 Baby 空状态打开添加宝宝，保存资料",
+    "重新安装当前 local debug APK 并冷启动，登录与宝宝资料保留",
+    "打开 Baby，检查新增 SVG 图标正常显示",
+    "点击体重卡片，记录 3.82 kg，保存返回",
+    "首页体重更新为 3.82 kg，9/12；生长曲线出现对应记录点"
+  ],
+  "lastUpdateTime": "2026-09-12 11:19:28",
+  "APK_SHA256": "b07451deee2e658bcd168c3240b164d3629f7376c55c4563ae016754d6b6a894",
+  "core_calculation": "existing calendar age / WHO reference / chart range calculations unchanged"
+}

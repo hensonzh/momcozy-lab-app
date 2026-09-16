@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/notification-followup-registration-retry-enabled-393.png",
+  "previous_source": "test/goldens/ui_inventory/notification-followup-registration-token-error-393.png",
+  "route": "/services/episodes/service-episode/booking",
+  "trigger": "Retry after token recovery → reminder saved and enabled",
+  "root_entry": "Authenticated More page",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production notification coordinator/repository/controller; isolated HTTP, push gateway and permission platform; real router.go and ScaffoldMessenger callbacks, no native OS dialog or remote push",
+  "test": "test/features/notifications/notification_followup_inventory_test.dart"
+}

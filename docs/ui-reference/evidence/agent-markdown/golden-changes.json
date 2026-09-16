@@ -1,0 +1,17 @@
+[
+  "test/goldens/design_system/agent-menu-assistant-320-1x.png",
+  "test/goldens/design_system/agent-chat-320.png",
+  "test/goldens/design_system/agent-menu-user-320-1x.png",
+  "test/goldens/design_system/agent-menu-assistant-430-1x.png",
+  "test/goldens/design_system/agent-chat-390.png",
+  "test/goldens/design_system/agent-menu-user-390-1x.png",
+  "test/goldens/design_system/agent-chat-430.png",
+  "test/goldens/design_system/agent-menu-assistant-390-1x.png",
+  "test/goldens/design_system/agent-menu-user-430-1x.png",
+  "test/goldens/design_system/agent-menu-assistant-390-2x.png",
+  "test/goldens/design_system/agent-menu-user-430-2x.png",
+  "test/goldens/design_system/agent-menu-assistant-430-2x.png",
+  "test/goldens/design_system/agent-menu-user-390-2x.png",
+  "test/goldens/design_system/agent-menu-user-320-2x.png",
+  "test/goldens/design_system/agent-menu-assistant-320-2x.png"
+]

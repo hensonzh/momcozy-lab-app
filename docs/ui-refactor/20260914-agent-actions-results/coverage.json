@@ -1,0 +1,387 @@
+[
+  {
+    "id": "05-agent/agent-result-consent-accepted",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "285:1142",
+      "285:1261"
+    ],
+    "note": "Previously implemented result-card pattern reviewed against these newly covered source states. Existing production result widgets unchanged; refreshed visual checks and route/consent assertions pass."
+  },
+  {
+    "id": "05-agent/agent-result-consult",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "285:1122",
+      "285:1241"
+    ],
+    "note": "Previously implemented result-card pattern reviewed against these newly covered source states. Existing production result widgets unchanged; refreshed visual checks and route/consent assertions pass."
+  },
+  {
+    "id": "05-agent/agent-result-disabled",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "285:1104",
+      "285:1223"
+    ],
+    "note": "Previously implemented result-card pattern reviewed against these newly covered source states. Existing production result widgets unchanged; refreshed visual checks and route/consent assertions pass."
+  },
+  {
+    "id": "05-agent/agent-result-motion",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "285:1162",
+      "285:1281"
+    ],
+    "note": "Previously implemented result-card pattern reviewed against these newly covered source states. Existing production result widgets unchanged; refreshed visual checks and route/consent assertions pass."
+  },
+  {
+    "id": "05-agent/agent-result-summary",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "285:1086",
+      "285:1205"
+    ],
+    "note": "Previously implemented result-card pattern reviewed against these newly covered source states. Existing production result widgets unchanged; refreshed visual checks and route/consent assertions pass."
+  },
+  {
+    "id": "05-agent/agent-result-unsupported",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "285:1175",
+      "285:1294"
+    ],
+    "note": "Previously implemented result-card pattern reviewed against these newly covered source states. Existing production result widgets unchanged; refreshed visual checks and route/consent assertions pass."
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-confirm-failure-away",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "122:9",
+      "122:105",
+      "122:185",
+      "124:68"
+    ],
+    "note": "More destination source matches the previously completed More scope; no new More implementation in this stage."
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-confirm-failure-pending",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "284:1139",
+      "284:1435"
+    ],
+    "note": "Screenshot-backed shared component design and widget verification."
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-confirm-failure-preview",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "284:1086",
+      "284:1379",
+      "284:1690"
+    ],
+    "note": "Screenshot-backed shared component design and widget verification."
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-confirm-failure-result",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "284:1331",
+      "284:1639"
+    ],
+    "note": "Screenshot-backed shared component design and widget verification."
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-confirm-failure-return",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "284:1331",
+      "284:1639"
+    ],
+    "note": "Screenshot-backed shared component design and widget verification."
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-confirm-success-away",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "122:9",
+      "122:105",
+      "122:185",
+      "124:68"
+    ],
+    "note": "More destination source matches the previously completed More scope; no new More implementation in this stage."
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-confirm-success-pending",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "284:1139",
+      "284:1435"
+    ],
+    "note": "Screenshot-backed shared component design and widget verification."
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-confirm-success-preview",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "284:1086",
+      "284:1379",
+      "284:1690"
+    ],
+    "note": "Screenshot-backed shared component design and widget verification."
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-confirm-success-result",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "284:1235",
+      "284:1537"
+    ],
+    "note": "Screenshot-backed shared component design and widget verification."
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-confirm-success-return",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "284:1235",
+      "284:1537"
+    ],
+    "note": "Screenshot-backed shared component design and widget verification."
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-diary-history",
+    "status": "pending_destination_design",
+    "figma_nodes": [],
+    "note": "Source reviewed; destination still uses a distinct older record-detail presentation. Mother-home handoff proves home design only, not these detail pages. Explicitly pending separate Figma design and implementation; route callback checks do not prove destination UI completion."
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-diary-return",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "250:1086",
+      "247:1218"
+    ],
+    "note": "Conversation scroll/return source visually reviewed against the completed conversation design; this stage changes only the action panel."
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-latest-off-bottom",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "250:1086",
+      "247:1218"
+    ],
+    "note": "Conversation scroll/return source visually reviewed against the completed conversation design; this stage changes only the action panel."
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-latest-returned",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "285:1187",
+      "285:1306",
+      "289:1132"
+    ],
+    "note": "Record-links card uses existing generic result design. Callback tests verify both original route paths; destination details remain separate pending items."
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-milk-history",
+    "status": "pending_destination_design",
+    "figma_nodes": [],
+    "note": "Source reviewed; destination still uses a distinct older record-detail presentation. Mother-home handoff proves home design only, not these detail pages. Explicitly pending separate Figma design and implementation; route callback checks do not prove destination UI completion."
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-milk-request",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "246:1173",
+      "247:1182"
+    ],
+    "note": "Existing preset request and streaming conversation pattern; no message/composer business change."
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-milk-result",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "285:1187",
+      "285:1306",
+      "289:1132"
+    ],
+    "note": "Record-links card uses existing generic result design. Callback tests verify both original route paths; destination details remain separate pending items."
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-milk-return",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "250:1086",
+      "247:1218"
+    ],
+    "note": "Conversation scroll/return source visually reviewed against the completed conversation design; this stage changes only the action panel."
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-reject-failure-away",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "122:9",
+      "122:105",
+      "122:185",
+      "124:68"
+    ],
+    "note": "More destination source matches the previously completed More scope; no new More implementation in this stage."
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-reject-failure-pending",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "284:1187",
+      "284:1486"
+    ],
+    "note": "Screenshot-backed shared component design and widget verification."
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-reject-failure-preview",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "284:1086",
+      "284:1379",
+      "284:1690"
+    ],
+    "note": "Screenshot-backed shared component design and widget verification."
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-reject-failure-result",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "284:1331",
+      "284:1639"
+    ],
+    "note": "Screenshot-backed shared component design and widget verification."
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-reject-failure-return",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "284:1331",
+      "284:1639"
+    ],
+    "note": "Screenshot-backed shared component design and widget verification."
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-reject-success-away",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "122:9",
+      "122:105",
+      "122:185",
+      "124:68"
+    ],
+    "note": "More destination source matches the previously completed More scope; no new More implementation in this stage."
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-reject-success-pending",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "284:1187",
+      "284:1486"
+    ],
+    "note": "Screenshot-backed shared component design and widget verification."
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-reject-success-preview",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "284:1086",
+      "284:1379",
+      "284:1690"
+    ],
+    "note": "Screenshot-backed shared component design and widget verification."
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-reject-success-result",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "284:1283",
+      "284:1588"
+    ],
+    "note": "Screenshot-backed shared component design and widget verification."
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-reject-success-return",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "284:1283",
+      "284:1588"
+    ],
+    "note": "Screenshot-backed shared component design and widget verification."
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-retry-intake-accepted",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "246:1250",
+      "247:1253",
+      "271:1560",
+      "271:2117"
+    ],
+    "note": "Additional retry journey reviewed against completed form, error and conversation patterns. Existing form lifecycle and Agent Hub retry checks pass; these files were not restyled again."
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-retry-intake-auto-loading",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "246:1250",
+      "247:1253",
+      "271:1560",
+      "271:2117"
+    ],
+    "note": "Additional retry journey reviewed against completed form, error and conversation patterns. Existing form lifecycle and Agent Hub retry checks pass; these files were not restyled again."
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-retry-intake-auto-open",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "276:1760",
+      "276:2115"
+    ],
+    "note": "Additional retry journey reviewed against completed form, error and conversation patterns. Existing form lifecycle and Agent Hub retry checks pass; these files were not restyled again."
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-retry-intake-completed",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "246:1250",
+      "247:1253",
+      "271:1560",
+      "271:2117"
+    ],
+    "note": "Additional retry journey reviewed against completed form, error and conversation patterns. Existing form lifecycle and Agent Hub retry checks pass; these files were not restyled again."
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-retry-intake-failed",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "276:1241",
+      "276:1553"
+    ],
+    "note": "Additional retry journey reviewed against completed form, error and conversation patterns. Existing form lifecycle and Agent Hub retry checks pass; these files were not restyled again."
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-retry-intake-pending",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "276:1906",
+      "276:2261"
+    ],
+    "note": "Additional retry journey reviewed against completed form, error and conversation patterns. Existing form lifecycle and Agent Hub retry checks pass; these files were not restyled again."
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-retry-intake-request",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "246:1250",
+      "247:1253",
+      "271:1560",
+      "271:2117"
+    ],
+    "note": "Additional retry journey reviewed against completed form, error and conversation patterns. Existing form lifecycle and Agent Hub retry checks pass; these files were not restyled again."
+  }
+]

@@ -1,0 +1,4909 @@
+[
+  {
+    "overlay_id": "mom-diary-editor",
+    "name": "妈妈记录弹窗",
+    "owners": [
+      "mom-home",
+      "mom-diary"
+    ],
+    "refactor_status": "implemented_widget_verified",
+    "states": [
+      {
+        "overlay": "mom-diary-editor",
+        "state": "身体",
+        "evidence": [
+          {
+            "id": "03-mom/mom-journey-diary-body-empty",
+            "image": "03-mom/mom-journey-diary-body-empty/default.png",
+            "trigger": "inventory Mom diary quick record tabs save and standalone details",
+            "extent": "full-measured-scroll-stitch"
+          }
+        ],
+        "report": "MOM-JOURNEYS.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "mom-diary-editor",
+          "state": "身体",
+          "figma_nodes": [
+            "306:1353",
+            "306:1425"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "身体表单和条件问题。"
+        }
+      },
+      {
+        "overlay": "mom-diary-editor",
+        "state": "休息",
+        "evidence": [
+          {
+            "id": "03-mom/mom-journey-diary-rest-empty",
+            "image": "03-mom/mom-journey-diary-rest-empty/default.png",
+            "trigger": "inventory Mom diary quick record tabs save and standalone details",
+            "extent": "viewport"
+          }
+        ],
+        "report": "MOM-JOURNEYS.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "mom-diary-editor",
+          "state": "休息",
+          "figma_nodes": [
+            "306:1086",
+            "306:1226"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "休息表单和可选字段。"
+        }
+      },
+      {
+        "overlay": "mom-diary-editor",
+        "state": "心情",
+        "evidence": [
+          {
+            "id": "03-mom/mom-journey-diary-mood-empty",
+            "image": "03-mom/mom-journey-diary-mood-empty/default.png",
+            "trigger": "inventory Mom diary quick record tabs save and standalone details",
+            "extent": "full-measured-scroll-stitch"
+          }
+        ],
+        "report": "MOM-JOURNEYS.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "mom-diary-editor",
+          "state": "心情",
+          "figma_nodes": [
+            "306:1629",
+            "306:1716",
+            "308:2249"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "心情与互斥选项。"
+        }
+      },
+      {
+        "overlay": "mom-diary-editor",
+        "state": "编辑",
+        "evidence": [
+          {
+            "id": "03-mom/mom-journey-diary-detail-updated",
+            "image": "03-mom/mom-journey-diary-detail-updated/default.png",
+            "trigger": "inventory Mom diary quick record tabs save and standalone details",
+            "extent": "full-measured-scroll-stitch"
+          }
+        ],
+        "report": "MOM-JOURNEYS.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "mom-diary-editor",
+          "state": "编辑",
+          "figma_nodes": [
+            "308:1499",
+            "308:1571"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "编辑保留 2000 字边界、预填与键盘行为。"
+        }
+      },
+      {
+        "overlay": "mom-diary-editor",
+        "state": "校验",
+        "evidence": [
+          {
+            "id": "03-mom/mom-journey-diary-empty-validation",
+            "image": "03-mom/mom-journey-diary-empty-validation/default.png",
+            "trigger": "inventory Mom diary quick record tabs save and standalone details",
+            "extent": "full-measured-scroll-stitch"
+          }
+        ],
+        "report": "MOM-JOURNEYS.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "mom-diary-editor",
+          "state": "校验",
+          "figma_nodes": [
+            "308:1086"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "空记录和字段校验不发送保存。"
+        }
+      },
+      {
+        "overlay": "mom-diary-editor",
+        "state": "保存",
+        "evidence": [
+          {
+            "id": "03-mom/mom-journey-diary-saving",
+            "image": "03-mom/mom-journey-diary-saving/default.png",
+            "trigger": "inventory Mom diary conflict reload and pending save",
+            "extent": "full-measured-scroll-stitch"
+          },
+          {
+            "id": "03-mom/mom-journey-diary-modal-saved",
+            "image": "03-mom/mom-journey-diary-modal-saved/default.png",
+            "trigger": "inventory Mom diary quick record tabs save and standalone details",
+            "extent": "full-measured-scroll-stitch"
+          }
+        ],
+        "report": "MOM-JOURNEYS.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "mom-diary-editor",
+          "state": "保存",
+          "figma_nodes": [
+            "308:1312",
+            "308:1235",
+            "308:1384"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "锁定、冲突草稿、服务器新版本与保存反馈。"
+        }
+      },
+      {
+        "overlay": "mom-diary-editor",
+        "state": "放弃",
+        "evidence": [
+          {
+            "id": "03-mom/mom-journey-diary-discard-confirm",
+            "image": "03-mom/mom-journey-diary-discard-confirm/default.png",
+            "trigger": "inventory Mom diary quick record tabs save and standalone details",
+            "extent": "viewport"
+          },
+          {
+            "id": "03-mom/mom-journey-diary-discarded-home",
+            "image": "03-mom/mom-journey-diary-discarded-home/default.png",
+            "trigger": "inventory Mom optional diary sections and mood draft discard",
+            "extent": "full-measured-scroll-stitch"
+          }
+        ],
+        "report": "MOM-JOURNEYS.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "mom-diary-editor",
+          "state": "放弃",
+          "figma_nodes": [
+            "309:1086"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "放弃前确认；留下保留草稿，确认才重新加载/离开。"
+        }
+      }
+    ],
+    "final_catalog_state_audit": "verified_existing_design_and_behavior_with_explicit_reuse"
+  },
+  {
+    "overlay_id": "lactation-editor",
+    "name": "泌乳记录弹窗",
+    "owners": [
+      "mom-home",
+      "mom-lactation"
+    ],
+    "refactor_status": "implemented_widget_verified",
+    "states": [
+      {
+        "overlay": "lactation-editor",
+        "state": "新增",
+        "evidence": [
+          {
+            "id": "03-mom/mom-journey-milk-new-pump",
+            "image": "03-mom/mom-journey-milk-new-pump/default.png",
+            "trigger": "inventory Mom lactation create edit delete restore and home refresh",
+            "extent": "viewport"
+          }
+        ],
+        "report": "MOM-MILK-CONTROLS.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "lactation-editor",
+          "state": "新增",
+          "figma_nodes": [
+            "296:2042"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "新增泵奶表单。"
+        }
+      },
+      {
+        "overlay": "lactation-editor",
+        "state": "编辑",
+        "evidence": [
+          {
+            "id": "03-mom/lactation-current-save-conflict",
+            "image": "03-mom/lactation-current-save-conflict/default.png",
+            "trigger": "lactation route reads, charts, long notes, conflicts and undo 390.0/1.0",
+            "extent": "full-measured-scroll-stitch"
+          }
+        ],
+        "report": "MOM-MILK-CONTROLS.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "lactation-editor",
+          "state": "编辑",
+          "figma_nodes": [
+            "296:2159"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "编辑原记录版本与字段。"
+        }
+      },
+      {
+        "overlay": "lactation-editor",
+        "state": "左右侧",
+        "evidence": [
+          {
+            "id": "03-mom/mom-milk-control-side-left",
+            "image": "03-mom/mom-milk-control-side-left/default.png",
+            "trigger": "inventory milk controls 393/1x",
+            "extent": "viewport"
+          },
+          {
+            "id": "03-mom/mom-milk-control-side-right",
+            "image": "03-mom/mom-milk-control-side-right/default.png",
+            "trigger": "inventory milk controls 393/1x",
+            "extent": "viewport"
+          }
+        ],
+        "report": "MOM-MILK-CONTROLS.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "lactation-editor",
+          "state": "左右侧",
+          "figma_nodes": [
+            "296:2042",
+            "296:2076"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "左右侧选择及按方式显示字段。"
+        }
+      },
+      {
+        "overlay": "lactation-editor",
+        "state": "泵奶与亲喂",
+        "evidence": [
+          {
+            "id": "03-mom/lactation-dialog-pump",
+            "image": "03-mom/lactation-dialog-pump/default.png",
+            "trigger": "lactation modal switches to nursing and saves at 390.0 / 1.0",
+            "extent": "full-measured-scroll-stitch"
+          },
+          {
+            "id": "03-mom/lactation-dialog-nurse",
+            "image": "03-mom/lactation-dialog-nurse/default.png",
+            "trigger": "lactation modal switches to nursing and saves at 390.0 / 1.0",
+            "extent": "full-measured-scroll-stitch"
+          }
+        ],
+        "report": "MOM-MILK-CONTROLS.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "lactation-editor",
+          "state": "泵奶与亲喂",
+          "figma_nodes": [
+            "296:2042",
+            "296:2076",
+            "296:2110"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "泵奶/亲喂和可选感受分组，不改数值含义。"
+        }
+      },
+      {
+        "overlay": "lactation-editor",
+        "state": "校验",
+        "evidence": [
+          {
+            "id": "03-mom/mom-journey-milk-invalid-volume",
+            "image": "03-mom/mom-journey-milk-invalid-volume/default.png",
+            "trigger": "inventory Mom lactation create edit delete restore and home refresh",
+            "extent": "full-measured-scroll-stitch"
+          }
+        ],
+        "report": "MOM-MILK-CONTROLS.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "lactation-editor",
+          "state": "校验",
+          "figma_nodes": [
+            "296:2309",
+            "297:1342"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "数量、时间及备注校验，原上午/下午组合。"
+        }
+      },
+      {
+        "overlay": "lactation-editor",
+        "state": "保存错误",
+        "evidence": [
+          {
+            "id": "03-mom/mom-journey-milk-save-error",
+            "image": "03-mom/mom-journey-milk-save-error/default.png",
+            "trigger": "inventory Mom lactation create edit delete restore and home refresh",
+            "extent": "full-measured-scroll-stitch"
+          }
+        ],
+        "report": "MOM-MILK-CONTROLS.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "lactation-editor",
+          "state": "保存错误",
+          "figma_nodes": [
+            "296:2257",
+            "305:1086"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "错误/不确定/冲突保留原请求及草稿，不重复创建意图。"
+        }
+      }
+    ],
+    "final_catalog_state_audit": "verified_existing_design_and_behavior_with_explicit_reuse"
+  },
+  {
+    "overlay_id": "baby-profile",
+    "name": "宝宝资料弹窗",
+    "owners": [
+      "baby-home"
+    ],
+    "refactor_status": "implemented_widget_verified",
+    "states": [
+      {
+        "overlay": "baby-profile",
+        "state": "新增",
+        "evidence": [
+          {
+            "id": "04-baby/baby-journey-first-profile-form",
+            "image": "04-baby/baby-journey-first-profile-form/default.png",
+            "trigger": "inventory Baby no profile creation and missing demographic data",
+            "extent": "viewport"
+          }
+        ],
+        "report": "BABY-PROFILE-CONTROLS.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "baby-profile",
+          "state": "新增",
+          "figma_nodes": [
+            "317:1086"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "称呼/日期与性别/喂养分两卡，固定保存。"
+        }
+      },
+      {
+        "overlay": "baby-profile",
+        "state": "编辑",
+        "evidence": [
+          {
+            "id": "04-baby/baby-profile-controls-editor",
+            "image": "04-baby/baby-profile-controls-editor/default.png",
+            "trigger": "inventory Baby profile controls 393/1x",
+            "extent": "viewport"
+          }
+        ],
+        "report": "BABY-PROFILE-CONTROLS.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "baby-profile",
+          "state": "编辑",
+          "figma_nodes": [
+            "317:1120",
+            "317:1156"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "原资料编辑及可清除日期。"
+        }
+      },
+      {
+        "overlay": "baby-profile",
+        "state": "校验",
+        "evidence": [
+          {
+            "id": "04-baby/baby-profile-controls-name-empty-validation",
+            "image": "04-baby/baby-profile-controls-name-empty-validation/default.png",
+            "trigger": "inventory Baby profile controls 393/1x",
+            "extent": "viewport"
+          }
+        ],
+        "report": "BABY-PROFILE-CONTROLS.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "baby-profile",
+          "state": "校验",
+          "figma_nodes": [
+            "317:1237"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "120 字输入限制、Unicode 与日期范围校验保留。"
+        }
+      },
+      {
+        "overlay": "baby-profile",
+        "state": "保存",
+        "evidence": [
+          {
+            "id": "04-baby/baby-profile-controls-retry-saved",
+            "image": "04-baby/baby-profile-controls-retry-saved/default.png",
+            "trigger": "inventory Baby profile controls 393/1x",
+            "extent": "full-measured-scroll-stitch"
+          }
+        ],
+        "report": "BABY-PROFILE-CONTROLS.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "baby-profile",
+          "state": "保存",
+          "figma_nodes": [
+            "317:1394",
+            "317:1430",
+            "317:1275"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "忙碌锁定，结果未知使用原键重试，冲突重读字段版本。"
+        }
+      },
+      {
+        "overlay": "baby-profile",
+        "state": "关闭确认",
+        "evidence": [
+          {
+            "id": "04-baby/baby-journey-profile-discard-confirm",
+            "image": "04-baby/baby-journey-profile-discard-confirm/default.png",
+            "trigger": "inventory Baby profile switch editing and discard",
+            "extent": "viewport"
+          }
+        ],
+        "report": "BABY-PROFILE-CONTROLS.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "baby-profile",
+          "state": "关闭确认",
+          "figma_nodes": [
+            "309:1086"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "复用原放弃确认，键盘关闭/继续填写策略不变。"
+        }
+      }
+    ],
+    "final_catalog_state_audit": "verified_existing_design_and_behavior_with_explicit_reuse"
+  },
+  {
+    "overlay_id": "baby-record",
+    "name": "宝宝记录弹窗",
+    "owners": [
+      "baby-home",
+      "baby-records"
+    ],
+    "refactor_status": "implemented_widget_verified",
+    "states": [
+      {
+        "overlay": "baby-record",
+        "state": "喂养",
+        "evidence": [
+          {
+            "id": "04-baby/baby-journey-feeding-filled",
+            "image": "04-baby/baby-journey-feeding-filled/default.png",
+            "trigger": "inventory Baby feeding save edit delete restore and history filters",
+            "extent": "viewport"
+          }
+        ],
+        "report": "BABY-JOURNEYS.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "implemented_widget_verified",
+        "refactor_evidence": {
+          "report": "20260914-baby-records/HANDOFF.md",
+          "figma_nodes": [
+            "329:1199",
+            "330:1355"
+          ],
+          "widget_tests": [
+            "test/modules/baby/baby_pages_test.dart",
+            "test/modules/baby/baby_editor_states_test.dart",
+            "test/modules/baby/baby_save_feedback_test.dart"
+          ],
+          "image_manifest": "20260914-baby-records/app-artifacts.json"
+        }
+      },
+      {
+        "overlay": "baby-record",
+        "state": "睡眠",
+        "evidence": [
+          {
+            "id": "04-baby/baby-journey-sleep-active-editor",
+            "image": "04-baby/baby-journey-sleep-active-editor/default.png",
+            "trigger": "inventory Baby sleep stool knowledge and growth interactions",
+            "extent": "viewport"
+          }
+        ],
+        "report": "BABY-JOURNEYS.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "implemented_widget_verified",
+        "refactor_evidence": {
+          "report": "20260914-baby-records/HANDOFF.md",
+          "figma_nodes": [
+            "330:1396",
+            "330:1430"
+          ],
+          "widget_tests": [
+            "test/modules/baby/baby_pages_test.dart",
+            "test/modules/baby/baby_editor_states_test.dart",
+            "test/modules/baby/baby_save_feedback_test.dart"
+          ],
+          "image_manifest": "20260914-baby-records/app-artifacts.json"
+        }
+      },
+      {
+        "overlay": "baby-record",
+        "state": "尿布",
+        "evidence": [
+          {
+            "id": "04-baby/baby-journey-wet-tab",
+            "image": "04-baby/baby-journey-wet-tab/default.png",
+            "trigger": "inventory Baby sleep stool knowledge and growth interactions",
+            "extent": "viewport"
+          },
+          {
+            "id": "04-baby/baby-journey-stool-tab",
+            "image": "04-baby/baby-journey-stool-tab/default.png",
+            "trigger": "inventory Baby sleep stool knowledge and growth interactions",
+            "extent": "full-measured-scroll-stitch"
+          }
+        ],
+        "report": "BABY-JOURNEYS.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "implemented_widget_verified",
+        "refactor_evidence": {
+          "report": "20260914-baby-records/HANDOFF.md",
+          "figma_nodes": [
+            "330:1454",
+            "330:1488"
+          ],
+          "widget_tests": [
+            "test/modules/baby/baby_pages_test.dart",
+            "test/modules/baby/baby_editor_states_test.dart",
+            "test/modules/baby/baby_save_feedback_test.dart"
+          ],
+          "image_manifest": "20260914-baby-records/app-artifacts.json"
+        }
+      },
+      {
+        "overlay": "baby-record",
+        "state": "生长",
+        "evidence": [
+          {
+            "id": "04-baby/baby-journey-growth-three-values",
+            "image": "04-baby/baby-journey-growth-three-values/default.png",
+            "trigger": "inventory Baby growth batch date validation and undo recovery",
+            "extent": "viewport"
+          }
+        ],
+        "report": "BABY-JOURNEYS.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "implemented_widget_verified",
+        "refactor_evidence": {
+          "report": "20260914-baby-records/HANDOFF.md",
+          "figma_nodes": [
+            "330:1563"
+          ],
+          "widget_tests": [
+            "test/modules/baby/baby_pages_test.dart",
+            "test/modules/baby/baby_editor_states_test.dart",
+            "test/modules/baby/baby_save_feedback_test.dart"
+          ],
+          "image_manifest": "20260914-baby-records/app-artifacts.json"
+        }
+      },
+      {
+        "overlay": "baby-record",
+        "state": "发育",
+        "evidence": [
+          {
+            "id": "04-baby/baby-journey-development-editor",
+            "image": "04-baby/baby-journey-development-editor/default.png",
+            "trigger": "inventory Baby sleep stool knowledge and growth interactions",
+            "extent": "viewport"
+          }
+        ],
+        "report": "BABY-JOURNEYS.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "implemented_widget_verified",
+        "refactor_evidence": {
+          "report": "20260914-baby-records/HANDOFF.md",
+          "figma_nodes": [
+            "330:1595"
+          ],
+          "widget_tests": [
+            "test/modules/baby/baby_pages_test.dart",
+            "test/modules/baby/baby_editor_states_test.dart",
+            "test/modules/baby/baby_save_feedback_test.dart"
+          ],
+          "image_manifest": "20260914-baby-records/app-artifacts.json"
+        }
+      },
+      {
+        "overlay": "baby-record",
+        "state": "编辑",
+        "evidence": [
+          {
+            "id": "04-baby/baby-journey-history-edit",
+            "image": "04-baby/baby-journey-history-edit/default.png",
+            "trigger": "inventory Baby feeding save edit delete restore and history filters",
+            "extent": "viewport"
+          }
+        ],
+        "report": "BABY-JOURNEYS.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "implemented_widget_verified",
+        "refactor_evidence": {
+          "report": "20260914-baby-records/HANDOFF.md",
+          "figma_nodes": [
+            "330:1638"
+          ],
+          "widget_tests": [
+            "test/modules/baby/baby_pages_test.dart",
+            "test/modules/baby/baby_editor_states_test.dart",
+            "test/modules/baby/baby_save_feedback_test.dart"
+          ],
+          "image_manifest": "20260914-baby-records/app-artifacts.json"
+        }
+      },
+      {
+        "overlay": "baby-record",
+        "state": "校验",
+        "evidence": [
+          {
+            "id": "04-baby/baby-journey-feeding-validation",
+            "image": "04-baby/baby-journey-feeding-validation/default.png",
+            "trigger": "inventory Baby feeding save edit delete restore and history filters",
+            "extent": "viewport"
+          },
+          {
+            "id": "04-baby/baby-journey-growth-invalid-value",
+            "image": "04-baby/baby-journey-growth-invalid-value/default.png",
+            "trigger": "inventory Baby growth batch date validation and undo recovery",
+            "extent": "viewport"
+          }
+        ],
+        "report": "BABY-JOURNEYS.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "implemented_widget_verified",
+        "refactor_evidence": {
+          "report": "20260914-baby-records/HANDOFF.md",
+          "figma_nodes": [
+            "330:1671"
+          ],
+          "widget_tests": [
+            "test/modules/baby/baby_pages_test.dart",
+            "test/modules/baby/baby_editor_states_test.dart",
+            "test/modules/baby/baby_save_feedback_test.dart"
+          ],
+          "image_manifest": "20260914-baby-records/app-artifacts.json"
+        }
+      },
+      {
+        "overlay": "baby-record",
+        "state": "保存",
+        "evidence": [
+          {
+            "id": "04-baby/baby-journey-record-saving",
+            "image": "04-baby/baby-journey-record-saving/default.png",
+            "trigger": "inventory Baby loading and pending save states",
+            "extent": "viewport"
+          },
+          {
+            "id": "04-baby/baby-journey-feeding-saved",
+            "image": "04-baby/baby-journey-feeding-saved/default.png",
+            "trigger": "inventory Baby feeding save edit delete restore and history filters",
+            "extent": "full-measured-scroll-stitch"
+          }
+        ],
+        "report": "BABY-JOURNEYS.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "implemented_widget_verified",
+        "refactor_evidence": {
+          "report": "20260914-baby-records/HANDOFF.md",
+          "figma_nodes": [
+            "330:1701",
+            "330:1734"
+          ],
+          "widget_tests": [
+            "test/modules/baby/baby_pages_test.dart",
+            "test/modules/baby/baby_editor_states_test.dart",
+            "test/modules/baby/baby_save_feedback_test.dart"
+          ],
+          "image_manifest": "20260914-baby-records/app-artifacts.json"
+        }
+      }
+    ],
+    "refactor_report": "20260914-baby-records/HANDOFF.md",
+    "verified_owners": [
+      "baby-home",
+      "baby-records"
+    ]
+  },
+  {
+    "overlay_id": "baby-saved",
+    "name": "宝宝保存反馈",
+    "owners": [
+      "baby-home",
+      "baby-records"
+    ],
+    "refactor_status": "implemented_widget_verified",
+    "states": [
+      {
+        "overlay": "baby-saved",
+        "state": "保存成功",
+        "evidence": [
+          {
+            "id": "04-baby/baby-development-controls-batch-saved",
+            "image": "04-baby/baby-development-controls-batch-saved/default.png",
+            "trigger": "inventory Baby development controls 393/1x",
+            "extent": "full-measured-scroll-stitch"
+          }
+        ],
+        "report": "BABY-DEVELOPMENT-CONTROLS.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "baby_home_refactor_evidence": "20260914-baby-home/HANDOFF.md",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "baby-saved",
+          "state": "保存成功",
+          "figma_nodes": [
+            "327:2632"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "首页使用 BabySavedFeedbackView；历史页保存后刷新并显示原 SnackBar，不强行添加同款首页反馈面板。"
+        }
+      },
+      {
+        "overlay": "baby-saved",
+        "state": "后续记录",
+        "evidence": [
+          {
+            "id": "04-baby/baby-journey-returned-home",
+            "image": "04-baby/baby-journey-returned-home/default.png",
+            "trigger": "inventory Baby feeding save edit delete restore and history filters",
+            "extent": "full-measured-scroll-stitch"
+          }
+        ],
+        "report": "BABY-DEVELOPMENT-CONTROLS.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "baby_home_refactor_evidence": "20260914-baby-home/HANDOFF.md",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "baby-saved",
+          "state": "后续记录",
+          "figma_nodes": [
+            "327:2632",
+            "326:1086"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "首页反馈进入历史/撤销/关闭；后续记录复用原首页，历史页自身编辑返回流程已验证。"
+        }
+      }
+    ],
+    "verified_owners": [
+      "baby-home"
+    ],
+    "refactor_report": "20260914-baby-home/HANDOFF.md",
+    "final_catalog_state_audit": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "owner_dispositions": {
+      "baby-home": "custom_saved_feedback_view_verified",
+      "baby-records": "original_reload_and_snackbar_verified"
+    }
+  },
+  {
+    "overlay_id": "baby-switcher",
+    "name": "宝宝切换",
+    "owners": [
+      "baby-home"
+    ],
+    "refactor_status": "implemented_widget_verified",
+    "states": [
+      {
+        "overlay": "baby-switcher",
+        "state": "列表",
+        "evidence": [
+          {
+            "id": "04-baby/baby-journey-switcher",
+            "image": "04-baby/baby-journey-switcher/default.png",
+            "trigger": "inventory Baby profile switch editing and discard",
+            "extent": "viewport"
+          }
+        ],
+        "report": "BABY-JOURNEYS.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "baby_home_refactor_evidence": "20260914-baby-home/HANDOFF.md",
+        "refactor_acceptance": "implemented_widget_verified",
+        "refactor_evidence": {
+          "report": "20260914-baby-home/HANDOFF.md",
+          "figma_nodes": [
+            "327:2560",
+            "327:2576"
+          ],
+          "widget_test": "test/modules/baby/baby_switcher_design_test.dart",
+          "current_test_log": "20260914-final-audit/changed-image-current-tests.log",
+          "boundary": "List and current selection preserve profile identity; cancel returns without changing selection."
+        }
+      },
+      {
+        "overlay": "baby-switcher",
+        "state": "当前选择",
+        "evidence": [
+          {
+            "id": "04-baby/baby-journey-switched-leo",
+            "image": "04-baby/baby-journey-switched-leo/default.png",
+            "trigger": "inventory Baby profile switch editing and discard",
+            "extent": "full-measured-scroll-stitch"
+          }
+        ],
+        "report": "BABY-JOURNEYS.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "baby_home_refactor_evidence": "20260914-baby-home/HANDOFF.md",
+        "refactor_acceptance": "implemented_widget_verified",
+        "refactor_evidence": {
+          "report": "20260914-baby-home/HANDOFF.md",
+          "figma_nodes": [
+            "327:2560",
+            "327:2576"
+          ],
+          "widget_test": "test/modules/baby/baby_switcher_design_test.dart",
+          "current_test_log": "20260914-final-audit/changed-image-current-tests.log",
+          "boundary": "List and current selection preserve profile identity; cancel returns without changing selection."
+        }
+      },
+      {
+        "overlay": "baby-switcher",
+        "state": "取消",
+        "evidence": [
+          {
+            "id": "04-baby/baby-journey-returned-home",
+            "image": "04-baby/baby-journey-returned-home/default.png",
+            "trigger": "inventory Baby feeding save edit delete restore and history filters",
+            "extent": "full-measured-scroll-stitch"
+          }
+        ],
+        "report": "BABY-JOURNEYS.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "baby_home_refactor_evidence": "20260914-baby-home/HANDOFF.md",
+        "refactor_acceptance": "implemented_widget_verified",
+        "refactor_evidence": {
+          "report": "20260914-baby-home/HANDOFF.md",
+          "figma_nodes": [
+            "327:2560",
+            "327:2576"
+          ],
+          "widget_test": "test/modules/baby/baby_switcher_design_test.dart",
+          "current_test_log": "20260914-final-audit/changed-image-current-tests.log",
+          "boundary": "List and current selection preserve profile identity; cancel returns without changing selection."
+        }
+      }
+    ],
+    "verified_owners": [
+      "baby-home"
+    ],
+    "refactor_report": "20260914-baby-home/HANDOFF.md",
+    "final_catalog_state_audit": "verified_existing_design_and_behavior_with_explicit_reuse"
+  },
+  {
+    "overlay_id": "knowledge",
+    "name": "知识来源与说明",
+    "owners": [
+      "mom-home",
+      "baby-home"
+    ],
+    "refactor_status": "implemented_widget_verified",
+    "states": [
+      {
+        "overlay": "knowledge",
+        "state": "来源说明",
+        "evidence": [
+          {
+            "id": "04-baby/baby-journey-knowledge-detail",
+            "image": "04-baby/baby-journey-knowledge-detail/default.png",
+            "trigger": "inventory Baby sleep stool knowledge and growth interactions",
+            "extent": "viewport"
+          }
+        ],
+        "report": "BABY-KNOWLEDGE-SOURCES.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "baby_home_refactor_evidence": "20260914-baby-home/HANDOFF.md",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "knowledge",
+          "state": "来源说明",
+          "figma_nodes": [
+            "327:2592"
+          ],
+          "mode": "shared_design_with_explicit_owner_disposition",
+          "boundary": "宝宝来源文章使用已完成共享样式、原来源与链接；妈妈首页按批准基准已移除知识入口，不重新添加。"
+        }
+      },
+      {
+        "overlay": "knowledge",
+        "state": "关闭",
+        "evidence": [
+          {
+            "id": "04-baby/baby-profile-controls-knowledge-baby-return",
+            "image": "04-baby/baby-profile-controls-knowledge-baby-return/default.png",
+            "trigger": "inventory Baby profile controls 393/1x",
+            "extent": "full-measured-scroll-stitch"
+          }
+        ],
+        "report": "BABY-KNOWLEDGE-SOURCES.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "baby_home_refactor_evidence": "20260914-baby-home/HANDOFF.md",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "knowledge",
+          "state": "关闭",
+          "figma_nodes": [
+            "327:2592",
+            "326:1086"
+          ],
+          "mode": "shared_design_with_explicit_owner_disposition",
+          "boundary": "关闭回原宝宝页；妈妈 owner 为历史清单范围，当前无此入口。"
+        }
+      }
+    ],
+    "verified_owners": [
+      "baby-home"
+    ],
+    "refactor_report": "20260914-baby-home/HANDOFF.md",
+    "final_catalog_state_audit": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "owner_dispositions": {
+      "baby-home": "shared_article_design_implemented_and_verified",
+      "mom-home": "historical_owner_no_current_entry_removed_by_approved_mom_baseline"
+    }
+  },
+  {
+    "overlay_id": "agent-history",
+    "name": "对话历史抽屉",
+    "owners": [
+      "agent-home"
+    ],
+    "refactor_status": "implemented_widget_verified",
+    "states": [
+      {
+        "overlay": "agent-history",
+        "state": "列表／当前会话",
+        "evidence": [
+          {
+            "id": "05-agent/agent-history-list",
+            "image": "05-agent/agent-history-list/default.png",
+            "trigger": "history states 390.0/1.0",
+            "extent": "full-measured-scroll-stitch"
+          }
+        ],
+        "report": "AGENT-ENTRY-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "agent-history",
+          "state": "列表／当前会话",
+          "figma_nodes": [
+            "242:1091",
+            "242:1135"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "列表/当前会话整卡标题，日期与当前标识下置。"
+        }
+      },
+      {
+        "overlay": "agent-history",
+        "state": "空",
+        "evidence": [
+          {
+            "id": "05-agent/agent-history-empty",
+            "image": "05-agent/agent-history-empty/default.png",
+            "trigger": "history states 390.0/1.0",
+            "extent": "viewport"
+          }
+        ],
+        "report": "AGENT-ENTRY-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "agent-history",
+          "state": "空",
+          "figma_nodes": [
+            "242:1324"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "空列表。"
+        }
+      },
+      {
+        "overlay": "agent-history",
+        "state": "加载",
+        "evidence": [
+          {
+            "id": "05-agent/agent-history-loading",
+            "image": "05-agent/agent-history-loading/default.png",
+            "trigger": "history states 390.0/1.0",
+            "extent": "viewport"
+          }
+        ],
+        "report": "AGENT-ENTRY-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "agent-history",
+          "state": "加载",
+          "figma_nodes": [
+            "242:1299"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "加载状态。"
+        }
+      },
+      {
+        "overlay": "agent-history",
+        "state": "加载错误",
+        "evidence": [
+          {
+            "id": "05-agent/agent-history-load-error",
+            "image": "05-agent/agent-history-load-error/default.png",
+            "trigger": "history states 390.0/1.0",
+            "extent": "viewport"
+          }
+        ],
+        "report": "AGENT-ENTRY-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "agent-history",
+          "state": "加载错误",
+          "figma_nodes": [
+            "242:1311"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "读取错误可重试。"
+        }
+      },
+      {
+        "overlay": "agent-history",
+        "state": "回复锁定",
+        "evidence": [
+          {
+            "id": "05-agent/agent-history-locked",
+            "image": "05-agent/agent-history-locked/default.png",
+            "trigger": "history states 390.0/1.0",
+            "extent": "full-measured-scroll-stitch"
+          }
+        ],
+        "report": "AGENT-ENTRY-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "agent-history",
+          "state": "回复锁定",
+          "figma_nodes": [
+            "242:1162"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "回复期间切换锁定。"
+        }
+      },
+      {
+        "overlay": "agent-history",
+        "state": "切换中",
+        "evidence": [
+          {
+            "id": "05-agent/agent-history-switching",
+            "image": "05-agent/agent-history-switching/default.png",
+            "trigger": "history states 390.0/1.0",
+            "extent": "full-measured-scroll-stitch"
+          }
+        ],
+        "report": "AGENT-ENTRY-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "agent-history",
+          "state": "切换中",
+          "figma_nodes": [
+            "242:1208"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "目标条目切换进度，其他条目禁用。"
+        }
+      },
+      {
+        "overlay": "agent-history",
+        "state": "切换失败",
+        "evidence": [
+          {
+            "id": "05-agent/agent-history-switch-error",
+            "image": "05-agent/agent-history-switch-error/default.png",
+            "trigger": "history states 390.0/1.0",
+            "extent": "full-measured-scroll-stitch"
+          }
+        ],
+        "report": "AGENT-ENTRY-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "agent-history",
+          "state": "切换失败",
+          "figma_nodes": [
+            "242:1253"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "切换失败保留列表/当前会话。"
+        }
+      },
+      {
+        "overlay": "agent-history",
+        "state": "关闭",
+        "evidence": [
+          {
+            "id": "10-global-modals/notification-conversation",
+            "image": "10-global-modals/notification-conversation/default.png",
+            "trigger": "notification conversation opens and keeps drafts scoped to its runtime and thread 393.0 / 1.0",
+            "extent": "viewport"
+          }
+        ],
+        "report": "AGENT-ENTRY-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "agent-history",
+          "state": "关闭",
+          "figma_nodes": [
+            "242:1091"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "固定关闭、外侧区域及滑动阈值保留；晚到成功不得二次关闭。"
+        }
+      }
+    ],
+    "final_catalog_state_audit": "verified_existing_design_and_behavior_with_explicit_reuse"
+  },
+  {
+    "overlay_id": "agent-menu",
+    "name": "消息操作菜单",
+    "owners": [
+      "agent-home"
+    ],
+    "refactor_status": "implemented_widget_verified",
+    "states": [
+      {
+        "overlay": "agent-menu",
+        "state": "操作项",
+        "evidence": [
+          {
+            "id": "05-agent/agent-journey-assistant-menu",
+            "image": "05-agent/agent-journey-assistant-menu/default.png",
+            "trigger": "inventory agent real reply message copy and tab retention",
+            "extent": "viewport"
+          },
+          {
+            "id": "05-agent/agent-journey-user-menu",
+            "image": "05-agent/agent-journey-user-menu/default.png",
+            "trigger": "inventory agent real reply message copy and tab retention",
+            "extent": "viewport"
+          }
+        ],
+        "report": "AGENT-JOURNEYS.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "agent-menu",
+          "state": "操作项",
+          "figma_nodes": [
+            "259:1253",
+            "259:1270",
+            "259:1287"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "原复制与条件性重试菜单，原生定位及辅助功能。"
+        }
+      },
+      {
+        "overlay": "agent-menu",
+        "state": "复制反馈",
+        "evidence": [
+          {
+            "id": "05-agent/agent-journey-assistant-copied",
+            "image": "05-agent/agent-journey-assistant-copied/default.png",
+            "trigger": "inventory agent real reply message copy and tab retention",
+            "extent": "viewport"
+          }
+        ],
+        "report": "AGENT-JOURNEYS.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "agent-menu",
+          "state": "复制反馈",
+          "figma_nodes": [
+            "259:1308",
+            "259:1322"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "复制成功/失败保留原始文本与反馈，真实 Shell 返回只关闭菜单。"
+        }
+      }
+    ],
+    "final_catalog_state_audit": "verified_existing_design_and_behavior_with_explicit_reuse"
+  },
+  {
+    "overlay_id": "agent-form",
+    "name": "Agent 结构化表单",
+    "owners": [
+      "agent-home"
+    ],
+    "refactor_status": "implemented_widget_verified",
+    "states": [
+      {
+        "overlay": "agent-form",
+        "state": "各表单 schema",
+        "evidence": [
+          {
+            "id": "05-agent/agent-workflow-journey-intake-auto-open",
+            "image": "05-agent/agent-workflow-journey-intake-auto-open/default.png",
+            "trigger": "inventory workflow intake controls and accepted submission 393.0",
+            "extent": "full-measured-scroll-stitch"
+          },
+          {
+            "id": "05-agent/agent-workflow-journey-ticket-auto-open",
+            "image": "05-agent/agent-workflow-journey-ticket-auto-open/default.png",
+            "trigger": "inventory workflow support ticket retry and submitted detail",
+            "extent": "viewport"
+          }
+        ],
+        "report": "AGENT-CURRENT-REUSE.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "agent-form",
+          "state": "各表单 schema",
+          "figma_nodes": [
+            "276:1086",
+            "276:1760",
+            "276:2002",
+            "282:1086"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "各 schema 原分组/默认值/其它选项编码不变，Mom 表单统一外观。"
+        }
+      },
+      {
+        "overlay": "agent-form",
+        "state": "校验",
+        "evidence": [
+          {
+            "id": "05-agent/agent-workflow-journey-intake-validation",
+            "image": "05-agent/agent-workflow-journey-intake-validation/default.png",
+            "trigger": "inventory workflow intake controls and accepted submission 393.0",
+            "extent": "full-measured-scroll-stitch"
+          }
+        ],
+        "report": "AGENT-CURRENT-REUSE.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "agent-form",
+          "state": "校验",
+          "figma_nodes": [
+            "276:1188",
+            "276:1856"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "必填校验及错误可见区域，live region。"
+        }
+      },
+      {
+        "overlay": "agent-form",
+        "state": "提交",
+        "evidence": [
+          {
+            "id": "05-agent/agent-workflow-journey-intake-submitting",
+            "image": "05-agent/agent-workflow-journey-intake-submitting/default.png",
+            "trigger": "inventory workflow intake controls and accepted submission 393.0",
+            "extent": "full-measured-scroll-stitch"
+          },
+          {
+            "id": "05-agent/agent-workflow-journey-ticket-submitting",
+            "image": "05-agent/agent-workflow-journey-ticket-submitting/default.png",
+            "trigger": "inventory workflow support ticket retry and submitted detail",
+            "extent": "viewport"
+          }
+        ],
+        "report": "AGENT-CURRENT-REUSE.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "agent-form",
+          "state": "提交",
+          "figma_nodes": [
+            "276:1296",
+            "276:1906",
+            "276:2061",
+            "276:1348"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "提交锁定、成功关闭、只读查看；草稿与原回调保持。"
+        }
+      },
+      {
+        "overlay": "agent-form",
+        "state": "失败",
+        "evidence": [
+          {
+            "id": "05-agent/agent-workflow-journey-retry-intake-failed",
+            "image": "05-agent/agent-workflow-journey-retry-intake-failed/default.png",
+            "trigger": "inventory workflow intake transport failure and retry",
+            "extent": "full-measured-scroll-stitch"
+          },
+          {
+            "id": "05-agent/agent-workflow-journey-ticket-failed",
+            "image": "05-agent/agent-workflow-journey-ticket-failed/default.png",
+            "trigger": "inventory workflow support ticket retry and submitted detail",
+            "extent": "viewport"
+          }
+        ],
+        "report": "AGENT-CURRENT-REUSE.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "agent-form",
+          "state": "失败",
+          "figma_nodes": [
+            "276:1241",
+            "276:2030"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "失败恢复编辑，重试内容一致；当前 ScrollPosition 验证错误可见。"
+        }
+      }
+    ],
+    "final_catalog_state_audit": "verified_existing_design_and_behavior_with_explicit_reuse"
+  },
+  {
+    "overlay_id": "agent-image",
+    "name": "对话图片预览",
+    "owners": [
+      "agent-home"
+    ],
+    "refactor_status": "implemented_widget_verified",
+    "states": [
+      {
+        "overlay": "agent-image",
+        "state": "加载",
+        "evidence": [
+          {
+            "id": "05-agent/agent-attachment-journey-image-remote-loading",
+            "image": "05-agent/agent-attachment-journey-image-remote-loading/default.png",
+            "trigger": "inventory attachment image upload failure and preview retry",
+            "extent": "viewport"
+          }
+        ],
+        "report": "AGENT-ATTACHMENTS.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "agent-image",
+          "state": "加载",
+          "figma_nodes": [
+            "265:1257"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "附件原图加载。"
+        }
+      },
+      {
+        "overlay": "agent-image",
+        "state": "图片",
+        "evidence": [
+          {
+            "id": "05-agent/agent-attachment-journey-image-viewer",
+            "image": "05-agent/agent-attachment-journey-image-viewer/default.png",
+            "trigger": "inventory attachment mixed send and image viewer 393.0",
+            "extent": "viewport"
+          }
+        ],
+        "report": "AGENT-ATTACHMENTS.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "note": "实际 _AgentFullScreenImage 对话图片浮层；与资源卡打开的 media-viewer 独立页面分开。",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "agent-image",
+          "state": "图片",
+          "figma_nodes": [
+            "265:1220"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "深色图片画布，原缩放手势。"
+        }
+      },
+      {
+        "overlay": "agent-image",
+        "state": "失败",
+        "evidence": [
+          {
+            "id": "05-agent/agent-attachment-journey-image-remote-failed",
+            "image": "05-agent/agent-attachment-journey-image-remote-failed/default.png",
+            "trigger": "inventory attachment image upload failure and preview retry",
+            "extent": "viewport"
+          }
+        ],
+        "report": "AGENT-ATTACHMENTS.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "agent-image",
+          "state": "失败",
+          "figma_nodes": [
+            "265:1229",
+            "265:1244"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "加载错误/不可用，原能力决定是否重试。"
+        }
+      },
+      {
+        "overlay": "agent-image",
+        "state": "关闭",
+        "evidence": [
+          {
+            "id": "05-agent/agent-attachment-journey-image-viewer-return",
+            "image": "05-agent/agent-attachment-journey-image-viewer-return/default.png",
+            "trigger": "inventory attachment mixed send and image viewer 393.0",
+            "extent": "viewport"
+          }
+        ],
+        "report": "AGENT-ATTACHMENTS.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "agent-image",
+          "state": "关闭",
+          "figma_nodes": [
+            "265:1220"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "关闭回同一聊天及附件位置。"
+        }
+      }
+    ],
+    "final_catalog_state_audit": "verified_existing_design_and_behavior_with_explicit_reuse"
+  },
+  {
+    "overlay_id": "schedule-editor",
+    "name": "个人日程表单",
+    "owners": [
+      "schedule"
+    ],
+    "refactor_status": "implemented_widget_verified",
+    "states": [
+      {
+        "overlay": "schedule-editor",
+        "state": "新增",
+        "evidence": [
+          {
+            "id": "06-schedule/schedule-create",
+            "image": "06-schedule/schedule-create/default.png",
+            "trigger": "personal schedule create edit delete at 390.0/1.0",
+            "extent": "viewport"
+          }
+        ],
+        "report": "SCHEDULE-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "schedule-editor",
+          "state": "新增",
+          "figma_nodes": [
+            "214:3241",
+            "214:3370"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "新增与已填写状态，真实用户字段。"
+        }
+      },
+      {
+        "overlay": "schedule-editor",
+        "state": "编辑",
+        "evidence": [
+          {
+            "id": "06-schedule/schedule-edit",
+            "image": "06-schedule/schedule-edit/default.png",
+            "trigger": "personal schedule create edit delete at 390.0/1.0",
+            "extent": "viewport"
+          }
+        ],
+        "report": "SCHEDULE-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "schedule-editor",
+          "state": "编辑",
+          "figma_nodes": [
+            "214:3499"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "原编辑值与版本。"
+        }
+      },
+      {
+        "overlay": "schedule-editor",
+        "state": "时间",
+        "evidence": [
+          {
+            "id": "06-schedule/schedule-time-picker",
+            "image": "06-schedule/schedule-time-picker/default.png",
+            "trigger": "personal schedule create edit delete at 390.0/1.0",
+            "extent": "viewport"
+          },
+          {
+            "id": "06-schedule/schedule-date-picker",
+            "image": "06-schedule/schedule-date-picker/default.png",
+            "trigger": "personal schedule create edit delete at 390.0/1.0",
+            "extent": "viewport"
+          }
+        ],
+        "report": "SCHEDULE-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "schedule-editor",
+          "state": "时间",
+          "figma_nodes": [
+            "216:1760",
+            "216:1910"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "原系统时间选择，时段选择主题一致。"
+        }
+      },
+      {
+        "overlay": "schedule-editor",
+        "state": "校验",
+        "evidence": [
+          {
+            "id": "06-schedule/schedule-journey-current-create-invalid",
+            "image": "06-schedule/schedule-journey-current-create-invalid/default.png",
+            "trigger": "inventory schedule current visible feedback gaps",
+            "extent": "viewport"
+          }
+        ],
+        "report": "SCHEDULE-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "schedule-editor",
+          "state": "校验",
+          "figma_nodes": [
+            "214:4019",
+            "216:1479",
+            "216:2054"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "字段/日期/时间校验，修正后提交真实值。"
+        }
+      },
+      {
+        "overlay": "schedule-editor",
+        "state": "保存",
+        "evidence": [
+          {
+            "id": "06-schedule/schedule-save-busy",
+            "image": "06-schedule/schedule-save-busy/default.png",
+            "trigger": "pending personal save locks edits and close then creates once",
+            "extent": "full-measured-scroll-stitch"
+          }
+        ],
+        "report": "SCHEDULE-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "schedule-editor",
+          "state": "保存",
+          "figma_nodes": [
+            "214:3628",
+            "214:3757"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "保存中及未知结果禁止编辑，创建重试原幂等键。"
+        }
+      },
+      {
+        "overlay": "schedule-editor",
+        "state": "错误",
+        "evidence": [
+          {
+            "id": "06-schedule/schedule-journey-current-edit-conflict",
+            "image": "06-schedule/schedule-journey-current-edit-conflict/default.png",
+            "trigger": "inventory schedule current visible feedback gaps",
+            "extent": "viewport"
+          }
+        ],
+        "report": "SCHEDULE-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "schedule-editor",
+          "state": "错误",
+          "figma_nodes": [
+            "214:3888",
+            "214:3757"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "冲突和错误沿用原恢复策略。"
+        }
+      }
+    ],
+    "final_catalog_state_audit": "verified_existing_design_and_behavior_with_explicit_reuse"
+  },
+  {
+    "overlay_id": "schedule-delete",
+    "name": "日程删除确认",
+    "owners": [
+      "schedule"
+    ],
+    "refactor_status": "implemented_widget_verified",
+    "states": [
+      {
+        "overlay": "schedule-delete",
+        "state": "确认",
+        "evidence": [
+          {
+            "id": "06-schedule/schedule-journey-delete-confirm",
+            "image": "06-schedule/schedule-journey-delete-confirm/default.png",
+            "trigger": "inventory schedule calendar create edit delete",
+            "extent": "viewport"
+          }
+        ],
+        "report": "SCHEDULE-FEEDBACK-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "schedule-delete",
+          "state": "确认",
+          "figma_nodes": [
+            "214:4150"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "删除确认中保留操作突出。"
+        }
+      },
+      {
+        "overlay": "schedule-delete",
+        "state": "取消",
+        "evidence": [
+          {
+            "id": "06-schedule/schedule-journey-delete-cancelled",
+            "image": "06-schedule/schedule-journey-delete-cancelled/default.png",
+            "trigger": "inventory schedule calendar create edit delete",
+            "extent": "viewport"
+          }
+        ],
+        "report": "SCHEDULE-FEEDBACK-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "schedule-delete",
+          "state": "取消",
+          "figma_nodes": [
+            "214:4150",
+            "214:1108"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "取消回原安排，不提交删除。"
+        }
+      },
+      {
+        "overlay": "schedule-delete",
+        "state": "等待",
+        "evidence": [
+          {
+            "id": "06-schedule/schedule-overview",
+            "image": "06-schedule/schedule-overview/default.png",
+            "trigger": "published care plan and appointment at 390.0 / 1.0",
+            "extent": "full-measured-scroll-stitch"
+          }
+        ],
+        "report": "SCHEDULE-FEEDBACK-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "note": "确认后弹窗先关闭，再等待 DELETE；控制器没有删除中状态变更。等待阶段共享原日程列表图，不存在独立等待弹窗。",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "schedule-delete",
+          "state": "等待",
+          "figma_nodes": [
+            "214:4150"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "同确认框架的等待/禁用，动作归原 controller。"
+        }
+      },
+      {
+        "overlay": "schedule-delete",
+        "state": "失败",
+        "evidence": [
+          {
+            "id": "06-schedule/schedule-journey-current-delete-error",
+            "image": "06-schedule/schedule-journey-current-delete-error/default.png",
+            "trigger": "inventory schedule current visible feedback gaps",
+            "extent": "full-measured-scroll-stitch"
+          }
+        ],
+        "report": "SCHEDULE-FEEDBACK-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "schedule-delete",
+          "state": "失败",
+          "figma_nodes": [
+            "214:4150",
+            "214:2728"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "共享错误反馈保留失败说明与恢复入口，不冒充已删除。"
+        }
+      }
+    ],
+    "final_catalog_state_audit": "verified_existing_design_and_behavior_with_explicit_reuse"
+  },
+  {
+    "overlay_id": "provider-team",
+    "name": "专家团队介绍",
+    "owners": [
+      "service-catalog",
+      "service-package"
+    ],
+    "refactor_status": "implemented_widget_verified",
+    "states": [
+      {
+        "overlay": "provider-team",
+        "state": "团队",
+        "evidence": [
+          {
+            "id": "08-expert-service/service-current-catalog-team",
+            "image": "08-expert-service/service-current-catalog-team/default.png",
+            "trigger": "current service catalog all package and team entries false",
+            "extent": "viewport"
+          }
+        ],
+        "report": "SERVICE-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/SETTINGS-SERVICES.md",
+          "state_record": "20260914-final-audit/settings-service-state-evidence.json",
+          "owner_id": "provider-team",
+          "state": "团队",
+          "figma_nodes": [
+            "149:1443",
+            "153:1139"
+          ],
+          "historical_figma_nodes": []
+        },
+        "acceptance": "VERIFIED_EXISTING_DESIGN_AND_BEHAVIOR_WITH_EXPLICIT_REUSE_AND_SOURCE_BOUNDARIES"
+      },
+      {
+        "overlay": "provider-team",
+        "state": "空",
+        "evidence": [
+          {
+            "id": "08-expert-service/service-current-catalog-team-empty",
+            "image": "08-expert-service/service-current-catalog-team-empty/default.png",
+            "trigger": "current catalog loading empty errors and refresh false",
+            "extent": "viewport"
+          }
+        ],
+        "report": "SERVICE-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/SETTINGS-SERVICES.md",
+          "state_record": "20260914-final-audit/settings-service-state-evidence.json",
+          "owner_id": "provider-team",
+          "state": "空",
+          "figma_nodes": [
+            "149:1401"
+          ],
+          "historical_figma_nodes": []
+        },
+        "acceptance": "VERIFIED_EXISTING_DESIGN_AND_BEHAVIOR_WITH_EXPLICIT_REUSE_AND_SOURCE_BOUNDARIES"
+      },
+      {
+        "overlay": "provider-team",
+        "state": "关闭",
+        "evidence": [
+          {
+            "id": "08-expert-service/service-current-catalog",
+            "image": "08-expert-service/service-current-catalog/default.png",
+            "trigger": "current service catalog all package and team entries false",
+            "extent": "full-measured-scroll-stitch"
+          }
+        ],
+        "report": "SERVICE-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/SETTINGS-SERVICES.md",
+          "state_record": "20260914-final-audit/settings-service-state-evidence.json",
+          "owner_id": "provider-team",
+          "state": "关闭",
+          "figma_nodes": [
+            "149:565"
+          ],
+          "historical_figma_nodes": []
+        },
+        "acceptance": "VERIFIED_EXISTING_DESIGN_AND_BEHAVIOR_WITH_EXPLICIT_REUSE_AND_SOURCE_BOUNDARIES"
+      }
+    ],
+    "final_catalog_state_audit": "verified_existing_design_and_behavior_with_explicit_reuse"
+  },
+  {
+    "overlay_id": "purchase",
+    "name": "购买服务流程",
+    "owners": [
+      "service-package",
+      "service-renew"
+    ],
+    "refactor_status": "implemented_widget_verified",
+    "states": [
+      {
+        "overlay": "purchase",
+        "state": "资格",
+        "evidence": [
+          {
+            "id": "08-expert-service/purchase-current-eligibility-ready",
+            "image": "08-expert-service/purchase-current-eligibility-ready/default.png",
+            "trigger": "current purchase eligibility rejection create retry false",
+            "extent": "viewport"
+          }
+        ],
+        "report": "PURCHASE-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/SETTINGS-SERVICES.md",
+          "state_record": "20260914-final-audit/settings-service-state-evidence.json",
+          "owner_id": "purchase",
+          "state": "资格",
+          "figma_nodes": [
+            "156:1993",
+            "156:2082"
+          ],
+          "historical_figma_nodes": []
+        },
+        "acceptance": "VERIFIED_EXISTING_DESIGN_AND_BEHAVIOR_WITH_EXPLICIT_REUSE_AND_SOURCE_BOUNDARIES"
+      },
+      {
+        "overlay": "purchase",
+        "state": "付款",
+        "evidence": [
+          {
+            "id": "08-expert-service/purchase-current-payment-pending",
+            "image": "08-expert-service/purchase-current-payment-pending/default.png",
+            "trigger": "current purchase uncertain payment retry query false",
+            "extent": "full-measured-scroll-stitch"
+          }
+        ],
+        "report": "PURCHASE-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/SETTINGS-SERVICES.md",
+          "state_record": "20260914-final-audit/settings-service-state-evidence.json",
+          "owner_id": "purchase",
+          "state": "付款",
+          "figma_nodes": [
+            "156:2445",
+            "156:2656"
+          ],
+          "historical_figma_nodes": []
+        },
+        "acceptance": "VERIFIED_EXISTING_DESIGN_AND_BEHAVIOR_WITH_EXPLICIT_REUSE_AND_SOURCE_BOUNDARIES"
+      },
+      {
+        "overlay": "purchase",
+        "state": "校验",
+        "evidence": [
+          {
+            "id": "08-expert-service/purchase-current-fields-invalid",
+            "image": "08-expert-service/purchase-current-fields-invalid/default.png",
+            "trigger": "current purchase fields decline verification success false",
+            "extent": "full-measured-scroll-stitch"
+          }
+        ],
+        "report": "PURCHASE-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/SETTINGS-SERVICES.md",
+          "state_record": "20260914-final-audit/settings-service-state-evidence.json",
+          "owner_id": "purchase",
+          "state": "校验",
+          "figma_nodes": [
+            "156:2550"
+          ],
+          "historical_figma_nodes": []
+        },
+        "acceptance": "VERIFIED_EXISTING_DESIGN_AND_BEHAVIOR_WITH_EXPLICIT_REUSE_AND_SOURCE_BOUNDARIES"
+      },
+      {
+        "overlay": "purchase",
+        "state": "拒付",
+        "evidence": [
+          {
+            "id": "08-expert-service/purchase-current-declined",
+            "image": "08-expert-service/purchase-current-declined/default.png",
+            "trigger": "current purchase fields decline verification success false",
+            "extent": "full-measured-scroll-stitch"
+          }
+        ],
+        "report": "PURCHASE-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/SETTINGS-SERVICES.md",
+          "state_record": "20260914-final-audit/settings-service-state-evidence.json",
+          "owner_id": "purchase",
+          "state": "拒付",
+          "figma_nodes": [
+            "156:2761"
+          ],
+          "historical_figma_nodes": []
+        },
+        "acceptance": "VERIFIED_EXISTING_DESIGN_AND_BEHAVIOR_WITH_EXPLICIT_REUSE_AND_SOURCE_BOUNDARIES"
+      },
+      {
+        "overlay": "purchase",
+        "state": "额外验证",
+        "evidence": [
+          {
+            "id": "08-expert-service/purchase-current-challenge",
+            "image": "08-expert-service/purchase-current-challenge/default.png",
+            "trigger": "current purchase fields decline verification success false",
+            "extent": "full-measured-scroll-stitch"
+          }
+        ],
+        "report": "PURCHASE-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/SETTINGS-SERVICES.md",
+          "state_record": "20260914-final-audit/settings-service-state-evidence.json",
+          "owner_id": "purchase",
+          "state": "额外验证",
+          "figma_nodes": [
+            "156:2869"
+          ],
+          "historical_figma_nodes": []
+        },
+        "acceptance": "VERIFIED_EXISTING_DESIGN_AND_BEHAVIOR_WITH_EXPLICIT_REUSE_AND_SOURCE_BOUNDARIES"
+      },
+      {
+        "overlay": "purchase",
+        "state": "待付",
+        "evidence": [
+          {
+            "id": "08-expert-service/purchase-current-processing",
+            "image": "08-expert-service/purchase-current-processing/default.png",
+            "trigger": "current purchase cancelled challenge reconciling and entitlement sync false",
+            "extent": "viewport"
+          }
+        ],
+        "report": "PURCHASE-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/SETTINGS-SERVICES.md",
+          "state_record": "20260914-final-audit/settings-service-state-evidence.json",
+          "owner_id": "purchase",
+          "state": "待付",
+          "figma_nodes": [
+            "156:2656",
+            "156:3063",
+            "156:3174"
+          ],
+          "historical_figma_nodes": []
+        },
+        "acceptance": "VERIFIED_EXISTING_DESIGN_AND_BEHAVIOR_WITH_EXPLICIT_REUSE_AND_SOURCE_BOUNDARIES"
+      },
+      {
+        "overlay": "purchase",
+        "state": "取消",
+        "evidence": [
+          {
+            "id": "08-expert-service/purchase-current-plain-cancelled",
+            "image": "08-expert-service/purchase-current-plain-cancelled/default.png",
+            "trigger": "current purchase plain cancellation and reconciliation completion false",
+            "extent": "viewport"
+          }
+        ],
+        "report": "PURCHASE-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/SETTINGS-SERVICES.md",
+          "state_record": "20260914-final-audit/settings-service-state-evidence.json",
+          "owner_id": "purchase",
+          "state": "取消",
+          "figma_nodes": [
+            "156:2977",
+            "156:3978"
+          ],
+          "historical_figma_nodes": []
+        },
+        "acceptance": "VERIFIED_EXISTING_DESIGN_AND_BEHAVIOR_WITH_EXPLICIT_REUSE_AND_SOURCE_BOUNDARIES"
+      },
+      {
+        "overlay": "purchase",
+        "state": "成功",
+        "evidence": [
+          {
+            "id": "08-expert-service/purchase-current-verified-success",
+            "image": "08-expert-service/purchase-current-verified-success/default.png",
+            "trigger": "current purchase fields decline verification success false",
+            "extent": "viewport"
+          }
+        ],
+        "report": "PURCHASE-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/SETTINGS-SERVICES.md",
+          "state_record": "20260914-final-audit/settings-service-state-evidence.json",
+          "owner_id": "purchase",
+          "state": "成功",
+          "figma_nodes": [
+            "156:3444",
+            "159:1302"
+          ],
+          "historical_figma_nodes": []
+        },
+        "acceptance": "VERIFIED_EXISTING_DESIGN_AND_BEHAVIOR_WITH_EXPLICIT_REUSE_AND_SOURCE_BOUNDARIES"
+      },
+      {
+        "overlay": "purchase",
+        "state": "同步权益",
+        "evidence": [
+          {
+            "id": "08-expert-service/purchase-current-paid-awaiting-benefits",
+            "image": "08-expert-service/purchase-current-paid-awaiting-benefits/default.png",
+            "trigger": "current purchase cancelled challenge reconciling and entitlement sync false",
+            "extent": "viewport"
+          },
+          {
+            "id": "08-expert-service/purchase-current-benefits-synced",
+            "image": "08-expert-service/purchase-current-benefits-synced/default.png",
+            "trigger": "current purchase cancelled challenge reconciling and entitlement sync false",
+            "extent": "viewport"
+          }
+        ],
+        "report": "PURCHASE-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/SETTINGS-SERVICES.md",
+          "state_record": "20260914-final-audit/settings-service-state-evidence.json",
+          "owner_id": "purchase",
+          "state": "同步权益",
+          "figma_nodes": [
+            "156:3263",
+            "156:3444"
+          ],
+          "historical_figma_nodes": []
+        },
+        "acceptance": "VERIFIED_EXISTING_DESIGN_AND_BEHAVIOR_WITH_EXPLICIT_REUSE_AND_SOURCE_BOUNDARIES"
+      },
+      {
+        "overlay": "purchase",
+        "state": "错误",
+        "evidence": [
+          {
+            "id": "08-expert-service/purchase-current-create-error",
+            "image": "08-expert-service/purchase-current-create-error/default.png",
+            "trigger": "current purchase eligibility rejection create retry false",
+            "extent": "full-measured-scroll-stitch"
+          },
+          {
+            "id": "08-expert-service/purchase-current-payment-uncertain",
+            "image": "08-expert-service/purchase-current-payment-uncertain/default.png",
+            "trigger": "current purchase uncertain payment retry query false",
+            "extent": "full-measured-scroll-stitch"
+          }
+        ],
+        "report": "PURCHASE-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/SETTINGS-SERVICES.md",
+          "state_record": "20260914-final-audit/settings-service-state-evidence.json",
+          "owner_id": "purchase",
+          "state": "错误",
+          "figma_nodes": [
+            "156:2351",
+            "156:3063",
+            "156:3350",
+            "156:3706"
+          ],
+          "historical_figma_nodes": []
+        },
+        "acceptance": "VERIFIED_EXISTING_DESIGN_AND_BEHAVIOR_WITH_EXPLICIT_REUSE_AND_SOURCE_BOUNDARIES"
+      }
+    ],
+    "final_catalog_state_audit": "verified_existing_design_and_behavior_with_explicit_reuse"
+  },
+  {
+    "overlay_id": "booking-precheck",
+    "name": "预约前确认",
+    "owners": [
+      "booking"
+    ],
+    "refactor_status": "implemented_widget_verified",
+    "states": [
+      {
+        "overlay": "booking-precheck",
+        "state": "州选择",
+        "evidence": [
+          {
+            "id": "08-expert-service/booking-precheck-current-region-menu",
+            "image": "08-expert-service/booking-precheck-current-region-menu/default.png",
+            "trigger": "current booking precheck controls and recovery false",
+            "extent": "viewport"
+          }
+        ],
+        "report": "BOOKING-PRECHECK-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/SETTINGS-SERVICES.md",
+          "state_record": "20260914-final-audit/settings-service-state-evidence.json",
+          "owner_id": "booking-precheck",
+          "state": "州选择",
+          "figma_nodes": [
+            "165:1414"
+          ],
+          "historical_figma_nodes": []
+        },
+        "acceptance": "VERIFIED_EXISTING_DESIGN_AND_BEHAVIOR_WITH_EXPLICIT_REUSE_AND_SOURCE_BOUNDARIES"
+      },
+      {
+        "overlay": "booking-precheck",
+        "state": "适用性",
+        "evidence": [
+          {
+            "id": "08-expert-service/booking-precheck-current-suitable",
+            "image": "08-expert-service/booking-precheck-current-suitable/default.png",
+            "trigger": "current booking precheck controls and recovery false",
+            "extent": "viewport"
+          }
+        ],
+        "report": "BOOKING-PRECHECK-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/SETTINGS-SERVICES.md",
+          "state_record": "20260914-final-audit/settings-service-state-evidence.json",
+          "owner_id": "booking-precheck",
+          "state": "适用性",
+          "figma_nodes": [
+            "165:1449"
+          ],
+          "historical_figma_nodes": []
+        },
+        "acceptance": "VERIFIED_EXISTING_DESIGN_AND_BEHAVIOR_WITH_EXPLICIT_REUSE_AND_SOURCE_BOUNDARIES"
+      },
+      {
+        "overlay": "booking-precheck",
+        "state": "风险",
+        "evidence": [
+          {
+            "id": "08-expert-service/booking-precheck-current-emergency-help",
+            "image": "08-expert-service/booking-precheck-current-emergency-help/default.png",
+            "trigger": "current booking precheck controls and recovery false",
+            "extent": "full-measured-scroll-stitch"
+          }
+        ],
+        "report": "BOOKING-PRECHECK-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/SETTINGS-SERVICES.md",
+          "state_record": "20260914-final-audit/settings-service-state-evidence.json",
+          "owner_id": "booking-precheck",
+          "state": "风险",
+          "figma_nodes": [
+            "165:1521"
+          ],
+          "historical_figma_nodes": []
+        },
+        "acceptance": "VERIFIED_EXISTING_DESIGN_AND_BEHAVIOR_WITH_EXPLICIT_REUSE_AND_SOURCE_BOUNDARIES"
+      },
+      {
+        "overlay": "booking-precheck",
+        "state": "等待",
+        "evidence": [
+          {
+            "id": "08-expert-service/booking-precheck-current-submit-pending",
+            "image": "08-expert-service/booking-precheck-current-submit-pending/default.png",
+            "trigger": "current booking precheck controls and recovery false",
+            "extent": "viewport"
+          }
+        ],
+        "report": "BOOKING-PRECHECK-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/SETTINGS-SERVICES.md",
+          "state_record": "20260914-final-audit/settings-service-state-evidence.json",
+          "owner_id": "booking-precheck",
+          "state": "等待",
+          "figma_nodes": [
+            "165:1558"
+          ],
+          "historical_figma_nodes": []
+        },
+        "acceptance": "VERIFIED_EXISTING_DESIGN_AND_BEHAVIOR_WITH_EXPLICIT_REUSE_AND_SOURCE_BOUNDARIES"
+      },
+      {
+        "overlay": "booking-precheck",
+        "state": "拒绝",
+        "evidence": [
+          {
+            "id": "08-expert-service/booking-precheck-current-server-service_unsuitable",
+            "image": "08-expert-service/booking-precheck-current-server-service_unsuitable/default.png",
+            "trigger": "current booking precheck controls and recovery false",
+            "extent": "full-measured-scroll-stitch"
+          }
+        ],
+        "report": "BOOKING-PRECHECK-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/SETTINGS-SERVICES.md",
+          "state_record": "20260914-final-audit/settings-service-state-evidence.json",
+          "owner_id": "booking-precheck",
+          "state": "拒绝",
+          "figma_nodes": [
+            "165:1484",
+            "165:1593"
+          ],
+          "historical_figma_nodes": []
+        },
+        "acceptance": "VERIFIED_EXISTING_DESIGN_AND_BEHAVIOR_WITH_EXPLICIT_REUSE_AND_SOURCE_BOUNDARIES"
+      },
+      {
+        "overlay": "booking-precheck",
+        "state": "重试",
+        "evidence": [
+          {
+            "id": "08-expert-service/booking-precheck-current-availability-restored",
+            "image": "08-expert-service/booking-precheck-current-availability-restored/default.png",
+            "trigger": "current booking precheck availability loading and retry false",
+            "extent": "viewport"
+          }
+        ],
+        "report": "BOOKING-PRECHECK-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/SETTINGS-SERVICES.md",
+          "state_record": "20260914-final-audit/settings-service-state-evidence.json",
+          "owner_id": "booking-precheck",
+          "state": "重试",
+          "figma_nodes": [
+            "165:1108",
+            "165:1593"
+          ],
+          "historical_figma_nodes": []
+        },
+        "acceptance": "VERIFIED_EXISTING_DESIGN_AND_BEHAVIOR_WITH_EXPLICIT_REUSE_AND_SOURCE_BOUNDARIES"
+      }
+    ],
+    "final_catalog_state_audit": "verified_existing_design_and_behavior_with_explicit_reuse"
+  },
+  {
+    "overlay_id": "booking-review",
+    "name": "确认预约时间",
+    "owners": [
+      "booking"
+    ],
+    "refactor_status": "implemented_widget_verified",
+    "states": [
+      {
+        "overlay": "booking-review",
+        "state": "held",
+        "evidence": [
+          {
+            "id": "08-expert-service/booking-selection-current-held-review",
+            "image": "08-expert-service/booking-selection-current-held-review/default.png",
+            "trigger": "current booking hold reselect and confirmation recovery false",
+            "extent": "viewport"
+          }
+        ],
+        "report": "BOOKING-SELECTION-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/SETTINGS-SERVICES.md",
+          "state_record": "20260914-final-audit/settings-service-state-evidence.json",
+          "owner_id": "booking-review",
+          "state": "held",
+          "figma_nodes": [
+            "165:1630"
+          ],
+          "historical_figma_nodes": []
+        },
+        "acceptance": "VERIFIED_EXISTING_DESIGN_AND_BEHAVIOR_WITH_EXPLICIT_REUSE_AND_SOURCE_BOUNDARIES"
+      },
+      {
+        "overlay": "booking-review",
+        "state": "提醒草稿",
+        "evidence": [
+          {
+            "id": "08-expert-service/booking-selection-current-reminder-selected",
+            "image": "08-expert-service/booking-selection-current-reminder-selected/default.png",
+            "trigger": "current booking hold reselect and confirmation recovery false",
+            "extent": "viewport"
+          },
+          {
+            "id": "08-expert-service/booking-selection-current-reminder-cleared",
+            "image": "08-expert-service/booking-selection-current-reminder-cleared/default.png",
+            "trigger": "current booking hold reselect and confirmation recovery false",
+            "extent": "viewport"
+          }
+        ],
+        "report": "BOOKING-SELECTION-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/SETTINGS-SERVICES.md",
+          "state_record": "20260914-final-audit/settings-service-state-evidence.json",
+          "owner_id": "booking-review",
+          "state": "提醒草稿",
+          "figma_nodes": [
+            "165:1630"
+          ],
+          "historical_figma_nodes": []
+        },
+        "acceptance": "VERIFIED_EXISTING_DESIGN_AND_BEHAVIOR_WITH_EXPLICIT_REUSE_AND_SOURCE_BOUNDARIES"
+      },
+      {
+        "overlay": "booking-review",
+        "state": "过期",
+        "evidence": [
+          {
+            "id": "08-expert-service/booking-recovery-current-confirm-hold-expired",
+            "image": "08-expert-service/booking-recovery-current-confirm-hold-expired/default.png",
+            "trigger": "current booking hold expiry and latest confirmation false",
+            "extent": "full-measured-scroll-stitch"
+          }
+        ],
+        "report": "BOOKING-SELECTION-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/SETTINGS-SERVICES.md",
+          "state_record": "20260914-final-audit/settings-service-state-evidence.json",
+          "owner_id": "booking-review",
+          "state": "过期",
+          "figma_nodes": [
+            "165:1809"
+          ],
+          "historical_figma_nodes": []
+        },
+        "acceptance": "VERIFIED_EXISTING_DESIGN_AND_BEHAVIOR_WITH_EXPLICIT_REUSE_AND_SOURCE_BOUNDARIES"
+      },
+      {
+        "overlay": "booking-review",
+        "state": "确认中",
+        "evidence": [
+          {
+            "id": "08-expert-service/booking-selection-current-confirm-pending",
+            "image": "08-expert-service/booking-selection-current-confirm-pending/default.png",
+            "trigger": "current booking hold reselect and confirmation recovery false",
+            "extent": "viewport"
+          }
+        ],
+        "report": "BOOKING-SELECTION-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/SETTINGS-SERVICES.md",
+          "state_record": "20260914-final-audit/settings-service-state-evidence.json",
+          "owner_id": "booking-review",
+          "state": "确认中",
+          "figma_nodes": [
+            "165:1689"
+          ],
+          "historical_figma_nodes": []
+        },
+        "acceptance": "VERIFIED_EXISTING_DESIGN_AND_BEHAVIOR_WITH_EXPLICIT_REUSE_AND_SOURCE_BOUNDARIES"
+      },
+      {
+        "overlay": "booking-review",
+        "state": "错误",
+        "evidence": [
+          {
+            "id": "08-expert-service/booking-selection-current-confirm-error",
+            "image": "08-expert-service/booking-selection-current-confirm-error/default.png",
+            "trigger": "current booking hold reselect and confirmation recovery false",
+            "extent": "full-measured-scroll-stitch"
+          }
+        ],
+        "report": "BOOKING-SELECTION-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/SETTINGS-SERVICES.md",
+          "state_record": "20260914-final-audit/settings-service-state-evidence.json",
+          "owner_id": "booking-review",
+          "state": "错误",
+          "figma_nodes": [
+            "165:1748"
+          ],
+          "historical_figma_nodes": []
+        },
+        "acceptance": "VERIFIED_EXISTING_DESIGN_AND_BEHAVIOR_WITH_EXPLICIT_REUSE_AND_SOURCE_BOUNDARIES"
+      },
+      {
+        "overlay": "booking-review",
+        "state": "已确认",
+        "evidence": [
+          {
+            "id": "08-expert-service/booking-selection-current-confirmed-detail",
+            "image": "08-expert-service/booking-selection-current-confirmed-detail/default.png",
+            "trigger": "current booking hold reselect and confirmation recovery false",
+            "extent": "viewport"
+          }
+        ],
+        "report": "BOOKING-SELECTION-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/SETTINGS-SERVICES.md",
+          "state_record": "20260914-final-audit/settings-service-state-evidence.json",
+          "owner_id": "booking-review",
+          "state": "已确认",
+          "figma_nodes": [
+            "165:1191"
+          ],
+          "historical_figma_nodes": []
+        },
+        "acceptance": "VERIFIED_EXISTING_DESIGN_AND_BEHAVIOR_WITH_EXPLICIT_REUSE_AND_SOURCE_BOUNDARIES"
+      }
+    ],
+    "final_catalog_state_audit": "verified_existing_design_and_behavior_with_explicit_reuse"
+  },
+  {
+    "overlay_id": "appointment-cancel",
+    "name": "取消预约",
+    "owners": [
+      "booking",
+      "appointment",
+      "consultation",
+      "mom-home"
+    ],
+    "refactor_status": "implemented_widget_verified",
+    "states": [
+      {
+        "overlay": "appointment-cancel",
+        "state": "确认",
+        "evidence": [
+          {
+            "id": "08-expert-service/booking-recovery-current-cancel-open",
+            "image": "08-expert-service/booking-recovery-current-cancel-open/default.png",
+            "trigger": "current confirmed appointment cancellation and state recovery false",
+            "extent": "viewport"
+          }
+        ],
+        "report": "BOOKING-RECOVERY-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/SETTINGS-SERVICES.md",
+          "state_record": "20260914-final-audit/settings-service-state-evidence.json",
+          "owner_id": "appointment-cancel",
+          "state": "确认",
+          "figma_nodes": [
+            "165:1865",
+            "167:1202"
+          ],
+          "historical_figma_nodes": []
+        },
+        "acceptance": "VERIFIED_EXISTING_DESIGN_AND_BEHAVIOR_WITH_EXPLICIT_REUSE_AND_SOURCE_BOUNDARIES"
+      },
+      {
+        "overlay": "appointment-cancel",
+        "state": "保留",
+        "evidence": [
+          {
+            "id": "08-expert-service/booking-recovery-current-cancel-retained",
+            "image": "08-expert-service/booking-recovery-current-cancel-retained/default.png",
+            "trigger": "current confirmed appointment cancellation and state recovery false",
+            "extent": "viewport"
+          }
+        ],
+        "report": "BOOKING-RECOVERY-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/SETTINGS-SERVICES.md",
+          "state_record": "20260914-final-audit/settings-service-state-evidence.json",
+          "owner_id": "appointment-cancel",
+          "state": "保留",
+          "figma_nodes": [
+            "165:1865"
+          ],
+          "historical_figma_nodes": []
+        },
+        "acceptance": "VERIFIED_EXISTING_DESIGN_AND_BEHAVIOR_WITH_EXPLICIT_REUSE_AND_SOURCE_BOUNDARIES"
+      },
+      {
+        "overlay": "appointment-cancel",
+        "state": "等待",
+        "evidence": [
+          {
+            "id": "08-expert-service/booking-recovery-current-cancel-pending",
+            "image": "08-expert-service/booking-recovery-current-cancel-pending/default.png",
+            "trigger": "current confirmed appointment cancellation and state recovery false",
+            "extent": "viewport"
+          }
+        ],
+        "report": "BOOKING-RECOVERY-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/SETTINGS-SERVICES.md",
+          "state_record": "20260914-final-audit/settings-service-state-evidence.json",
+          "owner_id": "appointment-cancel",
+          "state": "等待",
+          "figma_nodes": [
+            "165:2048"
+          ],
+          "historical_figma_nodes": []
+        },
+        "acceptance": "VERIFIED_EXISTING_DESIGN_AND_BEHAVIOR_WITH_EXPLICIT_REUSE_AND_SOURCE_BOUNDARIES"
+      },
+      {
+        "overlay": "appointment-cancel",
+        "state": "未知",
+        "evidence": [
+          {
+            "id": "08-expert-service/booking-recovery-current-cancel-uncertain",
+            "image": "08-expert-service/booking-recovery-current-cancel-uncertain/default.png",
+            "trigger": "current confirmed appointment cancellation and state recovery false",
+            "extent": "full-measured-scroll-stitch"
+          }
+        ],
+        "report": "BOOKING-RECOVERY-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/SETTINGS-SERVICES.md",
+          "state_record": "20260914-final-audit/settings-service-state-evidence.json",
+          "owner_id": "appointment-cancel",
+          "state": "未知",
+          "figma_nodes": [
+            "165:1921"
+          ],
+          "historical_figma_nodes": []
+        },
+        "acceptance": "VERIFIED_EXISTING_DESIGN_AND_BEHAVIOR_WITH_EXPLICIT_REUSE_AND_SOURCE_BOUNDARIES"
+      },
+      {
+        "overlay": "appointment-cancel",
+        "state": "状态变化",
+        "evidence": [
+          {
+            "id": "08-expert-service/booking-recovery-current-cancel-no-longer-allowed",
+            "image": "08-expert-service/booking-recovery-current-cancel-no-longer-allowed/default.png",
+            "trigger": "current confirmed appointment cancellation and state recovery false",
+            "extent": "full-measured-scroll-stitch"
+          }
+        ],
+        "report": "BOOKING-RECOVERY-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/SETTINGS-SERVICES.md",
+          "state_record": "20260914-final-audit/settings-service-state-evidence.json",
+          "owner_id": "appointment-cancel",
+          "state": "状态变化",
+          "figma_nodes": [
+            "165:1921",
+            "165:1224"
+          ],
+          "historical_figma_nodes": []
+        },
+        "acceptance": "VERIFIED_EXISTING_DESIGN_AND_BEHAVIOR_WITH_EXPLICIT_REUSE_AND_SOURCE_BOUNDARIES"
+      },
+      {
+        "overlay": "appointment-cancel",
+        "state": "恢复",
+        "evidence": [
+          {
+            "id": "08-expert-service/booking-recovery-current-cancel-in-progress-return",
+            "image": "08-expert-service/booking-recovery-current-cancel-in-progress-return/default.png",
+            "trigger": "current confirmed appointment cancellation and state recovery false",
+            "extent": "viewport"
+          }
+        ],
+        "report": "BOOKING-RECOVERY-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/SETTINGS-SERVICES.md",
+          "state_record": "20260914-final-audit/settings-service-state-evidence.json",
+          "owner_id": "appointment-cancel",
+          "state": "恢复",
+          "figma_nodes": [
+            "165:1224"
+          ],
+          "historical_figma_nodes": []
+        },
+        "acceptance": "VERIFIED_EXISTING_DESIGN_AND_BEHAVIOR_WITH_EXPLICIT_REUSE_AND_SOURCE_BOUNDARIES"
+      }
+    ],
+    "final_catalog_state_audit": "verified_existing_design_and_behavior_with_explicit_reuse"
+  },
+  {
+    "overlay_id": "home-consultation",
+    "name": "首页预约浮层",
+    "owners": [
+      "mom-home"
+    ],
+    "refactor_status": "implemented_widget_verified",
+    "states": [
+      {
+        "overlay": "home-consultation",
+        "state": "准备",
+        "evidence": [
+          {
+            "id": "08-expert-service/home-consultation-journey-preparation",
+            "image": "08-expert-service/home-consultation-journey-preparation/default.png",
+            "trigger": "inventory home consultation nested cancellation 393/1",
+            "extent": "viewport"
+          }
+        ],
+        "report": "ENTRY-FOLLOWUP.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "home-consultation",
+          "state": "准备",
+          "figma_nodes": [
+            "178:1436"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "首页准备浮层复用预约摘要及滚动操作。"
+        }
+      },
+      {
+        "overlay": "home-consultation",
+        "state": "信息采集入口",
+        "evidence": [
+          {
+            "id": "08-expert-service/home-consultation-journey-intake",
+            "image": "08-expert-service/home-consultation-journey-intake/default.png",
+            "trigger": "inventory home consultation intake route and return 393/1",
+            "extent": "full-measured-scroll-stitch"
+          }
+        ],
+        "report": "ENTRY-FOLLOWUP.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "home-consultation",
+          "state": "信息采集入口",
+          "figma_nodes": [
+            "178:1206",
+            "173:1108"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "信息采集入口原路由，目的表单独立交付。"
+        }
+      },
+      {
+        "overlay": "home-consultation",
+        "state": "取消",
+        "evidence": [
+          {
+            "id": "08-expert-service/home-consultation-journey-cancel-confirm",
+            "image": "08-expert-service/home-consultation-journey-cancel-confirm/default.png",
+            "trigger": "inventory home consultation nested cancellation 393/1",
+            "extent": "viewport"
+          }
+        ],
+        "report": "ENTRY-FOLLOWUP.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "home-consultation",
+          "state": "取消",
+          "figma_nodes": [
+            "165:1865"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "嵌套取消确认复用共享取消弹窗。"
+        }
+      },
+      {
+        "overlay": "home-consultation",
+        "state": "过期",
+        "evidence": [
+          {
+            "id": "08-expert-service/home-consultation-journey-window-expired",
+            "image": "08-expert-service/home-consultation-journey-window-expired/default.png",
+            "trigger": "inventory home expired consultation window",
+            "extent": "full-measured-scroll-stitch"
+          }
+        ],
+        "report": "OVERLAY-STATE-MAP.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "note": "真实 More → Me → 查看预约；过期浮层完整窗口已检查，点击重新预约后到达 booking 路由。",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "home-consultation",
+          "state": "过期",
+          "figma_nodes": [
+            "178:1171"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "入场窗口过期仍可走原重新预约入口。"
+        }
+      },
+      {
+        "overlay": "home-consultation",
+        "state": "错误",
+        "evidence": [
+          {
+            "id": "08-expert-service/home-consultation-journey-load-error",
+            "image": "08-expert-service/home-consultation-journey-load-error/default.png",
+            "trigger": "inventory home consultation load failure retry",
+            "extent": "viewport"
+          }
+        ],
+        "report": "ENTRY-FOLLOWUP.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "home-consultation",
+          "state": "错误",
+          "figma_nodes": [
+            "211:1319",
+            "211:1475"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "加载失败/离线，重试显示加载，晚到回调受保护。"
+        }
+      }
+    ],
+    "final_catalog_state_audit": "verified_existing_design_and_behavior_with_explicit_reuse"
+  },
+  {
+    "overlay_id": "intake-consent",
+    "name": "信息使用说明",
+    "owners": [
+      "intake"
+    ],
+    "refactor_status": "implemented_widget_verified",
+    "states": [
+      {
+        "overlay": "intake-consent",
+        "state": "说明",
+        "evidence": [
+          {
+            "id": "08-expert-service/service-journey-intake-consent-info",
+            "image": "08-expert-service/service-journey-intake-consent-info/default.png",
+            "trigger": "inventory Services intake fields consent uncertain save and update",
+            "extent": "viewport"
+          }
+        ],
+        "report": "INTAKE-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/SETTINGS-SERVICES.md",
+          "state_record": "20260914-final-audit/settings-service-state-evidence.json",
+          "owner_id": "intake-consent",
+          "state": "说明",
+          "figma_nodes": [
+            "173:1633",
+            "174:1108"
+          ],
+          "historical_figma_nodes": []
+        },
+        "acceptance": "VERIFIED_EXISTING_DESIGN_AND_BEHAVIOR_WITH_EXPLICIT_REUSE_AND_SOURCE_BOUNDARIES"
+      },
+      {
+        "overlay": "intake-consent",
+        "state": "关闭",
+        "evidence": [
+          {
+            "id": "08-expert-service/service-journey-intake-unfilled",
+            "image": "08-expert-service/service-journey-intake-unfilled/default.png",
+            "trigger": "inventory Services intake fields consent uncertain save and update",
+            "extent": "full-measured-scroll-stitch"
+          }
+        ],
+        "report": "INTAKE-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/SETTINGS-SERVICES.md",
+          "state_record": "20260914-final-audit/settings-service-state-evidence.json",
+          "owner_id": "intake-consent",
+          "state": "关闭",
+          "figma_nodes": [
+            "173:1151"
+          ],
+          "historical_figma_nodes": []
+        },
+        "acceptance": "VERIFIED_EXISTING_DESIGN_AND_BEHAVIOR_WITH_EXPLICIT_REUSE_AND_SOURCE_BOUNDARIES"
+      }
+    ],
+    "final_catalog_state_audit": "verified_existing_design_and_behavior_with_explicit_reuse"
+  },
+  {
+    "overlay_id": "intake-saved",
+    "name": "信息采集保存成功",
+    "owners": [
+      "intake"
+    ],
+    "refactor_status": "implemented_widget_verified",
+    "states": [
+      {
+        "overlay": "intake-saved",
+        "state": "保存成功",
+        "evidence": [
+          {
+            "id": "08-expert-service/intake-saved",
+            "image": "08-expert-service/intake-saved/default.png",
+            "trigger": "intake design disclosures consent and save at 390.0 / 1.0",
+            "extent": "viewport"
+          }
+        ],
+        "report": "SERVICE-JOURNEYS.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/SETTINGS-SERVICES.md",
+          "state_record": "20260914-final-audit/settings-service-state-evidence.json",
+          "owner_id": "intake-saved",
+          "state": "保存成功",
+          "figma_nodes": [
+            "173:1691",
+            "174:1169"
+          ],
+          "historical_figma_nodes": []
+        },
+        "acceptance": "VERIFIED_EXISTING_DESIGN_AND_BEHAVIOR_WITH_EXPLICIT_REUSE_AND_SOURCE_BOUNDARIES"
+      },
+      {
+        "overlay": "intake-saved",
+        "state": "预咨询",
+        "evidence": [
+          {
+            "id": "08-expert-service/service-journey-intake-to-cozymate",
+            "image": "08-expert-service/service-journey-intake-to-cozymate/default.png",
+            "trigger": "inventory Services date pickers intake retry profile and preconsult",
+            "extent": "viewport"
+          }
+        ],
+        "report": "SERVICE-JOURNEYS.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/SETTINGS-SERVICES.md",
+          "state_record": "20260914-final-audit/settings-service-state-evidence.json",
+          "owner_id": "intake-saved",
+          "state": "预咨询",
+          "figma_nodes": [
+            "173:1691"
+          ],
+          "historical_figma_nodes": []
+        },
+        "acceptance": "VERIFIED_EXISTING_DESIGN_AND_BEHAVIOR_WITH_EXPLICIT_REUSE_AND_SOURCE_BOUNDARIES"
+      },
+      {
+        "overlay": "intake-saved",
+        "state": "稍后",
+        "evidence": [
+          {
+            "id": "08-expert-service/service-journey-intake-saved-return",
+            "image": "08-expert-service/service-journey-intake-saved-return/default.png",
+            "trigger": "inventory Services intake fields consent uncertain save and update",
+            "extent": "viewport"
+          }
+        ],
+        "report": "SERVICE-JOURNEYS.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/SETTINGS-SERVICES.md",
+          "state_record": "20260914-final-audit/settings-service-state-evidence.json",
+          "owner_id": "intake-saved",
+          "state": "稍后",
+          "figma_nodes": [
+            "170:1154"
+          ],
+          "historical_figma_nodes": []
+        },
+        "acceptance": "VERIFIED_EXISTING_DESIGN_AND_BEHAVIOR_WITH_EXPLICIT_REUSE_AND_SOURCE_BOUNDARIES"
+      }
+    ],
+    "final_catalog_state_audit": "verified_existing_design_and_behavior_with_explicit_reuse"
+  },
+  {
+    "overlay_id": "device-check",
+    "name": "咨询设备检查",
+    "owners": [
+      "consultation",
+      "mom-home"
+    ],
+    "refactor_status": "implemented_widget_verified",
+    "states": [
+      {
+        "overlay": "device-check",
+        "state": "权限未授权",
+        "evidence": [
+          {
+            "id": "08-expert-service/consultation-journey-device-denied",
+            "image": "08-expert-service/consultation-journey-device-denied/default.png",
+            "trigger": "inventory consultation device failure retry consent and room entry",
+            "extent": "viewport"
+          }
+        ],
+        "report": "CONSULTATION-PREFLIGHT-FEEDBACK-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "device-check",
+          "state": "权限未授权",
+          "figma_nodes": [
+            "183:1247"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "未授权反馈保留系统请求和原重试动作，OS 对话框外观不重做。"
+        }
+      },
+      {
+        "overlay": "device-check",
+        "state": "检查中",
+        "evidence": [
+          {
+            "id": "08-expert-service/consultation-journey-device-checking",
+            "image": "08-expert-service/consultation-journey-device-checking/default.png",
+            "trigger": "inventory consultation device failure retry consent and room entry",
+            "extent": "viewport"
+          }
+        ],
+        "report": "CONSULTATION-PREFLIGHT-FEEDBACK-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "device-check",
+          "state": "检查中",
+          "figma_nodes": [
+            "183:1108"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "仅请求一次设备，忙碌状态。"
+        }
+      },
+      {
+        "overlay": "device-check",
+        "state": "预览",
+        "evidence": [
+          {
+            "id": "08-expert-service/consultation-journey-device-recovered",
+            "image": "08-expert-service/consultation-journey-device-recovered/default.png",
+            "trigger": "inventory consultation device failure retry consent and room entry",
+            "extent": "viewport"
+          }
+        ],
+        "report": "CONSULTATION-PREFLIGHT-FEEDBACK-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "device-check",
+          "state": "预览",
+          "figma_nodes": [
+            "183:1153"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "本机预览与检查结果，原轨道对象。"
+        }
+      },
+      {
+        "overlay": "device-check",
+        "state": "错误",
+        "evidence": [
+          {
+            "id": "08-expert-service/consultation-journey-device-denied",
+            "image": "08-expert-service/consultation-journey-device-denied/default.png",
+            "trigger": "inventory consultation device failure retry consent and room entry",
+            "extent": "viewport"
+          }
+        ],
+        "report": "CONSULTATION-PREFLIGHT-FEEDBACK-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "device-check",
+          "state": "错误",
+          "figma_nodes": [
+            "183:1247"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "设备错误恢复及晚到轨道释放。"
+        }
+      },
+      {
+        "overlay": "device-check",
+        "state": "通过",
+        "evidence": [
+          {
+            "id": "08-expert-service/consultation-journey-device-recovered",
+            "image": "08-expert-service/consultation-journey-device-recovered/default.png",
+            "trigger": "inventory consultation device failure retry consent and room entry",
+            "extent": "viewport"
+          }
+        ],
+        "report": "CONSULTATION-PREFLIGHT-FEEDBACK-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "device-check",
+          "state": "通过",
+          "figma_nodes": [
+            "183:1200"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "检查完成先释放轨道，用户点击继续确认才进入后续步骤。"
+        }
+      }
+    ],
+    "final_catalog_state_audit": "verified_existing_design_and_behavior_with_explicit_reuse"
+  },
+  {
+    "overlay_id": "video-consent",
+    "name": "视频咨询授权",
+    "owners": [
+      "consultation",
+      "mom-home"
+    ],
+    "refactor_status": "implemented_widget_verified",
+    "states": [
+      {
+        "overlay": "video-consent",
+        "state": "未勾选",
+        "evidence": [
+          {
+            "id": "08-expert-service/consultation-journey-video-consent",
+            "image": "08-expert-service/consultation-journey-video-consent/default.png",
+            "trigger": "inventory consultation device failure retry consent and room entry",
+            "extent": "viewport"
+          }
+        ],
+        "report": "CONSULTATION-PREFLIGHT-FEEDBACK-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "video-consent",
+          "state": "未勾选",
+          "figma_nodes": [
+            "183:1857"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "未勾选确认禁用。"
+        }
+      },
+      {
+        "overlay": "video-consent",
+        "state": "勾选",
+        "evidence": [
+          {
+            "id": "08-expert-service/consultation-journey-video-consent-selected",
+            "image": "08-expert-service/consultation-journey-video-consent-selected/default.png",
+            "trigger": "inventory consultation device failure retry consent and room entry",
+            "extent": "viewport"
+          }
+        ],
+        "report": "CONSULTATION-PREFLIGHT-FEEDBACK-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "video-consent",
+          "state": "勾选",
+          "figma_nodes": [
+            "183:1900"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "同意选项显示清楚，只针对本次服务。"
+        }
+      },
+      {
+        "overlay": "video-consent",
+        "state": "同意",
+        "evidence": [
+          {
+            "id": "08-expert-service/consultation-journey-video-consent-granted",
+            "image": "08-expert-service/consultation-journey-video-consent-granted/default.png",
+            "trigger": "inventory consultation device failure retry consent and room entry",
+            "extent": "viewport"
+          }
+        ],
+        "report": "CONSULTATION-PREFLIGHT-FEEDBACK-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "video-consent",
+          "state": "同意",
+          "figma_nodes": [
+            "183:1943"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "保存原授权版本，忙碌锁定，失败可恢复。"
+        }
+      },
+      {
+        "overlay": "video-consent",
+        "state": "关闭",
+        "evidence": [
+          {
+            "id": "08-expert-service/consultation-journey-video-consent-dismissed",
+            "image": "08-expert-service/consultation-journey-video-consent-dismissed/default.png",
+            "trigger": "inventory consultation loading failed read and closed preflight",
+            "extent": "viewport"
+          }
+        ],
+        "report": "CONSULTATION-PREFLIGHT-FEEDBACK-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "video-consent",
+          "state": "关闭",
+          "figma_nodes": [
+            "183:1857"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "关闭保持原取消结果，不自动授予权限。"
+        }
+      }
+    ],
+    "final_catalog_state_audit": "verified_existing_design_and_behavior_with_explicit_reuse"
+  },
+  {
+    "overlay_id": "consultation-start",
+    "name": "进入咨询确认",
+    "owners": [
+      "consultation",
+      "mom-home"
+    ],
+    "refactor_status": "implemented_widget_verified",
+    "states": [
+      {
+        "overlay": "consultation-start",
+        "state": "准备",
+        "evidence": [
+          {
+            "id": "08-expert-service/consultation-journey-start-confirmation",
+            "image": "08-expert-service/consultation-journey-start-confirmation/default.png",
+            "trigger": "inventory consultation device failure retry consent and room entry",
+            "extent": "viewport"
+          }
+        ],
+        "report": "CONSULTATION-JOURNEYS.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "consultation-start",
+          "state": "准备",
+          "figma_nodes": [
+            "183:1388",
+            "184:1156"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "当前位置与州选择保留原值/校验。"
+        }
+      },
+      {
+        "overlay": "consultation-start",
+        "state": "确认",
+        "evidence": [
+          {
+            "id": "08-expert-service/consultation-journey-location-selected",
+            "image": "08-expert-service/consultation-journey-location-selected/default.png",
+            "trigger": "inventory consultation preflight rejection and retry boundaries",
+            "extent": "viewport"
+          }
+        ],
+        "report": "CONSULTATION-JOURNEYS.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "consultation-start",
+          "state": "确认",
+          "figma_nodes": [
+            "183:1388",
+            "183:1480"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "条件满足才确认，资料/授权变化立即更新禁用。"
+        }
+      },
+      {
+        "overlay": "consultation-start",
+        "state": "等待",
+        "evidence": [
+          {
+            "id": "08-expert-service/preflight-preparing",
+            "image": "08-expert-service/preflight-preparing/default.png",
+            "trigger": "closing a preparing room cancels pending automatic join",
+            "extent": "viewport"
+          }
+        ],
+        "report": "CONSULTATION-JOURNEYS.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "consultation-start",
+          "state": "等待",
+          "figma_nodes": [
+            "183:1529",
+            "183:1621"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "服务器校验及房间准备等待，不重复入室。"
+        }
+      },
+      {
+        "overlay": "consultation-start",
+        "state": "失败",
+        "evidence": [
+          {
+            "id": "08-expert-service/consultation-journey-current-join-request-error",
+            "image": "08-expert-service/consultation-journey-current-join-request-error/default.png",
+            "trigger": "inventory consultation current preflight feedback gaps",
+            "extent": "viewport"
+          }
+        ],
+        "report": "CONSULTATION-JOURNEYS.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "consultation-start",
+          "state": "失败",
+          "figma_nodes": [
+            "183:1433",
+            "183:1574",
+            "183:1667",
+            "183:1716"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "位置拒绝/网络错误/资料或视频条件变化保留原恢复。"
+        }
+      }
+    ],
+    "final_catalog_state_audit": "verified_existing_design_and_behavior_with_explicit_reuse"
+  },
+  {
+    "overlay_id": "consultation-leave",
+    "name": "暂时离开咨询",
+    "owners": [
+      "consultation"
+    ],
+    "refactor_status": "implemented_widget_verified",
+    "states": [
+      {
+        "overlay": "consultation-leave",
+        "state": "确认",
+        "evidence": [
+          {
+            "id": "08-expert-service/consultation-journey-current-live-leave-confirmation",
+            "image": "08-expert-service/consultation-journey-current-live-leave-confirmation/default.png",
+            "trigger": "inventory consultation current live leave route",
+            "extent": "viewport"
+          }
+        ],
+        "report": "CONSULTATION-LIVE-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "consultation-leave",
+          "state": "确认",
+          "figma_nodes": [
+            "188:1346"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "留在或暂离确认，原会话语义。"
+        }
+      },
+      {
+        "overlay": "consultation-leave",
+        "state": "留下",
+        "evidence": [
+          {
+            "id": "08-expert-service/consultation-journey-current-live-active",
+            "image": "08-expert-service/consultation-journey-current-live-active/default.png",
+            "trigger": "inventory consultation current live leave route",
+            "extent": "viewport"
+          }
+        ],
+        "report": "CONSULTATION-LIVE-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "consultation-leave",
+          "state": "留下",
+          "figma_nodes": [
+            "188:1346"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "留下关闭弹窗，继续当前房间。"
+        }
+      },
+      {
+        "overlay": "consultation-leave",
+        "state": "处理中",
+        "evidence": [
+          {
+            "id": "08-expert-service/room-leave-pending",
+            "image": "08-expert-service/room-leave-pending/default.png",
+            "trigger": "inventory leave pending then returns",
+            "extent": "viewport"
+          }
+        ],
+        "report": "CONSULTATION-LIVE-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "note": "已实际点击暂时离开；弹窗关闭，准备页出现请稍候并禁用操作。新增截图及请求完成后返回断言见本轮严格日志。",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "consultation-leave",
+          "state": "处理中",
+          "figma_nodes": [
+            "188:1346"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "共用离开弹窗处理中锁定；断连请求和后续回调由原控制器处理。"
+        }
+      },
+      {
+        "overlay": "consultation-leave",
+        "state": "失败",
+        "evidence": [
+          {
+            "id": "08-expert-service/room-leave-failure",
+            "image": "08-expert-service/room-leave-failure/default.png",
+            "trigger": "leave recovery 390.0 / 1.0",
+            "extent": "viewport"
+          }
+        ],
+        "report": "CONSULTATION-LIVE-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "consultation-leave",
+          "state": "失败",
+          "figma_nodes": [
+            "188:1395"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "离开失败保留原重试，晚到响应/释放由当前回归验证。"
+        }
+      }
+    ],
+    "final_catalog_state_audit": "verified_existing_design_and_behavior_with_explicit_reuse"
+  },
+  {
+    "overlay_id": "notification-education",
+    "name": "通知授权说明",
+    "owners": [
+      "notification-settings",
+      "booking",
+      "appointment"
+    ],
+    "refactor_status": "implemented_widget_verified",
+    "states": [
+      {
+        "overlay": "notification-education",
+        "state": "说明",
+        "evidence": [
+          {
+            "id": "07-me/notification-permission-current-education-dialog",
+            "image": "07-me/notification-permission-current-education-dialog/default.png",
+            "trigger": "notification permission education cancellation denial and settings false",
+            "extent": "viewport"
+          }
+        ],
+        "report": "NOTIFICATION-PERMISSION-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/SETTINGS-SERVICES.md",
+          "state_record": "20260914-final-audit/settings-service-state-evidence.json",
+          "owner_id": "notification-education",
+          "state": "说明",
+          "figma_nodes": [
+            "136:577"
+          ],
+          "historical_figma_nodes": []
+        },
+        "acceptance": "VERIFIED_EXISTING_DESIGN_AND_BEHAVIOR_WITH_EXPLICIT_REUSE_AND_SOURCE_BOUNDARIES"
+      },
+      {
+        "overlay": "notification-education",
+        "state": "暂不",
+        "evidence": [
+          {
+            "id": "07-me/notification-permission-current-education-not-now",
+            "image": "07-me/notification-permission-current-education-not-now/default.png",
+            "trigger": "notification permission education cancellation denial and settings false",
+            "extent": "full-measured-scroll-stitch"
+          }
+        ],
+        "report": "NOTIFICATION-PERMISSION-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/SETTINGS-SERVICES.md",
+          "state_record": "20260914-final-audit/settings-service-state-evidence.json",
+          "owner_id": "notification-education",
+          "state": "暂不",
+          "figma_nodes": [
+            "136:577",
+            "135:274"
+          ],
+          "historical_figma_nodes": []
+        },
+        "acceptance": "VERIFIED_EXISTING_DESIGN_AND_BEHAVIOR_WITH_EXPLICIT_REUSE_AND_SOURCE_BOUNDARIES"
+      },
+      {
+        "overlay": "notification-education",
+        "state": "继续",
+        "evidence": [
+          {
+            "id": "07-me/notification-permission-current-request-authorized",
+            "image": "07-me/notification-permission-current-request-authorized/default.png",
+            "trigger": "notification permission request failure retry and direct settings error false",
+            "extent": "full-measured-scroll-stitch"
+          }
+        ],
+        "report": "NOTIFICATION-PERMISSION-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/SETTINGS-SERVICES.md",
+          "state_record": "20260914-final-audit/settings-service-state-evidence.json",
+          "owner_id": "notification-education",
+          "state": "继续",
+          "figma_nodes": [
+            "136:577",
+            "136:187"
+          ],
+          "historical_figma_nodes": []
+        },
+        "acceptance": "VERIFIED_EXISTING_DESIGN_AND_BEHAVIOR_WITH_EXPLICIT_REUSE_AND_SOURCE_BOUNDARIES"
+      },
+      {
+        "overlay": "notification-education",
+        "state": "拒绝后去设置",
+        "evidence": [
+          {
+            "id": "07-me/notification-permission-current-offer-settings-dialog",
+            "image": "07-me/notification-permission-current-offer-settings-dialog/default.png",
+            "trigger": "notification permission education cancellation denial and settings false",
+            "extent": "viewport"
+          }
+        ],
+        "report": "NOTIFICATION-PERMISSION-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/SETTINGS-SERVICES.md",
+          "state_record": "20260914-final-audit/settings-service-state-evidence.json",
+          "owner_id": "notification-education",
+          "state": "拒绝后去设置",
+          "figma_nodes": [
+            "136:612"
+          ],
+          "historical_figma_nodes": []
+        },
+        "acceptance": "VERIFIED_EXISTING_DESIGN_AND_BEHAVIOR_WITH_EXPLICIT_REUSE_AND_SOURCE_BOUNDARIES"
+      }
+    ],
+    "final_catalog_state_audit": "verified_existing_design_and_behavior_with_explicit_reuse"
+  },
+  {
+    "overlay_id": "auth-language",
+    "name": "登录语言选择",
+    "owners": [
+      "auth-login"
+    ],
+    "refactor_status": "implemented_widget_verified",
+    "states": [
+      {
+        "overlay": "auth-language",
+        "state": "语言列表",
+        "evidence": [
+          {
+            "id": "01-auth/auth-followup-language-sheet",
+            "image": "01-auth/auth-followup-language-sheet/default.png",
+            "trigger": "auth language dismissal legal failure and back navigation",
+            "extent": "viewport"
+          }
+        ],
+        "report": "AUTH-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/AUTH-ONBOARDING.md",
+          "state_record": "20260914-final-audit/auth-onboarding-state-evidence.json",
+          "owner_id": "auth-language",
+          "state": "语言列表",
+          "mode": "direct",
+          "figma_nodes": [
+            "224:1255",
+            "225:1795"
+          ]
+        },
+        "acceptance": "VERIFIED_EXISTING_DESIGN_AND_BEHAVIOR_WITH_EXPLICIT_REUSE_AND_SOURCE_BOUNDARIES"
+      },
+      {
+        "overlay": "auth-language",
+        "state": "选中",
+        "evidence": [
+          {
+            "id": "01-auth/auth-followup-language-selected",
+            "image": "01-auth/auth-followup-language-selected/default.png",
+            "trigger": "auth language dismissal legal failure and back navigation",
+            "extent": "viewport"
+          }
+        ],
+        "report": "AUTH-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/AUTH-ONBOARDING.md",
+          "state_record": "20260914-final-audit/auth-onboarding-state-evidence.json",
+          "owner_id": "auth-language",
+          "state": "选中",
+          "mode": "shared_control",
+          "figma_nodes": [
+            "224:1255"
+          ]
+        },
+        "acceptance": "VERIFIED_EXISTING_DESIGN_AND_BEHAVIOR_WITH_EXPLICIT_REUSE_AND_SOURCE_BOUNDARIES"
+      },
+      {
+        "overlay": "auth-language",
+        "state": "取消",
+        "evidence": [
+          {
+            "id": "01-auth/auth-followup-language-dismissed",
+            "image": "01-auth/auth-followup-language-dismissed/default.png",
+            "trigger": "auth language dismissal legal failure and back navigation",
+            "extent": "viewport"
+          }
+        ],
+        "report": "AUTH-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/AUTH-ONBOARDING.md",
+          "state_record": "20260914-final-audit/auth-onboarding-state-evidence.json",
+          "owner_id": "auth-language",
+          "state": "取消",
+          "mode": "transition",
+          "figma_nodes": [
+            "224:1108",
+            "224:1255"
+          ]
+        },
+        "acceptance": "VERIFIED_EXISTING_DESIGN_AND_BEHAVIOR_WITH_EXPLICIT_REUSE_AND_SOURCE_BOUNDARIES"
+      }
+    ],
+    "final_catalog_state_audit": "verified_existing_design_and_behavior_with_explicit_reuse"
+  },
+  {
+    "overlay_id": "account-confirm",
+    "name": "账号敏感操作确认",
+    "owners": [
+      "account"
+    ],
+    "refactor_status": "implemented_widget_verified",
+    "states": [
+      {
+        "overlay": "account-confirm",
+        "state": "密码确认",
+        "evidence": [
+          {
+            "id": "07-me/account-current-password-entered",
+            "image": "07-me/account-current-password-entered/default.png",
+            "trigger": "inventory current Account Google local unavailable false",
+            "extent": "viewport"
+          }
+        ],
+        "report": "ACCOUNT-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "note": "账号页内密码确认输入，非独立弹窗；沿用账号页对应图。",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/SETTINGS-SERVICES.md",
+          "state_record": "20260914-final-audit/settings-service-state-evidence.json",
+          "owner_id": "account-confirm",
+          "state": "密码确认",
+          "figma_nodes": [
+            "130:68"
+          ],
+          "historical_figma_nodes": [
+            "130:109"
+          ]
+        },
+        "acceptance": "VERIFIED_EXISTING_DESIGN_AND_BEHAVIOR_WITH_EXPLICIT_REUSE_AND_SOURCE_BOUNDARIES"
+      },
+      {
+        "overlay": "account-confirm",
+        "state": "绑定 Google",
+        "evidence": [
+          {
+            "id": "07-me/account-current-google-unavailable",
+            "image": "07-me/account-current-google-unavailable/default.png",
+            "trigger": "inventory current Account Google local unavailable false",
+            "extent": "viewport"
+          }
+        ],
+        "report": "ACCOUNT-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "note": "当前 Google 不可用反馈；无可用真实账号选择器，不人为配置真实账号扩展采集。",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/SETTINGS-SERVICES.md",
+          "state_record": "20260914-final-audit/settings-service-state-evidence.json",
+          "owner_id": "account-confirm",
+          "state": "绑定 Google",
+          "figma_nodes": [
+            "132:68",
+            "128:227"
+          ],
+          "historical_figma_nodes": []
+        },
+        "acceptance": "VERIFIED_EXISTING_DESIGN_AND_BEHAVIOR_WITH_EXPLICIT_REUSE_AND_SOURCE_BOUNDARIES"
+      },
+      {
+        "overlay": "account-confirm",
+        "state": "删除账号",
+        "evidence": [
+          {
+            "id": "07-me/account-current-delete-confirm",
+            "image": "07-me/account-current-delete-confirm/default.png",
+            "trigger": "inventory current Account delete recovery success false",
+            "extent": "viewport"
+          }
+        ],
+        "report": "ACCOUNT-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/SETTINGS-SERVICES.md",
+          "state_record": "20260914-final-audit/settings-service-state-evidence.json",
+          "owner_id": "account-confirm",
+          "state": "删除账号",
+          "figma_nodes": [
+            "128:189"
+          ],
+          "historical_figma_nodes": []
+        },
+        "acceptance": "VERIFIED_EXISTING_DESIGN_AND_BEHAVIOR_WITH_EXPLICIT_REUSE_AND_SOURCE_BOUNDARIES"
+      },
+      {
+        "overlay": "account-confirm",
+        "state": "错误",
+        "evidence": [
+          {
+            "id": "07-me/account-current-delete-error",
+            "image": "07-me/account-current-delete-error/default.png",
+            "trigger": "inventory current Account delete recovery success false",
+            "extent": "viewport"
+          }
+        ],
+        "report": "ACCOUNT-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/SETTINGS-SERVICES.md",
+          "state_record": "20260914-final-audit/settings-service-state-evidence.json",
+          "owner_id": "account-confirm",
+          "state": "错误",
+          "figma_nodes": [
+            "132:68"
+          ],
+          "historical_figma_nodes": [
+            "128:262"
+          ]
+        },
+        "acceptance": "VERIFIED_EXISTING_DESIGN_AND_BEHAVIOR_WITH_EXPLICIT_REUSE_AND_SOURCE_BOUNDARIES"
+      }
+    ],
+    "final_catalog_state_audit": "verified_existing_design_and_behavior_with_explicit_reuse"
+  },
+  {
+    "overlay_id": "date-time",
+    "name": "日期／时间选择器",
+    "owners": [
+      "shared"
+    ],
+    "refactor_status": "implemented_widget_verified",
+    "states": [
+      {
+        "overlay": "date-time",
+        "state": "日历",
+        "evidence": [
+          {
+            "id": "08-expert-service/booking-selection-current-date-open",
+            "image": "08-expert-service/booking-selection-current-date-open/default.png",
+            "trigger": "current booking provider and date selection false",
+            "extent": "viewport"
+          }
+        ],
+        "report": "BOOKING-SELECTION-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "date-time",
+          "state": "日历",
+          "figma_nodes": [
+            "166:1108",
+            "216:1108"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "原生 Material 日历继承局部 Mom 主题，日期范围和 locale 不改。"
+        }
+      },
+      {
+        "overlay": "date-time",
+        "state": "年份",
+        "evidence": [
+          {
+            "id": "08-expert-service/booking-selection-current-date-year-menu",
+            "image": "08-expert-service/booking-selection-current-date-year-menu/default.png",
+            "trigger": "current booking provider and date selection false",
+            "extent": "viewport"
+          }
+        ],
+        "report": "BOOKING-SELECTION-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "date-time",
+          "state": "年份",
+          "figma_nodes": [
+            "216:1620"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "复用系统年份模式，实际 booking 年份选择保留原范围。"
+        }
+      },
+      {
+        "overlay": "date-time",
+        "state": "输入",
+        "evidence": [
+          {
+            "id": "08-expert-service/booking-selection-current-date-valid-input",
+            "image": "08-expert-service/booking-selection-current-date-valid-input/default.png",
+            "trigger": "current booking provider and date selection false",
+            "extent": "viewport"
+          }
+        ],
+        "report": "BOOKING-SELECTION-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "date-time",
+          "state": "输入",
+          "figma_nodes": [
+            "166:1199",
+            "216:1339"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "日期输入模式及原解析。"
+        }
+      },
+      {
+        "overlay": "date-time",
+        "state": "时钟",
+        "evidence": [
+          {
+            "id": "03-mom/lactation-current-time-dial",
+            "image": "03-mom/lactation-current-time-dial/default.png",
+            "trigger": "lactation route time input validates and pending save locks edits 390.0/1.0",
+            "extent": "viewport"
+          }
+        ],
+        "report": "BOOKING-SELECTION-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "date-time",
+          "state": "时钟",
+          "figma_nodes": [
+            "297:1172",
+            "297:1233"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "时钟拨盘/分钟选择，不改变瞬时时区。"
+        }
+      },
+      {
+        "overlay": "date-time",
+        "state": "校验",
+        "evidence": [
+          {
+            "id": "03-mom/lactation-current-time-invalid",
+            "image": "03-mom/lactation-current-time-invalid/default.png",
+            "trigger": "lactation route time input validates and pending save locks edits 390.0/1.0",
+            "extent": "viewport"
+          }
+        ],
+        "report": "BOOKING-SELECTION-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "date-time",
+          "state": "校验",
+          "figma_nodes": [
+            "302:1228",
+            "216:1479",
+            "216:2054"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "时间/日期错误；泌乳窄屏输入水平裁切修复只改变局部内边距。"
+        }
+      },
+      {
+        "overlay": "date-time",
+        "state": "取消",
+        "evidence": [
+          {
+            "id": "08-expert-service/booking-selection-current-date-cancelled",
+            "image": "08-expert-service/booking-selection-current-date-cancelled/default.png",
+            "trigger": "current booking provider and date selection false",
+            "extent": "viewport"
+          }
+        ],
+        "report": "BOOKING-SELECTION-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "date-time",
+          "state": "取消",
+          "figma_nodes": [
+            "166:1108"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "取消回原字段，不写入临时日期。"
+        }
+      },
+      {
+        "overlay": "date-time",
+        "state": "确认",
+        "evidence": [
+          {
+            "id": "08-expert-service/booking-selection-current-date-applied",
+            "image": "08-expert-service/booking-selection-current-date-applied/default.png",
+            "trigger": "current booking provider and date selection false",
+            "extent": "viewport"
+          }
+        ],
+        "report": "BOOKING-SELECTION-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "date-time",
+          "state": "确认",
+          "figma_nodes": [
+            "166:1108",
+            "297:1294"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "确认使用选定实际日期/时间，由共享测试校验结果。"
+        }
+      }
+    ],
+    "final_catalog_state_audit": "verified_existing_design_and_behavior_with_explicit_reuse"
+  },
+  {
+    "overlay_id": "discard",
+    "name": "放弃修改确认",
+    "owners": [
+      "shared"
+    ],
+    "refactor_status": "implemented_widget_verified",
+    "states": [
+      {
+        "overlay": "discard",
+        "state": "脏草稿",
+        "evidence": [
+          {
+            "id": "03-mom/mom-journey-diary-discard-confirm",
+            "image": "03-mom/mom-journey-diary-discard-confirm/default.png",
+            "trigger": "inventory Mom diary quick record tabs save and standalone details",
+            "extent": "viewport"
+          }
+        ],
+        "report": "ENTRY-STATUS.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "discard",
+          "state": "脏草稿",
+          "figma_nodes": [
+            "309:1086"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "脏草稿离开确认。"
+        }
+      },
+      {
+        "overlay": "discard",
+        "state": "未知保存结果",
+        "evidence": [
+          {
+            "id": "06-schedule/schedule-journey-uncertain-discard",
+            "image": "06-schedule/schedule-journey-uncertain-discard/default.png",
+            "trigger": "inventory schedule discard and save retry",
+            "extent": "viewport"
+          }
+        ],
+        "report": "ENTRY-STATUS.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "discard",
+          "state": "未知保存结果",
+          "figma_nodes": [
+            "216:2336",
+            "297:1129"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "未知保存结果提示区别于普通脏草稿。"
+        }
+      },
+      {
+        "overlay": "discard",
+        "state": "留下",
+        "evidence": [
+          {
+            "id": "03-mom/mom-journey-diary-draft-retained",
+            "image": "03-mom/mom-journey-diary-draft-retained/default.png",
+            "trigger": "inventory Mom diary quick record tabs save and standalone details",
+            "extent": "full-measured-scroll-stitch"
+          }
+        ],
+        "report": "ENTRY-STATUS.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "discard",
+          "state": "留下",
+          "figma_nodes": [
+            "309:1086"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "留下返回原表单，值和版本不变。"
+        }
+      },
+      {
+        "overlay": "discard",
+        "state": "放弃",
+        "evidence": [
+          {
+            "id": "03-mom/mom-journey-diary-discarded-home",
+            "image": "03-mom/mom-journey-diary-discarded-home/default.png",
+            "trigger": "inventory Mom optional diary sections and mood draft discard",
+            "extent": "full-measured-scroll-stitch"
+          }
+        ],
+        "report": "ENTRY-STATUS.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "discard",
+          "state": "放弃",
+          "figma_nodes": [
+            "309:1086",
+            "88:2"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "放弃返回源页面；确认后才丢弃草稿。"
+        }
+      }
+    ],
+    "final_catalog_state_audit": "verified_existing_design_and_behavior_with_explicit_reuse"
+  },
+  {
+    "overlay_id": "snackbar",
+    "name": "操作反馈条",
+    "owners": [
+      "shared"
+    ],
+    "refactor_status": "implemented_widget_verified",
+    "states": [
+      {
+        "overlay": "snackbar",
+        "state": "成功",
+        "evidence": [
+          {
+            "id": "05-agent/agent-journey-assistant-copied",
+            "image": "05-agent/agent-journey-assistant-copied/default.png",
+            "trigger": "inventory agent real reply message copy and tab retention",
+            "extent": "viewport"
+          }
+        ],
+        "report": "SNACKBAR-LONG-REVIEW.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "snackbar",
+          "state": "成功",
+          "figma_nodes": [
+            "259:1308"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "原复制成功反馈，原文本与持续时间。"
+        }
+      },
+      {
+        "overlay": "snackbar",
+        "state": "错误",
+        "evidence": [
+          {
+            "id": "04-baby/baby-knowledge-source-source-false-error",
+            "image": "04-baby/baby-knowledge-source-source-false-error/default.png",
+            "trigger": "inventory Baby knowledge sources 393/1x",
+            "extent": "viewport"
+          }
+        ],
+        "report": "SNACKBAR-LONG-REVIEW.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "snackbar",
+          "state": "错误",
+          "figma_nodes": [
+            "327:2592",
+            "259:1322"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "来源打开错误使用共享主题/原消息；不把系统启动成功当作内容加载成功。"
+        }
+      },
+      {
+        "overlay": "snackbar",
+        "state": "撤销",
+        "evidence": [
+          {
+            "id": "03-mom/mom-journey-milk-history-deleted",
+            "image": "03-mom/mom-journey-milk-history-deleted/default.png",
+            "trigger": "inventory Mom lactation create edit delete restore and home refresh",
+            "extent": "full-measured-scroll-stitch"
+          },
+          {
+            "id": "03-mom/mom-journey-milk-history-restored",
+            "image": "03-mom/mom-journey-milk-history-restored/default.png",
+            "trigger": "inventory Mom lactation create edit delete restore and home refresh",
+            "extent": "full-measured-scroll-stitch"
+          }
+        ],
+        "report": "SNACKBAR-LONG-REVIEW.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "snackbar",
+          "state": "撤销",
+          "figma_nodes": [
+            "296:1328",
+            "296:1261"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "删除与撤销真实结果反馈；恢复失败可重试。"
+        }
+      },
+      {
+        "overlay": "snackbar",
+        "state": "自动消失",
+        "evidence": [
+          {
+            "id": "04-baby/baby-journey-growth-feedback-dismissed",
+            "image": "04-baby/baby-journey-growth-feedback-dismissed/default.png",
+            "trigger": "inventory Baby growth batch date validation and undo recovery",
+            "extent": "full-measured-scroll-stitch"
+          }
+        ],
+        "report": "SNACKBAR-LONG-REVIEW.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "snackbar",
+          "state": "自动消失",
+          "figma_nodes": [
+            "327:2632"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "计时或关闭后回原宝宝页；共享反馈生命周期保留，不制造新状态页面。"
+        }
+      }
+    ],
+    "final_catalog_state_audit": "verified_existing_design_and_behavior_with_explicit_reuse"
+  },
+  {
+    "overlay_id": "tooltip",
+    "name": "控件提示",
+    "owners": [
+      "shared"
+    ],
+    "refactor_status": "implemented_widget_verified",
+    "states": [
+      {
+        "overlay": "tooltip",
+        "state": "出现",
+        "evidence": [
+          {
+            "id": "01-auth/auth-journey-password-tooltip",
+            "image": "01-auth/auth-journey-password-tooltip/default.png",
+            "trigger": "inventory real login → More → account → deletion → login",
+            "extent": "full-measured-scroll-stitch"
+          },
+          {
+            "id": "06-schedule/schedule-journey-current-add-tooltip",
+            "image": "06-schedule/schedule-journey-current-add-tooltip/default.png",
+            "trigger": "inventory schedule current visible feedback gaps",
+            "extent": "full-measured-scroll-stitch"
+          }
+        ],
+        "report": "SCHEDULE-FEEDBACK-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "tooltip",
+          "state": "出现",
+          "figma_nodes": [
+            "224:1108",
+            "214:1108"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "密码显隐、添加等使用原 Tooltip 与语义标签，继承局部主题及系统定位。"
+        }
+      },
+      {
+        "overlay": "tooltip",
+        "state": "消失",
+        "evidence": [
+          {
+            "id": "01-auth/auth-journey-login",
+            "image": "01-auth/auth-journey-login/default.png",
+            "trigger": "inventory real login → More → account → deletion → login",
+            "extent": "viewport"
+          }
+        ],
+        "report": "SCHEDULE-FEEDBACK-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "note": "提示消失后恢复原登录页；同画面复用。原操作轨迹记录长按和后续切换。",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "tooltip",
+          "state": "消失",
+          "figma_nodes": [
+            "224:1108"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "提示消失复用原页面，不创建独立设计。"
+        }
+      }
+    ],
+    "final_catalog_state_audit": "verified_existing_design_and_behavior_with_explicit_reuse"
+  },
+  {
+    "overlay_id": "system",
+    "name": "原生系统浮层",
+    "owners": [
+      "shared"
+    ],
+    "refactor_status": "platform_behavior_preserved_app_entry_verified",
+    "states": [
+      {
+        "overlay": "system",
+        "state": "键盘",
+        "evidence": [
+          {
+            "image": "native/baby-profile-software-keyboard.png",
+            "trigger": "See native XML and actual OS journey",
+            "extent": "full-system-window"
+          }
+        ],
+        "report": "NATIVE-WINDOWS-CATALOG.md",
+        "status": "NATIVE_RENDERED_EVIDENCE; Android platform scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "system",
+          "state": "键盘",
+          "figma_nodes": [
+            "317:1086"
+          ],
+          "mode": "platform_behavior_preserved_app_entry_designed",
+          "boundary": "系统键盘保留 OS 外观；App 以实际 inset 适配，现有 Android 原生证据保留。"
+        }
+      },
+      {
+        "overlay": "system",
+        "state": "照片／文件选择",
+        "evidence": [
+          {
+            "image": "native/agent/photo-picker.png",
+            "trigger": "See native XML and actual OS journey",
+            "extent": "full-system-window"
+          },
+          {
+            "image": "native/agent/file-picker.png",
+            "trigger": "See native XML and actual OS journey",
+            "extent": "full-system-window"
+          }
+        ],
+        "report": "NATIVE-WINDOWS-CATALOG.md",
+        "status": "NATIVE_RENDERED_EVIDENCE; Android platform scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "system",
+          "state": "照片／文件选择",
+          "figma_nodes": [
+            "259:1097"
+          ],
+          "mode": "platform_behavior_preserved_app_entry_designed",
+          "boundary": "照片/文件选择保留系统控件和原入口/取消返回。"
+        }
+      },
+      {
+        "overlay": "system",
+        "state": "通知",
+        "evidence": [
+          {
+            "image": "native/notification-permission/native-permission-deny-system-request.png",
+            "trigger": "See native XML and actual OS journey",
+            "extent": "full-system-window"
+          }
+        ],
+        "report": "NATIVE-WINDOWS-CATALOG.md",
+        "status": "NATIVE_RENDERED_EVIDENCE; Android platform scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "system",
+          "state": "通知",
+          "figma_nodes": [
+            "136:577"
+          ],
+          "mode": "platform_behavior_preserved_app_entry_designed",
+          "boundary": "通知系统申请沿用原平台调用，App 教育单独设计。"
+        }
+      },
+      {
+        "overlay": "system",
+        "state": "相机",
+        "evidence": [
+          {
+            "image": "native/consultation-devices/native-device-deny-camera.png",
+            "trigger": "See native XML and actual OS journey",
+            "extent": "full-system-window"
+          }
+        ],
+        "report": "NATIVE-WINDOWS-CATALOG.md",
+        "status": "NATIVE_RENDERED_EVIDENCE; Android platform scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "system",
+          "state": "相机",
+          "figma_nodes": [
+            "183:1247"
+          ],
+          "mode": "platform_behavior_preserved_app_entry_designed",
+          "boundary": "相机授权保留 OS 提示和允许/拒绝处理。"
+        }
+      },
+      {
+        "overlay": "system",
+        "state": "麦克风",
+        "evidence": [
+          {
+            "image": "native/consultation-devices/native-device-deny-microphone.png",
+            "trigger": "See native XML and actual OS journey",
+            "extent": "full-system-window"
+          }
+        ],
+        "report": "NATIVE-WINDOWS-CATALOG.md",
+        "status": "NATIVE_RENDERED_EVIDENCE; Android platform scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "system",
+          "state": "麦克风",
+          "figma_nodes": [
+            "183:1247"
+          ],
+          "mode": "platform_behavior_preserved_app_entry_designed",
+          "boundary": "麦克风授权保留 OS 提示与设备释放逻辑。"
+        }
+      },
+      {
+        "overlay": "system",
+        "state": "系统设置",
+        "evidence": [
+          {
+            "image": "native/notification-permission/native-permission-deny-system-settings-off.png",
+            "trigger": "See native XML and actual OS journey",
+            "extent": "full-system-window"
+          },
+          {
+            "image": "native/notification-permission/native-permission-deny-system-settings-on.png",
+            "trigger": "See native XML and actual OS journey",
+            "extent": "full-system-window"
+          }
+        ],
+        "report": "NATIVE-WINDOWS-CATALOG.md",
+        "status": "NATIVE_RENDERED_EVIDENCE; Android platform scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "system",
+          "state": "系统设置",
+          "figma_nodes": [
+            "136:612"
+          ],
+          "mode": "platform_behavior_preserved_app_entry_designed",
+          "boundary": "系统设置页属于 OS；App 只负责原打开/返回刷新入口。"
+        }
+      }
+    ],
+    "final_catalog_state_audit": "verified_existing_design_and_behavior_with_explicit_reuse"
+  },
+  {
+    "overlay_id": "avatar-dialogs",
+    "name": "数字形象选择与确认",
+    "owners": [
+      "onboarding",
+      "avatar-create",
+      "avatar-review"
+    ],
+    "refactor_status": "implemented_widget_verified",
+    "states": [
+      {
+        "overlay": "avatar-dialogs",
+        "state": "照片来源",
+        "evidence": [
+          {
+            "id": "01-auth/onboarding-required-source",
+            "image": "01-auth/onboarding-required-source/default.png",
+            "trigger": "onboarding avatar required at 390.0 / 1.0",
+            "extent": "viewport"
+          }
+        ],
+        "report": "CONFIGURED-SUBMISSION-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/AUTH-ONBOARDING.md",
+          "state_record": "20260914-final-audit/auth-onboarding-state-evidence.json",
+          "owner_id": "avatar-dialogs",
+          "state": "照片来源",
+          "mode": "direct",
+          "figma_nodes": [
+            "234:1144",
+            "234:1566"
+          ]
+        },
+        "acceptance": "VERIFIED_EXISTING_DESIGN_AND_BEHAVIOR_WITH_EXPLICIT_REUSE_AND_SOURCE_BOUNDARIES"
+      },
+      {
+        "overlay": "avatar-dialogs",
+        "state": "默认确认",
+        "evidence": [
+          {
+            "id": "01-auth/onboarding-default-confirm",
+            "image": "01-auth/onboarding-default-confirm/default.png",
+            "trigger": "avatar photo failure and default confirmation at 390.0 / 1.0",
+            "extent": "viewport"
+          }
+        ],
+        "report": "CONFIGURED-SUBMISSION-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/AUTH-ONBOARDING.md",
+          "state_record": "20260914-final-audit/auth-onboarding-state-evidence.json",
+          "owner_id": "avatar-dialogs",
+          "state": "默认确认",
+          "mode": "direct",
+          "figma_nodes": [
+            "234:1168",
+            "234:1589"
+          ]
+        },
+        "acceptance": "VERIFIED_EXISTING_DESIGN_AND_BEHAVIOR_WITH_EXPLICIT_REUSE_AND_SOURCE_BOUNDARIES"
+      },
+      {
+        "overlay": "avatar-dialogs",
+        "state": "生成交接（等待／进入 App）",
+        "evidence": [
+          {
+            "id": "01-auth/onboarding-generation-handoff",
+            "image": "01-auth/onboarding-generation-handoff/default.png",
+            "trigger": "inventory configured avatar upload and handoff",
+            "extent": "viewport"
+          }
+        ],
+        "report": "CONFIGURED-SUBMISSION-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/AUTH-ONBOARDING.md",
+          "state_record": "20260914-final-audit/auth-onboarding-state-evidence.json",
+          "owner_id": "avatar-dialogs",
+          "state": "生成交接（等待／进入 App）",
+          "mode": "direct",
+          "figma_nodes": [
+            "234:1270",
+            "234:1633"
+          ]
+        },
+        "acceptance": "VERIFIED_EXISTING_DESIGN_AND_BEHAVIOR_WITH_EXPLICIT_REUSE_AND_SOURCE_BOUNDARIES"
+      },
+      {
+        "overlay": "avatar-dialogs",
+        "state": "生成完成",
+        "evidence": [
+          {
+            "id": "01-auth/onboarding-banners",
+            "image": "01-auth/onboarding-banners/default.png",
+            "trigger": "avatar task banners at 390.0 / 1.0",
+            "extent": "viewport"
+          }
+        ],
+        "report": "CONFIGURED-PAGES-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/AUTH-ONBOARDING.md",
+          "state_record": "20260914-final-audit/auth-onboarding-state-evidence.json",
+          "owner_id": "avatar-dialogs",
+          "state": "生成完成",
+          "mode": "direct",
+          "figma_nodes": [
+            "234:1736",
+            "234:1753"
+          ]
+        },
+        "acceptance": "VERIFIED_EXISTING_DESIGN_AND_BEHAVIOR_WITH_EXPLICIT_REUSE_AND_SOURCE_BOUNDARIES"
+      },
+      {
+        "overlay": "avatar-dialogs",
+        "state": "激活确认",
+        "evidence": [
+          {
+            "id": "01-auth/onboarding-reading-activation",
+            "image": "01-auth/onboarding-reading-activation/default.png",
+            "trigger": "onboarding reading 390.0/1.0",
+            "extent": "viewport"
+          }
+        ],
+        "report": "CONFIGURED-SUBMISSION-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/AUTH-ONBOARDING.md",
+          "state_record": "20260914-final-audit/auth-onboarding-state-evidence.json",
+          "owner_id": "avatar-dialogs",
+          "state": "激活确认",
+          "mode": "direct",
+          "figma_nodes": [
+            "234:1524"
+          ]
+        },
+        "acceptance": "VERIFIED_EXISTING_DESIGN_AND_BEHAVIOR_WITH_EXPLICIT_REUSE_AND_SOURCE_BOUNDARIES"
+      }
+    ],
+    "final_catalog_state_audit": "verified_existing_design_and_behavior_with_explicit_reuse"
+  },
+  {
+    "overlay_id": "summary-task-detail",
+    "name": "咨询行动详情",
+    "owners": [
+      "summary"
+    ],
+    "refactor_status": "implemented_widget_verified",
+    "states": [
+      {
+        "overlay": "summary-task-detail",
+        "state": "待完成",
+        "evidence": [
+          {
+            "id": "08-expert-service/consultation-journey-current-summary-task-detail",
+            "image": "08-expert-service/consultation-journey-current-summary-task-detail/default.png",
+            "trigger": "inventory consultation current summary publication task updates and routes",
+            "extent": "viewport"
+          }
+        ],
+        "report": "CONSULTATION-SUMMARY-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "summary-task-detail",
+          "state": "待完成",
+          "figma_nodes": [
+            "202:1108"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "待完成详情。"
+        }
+      },
+      {
+        "overlay": "summary-task-detail",
+        "state": "进行中",
+        "evidence": [
+          {
+            "id": "08-expert-service/consultation-journey-current-summary-task-in-progress",
+            "image": "08-expert-service/consultation-journey-current-summary-task-in-progress/default.png",
+            "trigger": "inventory consultation current summary publication task updates and routes",
+            "extent": "viewport"
+          }
+        ],
+        "report": "CONSULTATION-SUMMARY-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "summary-task-detail",
+          "state": "进行中",
+          "figma_nodes": [
+            "202:1180"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "进行中详情。"
+        }
+      },
+      {
+        "overlay": "summary-task-detail",
+        "state": "已完成",
+        "evidence": [
+          {
+            "id": "08-expert-service/consultation-journey-current-summary-task-recovered",
+            "image": "08-expert-service/consultation-journey-current-summary-task-recovered/default.png",
+            "trigger": "inventory consultation current summary publication task updates and routes",
+            "extent": "viewport"
+          }
+        ],
+        "report": "CONSULTATION-SUMMARY-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "note": "已完成来自失败重试后持久化的选中状态，不以菜单中出现已完成文字判定。",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "summary-task-detail",
+          "state": "已完成",
+          "figma_nodes": [
+            "202:1252"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "已完成详情。"
+        }
+      },
+      {
+        "overlay": "summary-task-detail",
+        "state": "暂时跳过",
+        "evidence": [
+          {
+            "id": "08-expert-service/consultation-journey-current-summary-task-skipped",
+            "image": "08-expert-service/consultation-journey-current-summary-task-skipped/default.png",
+            "trigger": "inventory consultation current summary publication task updates and routes",
+            "extent": "viewport"
+          }
+        ],
+        "report": "CONSULTATION-SUMMARY-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "summary-task-detail",
+          "state": "暂时跳过",
+          "figma_nodes": [
+            "202:1324"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "暂时跳过详情。"
+        }
+      },
+      {
+        "overlay": "summary-task-detail",
+        "state": "更新中",
+        "evidence": [
+          {
+            "id": "08-expert-service/summary-short-updating-320-2x-short",
+            "image": "08-expert-service/summary-short-updating-320-2x-short/default.png",
+            "trigger": "short large task keeps pending updates locked and retryable",
+            "extent": "full-measured-scroll-stitch"
+          }
+        ],
+        "report": "CONSULTATION-SUMMARY-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "summary-task-detail",
+          "state": "更新中",
+          "figma_nodes": [
+            "202:1396"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "更新中关闭/返回禁用。"
+        }
+      },
+      {
+        "overlay": "summary-task-detail",
+        "state": "结果不确定／重试",
+        "evidence": [
+          {
+            "id": "08-expert-service/consultation-journey-current-summary-task-uncertain",
+            "image": "08-expert-service/consultation-journey-current-summary-task-uncertain/default.png",
+            "trigger": "inventory consultation current summary publication task updates and routes",
+            "extent": "viewport"
+          }
+        ],
+        "report": "CONSULTATION-SUMMARY-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "summary-task-detail",
+          "state": "结果不确定／重试",
+          "figma_nodes": [
+            "202:1469"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "未知结果使用原版本重试，不并发新提交。"
+        }
+      },
+      {
+        "overlay": "summary-task-detail",
+        "state": "方案替换／重新载入",
+        "evidence": [
+          {
+            "id": "08-expert-service/summary-superseded",
+            "image": "08-expert-service/summary-superseded/default.png",
+            "trigger": "superseded action removed by reload remains safely closable at large text",
+            "extent": "full-measured-scroll-stitch"
+          }
+        ],
+        "report": "CONSULTATION-SUMMARY-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "summary-task-detail",
+          "state": "方案替换／重新载入",
+          "figma_nodes": [
+            "202:1546"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "方案替换后重新读取当前任务。"
+        }
+      },
+      {
+        "overlay": "summary-task-detail",
+        "state": "行动移除／关闭",
+        "evidence": [
+          {
+            "id": "08-expert-service/summary-removed-action",
+            "image": "08-expert-service/summary-removed-action/default.png",
+            "trigger": "superseded action removed by reload remains safely closable at large text",
+            "extent": "viewport"
+          }
+        ],
+        "report": "CONSULTATION-SUMMARY-CURRENT.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "verified_existing_design_and_behavior_with_explicit_reuse_and_source_boundaries",
+        "refactor_evidence": {
+          "report": "20260914-final-audit/REMAINING-STATES.md",
+          "state_record": "20260914-final-audit/remaining-state-evidence.json",
+          "owner_id": "summary-task-detail",
+          "state": "行动移除／关闭",
+          "figma_nodes": [
+            "202:1622"
+          ],
+          "mode": "existing_delivery_or_shared_state_pattern",
+          "boundary": "行动移除后保留原关闭入口。"
+        }
+      }
+    ],
+    "final_catalog_state_audit": "verified_existing_design_and_behavior_with_explicit_reuse"
+  }
+]

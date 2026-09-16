@@ -1,0 +1,393 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/modules/schedule/personal_schedule_editor_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: failed save preserves the draft and retries the same creation
+══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
+The following assertion was thrown building RawGestureDetector(state:
+RawGestureDetectorState#1554e(gestures: [tap, long press, tap and horizontal drag],
+excludeFromSemantics: true, behavior: translucent)):
+A TextEditingController was used after being disposed.
+Once you have called dispose() on a TextEditingController, it can no longer be used.
+
+The relevant error-causing widget was:
+  TextField
+  TextField:file:///Users/lute/project/momcozy-lab/app/lib/modules/schedule/presentation/schedule_page.dart:193:15
+
+When the exception was thrown, this was the stack:
+#0      ChangeNotifier.debugAssertNotDisposed.<anonymous closure> (package:flutter/src/foundation/change_notifier.dart:184:9)
+#1      ChangeNotifier.debugAssertNotDisposed (package:flutter/src/foundation/change_notifier.dart:191:6)
+#2      ChangeNotifier.addListener (package:flutter/src/foundation/change_notifier.dart:273:27)
+#3      _MergingListenable.addListener (package:flutter/src/foundation/change_notifier.dart:503:14)
+#4      _AnimatedState.didUpdateWidget (package:flutter/src/widgets/transitions.dart:119:25)
+#5      StatefulElement.update (package:flutter/src/widgets/framework.dart:5991:55)
+#6      Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#7      SingleChildRenderObjectElement.update (package:flutter/src/widgets/framework.dart:7122:14)
+#8      Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#9      ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#10     StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5982:11)
+#11     Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#12     StatefulElement.update (package:flutter/src/widgets/framework.dart:6007:5)
+#13     Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#14     ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#15     StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5982:11)
+#16     Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#17     StatefulElement.update (package:flutter/src/widgets/framework.dart:6007:5)
+#18     Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#19     SingleChildRenderObjectElement.update (package:flutter/src/widgets/framework.dart:7122:14)
+#20     Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#21     ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#22     StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5982:11)
+#23     Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#24     StatefulElement.update (package:flutter/src/widgets/framework.dart:6007:5)
+#25     Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#26     SingleChildRenderObjectElement.update (package:flutter/src/widgets/framework.dart:7122:14)
+#27     Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#28     SingleChildRenderObjectElement.update (package:flutter/src/widgets/framework.dart:7122:14)
+#29     Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#30     SingleChildRenderObjectElement.update (package:flutter/src/widgets/framework.dart:7122:14)
+#31     Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#32     ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#33     StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5982:11)
+#34     Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#35     BuildScope._tryRebuild (package:flutter/src/widgets/framework.dart:2750:15)
+#36     BuildScope._flushDirtyElements (package:flutter/src/widgets/framework.dart:2807:11)
+#37     BuildOwner.buildScope (package:flutter/src/widgets/framework.dart:3111:18)
+#38     AutomatedTestWidgetsFlutterBinding.drawFrame (package:flutter_test/src/binding.dart:2431:19)
+#39     RendererBinding._handlePersistentFrameCallback (package:flutter/src/rendering/binding.dart:509:5)
+#40     SchedulerBinding._invokeFrameCallback (package:flutter/src/scheduler/binding.dart:1430:15)
+#41     SchedulerBinding.handleDrawFrame (package:flutter/src/scheduler/binding.dart:1345:9)
+#42     AutomatedTestWidgetsFlutterBinding.pump.<anonymous closure> (package:flutter_test/src/binding.dart:2260:9)
+#45     TestAsyncUtils.guard (package:flutter_test/src/test_async_utils.dart:74:41)
+#46     AutomatedTestWidgetsFlutterBinding.pump (package:flutter_test/src/binding.dart:2249:27)
+#47     WidgetTester.pumpAndSettle.<anonymous closure> (package:flutter_test/src/widget_tester.dart:719:23)
+#50     TestAsyncUtils.guard (package:flutter_test/src/test_async_utils.dart:74:41)
+#51     WidgetTester.pumpAndSettle (package:flutter_test/src/widget_tester.dart:712:27)
+#52     main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/schedule/personal_schedule_editor_test.dart:147:18)
+<asynchronous suspension>
+#53     testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#54     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 5 frames from dart:async and package:stack_trace)
+
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY SCHEDULER LIBRARY ╞═════════════════════════════════════════════════════════
+The following assertion was thrown during a scheduler callback:
+'package:flutter/src/rendering/object.dart': Failed assertion: line 3675 pos 12: 'attached': is not
+true.
+
+Either the assertion indicates an error in the framework itself, or we should provide substantially
+more information in this error message to help you determine and fix the underlying cause.
+In either case, please report this assertion by filing a bug on GitHub:
+  https://github.com/flutter/flutter/issues/new?template=02_bug.yml
+
+When the exception was thrown, this was the stack:
+#2      RenderObject.getTransformTo (package:flutter/src/rendering/object.dart:3675:12)
+#3      RenderBox.localToGlobal (package:flutter/src/rendering/box.dart:3092:39)
+#4      RenderEditable._snapToPhysicalPixel (package:flutter/src/rendering/editable.dart:2342:33)
+#5      RenderEditable.getLocalRectForCaret (package:flutter/src/rendering/editable.dart:1862:28)
+#6      EditableTextState._scheduleShowCaretOnScreen.<anonymous closure> (package:flutter/src/widgets/editable_text.dart:4499:45)
+#7      SchedulerBinding._invokeFrameCallback (package:flutter/src/scheduler/binding.dart:1430:15)
+#8      SchedulerBinding.handleDrawFrame (package:flutter/src/scheduler/binding.dart:1357:11)
+#9      AutomatedTestWidgetsFlutterBinding.pump.<anonymous closure> (package:flutter_test/src/binding.dart:2260:9)
+#12     TestAsyncUtils.guard (package:flutter_test/src/test_async_utils.dart:74:41)
+#13     AutomatedTestWidgetsFlutterBinding.pump (package:flutter_test/src/binding.dart:2249:27)
+#14     WidgetTester.pumpAndSettle.<anonymous closure> (package:flutter_test/src/widget_tester.dart:719:23)
+#17     TestAsyncUtils.guard (package:flutter_test/src/test_async_utils.dart:74:41)
+#18     WidgetTester.pumpAndSettle (package:flutter_test/src/widget_tester.dart:712:27)
+#19     main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/schedule/personal_schedule_editor_test.dart:147:18)
+<asynchronous suspension>
+#20     testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#21     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 7 frames from class _AssertionError, dart:async, and package:stack_trace)
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
+The following assertion was thrown building Overlay-[LabeledGlobalKey<OverlayState>#aec5d](state:
+OverlayState#9e7f8(entries: [OverlayEntry#d0e36(opaque: true; maintainState: false),
+OverlayEntry#4446e(opaque: false; maintainState: true)])):
+'package:flutter/src/widgets/framework.dart': Failed assertion: line 6268 pos 12:
+'_dependents.isEmpty': is not true.
+
+Either the assertion indicates an error in the framework itself, or we should provide substantially
+more information in this error message to help you determine and fix the underlying cause.
+In either case, please report this assertion by filing a bug on GitHub:
+  https://github.com/flutter/flutter/issues/new?template=02_bug.yml
+
+The relevant error-causing widget was:
+  MediaQuery
+  MediaQuery:file:///Users/lute/project/momcozy-lab/app/test/modules/schedule/personal_schedule_editor_test.dart:117:36
+
+When the exception was thrown, this was the stack:
+#2      InheritedElement.debugDeactivated (package:flutter/src/widgets/framework.dart:6268:12)
+#3      _InactiveElements._deactivateRecursively.<anonymous closure> (package:flutter/src/widgets/framework.dart:2143:15)
+#4      _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2145:6)
+#5      SingleChildRenderObjectElement.visitChildren (package:flutter/src/widgets/framework.dart:7101:14)
+#6      _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#7      MultiChildRenderObjectElement.visitChildren (package:flutter/src/widgets/framework.dart:7223:16)
+#8      _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#9      SingleChildRenderObjectElement.visitChildren (package:flutter/src/widgets/framework.dart:7101:14)
+#10     _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#11     SingleChildRenderObjectElement.visitChildren (package:flutter/src/widgets/framework.dart:7101:14)
+#12     _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#13     SingleChildRenderObjectElement.visitChildren (package:flutter/src/widgets/framework.dart:7101:14)
+#14     _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#15     SingleChildRenderObjectElement.visitChildren (package:flutter/src/widgets/framework.dart:7101:14)
+#16     _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#17     SingleChildRenderObjectElement.visitChildren (package:flutter/src/widgets/framework.dart:7101:14)
+#18     _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#19     ComponentElement.visitChildren (package:flutter/src/widgets/framework.dart:5871:14)
+#20     _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#21     SingleChildRenderObjectElement.visitChildren (package:flutter/src/widgets/framework.dart:7101:14)
+#22     _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#23     ComponentElement.visitChildren (package:flutter/src/widgets/framework.dart:5871:14)
+#24     _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#25     SingleChildRenderObjectElement.visitChildren (package:flutter/src/widgets/framework.dart:7101:14)
+#26     _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#27     ComponentElement.visitChildren (package:flutter/src/widgets/framework.dart:5871:14)
+#28     _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#29     SingleChildRenderObjectElement.visitChildren (package:flutter/src/widgets/framework.dart:7101:14)
+#30     _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#31     ComponentElement.visitChildren (package:flutter/src/widgets/framework.dart:5871:14)
+#32     _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#33     SingleChildRenderObjectElement.visitChildren (package:flutter/src/widgets/framework.dart:7101:14)
+#34     _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#35     ComponentElement.visitChildren (package:flutter/src/widgets/framework.dart:5871:14)
+#36     _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#37     ComponentElement.visitChildren (package:flutter/src/widgets/framework.dart:5871:14)
+#38     _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#39     ComponentElement.visitChildren (package:flutter/src/widgets/framework.dart:5871:14)
+#40     _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#41     ComponentElement.visitChildren (package:flutter/src/widgets/framework.dart:5871:14)
+#42     _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#43     ComponentElement.visitChildren (package:flutter/src/widgets/framework.dart:5871:14)
+#44     _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#45     ComponentElement.visitChildren (package:flutter/src/widgets/framework.dart:5871:14)
+#46     _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#47     ComponentElement.visitChildren (package:flutter/src/widgets/framework.dart:5871:14)
+#48     _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#49     MultiChildRenderObjectElement.visitChildren (package:flutter/src/widgets/framework.dart:7223:16)
+#50     _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#51     SingleChildRenderObjectElement.visitChildren (package:flutter/src/widgets/framework.dart:7101:14)
+#52     _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#53     SingleChildRenderObjectElement.visitChildren (package:flutter/src/widgets/framework.dart:7101:14)
+#54     _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#55     ComponentElement.visitChildren (package:flutter/src/widgets/framework.dart:5871:14)
+#56     _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#57     ComponentElement.visitChildren (package:flutter/src/widgets/framework.dart:5871:14)
+#58     _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#59     SingleChildRenderObjectElement.visitChildren (package:flutter/src/widgets/framework.dart:7101:14)
+#60     _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#61     ComponentElement.visitChildren (package:flutter/src/widgets/framework.dart:5871:14)
+#62     _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#63     SingleChildRenderObjectElement.visitChildren (package:flutter/src/widgets/framework.dart:7101:14)
+#64     _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#65     ComponentElement.visitChildren (package:flutter/src/widgets/framework.dart:5871:14)
+#66     _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#67     SingleChildRenderObjectElement.visitChildren (package:flutter/src/widgets/framework.dart:7101:14)
+#68     _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#69     ComponentElement.visitChildren (package:flutter/src/widgets/framework.dart:5871:14)
+#70     _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#71     ComponentElement.visitChildren (package:flutter/src/widgets/framework.dart:5871:14)
+#72     _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#73     SingleChildRenderObjectElement.visitChildren (package:flutter/src/widgets/framework.dart:7101:14)
+#74     _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#75     SingleChildRenderObjectElement.visitChildren (package:flutter/src/widgets/framework.dart:7101:14)
+#76     _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#77     ComponentElement.visitChildren (package:flutter/src/widgets/framework.dart:5871:14)
+#78     _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#79     SingleChildRenderObjectElement.visitChildren (package:flutter/src/widgets/framework.dart:7101:14)
+#80     _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#81     ComponentElement.visitChildren (package:flutter/src/widgets/framework.dart:5871:14)
+#82     _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#83     SingleChildRenderObjectElement.visitChildren (package:flutter/src/widgets/framework.dart:7101:14)
+#84     _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#85     ComponentElement.visitChildren (package:flutter/src/widgets/framework.dart:5871:14)
+#86     _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#87     ComponentElement.visitChildren (package:flutter/src/widgets/framework.dart:5871:14)
+#88     _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#89     ComponentElement.visitChildren (package:flutter/src/widgets/framework.dart:5871:14)
+#90     _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#91     ComponentElement.visitChildren (package:flutter/src/widgets/framework.dart:5871:14)
+#92     _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#93     ComponentElement.visitChildren (package:flutter/src/widgets/framework.dart:5871:14)
+#94     _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#95     ComponentElement.visitChildren (package:flutter/src/widgets/framework.dart:5871:14)
+#96     _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#97     ComponentElement.visitChildren (package:flutter/src/widgets/framework.dart:5871:14)
+#98     _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#99     SingleChildRenderObjectElement.visitChildren (package:flutter/src/widgets/framework.dart:7101:14)
+#100    _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#101    ComponentElement.visitChildren (package:flutter/src/widgets/framework.dart:5871:14)
+#102    _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#103    SingleChildRenderObjectElement.visitChildren (package:flutter/src/widgets/framework.dart:7101:14)
+#104    _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#105    ComponentElement.visitChildren (package:flutter/src/widgets/framework.dart:5871:14)
+#106    _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#107    SingleChildRenderObjectElement.visitChildren (package:flutter/src/widgets/framework.dart:7101:14)
+#108    _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#109    ComponentElement.visitChildren (package:flutter/src/widgets/framework.dart:5871:14)
+#110    _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#111    SingleChildRenderObjectElement.visitChildren (package:flutter/src/widgets/framework.dart:7101:14)
+#112    _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#113    ComponentElement.visitChildren (package:flutter/src/widgets/framework.dart:5871:14)
+#114    _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#115    SingleChildRenderObjectElement.visitChildren (package:flutter/src/widgets/framework.dart:7101:14)
+#116    _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#117    SingleChildRenderObjectElement.visitChildren (package:flutter/src/widgets/framework.dart:7101:14)
+#118    _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#119    ComponentElement.visitChildren (package:flutter/src/widgets/framework.dart:5871:14)
+#120    _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#121    SingleChildRenderObjectElement.visitChildren (package:flutter/src/widgets/framework.dart:7101:14)
+#122    _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#123    ComponentElement.visitChildren (package:flutter/src/widgets/framework.dart:5871:14)
+#124    _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#125    SingleChildRenderObjectElement.visitChildren (package:flutter/src/widgets/framework.dart:7101:14)
+#126    _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#127    ComponentElement.visitChildren (package:flutter/src/widgets/framework.dart:5871:14)
+#128    _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#129    SingleChildRenderObjectElement.visitChildren (package:flutter/src/widgets/framework.dart:7101:14)
+#130    _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#131    ComponentElement.visitChildren (package:flutter/src/widgets/framework.dart:5871:14)
+#132    _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#133    ComponentElement.visitChildren (package:flutter/src/widgets/framework.dart:5871:14)
+#134    _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#135    ComponentElement.visitChildren (package:flutter/src/widgets/framework.dart:5871:14)
+#136    _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#137    ComponentElement.visitChildren (package:flutter/src/widgets/framework.dart:5871:14)
+#138    _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#139    ComponentElement.visitChildren (package:flutter/src/widgets/framework.dart:5871:14)
+#140    _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#141    ComponentElement.visitChildren (package:flutter/src/widgets/framework.dart:5871:14)
+#142    _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#143    SingleChildRenderObjectElement.visitChildren (package:flutter/src/widgets/framework.dart:7101:14)
+#144    _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#145    ComponentElement.visitChildren (package:flutter/src/widgets/framework.dart:5871:14)
+#146    _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#147    ComponentElement.visitChildren (package:flutter/src/widgets/framework.dart:5871:14)
+#148    _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#149    ComponentElement.visitChildren (package:flutter/src/widgets/framework.dart:5871:14)
+#150    _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#151    ComponentElement.visitChildren (package:flutter/src/widgets/framework.dart:5871:14)
+#152    _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#153    ComponentElement.visitChildren (package:flutter/src/widgets/framework.dart:5871:14)
+#154    _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#155    SingleChildRenderObjectElement.visitChildren (package:flutter/src/widgets/framework.dart:7101:14)
+#156    _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#157    ComponentElement.visitChildren (package:flutter/src/widgets/framework.dart:5871:14)
+#158    _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#159    ComponentElement.visitChildren (package:flutter/src/widgets/framework.dart:5871:14)
+#160    _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#161    ComponentElement.visitChildren (package:flutter/src/widgets/framework.dart:5871:14)
+#162    _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#163    ComponentElement.visitChildren (package:flutter/src/widgets/framework.dart:5871:14)
+#164    _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#165    ComponentElement.visitChildren (package:flutter/src/widgets/framework.dart:5871:14)
+#166    _InactiveElements._deactivateRecursively (package:flutter/src/widgets/framework.dart:2141:13)
+#167    _InactiveElements.add (package:flutter/src/widgets/framework.dart:2155:9)
+#168    Element.deactivateChild (package:flutter/src/widgets/framework.dart:4636:30)
+#169    Element.updateChildren (package:flutter/src/widgets/framework.dart:4302:11)
+#170    MultiChildRenderObjectElement.update (package:flutter/src/widgets/framework.dart:7295:17)
+#171    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#172    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5841:16)
+#173    StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5982:11)
+#174    Element.rebuild (package:flutter/src/widgets/framework.dart:5529:7)
+#175    BuildScope._tryRebuild (package:flutter/src/widgets/framework.dart:2750:15)
+#176    BuildScope._flushDirtyElements (package:flutter/src/widgets/framework.dart:2807:11)
+#177    BuildOwner.buildScope (package:flutter/src/widgets/framework.dart:3111:18)
+#178    AutomatedTestWidgetsFlutterBinding.drawFrame (package:flutter_test/src/binding.dart:2431:19)
+#179    RendererBinding._handlePersistentFrameCallback (package:flutter/src/rendering/binding.dart:509:5)
+#180    SchedulerBinding._invokeFrameCallback (package:flutter/src/scheduler/binding.dart:1430:15)
+#181    SchedulerBinding.handleDrawFrame (package:flutter/src/scheduler/binding.dart:1345:9)
+#182    AutomatedTestWidgetsFlutterBinding.pump.<anonymous closure> (package:flutter_test/src/binding.dart:2260:9)
+#185    TestAsyncUtils.guard (package:flutter_test/src/test_async_utils.dart:74:41)
+#186    AutomatedTestWidgetsFlutterBinding.pump (package:flutter_test/src/binding.dart:2249:27)
+#187    WidgetTester.pumpAndSettle.<anonymous closure> (package:flutter_test/src/widget_tester.dart:719:23)
+<asynchronous suspension>
+#188    TestAsyncUtils.guard.<anonymous closure> (package:flutter_test/src/test_async_utils.dart:130:27)
+<asynchronous suspension>
+#189    main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/schedule/personal_schedule_editor_test.dart:147:5)
+<asynchronous suspension>
+#190    testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#191    TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 5 frames from class _AssertionError, dart:async, and package:stack_trace)
+
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY SCHEDULER LIBRARY ╞═════════════════════════════════════════════════════════
+The following assertion was thrown during a scheduler callback:
+Tried to build dirty widget in the wrong build scope.
+A widget which was marked as dirty and is still active was scheduled to be built, but the current
+build scope unexpectedly does not contain that widget.
+Sometimes this is detected when an element is removed from the widget tree, but the element somehow
+did not get marked as inactive. In that case, it might be caused by an ancestor element failing to
+implement visitChildren correctly, thus preventing some or all of its descendants from being
+correctly deactivated.
+The root of the build scope was:
+  [root]
+The offending element (which does not appear to be a descendant of the root of the build scope) was:
+  AnimatedDefaultTextStyle
+
+When the exception was thrown, this was the stack:
+#0      BuildScope._debugAssertElementInScope (package:flutter/src/widgets/framework.dart:2772:5)
+#1      BuildScope._flushDirtyElements (package:flutter/src/widgets/framework.dart:2806:18)
+#2      BuildOwner.buildScope (package:flutter/src/widgets/framework.dart:3111:18)
+#3      AutomatedTestWidgetsFlutterBinding.drawFrame (package:flutter_test/src/binding.dart:2431:19)
+#4      RendererBinding._handlePersistentFrameCallback (package:flutter/src/rendering/binding.dart:509:5)
+#5      SchedulerBinding._invokeFrameCallback (package:flutter/src/scheduler/binding.dart:1430:15)
+#6      SchedulerBinding.handleDrawFrame (package:flutter/src/scheduler/binding.dart:1345:9)
+#7      AutomatedTestWidgetsFlutterBinding.pump.<anonymous closure> (package:flutter_test/src/binding.dart:2260:9)
+#10     TestAsyncUtils.guard (package:flutter_test/src/test_async_utils.dart:74:41)
+#11     AutomatedTestWidgetsFlutterBinding.pump (package:flutter_test/src/binding.dart:2249:27)
+#12     WidgetTester.pumpAndSettle.<anonymous closure> (package:flutter_test/src/widget_tester.dart:719:23)
+<asynchronous suspension>
+#13     TestAsyncUtils.guard.<anonymous closure> (package:flutter_test/src/test_async_utils.dart:130:27)
+<asynchronous suspension>
+#14     main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/schedule/personal_schedule_editor_test.dart:147:5)
+<asynchronous suspension>
+#15     testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#16     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: exactly 2 matching candidates
+  Actual: _TypeWidgetFinder:<Found 0 widgets with type "TextField": []>
+   Which: means none were found but some were expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/schedule/personal_schedule_editor_test.dart:148:5)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/modules/schedule/personal_schedule_editor_test.dart line 148
+The test description was:
+  failed save preserves the draft and retries the same creation
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following message was thrown:
+Multiple exceptions (5) were detected during the running of the current test, and at least one was
+unexpected.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +0 -1: failed save preserves the draft and retries the same creation [E]
+  Test failed. See exception logs above.
+  The test description was: failed save preserves the draft and retries the same creation
+  
+00:00 +0 -1: (tearDownAll)
+00:00 +0 -1: Some tests failed.
+
+Failing tests:
+  /Users/lute/project/momcozy-lab/app/test/modules/schedule/personal_schedule_editor_test.dart: failed save preserves the draft and retries the same creation

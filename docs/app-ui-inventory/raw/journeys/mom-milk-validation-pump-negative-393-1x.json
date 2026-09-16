@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/mom-milk-validation-pump-negative-393-1x.png",
+  "previous_source": "test/goldens/ui_inventory/mom-milk-validation-empty-393-1x.png",
+  "route": "/me",
+  "trigger": "Submit pump -1 → out_of_range; no write",
+  "root_entry": "Authenticated More → tap Me bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/mom/mom_milk_validation_inventory_test.dart"
+}

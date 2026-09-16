@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/baby-development-management-sound-head-history-393-1x.png",
+  "previous_source": "test/goldens/ui_inventory/baby-development-management-sound-head-saved-393-1x.png",
+  "route": "/babies/inventory-baby/records",
+  "trigger": "History development tab → sound-head records with each saved status",
+  "root_entry": "Authenticated More → tap Baby bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/baby/baby_development_management_inventory_test.dart"
+}

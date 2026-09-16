@@ -1,0 +1,487 @@
+{
+  "pageId": "0:1",
+  "pageName": "妈妈首页 · 恢复记录闭环",
+  "totalPageChildren": 595,
+  "nodes": [
+    {
+      "id": "317:1086",
+      "name": "Baby profile / new / 1x",
+      "parent": "0:1",
+      "x": 80,
+      "y": 174500,
+      "width": 390,
+      "height": 844,
+      "hash": "9bd64ee0"
+    },
+    {
+      "id": "317:1120",
+      "name": "Baby profile / existing / 1x",
+      "parent": "0:1",
+      "x": 550,
+      "y": 174500,
+      "width": 390,
+      "height": 844,
+      "hash": "652c48d7"
+    },
+    {
+      "id": "317:1156",
+      "name": "Baby profile / cleared / 1x",
+      "parent": "0:1",
+      "x": 1020,
+      "y": 174500,
+      "width": 390,
+      "height": 844,
+      "hash": "be56ba87"
+    },
+    {
+      "id": "317:1190",
+      "name": "Baby profile / feeding-menu / 1x",
+      "parent": "0:1",
+      "x": 1490,
+      "y": 174500,
+      "width": 390,
+      "height": 844,
+      "hash": "d135a5b9"
+    },
+    {
+      "id": "317:1237",
+      "name": "Baby profile / validation / 1x",
+      "parent": "0:1",
+      "x": 1960,
+      "y": 174500,
+      "width": 390,
+      "height": 844,
+      "hash": "b8506444"
+    },
+    {
+      "id": "317:1275",
+      "name": "Baby profile / conflict / 1x",
+      "parent": "0:1",
+      "x": 2430,
+      "y": 174500,
+      "width": 390,
+      "height": 844,
+      "hash": "fd3bfa6a"
+    },
+    {
+      "id": "317:1316",
+      "name": "Baby profile / forbidden / 1x",
+      "parent": "0:1",
+      "x": 2900,
+      "y": 174500,
+      "width": 390,
+      "height": 844,
+      "hash": "50a5064b"
+    },
+    {
+      "id": "317:1355",
+      "name": "Baby profile / unavailable / 1x",
+      "parent": "0:1",
+      "x": 3370,
+      "y": 174500,
+      "width": 390,
+      "height": 844,
+      "hash": "6d4874f6"
+    },
+    {
+      "id": "317:1394",
+      "name": "Baby profile / pending / 1x",
+      "parent": "0:1",
+      "x": 80,
+      "y": 176050,
+      "width": 390,
+      "height": 844,
+      "hash": "c7e3a957"
+    },
+    {
+      "id": "317:1430",
+      "name": "Baby profile / uncertain / 1x",
+      "parent": "0:1",
+      "x": 550,
+      "y": 176050,
+      "width": 390,
+      "height": 844,
+      "hash": "fe79388a"
+    },
+    {
+      "id": "317:1470",
+      "name": "Baby profile / long-name / 1x",
+      "parent": "0:1",
+      "x": 1020,
+      "y": 176050,
+      "width": 390,
+      "height": 844,
+      "hash": "d51d5ced"
+    },
+    {
+      "id": "323:1086",
+      "name": "Baby home / source asset / nursery",
+      "parent": "0:1",
+      "x": 80,
+      "y": 181000,
+      "width": 390,
+      "height": 150,
+      "hash": "4e3e36b1"
+    },
+    {
+      "id": "326:1086",
+      "name": "Baby home / recorded / 1x",
+      "parent": "0:1",
+      "x": 80,
+      "y": 182000,
+      "width": 390,
+      "height": 1752,
+      "hash": "72eea0e8"
+    },
+    {
+      "id": "327:1086",
+      "name": "Baby home / empty / 1x",
+      "parent": "0:1",
+      "x": 1020,
+      "y": 182000,
+      "width": 390,
+      "height": 1751,
+      "hash": "29b55661"
+    },
+    {
+      "id": "327:1378",
+      "name": "Baby home / loading / 1x",
+      "parent": "0:1",
+      "x": 1960,
+      "y": 182000,
+      "width": 390,
+      "height": 1610,
+      "hash": "ef7bfe86"
+    },
+    {
+      "id": "327:1632",
+      "name": "Baby home / error / 1x",
+      "parent": "0:1",
+      "x": 2900,
+      "y": 182000,
+      "width": 390,
+      "height": 1855,
+      "hash": "70a2d3cb"
+    },
+    {
+      "id": "327:1912",
+      "name": "Baby home / missing / 1x",
+      "parent": "0:1",
+      "x": 80,
+      "y": 190200,
+      "width": 390,
+      "height": 1635,
+      "hash": "784bb2a8"
+    },
+    {
+      "id": "327:2170",
+      "name": "Baby home / active / 1x",
+      "parent": "0:1",
+      "x": 1020,
+      "y": 190200,
+      "width": 390,
+      "height": 1746,
+      "hash": "73e802e3"
+    },
+    {
+      "id": "327:2470",
+      "name": "Baby home / no-profile / 1x",
+      "parent": "0:1",
+      "x": 1960,
+      "y": 190200,
+      "width": 390,
+      "height": 844,
+      "hash": "f9730514"
+    },
+    {
+      "id": "327:2560",
+      "name": "Baby home / switcher / 1x",
+      "parent": "0:1",
+      "x": 2900,
+      "y": 190200,
+      "width": 390,
+      "height": 844,
+      "hash": "4dae188d"
+    },
+    {
+      "id": "327:2592",
+      "name": "Baby home / knowledge / 1x",
+      "parent": "0:1",
+      "x": 80,
+      "y": 198400,
+      "width": 390,
+      "height": 844,
+      "hash": "5fd30c1b"
+    },
+    {
+      "id": "327:2632",
+      "name": "Baby home / saved / 1x",
+      "parent": "0:1",
+      "x": 1020,
+      "y": 198400,
+      "width": 390,
+      "height": 585,
+      "hash": "f19afe58"
+    },
+    {
+      "id": "327:2742",
+      "name": "Baby home / undone / 1x",
+      "parent": "0:1",
+      "x": 1960,
+      "y": 198400,
+      "width": 390,
+      "height": 533,
+      "hash": "d1939fd3"
+    },
+    {
+      "id": "327:2848",
+      "name": "Baby home / undo-error / 1x",
+      "parent": "0:1",
+      "x": 2900,
+      "y": 198400,
+      "width": 390,
+      "height": 585,
+      "hash": "e8bf0b38"
+    },
+    {
+      "id": "327:2958",
+      "name": "Baby home / long-name / 1x",
+      "parent": "0:1",
+      "x": 80,
+      "y": 206600,
+      "width": 390,
+      "height": 1929,
+      "hash": "25fa8091"
+    },
+    {
+      "id": "327:3250",
+      "name": "Baby home / growth selection / 身长",
+      "parent": "0:1",
+      "x": 80,
+      "y": 216000,
+      "width": 390,
+      "height": 389,
+      "hash": "cd2db183"
+    },
+    {
+      "id": "327:3282",
+      "name": "Baby home / growth selection / 头围",
+      "parent": "0:1",
+      "x": 550,
+      "y": 216000,
+      "width": 390,
+      "height": 389,
+      "hash": "7103a52e"
+    },
+    {
+      "id": "329:1086",
+      "name": "Baby records / list / 1x",
+      "parent": "0:1",
+      "x": 80,
+      "y": 220000,
+      "width": 390,
+      "height": 972,
+      "hash": "3d223821"
+    },
+    {
+      "id": "329:1199",
+      "name": "Baby editor / feeding / 1x",
+      "parent": "0:1",
+      "x": 950,
+      "y": 220000,
+      "width": 390,
+      "height": 844,
+      "hash": "d1cd3bfb"
+    },
+    {
+      "id": "330:1086",
+      "name": "Baby records / empty / 1x",
+      "parent": "0:1",
+      "x": 80,
+      "y": 223000,
+      "width": 390,
+      "height": 590,
+      "hash": "6e18a7c"
+    },
+    {
+      "id": "330:1117",
+      "name": "Baby records / month / 1x",
+      "parent": "0:1",
+      "x": 550,
+      "y": 223000,
+      "width": 390,
+      "height": 590,
+      "hash": "ff282a71"
+    },
+    {
+      "id": "330:1148",
+      "name": "Baby records / loading / 1x",
+      "parent": "0:1",
+      "x": 1020,
+      "y": 223000,
+      "width": 390,
+      "height": 972,
+      "hash": "e9e2096e"
+    },
+    {
+      "id": "330:1203",
+      "name": "Baby records / error / 1x",
+      "parent": "0:1",
+      "x": 1490,
+      "y": 223000,
+      "width": 390,
+      "height": 1090,
+      "hash": "fc96a06e"
+    },
+    {
+      "id": "330:1262",
+      "name": "Baby records / deleted / 1x",
+      "parent": "0:1",
+      "x": 1960,
+      "y": 223000,
+      "width": 390,
+      "height": 708,
+      "hash": "ccaaabab"
+    },
+    {
+      "id": "330:1297",
+      "name": "Baby records / source / 1x",
+      "parent": "0:1",
+      "x": 2430,
+      "y": 223000,
+      "width": 390,
+      "height": 1080,
+      "hash": "c00f483e"
+    },
+    {
+      "id": "330:1355",
+      "name": "Baby editor / nursing / 1x",
+      "parent": "0:1",
+      "x": 80,
+      "y": 227000,
+      "width": 390,
+      "height": 844,
+      "hash": "d0d4f194"
+    },
+    {
+      "id": "330:1396",
+      "name": "Baby editor / sleep / 1x",
+      "parent": "0:1",
+      "x": 550,
+      "y": 227000,
+      "width": 390,
+      "height": 844,
+      "hash": "ffe50262"
+    },
+    {
+      "id": "330:1430",
+      "name": "Baby editor / sleep-active / 1x",
+      "parent": "0:1",
+      "x": 1020,
+      "y": 227000,
+      "width": 390,
+      "height": 844,
+      "hash": "a7b04177"
+    },
+    {
+      "id": "330:1454",
+      "name": "Baby editor / wet / 1x",
+      "parent": "0:1",
+      "x": 1490,
+      "y": 227000,
+      "width": 390,
+      "height": 844,
+      "hash": "5e2b5e2"
+    },
+    {
+      "id": "330:1488",
+      "name": "Baby editor / stool / 1x",
+      "parent": "0:1",
+      "x": 1960,
+      "y": 227000,
+      "width": 390,
+      "height": 844,
+      "hash": "44f45d92"
+    },
+    {
+      "id": "330:1563",
+      "name": "Baby editor / growth / 1x",
+      "parent": "0:1",
+      "x": 2430,
+      "y": 227000,
+      "width": 390,
+      "height": 844,
+      "hash": "94fc667b"
+    },
+    {
+      "id": "330:1595",
+      "name": "Baby editor / development / 1x",
+      "parent": "0:1",
+      "x": 80,
+      "y": 231000,
+      "width": 390,
+      "height": 844,
+      "hash": "e15ac656"
+    },
+    {
+      "id": "330:1638",
+      "name": "Baby editor / edit / 1x",
+      "parent": "0:1",
+      "x": 550,
+      "y": 231000,
+      "width": 390,
+      "height": 844,
+      "hash": "9380fe71"
+    },
+    {
+      "id": "330:1671",
+      "name": "Baby editor / validation / 1x",
+      "parent": "0:1",
+      "x": 1020,
+      "y": 231000,
+      "width": 390,
+      "height": 844,
+      "hash": "366540f4"
+    },
+    {
+      "id": "330:1701",
+      "name": "Baby editor / saving / 1x",
+      "parent": "0:1",
+      "x": 1490,
+      "y": 231000,
+      "width": 390,
+      "height": 844,
+      "hash": "fd29f647"
+    },
+    {
+      "id": "330:1734",
+      "name": "Baby editor / uncertain / 1x",
+      "parent": "0:1",
+      "x": 1960,
+      "y": 231000,
+      "width": 390,
+      "height": 844,
+      "hash": "b2f2336e"
+    },
+    {
+      "id": "330:1769",
+      "name": "Baby editor / error / 1x",
+      "parent": "0:1",
+      "x": 2430,
+      "y": 231000,
+      "width": 390,
+      "height": 844,
+      "hash": "e3d7f55f"
+    },
+    {
+      "id": "331:1231",
+      "name": "Baby editor / stool / 1x / full scroll reference",
+      "parent": "0:1",
+      "x": 80,
+      "y": 240000,
+      "width": 390,
+      "height": 1077,
+      "hash": "2951128a"
+    }
+  ]
+}

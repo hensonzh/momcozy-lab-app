@@ -1,0 +1,13 @@
+{
+  "artifact": "build/app/outputs/flutter-apk/app-local-debug.apk",
+  "sha256": "7dbad4225bb4b0a31ee59238972d48bbd28780ab38d133a6e0070709f5ef08da",
+  "flavor": "local",
+  "mode": "debug",
+  "installation": "adb install -r; force-stop then launch; saved Mia account restored",
+  "lastUpdateTime": "2026-09-12 11:08:46",
+  "api": "http://10.0.2.2:8769",
+  "agent": "http://10.0.2.2:8010",
+  "displayVersion": "1.0.0",
+  "buildNumber": 57,
+  "publication": "none; transient simulator verification"
+}

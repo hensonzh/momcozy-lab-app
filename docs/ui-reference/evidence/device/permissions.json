@@ -1,0 +1,15 @@
+{
+  "before": {
+    "camera": false,
+    "microphone": false
+  },
+  "during_test": {
+    "camera": true,
+    "microphone": true
+  },
+  "restored": [
+    "android.permission.CAMERA: granted=false, flags=[ USER_SENSITIVE_WHEN_GRANTED|USER_SENSITIVE_WHEN_DENIED]",
+    "android.permission.RECORD_AUDIO: granted=false, flags=[ USER_SENSITIVE_WHEN_GRANTED|USER_SENSITIVE_WHEN_DENIED]"
+  ],
+  "runner": "flutter test --no-uninstall"
+}

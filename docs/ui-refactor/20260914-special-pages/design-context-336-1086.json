@@ -1,0 +1,20 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "const imgFrame = \"https://www.figma.com/api/mcp/asset/d955b39e-635a-4fc9-8d09-7733e1b7e21c.svg\";\n\nexport default function SpecialNotFound1X() {\n  return (\n    <div className=\"bg-[#fbf8f4] relative size-full\" data-node-id=\"336:1086\" data-name=\"Special / Not found / 1x\">\n      <div className=\"absolute bg-[#fffdfc] border border-[#e9e1dc] border-solid content-stretch flex flex-col gap-[14px] items-start left-[24px] overflow-clip p-[24px] rounded-[22px] top-[159.5px] w-[342px]\" data-node-id=\"336:1087\" data-name=\"Recovery card\">\n        <div className=\"bg-[#e8f3ef] overflow-clip relative rounded-[22px] shrink-0 size-[64px]\" data-node-id=\"336:1088\" data-name=\"Search icon tile\">\n          <div className=\"absolute left-[16px] size-[32px] top-[16px]\" data-node-id=\"336:1089\" data-name=\"Frame\">\n            <img alt=\"\" className=\"absolute block inset-0 max-w-none size-full\" src={imgFrame} />\n          </div>\n        </div>\n        <p className=\"[word-break:break-word] font-['Noto_Sans_SC:Bold'] font-bold leading-[1.4] relative shrink-0 text-[#2b2826] text-[22px] text-center w-[294px]\" data-node-id=\"336:1092\">\n          页面未找到\n        </p>\n        <p className=\"[word-break:break-word] font-['Noto_Sans_SC:Regular'] font-normal leading-[1.4] relative shrink-0 text-[#776e69] text-[14px] text-center w-[294px]\" data-node-id=\"336:1093\">\n          这个页面可能已移动，或链接已失效。\n        </p>\n        <div className=\"bg-[#b54f78] content-stretch flex flex-col items-start overflow-clip px-[10px] py-[13px] relative rounded-[14px] shrink-0 w-[294px]\" data-node-id=\"336:1094\" data-name=\"Action / 返回首页\">\n          <p className=\"[word-break:break-word] font-['Noto_Sans_SC:Bold'] font-bold leading-[1.4] relative shrink-0 text-[#fffdfc] text-[13px] text-center w-[274px]\" data-node-id=\"336:1095\">\n            返回首页\n          </p>\n        </div>\n      </div>\n    </div>\n  );\n}"
+    },
+    {
+      "type": "text",
+      "text": "SUPER CRITICAL: The generated React+Tailwind code MUST be converted to match the target project's technology stack and styling system.\n1. Analyze the target codebase to identify: technology stack, styling approach, component patterns, and design tokens\n2. Convert React syntax to the target framework/library\n3. Transform all Tailwind classes to the target styling system while preserving exact visual design\n4. Follow the project's existing patterns and conventions\nDO NOT install any Tailwind as a dependency unless the user instructs you to do so.\n"
+    },
+    {
+      "type": "text",
+      "text": "Node ids have been added to the code as data attributes, e.g. `data-node-id=\"1:2\"`."
+    },
+    {
+      "type": "text",
+      "text": "Images and SVGs will be stored as constants, e.g. const image = 'https://www.figma.com/api/mcp/asset/550e8400-e29b-41d4-a716-446655440000.png'. These constants will be used in the code as the source for the image, ex: <img src={image} />. Image assets are stored on a remote server for 7 days and can be fetched using the provided URLs until they expire."
+    }
+  ]
+}

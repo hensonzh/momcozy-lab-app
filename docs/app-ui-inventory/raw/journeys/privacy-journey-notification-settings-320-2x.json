@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/privacy-journey-notification-settings-320-2x.png",
+  "previous_source": "test/goldens/ui_inventory/privacy-journey-granted-320-2x.png",
+  "route": "/notifications/settings",
+  "trigger": "Manage reminders → actual notification settings route with privacy draft underneath",
+  "root_entry": "Authenticated More page",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production privacy page/controllers and Care/Intake API repositories; isolated HTTP with versioned per-service consent storage; actual More/privacy/notification routes and notification coordinator, no real user permissions mutated",
+  "test": "test/modules/profile/privacy_inventory_journey_test.dart"
+}

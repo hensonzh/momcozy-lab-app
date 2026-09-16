@@ -1,0 +1,41 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: short large missing keeps header and recovery reachable
+00:00 +1: short large image keeps header and recovery reachable
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following ProductAssetLoadException was thrown running a test:
+ProductAssetLoadException(http_error)
+
+When the exception was thrown, this was the stack:
+#0      ProductAssetRepository._loadAndCache (package:momcozy_flutter_app/features/media/data/product_asset_repository.dart:198:9)
+<asynchronous suspension>
+
+The test description was:
+  short large image keeps header and recovery reachable
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +1 -1: short large image keeps header and recovery reachable [E]
+  Test failed. See exception logs above.
+  The test description was: short large image keeps header and recovery reachable
+  
+00:00 +1 -1: short large pdf keeps header and recovery reachable
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following ProductAssetLoadException was thrown running a test:
+ProductAssetLoadException(http_error)
+
+When the exception was thrown, this was the stack:
+#0      ProductAssetRepository._loadAndCache (package:momcozy_flutter_app/features/media/data/product_asset_repository.dart:198:9)
+<asynchronous suspension>
+
+The test description was:
+  short large pdf keeps header and recovery reachable
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +1 -2: short large pdf keeps header and recovery reachable [E]
+  Test failed. See exception logs above.
+  The test description was: short large pdf keeps header and recovery reachable
+  
+00:00 +1 -2: (tearDownAll)
+00:00 +1 -2: Some tests failed.
+
+Failing tests:
+  /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: short large image keeps header and recovery reachable
+  /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: short large pdf keeps header and recovery reachable

@@ -1,0 +1,20 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: inventory schedule calendar create edit delete
+00:01 +1: inventory schedule discard and save retry
+00:02 +2: inventory schedule read and delete failure recovery
+00:02 +3: inventory schedule server validation and conflict
+00:02 +4: inventory schedule care task statuses and plan
+00:03 +5: inventory schedule service filters and appointment summary
+00:03 +6: inventory schedule picker cancel and task menu route
+00:04 +7: inventory schedule picker validation and changed time 1.0
+00:04 +8: inventory schedule picker validation and changed time 2.0
+00:04 +9: inventory schedule calendar year and tooltips
+00:05 +10: inventory schedule task pending and personal conflict reconciliation
+00:05 +11: inventory schedule confirmed appointment entry and return
+00:05 +12: inventory schedule first page limit has no continuation control
+00:06 +13: inventory schedule appointment held entry
+00:06 +14: inventory schedule appointment cancelled entry
+00:06 +15: inventory schedule appointment expired entry
+00:06 +16: (tearDownAll)
+00:06 +16: All tests passed!

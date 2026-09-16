@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/mom-note-boundary-body-overflow-truncated-320-2x.png",
+  "previous_source": "test/goldens/ui_inventory/mom-note-boundary-body-2000-320-2x.png",
+  "route": "/me",
+  "trigger": "Attempt 2001 body characters → formatter retains first 2000",
+  "root_entry": "Authenticated More → tap Me bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/mom/mom_note_boundary_inventory_test.dart"
+}

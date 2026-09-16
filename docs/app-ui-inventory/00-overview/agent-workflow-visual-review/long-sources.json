@@ -1,0 +1,242 @@
+[
+  {
+    "state": "agent-workflow-journey-confirm-failure-pending",
+    "source": "05-agent/agent-workflow-journey-confirm-failure-pending/default.png",
+    "sha256": "2eed747fff1666cd951d911d87356bdfb99b2ef7b1e1642f88ff9ae752e3fd4a",
+    "sheet": "long-1.jpg"
+  },
+  {
+    "state": "agent-workflow-journey-confirm-failure-preview",
+    "source": "05-agent/agent-workflow-journey-confirm-failure-preview/default.png",
+    "sha256": "a8c18ad32f85486be57c46d9ce24438ffe91ff888bb20f00fe4e27618c541587",
+    "sheet": "long-1.jpg"
+  },
+  {
+    "state": "agent-workflow-journey-confirm-failure-result",
+    "source": "05-agent/agent-workflow-journey-confirm-failure-result/default.png",
+    "sha256": "4a2454df822322b5050e2553fbbc3fc0cac0f50713e55061e3810e00682b90cf",
+    "sheet": "long-1.jpg"
+  },
+  {
+    "state": "agent-workflow-journey-confirm-failure-return",
+    "source": "05-agent/agent-workflow-journey-confirm-failure-return/default.png",
+    "sha256": "4a2454df822322b5050e2553fbbc3fc0cac0f50713e55061e3810e00682b90cf",
+    "sheet": "long-1.jpg"
+  },
+  {
+    "state": "agent-workflow-journey-confirm-success-pending",
+    "source": "05-agent/agent-workflow-journey-confirm-success-pending/default.png",
+    "sha256": "2eed747fff1666cd951d911d87356bdfb99b2ef7b1e1642f88ff9ae752e3fd4a",
+    "sheet": "long-1.jpg"
+  },
+  {
+    "state": "agent-workflow-journey-confirm-success-preview",
+    "source": "05-agent/agent-workflow-journey-confirm-success-preview/default.png",
+    "sha256": "a8c18ad32f85486be57c46d9ce24438ffe91ff888bb20f00fe4e27618c541587",
+    "sheet": "long-1.jpg"
+  },
+  {
+    "state": "agent-workflow-journey-confirm-success-result",
+    "source": "05-agent/agent-workflow-journey-confirm-success-result/default.png",
+    "sha256": "fdf375e20bf7d03b2d2af98be7cdf65a0425bc824722361c471f6ad27d8b9261",
+    "sheet": "long-2.jpg"
+  },
+  {
+    "state": "agent-workflow-journey-confirm-success-return",
+    "source": "05-agent/agent-workflow-journey-confirm-success-return/default.png",
+    "sha256": "fdf375e20bf7d03b2d2af98be7cdf65a0425bc824722361c471f6ad27d8b9261",
+    "sheet": "long-2.jpg"
+  },
+  {
+    "state": "agent-workflow-journey-diary-history",
+    "source": "05-agent/agent-workflow-journey-diary-history/default.png",
+    "sha256": "ced7bd874a68ce72f2ffbe711d52ae919a8b6bb4a68d36a223342512d0718355",
+    "sheet": "long-2.jpg"
+  },
+  {
+    "state": "agent-workflow-journey-diary-return",
+    "source": "05-agent/agent-workflow-journey-diary-return/default.png",
+    "sha256": "56df31d57880ad099473aa22355dd08d2c9f3dc3fdb3f21b8e64b677eaa12a74",
+    "sheet": "long-2.jpg"
+  },
+  {
+    "state": "agent-workflow-journey-intake-accepted",
+    "source": "05-agent/agent-workflow-journey-intake-accepted/default.png",
+    "sha256": "6aaa76c6c89b5684b654f5d15b70f6e150299f47d9c565bde886f4fa20fe7bee",
+    "sheet": "long-2.jpg"
+  },
+  {
+    "state": "agent-workflow-journey-intake-auto-open",
+    "source": "05-agent/agent-workflow-journey-intake-auto-open/default.png",
+    "sha256": "b02036b885cb0c76263c779b129a6fbfd459f5c9ba9f29988242e367689301bb",
+    "sheet": "long-2.jpg"
+  },
+  {
+    "state": "agent-workflow-journey-intake-draft-return",
+    "source": "05-agent/agent-workflow-journey-intake-draft-return/default.png",
+    "sha256": "6ed93f2730857caf4e57af05bca39601fc99dc02085eb3345947dc4aa6bd89c0",
+    "sheet": "long-3.jpg"
+  },
+  {
+    "state": "agent-workflow-journey-intake-filled",
+    "source": "05-agent/agent-workflow-journey-intake-filled/default.png",
+    "sha256": "3f3c755d5afd973c880a32548a2c9a7ad8286ce6b5e6754501ebe31fbe6c1e7d",
+    "sheet": "long-3.jpg"
+  },
+  {
+    "state": "agent-workflow-journey-intake-readonly",
+    "source": "05-agent/agent-workflow-journey-intake-readonly/default.png",
+    "sha256": "7af0cf78a506c42fcc2ff7eb04e0886a7566da147939a1a225181376c24b7f7f",
+    "sheet": "long-3.jpg"
+  },
+  {
+    "state": "agent-workflow-journey-intake-readonly-return",
+    "source": "05-agent/agent-workflow-journey-intake-readonly-return/default.png",
+    "sha256": "1510fd190f7d8227c34bb13891ed885267992609aa4a84b84675e085fccb41aa",
+    "sheet": "long-3.jpg"
+  },
+  {
+    "state": "agent-workflow-journey-intake-reply",
+    "source": "05-agent/agent-workflow-journey-intake-reply/default.png",
+    "sha256": "1510fd190f7d8227c34bb13891ed885267992609aa4a84b84675e085fccb41aa",
+    "sheet": "long-3.jpg"
+  },
+  {
+    "state": "agent-workflow-journey-intake-submitting",
+    "source": "05-agent/agent-workflow-journey-intake-submitting/default.png",
+    "sha256": "87982585887c9e5fda2bf456fceb30efd3825822b21f87bab1719303431d2962",
+    "sheet": "long-3.jpg"
+  },
+  {
+    "state": "agent-workflow-journey-intake-validation",
+    "source": "05-agent/agent-workflow-journey-intake-validation/default.png",
+    "sha256": "c519d528bfc35db8adabcada4ffd11c9f5542118025b7d7664eddd425fb31ab7",
+    "sheet": "long-4.jpg"
+  },
+  {
+    "state": "agent-workflow-journey-latest-off-bottom",
+    "source": "05-agent/agent-workflow-journey-latest-off-bottom/default.png",
+    "sha256": "56df31d57880ad099473aa22355dd08d2c9f3dc3fdb3f21b8e64b677eaa12a74",
+    "sheet": "long-4.jpg"
+  },
+  {
+    "state": "agent-workflow-journey-latest-returned",
+    "source": "05-agent/agent-workflow-journey-latest-returned/default.png",
+    "sha256": "56df31d57880ad099473aa22355dd08d2c9f3dc3fdb3f21b8e64b677eaa12a74",
+    "sheet": "long-4.jpg"
+  },
+  {
+    "state": "agent-workflow-journey-milk-history",
+    "source": "05-agent/agent-workflow-journey-milk-history/default.png",
+    "sha256": "2489f20d91eea180858aadbb2ec71c6c7035618d2f0b8f509b6f9fc69b1cc5d1",
+    "sheet": "long-4.jpg"
+  },
+  {
+    "state": "agent-workflow-journey-milk-request",
+    "source": "05-agent/agent-workflow-journey-milk-request/default.png",
+    "sha256": "3f8efa01d3d53c03c6f8062553d29926c04954ef015d2fa5a7f3b166d04079e9",
+    "sheet": "long-4.jpg"
+  },
+  {
+    "state": "agent-workflow-journey-milk-result",
+    "source": "05-agent/agent-workflow-journey-milk-result/default.png",
+    "sha256": "56df31d57880ad099473aa22355dd08d2c9f3dc3fdb3f21b8e64b677eaa12a74",
+    "sheet": "long-4.jpg"
+  },
+  {
+    "state": "agent-workflow-journey-milk-return",
+    "source": "05-agent/agent-workflow-journey-milk-return/default.png",
+    "sha256": "56df31d57880ad099473aa22355dd08d2c9f3dc3fdb3f21b8e64b677eaa12a74",
+    "sheet": "long-5.jpg"
+  },
+  {
+    "state": "agent-workflow-journey-reject-failure-pending",
+    "source": "05-agent/agent-workflow-journey-reject-failure-pending/default.png",
+    "sha256": "48d56646d970eeccbd2164a0c6d4e7b04244e9a8500a7b846654cd67008c2e97",
+    "sheet": "long-5.jpg"
+  },
+  {
+    "state": "agent-workflow-journey-reject-failure-preview",
+    "source": "05-agent/agent-workflow-journey-reject-failure-preview/default.png",
+    "sha256": "a8c18ad32f85486be57c46d9ce24438ffe91ff888bb20f00fe4e27618c541587",
+    "sheet": "long-5.jpg"
+  },
+  {
+    "state": "agent-workflow-journey-reject-failure-result",
+    "source": "05-agent/agent-workflow-journey-reject-failure-result/default.png",
+    "sha256": "4a2454df822322b5050e2553fbbc3fc0cac0f50713e55061e3810e00682b90cf",
+    "sheet": "long-5.jpg"
+  },
+  {
+    "state": "agent-workflow-journey-reject-failure-return",
+    "source": "05-agent/agent-workflow-journey-reject-failure-return/default.png",
+    "sha256": "4a2454df822322b5050e2553fbbc3fc0cac0f50713e55061e3810e00682b90cf",
+    "sheet": "long-5.jpg"
+  },
+  {
+    "state": "agent-workflow-journey-reject-success-pending",
+    "source": "05-agent/agent-workflow-journey-reject-success-pending/default.png",
+    "sha256": "48d56646d970eeccbd2164a0c6d4e7b04244e9a8500a7b846654cd67008c2e97",
+    "sheet": "long-5.jpg"
+  },
+  {
+    "state": "agent-workflow-journey-reject-success-preview",
+    "source": "05-agent/agent-workflow-journey-reject-success-preview/default.png",
+    "sha256": "a8c18ad32f85486be57c46d9ce24438ffe91ff888bb20f00fe4e27618c541587",
+    "sheet": "long-6.jpg"
+  },
+  {
+    "state": "agent-workflow-journey-reject-success-result",
+    "source": "05-agent/agent-workflow-journey-reject-success-result/default.png",
+    "sha256": "506278e54df009456924cf037aeaf2645754f5e50beb70fbb6574e8b66dc5c29",
+    "sheet": "long-6.jpg"
+  },
+  {
+    "state": "agent-workflow-journey-reject-success-return",
+    "source": "05-agent/agent-workflow-journey-reject-success-return/default.png",
+    "sha256": "506278e54df009456924cf037aeaf2645754f5e50beb70fbb6574e8b66dc5c29",
+    "sheet": "long-6.jpg"
+  },
+  {
+    "state": "agent-workflow-journey-retry-intake-accepted",
+    "source": "05-agent/agent-workflow-journey-retry-intake-accepted/default.png",
+    "sha256": "ad2356f93e5ebc09693574fd8c5155523901315f439db9cbc68735424c764177",
+    "sheet": "long-6.jpg"
+  },
+  {
+    "state": "agent-workflow-journey-retry-intake-auto-open",
+    "source": "05-agent/agent-workflow-journey-retry-intake-auto-open/default.png",
+    "sha256": "b02036b885cb0c76263c779b129a6fbfd459f5c9ba9f29988242e367689301bb",
+    "sheet": "long-6.jpg"
+  },
+  {
+    "state": "agent-workflow-journey-retry-intake-completed",
+    "source": "05-agent/agent-workflow-journey-retry-intake-completed/default.png",
+    "sha256": "d0bcc8816b8a149327911796d10c88fe2ed841cef785209e05bf2f7288160b01",
+    "sheet": "long-6.jpg"
+  },
+  {
+    "state": "agent-workflow-journey-retry-intake-failed",
+    "source": "05-agent/agent-workflow-journey-retry-intake-failed/default.png",
+    "sha256": "2e7148b51cb271768fa4de25a4b4ac317dfc2507df4d912e86f4ef1a9ef9a7b5",
+    "sheet": "long-7.jpg"
+  },
+  {
+    "state": "agent-workflow-journey-retry-intake-pending",
+    "source": "05-agent/agent-workflow-journey-retry-intake-pending/default.png",
+    "sha256": "33964227e7e77cf7964addf3db6898e7379dcca58436cb8f4eb8e6b19229613d",
+    "sheet": "long-7.jpg"
+  },
+  {
+    "state": "agent-workflow-journey-ticket-return",
+    "source": "05-agent/agent-workflow-journey-ticket-return/default.png",
+    "sha256": "c8a7c7213f0e91321a417228f1123085aa285218a87da5b04e17173c9b3484f0",
+    "sheet": "long-7.jpg"
+  },
+  {
+    "state": "agent-workflow-journey-ticket-submitted",
+    "source": "05-agent/agent-workflow-journey-ticket-submitted/default.png",
+    "sha256": "c8a7c7213f0e91321a417228f1123085aa285218a87da5b04e17173c9b3484f0",
+    "sheet": "long-7.jpg"
+  }
+]

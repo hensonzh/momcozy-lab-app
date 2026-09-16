@@ -1,0 +1,178 @@
+[
+  {
+    "state": "card",
+    "file": "native-resource-card.png",
+    "route": "/",
+    "trigger": "Actual native Agent reply with four Chinese action labels",
+    "previous": null,
+    "full_document": "native-resource-card-long.png",
+    "scroll_metadata": "native-resource-card-long.json",
+    "root_entry": "More → Cozymate → send question → SSE artifact card → actual action button",
+    "test": "integration_test/agent_resource_inventory_test.dart"
+  },
+  {
+    "state": "pdf-first",
+    "file": "native-resource-pdf-first.png",
+    "route": "/media-viewer",
+    "trigger": "Tap PDF action → native PDFium displays first of two pages",
+    "previous": "native-resource-card",
+    "full_document": "native-resource-pdf-full.png",
+    "scroll_metadata": "native-resource-pdf-full.json",
+    "root_entry": "More → Cozymate → send question → SSE artifact card → actual action button",
+    "test": "integration_test/agent_resource_inventory_test.dart"
+  },
+  {
+    "state": "pdf-next",
+    "file": "native-resource-pdf-next.png",
+    "route": "/media-viewer",
+    "trigger": "Tap next page → page two",
+    "previous": "native-resource-pdf-first",
+    "root_entry": "More → Cozymate → send question → SSE artifact card → actual action button",
+    "test": "integration_test/agent_resource_inventory_test.dart"
+  },
+  {
+    "state": "pdf-zoom",
+    "file": "native-resource-pdf-zoom.png",
+    "route": "/media-viewer",
+    "trigger": "Zoom PDF → actual rendered zoom and complete document",
+    "previous": "native-resource-pdf-next",
+    "full_document": "native-resource-pdf-zoom-full.png",
+    "scroll_metadata": "native-resource-pdf-zoom-full.json",
+    "root_entry": "More → Cozymate → send question → SSE artifact card → actual action button",
+    "test": "integration_test/agent_resource_inventory_test.dart"
+  },
+  {
+    "state": "pdf-reset",
+    "file": "native-resource-pdf-reset.png",
+    "route": "/media-viewer",
+    "trigger": "Zoom out then previous page → original document view",
+    "previous": "native-resource-pdf-zoom",
+    "root_entry": "More → Cozymate → send question → SSE artifact card → actual action button",
+    "test": "integration_test/agent_resource_inventory_test.dart"
+  },
+  {
+    "state": "pdf-return",
+    "file": "native-resource-pdf-return.png",
+    "route": "/",
+    "trigger": "Native PDF back → original Agent card",
+    "previous": "native-resource-pdf-reset",
+    "full_document": "native-resource-pdf-return-long.png",
+    "scroll_metadata": "native-resource-pdf-return-long.json",
+    "root_entry": "More → Cozymate → send question → SSE artifact card → actual action button",
+    "test": "integration_test/agent_resource_inventory_test.dart"
+  },
+  {
+    "state": "video-ready",
+    "file": "native-resource-video-ready.png",
+    "route": "/media-viewer",
+    "trigger": "Tap video action → real Android decoder renders asset",
+    "previous": "native-resource-pdf-return",
+    "root_entry": "More → Cozymate → send question → SSE artifact card → actual action button",
+    "test": "integration_test/agent_resource_inventory_test.dart"
+  },
+  {
+    "state": "video-playing",
+    "file": "native-resource-video-playing.png",
+    "route": "/media-viewer",
+    "trigger": "Play → native video position advances",
+    "previous": "native-resource-video-ready",
+    "root_entry": "More → Cozymate → send question → SSE artifact card → actual action button",
+    "test": "integration_test/agent_resource_inventory_test.dart"
+  },
+  {
+    "state": "video-paused",
+    "file": "native-resource-video-paused.png",
+    "route": "/media-viewer",
+    "trigger": "Pause native playback",
+    "previous": "native-resource-video-playing",
+    "root_entry": "More → Cozymate → send question → SSE artifact card → actual action button",
+    "test": "integration_test/agent_resource_inventory_test.dart"
+  },
+  {
+    "state": "video-seek-mute",
+    "file": "native-resource-video-seek-mute.png",
+    "route": "/media-viewer",
+    "trigger": "Seek and mute → actual controller controls",
+    "previous": "native-resource-video-paused",
+    "root_entry": "More → Cozymate → send question → SSE artifact card → actual action button",
+    "test": "integration_test/agent_resource_inventory_test.dart"
+  },
+  {
+    "state": "video-fullscreen",
+    "file": "native-resource-video-fullscreen.png",
+    "route": "/media-viewer",
+    "trigger": "Open native immersive player",
+    "previous": "native-resource-video-seek-mute",
+    "root_entry": "More → Cozymate → send question → SSE artifact card → actual action button",
+    "test": "integration_test/agent_resource_inventory_test.dart"
+  },
+  {
+    "state": "video-inline",
+    "file": "native-resource-video-inline.png",
+    "route": "/media-viewer",
+    "trigger": "Exit immersive player retains paused position",
+    "previous": "native-resource-video-fullscreen",
+    "root_entry": "More → Cozymate → send question → SSE artifact card → actual action button",
+    "test": "integration_test/agent_resource_inventory_test.dart"
+  },
+  {
+    "state": "video-return",
+    "file": "native-resource-video-return.png",
+    "route": "/",
+    "trigger": "Video back disposes player and restores original card",
+    "previous": "native-resource-video-inline",
+    "full_document": "native-resource-video-return-long.png",
+    "scroll_metadata": "native-resource-video-return-long.json",
+    "root_entry": "More → Cozymate → send question → SSE artifact card → actual action button",
+    "test": "integration_test/agent_resource_inventory_test.dart"
+  },
+  {
+    "state": "image",
+    "file": "native-resource-image.png",
+    "route": "/media-viewer",
+    "trigger": "Image card → native decoded PNG",
+    "previous": "native-resource-video-return",
+    "root_entry": "More → Cozymate → send question → SSE artifact card → actual action button",
+    "test": "integration_test/agent_resource_inventory_test.dart"
+  },
+  {
+    "state": "image-zoom",
+    "file": "native-resource-image-zoom.png",
+    "route": "/media-viewer",
+    "trigger": "Double tap → 2.5x image zoom",
+    "previous": "native-resource-image",
+    "root_entry": "More → Cozymate → send question → SSE artifact card → actual action button",
+    "test": "integration_test/agent_resource_inventory_test.dart"
+  },
+  {
+    "state": "image-return",
+    "file": "native-resource-image-return.png",
+    "route": "/",
+    "trigger": "Image back → original native card",
+    "previous": "native-resource-image-zoom",
+    "full_document": "native-resource-image-return-long.png",
+    "scroll_metadata": "native-resource-image-return-long.json",
+    "root_entry": "More → Cozymate → send question → SSE artifact card → actual action button",
+    "test": "integration_test/agent_resource_inventory_test.dart"
+  },
+  {
+    "state": "renew",
+    "file": "native-resource-renew.png",
+    "route": "/services/renew",
+    "trigger": "Native artifact internal link → generic renewal route",
+    "previous": "native-resource-image-return",
+    "root_entry": "More → Cozymate → send question → SSE artifact card → actual action button",
+    "test": "integration_test/agent_resource_inventory_test.dart"
+  },
+  {
+    "state": "renew-return",
+    "file": "native-resource-renew-return.png",
+    "route": "/",
+    "trigger": "Renewal back → Me; Cozymate tab restores the original reply",
+    "previous": "native-resource-renew",
+    "full_document": "native-resource-renew-return-long.png",
+    "scroll_metadata": "native-resource-renew-return-long.json",
+    "root_entry": "More → Cozymate → send question → SSE artifact card → actual action button",
+    "test": "integration_test/agent_resource_inventory_test.dart"
+  }
+]

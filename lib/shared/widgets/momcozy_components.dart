@@ -77,10 +77,14 @@ class MomCozySectionHeading extends StatelessWidget {
     super.key,
     required this.title,
     this.icon,
+    this.leading,
+    this.badge,
     this.action,
   });
   final String title;
   final IconData? icon;
+  final Widget? leading;
+  final Widget? badge;
   final Widget? action;
 
   @override
@@ -98,7 +102,10 @@ class MomCozySectionHeading extends StatelessWidget {
             MediaQuery.textScalerOf(context).scale(1) > 1.3;
         final heading = Row(
           children: [
-            if (icon != null) ...[
+            if (leading != null) ...[
+              leading!,
+              const SizedBox(width: MomCozySpacing.compact),
+            ] else if (icon != null) ...[
               Icon(
                 icon,
                 size: MomCozyIconSizes.standard,
@@ -107,7 +114,20 @@ class MomCozySectionHeading extends StatelessWidget {
               const SizedBox(width: MomCozySpacing.compact),
             ],
             Expanded(
-              child: Text(title, style: Theme.of(context).textTheme.titleLarge),
+              child: badge == null
+                  ? Text(title, style: Theme.of(context).textTheme.titleLarge)
+                  : Wrap(
+                      spacing: 8,
+                      runSpacing: 6,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      children: [
+                        Text(
+                          title,
+                          style: Theme.of(context).textTheme.titleLarge,
+                        ),
+                        badge!,
+                      ],
+                    ),
             ),
             if (!stacked && action != null) action!,
           ],
@@ -158,21 +178,29 @@ class MomCozyBadge extends StatelessWidget {
     super.key,
     this.color = MomCozyColors.mutedForeground,
     this.background = MomCozyColors.muted,
+    this.compact = false,
   });
   final String label;
   final Color color, background;
+  final bool compact;
 
   @override
   Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.symmetric(
-      horizontal: MomCozySpacing.compact,
-      vertical: MomCozySpacing.xs,
+    padding: EdgeInsets.symmetric(
+      horizontal: compact ? 6 : MomCozySpacing.compact,
+      vertical: compact ? 3 : MomCozySpacing.xs,
     ),
     decoration: BoxDecoration(
       color: background,
       borderRadius: BorderRadius.circular(MomCozyRadii.badge),
     ),
-    child: Text(label, style: MomCozyTypography.label.copyWith(color: color)),
+    child: Text(
+      label,
+      style: MomCozyTypography.label.copyWith(
+        color: color,
+        fontSize: compact ? 9 : null,
+      ),
+    ),
   );
 }
 

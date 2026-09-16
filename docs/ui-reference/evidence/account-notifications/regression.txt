@@ -1,0 +1,118 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/features/auth/consumer_auth_page_test.dart
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: (setUpAll)
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: email entry and registration at 320.0 / 1.0
+00:00 +1: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: email entry and registration at 320.0 / 1.0
+00:00 +2: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: email entry and registration at 320.0 / 1.0
+00:00 +3: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: email entry and registration at 320.0 / 1.0
+00:00 +4: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: email entry and registration at 320.0 / 1.0
+00:00 +5: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: email entry and registration at 320.0 / 1.0
+00:00 +6: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: email entry and registration at 320.0 / 1.0
+00:00 +7: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: email entry and registration at 320.0 / 1.0
+00:00 +8: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: email entry and registration at 320.0 / 1.0
+00:00 +9: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: email entry and registration at 320.0 / 1.0
+00:00 +10: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: email entry and registration at 320.0 / 1.0
+00:00 +11: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: email entry and registration at 320.0 / 1.0
+00:00 +12: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: email entry and registration at 320.0 / 1.0
+00:00 +13: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: email entry and registration at 320.0 / 1.0
+00:00 +14: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: email entry and registration at 320.0 / 1.0
+00:00 +15: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: email entry and registration at 320.0 / 1.0
+00:00 +16: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: email entry and registration at 320.0 / 1.0
+00:00 +17: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: email entry and registration at 320.0 / 1.0
+00:00 +18: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: email entry and registration at 320.0 / 1.0
+00:00 +19: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: email entry and registration at 320.0 / 1.0
+00:00 +20: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: email entry and registration at 320.0 / 1.0
+00:00 +21: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: email entry and registration at 320.0 / 1.0
+00:00 +22: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: email entry and registration at 320.0 / 1.0
+00:00 +23: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: email entry and registration at 320.0 / 1.0
+00:00 +24: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: email entry and registration at 320.0 / 1.0
+00:00 +25: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: email entry and registration at 320.0 / 1.0
+00:00 +26: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: email entry and registration at 320.0 / 1.0
+00:00 +27: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: email entry and registration at 320.0 / 1.0
+00:00 +28: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: email entry and registration at 320.0 / 1.0
+00:00 +29: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: email entry and registration at 320.0 / 1.0
+00:00 +30: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: email entry and registration at 320.0 / 1.0
+00:00 +31: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: email entry and registration at 320.0 / 1.0
+00:00 +32: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: email entry and registration at 320.0 / 1.0
+00:00 +33: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: email entry and registration at 320.0 / 1.0
+00:00 +34: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: email entry and registration at 320.0 / 1.0
+00:00 +35: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: email entry and registration at 320.0 / 1.0
+00:00 +36: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: email entry and registration at 320.0 / 1.0
+00:00 +37: /Users/lute/project/momcozy-lab/app/test/features/auth/consumer_auth_page_test.dart: language menu preserves the form and legal links open official pages
+00:00 +38: /Users/lute/project/momcozy-lab/app/test/features/auth/consumer_auth_page_test.dart: language menu preserves the form and legal links open official pages
+00:01 +39: /Users/lute/project/momcozy-lab/app/test/features/auth/consumer_auth_page_test.dart: language menu preserves the form and legal links open official pages
+00:01 +40: /Users/lute/project/momcozy-lab/app/test/features/auth/consumer_auth_page_test.dart: language menu preserves the form and legal links open official pages
+00:01 +41: /Users/lute/project/momcozy-lab/app/test/features/auth/account_page_test.dart: account route requires login and returns to the intended page
+00:01 +42: /Users/lute/project/momcozy-lab/app/test/features/notifications/notifications_page_test.dart: shows the real inbox and supports read and archive actions
+00:01 +43: /Users/lute/project/momcozy-lab/app/test/features/notifications/notifications_page_test.dart: shows the real inbox and supports read and archive actions
+00:01 +44: /Users/lute/project/momcozy-lab/app/test/features/notifications/notifications_page_test.dart: shows the real inbox and supports read and archive actions
+00:01 +45: /Users/lute/project/momcozy-lab/app/test/features/notifications/notifications_page_test.dart: shows the real inbox and supports read and archive actions
+00:01 +46: /Users/lute/project/momcozy-lab/app/test/features/notifications/notifications_page_test.dart: shows the real inbox and supports read and archive actions
+00:01 +47: /Users/lute/project/momcozy-lab/app/test/features/notifications/notifications_page_test.dart: shows the real inbox and supports read and archive actions
+00:01 +48: /Users/lute/project/momcozy-lab/app/test/features/notifications/notifications_page_test.dart: shows the real inbox and supports read and archive actions
+00:01 +49: /Users/lute/project/momcozy-lab/app/test/features/notifications/notifications_page_test.dart: shows the real inbox and supports read and archive actions
+00:01 +50: /Users/lute/project/momcozy-lab/app/test/features/notifications/notifications_page_test.dart: shows the real inbox and supports read and archive actions
+00:01 +51: /Users/lute/project/momcozy-lab/app/test/features/notifications/notifications_page_test.dart: shows the real inbox and supports read and archive actions
+00:01 +52: /Users/lute/project/momcozy-lab/app/test/features/notifications/notifications_page_test.dart: shows the real inbox and supports read and archive actions
+00:01 +53: /Users/lute/project/momcozy-lab/app/test/features/notifications/notifications_page_test.dart: shows the real inbox and supports read and archive actions
+00:01 +54: /Users/lute/project/momcozy-lab/app/test/features/notifications/notifications_page_test.dart: shows the real inbox and supports read and archive actions
+00:01 +55: /Users/lute/project/momcozy-lab/app/test/features/notifications/notifications_page_test.dart: shows the real inbox and supports read and archive actions
+00:01 +56: /Users/lute/project/momcozy-lab/app/test/features/notifications/notifications_page_test.dart: shows the real inbox and supports read and archive actions
+00:01 +57: /Users/lute/project/momcozy-lab/app/test/features/notifications/notifications_page_test.dart: shows the real inbox and supports read and archive actions
+00:01 +58: /Users/lute/project/momcozy-lab/app/test/features/notifications/notifications_page_test.dart: shows the real inbox and supports read and archive actions
+00:01 +59: /Users/lute/project/momcozy-lab/app/test/features/notifications/notifications_page_test.dart: shows the real inbox and supports read and archive actions
+00:01 +60: /Users/lute/project/momcozy-lab/app/test/features/notifications/notifications_page_test.dart: shows the real inbox and supports read and archive actions
+00:01 +61: /Users/lute/project/momcozy-lab/app/test/features/notifications/notifications_page_test.dart: shows the real inbox and supports read and archive actions
+00:01 +62: /Users/lute/project/momcozy-lab/app/test/features/notifications/notifications_page_test.dart: shows the real inbox and supports read and archive actions
+00:01 +63: /Users/lute/project/momcozy-lab/app/test/features/notifications/notifications_page_test.dart: shows the real inbox and supports read and archive actions
+00:01 +64: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: account and confirmations at 320.0 / 1.0
+00:01 +65: /Users/lute/project/momcozy-lab/app/test/features/auth/account_page_test.dart: account read retry and password-confirmed Google linking
+00:01 +66: /Users/lute/project/momcozy-lab/app/test/features/auth/consumer_auth_page_test.dart: password visibility can be toggled and resets on navigation
+00:01 +67: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: email entry and registration at 320.0 / 2.0
+00:01 +68: /Users/lute/project/momcozy-lab/app/test/features/auth/consumer_auth_page_test.dart: email login saves a session and Google cancellation does not sign in
+00:01 +69: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: reset form with keyboard at 320.0 / 2.0
+00:01 +70: /Users/lute/project/momcozy-lab/app/test/features/auth/consumer_auth_page_test.dart: register requires email proof and invalid input sends no request
+00:01 +71: /Users/lute/project/momcozy-lab/app/test/features/auth/consumer_auth_page_test.dart: register requires email proof and invalid input sends no request
+00:01 +72: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: account and confirmations at 320.0 / 2.0
+00:01 +73: /Users/lute/project/momcozy-lab/app/test/features/auth/consumer_auth_page_test.dart: forgot password gives generic confirmation and submits new password
+00:02 +74: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: email entry and registration at 390.0 / 1.0
+00:02 +75: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: reset form with keyboard at 390.0 / 1.0
+00:02 +76: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: reset form with keyboard at 390.0 / 1.0
+00:02 +77: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: reset form with keyboard at 390.0 / 1.0
+00:02 +78: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: reset form with keyboard at 390.0 / 1.0
+00:02 +79: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: reset form with keyboard at 390.0 / 1.0
+00:02 +80: /Users/lute/project/momcozy-lab/app/test/features/notifications/notification_widgets_test.dart: first reminder uses education and denial leaves it off
+00:02 +81: /Users/lute/project/momcozy-lab/app/test/features/notifications/notification_widgets_test.dart: first reminder uses education and denial leaves it off
+00:02 +82: /Users/lute/project/momcozy-lab/app/test/features/notifications/notification_widgets_test.dart: first reminder uses education and denial leaves it off
+00:02 +83: /Users/lute/project/momcozy-lab/app/test/features/notifications/notification_widgets_test.dart: first reminder uses education and denial leaves it off
+00:02 +84: /Users/lute/project/momcozy-lab/app/test/features/notifications/notification_widgets_test.dart: first reminder uses education and denial leaves it off
+00:02 +85: /Users/lute/project/momcozy-lab/app/test/features/notifications/notification_widgets_test.dart: first reminder uses education and denial leaves it off
+00:02 +86: /Users/lute/project/momcozy-lab/app/test/features/notifications/notification_widgets_test.dart: first reminder uses education and denial leaves it off
+00:02 +87: /Users/lute/project/momcozy-lab/app/test/features/notifications/firebase_push_messaging_test.dart: iOS waits for asynchronous APNs registration before requesting FCM
+00:02 +88: /Users/lute/project/momcozy-lab/app/test/features/notifications/firebase_push_messaging_test.dart: iOS waits for asynchronous APNs registration before requesting FCM
+00:02 +89: /Users/lute/project/momcozy-lab/app/test/features/notifications/firebase_push_messaging_test.dart: iOS waits for asynchronous APNs registration before requesting FCM
+00:02 +90: /Users/lute/project/momcozy-lab/app/test/features/notifications/notification_design_test.dart: inbox and retained-content error at 320.0 / 1.0
+00:02 +91: /Users/lute/project/momcozy-lab/app/test/features/notifications/notification_design_test.dart: inbox and retained-content error at 320.0 / 1.0
+00:02 +92: /Users/lute/project/momcozy-lab/app/test/features/notifications/notification_design_test.dart: inbox and retained-content error at 320.0 / 1.0
+00:02 +93: /Users/lute/project/momcozy-lab/app/test/features/notifications/notification_design_test.dart: inbox and retained-content error at 320.0 / 1.0
+00:02 +94: /Users/lute/project/momcozy-lab/app/test/features/notifications/firebase_push_messaging_test.dart: missing APNs stays pending and a later retry can acquire the token
+00:02 +95: /Users/lute/project/momcozy-lab/app/test/features/notifications/firebase_push_messaging_test.dart: missing APNs stays pending and a later retry can acquire the token
+00:03 +96: /Users/lute/project/momcozy-lab/app/test/features/notifications/firebase_push_messaging_test.dart: missing APNs stays pending and a later retry can acquire the token
+00:03 +97: /Users/lute/project/momcozy-lab/app/test/features/notifications/firebase_push_messaging_test.dart: missing APNs stays pending and a later retry can acquire the token
+00:03 +98: /Users/lute/project/momcozy-lab/app/test/features/notifications/firebase_push_messaging_test.dart: missing APNs stays pending and a later retry can acquire the token
+00:03 +99: /Users/lute/project/momcozy-lab/app/test/features/notifications/firebase_push_messaging_test.dart: missing APNs stays pending and a later retry can acquire the token
+00:03 +100: /Users/lute/project/momcozy-lab/app/test/features/notifications/firebase_push_messaging_test.dart: missing APNs stays pending and a later retry can acquire the token
+00:03 +101: /Users/lute/project/momcozy-lab/app/test/features/notifications/firebase_push_messaging_test.dart: missing APNs stays pending and a later retry can acquire the token
+00:03 +102: /Users/lute/project/momcozy-lab/app/test/features/notifications/firebase_push_messaging_test.dart: missing APNs stays pending and a later retry can acquire the token
+00:03 +103: /Users/lute/project/momcozy-lab/app/test/features/notifications/firebase_push_messaging_test.dart: missing APNs stays pending and a later retry can acquire the token
+00:03 +104: /Users/lute/project/momcozy-lab/app/test/features/notifications/firebase_push_messaging_test.dart: missing APNs stays pending and a later retry can acquire the token
+00:03 +105: /Users/lute/project/momcozy-lab/app/test/features/notifications/firebase_push_messaging_test.dart: missing APNs stays pending and a later retry can acquire the token
+00:03 +106: /Users/lute/project/momcozy-lab/app/test/features/notifications/firebase_push_messaging_test.dart: missing APNs stays pending and a later retry can acquire the token
+00:03 +107: /Users/lute/project/momcozy-lab/app/test/features/notifications/firebase_push_messaging_test.dart: missing APNs stays pending and a later retry can acquire the token
+00:03 +108: /Users/lute/project/momcozy-lab/app/test/features/notifications/firebase_push_messaging_test.dart: missing APNs stays pending and a later retry can acquire the token
+00:03 +109: /Users/lute/project/momcozy-lab/app/test/features/notifications/firebase_push_messaging_test.dart: missing APNs stays pending and a later retry can acquire the token
+00:03 +110: /Users/lute/project/momcozy-lab/app/test/features/notifications/firebase_push_messaging_test.dart: missing APNs stays pending and a later retry can acquire the token
+00:03 +111: /Users/lute/project/momcozy-lab/app/test/features/notifications/firebase_push_messaging_test.dart: missing APNs stays pending and a later retry can acquire the token
+00:03 +112: /Users/lute/project/momcozy-lab/app/test/features/notifications/firebase_push_messaging_test.dart: missing APNs stays pending and a later retry can acquire the token
+00:03 +113: /Users/lute/project/momcozy-lab/app/test/features/notifications/firebase_push_messaging_test.dart: missing APNs stays pending and a later retry can acquire the token
+00:04 +114: /Users/lute/project/momcozy-lab/app/test/features/notifications/firebase_push_messaging_test.dart: Android does not wait for APNs and logout pauses auto-init
+00:04 +115: All tests passed!

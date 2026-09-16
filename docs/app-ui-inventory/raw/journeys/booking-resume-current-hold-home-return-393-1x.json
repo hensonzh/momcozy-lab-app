@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/booking-resume-current-hold-home-return-393-1x.png",
+  "previous_source": "test/goldens/ui_inventory/booking-resume-current-hold-new-request-393-1x.png",
+  "route": "/me",
+  "trigger": "Booking Back → Me",
+  "root_entry": "Authenticated More → tap Me bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/services/booking_resume_current_inventory_test.dart"
+}

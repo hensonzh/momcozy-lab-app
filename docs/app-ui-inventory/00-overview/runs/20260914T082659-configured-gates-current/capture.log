@@ -1,0 +1,4 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_capability_gate_test.dart
+00:00 +0: default app startup bypasses the unsupported onboarding gate
+00:00 +1: an explicit capability keeps the onboarding route available
+00:00 +2: All tests passed!

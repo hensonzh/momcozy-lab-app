@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/service-current-package-feeding-confidence-393-1x.png",
+  "previous_source": "test/goldens/ui_inventory/service-current-catalog-team-back-dismissed-393-1x.png",
+  "route": "/services/feeding-confidence",
+  "trigger": "Catalog 喂养安心 → current package",
+  "root_entry": "Authenticated More → tap Me bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/services/service_current_inventory_test.dart"
+}

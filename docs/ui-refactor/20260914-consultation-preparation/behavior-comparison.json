@@ -1,0 +1,7 @@
+{
+  "all_entry_and_countdown_conditions_unchanged": true,
+  "one_second_timer_and_disposal_unchanged": true,
+  "room_constructor_lifecycle_back_leave_unchanged": true,
+  "room_methods_after_preparation_unchanged": true,
+  "preparation_callbacks_and_guards_unchanged": true
+}

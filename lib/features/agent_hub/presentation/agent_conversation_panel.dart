@@ -2,8 +2,10 @@ import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:momcozy_flutter_app/shared/widgets/product_feedback.dart';
-import 'package:momcozy_flutter_app/shared/design_system/momcozy_design_system.dart';
+import 'package:momcozy_flutter_app/shared/design_system/momcozy_motion.dart';
+import 'package:momcozy_flutter_app/shared/design_system/mom_home_tokens.dart';
+import 'package:momcozy_flutter_app/shared/design_system/mom_settings_theme.dart';
+import 'package:momcozy_flutter_app/shared/widgets/mom_settings_widgets.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_conversation.dart';
 
 typedef AgentConversationSelected = Future<bool> Function(String threadId);
@@ -16,6 +18,13 @@ Future<void> showAgentConversationPanel({
   required AgentConversationSelected onSelected,
   required VoidCallback onDismissed,
 }) async {
+  var dismissed = false;
+  void dismissOnce() {
+    if (dismissed) return;
+    dismissed = true;
+    onDismissed();
+  }
+
   final barrierLabel = MaterialLocalizations.of(
     context,
   ).modalBarrierDismissLabel;
@@ -24,14 +33,17 @@ Future<void> showAgentConversationPanel({
     useRootNavigator: true,
     barrierDismissible: true,
     barrierLabel: barrierLabel,
-    barrierColor: MomCozyColors.overlay,
-    transitionDuration: const Duration(milliseconds: 240),
+    barrierColor: const Color(0x520f0a0d),
+    transitionDuration: MomCozyMotion.duration(
+      context,
+      const Duration(milliseconds: 240),
+    ),
     pageBuilder: (context, animation, secondaryAnimation) {
       final screenWidth = MediaQuery.sizeOf(context).width;
-      final panelWidth = math.min(360.0, screenWidth * 0.82);
+      final panelWidth = math.min(360.0, screenWidth - 24);
       return PopScope(
         onPopInvokedWithResult: (didPop, result) {
-          if (didPop) onDismissed();
+          if (didPop) dismissOnce();
         },
         child: Align(
           alignment: Alignment.centerLeft,
@@ -50,6 +62,7 @@ Future<void> showAgentConversationPanel({
       );
     },
     transitionBuilder: (context, animation, secondaryAnimation, child) {
+      if (MediaQuery.disableAnimationsOf(context)) return child;
       final curved = CurvedAnimation(
         parent: animation,
         curve: Curves.easeOutCubic,
@@ -64,7 +77,7 @@ Future<void> showAgentConversationPanel({
       );
     },
   );
-  onDismissed();
+  dismissOnce();
 }
 
 class _AgentConversationPanel extends StatefulWidget {
@@ -150,206 +163,280 @@ class _AgentConversationPanelState extends State<_AgentConversationPanel> {
   }
 
   Widget _buildPanel(BuildContext context, {required bool canSwitch}) {
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onHorizontalDragEnd: (details) {
-        if ((details.primaryVelocity ?? 0) < -300) {
-          Navigator.of(context).pop();
-        }
-      },
-      child: Material(
-        color: MomCozyColors.background,
-        elevation: 18,
-        shadowColor: MomCozyColors.overlay,
-        borderRadius: const BorderRadius.only(
-          topRight: Radius.circular(MomCozyRadii.sheet),
-          bottomRight: Radius.circular(MomCozyRadii.sheet),
-        ),
-        clipBehavior: Clip.antiAlias,
-        child: SafeArea(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(20, 14, 10, 10),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        '会话历史',
-                        style: Theme.of(context).textTheme.headlineSmall
-                            ?.copyWith(
-                              color: MomCozyColors.foreground,
-                              fontWeight: FontWeight.w700,
+    return Theme(
+      data: momSettingsTheme(Theme.of(context)),
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onHorizontalDragEnd: (details) {
+          if ((details.primaryVelocity ?? 0) < -300) {
+            Navigator.of(context).pop();
+          }
+        },
+        child: Material(
+          color: MomHomeTokens.background,
+          elevation: 18,
+          shadowColor: const Color(0x520f0a0d),
+          borderRadius: const BorderRadius.only(
+            topRight: Radius.circular(MomHomeTokens.cardRadius),
+            bottomRight: Radius.circular(MomHomeTokens.cardRadius),
+          ),
+          clipBehavior: Clip.antiAlias,
+          child: SafeArea(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                ColoredBox(
+                  color: MomHomeTokens.surface,
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 16, 8, 16),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            '会话历史',
+                            style: MomHomeTokens.text(
+                              20,
+                              weight: FontWeight.w700,
                             ),
-                      ),
-                    ),
-                    IconButton(
-                      key: const ValueKey('agent-conversation-close-button'),
-                      onPressed: () => Navigator.of(context).pop(),
-                      tooltip: '关闭会话历史',
-                      icon: const Icon(Icons.close_rounded, size: 20),
-                    ),
-                  ],
-                ),
-              ),
-              const Divider(height: 1, color: MomCozyColors.border),
-              if (!canSwitch)
-                const Padding(
-                  padding: EdgeInsets.fromLTRB(20, 12, 20, 4),
-                  child: Text(
-                    '回复完成后可切换会话',
-                    style: TextStyle(
-                      color: MomCozyColors.mutedForeground,
-                      fontSize: MomCozyTypography.captionSize,
-                      fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        SizedBox.square(
+                          dimension: 44,
+                          child: IconButton(
+                            key: const ValueKey(
+                              'agent-conversation-close-button',
+                            ),
+                            onPressed: () => Navigator.of(context).pop(),
+                            tooltip: '关闭会话历史',
+                            icon: const Icon(Icons.close_rounded, size: 20),
+                            color: MomHomeTokens.rose,
+                            padding: EdgeInsets.zero,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
-              Expanded(child: _buildContent(context, canSwitch: canSwitch)),
-            ],
+                Expanded(child: _buildContent(context, canSwitch: canSwitch)),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
+  Widget _notice(String message, {bool error = false, Key? key}) => Semantics(
+    liveRegion: true,
+    child: Container(
+      key: key,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: error ? const Color(0xFFF8ECD8) : MomHomeTokens.neutralSurface,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Text(message, style: MomHomeTokens.text(13, height: 1.55)),
+    ),
+  );
+
   Widget _buildContent(BuildContext context, {required bool canSwitch}) {
     final conversations = _conversations;
-    if (conversations == null && _loadError == null) {
-      return const ProductLoadingView(
-        key: ValueKey('agent-conversation-loading'),
-      );
-    }
-    if (conversations == null) {
-      return Center(
-        child: ProductEmptyView(
-          icon: Icons.cloud_off_outlined,
-          title: '暂时无法加载会话',
-          action: TextButton(onPressed: _load, child: const Text('重试')),
+    final notices = <Widget>[
+      if (!canSwitch) _notice('回复完成后可切换会话'),
+      if (_switchFailed)
+        _notice(
+          '无法打开该会话，请重试',
+          error: true,
+          key: const ValueKey('agent-conversation-switch-error'),
         ),
-      );
-    }
-    if (conversations.isEmpty) {
-      return const Center(
-        child: ProductEmptyView(
-          icon: Icons.chat_bubble_outline_rounded,
-          title: '还没有历史会话',
-        ),
+    ];
+    if (conversations == null || conversations.isEmpty) {
+      final Widget status;
+      if (conversations == null && _loadError == null) {
+        status = Semantics(
+          liveRegion: true,
+          child: MomSettingsCard(
+            key: const ValueKey('agent-conversation-loading'),
+            children: [
+              Text(
+                '正在加载会话',
+                style: MomHomeTokens.text(16, weight: FontWeight.w700),
+              ),
+              const LinearProgressIndicator(),
+            ],
+          ),
+        );
+      } else if (conversations == null) {
+        status = MomSettingsCard(
+          children: [
+            Text(
+              '暂时无法加载会话',
+              style: MomHomeTokens.text(16, weight: FontWeight.w700),
+            ),
+            FilledButton(onPressed: _load, child: const Text('重试')),
+          ],
+        );
+      } else {
+        status = MomSettingsCard(
+          children: [
+            Text(
+              '还没有历史会话',
+              style: MomHomeTokens.text(16, weight: FontWeight.w700),
+            ),
+            Text(
+              '你可以关闭此面板，继续和 Cozymate 聊聊。',
+              style: MomHomeTokens.text(
+                13,
+                color: MomHomeTokens.secondary,
+                height: 1.55,
+              ),
+            ),
+          ],
+        );
+      }
+      return ListView(
+        padding: const EdgeInsets.all(MomHomeTokens.inset),
+        children: [
+          for (final notice in notices) ...[
+            notice,
+            const SizedBox(height: MomHomeTokens.gap),
+          ],
+          status,
+        ],
       );
     }
 
-    return Column(
-      children: [
-        if (_switchFailed)
-          const Padding(
-            key: ValueKey('agent-conversation-switch-error'),
-            padding: EdgeInsets.fromLTRB(20, 12, 20, 0),
-            child: Text(
-              '无法打开该会话，请重试',
-              style: TextStyle(
-                color: MomCozyColors.danger,
-                fontSize: MomCozyTypography.captionSize,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
-        Expanded(
-          child: ListView.separated(
-            key: const ValueKey('agent-conversation-list'),
-            padding: const EdgeInsets.fromLTRB(12, 12, 12, 24),
-            itemCount: conversations.length,
-            separatorBuilder: (context, index) => const SizedBox(height: 4),
-            itemBuilder: (context, index) {
-              final conversation = conversations[index];
-              final isCurrent = conversation.id == widget.activeThreadId;
-              final isLoading = conversation.id == _loadingThreadId;
-              return Semantics(
-                selected: isCurrent,
-                button: true,
-                child: Material(
-                  color: isCurrent
-                      ? MomCozyColors.roseSoft
-                      : Colors.transparent,
-                  borderRadius: BorderRadius.circular(MomCozyRadii.control),
-                  child: InkWell(
-                    key: ValueKey('agent-conversation-${conversation.id}'),
-                    borderRadius: BorderRadius.circular(MomCozyRadii.control),
-                    onTap: isLoading || (!canSwitch && !isCurrent)
-                        ? null
-                        : () => _select(conversation),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 11,
+    return ListView.separated(
+      key: const ValueKey('agent-conversation-list'),
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+      itemCount: notices.length + conversations.length,
+      separatorBuilder: (context, index) =>
+          const SizedBox(height: MomHomeTokens.gap),
+      itemBuilder: (context, index) {
+        if (index < notices.length) return notices[index];
+        final conversation = conversations[index - notices.length];
+        final isCurrent = conversation.id == widget.activeThreadId;
+        final isLoading = conversation.id == _loadingThreadId;
+        final enabled = _loadingThreadId == null && (canSwitch || isCurrent);
+        return _ConversationCard(
+          conversation: conversation,
+          current: isCurrent,
+          loading: isLoading,
+          enabled: enabled,
+          onTap: enabled ? () => _select(conversation) : null,
+        );
+      },
+    );
+  }
+}
+
+class _ConversationCard extends StatelessWidget {
+  const _ConversationCard({
+    required this.conversation,
+    required this.current,
+    required this.loading,
+    required this.enabled,
+    required this.onTap,
+  });
+  final AgentConversationSummary conversation;
+  final bool current;
+  final bool loading;
+  final bool enabled;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final largeText = MediaQuery.textScalerOf(context).scale(14) > 18;
+    return Semantics(
+      selected: current,
+      button: true,
+      enabled: enabled,
+      child: Material(
+        color: current ? MomHomeTokens.mint : MomHomeTokens.surface,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(MomHomeTokens.cardRadius),
+          side: const BorderSide(color: MomHomeTokens.border),
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          key: ValueKey('agent-conversation-${conversation.id}'),
+          onTap: onTap,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: 62),
+            child: Padding(
+              padding: const EdgeInsets.all(14),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    conversation.title,
+                    maxLines: largeText ? null : 2,
+                    overflow: largeText ? null : TextOverflow.ellipsis,
+                    style: MomHomeTokens.text(
+                      14,
+                      weight: FontWeight.w700,
+                      color: enabled || loading
+                          ? MomHomeTokens.ink
+                          : MomHomeTokens.secondary,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    _formatUpdatedAt(conversation.updatedAt),
+                    style: MomHomeTokens.text(
+                      12,
+                      color: MomHomeTokens.secondary,
+                    ),
+                  ),
+                  if (current) ...[
+                    const SizedBox(height: 6),
+                    Text(
+                      '✓ 当前会话',
+                      style: MomHomeTokens.text(
+                        12,
+                        weight: FontWeight.w700,
+                        color: MomHomeTokens.teal,
                       ),
+                    ),
+                  ],
+                  if (loading) ...[
+                    const SizedBox(height: 6),
+                    Semantics(
+                      liveRegion: true,
                       child: Row(
                         children: [
-                          Icon(
-                            isCurrent
-                                ? Icons.chat_bubble_rounded
-                                : Icons.chat_bubble_outline_rounded,
-                            size: 18,
-                            color: isCurrent
-                                ? MomCozyColors.primaryDark
-                                : MomCozyColors.mutedForeground,
+                          const SizedBox.square(
+                            dimension: 16,
+                            child: CircularProgressIndicator(strokeWidth: 2),
                           ),
-                          const SizedBox(width: 10),
+                          const SizedBox(width: 8),
                           Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  conversation.title,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                    color: MomCozyColors.foreground,
-                                    fontSize: MomCozyTypography.bodySize,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                                const SizedBox(height: 3),
-                                Text(
-                                  _formatUpdatedAt(conversation.updatedAt),
-                                  style: const TextStyle(
-                                    color: MomCozyColors.mutedForeground,
-                                    fontSize: MomCozyTypography.labelSize,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          if (isLoading)
-                            const Padding(
-                              padding: EdgeInsets.only(left: 8),
-                              child: SizedBox.square(
-                                dimension: 16,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                ),
+                            child: Text(
+                              '正在打开…',
+                              style: MomHomeTokens.text(
+                                12,
+                                color: MomHomeTokens.teal,
                               ),
                             ),
+                          ),
                         ],
                       ),
                     ),
-                  ),
-                ),
-              );
-            },
+                  ],
+                ],
+              ),
+            ),
           ),
         ),
-      ],
+      ),
     );
   }
 }
 
 String _formatUpdatedAt(DateTime value) {
   final local = value.toLocal();
-  final month = local.month.toString().padLeft(2, '0');
-  final day = local.day.toString().padLeft(2, '0');
   final hour = local.hour.toString().padLeft(2, '0');
   final minute = local.minute.toString().padLeft(2, '0');
-  return '$month-$day $hour:$minute';
+  return '${local.month}/${local.day} $hour:$minute';
 }

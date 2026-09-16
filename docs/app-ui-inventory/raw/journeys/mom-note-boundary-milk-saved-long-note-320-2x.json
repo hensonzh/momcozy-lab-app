@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/mom-note-boundary-milk-saved-long-note-320-2x.png",
+  "previous_source": "test/goldens/ui_inventory/mom-note-boundary-milk-note-scroll-end-320-2x.png",
+  "route": "/me",
+  "trigger": "Save maximum note without optional measurement → long record list",
+  "root_entry": "Authenticated More → tap Me bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/mom/mom_note_boundary_inventory_test.dart"
+}

@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/progress-current-appointments-error-393-1x.png",
+  "previous_source": "test/goldens/ui_inventory/progress-current-appointments-loading-393-1x.png",
+  "route": "/services/episodes/service-episode",
+  "trigger": "Appointment read 503 → service identity retained",
+  "root_entry": "Authenticated More → tap Me bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/services/progress_current_inventory_test.dart"
+}

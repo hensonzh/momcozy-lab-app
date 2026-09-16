@@ -1,4 +1,5 @@
 import 'dart:math' as math;
+import '../../../shared/widgets/momcozy_line_icon.dart';
 import 'package:flutter/material.dart';
 import '../../../shared/design_system/momcozy_design_system.dart';
 
@@ -29,6 +30,7 @@ class MotherStatusCard extends StatelessWidget {
     return Semantics(
       label: '$label，$value${detail == null ? '' : '，$detail'}',
       button: true,
+      onTap: onTap,
       child: ExcludeSemantics(
         child: Material(
           color: Colors.transparent,
@@ -59,8 +61,8 @@ class MotherStatusCard extends StatelessWidget {
                                 ),
                               ),
                             ),
-                            const Icon(
-                              Icons.chevron_right_rounded,
+                            const MomCozyLineIcon(
+                              MomCozyLineGlyph.chevronRight,
                               size: 16,
                               color: MomCozyColors.statusIcon,
                             ),

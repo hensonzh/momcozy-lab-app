@@ -1,0 +1,28 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: email entry and registration at 320.0 / 1.0
+00:00 +1: reset form with keyboard at 320.0 / 1.0
+00:00 +2: invite entry with short keyboard viewport at 320.0 / 1.0
+00:00 +3: account and confirmations at 320.0 / 1.0
+00:01 +4: email entry and registration at 320.0 / 2.0
+00:01 +5: reset form with keyboard at 320.0 / 2.0
+00:01 +6: invite entry with short keyboard viewport at 320.0 / 2.0
+00:01 +7: account and confirmations at 320.0 / 2.0
+00:01 +8: email entry and registration at 390.0 / 1.0
+00:01 +9: reset form with keyboard at 390.0 / 1.0
+00:01 +10: invite entry with short keyboard viewport at 390.0 / 1.0
+00:01 +11: account and confirmations at 390.0 / 1.0
+00:01 +12: email entry and registration at 390.0 / 2.0
+00:01 +13: reset form with keyboard at 390.0 / 2.0
+00:02 +14: invite entry with short keyboard viewport at 390.0 / 2.0
+00:02 +15: account and confirmations at 390.0 / 2.0
+00:02 +16: email entry and registration at 430.0 / 1.0
+00:02 +17: reset form with keyboard at 430.0 / 1.0
+00:02 +18: invite entry with short keyboard viewport at 430.0 / 1.0
+00:02 +19: account and confirmations at 430.0 / 1.0
+00:02 +20: email entry and registration at 430.0 / 2.0
+00:02 +21: reset form with keyboard at 430.0 / 2.0
+00:02 +22: invite entry with short keyboard viewport at 430.0 / 2.0
+00:02 +23: account and confirmations at 430.0 / 2.0
+00:02 +24: (tearDownAll)
+00:02 +24: All tests passed!

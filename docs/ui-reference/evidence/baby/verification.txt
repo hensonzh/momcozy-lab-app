@@ -1,0 +1,111 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/modules/baby/growth_reference_test.dart: WHO weekly and monthly points use actual calendar months through leap day
+00:00 +1: /Users/lute/project/momcozy-lab/app/test/modules/baby/growth_reference_test.dart: age uses completed calendar months and a missing date stays unknown
+00:00 +2: /Users/lute/project/momcozy-lab/app/test/modules/baby/growth_reference_test.dart: record values outside the default chart range remain visible
+00:00 +3: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_records_test.dart: five persisted record types retain dates, units and concrete observations
+00:00 +4: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_records_test.dart: unknown intake stays empty and feeding types cannot carry old measurements
+00:00 +5: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_records_test.dart: repository preserves scope, version and idempotency on mutations
+00:00 +6: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_records_test.dart: foreign baby in a response is rejected before reaching page state
+00:00 +7: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_home_controller_test.dart: late response from previous baby cannot replace the selected baby or its record state
+00:00 +8: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_controller_test.dart: uncertain creation freezes the exact draft and retries with the same key
+00:00 +9: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_controller_test.dart: uncertain creation freezes the exact draft and retries with the same key
+00:00 +10: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_record_editor_controller_test.dart: feeding requires method and breast side, and changing method cannot invent an intake amount
+00:00 +11: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_record_editor_controller_test.dart: feeding requires method and breast side, and changing method cannot invent an intake amount
+00:00 +12: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_record_editor_controller_test.dart: uncertain growth batch keeps the same measurements and key until confirmed
+00:00 +13: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_record_editor_controller_test.dart: waking an existing sleep retries its original end time and version
+00:00 +14: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_record_editor_controller_test.dart: observations keep calendar dates and cannot precede birth
+00:00 +15: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_record_editor_controller_test.dart: delete and undo recover uncertain responses using the exact receipt versions
+00:00 +16: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: (setUpAll)
+00:00 +17: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: (setUpAll)
+00:00 +17: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: baby home and knowledge scroll with double text at 320.0
+00:00 +18: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: baby home and knowledge scroll with double text at 320.0
+00:00 +19: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: baby home and knowledge scroll with double text at 320.0
+00:00 +20: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: baby home and knowledge scroll with double text at 320.0
+00:00 +21: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: baby home and knowledge scroll with double text at 320.0
+00:00 +22: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: baby home and knowledge scroll with double text at 320.0
+00:00 +23: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart: profile dialog scrolls and saves at 320.0 / 1.0
+00:01 +24: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart: profile dialog scrolls and saves at 320.0 / 1.0
+00:01 +25: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart: profile dialog scrolls and saves at 320.0 / 1.0
+00:01 +26: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: sleep editor remains usable at 320.0 / 1.0
+00:01 +27: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart: profile dialog scrolls and saves at 320.0 / 2.0
+00:01 +28: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: sleep editor remains usable at 320.0 / 2.0
+00:01 +29: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart: profile dialog scrolls and saves at 390.0 / 1.0
+00:01 +30: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: diaper editor remains usable at 320.0 / 1.0
+00:01 +31: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart: profile dialog scrolls and saves at 390.0 / 2.0
+00:01 +32: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: diaper editor remains usable at 320.0 / 2.0
+00:01 +33: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart: profile dialog scrolls and saves at 430.0 / 1.0
+00:01 +34: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: growth editor remains usable at 320.0 / 1.0
+00:01 +35: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart: profile dialog scrolls and saves at 430.0 / 2.0
+00:01 +36: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: growth editor remains usable at 320.0 / 2.0
+00:01 +37: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart: (tearDownAll)
+00:01 +37: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: development editor remains usable at 320.0 / 1.0
+00:01 +38: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: development editor remains usable at 320.0 / 2.0
+00:01 +39: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: baby home and knowledge scroll with double text at 390.0
+00:01 +40: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: feeding editor remains usable at 390.0 / 1.0
+00:01 +41: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: feeding editor remains usable at 390.0 / 2.0
+00:01 +42: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: sleep editor remains usable at 390.0 / 1.0
+00:01 +43: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: sleep editor remains usable at 390.0 / 2.0
+00:01 +44: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: diaper editor remains usable at 390.0 / 1.0
+00:01 +45: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: diaper editor remains usable at 390.0 / 2.0
+00:01 +46: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: growth editor remains usable at 390.0 / 1.0
+00:01 +47: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: growth editor remains usable at 390.0 / 2.0
+00:01 +48: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: development editor remains usable at 390.0 / 1.0
+00:02 +49: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: development editor remains usable at 390.0 / 2.0
+00:02 +50: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: baby home and knowledge scroll with double text at 430.0
+00:02 +51: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: feeding editor remains usable at 430.0 / 1.0
+00:02 +52: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: feeding editor remains usable at 430.0 / 2.0
+00:02 +53: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: sleep editor remains usable at 430.0 / 1.0
+00:02 +54: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: sleep editor remains usable at 430.0 / 2.0
+00:02 +55: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: diaper editor remains usable at 430.0 / 1.0
+00:02 +56: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: diaper editor remains usable at 430.0 / 2.0
+00:02 +57: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: growth editor remains usable at 430.0 / 1.0
+00:02 +58: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: growth editor remains usable at 430.0 / 2.0
+00:02 +59: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: development editor remains usable at 430.0 / 1.0
+00:02 +60: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: development editor remains usable at 430.0 / 2.0
+00:02 +61: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: history edits and restores the same baby record at 320.0 / 1.0
+00:02 +62: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: history edits and restores the same baby record at 320.0 / 2.0
+00:02 +63: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: history edits and restores the same baby record at 390.0 / 1.0
+00:02 +64: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: history edits and restores the same baby record at 390.0 / 2.0
+00:02 +65: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: history edits and restores the same baby record at 430.0 / 1.0
+00:03 +66: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: history edits and restores the same baby record at 430.0 / 2.0
+00:03 +67: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: a record URL cannot load a baby outside the owned profiles
+00:03 +68: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: a failed home request is not presented as no records
+00:03 +69: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: baby overview matches the current product design at 320.0
+00:03 +70: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: baby overview matches the current product design at 390.0
+00:03 +71: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: baby overview matches the current product design at 430.0
+00:03 +72: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: (tearDownAll)
+00:04 +72: /Users/lute/project/momcozy-lab/app/test/app/mom_navigation_test.dart: (setUpAll)
+00:04 +72: /Users/lute/project/momcozy-lab/app/test/app/mom_navigation_test.dart: navigation reference at 320.0 with all selected states
+00:04 +73: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_home_test.dart: default home opens grouped diary, saves and refreshes only current API data
+00:04 +74: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_home_test.dart: default home opens grouped diary, saves and refreshes only current API data
+00:04 +75: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_home_test.dart: default home opens grouped diary, saves and refreshes only current API data
+00:04 +76: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_home_test.dart: default home opens grouped diary, saves and refreshes only current API data
+00:04 +77: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_home_test.dart: default home opens grouped diary, saves and refreshes only current API data
+00:04 +78: /Users/lute/project/momcozy-lab/app/test/app/mom_navigation_test.dart: five navigation destinations remain readable and tappable at 2x text on 430.0
+00:04 +79: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_home_test.dart: mother home matches the product baseline at 320.0 / 1.0
+00:05 +80: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_home_test.dart: mother home matches the product baseline at 320.0 / 2.0
+00:05 +81: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_home_test.dart: mother home matches the product baseline at 390.0 / 1.0
+00:05 +82: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_home_test.dart: mother home matches the product baseline at 390.0 / 2.0
+00:05 +83: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_home_test.dart: mother home matches the product baseline at 430.0 / 1.0
+00:05 +84: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_home_test.dart: mother home matches the product baseline at 430.0 / 2.0
+00:05 +85: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_home_test.dart: failed state is distinct from an empty diary and retries safely
+00:05 +86: All tests passed!
+
+Analyzing 8 items...                                            
+No issues found! (ran in 0.7s)
+
+Running Gradle task 'assembleLocalDebug'...                     
+WARNING: Your Android app project: app located at: /Users/lute/project/momcozy-lab/app/android/app/build.gradle.kts
+applies the Kotlin Gradle Plugin, which will cause build failures in future versions of Flutter. 
+Please migrate your app to Built-in Kotlin using this guide: https://docs.flutter.dev/release/breaking-changes/migrate-to-built-in-kotlin/for-app-developers
+
+WARNING: Your app uses the following plugins that apply Kotlin Gradle Plugin (KGP): firebase_core, flutter_timezone, flutter_webrtc, livekit_client
+Future versions of Flutter will fail to build if your app uses plugins that apply KGP.
+
+Please check the changelogs of these plugins and upgrade to a version that supports Built-in Kotlin.
+If no such version exists, report the issue to the plugin. If necessary, here is a guide on filing 
+an issue against a plugin: https://docs.flutter.dev/release/breaking-changes/migrate-to-built-in-kotlin/for-app-developers#report-incompatible-kotlin-gradle-plugin-usage-to-plugin-authors
+
+If you are a plugin author, please migrate your plugin to Built-in Kotlin using this guide: https://docs.flutter.dev/release/breaking-changes/migrate-to-built-in-kotlin/for-plugin-authors
+Running Gradle task 'assembleLocalDebug'...                         9.7s
+✓ Built build/app/outputs/flutter-apk/app-local-debug.apk

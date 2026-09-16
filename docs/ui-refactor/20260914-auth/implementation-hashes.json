@@ -1,0 +1,7 @@
+{
+  "lib/features/auth/presentation/auth_page.dart": "77bf0ab04f1599f353bbb66c4a3dab2fe826d5e5e04f7f1b106f0b73ec07475f",
+  "lib/features/auth/presentation/auth_login_chrome.dart": "3808b5484b0cda026e8007c5ce940027bc672e1185ba2fc4ac354d3d385ab7bb",
+  "lib/features/auth/presentation/invite_auth_page.dart": "51b02cb9d3c973aa931abbeb7e9ec3352476b889db496b7cd583ef757732c51b",
+  "test/features/auth/auth_design_test.dart": "21a46fbbab3b280eac940b685659cace8021dea887b0aa0472297d424d39a4ca",
+  "test/features/auth/auth_redesign_states_test.dart": "a4ccda8389947cc59c3a8911f9cf7046b64a1b0c84d647f355078da0b8b35094"
+}

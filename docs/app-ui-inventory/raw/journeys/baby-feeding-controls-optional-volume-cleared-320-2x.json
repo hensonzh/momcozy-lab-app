@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/baby-feeding-controls-optional-volume-cleared-320-2x.png",
+  "previous_source": "test/goldens/ui_inventory/baby-feeding-controls-formula-history-reopened-320-2x.png",
+  "route": "/babies/inventory-baby/records",
+  "trigger": "Clear optional bottle volume before saving",
+  "root_entry": "Authenticated More → tap Baby bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/baby/baby_feeding_control_inventory_test.dart"
+}

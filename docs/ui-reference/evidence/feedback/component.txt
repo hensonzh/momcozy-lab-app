@@ -1,0 +1,12 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/shared/product_feedback_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: loading has a single accessible status when label is omitted
+00:00 +1: loading remains readable in a short region at 2x
+00:00 +2: feedback layout and retry callbacks 320.0/1.0
+00:00 +3: feedback layout and retry callbacks 320.0/2.0
+00:00 +4: feedback layout and retry callbacks 390.0/1.0
+00:00 +5: feedback layout and retry callbacks 390.0/2.0
+00:00 +6: feedback layout and retry callbacks 430.0/1.0
+00:00 +7: feedback layout and retry callbacks 430.0/2.0
+00:00 +8: (tearDownAll)
+00:00 +8: All tests passed!

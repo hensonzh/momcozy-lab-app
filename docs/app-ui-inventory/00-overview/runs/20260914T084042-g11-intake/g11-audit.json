@@ -1,0 +1,14 @@
+{
+  "source_hashes": {
+    "lib/modules/services/presentation/intake_page.dart": "8b1beec777fd069e0847ef3680506185534259527eec71b7bd49965b4800f10e",
+    "lib/shared/widgets/product_feedback.dart": "f0e9384b049cfc0e3c0db31f4f751723d3b7faa587a136caee1d0db75b004af1",
+    "lib/shared/widgets/mom_settings_widgets.dart": "271b022cb619641d956e92a5600e5f5585d2a5b469446132d53d402987403025",
+    "test/modules/services/intake_test.dart": "a7937aea09d2824352a7f6e3d16337a8cbf2f99c2b06133bc68750c275104f67"
+  },
+  "new_images": 0,
+  "reused_images": 9,
+  "strict_scenarios_passed": 4,
+  "images_reviewed": 9,
+  "long_images": 1,
+  "scope": "本报告关闭 G11 所列载入／保存失败、字段选择器与保留草稿反馈的版本核对。回调证明页面控件行为；正常路由来源和返回链引用原 SERVICE-JOURNEYS 及逐状态 README，未把本次单页面场景冒充新路由截图。长表单背景复用 G09 全长图，覆盖层自身完整显示。其它未列状态在最终总映射中核对，不因重复入口新增截图。"
+}

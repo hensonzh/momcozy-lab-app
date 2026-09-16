@@ -1,0 +1,116 @@
+[
+  {
+    "path": "assets/images/mom_home/cozymate_avatar.png",
+    "bytes": 46137,
+    "sha256": "66056fa637fb92364c03c52bee742ec682ecbd1ababff4ca14c767e19508ee1f",
+    "source": "ZIP assets/images"
+  },
+  {
+    "path": "assets/images/mom_home/expert_group.png",
+    "bytes": 55176,
+    "sha256": "b9cdcddff6191a9017e7777cea63ed738731f2a3b8503e5154e1d67f4ce6859c",
+    "source": "ZIP assets/images"
+  },
+  {
+    "path": "assets/images/mom_home/ibclc_jamie_lee.png",
+    "bytes": 25659,
+    "sha256": "7d12869e788277f41d77d6f2ea4a029e0bc8c9498d5ff99261e6fec972dd9905",
+    "source": "ZIP assets/images"
+  },
+  {
+    "path": "assets/images/mom_home/imgDecorationAiBlushGlow.svg",
+    "bytes": 278,
+    "sha256": "2a81dc19f2716b050b6807e4cd21332306d555da11499ec56e08fe4c74950803",
+    "source": "Figma 88:111 export; URL in purchased-figma.md"
+  },
+  {
+    "path": "assets/images/mom_home/imgDecorationAiLilacGlow.svg",
+    "bytes": 270,
+    "sha256": "256f1442848b4a59fa5d55565f48371d1f388546f6f4dacaf0bc9cac3a268b31",
+    "source": "Figma 88:111 export; URL in purchased-figma.md"
+  },
+  {
+    "path": "assets/images/mom_home/imgDecorationAiSparkle.svg",
+    "bytes": 446,
+    "sha256": "17cab799b07d52add8c1602c82b13c64bc04ac02d2b02ada45cfd20dc5a0de9c",
+    "source": "Figma 88:111 export; URL in purchased-figma.md"
+  },
+  {
+    "path": "assets/images/mom_home/imgDecorationBodyRecoveryGlow.svg",
+    "bytes": 276,
+    "sha256": "903c8acab0dcd272943171775202b61a3435706996f27d8fc69a46a9faea78ef",
+    "source": "Figma 88:111 export; URL in purchased-figma.md"
+  },
+  {
+    "path": "assets/images/mom_home/imgDecorationBodyRecoveryRing.svg",
+    "bytes": 294,
+    "sha256": "677e0af2f03cd067bd3e5d6dc662062661ff8e9a13991b38e32302be16065d29",
+    "source": "Figma 88:111 export; URL in purchased-figma.md"
+  },
+  {
+    "path": "assets/images/mom_home/imgDecorationBodyRecoverySoftDot.svg",
+    "bytes": 275,
+    "sha256": "7dc1a423f131ff95420e0d9ebaa2a3ad196082ba9fec0ca25c5fbcc02884b892",
+    "source": "Figma 88:111 export; URL in purchased-figma.md"
+  },
+  {
+    "path": "assets/images/mom_home/imgDecorationExpertSupportHalo.svg",
+    "bytes": 280,
+    "sha256": "20854ba65e1b90b3e83f91a88f277352f49a863fd4fca9dbc026f64f44555887",
+    "source": "Figma 88:111 export; URL in purchased-figma.md"
+  },
+  {
+    "path": "assets/images/mom_home/imgDecorationExpertSupportLeaves.svg",
+    "bytes": 563,
+    "sha256": "5b808824a3dc0eea5a0e7598bdf77d5f7dbfb023468d8014fa1bcb64df12f524",
+    "source": "Figma 88:111 export; URL in purchased-figma.md"
+  },
+  {
+    "path": "assets/images/mom_home/imgDecorationLactationDroplet.svg",
+    "bytes": 464,
+    "sha256": "7ea24a884dbae92aca0b6c4b634b88e352c028e2d924f483c82c59abd2001d36",
+    "source": "Figma 88:111 export; URL in purchased-figma.md"
+  },
+  {
+    "path": "assets/images/mom_home/imgDecorationMoodWave.svg",
+    "bytes": 594,
+    "sha256": "278e63d01e4491d53d1881a87a1b146f6d22038b89075dc6488b0090651f59fd",
+    "source": "Figma 88:111 export; URL in purchased-figma.md"
+  },
+  {
+    "path": "assets/images/mom_home/imgDecorationServiceLeaf.svg",
+    "bytes": 578,
+    "sha256": "1c131f3b065f4e7ee9218c53fe772fdd53d414aa5c802c0743b5f8df806878a4",
+    "source": "Figma 88:111 export; URL in purchased-figma.md"
+  },
+  {
+    "path": "assets/images/mom_home/imgDecorationServiceMintGlow.svg",
+    "bytes": 294,
+    "sha256": "1f2f70b1a6f4b8ee3a2d1aea11227b8b24492037a89911d6ab3c3a9140863ce3",
+    "source": "Figma 88:111 export; URL in purchased-figma.md"
+  },
+  {
+    "path": "assets/images/mom_home/imgDecorationSleepCrescent.svg",
+    "bytes": 501,
+    "sha256": "d205a4affc9a6c8d501fcf0da6e00f335ed6c78bfc7512a310eb75f960bda406",
+    "source": "Figma 88:111 export; URL in purchased-figma.md"
+  },
+  {
+    "path": "assets/images/mom_home/imgIconCalendar.svg",
+    "bytes": 716,
+    "sha256": "03c6869d830abdd3bb33600c71f4bf597f01af95e1fae04c09f71a812be5b217",
+    "source": "Figma 88:111 export; URL in purchased-figma.md"
+  },
+  {
+    "path": "assets/images/mom_home/imgIconConsultation.svg",
+    "bytes": 608,
+    "sha256": "4e6dd8dfcce07e53dead60224f83a2d876248b91b03cb62bc1b1e5b5bb924fa2",
+    "source": "Figma 88:111 export; URL in purchased-figma.md"
+  },
+  {
+    "path": "assets/images/mom_home/imgIconExpertSupportArrow.svg",
+    "bytes": 345,
+    "sha256": "9e987be9fb9157feb0d55a410d6b32c00ccfea70ab87ebe5001d129d19b4bccc",
+    "source": "Figma 88:111 export; URL in purchased-figma.md"
+  }
+]

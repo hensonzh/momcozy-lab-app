@@ -1,0 +1,14 @@
+{
+  "command": [
+    "/Users/lute/.local/share/momcozy-toolchains/flutter/bin/flutter",
+    "--suppress-analytics",
+    "test",
+    "--no-pub",
+    "test/modules/consultation/consultation_inventory_journey_test.dart",
+    "--plain-name",
+    "inventory consultation current summary publication",
+    "--reporter",
+    "expanded"
+  ],
+  "scope": "G03: final normal route verification after reusing existing ScheduleInventoryTransport; prior unique state tests retained in original run"
+}

@@ -1,0 +1,37 @@
+[
+  {
+    "tap": "Baby",
+    "selected": [
+      "Baby"
+    ],
+    "passed": true
+  },
+  {
+    "tap": "Cozymate",
+    "selected": [
+      "Cozymate"
+    ],
+    "passed": true
+  },
+  {
+    "tap": "Schedule",
+    "selected": [
+      "Schedule"
+    ],
+    "passed": true
+  },
+  {
+    "tap": "More",
+    "selected": [
+      "More"
+    ],
+    "passed": true
+  },
+  {
+    "tap": "Me",
+    "selected": [
+      "Me"
+    ],
+    "passed": true
+  }
+]

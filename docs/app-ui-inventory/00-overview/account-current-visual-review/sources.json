@@ -1,0 +1,3410 @@
+{
+  "method": "full-width continuous 650px strips; identical pixels reference prior reviewed Mom or Baby controls; remaining segments reviewed at native width",
+  "sources": [
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-delete-cancelled-320-2x.long.png",
+      "sha256": "37f03062bdac644cfa04a857ecd07548780cc781c2feb1f3c69aa64e0fdfdd3b",
+      "width": 320,
+      "height": 1489,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "80e28a3ccbddea9a43a398e9a9b469d43e4f57073d8a646201d3b0ab57f0a5e2",
+          "review": "../more-current-visual-review/sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "0590d30bcdd926ba50602f72f7b348e2814ecaf735b87bed5d88b9e6b5543e7e",
+          "review": "../more-current-visual-review/sheet-01.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1489,
+          "pixel_sha256": "0211ae977fded92310c3531502e4e681d2e26a434901496ca640ae3541d9981b",
+          "review": "../more-current-visual-review/sheet-01.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-delete-cancelled-320-2x.png",
+      "sha256": "66d63c8e70313cfa2405654ca84a5e09d11fc245396c69da0ae55cb8f7697a28",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "03b020ab4efbc1ed47688a228712822bee5a20d0e59fa0606d87fa85e3d44738",
+          "review": "../more-current-visual-review/sheet-02.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "dd3ce5adb34a1a3cf798938eb2fec0198538fba0e4be2ef1e186d02728272088",
+          "review": "../more-current-visual-review/sheet-02.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-delete-cancelled-393-1x.png",
+      "sha256": "ca5de96197df1fe96b8f9ff7f37956e492ce074418eb316b8fa778dd86d804a3",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "26806e58caf58485143b53822231f644c2f8b1f329703f886b0fab8f5538921e",
+          "review": "../more-current-visual-review/sheet-01.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "b887e38b37b580f70486059362cdc5cac3c8c0174c869d8e73fa162462a85beb",
+          "review": "../more-current-visual-review/sheet-01.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-delete-confirm-320-2x.png",
+      "sha256": "e8659d112924c6c56718227d68954c8ae7249e57392d3adf0a1a1dab0470adde",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c81e7454a8099ff9778c831a9e34f17d1bb82721c3ccee07b573243a169ba603",
+          "review": "../more-current-visual-review/sheet-02.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "37c5624269039e80504e12c969a43ea88829bb44cb8b84e6f8667ee8d560d629",
+          "review": "../more-current-visual-review/sheet-02.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-delete-confirm-393-1x.png",
+      "sha256": "9765a3be569e30a2efffec92d0de9baeaa362bc4aaec288915b17bec4a38a79e",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "94f3873b657d3a981464ac49e727cd9fe254bf67351889b11425f0c2f953fec3",
+          "review": "../more-current-visual-review/sheet-02.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "ea2c231719f7b87b4e82cc47d576c798bc1f8da2da9ee3c3082f161678f1ebce",
+          "review": "../more-current-visual-review/sheet-02.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-delete-error-320-2x.long.png",
+      "sha256": "58f0f88e7681b0f883993253d14496da09700f939417198eba7c58c469b70776",
+      "width": 320,
+      "height": 1657,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "80e28a3ccbddea9a43a398e9a9b469d43e4f57073d8a646201d3b0ab57f0a5e2",
+          "review": "../more-current-visual-review/sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "6a4bd1ff1b854657d2662156b0bc5a4a118d61c02629ff28c0d0902a9d76cc3a",
+          "review": "sheet-01.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1657,
+          "pixel_sha256": "229b420aee80edee15412f630719d0155de585bb22f4678e46979a841f4f966f",
+          "review": "sheet-01.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-delete-error-320-2x.png",
+      "sha256": "37edee7a935e938a4ed06bd93ffadfd75dd8eed1129b9b54c96f5ffe41d93b5b",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "eae6e60b914e1464ba243cc28b14d10f068e5a6a0adf0b7ac9e9ac81b3597cb5",
+          "review": "sheet-01.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "8f9364a93017dccd4b4bf7fe17f65a96cf41ec677d34f29e0576ac84b506b1b9",
+          "review": "sheet-01.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-delete-error-393-1x.png",
+      "sha256": "2277e469cd3c49ac3fc7e7d9a693a0c44d0a5ddf82a64d17e60cc66917d959e1",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "7ed16feea938ea6ee4c463bf488017c9f814748749054fa61b884df205a2e61e",
+          "review": "sheet-01.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "72a9c0ffa273eb9f7f435a5ac3d176bba418be57260367ab6692e75f0ab6d8ef",
+          "review": "sheet-01.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-delete-mom-320-2x.long.png",
+      "sha256": "505a284d125be2f41bc72fe9d2d485136160701ce3045b748f3df7c60c07e169",
+      "width": 320,
+      "height": 2632,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "dca82f03b860289a1e5574424610bd56234e76f5d2f561657b198fea24abc389",
+          "review": "../more-current-visual-review/sheet-04.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "0edf1d289b2e804b112ca91367c51524ae8a6a6a4684a4fdcad651b0ae8de7ad",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "737fbf296926091c9d3d8c054e5fcb5aa6828a0542d136aef0e678fcf5a2a305",
+          "review": "../more-current-visual-review/sheet-04.png#tile-5"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "7095838544641c4a065cc4edcde1fe5b17c214a6c3f62e0047542f6a1a4b7cf7",
+          "review": "../more-current-visual-review/sheet-05.png#tile-0"
+        },
+        {
+          "y0": 2600,
+          "y1": 2632,
+          "pixel_sha256": "3b7a0a91c34455cd936bb9e7c300fe49668695b79f3c98b8b43e37193c05f5f0",
+          "review": "../more-current-visual-review/sheet-05.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-delete-mom-320-2x.png",
+      "sha256": "a1e654c6dffee3c67326db17436fd6aa15207ebd35139c2123ef5a648ec1d97d",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "dca82f03b860289a1e5574424610bd56234e76f5d2f561657b198fea24abc389",
+          "review": "../more-current-visual-review/sheet-04.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1462d46c4861c29041d879736402097e4fd061fcb6e577142cd6e832cb70fae0",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-delete-mom-393-1x.long.png",
+      "sha256": "102b241889f89febff6667bc67dcb9995b06556bb1c624a1894805b2cf755fd0",
+      "width": 393,
+      "height": 1265,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "daf542880cf89ac418c97c53c2623ac132af83d7fe0b6abab6a998b480cd7517",
+          "review": "../more-current-visual-review/sheet-05.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1265,
+          "pixel_sha256": "ea2374efd0254d07986a56bf4a357fd4b691c5dac7662004c0ea3c39a04c0eb7",
+          "review": "../more-current-visual-review/sheet-05.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-delete-mom-393-1x.png",
+      "sha256": "046e0970ac79d86b60762853cb331f3b4728e055d4983b01cd6042392f1c7b2c",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "daf542880cf89ac418c97c53c2623ac132af83d7fe0b6abab6a998b480cd7517",
+          "review": "../more-current-visual-review/sheet-05.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3208ac8b3b1d4a7464bc46ef7618c8e19bd85dee870d86c1847457571b6198a6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-delete-more-320-2x.long.png",
+      "sha256": "dba4948f1953505cb7df9f2a64a4dcf37000a6719d55f2eea9e9330383f9ab74",
+      "width": 320,
+      "height": 1211,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6da77909306035c246cff5a66c2ad59caba0d88ed76691634d12aa4a633297d4",
+          "review": "../more-current-visual-review/sheet-03.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1211,
+          "pixel_sha256": "a0195565114e74c6e4c13a404589ff8c005c7bafc2dcb124d743ce1305e3eb7c",
+          "review": "../more-current-visual-review/sheet-04.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-delete-more-320-2x.png",
+      "sha256": "268b93aa2ae6ec57156583e0aeb4dee84904d78f8ec0080f5df8a93a00cb6aa9",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6da77909306035c246cff5a66c2ad59caba0d88ed76691634d12aa4a633297d4",
+          "review": "../more-current-visual-review/sheet-03.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "616faa1e9e32e7fb980b447773cff46cf97cf9547510bc2dbf18972ca9eb7fd1",
+          "review": "../more-current-visual-review/sheet-08.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-delete-more-393-1x.png",
+      "sha256": "c39f9e0a5c90e182515478fd165d75c83f05b9c9ff2bc3d0aa11797d5a9578db",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6029e8bb393e96c7f079de26341df7c44d241a8cde3607cdf03c2a221d95aabd",
+          "review": "../more-current-visual-review/sheet-04.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "ae4f630d503ab6fd4f559f429de09469456c11d171c0c3898413ee795bf5b433",
+          "review": "../baby-development-date-visual-review/sheet-05.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-delete-pending-320-2x.long.png",
+      "sha256": "37fe49a0a28381c17ff0e411d82edc91e26022f2a2fe0461415942b826ab2812",
+      "width": 320,
+      "height": 1507,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "80e28a3ccbddea9a43a398e9a9b469d43e4f57073d8a646201d3b0ab57f0a5e2",
+          "review": "../more-current-visual-review/sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "c2d02a49e51bd08da76c93caf0a0128f7247f6df34fb5a43e5bbdc7f943a995d",
+          "review": "sheet-02.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1507,
+          "pixel_sha256": "7b51b043c0a0f3bac3e6edb802479d5cf2b7958bbf8a1397bc23ed4da8a49243",
+          "review": "sheet-02.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-delete-pending-320-2x.png",
+      "sha256": "28bae450148fd385f66b7f9e21a6e8e9ada744872bc5c3ca14ad3dd0839ddd39",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "23154bea086e87ed4423c88c6d92c7e296a89acc0ed2660d8115fd9b7f7bdfbb",
+          "review": "sheet-02.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "44a91d68f6a53d458dc2df9a4f88daaca8b2fbfbe130fdb23e4d63f6969da638",
+          "review": "sheet-02.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-delete-pending-393-1x.png",
+      "sha256": "a09eb17c2e229d0dd34ca827f35c27e4dbbd3eb449e818509348f869eb7788a6",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ff6a52997b47ae3077a33ee8bc9dd9934306e4759cd9359d74e9ac6b16ae4e86",
+          "review": "sheet-02.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2f4041e7ade130144c9516f3542f89ad77a8f8ba1c1c1a4f6c95818318183907",
+          "review": "sheet-02.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-delete-ready-320-2x.long.png",
+      "sha256": "37f03062bdac644cfa04a857ecd07548780cc781c2feb1f3c69aa64e0fdfdd3b",
+      "width": 320,
+      "height": 1489,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "80e28a3ccbddea9a43a398e9a9b469d43e4f57073d8a646201d3b0ab57f0a5e2",
+          "review": "../more-current-visual-review/sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "0590d30bcdd926ba50602f72f7b348e2814ecaf735b87bed5d88b9e6b5543e7e",
+          "review": "../more-current-visual-review/sheet-01.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1489,
+          "pixel_sha256": "0211ae977fded92310c3531502e4e681d2e26a434901496ca640ae3541d9981b",
+          "review": "../more-current-visual-review/sheet-01.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-delete-ready-320-2x.png",
+      "sha256": "1e0752b14bd994e0568c6d2a142535022e8383d669526d8052eff3c95f08e6c9",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "80e28a3ccbddea9a43a398e9a9b469d43e4f57073d8a646201d3b0ab57f0a5e2",
+          "review": "../more-current-visual-review/sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "d6371eae2fb917f8a306f56ca923d26f398fb6be7a0d0fecfee9bb551a59dcbf",
+          "review": "../more-current-visual-review/sheet-01.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-delete-ready-393-1x.png",
+      "sha256": "ca5de96197df1fe96b8f9ff7f37956e492ce074418eb316b8fa778dd86d804a3",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "26806e58caf58485143b53822231f644c2f8b1f329703f886b0fab8f5538921e",
+          "review": "../more-current-visual-review/sheet-01.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "b887e38b37b580f70486059362cdc5cac3c8c0174c869d8e73fa162462a85beb",
+          "review": "../more-current-visual-review/sheet-01.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-delete-retry-confirm-320-2x.png",
+      "sha256": "b34fb94dadf3fa0fc8981ca920baf4bef3ebd95720deb09993c2b8865661abef",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "bda51e74a2764d91f96a13cb5e102b4a1c69954d1586de2937d088cf10ed1697",
+          "review": "sheet-03.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "37c5624269039e80504e12c969a43ea88829bb44cb8b84e6f8667ee8d560d629",
+          "review": "../more-current-visual-review/sheet-02.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-delete-retry-confirm-393-1x.png",
+      "sha256": "063895e6e71271c9703126e6b655f3a1ace4c1ab3a2a4da72e150e8d9c8805ee",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "32bfb011b5845fee91a59ad336a0c81c76904da920e59dd552b3fc7d563f7298",
+          "review": "sheet-03.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "693282437430a2f249db6c729cfbe64920cdae4f3bef1456259bb62deeb12fd3",
+          "review": "sheet-03.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-delete-retry-pending-320-2x.long.png",
+      "sha256": "37fe49a0a28381c17ff0e411d82edc91e26022f2a2fe0461415942b826ab2812",
+      "width": 320,
+      "height": 1507,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "80e28a3ccbddea9a43a398e9a9b469d43e4f57073d8a646201d3b0ab57f0a5e2",
+          "review": "../more-current-visual-review/sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "c2d02a49e51bd08da76c93caf0a0128f7247f6df34fb5a43e5bbdc7f943a995d",
+          "review": "sheet-02.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1507,
+          "pixel_sha256": "7b51b043c0a0f3bac3e6edb802479d5cf2b7958bbf8a1397bc23ed4da8a49243",
+          "review": "sheet-02.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-delete-retry-pending-320-2x.png",
+      "sha256": "803dbc600becfffae92914192da80fa35682449978b85aaf0a52b84bbbea9259",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c3461f85dde671f18317eb5b2429fd0c60976cc50ff3557050816e5c8c4afc7a",
+          "review": "sheet-03.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "80191e81e09277f93cf1f7e82e053e260524b8ae656bffd4ab3751e88cb2c47a",
+          "review": "sheet-03.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-delete-retry-pending-393-1x.png",
+      "sha256": "a09eb17c2e229d0dd34ca827f35c27e4dbbd3eb449e818509348f869eb7788a6",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ff6a52997b47ae3077a33ee8bc9dd9934306e4759cd9359d74e9ac6b16ae4e86",
+          "review": "sheet-02.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2f4041e7ade130144c9516f3542f89ad77a8f8ba1c1c1a4f6c95818318183907",
+          "review": "sheet-02.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-deleted-login-320-2x.long.png",
+      "sha256": "2d713b3b0ed51095ff743249756547fd04bb0118b562100c99164c61aab2154b",
+      "width": 320,
+      "height": 1569,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "322389ca19c59d2e6676fa3d3ce291c141a46b83332678f5dfa2348f2f9ff5d4",
+          "review": "../more-current-visual-review/sheet-13.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "2fb33e9a28e1cc6989e69bec5e934f6df3254ba93baa39781a123316bc6767aa",
+          "review": "../more-current-visual-review/sheet-13.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1569,
+          "pixel_sha256": "8995cb4b10fb45c66b16f8b69c567a0b496fa332e6933a496f5b719f13760c7d",
+          "review": "../more-current-visual-review/sheet-13.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-deleted-login-320-2x.png",
+      "sha256": "cd936eab5a26f8d098ff304db01566ec757b5755928eb383ef88e123b708ee3c",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "322389ca19c59d2e6676fa3d3ce291c141a46b83332678f5dfa2348f2f9ff5d4",
+          "review": "../more-current-visual-review/sheet-13.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "be6e654b138d38402b1ed6eba7375c62b3352910c06002ed28c46283d4489af1",
+          "review": "../more-current-visual-review/sheet-13.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-deleted-login-393-1x.png",
+      "sha256": "782099a0927aee729489edde1a799b95f075d553f628629f1935b37dc102b8e3",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "83ea4ce070b62010e91289a4ff02d2db8599e3474bef9dd514c849f7fb1d1155",
+          "review": "../more-current-visual-review/sheet-13.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "d3fc5d3bed99cb403eae7de90bf225c5affe6d26140aa7fb3cdaa54137519974",
+          "review": "../more-current-visual-review/sheet-14.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-deleted-login-message-320-2x.long.png",
+      "sha256": "23843ccc88539844628ba92cbed25e8168ab390c3ed2913f456aae8e1c450677",
+      "width": 320,
+      "height": 1569,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "322389ca19c59d2e6676fa3d3ce291c141a46b83332678f5dfa2348f2f9ff5d4",
+          "review": "../more-current-visual-review/sheet-13.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "5d552bd456786019e30dbfbdef959c23584e503fbaefdb7b03d1b3260695f734",
+          "review": "sheet-03.png#tile-5"
+        },
+        {
+          "y0": 1300,
+          "y1": 1569,
+          "pixel_sha256": "98f6efc19aab844a9053fab104596bc34caa2e844016796504a07186130777a9",
+          "review": "sheet-04.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-deleted-login-message-320-2x.png",
+      "sha256": "501441a818bf6a4feb869181b83cb27103bcc8ee4a8013f89bd1a30a3e79bc90",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "322389ca19c59d2e6676fa3d3ce291c141a46b83332678f5dfa2348f2f9ff5d4",
+          "review": "../more-current-visual-review/sheet-13.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "177da802cd65137ea107757ef5c7454001300b4396ea4b8842a07c6ddd0de20c",
+          "review": "sheet-04.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-deleted-login-message-393-1x.png",
+      "sha256": "f206ee15ce9bdb8041825d2a5109b7d5bbb77f972a0b78b0a8fdf651246dba28",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "83ea4ce070b62010e91289a4ff02d2db8599e3474bef9dd514c849f7fb1d1155",
+          "review": "../more-current-visual-review/sheet-13.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "9def05cfee3e1aba51c55f35d739a4719ae70ddb5e40bf0db37916f5e0712aeb",
+          "review": "sheet-04.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-disabled-empty-mom-320-2x.long.png",
+      "sha256": "505a284d125be2f41bc72fe9d2d485136160701ce3045b748f3df7c60c07e169",
+      "width": 320,
+      "height": 2632,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "dca82f03b860289a1e5574424610bd56234e76f5d2f561657b198fea24abc389",
+          "review": "../more-current-visual-review/sheet-04.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "0edf1d289b2e804b112ca91367c51524ae8a6a6a4684a4fdcad651b0ae8de7ad",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "737fbf296926091c9d3d8c054e5fcb5aa6828a0542d136aef0e678fcf5a2a305",
+          "review": "../more-current-visual-review/sheet-04.png#tile-5"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "7095838544641c4a065cc4edcde1fe5b17c214a6c3f62e0047542f6a1a4b7cf7",
+          "review": "../more-current-visual-review/sheet-05.png#tile-0"
+        },
+        {
+          "y0": 2600,
+          "y1": 2632,
+          "pixel_sha256": "3b7a0a91c34455cd936bb9e7c300fe49668695b79f3c98b8b43e37193c05f5f0",
+          "review": "../more-current-visual-review/sheet-05.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-disabled-empty-mom-320-2x.png",
+      "sha256": "a1e654c6dffee3c67326db17436fd6aa15207ebd35139c2123ef5a648ec1d97d",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "dca82f03b860289a1e5574424610bd56234e76f5d2f561657b198fea24abc389",
+          "review": "../more-current-visual-review/sheet-04.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1462d46c4861c29041d879736402097e4fd061fcb6e577142cd6e832cb70fae0",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-disabled-empty-mom-393-1x.long.png",
+      "sha256": "102b241889f89febff6667bc67dcb9995b06556bb1c624a1894805b2cf755fd0",
+      "width": 393,
+      "height": 1265,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "daf542880cf89ac418c97c53c2623ac132af83d7fe0b6abab6a998b480cd7517",
+          "review": "../more-current-visual-review/sheet-05.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1265,
+          "pixel_sha256": "ea2374efd0254d07986a56bf4a357fd4b691c5dac7662004c0ea3c39a04c0eb7",
+          "review": "../more-current-visual-review/sheet-05.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-disabled-empty-mom-393-1x.png",
+      "sha256": "046e0970ac79d86b60762853cb331f3b4728e055d4983b01cd6042392f1c7b2c",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "daf542880cf89ac418c97c53c2623ac132af83d7fe0b6abab6a998b480cd7517",
+          "review": "../more-current-visual-review/sheet-05.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3208ac8b3b1d4a7464bc46ef7618c8e19bd85dee870d86c1847457571b6198a6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-disabled-empty-more-320-2x.long.png",
+      "sha256": "a5497cca3e424b283453417b381ff036d47ef9849fb5ba40275e47c90e51e1a1",
+      "width": 320,
+      "height": 1211,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "08ee93fe8aed9dd47ab8fcda986e2d1da3c287b91e87adb580eba297105a7d70",
+          "review": "../more-current-visual-review/sheet-09.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1211,
+          "pixel_sha256": "a0195565114e74c6e4c13a404589ff8c005c7bafc2dcb124d743ce1305e3eb7c",
+          "review": "../more-current-visual-review/sheet-04.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-disabled-empty-more-320-2x.png",
+      "sha256": "a5b945eb23e013c147181762ca6688d7627c973f0aceb571b2989922325c83a0",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "08ee93fe8aed9dd47ab8fcda986e2d1da3c287b91e87adb580eba297105a7d70",
+          "review": "../more-current-visual-review/sheet-09.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "616faa1e9e32e7fb980b447773cff46cf97cf9547510bc2dbf18972ca9eb7fd1",
+          "review": "../more-current-visual-review/sheet-08.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-disabled-empty-more-393-1x.png",
+      "sha256": "32928f67d69954bedce1abe351413e612dc27da6015bb2d96cb669781a7309a7",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "8433d6f661bba064c5f9e5c1c07ddd571d3e31bb2c08f84fbe3a79458494dba3",
+          "review": "../more-current-visual-review/sheet-09.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "ae4f630d503ab6fd4f559f429de09469456c11d171c0c3898413ee795bf5b433",
+          "review": "../baby-development-date-visual-review/sheet-05.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-disabled-empty-ready-320-2x.long.png",
+      "sha256": "e4bbbd7a89b4d509e7ff9348af2a95cb3545c1ac51b61534d2cec7a0dc06cfbe",
+      "width": 320,
+      "height": 1343,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "240ec9a7106c75ee6fc3479fb7ea792927f46b1dc2e037ea2c713d1d58f1152f",
+          "review": "sheet-04.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "31531c4eb4e14a67a732e0db21acf52f170c20da6bb11e91ac7afb09650bf1aa",
+          "review": "sheet-04.png#tile-4"
+        },
+        {
+          "y0": 1300,
+          "y1": 1343,
+          "pixel_sha256": "f305cac08e6e72b97b5e24747c4f169121ea1bdb630ff9bb962d725f7922b94a",
+          "review": "sheet-04.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-disabled-empty-ready-320-2x.png",
+      "sha256": "a299a978c7b74ad4d46c8cfa2c933298cb33b2af789268cb74b72fa6f49202ec",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "240ec9a7106c75ee6fc3479fb7ea792927f46b1dc2e037ea2c713d1d58f1152f",
+          "review": "sheet-04.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "0ff890e1a3ce1e3e05787f1ecc7eb13e97ac1c834c11d6afa5e056589c67ea42",
+          "review": "sheet-05.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-disabled-empty-ready-393-1x.png",
+      "sha256": "7d4f9218894f31aa7db14d954aaabc51dc39678b74b9be84d7427cc4e937fdc5",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "f0a9ddada5b969add4a7557c144012bcd91e450dda02e2a3b0ac61277133da2c",
+          "review": "sheet-05.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "5e269ca9e36daffe984531405b8fd9a7fd95687843288196663912cae234267b",
+          "review": "sheet-05.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-disabled-empty-return-320-2x.long.png",
+      "sha256": "a5497cca3e424b283453417b381ff036d47ef9849fb5ba40275e47c90e51e1a1",
+      "width": 320,
+      "height": 1211,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "08ee93fe8aed9dd47ab8fcda986e2d1da3c287b91e87adb580eba297105a7d70",
+          "review": "../more-current-visual-review/sheet-09.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1211,
+          "pixel_sha256": "a0195565114e74c6e4c13a404589ff8c005c7bafc2dcb124d743ce1305e3eb7c",
+          "review": "../more-current-visual-review/sheet-04.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-disabled-empty-return-320-2x.png",
+      "sha256": "7a1568fd65dcff350879b7349b7fafbc3e84eb67046fd22a6cea30b2731b7da9",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "be1653a165eb90b0a21252c896a7870f09059f3fd807d5002393cb35bdd6a9bc",
+          "review": "../more-current-visual-review/sheet-04.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "733bd14ecda4e60da268bf218bf60fd46f94d021b5eb13d8b904d6688b21b696",
+          "review": "../more-current-visual-review/sheet-04.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-disabled-empty-return-393-1x.png",
+      "sha256": "32928f67d69954bedce1abe351413e612dc27da6015bb2d96cb669781a7309a7",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "8433d6f661bba064c5f9e5c1c07ddd571d3e31bb2c08f84fbe3a79458494dba3",
+          "review": "../more-current-visual-review/sheet-09.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "ae4f630d503ab6fd4f559f429de09469456c11d171c0c3898413ee795bf5b433",
+          "review": "../baby-development-date-visual-review/sheet-05.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-google-only-mom-320-2x.long.png",
+      "sha256": "505a284d125be2f41bc72fe9d2d485136160701ce3045b748f3df7c60c07e169",
+      "width": 320,
+      "height": 2632,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "dca82f03b860289a1e5574424610bd56234e76f5d2f561657b198fea24abc389",
+          "review": "../more-current-visual-review/sheet-04.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "0edf1d289b2e804b112ca91367c51524ae8a6a6a4684a4fdcad651b0ae8de7ad",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "737fbf296926091c9d3d8c054e5fcb5aa6828a0542d136aef0e678fcf5a2a305",
+          "review": "../more-current-visual-review/sheet-04.png#tile-5"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "7095838544641c4a065cc4edcde1fe5b17c214a6c3f62e0047542f6a1a4b7cf7",
+          "review": "../more-current-visual-review/sheet-05.png#tile-0"
+        },
+        {
+          "y0": 2600,
+          "y1": 2632,
+          "pixel_sha256": "3b7a0a91c34455cd936bb9e7c300fe49668695b79f3c98b8b43e37193c05f5f0",
+          "review": "../more-current-visual-review/sheet-05.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-google-only-mom-320-2x.png",
+      "sha256": "a1e654c6dffee3c67326db17436fd6aa15207ebd35139c2123ef5a648ec1d97d",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "dca82f03b860289a1e5574424610bd56234e76f5d2f561657b198fea24abc389",
+          "review": "../more-current-visual-review/sheet-04.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1462d46c4861c29041d879736402097e4fd061fcb6e577142cd6e832cb70fae0",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-google-only-mom-393-1x.long.png",
+      "sha256": "102b241889f89febff6667bc67dcb9995b06556bb1c624a1894805b2cf755fd0",
+      "width": 393,
+      "height": 1265,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "daf542880cf89ac418c97c53c2623ac132af83d7fe0b6abab6a998b480cd7517",
+          "review": "../more-current-visual-review/sheet-05.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1265,
+          "pixel_sha256": "ea2374efd0254d07986a56bf4a357fd4b691c5dac7662004c0ea3c39a04c0eb7",
+          "review": "../more-current-visual-review/sheet-05.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-google-only-mom-393-1x.png",
+      "sha256": "046e0970ac79d86b60762853cb331f3b4728e055d4983b01cd6042392f1c7b2c",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "daf542880cf89ac418c97c53c2623ac132af83d7fe0b6abab6a998b480cd7517",
+          "review": "../more-current-visual-review/sheet-05.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3208ac8b3b1d4a7464bc46ef7618c8e19bd85dee870d86c1847457571b6198a6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-google-only-more-320-2x.long.png",
+      "sha256": "dba4948f1953505cb7df9f2a64a4dcf37000a6719d55f2eea9e9330383f9ab74",
+      "width": 320,
+      "height": 1211,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6da77909306035c246cff5a66c2ad59caba0d88ed76691634d12aa4a633297d4",
+          "review": "../more-current-visual-review/sheet-03.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1211,
+          "pixel_sha256": "a0195565114e74c6e4c13a404589ff8c005c7bafc2dcb124d743ce1305e3eb7c",
+          "review": "../more-current-visual-review/sheet-04.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-google-only-more-320-2x.png",
+      "sha256": "268b93aa2ae6ec57156583e0aeb4dee84904d78f8ec0080f5df8a93a00cb6aa9",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6da77909306035c246cff5a66c2ad59caba0d88ed76691634d12aa4a633297d4",
+          "review": "../more-current-visual-review/sheet-03.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "616faa1e9e32e7fb980b447773cff46cf97cf9547510bc2dbf18972ca9eb7fd1",
+          "review": "../more-current-visual-review/sheet-08.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-google-only-more-393-1x.png",
+      "sha256": "c39f9e0a5c90e182515478fd165d75c83f05b9c9ff2bc3d0aa11797d5a9578db",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6029e8bb393e96c7f079de26341df7c44d241a8cde3607cdf03c2a221d95aabd",
+          "review": "../more-current-visual-review/sheet-04.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "ae4f630d503ab6fd4f559f429de09469456c11d171c0c3898413ee795bf5b433",
+          "review": "../baby-development-date-visual-review/sheet-05.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-google-only-ready-320-2x.long.png",
+      "sha256": "0cb99eae2d45c752faf59dd8a070a83eb5a67de6883438337cf0ece1c862be0d",
+      "width": 320,
+      "height": 1340,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "7244b521126028220e6f19c182bf7c81d517bf801113df60404216ba673c9e6a",
+          "review": "sheet-05.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "60ab126d79f2189c57390218f9dca359b90a975facff251db81803c20d9885f4",
+          "review": "sheet-05.png#tile-4"
+        },
+        {
+          "y0": 1300,
+          "y1": 1340,
+          "pixel_sha256": "7d97a2df350b9e094e6f7300b6dd2d7d99f1960fa7398d3a0fc16ba8b12f2b80",
+          "review": "sheet-05.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-google-only-ready-320-2x.png",
+      "sha256": "bd85aa0af3087da0a07d8ccf72eec3e36081436a8c295b6e2282fb3b0744e88d",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "7244b521126028220e6f19c182bf7c81d517bf801113df60404216ba673c9e6a",
+          "review": "sheet-05.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "e5a0605a4157b249d784408c5e8ba1d143ff826d939ed65f3f32236b1a56749b",
+          "review": "sheet-06.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-google-only-ready-393-1x.png",
+      "sha256": "ac4bec0988886044082b335c33f691b7eeae2386fb8ee0c863762424a2ff27db",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "042faf395592be76a0fdffb5340eb1c0bf303f97e503f12b70aa4e97cfa24afb",
+          "review": "sheet-06.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "5e269ca9e36daffe984531405b8fd9a7fd95687843288196663912cae234267b",
+          "review": "sheet-05.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-google-only-return-320-2x.long.png",
+      "sha256": "dba4948f1953505cb7df9f2a64a4dcf37000a6719d55f2eea9e9330383f9ab74",
+      "width": 320,
+      "height": 1211,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6da77909306035c246cff5a66c2ad59caba0d88ed76691634d12aa4a633297d4",
+          "review": "../more-current-visual-review/sheet-03.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1211,
+          "pixel_sha256": "a0195565114e74c6e4c13a404589ff8c005c7bafc2dcb124d743ce1305e3eb7c",
+          "review": "../more-current-visual-review/sheet-04.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-google-only-return-320-2x.png",
+      "sha256": "7a1568fd65dcff350879b7349b7fafbc3e84eb67046fd22a6cea30b2731b7da9",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "be1653a165eb90b0a21252c896a7870f09059f3fd807d5002393cb35bdd6a9bc",
+          "review": "../more-current-visual-review/sheet-04.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "733bd14ecda4e60da268bf218bf60fd46f94d021b5eb13d8b904d6688b21b696",
+          "review": "../more-current-visual-review/sheet-04.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-google-only-return-393-1x.png",
+      "sha256": "c39f9e0a5c90e182515478fd165d75c83f05b9c9ff2bc3d0aa11797d5a9578db",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6029e8bb393e96c7f079de26341df7c44d241a8cde3607cdf03c2a221d95aabd",
+          "review": "../more-current-visual-review/sheet-04.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "ae4f630d503ab6fd4f559f429de09469456c11d171c0c3898413ee795bf5b433",
+          "review": "../baby-development-date-visual-review/sheet-05.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-google-reopen-320-2x.png",
+      "sha256": "64c45f65ae6a4601ce978486726fff76c43cd6b6069be89cb2c4e4724ae3f71a",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "4aa1b3a8c108194799b43769c7a7601bdec703a10ea70a3f7707ea715a38f26e",
+          "review": "sheet-06.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "10f9c014325fa19834061cdf54a1bc0bcaa2bd54bb1190887b16953a1a8fd249",
+          "review": "sheet-06.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-google-reopen-393-1x.png",
+      "sha256": "97bd957341e1d13f9b52884f9d0db6ca0f386630b1f052b581b330b42fd14903",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "79defd867e5d7a36429f6bae0276861a8ebbdb8a4d1c25ca26d8cc20d96d60f9",
+          "review": "sheet-06.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "693282437430a2f249db6c729cfbe64920cdae4f3bef1456259bb62deeb12fd3",
+          "review": "sheet-03.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-google-retry-cancelled-320-2x.long.png",
+      "sha256": "3c3aff0016604f69a567ba0e1ee939d656c77ded8ed14e87b53a35db4813e1b9",
+      "width": 320,
+      "height": 1657,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "80e28a3ccbddea9a43a398e9a9b469d43e4f57073d8a646201d3b0ab57f0a5e2",
+          "review": "../more-current-visual-review/sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "b5312f160979ff91f5e7d3cb3246a38e0eefb3284bccb3d624e2fd7db0d76b89",
+          "review": "sheet-06.png#tile-5"
+        },
+        {
+          "y0": 1300,
+          "y1": 1657,
+          "pixel_sha256": "229b420aee80edee15412f630719d0155de585bb22f4678e46979a841f4f966f",
+          "review": "sheet-01.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-google-retry-cancelled-320-2x.png",
+      "sha256": "d7a0cecab901afcb25207ef5096095093c7bc9035ede44c7a07b05f4ccbf43c2",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "88fd100df472f73de0b75769d2c3f01963024d73e31f5f9a54199902d0a5c650",
+          "review": "sheet-07.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "8fac35a50ae3bd0e6cb9daa7ea50783270f5361a671eba5c37e9a062aaa7518a",
+          "review": "sheet-07.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-google-retry-cancelled-393-1x.png",
+      "sha256": "633df335c2741d5fc23bfae6a5b0c959ce9f5c779afe3e728461daccf3b2e865",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "5fb2259c09b559bf9bd2cb984fb83f4e0c7a4902a9d73338a9c46274ef430ad7",
+          "review": "sheet-07.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "72a9c0ffa273eb9f7f435a5ac3d176bba418be57260367ab6692e75f0ab6d8ef",
+          "review": "sheet-01.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-google-unavailable-320-2x.long.png",
+      "sha256": "3c3aff0016604f69a567ba0e1ee939d656c77ded8ed14e87b53a35db4813e1b9",
+      "width": 320,
+      "height": 1657,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "80e28a3ccbddea9a43a398e9a9b469d43e4f57073d8a646201d3b0ab57f0a5e2",
+          "review": "../more-current-visual-review/sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "b5312f160979ff91f5e7d3cb3246a38e0eefb3284bccb3d624e2fd7db0d76b89",
+          "review": "sheet-06.png#tile-5"
+        },
+        {
+          "y0": 1300,
+          "y1": 1657,
+          "pixel_sha256": "229b420aee80edee15412f630719d0155de585bb22f4678e46979a841f4f966f",
+          "review": "sheet-01.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-google-unavailable-320-2x.png",
+      "sha256": "2042b79b84bfe8d1aa0ae51cda9fefb9628e414a8334a9b64e4c61ae801c2446",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "54a64e7c1f15a4cdcafde8d9dc356b3960e5cd2b62b510f53df1a0acbabce160",
+          "review": "sheet-07.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "8f9364a93017dccd4b4bf7fe17f65a96cf41ec677d34f29e0576ac84b506b1b9",
+          "review": "sheet-01.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-google-unavailable-393-1x.png",
+      "sha256": "633df335c2741d5fc23bfae6a5b0c959ce9f5c779afe3e728461daccf3b2e865",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "5fb2259c09b559bf9bd2cb984fb83f4e0c7a4902a9d73338a9c46274ef430ad7",
+          "review": "sheet-07.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "72a9c0ffa273eb9f7f435a5ac3d176bba418be57260367ab6692e75f0ab6d8ef",
+          "review": "sheet-01.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-loading-320-2x.png",
+      "sha256": "cf8d01931d149f542f11bbfdbdae8665155c5391084b30ae81979c8283f994d9",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "5193d92e88ca8c75e30d72a97bce4431605d1e33cfd77ca6a134ccf239d7bead",
+          "review": "sheet-07.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "c65f45a9e7b9b361a0c4b43630dc19d5d3c121f954f7c47798296da08ea227e9",
+          "review": "sheet-07.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-loading-393-1x.png",
+      "sha256": "8359a4bf718efc546aaf91cb504205e79410de48f766965845224f109b22a506",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "0a15efea39b02d70ebf3117c31d7e76d50a859fa06ec69a8c25560d8e0f40a3a",
+          "review": "sheet-08.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "5e269ca9e36daffe984531405b8fd9a7fd95687843288196663912cae234267b",
+          "review": "sheet-05.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-logout-error-dismissed-320-2x.long.png",
+      "sha256": "2d713b3b0ed51095ff743249756547fd04bb0118b562100c99164c61aab2154b",
+      "width": 320,
+      "height": 1569,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "322389ca19c59d2e6676fa3d3ce291c141a46b83332678f5dfa2348f2f9ff5d4",
+          "review": "../more-current-visual-review/sheet-13.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "2fb33e9a28e1cc6989e69bec5e934f6df3254ba93baa39781a123316bc6767aa",
+          "review": "../more-current-visual-review/sheet-13.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1569,
+          "pixel_sha256": "8995cb4b10fb45c66b16f8b69c567a0b496fa332e6933a496f5b719f13760c7d",
+          "review": "../more-current-visual-review/sheet-13.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-logout-error-dismissed-320-2x.png",
+      "sha256": "cd936eab5a26f8d098ff304db01566ec757b5755928eb383ef88e123b708ee3c",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "322389ca19c59d2e6676fa3d3ce291c141a46b83332678f5dfa2348f2f9ff5d4",
+          "review": "../more-current-visual-review/sheet-13.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "be6e654b138d38402b1ed6eba7375c62b3352910c06002ed28c46283d4489af1",
+          "review": "../more-current-visual-review/sheet-13.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-logout-error-dismissed-393-1x.png",
+      "sha256": "782099a0927aee729489edde1a799b95f075d553f628629f1935b37dc102b8e3",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "83ea4ce070b62010e91289a4ff02d2db8599e3474bef9dd514c849f7fb1d1155",
+          "review": "../more-current-visual-review/sheet-13.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "d3fc5d3bed99cb403eae7de90bf225c5affe6d26140aa7fb3cdaa54137519974",
+          "review": "../more-current-visual-review/sheet-14.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-logout-error-mom-320-2x.long.png",
+      "sha256": "505a284d125be2f41bc72fe9d2d485136160701ce3045b748f3df7c60c07e169",
+      "width": 320,
+      "height": 2632,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "dca82f03b860289a1e5574424610bd56234e76f5d2f561657b198fea24abc389",
+          "review": "../more-current-visual-review/sheet-04.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "0edf1d289b2e804b112ca91367c51524ae8a6a6a4684a4fdcad651b0ae8de7ad",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "737fbf296926091c9d3d8c054e5fcb5aa6828a0542d136aef0e678fcf5a2a305",
+          "review": "../more-current-visual-review/sheet-04.png#tile-5"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "7095838544641c4a065cc4edcde1fe5b17c214a6c3f62e0047542f6a1a4b7cf7",
+          "review": "../more-current-visual-review/sheet-05.png#tile-0"
+        },
+        {
+          "y0": 2600,
+          "y1": 2632,
+          "pixel_sha256": "3b7a0a91c34455cd936bb9e7c300fe49668695b79f3c98b8b43e37193c05f5f0",
+          "review": "../more-current-visual-review/sheet-05.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-logout-error-mom-320-2x.png",
+      "sha256": "a1e654c6dffee3c67326db17436fd6aa15207ebd35139c2123ef5a648ec1d97d",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "dca82f03b860289a1e5574424610bd56234e76f5d2f561657b198fea24abc389",
+          "review": "../more-current-visual-review/sheet-04.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1462d46c4861c29041d879736402097e4fd061fcb6e577142cd6e832cb70fae0",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-logout-error-mom-393-1x.long.png",
+      "sha256": "102b241889f89febff6667bc67dcb9995b06556bb1c624a1894805b2cf755fd0",
+      "width": 393,
+      "height": 1265,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "daf542880cf89ac418c97c53c2623ac132af83d7fe0b6abab6a998b480cd7517",
+          "review": "../more-current-visual-review/sheet-05.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1265,
+          "pixel_sha256": "ea2374efd0254d07986a56bf4a357fd4b691c5dac7662004c0ea3c39a04c0eb7",
+          "review": "../more-current-visual-review/sheet-05.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-logout-error-mom-393-1x.png",
+      "sha256": "046e0970ac79d86b60762853cb331f3b4728e055d4983b01cd6042392f1c7b2c",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "daf542880cf89ac418c97c53c2623ac132af83d7fe0b6abab6a998b480cd7517",
+          "review": "../more-current-visual-review/sheet-05.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3208ac8b3b1d4a7464bc46ef7618c8e19bd85dee870d86c1847457571b6198a6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-logout-error-more-320-2x.long.png",
+      "sha256": "dba4948f1953505cb7df9f2a64a4dcf37000a6719d55f2eea9e9330383f9ab74",
+      "width": 320,
+      "height": 1211,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6da77909306035c246cff5a66c2ad59caba0d88ed76691634d12aa4a633297d4",
+          "review": "../more-current-visual-review/sheet-03.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1211,
+          "pixel_sha256": "a0195565114e74c6e4c13a404589ff8c005c7bafc2dcb124d743ce1305e3eb7c",
+          "review": "../more-current-visual-review/sheet-04.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-logout-error-more-320-2x.png",
+      "sha256": "268b93aa2ae6ec57156583e0aeb4dee84904d78f8ec0080f5df8a93a00cb6aa9",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6da77909306035c246cff5a66c2ad59caba0d88ed76691634d12aa4a633297d4",
+          "review": "../more-current-visual-review/sheet-03.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "616faa1e9e32e7fb980b447773cff46cf97cf9547510bc2dbf18972ca9eb7fd1",
+          "review": "../more-current-visual-review/sheet-08.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-logout-error-more-393-1x.png",
+      "sha256": "c39f9e0a5c90e182515478fd165d75c83f05b9c9ff2bc3d0aa11797d5a9578db",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6029e8bb393e96c7f079de26341df7c44d241a8cde3607cdf03c2a221d95aabd",
+          "review": "../more-current-visual-review/sheet-04.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "ae4f630d503ab6fd4f559f429de09469456c11d171c0c3898413ee795bf5b433",
+          "review": "../baby-development-date-visual-review/sheet-05.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-logout-error-pending-320-2x.long.png",
+      "sha256": "2d713b3b0ed51095ff743249756547fd04bb0118b562100c99164c61aab2154b",
+      "width": 320,
+      "height": 1569,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "322389ca19c59d2e6676fa3d3ce291c141a46b83332678f5dfa2348f2f9ff5d4",
+          "review": "../more-current-visual-review/sheet-13.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "2fb33e9a28e1cc6989e69bec5e934f6df3254ba93baa39781a123316bc6767aa",
+          "review": "../more-current-visual-review/sheet-13.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1569,
+          "pixel_sha256": "8995cb4b10fb45c66b16f8b69c567a0b496fa332e6933a496f5b719f13760c7d",
+          "review": "../more-current-visual-review/sheet-13.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-logout-error-pending-320-2x.png",
+      "sha256": "cd936eab5a26f8d098ff304db01566ec757b5755928eb383ef88e123b708ee3c",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "322389ca19c59d2e6676fa3d3ce291c141a46b83332678f5dfa2348f2f9ff5d4",
+          "review": "../more-current-visual-review/sheet-13.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "be6e654b138d38402b1ed6eba7375c62b3352910c06002ed28c46283d4489af1",
+          "review": "../more-current-visual-review/sheet-13.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-logout-error-pending-393-1x.png",
+      "sha256": "782099a0927aee729489edde1a799b95f075d553f628629f1935b37dc102b8e3",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "83ea4ce070b62010e91289a4ff02d2db8599e3474bef9dd514c849f7fb1d1155",
+          "review": "../more-current-visual-review/sheet-13.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "d3fc5d3bed99cb403eae7de90bf225c5affe6d26140aa7fb3cdaa54137519974",
+          "review": "../more-current-visual-review/sheet-14.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-logout-error-ready-320-2x.long.png",
+      "sha256": "37f03062bdac644cfa04a857ecd07548780cc781c2feb1f3c69aa64e0fdfdd3b",
+      "width": 320,
+      "height": 1489,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "80e28a3ccbddea9a43a398e9a9b469d43e4f57073d8a646201d3b0ab57f0a5e2",
+          "review": "../more-current-visual-review/sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "0590d30bcdd926ba50602f72f7b348e2814ecaf735b87bed5d88b9e6b5543e7e",
+          "review": "../more-current-visual-review/sheet-01.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1489,
+          "pixel_sha256": "0211ae977fded92310c3531502e4e681d2e26a434901496ca640ae3541d9981b",
+          "review": "../more-current-visual-review/sheet-01.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-logout-error-ready-320-2x.png",
+      "sha256": "1e0752b14bd994e0568c6d2a142535022e8383d669526d8052eff3c95f08e6c9",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "80e28a3ccbddea9a43a398e9a9b469d43e4f57073d8a646201d3b0ab57f0a5e2",
+          "review": "../more-current-visual-review/sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "d6371eae2fb917f8a306f56ca923d26f398fb6be7a0d0fecfee9bb551a59dcbf",
+          "review": "../more-current-visual-review/sheet-01.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-logout-error-ready-393-1x.png",
+      "sha256": "ca5de96197df1fe96b8f9ff7f37956e492ce074418eb316b8fa778dd86d804a3",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "26806e58caf58485143b53822231f644c2f8b1f329703f886b0fab8f5538921e",
+          "review": "../more-current-visual-review/sheet-01.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "b887e38b37b580f70486059362cdc5cac3c8c0174c869d8e73fa162462a85beb",
+          "review": "../more-current-visual-review/sheet-01.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-logout-error-result-320-2x.long.png",
+      "sha256": "7507467e457b4c46701b43fb9ff4eb3f14582869f67ae6cd16f778267d90a6b6",
+      "width": 320,
+      "height": 1569,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "322389ca19c59d2e6676fa3d3ce291c141a46b83332678f5dfa2348f2f9ff5d4",
+          "review": "../more-current-visual-review/sheet-13.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "5d552bd456786019e30dbfbdef959c23584e503fbaefdb7b03d1b3260695f734",
+          "review": "sheet-03.png#tile-5"
+        },
+        {
+          "y0": 1300,
+          "y1": 1569,
+          "pixel_sha256": "7a70fd9bf009f5e586104ee61f5163e90ab4cc06a397547d50491d23fb35575f",
+          "review": "sheet-08.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-logout-error-result-320-2x.png",
+      "sha256": "13beaca34af399da287d7c036c207a80ffc8de1e066ce6ffea74e0b3bd913053",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "621492ae02e790a93da7f7708771115e34beff9050a5152051396af7f907f6c7",
+          "review": "sheet-08.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "cfeb45659a16f18b972c7c74949e35664297479430a386971a0f633ee8136bfa",
+          "review": "sheet-08.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-logout-error-result-393-1x.png",
+      "sha256": "d4252451bc865fb5a25fbad3906a8868efae184a2c4197b0419af9ab6c943d7c",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "83ea4ce070b62010e91289a4ff02d2db8599e3474bef9dd514c849f7fb1d1155",
+          "review": "../more-current-visual-review/sheet-13.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "74c83232e9feca1cc160ed6f53f4b4db5e3cb588fb226911bee9dadbc9c6fdae",
+          "review": "sheet-08.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-logout-success-mom-320-2x.long.png",
+      "sha256": "505a284d125be2f41bc72fe9d2d485136160701ce3045b748f3df7c60c07e169",
+      "width": 320,
+      "height": 2632,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "dca82f03b860289a1e5574424610bd56234e76f5d2f561657b198fea24abc389",
+          "review": "../more-current-visual-review/sheet-04.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "0edf1d289b2e804b112ca91367c51524ae8a6a6a4684a4fdcad651b0ae8de7ad",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "737fbf296926091c9d3d8c054e5fcb5aa6828a0542d136aef0e678fcf5a2a305",
+          "review": "../more-current-visual-review/sheet-04.png#tile-5"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "7095838544641c4a065cc4edcde1fe5b17c214a6c3f62e0047542f6a1a4b7cf7",
+          "review": "../more-current-visual-review/sheet-05.png#tile-0"
+        },
+        {
+          "y0": 2600,
+          "y1": 2632,
+          "pixel_sha256": "3b7a0a91c34455cd936bb9e7c300fe49668695b79f3c98b8b43e37193c05f5f0",
+          "review": "../more-current-visual-review/sheet-05.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-logout-success-mom-320-2x.png",
+      "sha256": "a1e654c6dffee3c67326db17436fd6aa15207ebd35139c2123ef5a648ec1d97d",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "dca82f03b860289a1e5574424610bd56234e76f5d2f561657b198fea24abc389",
+          "review": "../more-current-visual-review/sheet-04.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1462d46c4861c29041d879736402097e4fd061fcb6e577142cd6e832cb70fae0",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-logout-success-mom-393-1x.long.png",
+      "sha256": "102b241889f89febff6667bc67dcb9995b06556bb1c624a1894805b2cf755fd0",
+      "width": 393,
+      "height": 1265,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "daf542880cf89ac418c97c53c2623ac132af83d7fe0b6abab6a998b480cd7517",
+          "review": "../more-current-visual-review/sheet-05.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1265,
+          "pixel_sha256": "ea2374efd0254d07986a56bf4a357fd4b691c5dac7662004c0ea3c39a04c0eb7",
+          "review": "../more-current-visual-review/sheet-05.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-logout-success-mom-393-1x.png",
+      "sha256": "046e0970ac79d86b60762853cb331f3b4728e055d4983b01cd6042392f1c7b2c",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "daf542880cf89ac418c97c53c2623ac132af83d7fe0b6abab6a998b480cd7517",
+          "review": "../more-current-visual-review/sheet-05.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3208ac8b3b1d4a7464bc46ef7618c8e19bd85dee870d86c1847457571b6198a6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-logout-success-more-320-2x.long.png",
+      "sha256": "dba4948f1953505cb7df9f2a64a4dcf37000a6719d55f2eea9e9330383f9ab74",
+      "width": 320,
+      "height": 1211,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6da77909306035c246cff5a66c2ad59caba0d88ed76691634d12aa4a633297d4",
+          "review": "../more-current-visual-review/sheet-03.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1211,
+          "pixel_sha256": "a0195565114e74c6e4c13a404589ff8c005c7bafc2dcb124d743ce1305e3eb7c",
+          "review": "../more-current-visual-review/sheet-04.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-logout-success-more-320-2x.png",
+      "sha256": "268b93aa2ae6ec57156583e0aeb4dee84904d78f8ec0080f5df8a93a00cb6aa9",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6da77909306035c246cff5a66c2ad59caba0d88ed76691634d12aa4a633297d4",
+          "review": "../more-current-visual-review/sheet-03.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "616faa1e9e32e7fb980b447773cff46cf97cf9547510bc2dbf18972ca9eb7fd1",
+          "review": "../more-current-visual-review/sheet-08.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-logout-success-more-393-1x.png",
+      "sha256": "c39f9e0a5c90e182515478fd165d75c83f05b9c9ff2bc3d0aa11797d5a9578db",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6029e8bb393e96c7f079de26341df7c44d241a8cde3607cdf03c2a221d95aabd",
+          "review": "../more-current-visual-review/sheet-04.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "ae4f630d503ab6fd4f559f429de09469456c11d171c0c3898413ee795bf5b433",
+          "review": "../baby-development-date-visual-review/sheet-05.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-logout-success-pending-320-2x.long.png",
+      "sha256": "2d713b3b0ed51095ff743249756547fd04bb0118b562100c99164c61aab2154b",
+      "width": 320,
+      "height": 1569,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "322389ca19c59d2e6676fa3d3ce291c141a46b83332678f5dfa2348f2f9ff5d4",
+          "review": "../more-current-visual-review/sheet-13.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "2fb33e9a28e1cc6989e69bec5e934f6df3254ba93baa39781a123316bc6767aa",
+          "review": "../more-current-visual-review/sheet-13.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1569,
+          "pixel_sha256": "8995cb4b10fb45c66b16f8b69c567a0b496fa332e6933a496f5b719f13760c7d",
+          "review": "../more-current-visual-review/sheet-13.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-logout-success-pending-320-2x.png",
+      "sha256": "cd936eab5a26f8d098ff304db01566ec757b5755928eb383ef88e123b708ee3c",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "322389ca19c59d2e6676fa3d3ce291c141a46b83332678f5dfa2348f2f9ff5d4",
+          "review": "../more-current-visual-review/sheet-13.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "be6e654b138d38402b1ed6eba7375c62b3352910c06002ed28c46283d4489af1",
+          "review": "../more-current-visual-review/sheet-13.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-logout-success-pending-393-1x.png",
+      "sha256": "782099a0927aee729489edde1a799b95f075d553f628629f1935b37dc102b8e3",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "83ea4ce070b62010e91289a4ff02d2db8599e3474bef9dd514c849f7fb1d1155",
+          "review": "../more-current-visual-review/sheet-13.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "d3fc5d3bed99cb403eae7de90bf225c5affe6d26140aa7fb3cdaa54137519974",
+          "review": "../more-current-visual-review/sheet-14.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-logout-success-ready-320-2x.long.png",
+      "sha256": "37f03062bdac644cfa04a857ecd07548780cc781c2feb1f3c69aa64e0fdfdd3b",
+      "width": 320,
+      "height": 1489,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "80e28a3ccbddea9a43a398e9a9b469d43e4f57073d8a646201d3b0ab57f0a5e2",
+          "review": "../more-current-visual-review/sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "0590d30bcdd926ba50602f72f7b348e2814ecaf735b87bed5d88b9e6b5543e7e",
+          "review": "../more-current-visual-review/sheet-01.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1489,
+          "pixel_sha256": "0211ae977fded92310c3531502e4e681d2e26a434901496ca640ae3541d9981b",
+          "review": "../more-current-visual-review/sheet-01.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-logout-success-ready-320-2x.png",
+      "sha256": "1e0752b14bd994e0568c6d2a142535022e8383d669526d8052eff3c95f08e6c9",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "80e28a3ccbddea9a43a398e9a9b469d43e4f57073d8a646201d3b0ab57f0a5e2",
+          "review": "../more-current-visual-review/sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "d6371eae2fb917f8a306f56ca923d26f398fb6be7a0d0fecfee9bb551a59dcbf",
+          "review": "../more-current-visual-review/sheet-01.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-logout-success-ready-393-1x.png",
+      "sha256": "ca5de96197df1fe96b8f9ff7f37956e492ce074418eb316b8fa778dd86d804a3",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "26806e58caf58485143b53822231f644c2f8b1f329703f886b0fab8f5538921e",
+          "review": "../more-current-visual-review/sheet-01.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "b887e38b37b580f70486059362cdc5cac3c8c0174c869d8e73fa162462a85beb",
+          "review": "../more-current-visual-review/sheet-01.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-logout-success-result-320-2x.long.png",
+      "sha256": "2d713b3b0ed51095ff743249756547fd04bb0118b562100c99164c61aab2154b",
+      "width": 320,
+      "height": 1569,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "322389ca19c59d2e6676fa3d3ce291c141a46b83332678f5dfa2348f2f9ff5d4",
+          "review": "../more-current-visual-review/sheet-13.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "2fb33e9a28e1cc6989e69bec5e934f6df3254ba93baa39781a123316bc6767aa",
+          "review": "../more-current-visual-review/sheet-13.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1569,
+          "pixel_sha256": "8995cb4b10fb45c66b16f8b69c567a0b496fa332e6933a496f5b719f13760c7d",
+          "review": "../more-current-visual-review/sheet-13.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-logout-success-result-320-2x.png",
+      "sha256": "cd936eab5a26f8d098ff304db01566ec757b5755928eb383ef88e123b708ee3c",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "322389ca19c59d2e6676fa3d3ce291c141a46b83332678f5dfa2348f2f9ff5d4",
+          "review": "../more-current-visual-review/sheet-13.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "be6e654b138d38402b1ed6eba7375c62b3352910c06002ed28c46283d4489af1",
+          "review": "../more-current-visual-review/sheet-13.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-logout-success-result-393-1x.png",
+      "sha256": "782099a0927aee729489edde1a799b95f075d553f628629f1935b37dc102b8e3",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "83ea4ce070b62010e91289a4ff02d2db8599e3474bef9dd514c849f7fb1d1155",
+          "review": "../more-current-visual-review/sheet-13.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "d3fc5d3bed99cb403eae7de90bf225c5affe6d26140aa7fb3cdaa54137519974",
+          "review": "../more-current-visual-review/sheet-14.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-long-pending-other-mom-320-2x.long.png",
+      "sha256": "505a284d125be2f41bc72fe9d2d485136160701ce3045b748f3df7c60c07e169",
+      "width": 320,
+      "height": 2632,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "dca82f03b860289a1e5574424610bd56234e76f5d2f561657b198fea24abc389",
+          "review": "../more-current-visual-review/sheet-04.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "0edf1d289b2e804b112ca91367c51524ae8a6a6a4684a4fdcad651b0ae8de7ad",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "737fbf296926091c9d3d8c054e5fcb5aa6828a0542d136aef0e678fcf5a2a305",
+          "review": "../more-current-visual-review/sheet-04.png#tile-5"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "7095838544641c4a065cc4edcde1fe5b17c214a6c3f62e0047542f6a1a4b7cf7",
+          "review": "../more-current-visual-review/sheet-05.png#tile-0"
+        },
+        {
+          "y0": 2600,
+          "y1": 2632,
+          "pixel_sha256": "3b7a0a91c34455cd936bb9e7c300fe49668695b79f3c98b8b43e37193c05f5f0",
+          "review": "../more-current-visual-review/sheet-05.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-long-pending-other-mom-320-2x.png",
+      "sha256": "a1e654c6dffee3c67326db17436fd6aa15207ebd35139c2123ef5a648ec1d97d",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "dca82f03b860289a1e5574424610bd56234e76f5d2f561657b198fea24abc389",
+          "review": "../more-current-visual-review/sheet-04.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1462d46c4861c29041d879736402097e4fd061fcb6e577142cd6e832cb70fae0",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-long-pending-other-mom-393-1x.long.png",
+      "sha256": "102b241889f89febff6667bc67dcb9995b06556bb1c624a1894805b2cf755fd0",
+      "width": 393,
+      "height": 1265,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "daf542880cf89ac418c97c53c2623ac132af83d7fe0b6abab6a998b480cd7517",
+          "review": "../more-current-visual-review/sheet-05.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1265,
+          "pixel_sha256": "ea2374efd0254d07986a56bf4a357fd4b691c5dac7662004c0ea3c39a04c0eb7",
+          "review": "../more-current-visual-review/sheet-05.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-long-pending-other-mom-393-1x.png",
+      "sha256": "046e0970ac79d86b60762853cb331f3b4728e055d4983b01cd6042392f1c7b2c",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "daf542880cf89ac418c97c53c2623ac132af83d7fe0b6abab6a998b480cd7517",
+          "review": "../more-current-visual-review/sheet-05.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3208ac8b3b1d4a7464bc46ef7618c8e19bd85dee870d86c1847457571b6198a6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-long-pending-other-more-320-2x.long.png",
+      "sha256": "2e4610fc2e08d0a94c48f0a2f4148362b36c8e840068f6e76313f054e2598b54",
+      "width": 320,
+      "height": 1279,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "dd95e420d2267f53ddd2d5f762b19e66a8b3323fbf17af67d4b9d14f21605d2c",
+          "review": "sheet-08.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1279,
+          "pixel_sha256": "a3adc4ec1060e799cfeecec776cab9417328b17deb4a50bab948a4f6ada52e6f",
+          "review": "sheet-09.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-long-pending-other-more-320-2x.png",
+      "sha256": "c32b31eb778f0f6cf6bea065078b4b84a053f1bfff3a2d4d40f55d420ee1ede6",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "dd95e420d2267f53ddd2d5f762b19e66a8b3323fbf17af67d4b9d14f21605d2c",
+          "review": "sheet-08.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1ad0fcf0ee85f5328a1c1e39ea5319d94976e3e00c3cff7fea582b362c391748",
+          "review": "sheet-09.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-long-pending-other-more-393-1x.png",
+      "sha256": "ba7c4856ade71cac6eae214d512783d0858a4de4744180f34af534b50dce786b",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9c1c8d56280a859d1728ea6948fe51449737def07110e02f496e7ccaac602089",
+          "review": "sheet-09.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "ae4f630d503ab6fd4f559f429de09469456c11d171c0c3898413ee795bf5b433",
+          "review": "../baby-development-date-visual-review/sheet-05.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-long-pending-other-ready-320-2x.long.png",
+      "sha256": "03cd1ae1b3292099056aca29fba2c344ee3437e5c59eae20635a528273ac5b10",
+      "width": 320,
+      "height": 1700,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "23f9dc5ed2fddcbcf6e73114e17957f960e60ae4348fe534feabfd4ecf276579",
+          "review": "sheet-09.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "a29527c9486a2595afef53597830ceea98ad24360747be4b526fadbcc53b60ab",
+          "review": "sheet-09.png#tile-4"
+        },
+        {
+          "y0": 1300,
+          "y1": 1700,
+          "pixel_sha256": "da43d02b1cb1ece806c1d8e5a6ae40b40751fe3d4eff7f12ce81e8afb973bd90",
+          "review": "sheet-09.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-long-pending-other-ready-320-2x.png",
+      "sha256": "68060c3800858af670a900b2c403685614afe56e0034b713fd5e8f17394c8152",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "23f9dc5ed2fddcbcf6e73114e17957f960e60ae4348fe534feabfd4ecf276579",
+          "review": "sheet-09.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "d62d20f5a17b001885a8c539f9fcf16bdec5bad0ec536820f23e07fe52b619b4",
+          "review": "sheet-10.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-long-pending-other-ready-393-1x.png",
+      "sha256": "20b258291336cfe5b8f68d3b8adb04ba590b1ff7cbc5c3e367c6e3149bef6af0",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "788aaba137bb2340849fd88b9d35e8900946ac9576bf65a5934cae004b854ee5",
+          "review": "sheet-10.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "fd255903bb6a2f3ab2d2f40dd37b469cd3206979d34e841aa05ab69ac8aabb5f",
+          "review": "sheet-10.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-long-pending-other-return-320-2x.long.png",
+      "sha256": "2e4610fc2e08d0a94c48f0a2f4148362b36c8e840068f6e76313f054e2598b54",
+      "width": 320,
+      "height": 1279,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "dd95e420d2267f53ddd2d5f762b19e66a8b3323fbf17af67d4b9d14f21605d2c",
+          "review": "sheet-08.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1279,
+          "pixel_sha256": "a3adc4ec1060e799cfeecec776cab9417328b17deb4a50bab948a4f6ada52e6f",
+          "review": "sheet-09.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-long-pending-other-return-320-2x.png",
+      "sha256": "7a1568fd65dcff350879b7349b7fafbc3e84eb67046fd22a6cea30b2731b7da9",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "be1653a165eb90b0a21252c896a7870f09059f3fd807d5002393cb35bdd6a9bc",
+          "review": "../more-current-visual-review/sheet-04.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "733bd14ecda4e60da268bf218bf60fd46f94d021b5eb13d8b904d6688b21b696",
+          "review": "../more-current-visual-review/sheet-04.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-long-pending-other-return-393-1x.png",
+      "sha256": "ba7c4856ade71cac6eae214d512783d0858a4de4744180f34af534b50dce786b",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9c1c8d56280a859d1728ea6948fe51449737def07110e02f496e7ccaac602089",
+          "review": "sheet-09.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "ae4f630d503ab6fd4f559f429de09469456c11d171c0c3898413ee795bf5b433",
+          "review": "../baby-development-date-visual-review/sheet-05.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-password-cancelled-320-2x.long.png",
+      "sha256": "37f03062bdac644cfa04a857ecd07548780cc781c2feb1f3c69aa64e0fdfdd3b",
+      "width": 320,
+      "height": 1489,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "80e28a3ccbddea9a43a398e9a9b469d43e4f57073d8a646201d3b0ab57f0a5e2",
+          "review": "../more-current-visual-review/sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "0590d30bcdd926ba50602f72f7b348e2814ecaf735b87bed5d88b9e6b5543e7e",
+          "review": "../more-current-visual-review/sheet-01.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1489,
+          "pixel_sha256": "0211ae977fded92310c3531502e4e681d2e26a434901496ca640ae3541d9981b",
+          "review": "../more-current-visual-review/sheet-01.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-password-cancelled-320-2x.png",
+      "sha256": "8657cad8155a7634faac0a408297e34240d76a3aa8c3bf78b8bed888cab372d2",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "629a204240f8601734a2ca881122a8da30d3c47546e8e09b7be962118fa52d67",
+          "review": "../more-current-visual-review/sheet-03.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "4b4418576a92dfa3ee8f8ea5f228f5fea403bb5266a4348fb9e1782543d13ede",
+          "review": "../more-current-visual-review/sheet-03.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-password-cancelled-393-1x.png",
+      "sha256": "ca5de96197df1fe96b8f9ff7f37956e492ce074418eb316b8fa778dd86d804a3",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "26806e58caf58485143b53822231f644c2f8b1f329703f886b0fab8f5538921e",
+          "review": "../more-current-visual-review/sheet-01.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "b887e38b37b580f70486059362cdc5cac3c8c0174c869d8e73fa162462a85beb",
+          "review": "../more-current-visual-review/sheet-01.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-password-empty-320-2x.png",
+      "sha256": "4c104e162e2d6e375f71422ec5f946df98d8ae5f5e8ed0bd2a3552b64736364e",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "accf12442d566392192aeaf4ff9147b75771412bec210a6f2a9b72390d6940a7",
+          "review": "../more-current-visual-review/sheet-03.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "c7854f5b2dd9e11039029ebdfb0e6f75ab8e57def129c2f3bee5cd437f2d8de7",
+          "review": "../more-current-visual-review/sheet-03.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-password-empty-393-1x.png",
+      "sha256": "1fec39568daa867188ec8f90d2c7601497cb2b872a6f4d00cccd7d15ce680dad",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "78dcd7c5a66e3a5934cc04dc74bafbd16f59b820a642c2bde3f9be8903472128",
+          "review": "../more-current-visual-review/sheet-03.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "ea2c231719f7b87b4e82cc47d576c798bc1f8da2da9ee3c3082f161678f1ebce",
+          "review": "../more-current-visual-review/sheet-02.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-password-empty-dismissed-320-2x.long.png",
+      "sha256": "37f03062bdac644cfa04a857ecd07548780cc781c2feb1f3c69aa64e0fdfdd3b",
+      "width": 320,
+      "height": 1489,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "80e28a3ccbddea9a43a398e9a9b469d43e4f57073d8a646201d3b0ab57f0a5e2",
+          "review": "../more-current-visual-review/sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "0590d30bcdd926ba50602f72f7b348e2814ecaf735b87bed5d88b9e6b5543e7e",
+          "review": "../more-current-visual-review/sheet-01.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1489,
+          "pixel_sha256": "0211ae977fded92310c3531502e4e681d2e26a434901496ca640ae3541d9981b",
+          "review": "../more-current-visual-review/sheet-01.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-password-empty-dismissed-320-2x.png",
+      "sha256": "8657cad8155a7634faac0a408297e34240d76a3aa8c3bf78b8bed888cab372d2",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "629a204240f8601734a2ca881122a8da30d3c47546e8e09b7be962118fa52d67",
+          "review": "../more-current-visual-review/sheet-03.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "4b4418576a92dfa3ee8f8ea5f228f5fea403bb5266a4348fb9e1782543d13ede",
+          "review": "../more-current-visual-review/sheet-03.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-password-empty-dismissed-393-1x.png",
+      "sha256": "ca5de96197df1fe96b8f9ff7f37956e492ce074418eb316b8fa778dd86d804a3",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "26806e58caf58485143b53822231f644c2f8b1f329703f886b0fab8f5538921e",
+          "review": "../more-current-visual-review/sheet-01.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "b887e38b37b580f70486059362cdc5cac3c8c0174c869d8e73fa162462a85beb",
+          "review": "../more-current-visual-review/sheet-01.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-password-entered-320-2x.png",
+      "sha256": "670fb58e929f3e7398ce09f89d91e34221fa532cc5a3837a5603f93836cb8302",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2c1699c7ec1776fac155d39975a5676858617775324cca384aff27a0765e58d3",
+          "review": "sheet-10.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "c7854f5b2dd9e11039029ebdfb0e6f75ab8e57def129c2f3bee5cd437f2d8de7",
+          "review": "../more-current-visual-review/sheet-03.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-password-entered-393-1x.png",
+      "sha256": "b58507a988cd51c54a4bdba0732d343d1e552152c5ce75fce2f3e914d89c6bf7",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "258af4259d2f504a9ac2ab648a3d4ecce6ad4270ace81cc7a261eaa9777ff5a5",
+          "review": "sheet-10.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "ea2c231719f7b87b4e82cc47d576c798bc1f8da2da9ee3c3082f161678f1ebce",
+          "review": "../more-current-visual-review/sheet-02.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-password-mom-320-2x.long.png",
+      "sha256": "505a284d125be2f41bc72fe9d2d485136160701ce3045b748f3df7c60c07e169",
+      "width": 320,
+      "height": 2632,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "dca82f03b860289a1e5574424610bd56234e76f5d2f561657b198fea24abc389",
+          "review": "../more-current-visual-review/sheet-04.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "0edf1d289b2e804b112ca91367c51524ae8a6a6a4684a4fdcad651b0ae8de7ad",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "737fbf296926091c9d3d8c054e5fcb5aa6828a0542d136aef0e678fcf5a2a305",
+          "review": "../more-current-visual-review/sheet-04.png#tile-5"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "7095838544641c4a065cc4edcde1fe5b17c214a6c3f62e0047542f6a1a4b7cf7",
+          "review": "../more-current-visual-review/sheet-05.png#tile-0"
+        },
+        {
+          "y0": 2600,
+          "y1": 2632,
+          "pixel_sha256": "3b7a0a91c34455cd936bb9e7c300fe49668695b79f3c98b8b43e37193c05f5f0",
+          "review": "../more-current-visual-review/sheet-05.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-password-mom-320-2x.png",
+      "sha256": "a1e654c6dffee3c67326db17436fd6aa15207ebd35139c2123ef5a648ec1d97d",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "dca82f03b860289a1e5574424610bd56234e76f5d2f561657b198fea24abc389",
+          "review": "../more-current-visual-review/sheet-04.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1462d46c4861c29041d879736402097e4fd061fcb6e577142cd6e832cb70fae0",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-password-mom-393-1x.long.png",
+      "sha256": "102b241889f89febff6667bc67dcb9995b06556bb1c624a1894805b2cf755fd0",
+      "width": 393,
+      "height": 1265,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "daf542880cf89ac418c97c53c2623ac132af83d7fe0b6abab6a998b480cd7517",
+          "review": "../more-current-visual-review/sheet-05.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1265,
+          "pixel_sha256": "ea2374efd0254d07986a56bf4a357fd4b691c5dac7662004c0ea3c39a04c0eb7",
+          "review": "../more-current-visual-review/sheet-05.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-password-mom-393-1x.png",
+      "sha256": "046e0970ac79d86b60762853cb331f3b4728e055d4983b01cd6042392f1c7b2c",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "daf542880cf89ac418c97c53c2623ac132af83d7fe0b6abab6a998b480cd7517",
+          "review": "../more-current-visual-review/sheet-05.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3208ac8b3b1d4a7464bc46ef7618c8e19bd85dee870d86c1847457571b6198a6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-password-more-320-2x.long.png",
+      "sha256": "dba4948f1953505cb7df9f2a64a4dcf37000a6719d55f2eea9e9330383f9ab74",
+      "width": 320,
+      "height": 1211,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6da77909306035c246cff5a66c2ad59caba0d88ed76691634d12aa4a633297d4",
+          "review": "../more-current-visual-review/sheet-03.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1211,
+          "pixel_sha256": "a0195565114e74c6e4c13a404589ff8c005c7bafc2dcb124d743ce1305e3eb7c",
+          "review": "../more-current-visual-review/sheet-04.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-password-more-320-2x.png",
+      "sha256": "268b93aa2ae6ec57156583e0aeb4dee84904d78f8ec0080f5df8a93a00cb6aa9",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6da77909306035c246cff5a66c2ad59caba0d88ed76691634d12aa4a633297d4",
+          "review": "../more-current-visual-review/sheet-03.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "616faa1e9e32e7fb980b447773cff46cf97cf9547510bc2dbf18972ca9eb7fd1",
+          "review": "../more-current-visual-review/sheet-08.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-password-more-393-1x.png",
+      "sha256": "c39f9e0a5c90e182515478fd165d75c83f05b9c9ff2bc3d0aa11797d5a9578db",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6029e8bb393e96c7f079de26341df7c44d241a8cde3607cdf03c2a221d95aabd",
+          "review": "../more-current-visual-review/sheet-04.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "ae4f630d503ab6fd4f559f429de09469456c11d171c0c3898413ee795bf5b433",
+          "review": "../baby-development-date-visual-review/sheet-05.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-password-ready-320-2x.long.png",
+      "sha256": "37f03062bdac644cfa04a857ecd07548780cc781c2feb1f3c69aa64e0fdfdd3b",
+      "width": 320,
+      "height": 1489,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "80e28a3ccbddea9a43a398e9a9b469d43e4f57073d8a646201d3b0ab57f0a5e2",
+          "review": "../more-current-visual-review/sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "0590d30bcdd926ba50602f72f7b348e2814ecaf735b87bed5d88b9e6b5543e7e",
+          "review": "../more-current-visual-review/sheet-01.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1489,
+          "pixel_sha256": "0211ae977fded92310c3531502e4e681d2e26a434901496ca640ae3541d9981b",
+          "review": "../more-current-visual-review/sheet-01.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-password-ready-320-2x.png",
+      "sha256": "1e0752b14bd994e0568c6d2a142535022e8383d669526d8052eff3c95f08e6c9",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "80e28a3ccbddea9a43a398e9a9b469d43e4f57073d8a646201d3b0ab57f0a5e2",
+          "review": "../more-current-visual-review/sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "d6371eae2fb917f8a306f56ca923d26f398fb6be7a0d0fecfee9bb551a59dcbf",
+          "review": "../more-current-visual-review/sheet-01.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-password-ready-393-1x.png",
+      "sha256": "ca5de96197df1fe96b8f9ff7f37956e492ce074418eb316b8fa778dd86d804a3",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "26806e58caf58485143b53822231f644c2f8b1f329703f886b0fab8f5538921e",
+          "review": "../more-current-visual-review/sheet-01.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "b887e38b37b580f70486059362cdc5cac3c8c0174c869d8e73fa162462a85beb",
+          "review": "../more-current-visual-review/sheet-01.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-password-return-320-2x.long.png",
+      "sha256": "dba4948f1953505cb7df9f2a64a4dcf37000a6719d55f2eea9e9330383f9ab74",
+      "width": 320,
+      "height": 1211,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6da77909306035c246cff5a66c2ad59caba0d88ed76691634d12aa4a633297d4",
+          "review": "../more-current-visual-review/sheet-03.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1211,
+          "pixel_sha256": "a0195565114e74c6e4c13a404589ff8c005c7bafc2dcb124d743ce1305e3eb7c",
+          "review": "../more-current-visual-review/sheet-04.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-password-return-320-2x.png",
+      "sha256": "7a1568fd65dcff350879b7349b7fafbc3e84eb67046fd22a6cea30b2731b7da9",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "be1653a165eb90b0a21252c896a7870f09059f3fd807d5002393cb35bdd6a9bc",
+          "review": "../more-current-visual-review/sheet-04.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "733bd14ecda4e60da268bf218bf60fd46f94d021b5eb13d8b904d6688b21b696",
+          "review": "../more-current-visual-review/sheet-04.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-password-return-393-1x.png",
+      "sha256": "c39f9e0a5c90e182515478fd165d75c83f05b9c9ff2bc3d0aa11797d5a9578db",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6029e8bb393e96c7f079de26341df7c44d241a8cde3607cdf03c2a221d95aabd",
+          "review": "../more-current-visual-review/sheet-04.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "ae4f630d503ab6fd4f559f429de09469456c11d171c0c3898413ee795bf5b433",
+          "review": "../baby-development-date-visual-review/sheet-05.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-read-error-320-2x.png",
+      "sha256": "9ae93f77d07c934c7d9812451cbb82a3c9bbd3301ab7e2e0cc86e4ad71a8bda3",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "7f10f1aba25d77fae1bf02ed4e1a4279619627c3f641ae60dc1f5b3fbc222806",
+          "review": "sheet-10.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "c65f45a9e7b9b361a0c4b43630dc19d5d3c121f954f7c47798296da08ea227e9",
+          "review": "sheet-07.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-read-error-393-1x.png",
+      "sha256": "b78cf18fc5ab8d3872801c7069290123351c60beebf02692cff47924805b8fc6",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "3abfbf8165328c644905c6e1d8a98054459d7f09d23ee784be2b57e7ed0d18f2",
+          "review": "sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "5e269ca9e36daffe984531405b8fd9a7fd95687843288196663912cae234267b",
+          "review": "sheet-05.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-read-mom-320-2x.long.png",
+      "sha256": "505a284d125be2f41bc72fe9d2d485136160701ce3045b748f3df7c60c07e169",
+      "width": 320,
+      "height": 2632,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "dca82f03b860289a1e5574424610bd56234e76f5d2f561657b198fea24abc389",
+          "review": "../more-current-visual-review/sheet-04.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "0edf1d289b2e804b112ca91367c51524ae8a6a6a4684a4fdcad651b0ae8de7ad",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "737fbf296926091c9d3d8c054e5fcb5aa6828a0542d136aef0e678fcf5a2a305",
+          "review": "../more-current-visual-review/sheet-04.png#tile-5"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "7095838544641c4a065cc4edcde1fe5b17c214a6c3f62e0047542f6a1a4b7cf7",
+          "review": "../more-current-visual-review/sheet-05.png#tile-0"
+        },
+        {
+          "y0": 2600,
+          "y1": 2632,
+          "pixel_sha256": "3b7a0a91c34455cd936bb9e7c300fe49668695b79f3c98b8b43e37193c05f5f0",
+          "review": "../more-current-visual-review/sheet-05.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-read-mom-320-2x.png",
+      "sha256": "a1e654c6dffee3c67326db17436fd6aa15207ebd35139c2123ef5a648ec1d97d",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "dca82f03b860289a1e5574424610bd56234e76f5d2f561657b198fea24abc389",
+          "review": "../more-current-visual-review/sheet-04.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1462d46c4861c29041d879736402097e4fd061fcb6e577142cd6e832cb70fae0",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-read-mom-393-1x.long.png",
+      "sha256": "102b241889f89febff6667bc67dcb9995b06556bb1c624a1894805b2cf755fd0",
+      "width": 393,
+      "height": 1265,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "daf542880cf89ac418c97c53c2623ac132af83d7fe0b6abab6a998b480cd7517",
+          "review": "../more-current-visual-review/sheet-05.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1265,
+          "pixel_sha256": "ea2374efd0254d07986a56bf4a357fd4b691c5dac7662004c0ea3c39a04c0eb7",
+          "review": "../more-current-visual-review/sheet-05.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-read-mom-393-1x.png",
+      "sha256": "046e0970ac79d86b60762853cb331f3b4728e055d4983b01cd6042392f1c7b2c",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "daf542880cf89ac418c97c53c2623ac132af83d7fe0b6abab6a998b480cd7517",
+          "review": "../more-current-visual-review/sheet-05.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3208ac8b3b1d4a7464bc46ef7618c8e19bd85dee870d86c1847457571b6198a6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-read-more-320-2x.long.png",
+      "sha256": "dba4948f1953505cb7df9f2a64a4dcf37000a6719d55f2eea9e9330383f9ab74",
+      "width": 320,
+      "height": 1211,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6da77909306035c246cff5a66c2ad59caba0d88ed76691634d12aa4a633297d4",
+          "review": "../more-current-visual-review/sheet-03.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1211,
+          "pixel_sha256": "a0195565114e74c6e4c13a404589ff8c005c7bafc2dcb124d743ce1305e3eb7c",
+          "review": "../more-current-visual-review/sheet-04.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-read-more-320-2x.png",
+      "sha256": "268b93aa2ae6ec57156583e0aeb4dee84904d78f8ec0080f5df8a93a00cb6aa9",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6da77909306035c246cff5a66c2ad59caba0d88ed76691634d12aa4a633297d4",
+          "review": "../more-current-visual-review/sheet-03.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "616faa1e9e32e7fb980b447773cff46cf97cf9547510bc2dbf18972ca9eb7fd1",
+          "review": "../more-current-visual-review/sheet-08.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-read-more-393-1x.png",
+      "sha256": "c39f9e0a5c90e182515478fd165d75c83f05b9c9ff2bc3d0aa11797d5a9578db",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6029e8bb393e96c7f079de26341df7c44d241a8cde3607cdf03c2a221d95aabd",
+          "review": "../more-current-visual-review/sheet-04.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "ae4f630d503ab6fd4f559f429de09469456c11d171c0c3898413ee795bf5b433",
+          "review": "../baby-development-date-visual-review/sheet-05.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-read-return-320-2x.long.png",
+      "sha256": "dba4948f1953505cb7df9f2a64a4dcf37000a6719d55f2eea9e9330383f9ab74",
+      "width": 320,
+      "height": 1211,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6da77909306035c246cff5a66c2ad59caba0d88ed76691634d12aa4a633297d4",
+          "review": "../more-current-visual-review/sheet-03.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1211,
+          "pixel_sha256": "a0195565114e74c6e4c13a404589ff8c005c7bafc2dcb124d743ce1305e3eb7c",
+          "review": "../more-current-visual-review/sheet-04.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-read-return-320-2x.png",
+      "sha256": "7a1568fd65dcff350879b7349b7fafbc3e84eb67046fd22a6cea30b2731b7da9",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "be1653a165eb90b0a21252c896a7870f09059f3fd807d5002393cb35bdd6a9bc",
+          "review": "../more-current-visual-review/sheet-04.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "733bd14ecda4e60da268bf218bf60fd46f94d021b5eb13d8b904d6688b21b696",
+          "review": "../more-current-visual-review/sheet-04.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-read-return-393-1x.png",
+      "sha256": "c39f9e0a5c90e182515478fd165d75c83f05b9c9ff2bc3d0aa11797d5a9578db",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6029e8bb393e96c7f079de26341df7c44d241a8cde3607cdf03c2a221d95aabd",
+          "review": "../more-current-visual-review/sheet-04.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "ae4f630d503ab6fd4f559f429de09469456c11d171c0c3898413ee795bf5b433",
+          "review": "../baby-development-date-visual-review/sheet-05.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-retry-pending-320-2x.png",
+      "sha256": "cf8d01931d149f542f11bbfdbdae8665155c5391084b30ae81979c8283f994d9",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "5193d92e88ca8c75e30d72a97bce4431605d1e33cfd77ca6a134ccf239d7bead",
+          "review": "sheet-07.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "c65f45a9e7b9b361a0c4b43630dc19d5d3c121f954f7c47798296da08ea227e9",
+          "review": "sheet-07.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-retry-pending-393-1x.png",
+      "sha256": "8359a4bf718efc546aaf91cb504205e79410de48f766965845224f109b22a506",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "0a15efea39b02d70ebf3117c31d7e76d50a859fa06ec69a8c25560d8e0f40a3a",
+          "review": "sheet-08.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "5e269ca9e36daffe984531405b8fd9a7fd95687843288196663912cae234267b",
+          "review": "sheet-05.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-retry-ready-320-2x.long.png",
+      "sha256": "37f03062bdac644cfa04a857ecd07548780cc781c2feb1f3c69aa64e0fdfdd3b",
+      "width": 320,
+      "height": 1489,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "80e28a3ccbddea9a43a398e9a9b469d43e4f57073d8a646201d3b0ab57f0a5e2",
+          "review": "../more-current-visual-review/sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "0590d30bcdd926ba50602f72f7b348e2814ecaf735b87bed5d88b9e6b5543e7e",
+          "review": "../more-current-visual-review/sheet-01.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1489,
+          "pixel_sha256": "0211ae977fded92310c3531502e4e681d2e26a434901496ca640ae3541d9981b",
+          "review": "../more-current-visual-review/sheet-01.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-retry-ready-320-2x.png",
+      "sha256": "1e0752b14bd994e0568c6d2a142535022e8383d669526d8052eff3c95f08e6c9",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "80e28a3ccbddea9a43a398e9a9b469d43e4f57073d8a646201d3b0ab57f0a5e2",
+          "review": "../more-current-visual-review/sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "d6371eae2fb917f8a306f56ca923d26f398fb6be7a0d0fecfee9bb551a59dcbf",
+          "review": "../more-current-visual-review/sheet-01.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/account-current-retry-ready-393-1x.png",
+      "sha256": "ca5de96197df1fe96b8f9ff7f37956e492ce074418eb316b8fa778dd86d804a3",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "26806e58caf58485143b53822231f644c2f8b1f329703f886b0fab8f5538921e",
+          "review": "../more-current-visual-review/sheet-01.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "b887e38b37b580f70486059362cdc5cac3c8c0174c869d8e73fa162462a85beb",
+          "review": "../more-current-visual-review/sheet-01.png#tile-5"
+        }
+      ]
+    }
+  ],
+  "unique_segments": 102,
+  "new_segments": 61,
+  "new_sheets": 11
+}

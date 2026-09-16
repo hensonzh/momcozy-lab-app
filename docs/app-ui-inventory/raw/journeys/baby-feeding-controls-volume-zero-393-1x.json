@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/baby-feeding-controls-volume-zero-393-1x.png",
+  "previous_source": "test/goldens/ui_inventory/baby-feeding-controls-expressed-milk-selected-393-1x.png",
+  "route": "/baby",
+  "trigger": "Tap save → 瓶喂量需要大于 0 且不超过 1000 ml，也可以留空。; no write request",
+  "root_entry": "Authenticated More → tap Baby bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/baby/baby_feeding_control_inventory_test.dart"
+}

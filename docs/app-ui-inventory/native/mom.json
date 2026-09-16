@@ -1,0 +1,108 @@
+{
+  "entry": "Bottom navigation",
+  "trigger": "Me",
+  "controls": [
+    {
+      "text": "",
+      "class": "android.widget.ScrollView",
+      "bounds": "[0,156][1280,2550]",
+      "scrollable": "true"
+    },
+    {
+      "text": "Cozymate · 每日分析暂不可用\n记录每一点变化，\n与 Cozymate 一起了解自己\n每日分析暂不可用，你仍可以与 Cozymate 交流今天的状态。\n→",
+      "class": "android.widget.Button",
+      "bounds": "[48,426][1232,840]",
+      "scrollable": "false"
+    },
+    {
+      "text": "查看记录 ›",
+      "class": "android.widget.Button",
+      "bounds": "[1057,861][1232,993]",
+      "scrollable": "false"
+    },
+    {
+      "text": "＋ 记录一次泌乳",
+      "class": "android.widget.Button",
+      "bounds": "[96,1182][1184,1326]",
+      "scrollable": "false"
+    },
+    {
+      "text": "今日已完成记录 ›",
+      "class": "android.widget.Button",
+      "bounds": "[949,1440][1232,1572]",
+      "scrollable": "false"
+    },
+    {
+      "text": "身体与精力，有力气",
+      "class": "android.widget.Button",
+      "bounds": "[48,1593][624,1917]",
+      "scrollable": "false"
+    },
+    {
+      "text": "昨夜休息，5–6 小时",
+      "class": "android.widget.Button",
+      "bounds": "[657,1593][1232,1917]",
+      "scrollable": "false"
+    },
+    {
+      "text": "今日心情\n有点绷着",
+      "class": "android.widget.Button",
+      "bounds": "[96,1977][716,2109]",
+      "scrollable": "false"
+    },
+    {
+      "text": "不太好",
+      "class": "android.widget.Button",
+      "bounds": "[728,1977][884,2109]",
+      "scrollable": "false"
+    },
+    {
+      "text": "一般",
+      "class": "android.widget.Button",
+      "bounds": "[902,1977][1034,2109]",
+      "scrollable": "false"
+    },
+    {
+      "text": "不错",
+      "class": "android.widget.Button",
+      "bounds": "[1052,1977][1184,2109]",
+      "scrollable": "false"
+    },
+    {
+      "text": "专家陪伴计划\n让专业的人，陪你把问题解决\n专家 + AI 持续服务，从分析问题到跟进改善，全程有人陪",
+      "class": "android.widget.Button",
+      "bounds": "[48,2175][1232,2550]",
+      "scrollable": "false"
+    },
+    {
+      "text": "Me",
+      "class": "android.widget.Button",
+      "bounds": "[24,2571][270,2766]",
+      "scrollable": "false"
+    },
+    {
+      "text": "Baby",
+      "class": "android.widget.Button",
+      "bounds": "[270,2571][517,2766]",
+      "scrollable": "false"
+    },
+    {
+      "text": "Cozymate",
+      "class": "android.widget.Button",
+      "bounds": "[517,2571][763,2766]",
+      "scrollable": "false"
+    },
+    {
+      "text": "Schedule",
+      "class": "android.widget.Button",
+      "bounds": "[763,2571][1010,2766]",
+      "scrollable": "false"
+    },
+    {
+      "text": "More",
+      "class": "android.widget.Button",
+      "bounds": "[1010,2571][1256,2766]",
+      "scrollable": "false"
+    }
+  ]
+}

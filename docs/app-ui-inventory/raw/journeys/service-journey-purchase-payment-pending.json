@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/service-journey-purchase-payment-pending-393.png",
+  "previous_source": "test/goldens/ui_inventory/service-journey-purchase-resumed-form-393.png",
+  "route": "/services/feeding-confidence",
+  "trigger": "Payment response pending → controls and close disabled",
+  "root_entry": "Authenticated More → tap Me bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/services/service_inventory_journey_test.dart"
+}

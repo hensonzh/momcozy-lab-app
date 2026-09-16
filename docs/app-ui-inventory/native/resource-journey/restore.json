@@ -1,0 +1,7 @@
+{
+  "original_apk_sha256": "8395f439039d8f47aba0b0253942a3b875c1969f9ed9f570650420e558403d51",
+  "installed_apk_sha256": "8395f439039d8f47aba0b0253942a3b875c1969f9ed9f570650420e558403d51",
+  "mia_visible_in_ui": true,
+  "method": "adb install -r; no uninstall or app data reset",
+  "launch_component": "com.momcozymai.app.flutterpoc.local/com.momcozymai.momcozy_flutter_app.MainActivity"
+}

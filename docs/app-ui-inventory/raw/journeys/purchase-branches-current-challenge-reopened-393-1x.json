@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/purchase-branches-current-challenge-reopened-393-1x.png",
+  "previous_source": "test/goldens/ui_inventory/purchase-branches-current-challenge-closed-393-1x.png",
+  "route": "/services/feeding-confidence",
+  "trigger": "Reopen requiresAction order → verification without card fields",
+  "root_entry": "Authenticated More → tap Me bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/services/purchase_branches_current_inventory_test.dart"
+}

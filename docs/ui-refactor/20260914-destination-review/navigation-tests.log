@@ -1,0 +1,10 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/app/mom_navigation_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: navigation reference at 320.0 with all selected states
+00:00 +1: five navigation destinations remain readable and tappable at 2x text on 320.0
+00:00 +2: navigation reference at 390.0 with all selected states
+00:00 +3: five navigation destinations remain readable and tappable at 2x text on 390.0
+00:00 +4: navigation reference at 430.0 with all selected states
+00:00 +5: five navigation destinations remain readable and tappable at 2x text on 430.0
+00:00 +6: (tearDownAll)
+00:00 +6: All tests passed!

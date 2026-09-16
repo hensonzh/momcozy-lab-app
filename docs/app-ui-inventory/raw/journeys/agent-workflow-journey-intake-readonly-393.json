@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/agent-workflow-journey-intake-readonly-393.png",
+  "previous_source": "test/goldens/ui_inventory/agent-workflow-journey-intake-reply-393.png",
+  "route": "/",
+  "trigger": "Open submitted form → read-only values",
+  "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage via public agentHubBuilder; production SSE parser, runner with default retries, cancel client and profile repository; isolated SSE/control/ticket HTTP and voice dependencies; production action client and support ticket repository. History disabled as in default local build; no remote model request.",
+  "test": "test/features/agent_hub/agent_workflow_inventory_journey_test.dart"
+}

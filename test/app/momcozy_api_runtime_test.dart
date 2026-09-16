@@ -51,7 +51,15 @@ void main() {
       ),
     );
 
-    final runtime = await MomCozyApiRuntime.bootstrap(store: store, authRepository: MomCozyAuthApiRepository(transport: FixtureApiJsonTransport({'id': 'secure-user', 'account_status': 'active'})));
+    final runtime = await MomCozyApiRuntime.bootstrap(
+      store: store,
+      authRepository: MomCozyAuthApiRepository(
+        transport: FixtureApiJsonTransport({
+          'id': 'secure-user',
+          'account_status': 'active',
+        }),
+      ),
+    );
     final observed = runtime.jsonTransport as ObservedApiJsonTransport;
     final transport = observed.inner as IoApiJsonTransport;
     final eventResult = await runtime.clientEventClient.post(

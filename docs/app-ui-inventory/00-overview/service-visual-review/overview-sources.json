@@ -1,0 +1,482 @@
+[
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-booking-availability-error-393.png",
+    "sha256": "ad5ee97428d5b682960617abc93c5a04bba8f0c7671601e92a0d0316676d55c0",
+    "sheet": "overview-1.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-booking-cancel-confirm-393.png",
+    "sha256": "6a1948249a3f9e97ed7f204a8887063304d1cbde964af842030618d1a2ce59c3",
+    "sheet": "overview-1.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-booking-cancel-error-393.png",
+    "sha256": "348ef2338b77392d1f4f17035ae19cb3d2240bc252ce11e9be26aea5eadaf174",
+    "sheet": "overview-1.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-booking-cancel-retained-393.png",
+    "sha256": "3656555053c2d5e71af30673c06db67f252077eb4b52a7f8300232f474152619",
+    "sheet": "overview-1.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-booking-cancelled-393.png",
+    "sha256": "611aaaa1921f81f062993c33b21a940bc7e0a320da9da6fc5e3badfcc6bee27d",
+    "sheet": "overview-1.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-booking-cancelled-timeline-393.png",
+    "sha256": "df60610b276c10553b3a169c34d7d59ef08266b0b65ce004b72e38b4ce243727",
+    "sheet": "overview-1.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-booking-confirm-error-393.png",
+    "sha256": "c58042161d6ecc0fec6b8cb39ef9f4ba31ada39e3f4fb5f8c0726f5f6e916652",
+    "sheet": "overview-1.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-booking-confirm-recovered-393.png",
+    "sha256": "e83f446673b46d7d46e20b8b48ca8b632a8de4d9b9b7adc81899e3ed07f00e6c",
+    "sheet": "overview-1.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-booking-confirmed-details-393.png",
+    "sha256": "3656555053c2d5e71af30673c06db67f252077eb4b52a7f8300232f474152619",
+    "sheet": "overview-1.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-booking-date-applied-393.png",
+    "sha256": "1a49aa390144b456769dce0658704ff8deee42353a2d82ff3fb337d44a14b25e",
+    "sheet": "overview-1.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-booking-date-calendar-393.png",
+    "sha256": "7967585f0e5427c950f4026c67406e461f31c57a7aa14a60ce7c10f52f4fc02c",
+    "sheet": "overview-1.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-booking-date-cancelled-393.png",
+    "sha256": "e8e944863145d7878ff86b17758a2ea7d4de169c347ee162a1bc52116c9e66db",
+    "sheet": "overview-1.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-booking-date-input-393.png",
+    "sha256": "2e05240a2bede4743ab4184f3684007490e6962479a99d24ae2d2ea8a50ac21a",
+    "sheet": "overview-2.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-booking-date-invalid-393.png",
+    "sha256": "2c8dccb5fe056134fdb10a2eb1ec2d8a191da1b4c5cbe744b0b565cdacb37111",
+    "sheet": "overview-2.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-booking-date-selected-393.png",
+    "sha256": "e27fb9c9b9c5317e0f449c80e22e15fdc02d951d1df1e2b8fc89c3685abc92d1",
+    "sheet": "overview-2.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-booking-emergency-393.png",
+    "sha256": "a4eee915b2b0c2bee22a10997f083f65fec65a4dd5583bc5921269c2160dc0b4",
+    "sheet": "overview-2.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-booking-held-393.png",
+    "sha256": "b8537df3f6d58043d629ab6c352cf464be53aaff5b97f51284d593a1a67efa32",
+    "sheet": "overview-2.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-booking-held-collapsed-393.png",
+    "sha256": "1640a86f7ce1d209bb5c490251d159da80d8f127b6bc55d43319f67f29448629",
+    "sheet": "overview-2.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-booking-hold-error-393.png",
+    "sha256": "ca09a4c482f8a1bc4e42494262a45648f89ff38656035ecadedcb102f1032728",
+    "sheet": "overview-2.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-booking-hold-recovered-393.png",
+    "sha256": "b8537df3f6d58043d629ab6c352cf464be53aaff5b97f51284d593a1a67efa32",
+    "sheet": "overview-2.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-booking-intake-entry-393.png",
+    "sha256": "e83f446673b46d7d46e20b8b48ca8b632a8de4d9b9b7adc81899e3ed07f00e6c",
+    "sheet": "overview-2.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-booking-no-slots-393.png",
+    "sha256": "aa9cb0c93f5917787c15ab8227a9aa0397a44457be82e25bf5c8d109777ea079",
+    "sheet": "overview-2.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-booking-precheck-393.png",
+    "sha256": "15ba20e272414d373a432186af649c7b3c638d1ca16c7f5cfd7814bf2b04a537",
+    "sheet": "overview-2.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-booking-provider-menu-393.png",
+    "sha256": "9721ddfb052ebf4fafe7923c01c222c493fbbfcf68fb675aac006055dc71c917",
+    "sheet": "overview-2.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-booking-region-blocked-393.png",
+    "sha256": "9629decbfd0038a6baebf7fac9703a14da5efbf3e846f4b4fc88b766d97b5af0",
+    "sheet": "overview-3.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-booking-slots-393.png",
+    "sha256": "e8e944863145d7878ff86b17758a2ea7d4de169c347ee162a1bc52116c9e66db",
+    "sheet": "overview-3.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-catalog-393.png",
+    "sha256": "6897cf7692efd2862014e721ad4bf55ef346da703a1600c5e0f62926b17c469f",
+    "sheet": "overview-3.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-catalog-empty-393.png",
+    "sha256": "03ed379ed015c603cac0eeb79c63aba55d38788bcadccf61c6e33f8e4a68b9e7",
+    "sheet": "overview-3.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-catalog-loading-393.png",
+    "sha256": "fc70cf0fae3a590504e11abc979ddb2b8628e34104397ddab9280f5ebbfd1fa3",
+    "sheet": "overview-3.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-catalog-pull-refreshed-393.png",
+    "sha256": "6897cf7692efd2862014e721ad4bf55ef346da703a1600c5e0f62926b17c469f",
+    "sheet": "overview-3.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-catalog-read-error-393.png",
+    "sha256": "88c582f6c20ca0a56b49c12826871359f465e87da4d2b8c192d18f2b20a2d575",
+    "sheet": "overview-3.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-catalog-return-393.png",
+    "sha256": "2b3e940eb90f29c6befe73c997d081b181c569d4e6c4d64e2585fb62ce423998",
+    "sheet": "overview-3.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-catalog-return-home-393.png",
+    "sha256": "be291808401e7f353b8f14552b0df4a698f3edd191e5e2d770c66c2e129fc145",
+    "sheet": "overview-3.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-catalog-team-393.png",
+    "sha256": "7652319166d6da705695a3ef794f7ce784cb673cbdc94d95895811d6eac00e54",
+    "sheet": "overview-3.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-intake-birth-calendar-393.png",
+    "sha256": "de4c4fa902451b180277380e8040c557967efd06801aac64a1e5a4c22df458c3",
+    "sheet": "overview-3.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-intake-consent-info-393.png",
+    "sha256": "f25ac883831c18aca44344dd0d0dea203a5ab0ebe3ae6436909ab24cdc535bbf",
+    "sheet": "overview-3.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-intake-consent-withdrawn-draft-393.png",
+    "sha256": "6809393b9dfe00167a0e9bacb18bc279b583a3cc197570aa2447ae7a2e369ce7",
+    "sheet": "overview-4.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-intake-discard-confirm-393.png",
+    "sha256": "11d84dc15015f6f81125b2d85056460bb10ca42cbd8653d0d50415c1c9731478",
+    "sheet": "overview-4.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-intake-feeding-menu-393.png",
+    "sha256": "10eafd7e5fc84dc8dec35fffdca6705a8633e35947c836f93f5ca5de3d4c310a",
+    "sheet": "overview-4.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-intake-load-error-393.png",
+    "sha256": "4d777f763c2a39ab63a033fc9a4c97c6b27244456a017606acfc4dcc0ec71c05",
+    "sheet": "overview-4.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-intake-load-recovered-393.png",
+    "sha256": "e83f446673b46d7d46e20b8b48ca8b632a8de4d9b9b7adc81899e3ed07f00e6c",
+    "sheet": "overview-4.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-intake-loading-393.png",
+    "sha256": "fba06374fd1f03d3641c0daf42819abf7206f23393f03b597b461d07c0a8beb4",
+    "sheet": "overview-4.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-intake-optional-filled-393.png",
+    "sha256": "ccf66d30fbd076369eca6680fbd6813fe86e995fd3318aa3f3f4190bf6f90a48",
+    "sheet": "overview-4.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-intake-preconsult-completion-393.png",
+    "sha256": "dd3c1aba149e599298c8a8749fe5c38ebc32ce69a0ca09a99ae9f40cfb4bb9f6",
+    "sheet": "overview-4.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-intake-ready-393.png",
+    "sha256": "47f4372ccf5497770eb016a9506bc8b0d5330cd3a763a1bce4717a457359e4ec",
+    "sheet": "overview-4.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-intake-region-menu-393.png",
+    "sha256": "8e0b3b7e4052914fc60e93938dc1f0615825262ce38941b978bb5e8fe53293b1",
+    "sheet": "overview-4.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-intake-reopened-393.png",
+    "sha256": "414e8d5f04695264866fe4cfbb01c21a4872fb65fe53185234657e23b376a08f",
+    "sheet": "overview-4.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-intake-save-uncertain-393.png",
+    "sha256": "1978666383d3c0f262ba6c864b8fc76c038f16acf0f459cc2f185ac080934ac4",
+    "sheet": "overview-4.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-intake-saved-393.png",
+    "sha256": "fb41ed140583d8aef1ef6136611204c9bcc0013a6aab882dbdb154dfaf6021c6",
+    "sheet": "overview-5.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-intake-saved-return-393.png",
+    "sha256": "0dd00e38efecbb07f6ba7bd9a78c07e5b2dc0f8709efa45a4703604198f23b31",
+    "sheet": "overview-5.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-intake-saving-393.png",
+    "sha256": "a8855952526c5392378fd48879afdf04e8bc104be268545fe74f15fead45ab8f",
+    "sheet": "overview-5.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-intake-sex-menu-393.png",
+    "sha256": "663417046f7b2195ffe9c760d5dfc3b1846ee70b7465a0510d372ca9a4d947c0",
+    "sheet": "overview-5.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-intake-to-cozymate-393.png",
+    "sha256": "89d2c38007f2d7bd48abaa082392cf3b0fbd15467b073688909f1cc8faa7a60e",
+    "sheet": "overview-5.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-intake-uncertain-leave-393.png",
+    "sha256": "0cf344d03a6057350b24858e2fc027fad48a69c1ad5cbd7babe93fbc78386d68",
+    "sheet": "overview-5.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-intake-unfilled-393.png",
+    "sha256": "e83f446673b46d7d46e20b8b48ca8b632a8de4d9b9b7adc81899e3ed07f00e6c",
+    "sheet": "overview-5.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-intake-update-saved-393.png",
+    "sha256": "0dd00e38efecbb07f6ba7bd9a78c07e5b2dc0f8709efa45a4703604198f23b31",
+    "sheet": "overview-5.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-package-better-breastfeeding-393.png",
+    "sha256": "e13294f39da722ebde761b6678dbfd16ca6f1cd51629cc2345be3ed8036b27c6",
+    "sheet": "overview-5.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-package-comfortable-feeding-393.png",
+    "sha256": "9e2b2df06e3ef4b5e0ef93eb1bd0c35ea609780e8be29e769bf4b6577e554829",
+    "sheet": "overview-5.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-package-feeding-confidence-393.png",
+    "sha256": "5bc77a13b759d77770ff849985913c1fd394a2da7006da7983785db303d1b647",
+    "sheet": "overview-5.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-package-milk-supply-care-393.png",
+    "sha256": "46fad6440bd82c390627c3827d7a965ad73682a2dff11e4e1df5d97c921776cc",
+    "sheet": "overview-5.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-package-payment-disabled-393.png",
+    "sha256": "0aeef463efc3443a1e8ef7fee453b23ed8d630f2303da96aaac8eb5e4377fb8e",
+    "sheet": "overview-6.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-package-read-error-393.png",
+    "sha256": "6fb4961d2bf2388347f9ed15f34f71969cc377cb1bd25880e730f6141fb4192c",
+    "sheet": "overview-6.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-package-read-recovered-393.png",
+    "sha256": "5bc77a13b759d77770ff849985913c1fd394a2da7006da7983785db303d1b647",
+    "sheet": "overview-6.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-package-team-better-breastfeeding-393.png",
+    "sha256": "81b12dcd13a3e63e17a917717eaa0dc932704e93288448d9f34a46067dfa63fc",
+    "sheet": "overview-6.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-package-team-comfortable-feeding-393.png",
+    "sha256": "c84f1c5db82d18ab85922e04416986c50afa9e4a2f892c09f18f02625d815bce",
+    "sheet": "overview-6.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-package-team-feeding-confidence-393.png",
+    "sha256": "27572d5cffb1212341fa22860373cd3a0699306e77250aeed8e31c52ae9c1cc3",
+    "sheet": "overview-6.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-package-team-milk-supply-care-393.png",
+    "sha256": "cbe1834091a25886a432f17165ebb0903c1ee8b1b10ddf4d36d69b346a89d746",
+    "sheet": "overview-6.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-purchase-bank-challenge-393.png",
+    "sha256": "aa09931a9c92814ed39f76880e100a2a3ff3877721ec98d20a9f2e2f43bed863",
+    "sheet": "overview-6.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-purchase-cancelled-detail-393.png",
+    "sha256": "5bc77a13b759d77770ff849985913c1fd394a2da7006da7983785db303d1b647",
+    "sheet": "overview-6.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-purchase-card-form-393.png",
+    "sha256": "a106204d0f09f5a9088f35a5212c4becf9c0a50fe37a816111fe45ca79a6b593",
+    "sheet": "overview-6.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-purchase-challenge-cancelled-393.png",
+    "sha256": "524004e5246a4b2d62073709d620320840cd953acd6865d9d409f49cd0fd9945",
+    "sheet": "overview-6.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-purchase-declined-393.png",
+    "sha256": "064722b0014de9ff23d2badf586ac4710de2698f712c55e40379eaba1257caf3",
+    "sheet": "overview-6.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-purchase-eligibility-empty-393.png",
+    "sha256": "3d5b5cbfca2cfe14fa76edef9e05bf225621073f93d8aa1b87e619f6b55abfc3",
+    "sheet": "overview-7.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-purchase-eligibility-ready-393.png",
+    "sha256": "6916bc64a7db7cf2cac56a7acc37e1ba48011368035a303a689eb7bcbf436938",
+    "sheet": "overview-7.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-purchase-invalid-card-393.png",
+    "sha256": "6c448f8d71cb55aac430ecc517a4c7e4ccb1d1f1cd72efa17b35ecb8f8475a1e",
+    "sheet": "overview-7.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-purchase-later-booking-393.png",
+    "sha256": "611aaaa1921f81f062993c33b21a940bc7e0a320da9da6fc5e3badfcc6bee27d",
+    "sheet": "overview-7.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-purchase-order-error-393.png",
+    "sha256": "8d7d8b9ae39e3258b80dff25962d5c0912d4aa0e34301b81f6da8be4a53b9d7e",
+    "sheet": "overview-7.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-purchase-owned-catalog-393.png",
+    "sha256": "2b3e940eb90f29c6befe73c997d081b181c569d4e6c4d64e2585fb62ce423998",
+    "sheet": "overview-7.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-purchase-owned-catalog-refreshed-393.png",
+    "sha256": "b3900a2ca7f4a5be043aaeb13ef7915bb582c868b0543e41aee4673632527339",
+    "sheet": "overview-7.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-purchase-owned-detail-393.png",
+    "sha256": "611aaaa1921f81f062993c33b21a940bc7e0a320da9da6fc5e3badfcc6bee27d",
+    "sheet": "overview-7.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-purchase-payment-pending-393.png",
+    "sha256": "a6171021651d73f987db2b7c1092317e1babc7622c9daaa33d9fe42f9d723402",
+    "sheet": "overview-7.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-purchase-payment-uncertain-393.png",
+    "sha256": "ad1c0da25473c9bf0d894a9b98812b91bf17537b3e67fd8fcde83a20e3146d9f",
+    "sheet": "overview-7.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-purchase-pending-catalog-393.png",
+    "sha256": "2b3e940eb90f29c6befe73c997d081b181c569d4e6c4d64e2585fb62ce423998",
+    "sheet": "overview-7.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-purchase-pending-catalog-refreshed-393.png",
+    "sha256": "7e383ad8e4165f4de328a404b18b4d9de82b758e3179f4d80657d130446d6279",
+    "sheet": "overview-7.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-purchase-pending-detail-393.png",
+    "sha256": "ada43503c2712fd537beecbaa3d1628117450634afce5dea6c87633322ddc9ee",
+    "sheet": "overview-8.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-purchase-query-error-393.png",
+    "sha256": "299e18504b5ba17f5a8726471400503127ac33e0f40d37b941ee7ee5543763cb",
+    "sheet": "overview-8.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-purchase-reconciliation-complete-393.png",
+    "sha256": "54622d08e6820b62d88f10d289b73850cfa31ea975ecd79e56d61f22fb62f1d5",
+    "sheet": "overview-8.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-purchase-reconciling-393.png",
+    "sha256": "c185d53257b0d298967aa86e094ec0dc6dbb025ea8c8b2d5abc5a8b77af09d67",
+    "sheet": "overview-8.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-purchase-region-menu-393.png",
+    "sha256": "e73dfbed9e3fcf58fb04439fdf1b0efa0f6abbb0cc169f4e16155983d8dad569",
+    "sheet": "overview-8.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-purchase-resume-error-393.png",
+    "sha256": "edbe79fc7c88d55cfeb1138e363219c05e17fcc1909832b41f6a6c2620e540e2",
+    "sheet": "overview-8.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-purchase-resume-message-dismissed-393.png",
+    "sha256": "ada43503c2712fd537beecbaa3d1628117450634afce5dea6c87633322ddc9ee",
+    "sheet": "overview-8.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-purchase-resumed-form-393.png",
+    "sha256": "a106204d0f09f5a9088f35a5212c4becf9c0a50fe37a816111fe45ca79a6b593",
+    "sheet": "overview-8.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-purchase-retry-success-393.png",
+    "sha256": "54622d08e6820b62d88f10d289b73850cfa31ea975ecd79e56d61f22fb62f1d5",
+    "sheet": "overview-8.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-purchase-success-393.png",
+    "sha256": "54622d08e6820b62d88f10d289b73850cfa31ea975ecd79e56d61f22fb62f1d5",
+    "sheet": "overview-8.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-purchase-to-booking-393.png",
+    "sha256": "15ba20e272414d373a432186af649c7b3c638d1ca16c7f5cfd7814bf2b04a537",
+    "sheet": "overview-8.png"
+  },
+  {
+    "source": "raw/test/goldens/ui_inventory/service-journey-purchase-unsupported-region-393.png",
+    "sha256": "a409c2c05ea01e31bba9723e8c6936d3f4e5e853298fb7793e43fa736247d95e",
+    "sheet": "overview-8.png"
+  }
+]

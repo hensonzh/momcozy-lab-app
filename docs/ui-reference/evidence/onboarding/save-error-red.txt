@@ -1,0 +1,33 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: onboarding profile forms at 390.0 / 1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: exactly one matching candidate
+  Actual: _TextWidgetFinder:<Found 0 widgets with text "Profile could not be saved. Try again.": []>
+   Which: means none were found but one was expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart:126:9)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart line 126
+The test description was:
+  onboarding profile forms at 390.0 / 1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +0 -1: onboarding profile forms at 390.0 / 1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: onboarding profile forms at 390.0 / 1.0
+  
+00:00 +0 -1: (tearDownAll)
+00:00 +0 -1: Some tests failed.
+
+Failing tests:
+  /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding profile forms at 390.0 / 1.0

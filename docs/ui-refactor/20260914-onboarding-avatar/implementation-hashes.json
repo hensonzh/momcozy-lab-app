@@ -1,0 +1,5 @@
+{
+  "lib/features/onboarding/presentation/onboarding_page.dart": "2d5ec507c926086540c9bbdc770e3aa68c319dbe3357a7b57d7a0ff1a28487dc",
+  "lib/features/onboarding/presentation/avatar_task_banner.dart": "38ba39c2419ef2b34c8c0993862106d2c19d77c18a474cf8a8fd374fea77946e",
+  "test/features/onboarding/onboarding_design_test.dart": "7433288e6092533856f303b01adf2c41d2f0ef08fee05b6fd19e34040447670e"
+}

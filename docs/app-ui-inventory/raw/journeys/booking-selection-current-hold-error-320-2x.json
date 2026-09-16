@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/booking-selection-current-hold-error-320-2x.png",
+  "previous_source": "test/goldens/ui_inventory/booking-selection-current-hold-pending-320-2x.png",
+  "route": "/services/episodes/service-episode/booking",
+  "trigger": "Hold HTTP 503 → unresolved submission with retry",
+  "root_entry": "Authenticated More → tap Me bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/services/booking_selection_current_inventory_test.dart"
+}

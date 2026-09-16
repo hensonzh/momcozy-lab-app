@@ -1,0 +1,2386 @@
+[
+  {
+    "source_id": "03-mom/lactation-dialog-nurse",
+    "design_state_family": "form nurse",
+    "figma_nodes": [
+      "296:2076",
+      "296:2428"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/lactation-dialog-pump",
+    "design_state_family": "form pump",
+    "figma_nodes": [
+      "296:2042",
+      "296:2394"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/lactation-entry",
+    "design_state_family": "form pump",
+    "figma_nodes": [
+      "296:2042",
+      "296:2394"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/lactation-list",
+    "design_state_family": "overview",
+    "figma_nodes": [
+      "296:1086",
+      "296:1603"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/milk-state-deleted",
+    "design_state_family": "deleted",
+    "figma_nodes": [
+      "296:1328",
+      "296:1845"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/milk-state-editing",
+    "design_state_family": "form editing",
+    "figma_nodes": [
+      "296:2159",
+      "296:2511"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/milk-state-empty",
+    "design_state_family": "empty",
+    "figma_nodes": [
+      "296:1214",
+      "296:1731"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/milk-state-nurse",
+    "design_state_family": "form nurse",
+    "figma_nodes": [
+      "296:2076",
+      "296:2428"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/milk-state-optional-keyboard",
+    "design_state_family": "form optional",
+    "figma_nodes": [
+      "296:2110",
+      "296:2462"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/milk-state-pump",
+    "design_state_family": "form pump",
+    "figma_nodes": [
+      "296:2042",
+      "296:2394"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/milk-state-restored",
+    "design_state_family": "saved",
+    "figma_nodes": [
+      "296:1261",
+      "296:1778"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/milk-state-saved",
+    "design_state_family": "saved",
+    "figma_nodes": [
+      "296:1261",
+      "296:1778"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/milk-state-uncertain",
+    "design_state_family": "form uncertain",
+    "figma_nodes": [
+      "296:2257",
+      "296:2609"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/milk-state-updated",
+    "design_state_family": "saved",
+    "figma_nodes": [
+      "296:1261",
+      "296:1778"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/milk-state-validation",
+    "design_state_family": "form validation",
+    "figma_nodes": [
+      "296:2309",
+      "296:2661"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-journey-milk-conflict",
+    "design_state_family": "form conflict",
+    "figma_nodes": [
+      "305:1086",
+      "305:1140"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-journey-milk-conflict-reload-confirm",
+    "design_state_family": "leave",
+    "figma_nodes": [
+      "297:1086",
+      "297:1439"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-journey-milk-conflict-reloaded",
+    "design_state_family": "overview",
+    "figma_nodes": [
+      "296:1086",
+      "296:1603"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-journey-milk-delete-failed",
+    "design_state_family": "read-error",
+    "figma_nodes": [
+      "296:1583",
+      "296:2031"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-journey-milk-filled",
+    "design_state_family": "form editing",
+    "figma_nodes": [
+      "296:2159",
+      "296:2511"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-journey-milk-history",
+    "design_state_family": "overview",
+    "figma_nodes": [
+      "296:1086",
+      "296:1603"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-journey-milk-history-deleted",
+    "design_state_family": "deleted",
+    "figma_nodes": [
+      "296:1328",
+      "296:1845"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-journey-milk-history-edit",
+    "design_state_family": "overview",
+    "figma_nodes": [
+      "296:1086",
+      "296:1603"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-journey-milk-history-empty",
+    "design_state_family": "empty",
+    "figma_nodes": [
+      "296:1214",
+      "296:1731"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-journey-milk-history-read-error",
+    "design_state_family": "read-error",
+    "figma_nodes": [
+      "296:1583",
+      "296:2031"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-journey-milk-history-read-recovered",
+    "design_state_family": "overview",
+    "figma_nodes": [
+      "296:1086",
+      "296:1603"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-journey-milk-history-restored",
+    "design_state_family": "saved",
+    "figma_nodes": [
+      "296:1261",
+      "296:1778"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-journey-milk-history-updated",
+    "design_state_family": "saved",
+    "figma_nodes": [
+      "296:1261",
+      "296:1778"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-journey-milk-invalid-volume",
+    "design_state_family": "form validation",
+    "figma_nodes": [
+      "296:2309",
+      "296:2661"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-journey-milk-modal-saved",
+    "design_state_family": "saved",
+    "figma_nodes": [
+      "296:1261",
+      "296:1778"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-journey-milk-new-pump",
+    "design_state_family": "form pump",
+    "figma_nodes": [
+      "296:2042",
+      "296:2394"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-journey-milk-restore-error",
+    "design_state_family": "restore-error",
+    "figma_nodes": [
+      "296:1379",
+      "296:1896"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-journey-milk-save-error",
+    "design_state_family": "form uncertain",
+    "figma_nodes": [
+      "296:2257",
+      "296:2609"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-journey-milk-uncertain-leave-confirm",
+    "design_state_family": "leave-uncertain",
+    "figma_nodes": [
+      "297:1129",
+      "297:1482"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-journey-milk-uncertain-retried",
+    "design_state_family": "saved",
+    "figma_nodes": [
+      "296:1261",
+      "296:1778"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-journey-milk-uncertain-save",
+    "design_state_family": "form uncertain",
+    "figma_nodes": [
+      "296:2257",
+      "296:2609"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-journey-nursing-cancel-confirm",
+    "design_state_family": "leave",
+    "figma_nodes": [
+      "297:1086",
+      "297:1439"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-journey-nursing-cancel-retained",
+    "design_state_family": "form nurse",
+    "figma_nodes": [
+      "296:2076",
+      "296:2428"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-journey-nursing-duration-invalid",
+    "design_state_family": "form validation",
+    "figma_nodes": [
+      "296:2309",
+      "296:2661"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-journey-nursing-empty",
+    "design_state_family": "empty",
+    "figma_nodes": [
+      "296:1214",
+      "296:1731"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-journey-nursing-new-discarded",
+    "design_state_family": "form nurse",
+    "figma_nodes": [
+      "296:2076",
+      "296:2428"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-journey-nursing-optional-filled",
+    "design_state_family": "form editing",
+    "figma_nodes": [
+      "296:2159",
+      "296:2511"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-journey-nursing-saved",
+    "design_state_family": "saved",
+    "figma_nodes": [
+      "296:1261",
+      "296:1778"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-journey-nursing-saving",
+    "design_state_family": "form pending",
+    "figma_nodes": [
+      "296:2208",
+      "296:2560"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-journey-nursing-time-input",
+    "design_state_family": "time-input",
+    "figma_nodes": [
+      "297:1294",
+      "297:1525"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-journey-nursing-time-invalid",
+    "design_state_family": "time-invalid",
+    "figma_nodes": [
+      "297:1342",
+      "297:1578"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-journey-nursing-time-picker",
+    "design_state_family": "dial-hour",
+    "figma_nodes": [
+      "297:1172"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-journey-trend-seven-days",
+    "design_state_family": "overview",
+    "figma_nodes": [
+      "296:1086",
+      "296:1603"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-journey-trend-seven-days-return",
+    "design_state_family": "overview",
+    "figma_nodes": [
+      "296:1086",
+      "296:1603"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-journey-trend-thirty-days",
+    "design_state_family": "30-days",
+    "figma_nodes": [
+      "296:1151",
+      "296:1668"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-control-cancel-confirm",
+    "design_state_family": "leave",
+    "figma_nodes": [
+      "297:1086",
+      "297:1439"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-control-cancel-return-history",
+    "design_state_family": "overview",
+    "figma_nodes": [
+      "296:1086",
+      "296:1603"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-control-comfort-comfortable",
+    "design_state_family": "form optional",
+    "figma_nodes": [
+      "296:2110",
+      "296:2462"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-control-comfort-comfortable-cleared",
+    "design_state_family": "form optional",
+    "figma_nodes": [
+      "296:2110",
+      "296:2462"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-control-comfort-full",
+    "design_state_family": "form optional",
+    "figma_nodes": [
+      "296:2110",
+      "296:2462"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-control-comfort-full-cleared",
+    "design_state_family": "form optional",
+    "figma_nodes": [
+      "296:2110",
+      "296:2462"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-control-comfort-painful",
+    "design_state_family": "form optional",
+    "figma_nodes": [
+      "296:2110",
+      "296:2462"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-control-comfort-painful-cleared",
+    "design_state_family": "form optional",
+    "figma_nodes": [
+      "296:2110",
+      "296:2462"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-control-comfort-restored",
+    "design_state_family": "saved",
+    "figma_nodes": [
+      "296:1261",
+      "296:1778"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-control-comfort-uncertain",
+    "design_state_family": "form uncertain",
+    "figma_nodes": [
+      "296:2257",
+      "296:2609"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-control-comfort-uncertain-cleared",
+    "design_state_family": "form uncertain",
+    "figma_nodes": [
+      "296:2257",
+      "296:2609"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-control-history",
+    "design_state_family": "overview",
+    "figma_nodes": [
+      "296:1086",
+      "296:1603"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-control-history-reopened",
+    "design_state_family": "overview",
+    "figma_nodes": [
+      "296:1086",
+      "296:1603"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-control-note-cleared",
+    "design_state_family": "form optional",
+    "figma_nodes": [
+      "296:2110",
+      "296:2462"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-control-note-filled",
+    "design_state_family": "form editing",
+    "figma_nodes": [
+      "296:2159",
+      "296:2511"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-control-nurse-duration",
+    "design_state_family": "form nurse",
+    "figma_nodes": [
+      "296:2076",
+      "296:2428"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-control-nurse-no-duration-saved",
+    "design_state_family": "saved",
+    "figma_nodes": [
+      "296:1261",
+      "296:1778"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-control-nurse-switch-cleared",
+    "design_state_family": "form nurse",
+    "figma_nodes": [
+      "296:2076",
+      "296:2428"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-control-optional-collapsed",
+    "design_state_family": "form pump",
+    "figma_nodes": [
+      "296:2042",
+      "296:2394"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-control-optional-open",
+    "design_state_family": "form optional",
+    "figma_nodes": [
+      "296:2110",
+      "296:2462"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-control-pump-decimal",
+    "design_state_family": "form pump",
+    "figma_nodes": [
+      "296:2042",
+      "296:2394"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-control-pump-empty",
+    "design_state_family": "form pump",
+    "figma_nodes": [
+      "296:2042",
+      "296:2394"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-control-pump-reopened",
+    "design_state_family": "form pump",
+    "figma_nodes": [
+      "296:2042",
+      "296:2394"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-control-pump-saved",
+    "design_state_family": "saved",
+    "figma_nodes": [
+      "296:1261",
+      "296:1778"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-control-pump-switch-cleared",
+    "design_state_family": "form pump",
+    "figma_nodes": [
+      "296:2042",
+      "296:2394"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-control-saved-switch-to-nurse",
+    "design_state_family": "saved",
+    "figma_nodes": [
+      "296:1261",
+      "296:1778"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-control-side-left",
+    "design_state_family": "form pump",
+    "figma_nodes": [
+      "296:2042",
+      "296:2394"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-control-side-right",
+    "design_state_family": "form pump",
+    "figma_nodes": [
+      "296:2042",
+      "296:2394"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-control-time-accepted",
+    "design_state_family": "form pump",
+    "figma_nodes": [
+      "296:2042",
+      "296:2394"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-control-time-cancelled",
+    "design_state_family": "form pump",
+    "figma_nodes": [
+      "296:2042",
+      "296:2394"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-control-time-input-mode",
+    "design_state_family": "time-input",
+    "figma_nodes": [
+      "297:1294",
+      "297:1525"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-control-time-open",
+    "design_state_family": "dial-hour",
+    "figma_nodes": [
+      "297:1172"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-control-time-reopened",
+    "design_state_family": "dial-hour",
+    "figma_nodes": [
+      "297:1172"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-control-time-valid-input",
+    "design_state_family": "time-input",
+    "figma_nodes": [
+      "297:1294",
+      "297:1525"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-dial-accepted",
+    "design_state_family": "form pump",
+    "figma_nodes": [
+      "296:2042",
+      "296:2394"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-dial-am",
+    "design_state_family": "time-am",
+    "figma_nodes": [
+      "297:1391"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-dial-cancel-selection",
+    "design_state_family": "form pump",
+    "figma_nodes": [
+      "296:2042",
+      "296:2394"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-dial-cancelled",
+    "design_state_family": "form pump",
+    "figma_nodes": [
+      "296:2042",
+      "296:2394"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-dial-close-confirm",
+    "design_state_family": "leave",
+    "figma_nodes": [
+      "297:1086",
+      "297:1439"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-dial-form-filled",
+    "design_state_family": "form editing",
+    "figma_nodes": [
+      "296:2159",
+      "296:2511"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-dial-hour-eleven",
+    "design_state_family": "dial-hour",
+    "figma_nodes": [
+      "297:1172"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-dial-hour-header",
+    "design_state_family": "dial-hour",
+    "figma_nodes": [
+      "297:1172"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-dial-hour-nine",
+    "design_state_family": "dial-hour",
+    "figma_nodes": [
+      "297:1172"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-dial-input-mode",
+    "design_state_family": "time-input",
+    "figma_nodes": [
+      "297:1294",
+      "297:1525"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-dial-invalid-input",
+    "design_state_family": "time-invalid",
+    "figma_nodes": [
+      "297:1342",
+      "297:1578"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-dial-invalid-input-left-edge",
+    "design_state_family": "time-invalid",
+    "figma_nodes": [
+      "297:1342",
+      "297:1578"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-dial-invalid-input-right-edge",
+    "design_state_family": "time-invalid",
+    "figma_nodes": [
+      "297:1342",
+      "297:1578"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-dial-midnight-dial",
+    "design_state_family": "time-am",
+    "figma_nodes": [
+      "297:1391"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-dial-minute-forty-five",
+    "design_state_family": "dial-minute",
+    "figma_nodes": [
+      "297:1233"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-dial-minute-header",
+    "design_state_family": "dial-minute",
+    "figma_nodes": [
+      "297:1233"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-dial-minute-twenty",
+    "design_state_family": "dial-minute",
+    "figma_nodes": [
+      "297:1233"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-dial-noon-accepted",
+    "design_state_family": "form pump",
+    "figma_nodes": [
+      "296:2042",
+      "296:2394"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-dial-noon-dial",
+    "design_state_family": "dial-hour",
+    "figma_nodes": [
+      "297:1172"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-dial-noon-saved",
+    "design_state_family": "saved",
+    "figma_nodes": [
+      "296:1261",
+      "296:1778"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-dial-open",
+    "design_state_family": "dial-hour",
+    "figma_nodes": [
+      "297:1172"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-dial-reopened",
+    "design_state_family": "dial-hour",
+    "figma_nodes": [
+      "297:1172"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-dial-saved",
+    "design_state_family": "saved",
+    "figma_nodes": [
+      "296:1261",
+      "296:1778"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-validation-back-confirm",
+    "design_state_family": "form validation",
+    "figma_nodes": [
+      "296:2309",
+      "296:2661"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-validation-back-editor",
+    "design_state_family": "form validation",
+    "figma_nodes": [
+      "296:2309",
+      "296:2661"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-validation-empty",
+    "design_state_family": "form pump",
+    "figma_nodes": [
+      "296:2042",
+      "296:2394"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-validation-future-time-accepted",
+    "design_state_family": "form validation",
+    "figma_nodes": [
+      "296:2309",
+      "296:2661"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-validation-future-time-input",
+    "design_state_family": "time-input",
+    "figma_nodes": [
+      "297:1294",
+      "297:1525"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-validation-future-time-rejected",
+    "design_state_family": "form validation",
+    "figma_nodes": [
+      "296:2309",
+      "296:2661"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-validation-nurse-above-limit",
+    "design_state_family": "form validation",
+    "figma_nodes": [
+      "296:2309",
+      "296:2661"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-validation-nurse-empty",
+    "design_state_family": "form nurse",
+    "figma_nodes": [
+      "296:2076",
+      "296:2428"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-validation-nurse-fraction",
+    "design_state_family": "form validation",
+    "figma_nodes": [
+      "296:2309",
+      "296:2661"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-validation-nurse-limit-filled",
+    "design_state_family": "form validation",
+    "figma_nodes": [
+      "296:2309",
+      "296:2661"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-validation-nurse-limit-saved",
+    "design_state_family": "saved",
+    "figma_nodes": [
+      "296:1261",
+      "296:1778"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-validation-nurse-negative",
+    "design_state_family": "form validation",
+    "figma_nodes": [
+      "296:2309",
+      "296:2661"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-validation-nurse-zero-filled",
+    "design_state_family": "form validation",
+    "figma_nodes": [
+      "296:2309",
+      "296:2661"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-validation-nurse-zero-saved",
+    "design_state_family": "saved",
+    "figma_nodes": [
+      "296:1261",
+      "296:1778"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-validation-past-time-accepted",
+    "design_state_family": "form validation",
+    "figma_nodes": [
+      "296:2309",
+      "296:2661"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-validation-past-time-input",
+    "design_state_family": "time-input",
+    "figma_nodes": [
+      "297:1294",
+      "297:1525"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-validation-past-time-saved",
+    "design_state_family": "saved",
+    "figma_nodes": [
+      "296:1261",
+      "296:1778"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-validation-pump-above-limit",
+    "design_state_family": "form validation",
+    "figma_nodes": [
+      "296:2309",
+      "296:2661"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-validation-pump-limit-filled",
+    "design_state_family": "form validation",
+    "figma_nodes": [
+      "296:2309",
+      "296:2661"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-validation-pump-limit-saved",
+    "design_state_family": "saved",
+    "figma_nodes": [
+      "296:1261",
+      "296:1778"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-validation-pump-negative",
+    "design_state_family": "form validation",
+    "figma_nodes": [
+      "296:2309",
+      "296:2661"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-validation-pump-not-finite",
+    "design_state_family": "form validation",
+    "figma_nodes": [
+      "296:2309",
+      "296:2661"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-validation-pump-not-number",
+    "design_state_family": "form validation",
+    "figma_nodes": [
+      "296:2309",
+      "296:2661"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-validation-pump-zero-filled",
+    "design_state_family": "form validation",
+    "figma_nodes": [
+      "296:2309",
+      "296:2661"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-validation-pump-zero-saved",
+    "design_state_family": "saved",
+    "figma_nodes": [
+      "296:1261",
+      "296:1778"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-validation-return-record-confirm",
+    "design_state_family": "leave",
+    "figma_nodes": [
+      "297:1086",
+      "297:1439"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-validation-return-record-left",
+    "design_state_family": "form validation",
+    "figma_nodes": [
+      "296:2309",
+      "296:2661"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-validation-return-record-stay",
+    "design_state_family": "form validation",
+    "figma_nodes": [
+      "296:2309",
+      "296:2661"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-validation-time-am-selected",
+    "design_state_family": "time-am",
+    "figma_nodes": [
+      "297:1391"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-validation-time-input",
+    "design_state_family": "time-input",
+    "figma_nodes": [
+      "297:1294",
+      "297:1525"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-milk-validation-time-open",
+    "design_state_family": "dial-hour",
+    "figma_nodes": [
+      "297:1172"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-note-boundary-milk-1999",
+    "design_state_family": "form long-note",
+    "figma_nodes": [
+      "296:2345",
+      "296:2697"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-note-boundary-milk-2000",
+    "design_state_family": "form long-note",
+    "figma_nodes": [
+      "296:2345",
+      "296:2697"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-note-boundary-milk-cleared",
+    "design_state_family": "form optional",
+    "figma_nodes": [
+      "296:2110",
+      "296:2462"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-note-boundary-milk-discard-confirm",
+    "design_state_family": "leave",
+    "figma_nodes": [
+      "297:1086",
+      "297:1439"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-note-boundary-milk-empty",
+    "design_state_family": "form optional",
+    "figma_nodes": [
+      "296:2110",
+      "296:2462"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-note-boundary-milk-note-scroll-end",
+    "design_state_family": "form long-note",
+    "figma_nodes": [
+      "296:2345",
+      "296:2697"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-note-boundary-milk-note-scroll-start",
+    "design_state_family": "form long-note",
+    "figma_nodes": [
+      "296:2345",
+      "296:2697"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-note-boundary-milk-overflow-truncated",
+    "design_state_family": "form long-note",
+    "figma_nodes": [
+      "296:2345",
+      "296:2697"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-note-boundary-milk-reopened",
+    "design_state_family": "form optional",
+    "figma_nodes": [
+      "296:2110",
+      "296:2462"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-note-boundary-milk-retained",
+    "design_state_family": "form optional",
+    "figma_nodes": [
+      "296:2110",
+      "296:2462"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "03-mom/mom-note-boundary-milk-saved-long-note",
+    "design_state_family": "long-note",
+    "figma_nodes": [
+      "296:1517",
+      "296:1965"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  },
+  {
+    "source_id": "05-agent/agent-workflow-journey-milk-history",
+    "design_state_family": "overview",
+    "figma_nodes": [
+      "296:1086",
+      "296:1603"
+    ],
+    "verification": "Shared presentation tested with local repository fixtures at 320/390/430 and 1x/2x. This maps a source state to the reusable design family; it does not claim an exact replay of every original capture.",
+    "tests": [
+      "test/modules/mom/lactation_test.dart",
+      "test/modules/mom/lactation_states_test.dart",
+      "test/modules/mom/lactation_redesign_test.dart",
+      "test/shared/date_time_picker_test.dart",
+      "test/domain/health_records_test.dart"
+    ]
+  }
+]

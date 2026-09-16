@@ -1,0 +1,211 @@
+Resolving dependencies...
+Downloading packages...
+  archive 4.0.9 (4.2.0 available)
+  clock 1.1.2 (1.1.3 available)
+  code_assets 1.2.1 (2.0.0 available)
+  cross_file 0.3.5+4 (0.3.5+5 available)
+  dart_webrtc 1.8.1 (1.8.2 available)
+  file_selector_android 0.5.2+8 (0.5.2+10 available)
+  file_selector_ios 0.5.3+5 (0.5.3+6 available)
+  file_selector_linux 0.9.4 (0.9.4+1 available)
+  file_selector_macos 0.9.5 (0.9.5+1 available)
+  file_selector_windows 0.9.3+5 (0.9.3+6 available)
+  flutter_markdown_plus 1.0.11 (1.0.12 available)
+  flutter_secure_storage 10.3.1 (11.1.0 available)
+  flutter_secure_storage_darwin 0.3.2 (0.4.1 available)
+  flutter_secure_storage_linux 3.0.1 (3.0.2 available)
+  flutter_secure_storage_platform_interface 2.0.1 (2.1.0 available)
+  flutter_webrtc 1.6.0 (1.6.2+hotfix.1 available)
+  go_router 17.3.0 (18.0.1 available)
+  hooks 2.0.2 (2.2.0 available)
+  html 0.15.6 (0.15.7 available)
+  image 4.9.1 (4.9.2 available)
+  image_picker_android 0.8.13+19 (0.8.13+22 available)
+  image_picker_ios 0.8.13+6 (0.8.13+7 available)
+  intl 0.20.2 (0.20.3 available)
+  jni 1.0.0 (1.0.3 available)
+  jni_flutter 1.0.1 (1.0.3 available)
+  logger 2.7.0 (2.8.0 available)
+  matcher 0.12.19 (0.12.20 available)
+  material_color_utilities 0.13.0 (0.13.1 available)
+  meta 1.18.0 (1.19.0 available)
+  mime 2.0.0 (2.1.0 available)
+  objective_c 9.4.1 (9.6.0 available)
+  package_config 2.2.0 (3.0.0 available)
+  pdfium_dart 0.1.3 (0.3.0 available)
+  pdfium_flutter 0.1.9 (0.3.0 available)
+  pdfrx 2.2.24 (2.6.1 available)
+  pdfrx_engine 0.3.9 (0.6.0 available)
+  platform 3.1.6 (3.2.0 available)
+  posix 6.5.0 (6.5.2 available)
+  process 5.0.5 (5.0.6 available)
+  pub_semver 2.2.0 (2.2.1 available)
+  record_use 0.6.0 (1.1.1 available)
+  share_plus 13.2.0 (13.3.0 available)
+  share_plus_platform_interface 7.1.0 (7.2.0 available)
+  stack_trace 1.12.1 (1.12.2 available)
+  synchronized 3.4.1 (3.4.2 available)
+  test_api 0.7.11 (0.7.14 available)
+  url_launcher_android 6.3.32 (6.3.33 available)
+  url_launcher_ios 6.4.1 (6.4.2 available)
+  url_launcher_linux 3.2.2 (3.2.3 available)
+  url_launcher_macos 3.2.5 (3.2.6 available)
+  url_launcher_windows 3.1.5 (3.1.6 available)
+  uuid 4.5.3 (4.6.0 available)
+  vector_math 2.2.0 (2.4.2 available)
+  video_player 2.11.1 (2.14.0 available)
+  video_player_android 2.10.0 (2.12.2 available)
+  video_player_avfoundation 2.10.0 (2.12.0 available)
+  vm_service 15.2.0 (15.3.0 available)
+  webdriver 3.1.0 (3.2.0 available)
+  win32 6.3.0 (6.4.0 available)
+  yaml 3.1.3 (3.1.4 available)
+Got dependencies!
+60 packages have newer versions incompatible with dependency constraints.
+Try `flutter pub outdated` for more information.
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/core/network/api_json_transport_test.dart
+00:00 +0: IoApiJsonTransport keeps schedule optimistic-lock query out of the DELETE path
+00:00 +0 -1: IoApiJsonTransport keeps schedule optimistic-lock query out of the DELETE path [E]
+  Expected: '/v1/schedule/personal/test-id'
+    Actual: '/v1/schedule/personal/test-id%3Fexpected_updated_at=2026-09-12T03%3A32%3A00.123456Z'
+     Which: is different. Both strings start the same, but the actual value also has the following trailing characters: %3Fexpecte ...
+  
+  package:matcher                                       expect
+  package:flutter_test/src/widget_tester.dart 473:18    expect
+  test/core/network/api_json_transport_test.dart 135:7  main.<fn>.<fn>
+  
+00:00 +0 -1: Some tests failed.
+
+Failing tests:
+  /Users/lute/project/momcozy-lab/app/test/core/network/api_json_transport_test.dart: IoApiJsonTransport keeps schedule optimistic-lock query out of the DELETE path
+
+
+Resolving dependencies...
+Downloading packages...
+  archive 4.0.9 (4.2.0 available)
+  clock 1.1.2 (1.1.3 available)
+  code_assets 1.2.1 (2.0.0 available)
+  cross_file 0.3.5+4 (0.3.5+5 available)
+  dart_webrtc 1.8.1 (1.8.2 available)
+  file_selector_android 0.5.2+8 (0.5.2+10 available)
+  file_selector_ios 0.5.3+5 (0.5.3+6 available)
+  file_selector_linux 0.9.4 (0.9.4+1 available)
+  file_selector_macos 0.9.5 (0.9.5+1 available)
+  file_selector_windows 0.9.3+5 (0.9.3+6 available)
+  flutter_markdown_plus 1.0.11 (1.0.12 available)
+  flutter_secure_storage 10.3.1 (11.1.0 available)
+  flutter_secure_storage_darwin 0.3.2 (0.4.1 available)
+  flutter_secure_storage_linux 3.0.1 (3.0.2 available)
+  flutter_secure_storage_platform_interface 2.0.1 (2.1.0 available)
+  flutter_webrtc 1.6.0 (1.6.2+hotfix.1 available)
+  go_router 17.3.0 (18.0.1 available)
+  hooks 2.0.2 (2.2.0 available)
+  html 0.15.6 (0.15.7 available)
+  image 4.9.1 (4.9.2 available)
+  image_picker_android 0.8.13+19 (0.8.13+22 available)
+  image_picker_ios 0.8.13+6 (0.8.13+7 available)
+  intl 0.20.2 (0.20.3 available)
+  jni 1.0.0 (1.0.3 available)
+  jni_flutter 1.0.1 (1.0.3 available)
+  logger 2.7.0 (2.8.0 available)
+  matcher 0.12.19 (0.12.20 available)
+  material_color_utilities 0.13.0 (0.13.1 available)
+  meta 1.18.0 (1.19.0 available)
+  mime 2.0.0 (2.1.0 available)
+  objective_c 9.4.1 (9.6.0 available)
+  package_config 2.2.0 (3.0.0 available)
+  pdfium_dart 0.1.3 (0.3.0 available)
+  pdfium_flutter 0.1.9 (0.3.0 available)
+  pdfrx 2.2.24 (2.6.1 available)
+  pdfrx_engine 0.3.9 (0.6.0 available)
+  platform 3.1.6 (3.2.0 available)
+  posix 6.5.0 (6.5.2 available)
+  process 5.0.5 (5.0.6 available)
+  pub_semver 2.2.0 (2.2.1 available)
+  record_use 0.6.0 (1.1.1 available)
+  share_plus 13.2.0 (13.3.0 available)
+  share_plus_platform_interface 7.1.0 (7.2.0 available)
+  stack_trace 1.12.1 (1.12.2 available)
+  synchronized 3.4.1 (3.4.2 available)
+  test_api 0.7.11 (0.7.14 available)
+  url_launcher_android 6.3.32 (6.3.33 available)
+  url_launcher_ios 6.4.1 (6.4.2 available)
+  url_launcher_linux 3.2.2 (3.2.3 available)
+  url_launcher_macos 3.2.5 (3.2.6 available)
+  url_launcher_windows 3.1.5 (3.1.6 available)
+  uuid 4.5.3 (4.6.0 available)
+  vector_math 2.2.0 (2.4.2 available)
+  video_player 2.11.1 (2.14.0 available)
+  video_player_android 2.10.0 (2.12.2 available)
+  video_player_avfoundation 2.10.0 (2.12.0 available)
+  vm_service 15.2.0 (15.3.0 available)
+  webdriver 3.1.0 (3.2.0 available)
+  win32 6.3.0 (6.4.0 available)
+  yaml 3.1.3 (3.1.4 available)
+Got dependencies!
+60 packages have newer versions incompatible with dependency constraints.
+Try `flutter pub outdated` for more information.
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/core/network/workbench_transport_test.dart
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/core/network/api_json_transport_test.dart: IoApiJsonTransport sends GET query, auth, and headers
+00:00 +1: /Users/lute/project/momcozy-lab/app/test/core/network/api_envelope_test.dart: API contract fixtures provide every required variant for each Flutter API domain
+00:00 +2: /Users/lute/project/momcozy-lab/app/test/core/network/api_envelope_test.dart: API contract fixtures provide every required variant for each Flutter API domain
+00:00 +3: /Users/lute/project/momcozy-lab/app/test/core/network/api_envelope_test.dart: API contract fixtures provide every required variant for each Flutter API domain
+00:00 +4: /Users/lute/project/momcozy-lab/app/test/core/network/api_envelope_test.dart: API contract fixtures provide every required variant for each Flutter API domain
+00:00 +5: /Users/lute/project/momcozy-lab/app/test/core/network/api_envelope_test.dart: API contract fixtures provide every required variant for each Flutter API domain
+00:00 +6: /Users/lute/project/momcozy-lab/app/test/core/network/workbench_transport_test.dart: empty 204 acknowledgements succeed while empty JSON responses are rejected
+00:00 +7: /Users/lute/project/momcozy-lab/app/test/core/network/workbench_transport_test.dart: empty 204 acknowledgements succeed while empty JSON responses are rejected
+00:00 +8: /Users/lute/project/momcozy-lab/app/test/core/network/workbench_transport_test.dart: empty 204 acknowledgements succeed while empty JSON responses are rejected
+00:00 +9: /Users/lute/project/momcozy-lab/app/test/core/network/workbench_transport_test.dart: empty 204 acknowledgements succeed while empty JSON responses are rejected
+00:00 +10: /Users/lute/project/momcozy-lab/app/test/core/network/api_json_transport_test.dart: IoApiJsonTransport HTTP connector sends non-ASCII JSON bodies as UTF-8
+00:00 +11: /Users/lute/project/momcozy-lab/app/test/core/auth/flutter_secure_momcozy_session_store_test.dart: writes one atomic payload and verifies the stored session
+00:00 +12: /Users/lute/project/momcozy-lab/app/test/core/network/api_envelope_test.dart: API contract fixtures accept legacy snake/camel aliases without adding secret-shaped values
+00:00 +13: /Users/lute/project/momcozy-lab/app/test/core/network/api_envelope_test.dart: API contract fixtures accept legacy snake/camel aliases without adding secret-shaped values
+00:00 +14: /Users/lute/project/momcozy-lab/app/test/core/network/test_certificate_trust_test.dart: test certificate trust loads the bundled certificate and installs a trusted context
+00:00 +15: /Users/lute/project/momcozy-lab/app/test/core/network/test_certificate_trust_test.dart: test certificate trust loads the bundled certificate and installs a trusted context
+00:00 +16: /Users/lute/project/momcozy-lab/app/test/core/network/test_certificate_trust_test.dart: test certificate trust loads the bundled certificate and installs a trusted context
+00:00 +17: /Users/lute/project/momcozy-lab/app/test/core/network/test_certificate_trust_test.dart: test certificate trust loads the bundled certificate and installs a trusted context
+00:00 +18: /Users/lute/project/momcozy-lab/app/test/core/network/test_certificate_trust_test.dart: test certificate trust loads the bundled certificate and installs a trusted context
+00:00 +19: /Users/lute/project/momcozy-lab/app/test/core/auth/flutter_secure_momcozy_session_store_test.dart: drops a malformed atomic payload instead of restoring it
+00:00 +20: /Users/lute/project/momcozy-lab/app/test/core/network/api_json_transport_test.dart: IoApiJsonTransport omits missing tokens and surfaces expired-token HTTP status
+00:00 +21: /Users/lute/project/momcozy-lab/app/test/core/network/workbench_transport_test.dart: transport rejects a foreign origin without sending credentials and preserves proxy error status
+00:00 +22: /Users/lute/project/momcozy-lab/app/test/core/network/api_json_transport_test.dart: IoApiMultipartTransport sends query parameters separately from the upload path
+00:00 +23: /Users/lute/project/momcozy-lab/app/test/core/auth/momcozy_auth_api_test.dart: MomCozyAuthApiRepository login posts production auth body and maps token response
+00:00 +24: /Users/lute/project/momcozy-lab/app/test/core/auth/momcozy_auth_api_test.dart: MomCozyAuthApiRepository login posts production auth body and maps token response
+00:00 +25: /Users/lute/project/momcozy-lab/app/test/core/network/transport_security_policy_test.dart: TransportSecurityPolicy allows HTTPS and WSS remote endpoints
+00:00 +26: /Users/lute/project/momcozy-lab/app/test/core/network/transport_security_policy_test.dart: TransportSecurityPolicy allows HTTPS and WSS remote endpoints
+00:00 +27: /Users/lute/project/momcozy-lab/app/test/core/network/transport_security_policy_test.dart: TransportSecurityPolicy allows HTTPS and WSS remote endpoints
+00:00 +28: /Users/lute/project/momcozy-lab/app/test/core/network/api_json_transport_test.dart: IoApiMultipartTransport streams file bytes and reports monotonic upload progress
+00:00 +29: /Users/lute/project/momcozy-lab/app/test/core/network/api_json_transport_test.dart: IoApiMultipartTransport streams file bytes and reports monotonic upload progress
+00:00 +30: /Users/lute/project/momcozy-lab/app/test/core/network/api_json_transport_test.dart: IoApiMultipartTransport streams file bytes and reports monotonic upload progress
+00:00 +31: /Users/lute/project/momcozy-lab/app/test/core/network/api_json_transport_test.dart: IoApiMultipartTransport streams file bytes and reports monotonic upload progress
+00:00 +32: /Users/lute/project/momcozy-lab/app/test/core/network/api_json_transport_test.dart: IoApiMultipartTransport streams file bytes and reports monotonic upload progress
+00:00 +33: /Users/lute/project/momcozy-lab/app/test/core/network/api_json_transport_test.dart: IoApiMultipartTransport streams file bytes and reports monotonic upload progress
+00:00 +34: /Users/lute/project/momcozy-lab/app/test/core/network/api_json_transport_test.dart: IoApiMultipartTransport streams file bytes and reports monotonic upload progress
+00:00 +35: /Users/lute/project/momcozy-lab/app/test/core/network/api_json_transport_test.dart: IoApiMultipartTransport streams file bytes and reports monotonic upload progress
+00:00 +36: /Users/lute/project/momcozy-lab/app/test/core/network/api_json_transport_test.dart: IoApiMultipartTransport streams file bytes and reports monotonic upload progress
+00:00 +37: /Users/lute/project/momcozy-lab/app/test/core/auth/momcozy_auth_api_test.dart: MomCozySessionRefreshCoordinator keeps session publication inside the shared refresh operation
+00:00 +38: /Users/lute/project/momcozy-lab/app/test/core/auth/momcozy_auth_api_test.dart: AuthenticatedApiJsonTransport refreshes on 401 and retries the original request once
+00:00 +39: /Users/lute/project/momcozy-lab/app/test/core/auth/momcozy_auth_api_test.dart: AuthenticatedApiJsonTransport shares one refresh request across concurrent 401 responses
+00:00 +40: /Users/lute/project/momcozy-lab/app/test/core/auth/momcozy_auth_api_test.dart: AuthenticatedApiJsonTransport retries a stale 401 with the latest access token without refreshing
+00:00 +41: /Users/lute/project/momcozy-lab/app/test/core/auth/momcozy_auth_api_test.dart: AuthenticatedApiJsonTransport does not refresh non-auth HTTP failures
+00:00 +42: /Users/lute/project/momcozy-lab/app/test/core/auth/momcozy_auth_api_test.dart: AuthenticatedApiJsonTransport refreshes authenticated PUT, PATCH, and DELETE mutations once
+00:00 +43: /Users/lute/project/momcozy-lab/app/test/core/auth/momcozy_auth_api_test.dart: AuthenticatedApiJsonTransport refreshes multipart uploads and retries with the new token
+00:00 +44: /Users/lute/project/momcozy-lab/app/test/core/auth/momcozy_session_test.dart: MomCozySession environment bootstrap is anonymous without tokens
+00:00 +45: /Users/lute/project/momcozy-lab/app/test/core/auth/momcozy_session_test.dart: MomCozySession environment bootstrap is authenticated with access token
+00:00 +46: /Users/lute/project/momcozy-lab/app/test/core/auth/momcozy_session_test.dart: MomCozySessionManager stored secure session wins over environment session
+00:00 +47: /Users/lute/project/momcozy-lab/app/test/core/auth/momcozy_session_test.dart: MomCozySessionManager logout clears stored secrets and returns anonymous session
+00:00 +48: /Users/lute/project/momcozy-lab/app/test/core/auth/momcozy_session_test.dart: MomCozySessionManager switchAccount clears old session before writing next account
+00:00 +49: /Users/lute/project/momcozy-lab/app/test/core/auth/momcozy_session_test.dart: MomCozySessionManager switchAccount clears scoped cache before persisting next account
+00:01 +50: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_controller_test.dart: loads a six-week calendar window and selects a month without derived ages
+00:01 +51: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_controller_test.dart: personal schedule mutations use the repository and reload authoritative state
+00:01 +52: /Users/lute/project/momcozy-lab/app/test/core/auth/account_session_lifecycle_test.dart: restart restores and persists rotated tokens; revoked refresh expires session
+00:01 +53: /Users/lute/project/momcozy-lab/app/test/core/auth/account_session_lifecycle_test.dart: logout prevents an in-flight refresh write from restoring credentials
+00:01 +54: /Users/lute/project/momcozy-lab/app/test/core/auth/account_session_lifecycle_test.dart: late login persistence cannot revive a session after logout
+00:01 +55: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_page_golden_test.dart: service periods use actual dates and the display filter
+00:02 +56: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_page_golden_test.dart: schedule month and selected day agenda at 320.0 / 1.0
+00:02 +57: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_page_golden_test.dart: schedule month and selected day agenda at 320.0 / 2.0
+00:02 +58: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_page_golden_test.dart: schedule month and selected day agenda at 390.0 / 1.0
+00:02 +59: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_page_golden_test.dart: schedule month and selected day agenda at 390.0 / 2.0
+00:02 +60: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_page_golden_test.dart: schedule month and selected day agenda at 430.0 / 1.0
+00:02 +61: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_page_golden_test.dart: schedule month and selected day agenda at 430.0 / 2.0
+00:02 +62: All tests passed!

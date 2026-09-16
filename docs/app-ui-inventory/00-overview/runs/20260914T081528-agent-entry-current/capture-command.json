@@ -1,0 +1,15 @@
+{
+  "command": [
+    "/Users/lute/.local/share/momcozy-toolchains/flutter/bin/flutter",
+    "--suppress-analytics",
+    "test",
+    "--no-pub",
+    "test/app/notification_conversation_route_test.dart",
+    "test/features/agent_hub/agent_history_design_test.dart",
+    "--name",
+    "notification conversation opens.*393\\.0 / 1\\.0|history states 390\\.0/1\\.0",
+    "--reporter",
+    "expanded"
+  ],
+  "scope": "Existing current golden scenarios; one standard viewport plus existing unique state cases; full scroll capture only, no baseline update or added tests"
+}

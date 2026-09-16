@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/mom-journey-home-diary-partial-error-393.png",
+  "previous_source": "test/goldens/ui_inventory/mom-journey-home-loaded-empty-393.png",
+  "route": "/me",
+  "trigger": "Pull refresh → diary request fails while other modules remain available",
+  "root_entry": "Authenticated More → tap Me bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/mom/mom_inventory_journey_test.dart"
+}

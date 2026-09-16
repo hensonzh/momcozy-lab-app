@@ -1,0 +1,378 @@
+[
+  {
+    "path": "docs/app-ui-inventory/native/consultation-devices/native-device-allow-camera.png",
+    "sha256": "1d55a9aaf61d6f832941e721f73630c106204aac49a1a7453de9134fb7d0c6a2",
+    "width": 1280,
+    "height": 2856,
+    "segments": [
+      [
+        0,
+        1000
+      ],
+      [
+        1000,
+        2000
+      ],
+      [
+        2000,
+        2856
+      ]
+    ]
+  },
+  {
+    "path": "docs/app-ui-inventory/native/consultation-devices/native-device-allow-microphone.png",
+    "sha256": "8a6aa6c6c0edcca698c43eb19b57e27a1d16f33b044f24c08e35bbc89022ff1c",
+    "width": 1280,
+    "height": 2856,
+    "segments": [
+      [
+        0,
+        1000
+      ],
+      [
+        1000,
+        2000
+      ],
+      [
+        2000,
+        2856
+      ]
+    ]
+  },
+  {
+    "path": "docs/app-ui-inventory/native/consultation-devices/native-device-appointment.png",
+    "sha256": "af7bc9c08cf7f7544de82f0464b54f85bc60309606e09b1474364dbd668c6d81",
+    "width": 1280,
+    "height": 2856,
+    "segments": [
+      [
+        0,
+        1000
+      ],
+      [
+        1000,
+        2000
+      ],
+      [
+        2000,
+        2856
+      ]
+    ]
+  },
+  {
+    "path": "docs/app-ui-inventory/native/consultation-devices/native-device-checking.png",
+    "sha256": "43d924a799f887b306c1f23552d04972da524c8796d6ec44a35326dc5b8eb463",
+    "width": 1280,
+    "height": 2856,
+    "segments": [
+      [
+        0,
+        1000
+      ],
+      [
+        1000,
+        2000
+      ],
+      [
+        2000,
+        2856
+      ]
+    ]
+  },
+  {
+    "path": "docs/app-ui-inventory/native/consultation-devices/native-device-denied.png",
+    "sha256": "5fefc2cac47a67db929f7e6de7a053ee0970a5b1cdd35405f2424603940aa03e",
+    "width": 1280,
+    "height": 2856,
+    "segments": [
+      [
+        0,
+        1000
+      ],
+      [
+        1000,
+        2000
+      ],
+      [
+        2000,
+        2856
+      ]
+    ]
+  },
+  {
+    "path": "docs/app-ui-inventory/native/consultation-devices/native-device-deny-camera.png",
+    "sha256": "066d2775df261d4ac03888196cf56b34d252b9381fea9aba19277d1f1501884e",
+    "width": 1280,
+    "height": 2856,
+    "segments": [
+      [
+        0,
+        1000
+      ],
+      [
+        1000,
+        2000
+      ],
+      [
+        2000,
+        2856
+      ]
+    ]
+  },
+  {
+    "path": "docs/app-ui-inventory/native/consultation-devices/native-device-deny-microphone.png",
+    "sha256": "a00b17d65493a6e94ed026b05e103ce43074679dd3109793d36825ecd06d9cc4",
+    "width": 1280,
+    "height": 2856,
+    "segments": [
+      [
+        0,
+        1000
+      ],
+      [
+        1000,
+        2000
+      ],
+      [
+        2000,
+        2856
+      ]
+    ]
+  },
+  {
+    "path": "docs/app-ui-inventory/native/consultation-devices/native-device-mom-long.png",
+    "sha256": "f02a7e39ad00d638d2792c53973e4e71886ade79491cd1924e12d2256eb169f5",
+    "width": 1280,
+    "height": 4020,
+    "segments": [
+      [
+        0,
+        1000
+      ],
+      [
+        1000,
+        2000
+      ],
+      [
+        2000,
+        3000
+      ],
+      [
+        3000,
+        4000
+      ],
+      [
+        4000,
+        4020
+      ]
+    ]
+  },
+  {
+    "path": "docs/app-ui-inventory/native/consultation-devices/native-device-mom-return-long.png",
+    "sha256": "f02a7e39ad00d638d2792c53973e4e71886ade79491cd1924e12d2256eb169f5",
+    "width": 1280,
+    "height": 4020,
+    "segments": [
+      [
+        0,
+        1000
+      ],
+      [
+        1000,
+        2000
+      ],
+      [
+        2000,
+        3000
+      ],
+      [
+        3000,
+        4000
+      ],
+      [
+        4000,
+        4020
+      ]
+    ]
+  },
+  {
+    "path": "docs/app-ui-inventory/native/consultation-devices/native-device-mom-return.png",
+    "sha256": "3065a1a1d63e6ad299c700fae19735cfac5cc1a4d8145e0e7bbe1121f3ea1eb1",
+    "width": 1280,
+    "height": 2856,
+    "segments": [
+      [
+        0,
+        1000
+      ],
+      [
+        1000,
+        2000
+      ],
+      [
+        2000,
+        2856
+      ]
+    ]
+  },
+  {
+    "path": "docs/app-ui-inventory/native/consultation-devices/native-device-mom.png",
+    "sha256": "e91b773206211f281ad15b718e919c9866c7ea76170bec714f9df830aca6b9c1",
+    "width": 1280,
+    "height": 2856,
+    "segments": [
+      [
+        0,
+        1000
+      ],
+      [
+        1000,
+        2000
+      ],
+      [
+        2000,
+        2856
+      ]
+    ]
+  },
+  {
+    "path": "docs/app-ui-inventory/native/consultation-devices/native-device-more-return.png",
+    "sha256": "8eb728135c9684cbc3c192991e36096617b6226677573133e644b7aa15f40f30",
+    "width": 1280,
+    "height": 2856,
+    "segments": [
+      [
+        0,
+        1000
+      ],
+      [
+        1000,
+        2000
+      ],
+      [
+        2000,
+        2856
+      ]
+    ]
+  },
+  {
+    "path": "docs/app-ui-inventory/native/consultation-devices/native-device-more.png",
+    "sha256": "8eb728135c9684cbc3c192991e36096617b6226677573133e644b7aa15f40f30",
+    "width": 1280,
+    "height": 2856,
+    "segments": [
+      [
+        0,
+        1000
+      ],
+      [
+        1000,
+        2000
+      ],
+      [
+        2000,
+        2856
+      ]
+    ]
+  },
+  {
+    "path": "docs/app-ui-inventory/native/consultation-devices/native-device-ready.png",
+    "sha256": "8c94b0f591755cffbfa8c10b2ed853ee5eb83110cba8104104583715846225b1",
+    "width": 1280,
+    "height": 2856,
+    "segments": [
+      [
+        0,
+        1000
+      ],
+      [
+        1000,
+        2000
+      ],
+      [
+        2000,
+        2856
+      ]
+    ]
+  },
+  {
+    "path": "docs/app-ui-inventory/native/consultation-devices/native-device-rechecked.png",
+    "sha256": "8c94b0f591755cffbfa8c10b2ed853ee5eb83110cba8104104583715846225b1",
+    "width": 1280,
+    "height": 2856,
+    "segments": [
+      [
+        0,
+        1000
+      ],
+      [
+        1000,
+        2000
+      ],
+      [
+        2000,
+        2856
+      ]
+    ]
+  },
+  {
+    "path": "docs/app-ui-inventory/native/consultation-devices/native-device-retry-checking.png",
+    "sha256": "31b8d9f963f323116f25bed746d985f5cce65421d0d459e666b898b0ad5c77d1",
+    "width": 1280,
+    "height": 2856,
+    "segments": [
+      [
+        0,
+        1000
+      ],
+      [
+        1000,
+        2000
+      ],
+      [
+        2000,
+        2856
+      ]
+    ]
+  },
+  {
+    "path": "docs/app-ui-inventory/native/consultation-devices/native-device-start-confirm.png",
+    "sha256": "44b9f56e205da260b5bf60fdfd8a9316549868204f3e210577813697ea4fa420",
+    "width": 1280,
+    "height": 2856,
+    "segments": [
+      [
+        0,
+        1000
+      ],
+      [
+        1000,
+        2000
+      ],
+      [
+        2000,
+        2856
+      ]
+    ]
+  },
+  {
+    "path": "docs/app-ui-inventory/native/consultation-devices/restored-home.png",
+    "sha256": "08b3afc6e888f9f3abceda4f97739e64e5c3152ed30a5bb72208bba1908e0dd7",
+    "width": 1280,
+    "height": 2856,
+    "segments": [
+      [
+        0,
+        1000
+      ],
+      [
+        1000,
+        2000
+      ],
+      [
+        2000,
+        2856
+      ]
+    ]
+  }
+]

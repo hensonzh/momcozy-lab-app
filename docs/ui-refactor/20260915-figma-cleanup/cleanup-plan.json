@@ -1,0 +1,1499 @@
+{
+  "file_key": "ePIoJkiMiXiug9ibpcgRbl",
+  "date": "2026-09-15",
+  "user_request": "删除重复设计图及大字号设计图",
+  "before_ui_boards": 863,
+  "large_boards": [
+    {
+      "id": "142:1403",
+      "name": "Privacy / 320 at 2x text",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "145:553",
+      "name": "Privacy / Long service label at 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "153:1139",
+      "name": "Service catalog / Team at 2x text",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "156:1844",
+      "name": "Service detail / Large text",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "156:1912",
+      "name": "Service detail / Large owned",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "159:1108",
+      "name": "Purchase flow / Eligibility large",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "159:1197",
+      "name": "Purchase flow / Payment large",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "159:1302",
+      "name": "Purchase flow / Success large",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "162:1501",
+      "name": "Service progress / Large history",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "162:1574",
+      "name": "Service progress / Long plan name",
+      "reason": "verified_enlarged_typography"
+    },
+    {
+      "id": "162:1605",
+      "name": "Service progress / Completed large",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "163:1108",
+      "name": "Service progress / Short large earlier viewport",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "165:1981",
+      "name": "Booking / Choose time large",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "165:2015",
+      "name": "Booking / Confirmed large",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "167:1108",
+      "name": "Booking dialog / Precheck large",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "167:1143",
+      "name": "Booking dialog / Held large",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "167:1202",
+      "name": "Booking dialog / Cancellation large",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "170:1408",
+      "name": "Appointment detail / Confirmed large",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "170:1454",
+      "name": "Appointment detail / Held large",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "170:1493",
+      "name": "Appointment detail / Unavailable large",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "173:1520",
+      "name": "Intake / large-form",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "173:1566",
+      "name": "Intake / large-profile",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "174:1108",
+      "name": "Intake / large-consent",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "174:1169",
+      "name": "Intake / large-completed",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "174:1237",
+      "name": "Intake / large-uncertain-leave",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "175:1533",
+      "name": "Intake / large-unconfirmed",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "178:1923",
+      "name": "Preparation / large-ready",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "178:1954",
+      "name": "Preparation / large-intake",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "178:1989",
+      "name": "Preparation / large-expired",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "178:2024",
+      "name": "Preparation / large-pending",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "178:2088",
+      "name": "Preparation / large-home-error",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "179:1108",
+      "name": "Preparation / large-ready-actions",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "179:1139",
+      "name": "Preparation / large-intake-actions",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "179:1174",
+      "name": "Preparation / large-expired-actions",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "180:1108",
+      "name": "Preparation / short-home-loading",
+      "reason": "verified_enlarged_typography"
+    },
+    {
+      "id": "180:1263",
+      "name": "Preparation / short-home-error",
+      "reason": "verified_enlarged_typography"
+    },
+    {
+      "id": "183:1294",
+      "name": "Preflight / large-device-error",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "183:1341",
+      "name": "Preflight / large-device-ready",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "183:2031",
+      "name": "Preflight / large-location",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "183:2076",
+      "name": "Preflight / large-consent-required",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "183:2125",
+      "name": "Preflight / large-consent",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "183:2168",
+      "name": "Preflight / large-consent-error",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "183:2213",
+      "name": "Preflight / large-rejected",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "184:1108",
+      "name": "Preflight / short-device-ready",
+      "reason": "verified_enlarged_typography"
+    },
+    {
+      "id": "188:1435",
+      "name": "Live room / large-waiting",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "188:1473",
+      "name": "Live room / large-leave",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "192:1108",
+      "name": "Live room / large-controls",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "192:1163",
+      "name": "Live room / large-media-error",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "192:1222",
+      "name": "Live room / large-disconnected",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "192:1281",
+      "name": "Live room / short-large-leave",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "198:1276",
+      "name": "Consultation outcome / large-technical",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "198:1304",
+      "name": "Consultation outcome / large-completed",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "198:1330",
+      "name": "Consultation outcome / large-safety",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "198:1359",
+      "name": "Consultation outcome / short-no-show-actions",
+      "reason": "verified_enlarged_typography"
+    },
+    {
+      "id": "201:1402",
+      "name": "Consultation summary / large-published",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "202:1754",
+      "name": "Summary task / large-uncertain",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "202:1834",
+      "name": "Consultation summary / large-information",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "202:1896",
+      "name": "Consultation summary / large-pending",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "202:1950",
+      "name": "Summary task / short-large-progress",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "208:1625",
+      "name": "Continue support / 大字体",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "211:1141",
+      "name": "Consultation entry / 大字号加载",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "211:1152",
+      "name": "Consultation entry / 短屏大字号错误",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "211:1631",
+      "name": "Consultation entry / 妈妈页大字号加载",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "211:1787",
+      "name": "Consultation entry / 妈妈页短屏大字号错误",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "214:2971",
+      "name": "Schedule / 大字号日程",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "214:3106",
+      "name": "Schedule / 短屏大字号",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "214:4269",
+      "name": "Schedule editor / 大字号短屏编辑",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "214:4398",
+      "name": "Schedule editor / 大字号删除",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "225:1674",
+      "name": "Auth / 大字号登录",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "225:1707",
+      "name": "Auth / 短屏大字号表单",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "225:1740",
+      "name": "Auth / 大字号验证码错误",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "225:1768",
+      "name": "Auth / 短屏重置",
+      "reason": "verified_enlarged_typography"
+    },
+    {
+      "id": "225:1795",
+      "name": "Auth / 大字号语言",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "225:1863",
+      "name": "Auth / 邀请码短屏",
+      "reason": "verified_enlarged_typography"
+    },
+    {
+      "id": "230:1328",
+      "name": "Onboarding profile / 大字号基本资料",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "230:1352",
+      "name": "Onboarding profile / 大字号日期",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "230:1372",
+      "name": "Onboarding profile / 短屏基本资料",
+      "reason": "verified_enlarged_typography"
+    },
+    {
+      "id": "230:1396",
+      "name": "Onboarding profile / 短屏保存失败",
+      "reason": "verified_enlarged_typography"
+    },
+    {
+      "id": "230:1422",
+      "name": "Onboarding profile / 大字号保存中",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "234:1534",
+      "name": "Onboarding avatar / 大字号创建",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "234:1550",
+      "name": "Onboarding avatar / 短屏照片说明",
+      "reason": "verified_enlarged_typography"
+    },
+    {
+      "id": "234:1566",
+      "name": "Onboarding avatar / 大字号照片来源",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "234:1589",
+      "name": "Onboarding avatar / 大字号默认确认",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "234:1613",
+      "name": "Onboarding avatar / 大字号生成进度",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "234:1633",
+      "name": "Onboarding avatar / 大字号后台提示",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "234:1661",
+      "name": "Onboarding avatar / 短屏候选操作",
+      "reason": "verified_enlarged_typography"
+    },
+    {
+      "id": "234:1691",
+      "name": "Onboarding avatar / 大字号图片失败",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "234:1721",
+      "name": "Onboarding avatar / 更换失败保留原形象",
+      "reason": "verified_enlarged_typography"
+    },
+    {
+      "id": "234:1753",
+      "name": "Onboarding avatar / 大字号任务提示",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "234:1770",
+      "name": "Onboarding avatar / 短屏任务提示",
+      "reason": "verified_enlarged_typography"
+    },
+    {
+      "id": "242:1334",
+      "name": "History / short large list",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "242:1378",
+      "name": "History / short large locked",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "242:1424",
+      "name": "History / short large switching",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "242:1469",
+      "name": "History / short large switch-error",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "242:1515",
+      "name": "History / short large loading",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "242:1527",
+      "name": "History / short large empty",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "242:1537",
+      "name": "History / short large load-error",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "242:1550",
+      "name": "History / short large single",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "247:1086",
+      "name": "Cozymate / large home",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "247:1118",
+      "name": "Cozymate / large fallback",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "247:1150",
+      "name": "Cozymate / large chat",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "247:1182",
+      "name": "Cozymate / large streaming",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "247:1218",
+      "name": "Cozymate / large reply",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "247:1253",
+      "name": "Cozymate / large disconnected-empty",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "247:1290",
+      "name": "Cozymate / large terminal-error",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "247:1325",
+      "name": "Cozymate / large disconnected-partial",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "247:1363",
+      "name": "Cozymate / large resumed",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "250:1086",
+      "name": "Cozymate / large latest-message control",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "259:1336",
+      "name": "Cozymate attachments / menu large",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "259:1370",
+      "name": "Cozymate attachments / pending-image large",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "259:1405",
+      "name": "Cozymate attachments / pending-file large",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "259:1440",
+      "name": "Cozymate attachments / uploading large",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "259:1475",
+      "name": "Cozymate attachments / sent-files large",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "259:1502",
+      "name": "Cozymate attachments / user-menu large",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "259:1519",
+      "name": "Cozymate attachments / assistant-menu large",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "259:1536",
+      "name": "Cozymate attachments / retry-menu large",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "259:1557",
+      "name": "Cozymate attachments / copy-success large",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "259:1571",
+      "name": "Cozymate attachments / copy-failed large",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "262:1115",
+      "name": "Cozymate attachments / sent-image large",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "265:1269",
+      "name": "Media viewer / image-loaded large",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "265:1278",
+      "name": "Media viewer / image-zoomed large",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "265:1287",
+      "name": "Media viewer / image-panned large",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "265:1296",
+      "name": "Media viewer / image-loading large",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "265:1308",
+      "name": "Media viewer / image-error large",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "265:1323",
+      "name": "Media viewer / image-unavailable large",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "265:1336",
+      "name": "Media viewer / pdf-loading large",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "265:1348",
+      "name": "Media viewer / pdf-error large",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "265:1363",
+      "name": "Media viewer / pdf-unavailable large",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "265:1376",
+      "name": "Media viewer / missing large",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "265:1390",
+      "name": "Media viewer / video-unavailable large",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "265:1403",
+      "name": "Media viewer / attachment-loaded large",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "265:1412",
+      "name": "Media viewer / attachment-error large",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "265:1427",
+      "name": "Media viewer / attachment-unavailable large",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "265:1440",
+      "name": "Media viewer / attachment-loading large",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "267:1388",
+      "name": "Cozymate / voice / greeting-error",
+      "reason": "verified_enlarged_typography"
+    },
+    {
+      "id": "267:1428",
+      "name": "Cozymate / voice / stream-error",
+      "reason": "verified_enlarged_typography"
+    },
+    {
+      "id": "267:1478",
+      "name": "Cozymate / voice / reply-error",
+      "reason": "verified_enlarged_typography"
+    },
+    {
+      "id": "267:1527",
+      "name": "Cozymate / voice / off",
+      "reason": "verified_enlarged_typography"
+    },
+    {
+      "id": "267:1568",
+      "name": "Cozymate / voice / on",
+      "reason": "verified_enlarged_typography"
+    },
+    {
+      "id": "267:1609",
+      "name": "Cozymate / voice / dismissed",
+      "reason": "verified_enlarged_typography"
+    },
+    {
+      "id": "267:1641",
+      "name": "Cozymate / voice / greeting-playing",
+      "reason": "verified_enlarged_typography"
+    },
+    {
+      "id": "267:1673",
+      "name": "Cozymate / voice / reply-playing",
+      "reason": "verified_enlarged_typography"
+    },
+    {
+      "id": "267:1714",
+      "name": "Cozymate / voice / keyboard-error",
+      "reason": "verified_enlarged_typography"
+    },
+    {
+      "id": "267:1978",
+      "name": "Cozymate / voice / attachment-image-error",
+      "reason": "verified_enlarged_typography"
+    },
+    {
+      "id": "267:2029",
+      "name": "Cozymate / voice / attachment-file-error",
+      "reason": "verified_enlarged_typography"
+    },
+    {
+      "id": "267:2080",
+      "name": "Cozymate / voice / attachment-too-large",
+      "reason": "verified_enlarged_typography"
+    },
+    {
+      "id": "267:2123",
+      "name": "Cozymate / voice / attachment-unsupported",
+      "reason": "verified_enlarged_typography"
+    },
+    {
+      "id": "267:2166",
+      "name": "Cozymate / voice / attachment-cleanup-error",
+      "reason": "verified_enlarged_typography"
+    },
+    {
+      "id": "271:1610",
+      "name": "Cozymate / reading / markdown-top",
+      "reason": "verified_enlarged_typography"
+    },
+    {
+      "id": "271:1650",
+      "name": "Cozymate / reading / markdown-link",
+      "reason": "verified_enlarged_typography"
+    },
+    {
+      "id": "271:1690",
+      "name": "Cozymate / reading / image",
+      "reason": "verified_enlarged_typography"
+    },
+    {
+      "id": "271:1737",
+      "name": "Cozymate / reading / pdf",
+      "reason": "verified_enlarged_typography"
+    },
+    {
+      "id": "271:1784",
+      "name": "Cozymate / reading / video",
+      "reason": "verified_enlarged_typography"
+    },
+    {
+      "id": "271:1831",
+      "name": "Cozymate / reading / renew",
+      "reason": "verified_enlarged_typography"
+    },
+    {
+      "id": "271:1878",
+      "name": "Cozymate / reading / invalid",
+      "reason": "verified_enlarged_typography"
+    },
+    {
+      "id": "271:1925",
+      "name": "Cozymate / reading / external",
+      "reason": "verified_enlarged_typography"
+    },
+    {
+      "id": "271:1972",
+      "name": "Cozymate / reading / motion-head",
+      "reason": "verified_enlarged_typography"
+    },
+    {
+      "id": "271:2018",
+      "name": "Cozymate / reading / motion-posture",
+      "reason": "verified_enlarged_typography"
+    },
+    {
+      "id": "271:2064",
+      "name": "Cozymate / reading / multi",
+      "reason": "verified_enlarged_typography"
+    },
+    {
+      "id": "271:2117",
+      "name": "Cozymate / reading / consult-form",
+      "reason": "verified_enlarged_typography"
+    },
+    {
+      "id": "274:1110",
+      "name": "Agent consult / consent accepted",
+      "reason": "verified_enlarged_typography"
+    },
+    {
+      "id": "276:1398",
+      "name": "Agent form / Large / top",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "276:1448",
+      "name": "Agent form / Large / choices",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "276:1500",
+      "name": "Agent form / Large / validation",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "276:1553",
+      "name": "Agent form / Large / failed",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "276:1608",
+      "name": "Agent form / Large / pending",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "276:1660",
+      "name": "Agent form / Large / readonly",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "276:1710",
+      "name": "Agent form / Short keyboard",
+      "reason": "verified_enlarged_typography"
+    },
+    {
+      "id": "276:2115",
+      "name": "Agent form / 恢复支持 / large / top",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "276:2162",
+      "name": "Agent form / 恢复支持 / large / choices",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "276:2211",
+      "name": "Agent form / 恢复支持 / large / validation",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "276:2261",
+      "name": "Agent form / 恢复支持 / large / pending",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "276:2310",
+      "name": "Agent form / 恢复支持 / large / readonly",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "277:1260",
+      "name": "Agent form / 恢复支持 / large date input",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "280:1086",
+      "name": "Agent form / 售后支持 / large / top",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "280:1114",
+      "name": "Agent form / 售后支持 / large / failed",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "280:1145",
+      "name": "Agent form / 售后支持 / large / pending",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "280:1173",
+      "name": "Agent form / 售后支持 / large / readonly",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "282:1125",
+      "name": "Agent form / 喂养记录与支持偏好 / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "283:1135",
+      "name": "Agent form / 恢复支持 / draft return 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "284:1379",
+      "name": "Agent action / confirmation_required / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "284:1435",
+      "name": "Agent action / confirming / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "284:1486",
+      "name": "Agent action / rejecting / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "284:1537",
+      "name": "Agent action / applied / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "284:1588",
+      "name": "Agent action / rejected / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "284:1639",
+      "name": "Agent action / failed / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "284:1690",
+      "name": "Agent action / confirmation_required / 2x / bottom",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "285:1205",
+      "name": "Agent result review / summary / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "285:1223",
+      "name": "Agent result review / disabled / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "285:1241",
+      "name": "Agent result review / consult / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "285:1261",
+      "name": "Agent result review / consent-accepted / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "285:1281",
+      "name": "Agent result review / motion / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "285:1294",
+      "name": "Agent result review / unsupported / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "285:1306",
+      "name": "Agent result review / milk / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "289:1132",
+      "name": "Agent result review / milk-top / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "291:1210",
+      "name": "MomCozy PDF / page-1 / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "291:1241",
+      "name": "MomCozy PDF / page-2 / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "291:1272",
+      "name": "MomCozy PDF / zoom / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "291:1303",
+      "name": "MomCozy PDF / opening / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "291:1495",
+      "name": "MomCozy video / ready / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "291:1521",
+      "name": "MomCozy video / playing / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "291:1547",
+      "name": "MomCozy video / seek-mute / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "291:1573",
+      "name": "MomCozy video / fullscreen / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "291:1595",
+      "name": "MomCozy video / loading / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "291:1607",
+      "name": "MomCozy video / error / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "291:1620",
+      "name": "MomCozy video / interrupted / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "293:1098",
+      "name": "MomCozy video / ready / 2x / landscape",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "293:1124",
+      "name": "MomCozy video / fullscreen / 2x / landscape",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "293:1146",
+      "name": "MomCozy video / ready / 2x / short",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "293:1172",
+      "name": "MomCozy video / fullscreen / 2x / short",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "293:1194",
+      "name": "MomCozy video / error / 2x / short",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "296:1603",
+      "name": "MomCozy Lactation / overview / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "296:1668",
+      "name": "MomCozy Lactation / 30-days / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "296:1731",
+      "name": "MomCozy Lactation / empty / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "296:1778",
+      "name": "MomCozy Lactation / saved / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "296:1845",
+      "name": "MomCozy Lactation / deleted / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "296:1896",
+      "name": "MomCozy Lactation / restore-error / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "296:1965",
+      "name": "MomCozy Lactation / long-note / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "296:2031",
+      "name": "MomCozy Lactation / read-error / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "296:2394",
+      "name": "MomCozy Lactation / form pump / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "296:2428",
+      "name": "MomCozy Lactation / form nurse / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "296:2462",
+      "name": "MomCozy Lactation / form optional / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "296:2511",
+      "name": "MomCozy Lactation / form editing / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "296:2560",
+      "name": "MomCozy Lactation / form pending / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "296:2609",
+      "name": "MomCozy Lactation / form uncertain / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "296:2661",
+      "name": "MomCozy Lactation / form validation / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "296:2697",
+      "name": "MomCozy Lactation / form long-note / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "297:1439",
+      "name": "MomCozy Lactation / leave / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "297:1482",
+      "name": "MomCozy Lactation / leave-uncertain / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "297:1525",
+      "name": "MomCozy Lactation / time-input / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "297:1578",
+      "name": "MomCozy Lactation / time-invalid / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "305:1140",
+      "name": "MomCozy Lactation / form conflict / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "306:1803",
+      "name": "MomCozy Diary / rest empty / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "306:1882",
+      "name": "MomCozy Diary / rest selected / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "306:1961",
+      "name": "MomCozy Diary / rest optional / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "306:2107",
+      "name": "MomCozy Diary / body empty / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "306:2186",
+      "name": "MomCozy Diary / body dependent / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "306:2289",
+      "name": "MomCozy Diary / body optional / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "306:2416",
+      "name": "MomCozy Diary / mood empty / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "306:2513",
+      "name": "MomCozy Diary / mood multiple / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "308:1643",
+      "name": "MomCozy Diary / body validation / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "308:1724",
+      "name": "MomCozy Diary / body save-error / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "308:1806",
+      "name": "MomCozy Diary / body conflict / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "308:1890",
+      "name": "MomCozy Diary / body saving / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "308:1969",
+      "name": "MomCozy Diary / body saved / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "308:2049",
+      "name": "MomCozy Diary / body read-error / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "308:2071",
+      "name": "MomCozy Diary / body loading / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "308:2091",
+      "name": "MomCozy Diary / body note / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "308:2170",
+      "name": "MomCozy Diary / body long-note / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "308:2336",
+      "name": "MomCozy Diary / mood exclusive / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "308:2520",
+      "name": "MomCozy Diary / mood quick-low / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "308:2704",
+      "name": "MomCozy Diary / mood quick-unclear / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "308:2888",
+      "name": "MomCozy Diary / mood cleared / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "308:3057",
+      "name": "MomCozy Diary / body keyboard / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "309:1094",
+      "name": "MomCozy Diary / discard confirmation / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "317:1506",
+      "name": "Baby profile / new / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "317:1540",
+      "name": "Baby profile / existing / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "317:1576",
+      "name": "Baby profile / cleared / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "317:1610",
+      "name": "Baby profile / feeding-menu / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "317:1657",
+      "name": "Baby profile / validation / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "317:1695",
+      "name": "Baby profile / conflict / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "317:1736",
+      "name": "Baby profile / forbidden / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "317:1775",
+      "name": "Baby profile / unavailable / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "317:1814",
+      "name": "Baby profile / pending / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "317:1850",
+      "name": "Baby profile / uncertain / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "317:1890",
+      "name": "Baby profile / long-name / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "317:1926",
+      "name": "Baby profile / existing / 2x / end",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "317:1962",
+      "name": "Baby profile / new / 2x / end",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "317:1996",
+      "name": "Baby profile / existing / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "317:2032",
+      "name": "Baby profile / conflict / 2x / end",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "326:1236",
+      "name": "Baby home / recorded / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "327:1232",
+      "name": "Baby home / empty / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "327:1505",
+      "name": "Baby home / loading / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "327:1772",
+      "name": "Baby home / error / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "327:2041",
+      "name": "Baby home / missing / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "327:2320",
+      "name": "Baby home / active / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "327:2515",
+      "name": "Baby home / no-profile / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "327:2576",
+      "name": "Baby home / switcher / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "327:2612",
+      "name": "Baby home / knowledge / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "327:2687",
+      "name": "Baby home / saved / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "327:2795",
+      "name": "Baby home / undone / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "327:2903",
+      "name": "Baby home / undo-error / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "327:3104",
+      "name": "Baby home / long-name / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "329:1141",
+      "name": "Baby records / list / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "329:1232",
+      "name": "Baby editor / stool / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "330:1804",
+      "name": "Baby editor / feeding / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "330:1839",
+      "name": "Baby editor / development / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "331:1306",
+      "name": "Baby editor / stool / 2x / full scroll reference",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "331:1395",
+      "name": "Baby editor / feeding / 2x / full scroll reference",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "331:1430",
+      "name": "Baby editor / development / 2x / full scroll reference",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "336:1096",
+      "name": "Special / Not found / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "336:1138",
+      "name": "Special / Motion guide / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "336:1150",
+      "name": "Special / Motion failure / 2x",
+      "reason": "explicit_large_variant"
+    },
+    {
+      "id": "336:1170",
+      "name": "Special / Motion failure / 2x / full failure scroll reference",
+      "reason": "explicit_large_variant"
+    }
+  ],
+  "duplicate_boards": [
+    {
+      "keep": "271:1086",
+      "remove": "271:1123",
+      "byteIdentical": true
+    },
+    {
+      "keep": "291:1334",
+      "remove": "291:1386",
+      "byteIdentical": true
+    },
+    {
+      "keep": "308:2617",
+      "remove": "308:2801",
+      "byteIdentical": true
+    }
+  ],
+  "expected_ui_remaining": 566,
+  "duplicate_policy": "Same dimensions, PNG export fingerprints, then byte-for-byte identical PNG exports. Different visible states and regular-size scroll references are preserved.",
+  "status": "completed",
+  "actual_ui_remaining": 566
+}

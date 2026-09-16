@@ -1,0 +1,28 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: (setUpAll)
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: (setUpAll)
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: invite entry with short keyboard viewport at 390.0 / 1.0
+lib/features/agent_hub/presentation/agent_voice_notice.dart:35:60: Error: Member not found: 'neutral'.
+                    disabledBackgroundColor: MomHomeTokens.neutral,
+                                                           ^^^^^^^
+00:00 +1: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: profile short viewport keeps save pending and recovers draft
+00:00 +1 -1: loading /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_capability_gate_test.dart [E]
+  Failed to load "/Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_capability_gate_test.dart":
+  Compilation failed for testPath=/Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_capability_gate_test.dart: lib/features/agent_hub/presentation/agent_voice_notice.dart:35:60: Error: Member not found: 'neutral'.
+                      disabledBackgroundColor: MomHomeTokens.neutral,
+                                                             ^^^^^^^
+  .
+00:01 +2 -1: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: avatar short screen retries thumbnail and locks confirmation
+00:01 +3 -1: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding profile forms at 390.0 / 1.0
+00:01 +4 -1: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding load failure retries at 390.0 / 1.0
+00:01 +5 -1: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: avatar task banners at 390.0 / 1.0
+00:01 +6 -1: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: avatar photo failure and default confirmation at 390.0 / 1.0
+00:01 +7 -1: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding avatar required at 390.0 / 1.0
+00:02 +8 -1: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding avatar generating at 390.0 / 1.0
+00:02 +9 -1: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding avatar review at 390.0 / 1.0
+00:02 +10 -1: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding avatar failed at 390.0 / 1.0
+00:02 +11 -1: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: (tearDownAll)
+00:02 +11 -1: Some tests failed.
+
+Failing tests:
+  /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_capability_gate_test.dart: loading /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_capability_gate_test.dart

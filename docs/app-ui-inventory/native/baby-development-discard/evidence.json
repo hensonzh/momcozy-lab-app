@@ -1,0 +1,211 @@
+{
+  "result": "PASS",
+  "scope": "Native Android ordinary dirty draft discard; 11 reviewed windows; no save action",
+  "actions_sha256": "b8fec9a27ff2946ed3e2834d3803276f246257a6594cbb2464c55734b61c4ba5",
+  "capture_script_sha256": "c621f61ebfdc9e31ef38b7572974ac5a27a7e4782cde3543e7e3a85fab0b0fd7",
+  "chain": [
+    {
+      "source": "original-mom",
+      "previous": null,
+      "actions": [],
+      "png_sha256": "f4518ec3e6bbb20a8a9b60ac4dd3a631186c205da5fe49196713d0336cca76f1",
+      "xml_sha256": "1ab53a5fc55fbbfd9207570851e3ad8acfc7e36256a8004415d236a9061aeb3f"
+    },
+    {
+      "source": "baby-entry",
+      "previous": "original-mom",
+      "actions": [
+        {
+          "at": "2026-09-13T22:43:22.902215+00:00",
+          "tap": "Baby",
+          "bounds": "[270,2571][517,2766]",
+          "coordinate": [
+            393,
+            2668
+          ]
+        }
+      ],
+      "png_sha256": "fe0af5d0d2be2aa1b680d8bb0494b26f796c2b5102ce244f4258bd6ddc3ee55a",
+      "xml_sha256": "30ed504edb20c908ae45d4291c3c426fedcb01ef04d6b881a8cf13c5e0550d2a"
+    },
+    {
+      "source": "resumed-baby",
+      "previous": "baby-entry",
+      "actions": [],
+      "png_sha256": "c4a34d4edf7afbed1f8564aaabd91efc775b7f31495b8fe2feb12624ef2ca40d",
+      "xml_sha256": "30ed504edb20c908ae45d4291c3c426fedcb01ef04d6b881a8cf13c5e0550d2a"
+    },
+    {
+      "source": "baby-lower",
+      "previous": "resumed-baby",
+      "actions": [
+        {
+          "at": "2026-09-13T22:47:10.868125+00:00",
+          "swipe": "up",
+          "bounds": "[0,156][1280,2550]",
+          "from": [
+            640,
+            1951
+          ],
+          "to": [
+            640,
+            754
+          ]
+        }
+      ],
+      "png_sha256": "9e5ea2c197d6a09f16e549762cbc06ef3ab1642f7496bebb01da7154910a876f",
+      "xml_sha256": "b2ce23d8bbc5e0678c0794aa4cfa79eb9b93f51b41a073513a4b6b77c94be297"
+    },
+    {
+      "source": "editor-empty",
+      "previous": "baby-lower",
+      "actions": [
+        {
+          "at": "2026-09-13T22:47:29.328711+00:00",
+          "tap": "记录发育观察",
+          "bounds": "[845,2152][1256,2296]",
+          "coordinate": [
+            1050,
+            2224
+          ]
+        }
+      ],
+      "png_sha256": "9b1f1e35e0876edbcf36e2c57d7294bccbbe3aae8f6972c35fab68af276fed66",
+      "xml_sha256": "0b66dc8e2d02512dfcdd169d096b28b90b8641cb3c348593c6d38374b39312d9"
+    },
+    {
+      "source": "editor-selected",
+      "previous": "editor-empty",
+      "actions": [
+        {
+          "at": "2026-09-13T22:47:50.149951+00:00",
+          "tap": "观察到",
+          "bounds": "[96,1004][443,1136]",
+          "coordinate": [
+            269,
+            1070
+          ]
+        }
+      ],
+      "png_sha256": "077a56b63ee05ceca8d74f8d76e114fe4d4dfbc4752593979da420ef8ca48498",
+      "xml_sha256": "2f406ee33d5ade2871c69679f5e9ffb1469e5ea74c8f8e14b3a0dfe3e47029ee"
+    },
+    {
+      "source": "discard-confirm",
+      "previous": "editor-selected",
+      "actions": [
+        {
+          "at": "2026-09-13T22:48:02.139196+00:00",
+          "tap": "关闭记录",
+          "bounds": "[1040,539][1184,683]",
+          "coordinate": [
+            1112,
+            611
+          ]
+        }
+      ],
+      "png_sha256": "74d45e80fed60b3e474153986e871e615dcb7e4fa554ee39ee1517cec8d64125",
+      "xml_sha256": "bff44a64934d9dfb6f1cbeb2aa21c30d22f87601b8fe31523ec0e53374b6fb47"
+    },
+    {
+      "source": "discarded-baby",
+      "previous": "discard-confirm",
+      "actions": [
+        {
+          "at": "2026-09-13T22:48:27.076342+00:00",
+          "tap": "离开",
+          "bounds": "[760,1526][988,1670]",
+          "coordinate": [
+            874,
+            1598
+          ]
+        }
+      ],
+      "png_sha256": "f182be4eb24aefef472d9f149f09475f65e135b80a448175aa16e4392fdd02dc",
+      "xml_sha256": "b2ce23d8bbc5e0678c0794aa4cfa79eb9b93f51b41a073513a4b6b77c94be297"
+    },
+    {
+      "source": "reopened-empty",
+      "previous": "discarded-baby",
+      "actions": [
+        {
+          "at": "2026-09-13T22:48:37.907623+00:00",
+          "tap": "记录发育观察",
+          "bounds": "[845,2152][1256,2296]",
+          "coordinate": [
+            1050,
+            2224
+          ]
+        }
+      ],
+      "png_sha256": "1f271924d1c276323d148c27405f7103e70f64d7d6838d89843622a2a0f3bd19",
+      "xml_sha256": "0b66dc8e2d02512dfcdd169d096b28b90b8641cb3c348593c6d38374b39312d9"
+    },
+    {
+      "source": "unchanged-close",
+      "previous": "reopened-empty",
+      "actions": [
+        {
+          "at": "2026-09-13T22:48:49.197769+00:00",
+          "tap": "关闭记录",
+          "bounds": "[1040,539][1184,683]",
+          "coordinate": [
+            1112,
+            611
+          ]
+        }
+      ],
+      "png_sha256": "dfa4729c5004d0d65aec04834e182e51bf575c9009a47564a0eb77b92ee7b94d",
+      "xml_sha256": "b2ce23d8bbc5e0678c0794aa4cfa79eb9b93f51b41a073513a4b6b77c94be297"
+    },
+    {
+      "source": "restored-mom",
+      "previous": "unchanged-close",
+      "actions": [
+        {
+          "at": "2026-09-13T22:49:01.234161+00:00",
+          "tap": "Me",
+          "bounds": "[24,2571][270,2766]",
+          "coordinate": [
+            147,
+            2668
+          ]
+        }
+      ],
+      "png_sha256": "f979f7db4c4571773c006d4ec3b90e4f2c4b17892d40afa17ce47384656a26fd",
+      "xml_sha256": "1ab53a5fc55fbbfd9207570851e3ad8acfc7e36256a8004415d236a9061aeb3f"
+    }
+  ],
+  "comparisons": [
+    {
+      "before": "original-mom",
+      "after": "restored-mom",
+      "equal_ignoring": "focused"
+    },
+    {
+      "before": "baby-lower",
+      "after": "discarded-baby",
+      "equal_ignoring": "focused"
+    },
+    {
+      "before": "baby-lower",
+      "after": "unchanged-close",
+      "equal_ignoring": "focused"
+    },
+    {
+      "before": "editor-empty",
+      "after": "reopened-empty",
+      "equal_ignoring": "focused"
+    }
+  ],
+  "observed_selection": [
+    "false",
+    "true",
+    "false"
+  ],
+  "limitations": [
+    "No backend database or HTTP write audit",
+    "Native windows supplement full host scroll images",
+    "Unconfirmed save leave and platform Back during save remain uncovered"
+  ]
+}

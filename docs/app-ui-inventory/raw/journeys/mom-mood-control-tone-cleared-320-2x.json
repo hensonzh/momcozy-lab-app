@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/mom-mood-control-tone-cleared-320-2x.png",
+  "previous_source": "test/goldens/ui_inventory/mom-mood-control-tone-unclear-320-2x.png",
+  "route": "/me",
+  "trigger": "Tap selected mood tone again → no tone selected",
+  "root_entry": "Authenticated More → tap Me bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/mom/mom_mood_control_inventory_test.dart"
+}

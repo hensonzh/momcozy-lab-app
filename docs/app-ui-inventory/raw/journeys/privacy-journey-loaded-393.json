@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/privacy-journey-loaded-393.png",
+  "previous_source": null,
+  "route": "/privacy",
+  "trigger": "More privacy → first service three editable permissions",
+  "root_entry": "Authenticated More page",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production privacy page/controllers and Care/Intake API repositories; isolated HTTP with versioned per-service consent storage; actual More/privacy/notification routes and notification coordinator, no real user permissions mutated",
+  "test": "test/modules/profile/privacy_inventory_journey_test.dart"
+}

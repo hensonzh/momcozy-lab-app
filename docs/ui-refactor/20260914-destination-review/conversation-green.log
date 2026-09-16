@@ -1,0 +1,5 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/app/notification_conversation_route_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: notification conversation opens and keeps drafts scoped to its runtime and thread
+00:01 +1: (tearDownAll)
+00:01 +1: All tests passed!

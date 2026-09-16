@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/agent-journey-partial-menu-393.png",
+  "previous_source": "test/goldens/ui_inventory/agent-journey-disconnected-partial-393.png",
+  "route": "/",
+  "trigger": "Long press disconnected answer → copy and retry menu",
+  "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage via public agentHubBuilder; production SSE parser, runner with default retries, cancel client and profile repository; isolated SSE/control HTTP/voice dependencies. History disabled as in default local build; no remote model request.",
+  "test": "test/features/agent_hub/agent_inventory_journey_test.dart"
+}

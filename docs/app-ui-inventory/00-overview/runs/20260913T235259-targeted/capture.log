@@ -1,0 +1,20 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/modules/profile/account_current_inventory_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: inventory current Account read recovery false
+00:01 +1: inventory current Account Google local unavailable false
+00:02 +2: inventory current Account delete recovery success false
+00:02 +3: inventory current Account logout false false
+00:03 +4: inventory current Account logout true false
+00:03 +5: inventory current Account profile google-only false
+00:03 +6: inventory current Account profile disabled-empty false
+00:04 +7: inventory current Account profile long-pending-other false
+00:04 +8: inventory current Account read recovery true
+00:04 +9: inventory current Account Google local unavailable true
+00:05 +10: inventory current Account delete recovery success true
+00:06 +11: inventory current Account logout false true
+00:06 +12: inventory current Account logout true true
+00:06 +13: inventory current Account profile google-only true
+00:07 +14: inventory current Account profile disabled-empty true
+00:07 +15: inventory current Account profile long-pending-other true
+00:07 +16: (tearDownAll)
+00:07 +16: All tests passed!

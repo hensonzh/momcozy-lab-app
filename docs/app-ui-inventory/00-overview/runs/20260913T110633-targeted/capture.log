@@ -1,0 +1,13 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: inventory Baby feeding save edit delete restore and history filters
+00:02 +1: inventory Baby profile switch editing and discard
+00:03 +2: inventory Baby sleep stool knowledge and growth interactions
+00:05 +3: inventory Baby no profile creation and missing demographic data
+00:05 +4: inventory Baby local record failure and pull refresh recovery
+00:06 +5: inventory Baby loading and pending save states
+00:06 +6: inventory Baby growth batch date validation and undo recovery
+00:07 +7: inventory Baby history mutation failures privacy and return
+00:08 +8: inventory Baby history pagination loading failure recovery
+00:09 +9: (tearDownAll)
+00:09 +9: All tests passed!

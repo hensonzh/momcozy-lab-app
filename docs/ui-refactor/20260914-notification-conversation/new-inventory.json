@@ -1,0 +1,49 @@
+{
+  "observed_states": 2719,
+  "added": [
+    "01-auth/auth-busy-320-2x-short",
+    "01-auth/auth-code-expired-320-2x-short",
+    "01-auth/auth-code-validation-320-2x-short",
+    "01-auth/auth-google-error-320-2x-short",
+    "01-auth/auth-login-error-320-2x-short",
+    "01-auth/auth-resend-busy-320-2x-short",
+    "01-auth/auth-resend-cooldown-320-2x-short",
+    "01-auth/auth-storage-error-320-2x-short"
+  ],
+  "changed": [
+    "01-auth/auth-followup-forgot-email-unavailable",
+    "01-auth/auth-followup-forgot-empty",
+    "01-auth/auth-followup-forgot-offline",
+    "01-auth/auth-followup-forgot-pending",
+    "01-auth/auth-followup-forgot-validation",
+    "01-auth/auth-followup-reset-code-form",
+    "01-auth/auth-followup-reset-complete",
+    "01-auth/auth-followup-reset-empty-validation",
+    "01-auth/auth-followup-reset-entry",
+    "01-auth/auth-followup-reset-expired-code",
+    "01-auth/auth-followup-reset-login-more",
+    "01-auth/auth-followup-reset-password-validation",
+    "01-auth/auth-followup-reset-pending",
+    "01-auth/auth-followup-reset-rate-limited",
+    "01-auth/auth-followup-reset-resend-cooldown",
+    "01-auth/auth-forgot",
+    "01-auth/auth-journey-code-expired",
+    "01-auth/auth-journey-code-validation",
+    "01-auth/auth-journey-register",
+    "01-auth/auth-journey-resend-cooldown",
+    "01-auth/auth-journey-signed-out",
+    "01-auth/auth-journey-verify",
+    "01-auth/auth-language",
+    "01-auth/auth-legal",
+    "01-auth/auth-login",
+    "01-auth/auth-register",
+    "01-auth/auth-register-validation",
+    "01-auth/auth-reset",
+    "01-auth/auth-reset-complete",
+    "01-auth/auth-verify",
+    "07-me/account-journey-verified-more"
+  ],
+  "already_reviewed_changed": [
+    "08-expert-service/consultation-journey-current-summary-full-plan"
+  ]
+}

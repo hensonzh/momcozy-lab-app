@@ -1,0 +1,6 @@
+{
+  "lib/modules/services/presentation/service_renew_page.dart": "f01adf5d24ec28ef69b9c37fc4020acfac26aece466f4395ae0cd829e1fcea47",
+  "test/modules/services/service_renew_test.dart": "4e3ce1e1b90674b949fda73776be16864b039fc045c8babc649f773da3233901",
+  "lib/modules/services/application/care_overview_controller.dart": "612e8dc2aee7207987aa466bb7e2fff60e394d91c1c7088479c18a43c9a0f966",
+  "lib/modules/services/presentation/service_purchase_dialog.dart": "ab1280bcecd27eda6240d107d365fc561ddbd068a24fad30b2f879d38de5fdfe"
+}

@@ -1,0 +1,6 @@
+{
+  "select_purchase_resume_and_callbacks_unchanged": true,
+  "purchase_enabled_and_action_priority_unchanged": true,
+  "selected_package_resolution_unchanged": true,
+  "refresh_guard_unchanged": true
+}

@@ -1,0 +1,1206 @@
+{
+  "method": "full-width continuous 650px strips; identical pixels reference prior reviewed Mom or Baby controls; remaining segments reviewed at native width",
+  "sources": [
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-boundaries-birth-calendar-393-1x.png",
+      "sha256": "5542944dc0bd2f706a2049c6bdfbac71c5ffdf6eee7c84cd02df0da0b0c4f9dd",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "8f6064b0e1793a0400378ccc35ad8705b7be1c5385eb41ce0b46126e79bf154d",
+          "review": "sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "328e60e64418a8b6a25d0c11d31f4cc9d64ff9c02ff8943d1be1fe16b04d18cb",
+          "review": "../baby-development-control-visual-review/sheet-06.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-boundaries-birth-input-only-320-2x.png",
+      "sha256": "91e6f9db6423d5f41df448d17e206258ece3acabe64ac98774e5338b00c6a437",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "83e0c9121ac53c88a0ded1d5f3d1f4627dbfeb512968ee3301159b3f2713dc90",
+          "review": "sheet-01.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "9c531b786bf8a4959b5dc46f35bba938e5c6706840bcfa390ecf6a52fb6f36ed",
+          "review": "../baby-development-control-visual-review/sheet-05.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-boundaries-birth-selected-320-2x.long.png",
+      "sha256": "c970800c96156d612b9b5e735ed889c59a7cc9b47d6b8a417eed7c9d77006d75",
+      "width": 320,
+      "height": 1542,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "fc92358c6c52fe7fda4deddad164fd97c7aec6a75959e2d71dfa5d0eddd3242b",
+          "review": "../baby-development-control-visual-review/sheet-02.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "e100bbc8f595a34fca0d9206c5d3ad4c5be9567a70d2927b195089a9d8118a80",
+          "review": "../baby-development-control-visual-review/sheet-03.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1542,
+          "pixel_sha256": "657fb81412dd94056e5977ccbe6db388bc8f43c87dce6f1af89605749de1099a",
+          "review": "sheet-01.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-boundaries-birth-selected-320-2x.png",
+      "sha256": "d896db5c7ef302df0d218e7d3f877667f7f6beed3732ecf9eedc73ac0b4967b9",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2d58ecef10d4b5ed6c0feb626e8861065b9f9578121b6d0218f8e51c7e6c1485",
+          "review": "sheet-01.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "8667affa8d035cdba1783ae8cf8e809890748ffd868b985ee26a7005244cd4b6",
+          "review": "sheet-01.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-boundaries-birth-selected-393-1x.png",
+      "sha256": "75b3f348064077c34d0d0ae370bf6d2f48273199a2e8d85ba3c866e08bd9403c",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "602171c9bb5e4b6209071710218219b15a7c0587fa37faa9f8eb3826b2135ed0",
+          "review": "sheet-01.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "bfe04f1aa45247cf0495b9768136828ab49029f142966453a3eb385907fcd460",
+          "review": "../baby-development-control-visual-review/sheet-03.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-boundaries-calendar-cancel-320-2x.long.png",
+      "sha256": "c970800c96156d612b9b5e735ed889c59a7cc9b47d6b8a417eed7c9d77006d75",
+      "width": 320,
+      "height": 1542,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "fc92358c6c52fe7fda4deddad164fd97c7aec6a75959e2d71dfa5d0eddd3242b",
+          "review": "../baby-development-control-visual-review/sheet-02.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "e100bbc8f595a34fca0d9206c5d3ad4c5be9567a70d2927b195089a9d8118a80",
+          "review": "../baby-development-control-visual-review/sheet-03.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1542,
+          "pixel_sha256": "657fb81412dd94056e5977ccbe6db388bc8f43c87dce6f1af89605749de1099a",
+          "review": "sheet-01.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-boundaries-calendar-cancel-320-2x.png",
+      "sha256": "d896db5c7ef302df0d218e7d3f877667f7f6beed3732ecf9eedc73ac0b4967b9",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2d58ecef10d4b5ed6c0feb626e8861065b9f9578121b6d0218f8e51c7e6c1485",
+          "review": "sheet-01.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "8667affa8d035cdba1783ae8cf8e809890748ffd868b985ee26a7005244cd4b6",
+          "review": "sheet-01.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-boundaries-calendar-cancel-393-1x.png",
+      "sha256": "75b3f348064077c34d0d0ae370bf6d2f48273199a2e8d85ba3c866e08bd9403c",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "602171c9bb5e4b6209071710218219b15a7c0587fa37faa9f8eb3826b2135ed0",
+          "review": "sheet-01.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "bfe04f1aa45247cf0495b9768136828ab49029f142966453a3eb385907fcd460",
+          "review": "../baby-development-control-visual-review/sheet-03.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-boundaries-date-before-birth-rejected-320-2x.png",
+      "sha256": "9a86f9dbb1a7dbdb9f3184e31b7b349dfc0240bd30e3293a071b3e6056e666d0",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "4054f61528b06e1fdf10a9003e1a4610f8f6a16554b65f347d6a47b457d2c6f6",
+          "review": "sheet-02.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "9c531b786bf8a4959b5dc46f35bba938e5c6706840bcfa390ecf6a52fb6f36ed",
+          "review": "../baby-development-control-visual-review/sheet-05.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-boundaries-date-before-birth-rejected-393-1x.png",
+      "sha256": "eb7b7be86ca34b0b544136546875bda3c0b9002309af061abfdb7584b221cbc6",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "0538a6ff25ef486fbfcd6b87e05f7291a98441e22b3ce7ddce2bc4794aa5f2a6",
+          "review": "sheet-02.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "7043e195a70d3aefdd4c246a920841713f76bb49864290eb991c1a30fe7f5115",
+          "review": "../baby-development-control-visual-review/sheet-06.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-boundaries-date-format-rejected-320-2x.png",
+      "sha256": "157d3551739295719c8bc5b644fa1b47c0f52b26aaa5fbc8469aa7512051dd63",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ba5ad2acba811b10c67b7b39f395e296e580d350d56da15448e39cdba44f6f93",
+          "review": "sheet-02.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "9c531b786bf8a4959b5dc46f35bba938e5c6706840bcfa390ecf6a52fb6f36ed",
+          "review": "../baby-development-control-visual-review/sheet-05.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-boundaries-date-format-rejected-393-1x.png",
+      "sha256": "a7ac121b992ea77ab2d668323b07544e6d4dff795098d56398d46f37d78f19d5",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "66d0655a0ae8d2b485265d14a3a33a8da811adda4aa70d93cdebd8fbd51f3efb",
+          "review": "sheet-02.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "7043e195a70d3aefdd4c246a920841713f76bb49864290eb991c1a30fe7f5115",
+          "review": "../baby-development-control-visual-review/sheet-06.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-boundaries-date-future-rejected-320-2x.png",
+      "sha256": "f5e1aa22bacd921d678383d943f4a8662c8fb80e5ea954162fcdb74bf4b7429f",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "05d0970cd98c03cc6aafa4c0cb9db2261766c5552469ed2ea0d893585092753f",
+          "review": "sheet-02.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "9c531b786bf8a4959b5dc46f35bba938e5c6706840bcfa390ecf6a52fb6f36ed",
+          "review": "../baby-development-control-visual-review/sheet-05.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-boundaries-date-future-rejected-393-1x.png",
+      "sha256": "630dcd31b48ab179cbd30c49a82267d1b1fb22f65c75e5785c3f49df57602372",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "561c446300bb967322d05e460c62c4c31cce31d9965e828e4e0816cfa8f77cd2",
+          "review": "sheet-02.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "7043e195a70d3aefdd4c246a920841713f76bb49864290eb991c1a30fe7f5115",
+          "review": "../baby-development-control-visual-review/sheet-06.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-boundaries-date-open-320-2x.png",
+      "sha256": "8dd64421b39d7fdbd00d9c28faaade96496f4fc27c6aaec1bf1af9d28fc17bec",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "bebc6535dc54cc4520033809a88f38ca6d2d8f3a25fa24956e8ae621a0273e33",
+          "review": "../baby-development-control-visual-review/sheet-06.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "9c531b786bf8a4959b5dc46f35bba938e5c6706840bcfa390ecf6a52fb6f36ed",
+          "review": "../baby-development-control-visual-review/sheet-05.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-boundaries-date-open-393-1x.png",
+      "sha256": "35343f922fcfc9862f13e80e1063e193e5555154d371609facf2cf29525870d5",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6a5ae365c1a9ead62090a7d3a57086f25b4a22c5bd65b918d4f85e6718ac3ca7",
+          "review": "../baby-development-control-visual-review/sheet-06.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "328e60e64418a8b6a25d0c11d31f4cc9d64ff9c02ff8943d1be1fe16b04d18cb",
+          "review": "../baby-development-control-visual-review/sheet-06.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-boundaries-home-entry-320-2x.long.png",
+      "sha256": "2a7eed3eaa881740523730a74f99487a3935cee5f5e500fdea7e513a60082fc7",
+      "width": 320,
+      "height": 3460,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "58578630282c08ed070b330c5092b2346554d47e291ecce03bfa1790d2ebdd62",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "034c398b12fe2df5aaef1e8fd2e151d4092f4bc550a8179f7524acfdf8572a5d",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "fa27bf1b8f7135cf78bb1380036cbe25b805799678f9c6338d1b09862168215b",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "cf7b9827ee12ea5f4ce473b5b04736e9eca7e63163a06350e8ad0569b0e9a58a",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-3"
+        },
+        {
+          "y0": 2600,
+          "y1": 3250,
+          "pixel_sha256": "830120be56be43c6e4e4a7527c94577138b4175b12f8b7b606a89d5ff059987b",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-4"
+        },
+        {
+          "y0": 3250,
+          "y1": 3460,
+          "pixel_sha256": "347ac7ec17d5bdaf8c362c53e6be84275398444203824d119dff6d55c72c68e4",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-boundaries-home-entry-320-2x.png",
+      "sha256": "32e02297eb960cf9da693d3ed9a4e380131ba98e63d64680e1c452112635af75",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "58578630282c08ed070b330c5092b2346554d47e291ecce03bfa1790d2ebdd62",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "98ef9a2ad09f8a3c8229ac286c7eb3cb28273ffd01708531c25ae3c0ce531fd2",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-boundaries-home-entry-393-1x.long.png",
+      "sha256": "f0cba396e8a9efa775fb9fbb71adccd863e4ce8dace888759be74db253f099a6",
+      "width": 393,
+      "height": 1752,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2541e10f43029eb71329290bf405fa83fabe418cf9eb6676ed4e3eb8498f6856",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "462243825730002d5a7b26fe7e1bbdb2f381ea57afabfc7a0cad762ed9541c1e",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1752,
+          "pixel_sha256": "5d1142fe86ef6e5a8664871afce9928bf15cf58f7b773ac5f1080f1b7fead23c",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-boundaries-home-entry-393-1x.png",
+      "sha256": "f7c02c89b1acb7e0cd4ab4adc0593819b05f05ed599398d49ea569c924ea6a82",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2541e10f43029eb71329290bf405fa83fabe418cf9eb6676ed4e3eb8498f6856",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a1f9a5a5f828e0a335129ce0d0a8a7cf54c1ab1e6b87423f882a64c1946d8f9e",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-boundaries-more-return-320-2x.png",
+      "sha256": "90ff3249f64fc7750a5da2a6bac0e2e90a64014893d9e85c3df4c76dbe8dea38",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "7925ed8e5939f589376b72745969839e14c7fb166cfb48866eed469fa66c4d02",
+          "review": "../baby-profile-control-visual-review/sheet-19.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "f95aac7cc67095efb73a4ae0b9ee5dc9518b86f20195158e860fce9621ec483a",
+          "review": "../mom-rest-control-visual-review/sheet-19.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-boundaries-more-return-393-1x.png",
+      "sha256": "1905827f337ce2fe60b46266600cce9aa8dea3b9aac6828fb6a1d3f67f020b35",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c8e12900bddbe318fd8d03ad9b384466fc1af1f6c371f72f999f20bc96cac1d6",
+          "review": "../baby-profile-control-visual-review/sheet-19.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "ae62a60cadfc8bfb09e3e94acb0dc8f7d481c4c260eae5960e33ebdc5f0799db",
+          "review": "../mom-rest-control-visual-review/sheet-20.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-boundaries-next-month-393-1x.png",
+      "sha256": "8acc4e970d9e38cc51c3d979fffbae5e9820110de62636d1c46ad33e8c6f3411",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "db678ebdf460294d2ed413d2d257bb5f3bad935a622f4dcc2bac36be234d7965",
+          "review": "sheet-03.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "328e60e64418a8b6a25d0c11d31f4cc9d64ff9c02ff8943d1be1fe16b04d18cb",
+          "review": "../baby-development-control-visual-review/sheet-06.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-boundaries-one-selected-320-2x.long.png",
+      "sha256": "cd49bb5e6d9cac5c0c08d1d3089f015fc106d0853b66332894c6caf048c73cb7",
+      "width": 320,
+      "height": 1542,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "fc92358c6c52fe7fda4deddad164fd97c7aec6a75959e2d71dfa5d0eddd3242b",
+          "review": "../baby-development-control-visual-review/sheet-02.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "e100bbc8f595a34fca0d9206c5d3ad4c5be9567a70d2927b195089a9d8118a80",
+          "review": "../baby-development-control-visual-review/sheet-03.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1542,
+          "pixel_sha256": "2c89335eab245687767495301a221a6db8203bd6469a4d19e287833f78d69d19",
+          "review": "../baby-development-control-visual-review/sheet-02.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-boundaries-one-selected-320-2x.png",
+      "sha256": "f5ead7d98e7b272dcdd5b58fd751a2b2cd55732c855da040b71366a7d3055c64",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "df2be000c0d7d740d506a2ab64a3cb1922a776cc52098ca11e0e709289ddbb6f",
+          "review": "../baby-development-control-visual-review/sheet-03.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "15b71561fb7c07a14715ad7e3e48ee533dbf6ecfaa1143f8743b6baed9f60d2d",
+          "review": "../baby-development-control-visual-review/sheet-03.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-boundaries-one-selected-393-1x.png",
+      "sha256": "6e9f2f42ca63a3d40b6d280701e8422f3d655fe4bd0e2ef71af6fd57139c0320",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "1889d0998a5da7a1ebff7ca94b961da6b39dbd55c61a582b596666265d94aa9f",
+          "review": "../baby-development-control-visual-review/sheet-03.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "bfe04f1aa45247cf0495b9768136828ab49029f142966453a3eb385907fcd460",
+          "review": "../baby-development-control-visual-review/sheet-03.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-boundaries-pending-back-blocked-320-2x.long.png",
+      "sha256": "dfafcaff922bab44b5fd9b295449d8fcbb84f590882b2e90adc489615b66e7e8",
+      "width": 320,
+      "height": 1542,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "45164f0418b615307efc9df1b589c3f1a3f7277459a983d57251b2c4af49a3ef",
+          "review": "../baby-development-control-visual-review/sheet-24.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "e100bbc8f595a34fca0d9206c5d3ad4c5be9567a70d2927b195089a9d8118a80",
+          "review": "../baby-development-control-visual-review/sheet-03.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1542,
+          "pixel_sha256": "13e4062b5ca5c07ae47546bcc3d9d3ac64401f1865ddff1afe01f4856ade7e56",
+          "review": "sheet-03.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-boundaries-pending-back-blocked-320-2x.png",
+      "sha256": "4733e8fa2bdfd5d2277f00cc3de4ddd69150006fe949cc36901558886393582e",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a52400dbe10b5b5557c2e021d0329921ede62198c3e6432e924f0d4167af04f7",
+          "review": "sheet-03.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "99521c56d7a0560116908630c981172b34e7926ec559b55e4dfca14c1e2ef9f9",
+          "review": "sheet-03.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-boundaries-pending-back-blocked-393-1x.png",
+      "sha256": "8895c21fc404a31ead85ed1bba1312d897a28e6f39eb178dfd5a81dd5149b7ac",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "0497253f6d2bc73aaae02ae34df6bc99b705410c1abffad4aa6635a3d1727b24",
+          "review": "sheet-03.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "d13ce716c4f12a201fd3b6966c9ab87c6eb43f231005b513ccb6b82c25de59cb",
+          "review": "sheet-03.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-boundaries-pending-close-blocked-320-2x.long.png",
+      "sha256": "dfafcaff922bab44b5fd9b295449d8fcbb84f590882b2e90adc489615b66e7e8",
+      "width": 320,
+      "height": 1542,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "45164f0418b615307efc9df1b589c3f1a3f7277459a983d57251b2c4af49a3ef",
+          "review": "../baby-development-control-visual-review/sheet-24.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "e100bbc8f595a34fca0d9206c5d3ad4c5be9567a70d2927b195089a9d8118a80",
+          "review": "../baby-development-control-visual-review/sheet-03.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1542,
+          "pixel_sha256": "13e4062b5ca5c07ae47546bcc3d9d3ac64401f1865ddff1afe01f4856ade7e56",
+          "review": "sheet-03.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-boundaries-pending-close-blocked-320-2x.png",
+      "sha256": "4733e8fa2bdfd5d2277f00cc3de4ddd69150006fe949cc36901558886393582e",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a52400dbe10b5b5557c2e021d0329921ede62198c3e6432e924f0d4167af04f7",
+          "review": "sheet-03.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "99521c56d7a0560116908630c981172b34e7926ec559b55e4dfca14c1e2ef9f9",
+          "review": "sheet-03.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-boundaries-pending-close-blocked-393-1x.png",
+      "sha256": "8895c21fc404a31ead85ed1bba1312d897a28e6f39eb178dfd5a81dd5149b7ac",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "0497253f6d2bc73aaae02ae34df6bc99b705410c1abffad4aa6635a3d1727b24",
+          "review": "sheet-03.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "d13ce716c4f12a201fd3b6966c9ab87c6eb43f231005b513ccb6b82c25de59cb",
+          "review": "sheet-03.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-boundaries-previous-month-393-1x.png",
+      "sha256": "5542944dc0bd2f706a2049c6bdfbac71c5ffdf6eee7c84cd02df0da0b0c4f9dd",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "8f6064b0e1793a0400378ccc35ad8705b7be1c5385eb41ce0b46126e79bf154d",
+          "review": "sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "328e60e64418a8b6a25d0c11d31f4cc9d64ff9c02ff8943d1be1fe16b04d18cb",
+          "review": "../baby-development-control-visual-review/sheet-06.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-boundaries-reopened-clean-320-2x.long.png",
+      "sha256": "3de5544cb07fcf2b7c3eb6f09a57078aaedf5e85e5d27ea689eeb946e60589ca",
+      "width": 320,
+      "height": 1542,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "bf1407b2d076d172db899b8e2278a8919f662b379bf36375f6395ae49f80f294",
+          "review": "../baby-development-control-visual-review/sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "e100bbc8f595a34fca0d9206c5d3ad4c5be9567a70d2927b195089a9d8118a80",
+          "review": "../baby-development-control-visual-review/sheet-03.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1542,
+          "pixel_sha256": "2c89335eab245687767495301a221a6db8203bd6469a4d19e287833f78d69d19",
+          "review": "../baby-development-control-visual-review/sheet-02.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-boundaries-reopened-clean-320-2x.png",
+      "sha256": "0d1ad4bfd0adba4d28b5f1197eb188fc5a4756d3b2203fb76a07f65989951db3",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ac0ea67cce630e2bd71471cf853ef387394bfe5f46d532a5d32b5ed9de2fc75a",
+          "review": "../baby-development-control-visual-review/sheet-08.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "c749b2451dde77c5fcade2aad7120bfd76cc59a02f96b32957f6a6efe9fe49ff",
+          "review": "../baby-development-control-visual-review/sheet-08.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-boundaries-reopened-clean-393-1x.png",
+      "sha256": "246367becec6e748f6b44758d269c85e95cad8d67d8928173b0493c98f00156a",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "1b89474f0bca3a4811a70d9b8d54f205c71c2b06d193ab70623b46d20195473b",
+          "review": "../baby-development-control-visual-review/sheet-08.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "bfe04f1aa45247cf0495b9768136828ab49029f142966453a3eb385907fcd460",
+          "review": "../baby-development-control-visual-review/sheet-03.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-boundaries-save-pending-320-2x.long.png",
+      "sha256": "a4187fee02773c6d61c8bc21def9dcb3e6ae258cd599411f826d9a117af1f82f",
+      "width": 320,
+      "height": 1542,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "45164f0418b615307efc9df1b589c3f1a3f7277459a983d57251b2c4af49a3ef",
+          "review": "../baby-development-control-visual-review/sheet-24.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "e100bbc8f595a34fca0d9206c5d3ad4c5be9567a70d2927b195089a9d8118a80",
+          "review": "../baby-development-control-visual-review/sheet-03.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1542,
+          "pixel_sha256": "abc32959fc44830b3cdcebb938633f0b85df309d0405d12df8c0021987c377a2",
+          "review": "sheet-04.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-boundaries-save-pending-320-2x.png",
+      "sha256": "88dd565b7b91f80c01a7adde34c2a0be814d877e02400b2978913483561e1cc4",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a52400dbe10b5b5557c2e021d0329921ede62198c3e6432e924f0d4167af04f7",
+          "review": "sheet-03.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "8a4bffce13c7eadf5c75338c09ccfe4be8cf23242c2258c74c20b356d2e0622d",
+          "review": "sheet-04.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-boundaries-save-pending-393-1x.png",
+      "sha256": "cd2f4f02696dfa6ef4ef98ea4e2cad244d06f67938023f5f673ad45368f4d04b",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "0497253f6d2bc73aaae02ae34df6bc99b705410c1abffad4aa6635a3d1727b24",
+          "review": "sheet-03.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "f56b1950aa0218faf51ce9354457060ef3d2763e40e582864a02ec898af1e7b7",
+          "review": "../baby-development-control-visual-review/sheet-25.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-boundaries-save-unconfirmed-320-2x.long.png",
+      "sha256": "3fb38f2a5b4262488a4a0e9ca2189a79592fa947a44290c48f046b54ca43d252",
+      "width": 320,
+      "height": 1878,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "47705e3c2d912b7d09a4fc08c7f9f0e26f058d5b2cc125493cd2d98ae46de302",
+          "review": "../baby-development-control-visual-review/sheet-21.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "5dee285153402fe96661d2b8ff8de65e0f227a763bf76c44bc69e61f80d776a7",
+          "review": "../baby-development-control-visual-review/sheet-01.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1878,
+          "pixel_sha256": "c75fc94986caf06612ce80a15cb10e815258c8dc8c1c7dc0ced3f99adf3de147",
+          "review": "sheet-04.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-boundaries-save-unconfirmed-320-2x.png",
+      "sha256": "0d5249612a66d8b6ffcec655c51df93a73fbc8530438990af2447eb9c06e3d6a",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "28c691dea7f0df23172b8f4d1e9959f96ebdd12c088e12e000f1e42c42a77949",
+          "review": "sheet-04.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "f2fbfa42d2866c8cfac0d66a884ac4c08c911827104e55b577aed925b35b730b",
+          "review": "../baby-development-control-visual-review/sheet-24.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-boundaries-save-unconfirmed-393-1x.long.png",
+      "sha256": "bd946248c6dc469e81c32a77502fec4a63dbbe570ed71b8c5fc9f40a7fe5e503",
+      "width": 393,
+      "height": 909,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "92f1de9155d5cc759c4ad47bb1ea418f9d1bd1882bfe95e46e4e42eb389525bb",
+          "review": "sheet-04.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 909,
+          "pixel_sha256": "2122252dc0a68396a43c1ed43d42c1a502263d863ef17b450a5aab7ef4649193",
+          "review": "../baby-development-control-visual-review/sheet-24.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-boundaries-save-unconfirmed-393-1x.png",
+      "sha256": "8cf698fac00727660705eb850cb6920555c45251002b33324f88b19fc12dbc58",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "3888e94bd89be1100a5db6d8e78ef0cd378bed4687ec7449bbb15a4bc89723ee",
+          "review": "sheet-04.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "c42ab7423a3c18afceacdc5959cad8dc24177d16cc6d3df442ae8a576efa5a19",
+          "review": "../baby-development-control-visual-review/sheet-24.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-boundaries-single-saved-320-2x.long.png",
+      "sha256": "52798ca8bf235f1b0243306c2809a4000371320ca3102c04576ab86821aa3036",
+      "width": 320,
+      "height": 3554,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "58578630282c08ed070b330c5092b2346554d47e291ecce03bfa1790d2ebdd62",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "034c398b12fe2df5aaef1e8fd2e151d4092f4bc550a8179f7524acfdf8572a5d",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "fa27bf1b8f7135cf78bb1380036cbe25b805799678f9c6338d1b09862168215b",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "cf7b9827ee12ea5f4ce473b5b04736e9eca7e63163a06350e8ad0569b0e9a58a",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-3"
+        },
+        {
+          "y0": 2600,
+          "y1": 3250,
+          "pixel_sha256": "b0642aba05928c776f791d9c26e7add778f68d5b445da62b1c9ac1f5620d383f",
+          "review": "sheet-05.png#tile-0"
+        },
+        {
+          "y0": 3250,
+          "y1": 3554,
+          "pixel_sha256": "c79e47165de7b9cdc32d472e17bb425ee22d7bdbf49e0704b2ce714dc7b37d42",
+          "review": "sheet-05.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-boundaries-single-saved-320-2x.png",
+      "sha256": "d1a06ef4c1d0eabd15a6117114cc9c2dc084e50807447444ae687434e57642b0",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "0d284b4e8d46327c9f87d34c3265a444625536a280bb38ed32370453046a2f24",
+          "review": "../baby-development-control-visual-review/sheet-05.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "563dd0eb6127eff7c02d4cf0854f116747677cf072bd11574cc7adf5267526f7",
+          "review": "../baby-feeding-control-visual-review/sheet-18.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-boundaries-single-saved-393-1x.long.png",
+      "sha256": "14830f54ec9e4f659edeaf399a4e59c10e2967ed23b80587d93837a86fddb826",
+      "width": 393,
+      "height": 1816,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2541e10f43029eb71329290bf405fa83fabe418cf9eb6676ed4e3eb8498f6856",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "462243825730002d5a7b26fe7e1bbdb2f381ea57afabfc7a0cad762ed9541c1e",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1816,
+          "pixel_sha256": "339a0014bca02680e8fbe8909d175a4db523583a2db9804b5a4fc07fa05f291e",
+          "review": "../baby-development-control-visual-review/sheet-05.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-boundaries-single-saved-393-1x.png",
+      "sha256": "fad0d44f149b0bc1a8154c905dfb7e10b6f3abe8ca047d26baf977424f910efc",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "1d1b4de2c1b81d5666fd54394d73c5b21b2a7bea81744a337473932cb4467d25",
+          "review": "../baby-development-control-visual-review/sheet-05.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "4708d68a58904bdf9acff66f8efee44d91bea259d8da8661c22c884071926520",
+          "review": "../baby-development-control-visual-review/sheet-05.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-boundaries-unconfirmed-back-confirm-320-2x.png",
+      "sha256": "b748db005e5cdda525354ec665f47e6268b8fc357d90f7549c00bdc7f08a81ee",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9ce8504414690ef58993b14d3aefafcecc866006a9623815bd4ed30aaa3f6359",
+          "review": "../baby-development-control-visual-review/sheet-25.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "5d390f7fc058d39afcd2772b51bce223ffda049da347522aa88ba593ae75e4fc",
+          "review": "../baby-development-control-visual-review/sheet-26.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-boundaries-unconfirmed-back-confirm-393-1x.png",
+      "sha256": "2e6a0bac9f46e260de23ce28b71c639349cab877730471ab857a45a9fcdff442",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "23769ee4ab9bcb83988cc6f6fc933f44bb3448a62cbd9af3014714a7a2300de2",
+          "review": "sheet-05.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "690f3e7c740210757acff3d7f36eef86327dc6fc9aa91f26813c6fa3a2805feb",
+          "review": "../baby-development-control-visual-review/sheet-26.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-boundaries-unconfirmed-left-320-2x.long.png",
+      "sha256": "2a7eed3eaa881740523730a74f99487a3935cee5f5e500fdea7e513a60082fc7",
+      "width": 320,
+      "height": 3460,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "58578630282c08ed070b330c5092b2346554d47e291ecce03bfa1790d2ebdd62",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "034c398b12fe2df5aaef1e8fd2e151d4092f4bc550a8179f7524acfdf8572a5d",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "fa27bf1b8f7135cf78bb1380036cbe25b805799678f9c6338d1b09862168215b",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "cf7b9827ee12ea5f4ce473b5b04736e9eca7e63163a06350e8ad0569b0e9a58a",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-3"
+        },
+        {
+          "y0": 2600,
+          "y1": 3250,
+          "pixel_sha256": "830120be56be43c6e4e4a7527c94577138b4175b12f8b7b606a89d5ff059987b",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-4"
+        },
+        {
+          "y0": 3250,
+          "y1": 3460,
+          "pixel_sha256": "347ac7ec17d5bdaf8c362c53e6be84275398444203824d119dff6d55c72c68e4",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-boundaries-unconfirmed-left-320-2x.png",
+      "sha256": "9ffcd0699fbdcd51d1a42a7ab55be7917f9123288923ecdea3cc3f75c5c1a17e",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "1d8eb15c29b63542d8e6efbe1da5f834ef1dac52a6ff2872fae0eb64851493a8",
+          "review": "sheet-05.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "563dd0eb6127eff7c02d4cf0854f116747677cf072bd11574cc7adf5267526f7",
+          "review": "../baby-feeding-control-visual-review/sheet-18.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-boundaries-unconfirmed-left-393-1x.long.png",
+      "sha256": "f0cba396e8a9efa775fb9fbb71adccd863e4ce8dace888759be74db253f099a6",
+      "width": 393,
+      "height": 1752,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2541e10f43029eb71329290bf405fa83fabe418cf9eb6676ed4e3eb8498f6856",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "462243825730002d5a7b26fe7e1bbdb2f381ea57afabfc7a0cad762ed9541c1e",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1752,
+          "pixel_sha256": "5d1142fe86ef6e5a8664871afce9928bf15cf58f7b773ac5f1080f1b7fead23c",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-development-boundaries-unconfirmed-left-393-1x.png",
+      "sha256": "3a531daf662d059480fcd7348600d8ca0d9feac2bb40bd598ec6d3d2742ac047",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "77dbeefca551343e01099c6dffa3b1599116be347a739f4cbd38c54de6075642",
+          "review": "sheet-05.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "d307954912ad4b9aea0f1b50ca393b0435e82681ee51db634dd7983cdf013921",
+          "review": "sheet-05.png#tile-5"
+        }
+      ]
+    }
+  ],
+  "unique_segments": 76,
+  "new_segments": 30,
+  "new_sheets": 5
+}

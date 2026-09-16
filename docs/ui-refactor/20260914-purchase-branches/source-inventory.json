@@ -1,0 +1,3578 @@
+[
+  {
+    "id": "08-expert-service/purchase-branches-current-business-cancelled",
+    "module": "专家服务与咨询",
+    "label": "喂养安心服务包",
+    "state": "purchase-branches-current-business-cancelled",
+    "image": "08-expert-service/purchase-branches-current-business-cancelled/default.png",
+    "viewport": "08-expert-service/purchase-branches-current-business-cancelled/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/feeding-confidence"
+    ],
+    "mapped_design_candidates": [
+      "services/package",
+      "services/purchase",
+      "common/not-found",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24",
+      "services/state-25",
+      "services/state-26",
+      "services/state-27",
+      "services/state-28",
+      "services/state-29",
+      "services/state-30"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/mom_service_widgets.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/modules/services/presentation/service_purchase_dialog.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/purchase_branches_current_inventory_test.dart",
+    "test_case": "current purchase order and payment business errors false",
+    "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-business-cancelled-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-business-cancelled-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-business-cancelled-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-business-cancelled-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-business-cancelled-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/feeding-confidence",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Cancel recovered pending order → no benefits",
+    "journey": {
+      "source": "test/goldens/ui_inventory/purchase-branches-current-business-cancelled-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/purchase-branches-current-business-query-recovered-393-1x.png",
+      "route": "/services/feeding-confidence",
+      "trigger": "Cancel recovered pending order → no benefits",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/purchase_branches_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/purchase-branches-current-business-query-recovered",
+    "module": "专家服务与咨询",
+    "label": "喂养安心服务包",
+    "state": "purchase-branches-current-business-query-recovered",
+    "image": "08-expert-service/purchase-branches-current-business-query-recovered/default.png",
+    "viewport": "08-expert-service/purchase-branches-current-business-query-recovered/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/feeding-confidence"
+    ],
+    "mapped_design_candidates": [
+      "services/package",
+      "services/purchase",
+      "common/not-found",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24",
+      "services/state-25",
+      "services/state-26",
+      "services/state-27",
+      "services/state-28",
+      "services/state-29",
+      "services/state-30"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/mom_service_widgets.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/modules/services/presentation/service_purchase_dialog.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/purchase_branches_current_inventory_test.dart",
+    "test_case": "current purchase order and payment business errors false",
+    "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-business-query-recovered-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-business-query-recovered-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-business-query-recovered-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-business-query-recovered-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-business-query-recovered-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/feeding-confidence",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Query actual pending order → error cleared",
+    "journey": {
+      "source": "test/goldens/ui_inventory/purchase-branches-current-business-query-recovered-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/purchase-branches-current-payment-422-393-1x.png",
+      "route": "/services/feeding-confidence",
+      "trigger": "Query actual pending order → error cleared",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/purchase_branches_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/purchase-branches-current-challenge-back-dismissed",
+    "module": "专家服务与咨询",
+    "label": "喂养安心服务包",
+    "state": "purchase-branches-current-challenge-back-dismissed",
+    "image": "08-expert-service/purchase-branches-current-challenge-back-dismissed/default.png",
+    "viewport": "08-expert-service/purchase-branches-current-challenge-back-dismissed/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/feeding-confidence"
+    ],
+    "mapped_design_candidates": [
+      "services/package",
+      "common/not-found",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/mom_service_widgets.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/purchase_branches_current_inventory_test.dart",
+    "test_case": "current purchase idle dismissal and reopened verification false",
+    "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-challenge-back-dismissed-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-challenge-back-dismissed-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-challenge-back-dismissed-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-challenge-back-dismissed-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-challenge-back-dismissed-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/feeding-confidence",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Idle framework Back → resumable package",
+    "journey": {
+      "source": "test/goldens/ui_inventory/purchase-branches-current-challenge-back-dismissed-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/purchase-branches-current-challenge-reopened-393-1x.png",
+      "route": "/services/feeding-confidence",
+      "trigger": "Idle framework Back → resumable package",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/purchase_branches_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/purchase-branches-current-challenge-closed",
+    "module": "专家服务与咨询",
+    "label": "喂养安心服务包",
+    "state": "purchase-branches-current-challenge-closed",
+    "image": "08-expert-service/purchase-branches-current-challenge-closed/default.png",
+    "viewport": "08-expert-service/purchase-branches-current-challenge-closed/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/feeding-confidence"
+    ],
+    "mapped_design_candidates": [
+      "services/package",
+      "common/not-found",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/mom_service_widgets.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/purchase_branches_current_inventory_test.dart",
+    "test_case": "current purchase idle dismissal and reopened verification false",
+    "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-challenge-closed-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-challenge-closed-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-challenge-closed-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-challenge-closed-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-challenge-closed-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/feeding-confidence",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Close challenge → resumable package",
+    "journey": {
+      "source": "test/goldens/ui_inventory/purchase-branches-current-challenge-closed-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/purchase-branches-current-submitted-challenge-393-1x.png",
+      "route": "/services/feeding-confidence",
+      "trigger": "Close challenge → resumable package",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/purchase_branches_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/purchase-branches-current-challenge-reopened",
+    "module": "专家服务与咨询",
+    "label": "喂养安心服务包",
+    "state": "purchase-branches-current-challenge-reopened",
+    "image": "08-expert-service/purchase-branches-current-challenge-reopened/default.png",
+    "viewport": "08-expert-service/purchase-branches-current-challenge-reopened/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/feeding-confidence"
+    ],
+    "mapped_design_candidates": [
+      "services/package",
+      "services/purchase",
+      "common/not-found",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24",
+      "services/state-25",
+      "services/state-26",
+      "services/state-27",
+      "services/state-28",
+      "services/state-29",
+      "services/state-30"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/mom_service_widgets.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/modules/services/presentation/service_purchase_dialog.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/purchase_branches_current_inventory_test.dart",
+    "test_case": "current purchase idle dismissal and reopened verification false",
+    "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-challenge-reopened-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-challenge-reopened-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-challenge-reopened-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-challenge-reopened-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-challenge-reopened-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/feeding-confidence",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Reopen requiresAction order → verification without card fields",
+    "journey": {
+      "source": "test/goldens/ui_inventory/purchase-branches-current-challenge-reopened-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/purchase-branches-current-challenge-closed-393-1x.png",
+      "route": "/services/feeding-confidence",
+      "trigger": "Reopen requiresAction order → verification without card fields",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/purchase_branches_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/purchase-branches-current-checkout-back-blocked",
+    "module": "专家服务与咨询",
+    "label": "喂养安心服务包",
+    "state": "purchase-branches-current-checkout-back-blocked",
+    "image": "08-expert-service/purchase-branches-current-checkout-back-blocked/default.png",
+    "viewport": "08-expert-service/purchase-branches-current-checkout-back-blocked/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/feeding-confidence"
+    ],
+    "mapped_design_candidates": [
+      "services/package",
+      "services/purchase",
+      "common/not-found",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24",
+      "services/state-25",
+      "services/state-26",
+      "services/state-27",
+      "services/state-28",
+      "services/state-29",
+      "services/state-30"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/mom_service_widgets.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/modules/services/presentation/service_purchase_dialog.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/purchase_branches_current_inventory_test.dart",
+    "test_case": "current Stripe checkout failure launch pending and query false",
+    "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-checkout-back-blocked-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-checkout-back-blocked-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-checkout-back-blocked-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-checkout-back-blocked-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-checkout-back-blocked-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/feeding-confidence",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Framework Back during checkout preparation → retained",
+    "journey": {
+      "source": "test/goldens/ui_inventory/purchase-branches-current-checkout-back-blocked-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/purchase-branches-current-checkout-pending-393-1x.png",
+      "route": "/services/feeding-confidence",
+      "trigger": "Framework Back during checkout preparation → retained",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/purchase_branches_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/purchase-branches-current-checkout-error",
+    "module": "专家服务与咨询",
+    "label": "喂养安心服务包",
+    "state": "purchase-branches-current-checkout-error",
+    "image": "08-expert-service/purchase-branches-current-checkout-error/default.png",
+    "viewport": "08-expert-service/purchase-branches-current-checkout-error/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/feeding-confidence"
+    ],
+    "mapped_design_candidates": [
+      "services/package",
+      "services/purchase",
+      "common/not-found",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24",
+      "services/state-25",
+      "services/state-26",
+      "services/state-27",
+      "services/state-28",
+      "services/state-29",
+      "services/state-30"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/mom_service_widgets.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/modules/services/presentation/service_purchase_dialog.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/purchase_branches_current_inventory_test.dart",
+    "test_case": "current Stripe checkout failure launch pending and query false",
+    "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-checkout-error-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-checkout-error-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-checkout-error-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-checkout-error-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-checkout-error-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/feeding-confidence",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Checkout POST 503 → order notice and retry",
+    "journey": {
+      "source": "test/goldens/ui_inventory/purchase-branches-current-checkout-error-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/purchase-branches-current-checkout-back-blocked-393-1x.png",
+      "route": "/services/feeding-confidence",
+      "trigger": "Checkout POST 503 → order notice and retry",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/purchase_branches_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/purchase-branches-current-checkout-pending",
+    "module": "专家服务与咨询",
+    "label": "喂养安心服务包",
+    "state": "purchase-branches-current-checkout-pending",
+    "image": "08-expert-service/purchase-branches-current-checkout-pending/default.png",
+    "viewport": "08-expert-service/purchase-branches-current-checkout-pending/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/feeding-confidence"
+    ],
+    "mapped_design_candidates": [
+      "services/package",
+      "services/purchase",
+      "common/not-found",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24",
+      "services/state-25",
+      "services/state-26",
+      "services/state-27",
+      "services/state-28",
+      "services/state-29",
+      "services/state-30"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/mom_service_widgets.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/modules/services/presentation/service_purchase_dialog.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/purchase_branches_current_inventory_test.dart",
+    "test_case": "current Stripe checkout failure launch pending and query false",
+    "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-checkout-pending-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-checkout-pending-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-checkout-pending-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-checkout-pending-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-checkout-pending-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/feeding-confidence",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Checkout POST pending → preparing and close disabled",
+    "journey": {
+      "source": "test/goldens/ui_inventory/purchase-branches-current-checkout-pending-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/purchase-branches-current-stripe-payment-393-1x.png",
+      "route": "/services/feeding-confidence",
+      "trigger": "Checkout POST pending → preparing and close disabled",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/purchase_branches_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/purchase-branches-current-create-401",
+    "module": "专家服务与咨询",
+    "label": "喂养安心服务包",
+    "state": "purchase-branches-current-create-401",
+    "image": "08-expert-service/purchase-branches-current-create-401/default.png",
+    "viewport": "08-expert-service/purchase-branches-current-create-401/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/feeding-confidence"
+    ],
+    "mapped_design_candidates": [
+      "services/package",
+      "services/purchase",
+      "common/not-found",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24",
+      "services/state-25",
+      "services/state-26",
+      "services/state-27",
+      "services/state-28",
+      "services/state-29",
+      "services/state-30"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/mom_service_widgets.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/modules/services/presentation/service_purchase_dialog.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/purchase_branches_current_inventory_test.dart",
+    "test_case": "current purchase order and payment business errors false",
+    "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-create-401-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-create-401-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-create-401-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-create-401-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-create-401-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/feeding-confidence",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Create HTTP 401 → specific business error",
+    "journey": {
+      "source": "test/goldens/ui_inventory/purchase-branches-current-create-401-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/purchase-branches-current-errors-package-393-1x.png",
+      "route": "/services/feeding-confidence",
+      "trigger": "Create HTTP 401 → specific business error",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/purchase_branches_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/purchase-branches-current-create-403",
+    "module": "专家服务与咨询",
+    "label": "喂养安心服务包",
+    "state": "purchase-branches-current-create-403",
+    "image": "08-expert-service/purchase-branches-current-create-403/default.png",
+    "viewport": "08-expert-service/purchase-branches-current-create-403/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/feeding-confidence"
+    ],
+    "mapped_design_candidates": [
+      "services/package",
+      "services/purchase",
+      "common/not-found",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24",
+      "services/state-25",
+      "services/state-26",
+      "services/state-27",
+      "services/state-28",
+      "services/state-29",
+      "services/state-30"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/mom_service_widgets.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/modules/services/presentation/service_purchase_dialog.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/purchase_branches_current_inventory_test.dart",
+    "test_case": "current purchase order and payment business errors false",
+    "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-create-403-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-create-403-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-create-403-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-create-403-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-create-403-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/feeding-confidence",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Create HTTP 403 → specific business error",
+    "journey": {
+      "source": "test/goldens/ui_inventory/purchase-branches-current-create-403-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/purchase-branches-current-create-401-393-1x.png",
+      "route": "/services/feeding-confidence",
+      "trigger": "Create HTTP 403 → specific business error",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/purchase_branches_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/purchase-branches-current-create-409",
+    "module": "专家服务与咨询",
+    "label": "喂养安心服务包",
+    "state": "purchase-branches-current-create-409",
+    "image": "08-expert-service/purchase-branches-current-create-409/default.png",
+    "viewport": "08-expert-service/purchase-branches-current-create-409/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/feeding-confidence"
+    ],
+    "mapped_design_candidates": [
+      "services/package",
+      "services/purchase",
+      "common/not-found",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24",
+      "services/state-25",
+      "services/state-26",
+      "services/state-27",
+      "services/state-28",
+      "services/state-29",
+      "services/state-30"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/mom_service_widgets.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/modules/services/presentation/service_purchase_dialog.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/purchase_branches_current_inventory_test.dart",
+    "test_case": "current purchase order and payment business errors false",
+    "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-create-409-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-create-409-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-create-409-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-create-409-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-create-409-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/feeding-confidence",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Create HTTP 409 → specific business error",
+    "journey": {
+      "source": "test/goldens/ui_inventory/purchase-branches-current-create-409-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/purchase-branches-current-create-403-393-1x.png",
+      "route": "/services/feeding-confidence",
+      "trigger": "Create HTTP 409 → specific business error",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/purchase_branches_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/purchase-branches-current-create-422",
+    "module": "专家服务与咨询",
+    "label": "喂养安心服务包",
+    "state": "purchase-branches-current-create-422",
+    "image": "08-expert-service/purchase-branches-current-create-422/default.png",
+    "viewport": "08-expert-service/purchase-branches-current-create-422/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/feeding-confidence"
+    ],
+    "mapped_design_candidates": [
+      "services/package",
+      "services/purchase",
+      "common/not-found",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24",
+      "services/state-25",
+      "services/state-26",
+      "services/state-27",
+      "services/state-28",
+      "services/state-29",
+      "services/state-30"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/mom_service_widgets.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/modules/services/presentation/service_purchase_dialog.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/purchase_branches_current_inventory_test.dart",
+    "test_case": "current purchase order and payment business errors false",
+    "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-create-422-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-create-422-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-create-422-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-create-422-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-create-422-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/feeding-confidence",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Create HTTP 422 → specific business error",
+    "journey": {
+      "source": "test/goldens/ui_inventory/purchase-branches-current-create-422-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/purchase-branches-current-create-409-393-1x.png",
+      "route": "/services/feeding-confidence",
+      "trigger": "Create HTTP 422 → specific business error",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/purchase_branches_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/purchase-branches-current-create-business-recovered",
+    "module": "专家服务与咨询",
+    "label": "喂养安心服务包",
+    "state": "purchase-branches-current-create-business-recovered",
+    "image": "08-expert-service/purchase-branches-current-create-business-recovered/default.png",
+    "viewport": "08-expert-service/purchase-branches-current-create-business-recovered/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/feeding-confidence"
+    ],
+    "mapped_design_candidates": [
+      "services/package",
+      "services/purchase",
+      "common/not-found",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24",
+      "services/state-25",
+      "services/state-26",
+      "services/state-27",
+      "services/state-28",
+      "services/state-29",
+      "services/state-30"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/mom_service_widgets.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/modules/services/presentation/service_purchase_dialog.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/purchase_branches_current_inventory_test.dart",
+    "test_case": "current purchase order and payment business errors false",
+    "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-create-business-recovered-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-create-business-recovered-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-create-business-recovered-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-create-business-recovered-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-create-business-recovered-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/feeding-confidence",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Retry creation after rejected responses → same order form",
+    "journey": {
+      "source": "test/goldens/ui_inventory/purchase-branches-current-create-business-recovered-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/purchase-branches-current-create-422-393-1x.png",
+      "route": "/services/feeding-confidence",
+      "trigger": "Retry creation after rejected responses → same order form",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/purchase_branches_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/purchase-branches-current-eligibility-back-dismissed",
+    "module": "专家服务与咨询",
+    "label": "喂养安心服务包",
+    "state": "purchase-branches-current-eligibility-back-dismissed",
+    "image": "08-expert-service/purchase-branches-current-eligibility-back-dismissed/default.png",
+    "viewport": "08-expert-service/purchase-branches-current-eligibility-back-dismissed/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/feeding-confidence"
+    ],
+    "mapped_design_candidates": [
+      "services/package",
+      "common/not-found",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/mom_service_widgets.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/purchase_branches_current_inventory_test.dart",
+    "test_case": "current purchase idle dismissal and reopened verification false",
+    "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-eligibility-back-dismissed-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-eligibility-back-dismissed-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-eligibility-back-dismissed-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-eligibility-back-dismissed-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-eligibility-back-dismissed-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/feeding-confidence",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Framework Back while idle → package",
+    "journey": {
+      "source": "test/goldens/ui_inventory/purchase-branches-current-eligibility-back-dismissed-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/purchase-branches-current-eligibility-outside-retained-393-1x.png",
+      "route": "/services/feeding-confidence",
+      "trigger": "Framework Back while idle → package",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/purchase_branches_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/purchase-branches-current-eligibility-idle",
+    "module": "专家服务与咨询",
+    "label": "喂养安心服务包",
+    "state": "purchase-branches-current-eligibility-idle",
+    "image": "08-expert-service/purchase-branches-current-eligibility-idle/default.png",
+    "viewport": "08-expert-service/purchase-branches-current-eligibility-idle/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/feeding-confidence"
+    ],
+    "mapped_design_candidates": [
+      "services/package",
+      "services/purchase",
+      "common/not-found",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24",
+      "services/state-25",
+      "services/state-26",
+      "services/state-27",
+      "services/state-28",
+      "services/state-29",
+      "services/state-30"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/mom_service_widgets.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/modules/services/presentation/service_purchase_dialog.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/purchase_branches_current_inventory_test.dart",
+    "test_case": "current purchase idle dismissal and reopened verification false",
+    "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-eligibility-idle-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-eligibility-idle-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-eligibility-idle-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-eligibility-idle-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-eligibility-idle-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/feeding-confidence",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Untouched eligibility before dismissal",
+    "journey": {
+      "source": "test/goldens/ui_inventory/purchase-branches-current-eligibility-idle-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/purchase-branches-current-resume-package-393-1x.png",
+      "route": "/services/feeding-confidence",
+      "trigger": "Untouched eligibility before dismissal",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/purchase_branches_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/purchase-branches-current-eligibility-outside-retained",
+    "module": "专家服务与咨询",
+    "label": "喂养安心服务包",
+    "state": "purchase-branches-current-eligibility-outside-retained",
+    "image": "08-expert-service/purchase-branches-current-eligibility-outside-retained/default.png",
+    "viewport": "08-expert-service/purchase-branches-current-eligibility-outside-retained/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/feeding-confidence"
+    ],
+    "mapped_design_candidates": [
+      "services/package",
+      "services/purchase",
+      "common/not-found",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24",
+      "services/state-25",
+      "services/state-26",
+      "services/state-27",
+      "services/state-28",
+      "services/state-29",
+      "services/state-30"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/mom_service_widgets.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/modules/services/presentation/service_purchase_dialog.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/purchase_branches_current_inventory_test.dart",
+    "test_case": "current purchase idle dismissal and reopened verification false",
+    "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-eligibility-outside-retained-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-eligibility-outside-retained-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-eligibility-outside-retained-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-eligibility-outside-retained-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-eligibility-outside-retained-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/feeding-confidence",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Outside click → non-dismissible purchase remains",
+    "journey": {
+      "source": "test/goldens/ui_inventory/purchase-branches-current-eligibility-outside-retained-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/purchase-branches-current-eligibility-idle-393-1x.png",
+      "route": "/services/feeding-confidence",
+      "trigger": "Outside click → non-dismissible purchase remains",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/purchase_branches_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/purchase-branches-current-errors-catalog",
+    "module": "专家服务与咨询",
+    "label": "IBCLC 专家团队服务",
+    "state": "purchase-branches-current-errors-catalog",
+    "image": "08-expert-service/purchase-branches-current-errors-catalog/default.png",
+    "viewport": "08-expert-service/purchase-branches-current-errors-catalog/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services"
+    ],
+    "mapped_design_candidates": [
+      "services/catalog",
+      "services/team",
+      "common/not-found",
+      "services/state-20"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/mom_service_widgets.dart",
+      "lib/modules/services/presentation/service_catalog_page.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/purchase_branches_current_inventory_test.dart",
+    "test_case": "current purchase order and payment business errors false",
+    "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-errors-catalog-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-errors-catalog-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-errors-catalog-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-errors-catalog-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-errors-catalog-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Home expert plan → catalog",
+    "journey": {
+      "source": "test/goldens/ui_inventory/purchase-branches-current-errors-catalog-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/purchase-branches-current-errors-home-393-1x.png",
+      "route": "/services",
+      "trigger": "Home expert plan → catalog",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/purchase_branches_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/purchase-branches-current-errors-catalog-return",
+    "module": "专家服务与咨询",
+    "label": "喂养安心",
+    "state": "purchase-branches-current-errors-catalog-return",
+    "image": "08-expert-service/purchase-branches-current-errors-catalog-return/default.png",
+    "viewport": "08-expert-service/purchase-branches-current-errors-catalog-return/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services"
+    ],
+    "mapped_design_candidates": [
+      "services/catalog",
+      "services/team",
+      "common/not-found",
+      "services/state-20"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/mom_service_widgets.dart",
+      "lib/modules/services/presentation/service_catalog_page.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/purchase_branches_current_inventory_test.dart",
+    "test_case": "current purchase order and payment business errors false",
+    "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-errors-catalog-return-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-errors-catalog-return-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-errors-catalog-return-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-errors-catalog-return-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-errors-catalog-return-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Package Back → catalog",
+    "journey": {
+      "source": "test/goldens/ui_inventory/purchase-branches-current-errors-catalog-return-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/purchase-branches-current-business-cancelled-393-1x.png",
+      "route": "/services",
+      "trigger": "Package Back → catalog",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/purchase_branches_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/purchase-branches-current-errors-home",
+    "module": "专家服务与咨询",
+    "label": "下午好，Mia",
+    "state": "purchase-branches-current-errors-home",
+    "image": "08-expert-service/purchase-branches-current-errors-home/default.png",
+    "viewport": "08-expert-service/purchase-branches-current-errors-home/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/me"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "mom/home",
+      "mom/record-picker",
+      "mom/other-functions",
+      "common/not-found",
+      "mom/state-01",
+      "mom/state-11",
+      "mom/state-31",
+      "mom/state-38",
+      "mom/state-43"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/modules/mom/presentation/mom_home_sections.dart",
+      "lib/modules/mom/presentation/mother_home_page.dart",
+      "lib/modules/services/presentation/expert_support_section.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/purchase_branches_current_inventory_test.dart",
+    "test_case": "current purchase order and payment business errors false",
+    "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-errors-home-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-errors-home-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-errors-home-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-errors-home-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-errors-home-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/me",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "More → Me before conditional purchase",
+    "journey": {
+      "source": "test/goldens/ui_inventory/purchase-branches-current-errors-home-393-1x.png",
+      "previous_source": null,
+      "route": "/me",
+      "trigger": "More → Me before conditional purchase",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/purchase_branches_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/purchase-branches-current-errors-home-return",
+    "module": "专家服务与咨询",
+    "label": "下午好，Mia",
+    "state": "purchase-branches-current-errors-home-return",
+    "image": "08-expert-service/purchase-branches-current-errors-home-return/default.png",
+    "viewport": "08-expert-service/purchase-branches-current-errors-home-return/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/me"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "mom/home",
+      "mom/record-picker",
+      "mom/other-functions",
+      "common/not-found",
+      "mom/state-01",
+      "mom/state-11",
+      "mom/state-31",
+      "mom/state-38",
+      "mom/state-43"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/modules/mom/presentation/mom_home_sections.dart",
+      "lib/modules/mom/presentation/mother_home_page.dart",
+      "lib/modules/services/presentation/expert_support_section.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/purchase_branches_current_inventory_test.dart",
+    "test_case": "current purchase order and payment business errors false",
+    "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-errors-home-return-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-errors-home-return-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-errors-home-return-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-errors-home-return-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-errors-home-return-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/me",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Catalog Back → Me",
+    "journey": {
+      "source": "test/goldens/ui_inventory/purchase-branches-current-errors-home-return-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/purchase-branches-current-errors-catalog-return-393-1x.png",
+      "route": "/me",
+      "trigger": "Catalog Back → Me",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/purchase_branches_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/purchase-branches-current-errors-package",
+    "module": "专家服务与咨询",
+    "label": "喂养安心服务包",
+    "state": "purchase-branches-current-errors-package",
+    "image": "08-expert-service/purchase-branches-current-errors-package/default.png",
+    "viewport": "08-expert-service/purchase-branches-current-errors-package/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/feeding-confidence"
+    ],
+    "mapped_design_candidates": [
+      "services/package",
+      "common/not-found",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/mom_service_widgets.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/purchase_branches_current_inventory_test.dart",
+    "test_case": "current purchase order and payment business errors false",
+    "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-errors-package-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-errors-package-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-errors-package-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-errors-package-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-errors-package-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/feeding-confidence",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Catalog → package",
+    "journey": {
+      "source": "test/goldens/ui_inventory/purchase-branches-current-errors-package-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/purchase-branches-current-errors-catalog-393-1x.png",
+      "route": "/services/feeding-confidence",
+      "trigger": "Catalog → package",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/purchase_branches_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/purchase-branches-current-launch-accepted",
+    "module": "专家服务与咨询",
+    "label": "喂养安心服务包",
+    "state": "purchase-branches-current-launch-accepted",
+    "image": "08-expert-service/purchase-branches-current-launch-accepted/default.png",
+    "viewport": "08-expert-service/purchase-branches-current-launch-accepted/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/feeding-confidence"
+    ],
+    "mapped_design_candidates": [
+      "services/package",
+      "services/purchase",
+      "common/not-found",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24",
+      "services/state-25",
+      "services/state-26",
+      "services/state-27",
+      "services/state-28",
+      "services/state-29",
+      "services/state-30"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/mom_service_widgets.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/modules/services/presentation/service_purchase_dialog.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/purchase_branches_current_inventory_test.dart",
+    "test_case": "current Stripe checkout failure launch pending and query false",
+    "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-launch-accepted-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-launch-accepted-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-launch-accepted-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-launch-accepted-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-launch-accepted-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/feeding-confidence",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Platform reports URL opened → App ready for query, no payment inferred",
+    "journey": {
+      "source": "test/goldens/ui_inventory/purchase-branches-current-launch-accepted-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/purchase-branches-current-launch-back-blocked-393-1x.png",
+      "route": "/services/feeding-confidence",
+      "trigger": "Platform reports URL opened → App ready for query, no payment inferred",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/purchase_branches_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/purchase-branches-current-launch-back-blocked",
+    "module": "专家服务与咨询",
+    "label": "喂养安心服务包",
+    "state": "purchase-branches-current-launch-back-blocked",
+    "image": "08-expert-service/purchase-branches-current-launch-back-blocked/default.png",
+    "viewport": "08-expert-service/purchase-branches-current-launch-back-blocked/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/feeding-confidence"
+    ],
+    "mapped_design_candidates": [
+      "services/package",
+      "services/purchase",
+      "common/not-found",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24",
+      "services/state-25",
+      "services/state-26",
+      "services/state-27",
+      "services/state-28",
+      "services/state-29",
+      "services/state-30"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/mom_service_widgets.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/modules/services/presentation/service_purchase_dialog.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/purchase_branches_current_inventory_test.dart",
+    "test_case": "current Stripe checkout failure launch pending and query false",
+    "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-launch-back-blocked-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-launch-back-blocked-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-launch-back-blocked-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-launch-back-blocked-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-launch-back-blocked-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/feeding-confidence",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Framework Back while opening external URL → retained",
+    "journey": {
+      "source": "test/goldens/ui_inventory/purchase-branches-current-launch-back-blocked-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/purchase-branches-current-launch-pending-393-1x.png",
+      "route": "/services/feeding-confidence",
+      "trigger": "Framework Back while opening external URL → retained",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/purchase_branches_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/purchase-branches-current-launch-pending",
+    "module": "专家服务与咨询",
+    "label": "喂养安心服务包",
+    "state": "purchase-branches-current-launch-pending",
+    "image": "08-expert-service/purchase-branches-current-launch-pending/default.png",
+    "viewport": "08-expert-service/purchase-branches-current-launch-pending/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/feeding-confidence"
+    ],
+    "mapped_design_candidates": [
+      "services/package",
+      "services/purchase",
+      "common/not-found",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24",
+      "services/state-25",
+      "services/state-26",
+      "services/state-27",
+      "services/state-28",
+      "services/state-29",
+      "services/state-30"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/mom_service_widgets.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/modules/services/presentation/service_purchase_dialog.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/purchase_branches_current_inventory_test.dart",
+    "test_case": "current Stripe checkout failure launch pending and query false",
+    "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-launch-pending-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-launch-pending-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-launch-pending-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-launch-pending-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-launch-pending-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/feeding-confidence",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Platform launch request pending → processing controls",
+    "journey": {
+      "source": "test/goldens/ui_inventory/purchase-branches-current-launch-pending-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/purchase-branches-current-launch-rejected-393-1x.png",
+      "route": "/services/feeding-confidence",
+      "trigger": "Platform launch request pending → processing controls",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/purchase_branches_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/purchase-branches-current-launch-rejected",
+    "module": "专家服务与咨询",
+    "label": "喂养安心服务包",
+    "state": "purchase-branches-current-launch-rejected",
+    "image": "08-expert-service/purchase-branches-current-launch-rejected/default.png",
+    "viewport": "08-expert-service/purchase-branches-current-launch-rejected/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/feeding-confidence"
+    ],
+    "mapped_design_candidates": [
+      "services/package",
+      "services/purchase",
+      "common/not-found",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24",
+      "services/state-25",
+      "services/state-26",
+      "services/state-27",
+      "services/state-28",
+      "services/state-29",
+      "services/state-30"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/mom_service_widgets.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/modules/services/presentation/service_purchase_dialog.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/purchase_branches_current_inventory_test.dart",
+    "test_case": "current Stripe checkout failure launch pending and query false",
+    "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-launch-rejected-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-launch-rejected-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-launch-rejected-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-launch-rejected-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-launch-rejected-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/feeding-confidence",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Checkout URL returned, platform refuses launch → explicit opening error",
+    "journey": {
+      "source": "test/goldens/ui_inventory/purchase-branches-current-launch-rejected-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/purchase-branches-current-checkout-error-393-1x.png",
+      "route": "/services/feeding-confidence",
+      "trigger": "Checkout URL returned, platform refuses launch → explicit opening error",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/purchase_branches_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/purchase-branches-current-new-card",
+    "module": "专家服务与咨询",
+    "label": "喂养安心服务包",
+    "state": "purchase-branches-current-new-card",
+    "image": "08-expert-service/purchase-branches-current-new-card/default.png",
+    "viewport": "08-expert-service/purchase-branches-current-new-card/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/feeding-confidence"
+    ],
+    "mapped_design_candidates": [
+      "services/package",
+      "services/purchase",
+      "common/not-found",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24",
+      "services/state-25",
+      "services/state-26",
+      "services/state-27",
+      "services/state-28",
+      "services/state-29",
+      "services/state-30"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/mom_service_widgets.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/modules/services/presentation/service_purchase_dialog.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/purchase_branches_current_inventory_test.dart",
+    "test_case": "current purchase idle dismissal and reopened verification false",
+    "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-new-card-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-new-card-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-new-card-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-new-card-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-new-card-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/feeding-confidence",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Create order → editable sandbox form",
+    "journey": {
+      "source": "test/goldens/ui_inventory/purchase-branches-current-new-card-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/purchase-branches-current-eligibility-back-dismissed-393-1x.png",
+      "route": "/services/feeding-confidence",
+      "trigger": "Create order → editable sandbox form",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/purchase_branches_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/purchase-branches-current-payment-401",
+    "module": "专家服务与咨询",
+    "label": "喂养安心服务包",
+    "state": "purchase-branches-current-payment-401",
+    "image": "08-expert-service/purchase-branches-current-payment-401/default.png",
+    "viewport": "08-expert-service/purchase-branches-current-payment-401/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/feeding-confidence"
+    ],
+    "mapped_design_candidates": [
+      "services/package",
+      "services/purchase",
+      "common/not-found",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24",
+      "services/state-25",
+      "services/state-26",
+      "services/state-27",
+      "services/state-28",
+      "services/state-29",
+      "services/state-30"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/mom_service_widgets.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/modules/services/presentation/service_purchase_dialog.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/purchase_branches_current_inventory_test.dart",
+    "test_case": "current purchase order and payment business errors false",
+    "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-payment-401-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-payment-401-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-payment-401-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-payment-401-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-payment-401-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/feeding-confidence",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Payment HTTP 401 → specific error and query action",
+    "journey": {
+      "source": "test/goldens/ui_inventory/purchase-branches-current-payment-401-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/purchase-branches-current-create-business-recovered-393-1x.png",
+      "route": "/services/feeding-confidence",
+      "trigger": "Payment HTTP 401 → specific error and query action",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/purchase_branches_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/purchase-branches-current-payment-403",
+    "module": "专家服务与咨询",
+    "label": "喂养安心服务包",
+    "state": "purchase-branches-current-payment-403",
+    "image": "08-expert-service/purchase-branches-current-payment-403/default.png",
+    "viewport": "08-expert-service/purchase-branches-current-payment-403/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/feeding-confidence"
+    ],
+    "mapped_design_candidates": [
+      "services/package",
+      "services/purchase",
+      "common/not-found",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24",
+      "services/state-25",
+      "services/state-26",
+      "services/state-27",
+      "services/state-28",
+      "services/state-29",
+      "services/state-30"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/mom_service_widgets.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/modules/services/presentation/service_purchase_dialog.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/purchase_branches_current_inventory_test.dart",
+    "test_case": "current purchase order and payment business errors false",
+    "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-payment-403-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-payment-403-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-payment-403-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-payment-403-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-payment-403-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/feeding-confidence",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Payment HTTP 403 → specific error and query action",
+    "journey": {
+      "source": "test/goldens/ui_inventory/purchase-branches-current-payment-403-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/purchase-branches-current-payment-401-393-1x.png",
+      "route": "/services/feeding-confidence",
+      "trigger": "Payment HTTP 403 → specific error and query action",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/purchase_branches_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/purchase-branches-current-payment-409",
+    "module": "专家服务与咨询",
+    "label": "喂养安心服务包",
+    "state": "purchase-branches-current-payment-409",
+    "image": "08-expert-service/purchase-branches-current-payment-409/default.png",
+    "viewport": "08-expert-service/purchase-branches-current-payment-409/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/feeding-confidence"
+    ],
+    "mapped_design_candidates": [
+      "services/package",
+      "services/purchase",
+      "common/not-found",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24",
+      "services/state-25",
+      "services/state-26",
+      "services/state-27",
+      "services/state-28",
+      "services/state-29",
+      "services/state-30"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/mom_service_widgets.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/modules/services/presentation/service_purchase_dialog.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/purchase_branches_current_inventory_test.dart",
+    "test_case": "current purchase order and payment business errors false",
+    "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-payment-409-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-payment-409-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-payment-409-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-payment-409-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-payment-409-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/feeding-confidence",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Payment HTTP 409 → specific error and query action",
+    "journey": {
+      "source": "test/goldens/ui_inventory/purchase-branches-current-payment-409-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/purchase-branches-current-payment-403-393-1x.png",
+      "route": "/services/feeding-confidence",
+      "trigger": "Payment HTTP 409 → specific error and query action",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/purchase_branches_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/purchase-branches-current-payment-422",
+    "module": "专家服务与咨询",
+    "label": "喂养安心服务包",
+    "state": "purchase-branches-current-payment-422",
+    "image": "08-expert-service/purchase-branches-current-payment-422/default.png",
+    "viewport": "08-expert-service/purchase-branches-current-payment-422/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/feeding-confidence"
+    ],
+    "mapped_design_candidates": [
+      "services/package",
+      "services/purchase",
+      "common/not-found",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24",
+      "services/state-25",
+      "services/state-26",
+      "services/state-27",
+      "services/state-28",
+      "services/state-29",
+      "services/state-30"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/mom_service_widgets.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/modules/services/presentation/service_purchase_dialog.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/purchase_branches_current_inventory_test.dart",
+    "test_case": "current purchase order and payment business errors false",
+    "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-payment-422-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-payment-422-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-payment-422-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-payment-422-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-payment-422-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/feeding-confidence",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Payment HTTP 422 → specific error and query action",
+    "journey": {
+      "source": "test/goldens/ui_inventory/purchase-branches-current-payment-422-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/purchase-branches-current-payment-409-393-1x.png",
+      "route": "/services/feeding-confidence",
+      "trigger": "Payment HTTP 422 → specific error and query action",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/purchase_branches_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/purchase-branches-current-reopened-challenge-success",
+    "module": "专家服务与咨询",
+    "label": "喂养安心服务包",
+    "state": "purchase-branches-current-reopened-challenge-success",
+    "image": "08-expert-service/purchase-branches-current-reopened-challenge-success/default.png",
+    "viewport": "08-expert-service/purchase-branches-current-reopened-challenge-success/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/feeding-confidence"
+    ],
+    "mapped_design_candidates": [
+      "services/package",
+      "services/purchase",
+      "common/not-found",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24",
+      "services/state-25",
+      "services/state-26",
+      "services/state-27",
+      "services/state-28",
+      "services/state-29",
+      "services/state-30"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/mom_service_widgets.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/modules/services/presentation/service_purchase_dialog.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/purchase_branches_current_inventory_test.dart",
+    "test_case": "current purchase idle dismissal and reopened verification false",
+    "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-reopened-challenge-success-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-reopened-challenge-success-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-reopened-challenge-success-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-reopened-challenge-success-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-reopened-challenge-success-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/feeding-confidence",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Confirm reopened challenge → paid episode",
+    "journey": {
+      "source": "test/goldens/ui_inventory/purchase-branches-current-reopened-challenge-success-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/purchase-branches-current-challenge-back-dismissed-393-1x.png",
+      "route": "/services/feeding-confidence",
+      "trigger": "Confirm reopened challenge → paid episode",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/purchase_branches_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/purchase-branches-current-resume-catalog",
+    "module": "专家服务与咨询",
+    "label": "IBCLC 专家团队服务",
+    "state": "purchase-branches-current-resume-catalog",
+    "image": "08-expert-service/purchase-branches-current-resume-catalog/default.png",
+    "viewport": "08-expert-service/purchase-branches-current-resume-catalog/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services"
+    ],
+    "mapped_design_candidates": [
+      "services/catalog",
+      "services/team",
+      "common/not-found",
+      "services/state-20"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/mom_service_widgets.dart",
+      "lib/modules/services/presentation/service_catalog_page.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/purchase_branches_current_inventory_test.dart",
+    "test_case": "current purchase idle dismissal and reopened verification false",
+    "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-resume-catalog-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-resume-catalog-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-resume-catalog-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-resume-catalog-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-resume-catalog-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Home expert plan → catalog",
+    "journey": {
+      "source": "test/goldens/ui_inventory/purchase-branches-current-resume-catalog-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/purchase-branches-current-resume-home-393-1x.png",
+      "route": "/services",
+      "trigger": "Home expert plan → catalog",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/purchase_branches_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/purchase-branches-current-resume-catalog-return",
+    "module": "专家服务与咨询",
+    "label": "喂养安心",
+    "state": "purchase-branches-current-resume-catalog-return",
+    "image": "08-expert-service/purchase-branches-current-resume-catalog-return/default.png",
+    "viewport": "08-expert-service/purchase-branches-current-resume-catalog-return/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services"
+    ],
+    "mapped_design_candidates": [
+      "services/catalog",
+      "services/team",
+      "common/not-found",
+      "services/state-20"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/mom_service_widgets.dart",
+      "lib/modules/services/presentation/service_catalog_page.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/purchase_branches_current_inventory_test.dart",
+    "test_case": "current purchase idle dismissal and reopened verification false",
+    "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-resume-catalog-return-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-resume-catalog-return-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-resume-catalog-return-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-resume-catalog-return-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-resume-catalog-return-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Package Back → catalog",
+    "journey": {
+      "source": "test/goldens/ui_inventory/purchase-branches-current-resume-catalog-return-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/purchase-branches-current-success-close-393-1x.png",
+      "route": "/services",
+      "trigger": "Package Back → catalog",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/purchase_branches_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/purchase-branches-current-resume-home",
+    "module": "专家服务与咨询",
+    "label": "下午好，Mia",
+    "state": "purchase-branches-current-resume-home",
+    "image": "08-expert-service/purchase-branches-current-resume-home/default.png",
+    "viewport": "08-expert-service/purchase-branches-current-resume-home/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/me"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "mom/home",
+      "mom/record-picker",
+      "mom/other-functions",
+      "common/not-found",
+      "mom/state-01",
+      "mom/state-11",
+      "mom/state-31",
+      "mom/state-38",
+      "mom/state-43"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/modules/mom/presentation/mom_home_sections.dart",
+      "lib/modules/mom/presentation/mother_home_page.dart",
+      "lib/modules/services/presentation/expert_support_section.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/purchase_branches_current_inventory_test.dart",
+    "test_case": "current purchase idle dismissal and reopened verification false",
+    "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-resume-home-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-resume-home-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-resume-home-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-resume-home-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-resume-home-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/me",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "More → Me before conditional purchase",
+    "journey": {
+      "source": "test/goldens/ui_inventory/purchase-branches-current-resume-home-393-1x.png",
+      "previous_source": null,
+      "route": "/me",
+      "trigger": "More → Me before conditional purchase",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/purchase_branches_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/purchase-branches-current-resume-home-return",
+    "module": "专家服务与咨询",
+    "label": "下午好，Mia",
+    "state": "purchase-branches-current-resume-home-return",
+    "image": "08-expert-service/purchase-branches-current-resume-home-return/default.png",
+    "viewport": "08-expert-service/purchase-branches-current-resume-home-return/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/me"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "mom/home",
+      "mom/record-picker",
+      "mom/other-functions",
+      "common/not-found",
+      "mom/state-01",
+      "mom/state-11",
+      "mom/state-31",
+      "mom/state-38",
+      "mom/state-43"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/modules/mom/presentation/mom_home_sections.dart",
+      "lib/modules/mom/presentation/mother_home_page.dart",
+      "lib/modules/services/presentation/expert_support_section.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/purchase_branches_current_inventory_test.dart",
+    "test_case": "current purchase idle dismissal and reopened verification false",
+    "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-resume-home-return-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-resume-home-return-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-resume-home-return-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-resume-home-return-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-resume-home-return-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/me",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Catalog Back → Me",
+    "journey": {
+      "source": "test/goldens/ui_inventory/purchase-branches-current-resume-home-return-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/purchase-branches-current-resume-catalog-return-393-1x.png",
+      "route": "/me",
+      "trigger": "Catalog Back → Me",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/purchase_branches_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/purchase-branches-current-resume-package",
+    "module": "专家服务与咨询",
+    "label": "喂养安心服务包",
+    "state": "purchase-branches-current-resume-package",
+    "image": "08-expert-service/purchase-branches-current-resume-package/default.png",
+    "viewport": "08-expert-service/purchase-branches-current-resume-package/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/feeding-confidence"
+    ],
+    "mapped_design_candidates": [
+      "services/package",
+      "common/not-found",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/mom_service_widgets.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/purchase_branches_current_inventory_test.dart",
+    "test_case": "current purchase idle dismissal and reopened verification false",
+    "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-resume-package-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-resume-package-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-resume-package-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-resume-package-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-resume-package-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/feeding-confidence",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Catalog → package",
+    "journey": {
+      "source": "test/goldens/ui_inventory/purchase-branches-current-resume-package-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/purchase-branches-current-resume-catalog-393-1x.png",
+      "route": "/services/feeding-confidence",
+      "trigger": "Catalog → package",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/purchase_branches_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/purchase-branches-current-stripe-cancel-return",
+    "module": "专家服务与咨询",
+    "label": "喂养安心服务包",
+    "state": "purchase-branches-current-stripe-cancel-return",
+    "image": "08-expert-service/purchase-branches-current-stripe-cancel-return/default.png",
+    "viewport": "08-expert-service/purchase-branches-current-stripe-cancel-return/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/feeding-confidence"
+    ],
+    "mapped_design_candidates": [
+      "services/package",
+      "common/not-found",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/mom_service_widgets.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/purchase_branches_current_inventory_test.dart",
+    "test_case": "current Stripe checkout failure launch pending and query false",
+    "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-cancel-return-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-stripe-cancel-return-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-cancel-return-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-stripe-cancel-return-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-cancel-return-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/feeding-confidence",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Cancelled Stripe order → package",
+    "journey": {
+      "source": "test/goldens/ui_inventory/purchase-branches-current-stripe-cancel-return-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/purchase-branches-current-stripe-cancelled-393-1x.png",
+      "route": "/services/feeding-confidence",
+      "trigger": "Cancelled Stripe order → package",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/purchase_branches_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/purchase-branches-current-stripe-cancelled",
+    "module": "专家服务与咨询",
+    "label": "喂养安心服务包",
+    "state": "purchase-branches-current-stripe-cancelled",
+    "image": "08-expert-service/purchase-branches-current-stripe-cancelled/default.png",
+    "viewport": "08-expert-service/purchase-branches-current-stripe-cancelled/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/feeding-confidence"
+    ],
+    "mapped_design_candidates": [
+      "services/package",
+      "services/purchase",
+      "common/not-found",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24",
+      "services/state-25",
+      "services/state-26",
+      "services/state-27",
+      "services/state-28",
+      "services/state-29",
+      "services/state-30"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/mom_service_widgets.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/modules/services/presentation/service_purchase_dialog.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/purchase_branches_current_inventory_test.dart",
+    "test_case": "current Stripe checkout failure launch pending and query false",
+    "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-cancelled-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-stripe-cancelled-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-cancelled-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-stripe-cancelled-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-cancelled-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/feeding-confidence",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Query cancelled external payment → no service benefits",
+    "journey": {
+      "source": "test/goldens/ui_inventory/purchase-branches-current-stripe-cancelled-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/purchase-branches-current-stripe-query-error-393-1x.png",
+      "route": "/services/feeding-confidence",
+      "trigger": "Query cancelled external payment → no service benefits",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/purchase_branches_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/purchase-branches-current-stripe-catalog",
+    "module": "专家服务与咨询",
+    "label": "IBCLC 专家团队服务",
+    "state": "purchase-branches-current-stripe-catalog",
+    "image": "08-expert-service/purchase-branches-current-stripe-catalog/default.png",
+    "viewport": "08-expert-service/purchase-branches-current-stripe-catalog/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services"
+    ],
+    "mapped_design_candidates": [
+      "services/catalog",
+      "services/team",
+      "common/not-found",
+      "services/state-20"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/mom_service_widgets.dart",
+      "lib/modules/services/presentation/service_catalog_page.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/purchase_branches_current_inventory_test.dart",
+    "test_case": "current Stripe checkout failure launch pending and query false",
+    "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-catalog-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-stripe-catalog-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-catalog-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-stripe-catalog-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-catalog-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Home expert plan → catalog",
+    "journey": {
+      "source": "test/goldens/ui_inventory/purchase-branches-current-stripe-catalog-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/purchase-branches-current-stripe-home-393-1x.png",
+      "route": "/services",
+      "trigger": "Home expert plan → catalog",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/purchase_branches_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/purchase-branches-current-stripe-catalog-return",
+    "module": "专家服务与咨询",
+    "label": "喂养安心",
+    "state": "purchase-branches-current-stripe-catalog-return",
+    "image": "08-expert-service/purchase-branches-current-stripe-catalog-return/default.png",
+    "viewport": "08-expert-service/purchase-branches-current-stripe-catalog-return/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services"
+    ],
+    "mapped_design_candidates": [
+      "services/catalog",
+      "services/team",
+      "common/not-found",
+      "services/state-20"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/mom_service_widgets.dart",
+      "lib/modules/services/presentation/service_catalog_page.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/purchase_branches_current_inventory_test.dart",
+    "test_case": "current Stripe checkout failure launch pending and query false",
+    "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-catalog-return-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-stripe-catalog-return-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-catalog-return-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-stripe-catalog-return-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-catalog-return-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Package Back → catalog",
+    "journey": {
+      "source": "test/goldens/ui_inventory/purchase-branches-current-stripe-catalog-return-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/purchase-branches-current-stripe-owned-393-1x.png",
+      "route": "/services",
+      "trigger": "Package Back → catalog",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/purchase_branches_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/purchase-branches-current-stripe-failed",
+    "module": "专家服务与咨询",
+    "label": "喂养安心服务包",
+    "state": "purchase-branches-current-stripe-failed",
+    "image": "08-expert-service/purchase-branches-current-stripe-failed/default.png",
+    "viewport": "08-expert-service/purchase-branches-current-stripe-failed/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/feeding-confidence"
+    ],
+    "mapped_design_candidates": [
+      "services/package",
+      "services/purchase",
+      "common/not-found",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24",
+      "services/state-25",
+      "services/state-26",
+      "services/state-27",
+      "services/state-28",
+      "services/state-29",
+      "services/state-30"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/mom_service_widgets.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/modules/services/presentation/service_purchase_dialog.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/purchase_branches_current_inventory_test.dart",
+    "test_case": "current Stripe checkout failure launch pending and query false",
+    "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-failed-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-stripe-failed-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-failed-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-stripe-failed-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-failed-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/feeding-confidence",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Query returns failed → reopen checkout or query",
+    "journey": {
+      "source": "test/goldens/ui_inventory/purchase-branches-current-stripe-failed-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/purchase-branches-current-stripe-repurchase-393-1x.png",
+      "route": "/services/feeding-confidence",
+      "trigger": "Query returns failed → reopen checkout or query",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/purchase_branches_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/purchase-branches-current-stripe-home",
+    "module": "专家服务与咨询",
+    "label": "下午好，Mia",
+    "state": "purchase-branches-current-stripe-home",
+    "image": "08-expert-service/purchase-branches-current-stripe-home/default.png",
+    "viewport": "08-expert-service/purchase-branches-current-stripe-home/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/me"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "mom/home",
+      "mom/record-picker",
+      "mom/other-functions",
+      "common/not-found",
+      "mom/state-01",
+      "mom/state-11",
+      "mom/state-31",
+      "mom/state-38",
+      "mom/state-43"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/modules/mom/presentation/mom_home_sections.dart",
+      "lib/modules/mom/presentation/mother_home_page.dart",
+      "lib/modules/services/presentation/expert_support_section.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/purchase_branches_current_inventory_test.dart",
+    "test_case": "current Stripe checkout failure launch pending and query false",
+    "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-home-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-stripe-home-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-home-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-stripe-home-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-home-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/me",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "More → Me before conditional purchase",
+    "journey": {
+      "source": "test/goldens/ui_inventory/purchase-branches-current-stripe-home-393-1x.png",
+      "previous_source": null,
+      "route": "/me",
+      "trigger": "More → Me before conditional purchase",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/purchase_branches_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/purchase-branches-current-stripe-home-return",
+    "module": "专家服务与咨询",
+    "label": "下午好，Mia",
+    "state": "purchase-branches-current-stripe-home-return",
+    "image": "08-expert-service/purchase-branches-current-stripe-home-return/default.png",
+    "viewport": "08-expert-service/purchase-branches-current-stripe-home-return/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/me"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "mom/home",
+      "mom/record-picker",
+      "mom/other-functions",
+      "common/not-found",
+      "mom/state-01",
+      "mom/state-11",
+      "mom/state-31",
+      "mom/state-38",
+      "mom/state-43"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/modules/mom/presentation/mom_home_sections.dart",
+      "lib/modules/mom/presentation/mother_home_page.dart",
+      "lib/modules/services/presentation/expert_support_section.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/purchase_branches_current_inventory_test.dart",
+    "test_case": "current Stripe checkout failure launch pending and query false",
+    "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-home-return-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-stripe-home-return-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-home-return-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-stripe-home-return-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-home-return-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/me",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Catalog Back → Me",
+    "journey": {
+      "source": "test/goldens/ui_inventory/purchase-branches-current-stripe-home-return-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/purchase-branches-current-stripe-catalog-return-393-1x.png",
+      "route": "/me",
+      "trigger": "Catalog Back → Me",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/purchase_branches_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/purchase-branches-current-stripe-owned",
+    "module": "专家服务与咨询",
+    "label": "我的陪伴计划",
+    "state": "purchase-branches-current-stripe-owned",
+    "image": "08-expert-service/purchase-branches-current-stripe-owned/default.png",
+    "viewport": "08-expert-service/purchase-branches-current-stripe-owned/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/feeding-confidence"
+    ],
+    "mapped_design_candidates": [
+      "services/package",
+      "common/not-found",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/mom_service_widgets.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/purchase_branches_current_inventory_test.dart",
+    "test_case": "current Stripe checkout failure launch pending and query false",
+    "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-owned-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-stripe-owned-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-owned-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-stripe-owned-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-owned-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/feeding-confidence",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Book later → owned package",
+    "journey": {
+      "source": "test/goldens/ui_inventory/purchase-branches-current-stripe-owned-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/purchase-branches-current-stripe-success-393-1x.png",
+      "route": "/services/feeding-confidence",
+      "trigger": "Book later → owned package",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/purchase_branches_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/purchase-branches-current-stripe-package",
+    "module": "专家服务与咨询",
+    "label": "喂养安心服务包",
+    "state": "purchase-branches-current-stripe-package",
+    "image": "08-expert-service/purchase-branches-current-stripe-package/default.png",
+    "viewport": "08-expert-service/purchase-branches-current-stripe-package/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/feeding-confidence"
+    ],
+    "mapped_design_candidates": [
+      "services/package",
+      "common/not-found",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/mom_service_widgets.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/purchase_branches_current_inventory_test.dart",
+    "test_case": "current Stripe checkout failure launch pending and query false",
+    "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-package-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-stripe-package-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-package-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-stripe-package-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-package-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/feeding-confidence",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Catalog → package",
+    "journey": {
+      "source": "test/goldens/ui_inventory/purchase-branches-current-stripe-package-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/purchase-branches-current-stripe-catalog-393-1x.png",
+      "route": "/services/feeding-confidence",
+      "trigger": "Catalog → package",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/purchase_branches_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/purchase-branches-current-stripe-payment",
+    "module": "专家服务与咨询",
+    "label": "喂养安心服务包",
+    "state": "purchase-branches-current-stripe-payment",
+    "image": "08-expert-service/purchase-branches-current-stripe-payment/default.png",
+    "viewport": "08-expert-service/purchase-branches-current-stripe-payment/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/feeding-confidence"
+    ],
+    "mapped_design_candidates": [
+      "services/package",
+      "services/purchase",
+      "common/not-found",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24",
+      "services/state-25",
+      "services/state-26",
+      "services/state-27",
+      "services/state-28",
+      "services/state-29",
+      "services/state-30"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/mom_service_widgets.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/modules/services/presentation/service_purchase_dialog.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/purchase_branches_current_inventory_test.dart",
+    "test_case": "current Stripe checkout failure launch pending and query false",
+    "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-payment-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-stripe-payment-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-payment-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-stripe-payment-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-payment-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/feeding-confidence",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Eligibility → configured payment mode",
+    "journey": {
+      "source": "test/goldens/ui_inventory/purchase-branches-current-stripe-payment-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/purchase-branches-current-stripe-package-393-1x.png",
+      "route": "/services/feeding-confidence",
+      "trigger": "Eligibility → configured payment mode",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/purchase_branches_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/purchase-branches-current-stripe-processing",
+    "module": "专家服务与咨询",
+    "label": "喂养安心服务包",
+    "state": "purchase-branches-current-stripe-processing",
+    "image": "08-expert-service/purchase-branches-current-stripe-processing/default.png",
+    "viewport": "08-expert-service/purchase-branches-current-stripe-processing/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/feeding-confidence"
+    ],
+    "mapped_design_candidates": [
+      "services/package",
+      "services/purchase",
+      "common/not-found",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24",
+      "services/state-25",
+      "services/state-26",
+      "services/state-27",
+      "services/state-28",
+      "services/state-29",
+      "services/state-30"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/mom_service_widgets.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/modules/services/presentation/service_purchase_dialog.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/purchase_branches_current_inventory_test.dart",
+    "test_case": "current Stripe checkout failure launch pending and query false",
+    "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-processing-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-stripe-processing-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-processing-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-stripe-processing-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-processing-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/feeding-confidence",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Query processing → only query, no sandbox completion",
+    "journey": {
+      "source": "test/goldens/ui_inventory/purchase-branches-current-stripe-processing-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/purchase-branches-current-stripe-failed-393-1x.png",
+      "route": "/services/feeding-confidence",
+      "trigger": "Query processing → only query, no sandbox completion",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/purchase_branches_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/purchase-branches-current-stripe-query-error",
+    "module": "专家服务与咨询",
+    "label": "喂养安心服务包",
+    "state": "purchase-branches-current-stripe-query-error",
+    "image": "08-expert-service/purchase-branches-current-stripe-query-error/default.png",
+    "viewport": "08-expert-service/purchase-branches-current-stripe-query-error/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/feeding-confidence"
+    ],
+    "mapped_design_candidates": [
+      "services/package",
+      "services/purchase",
+      "common/not-found",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24",
+      "services/state-25",
+      "services/state-26",
+      "services/state-27",
+      "services/state-28",
+      "services/state-29",
+      "services/state-30"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/mom_service_widgets.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/modules/services/presentation/service_purchase_dialog.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/purchase_branches_current_inventory_test.dart",
+    "test_case": "current Stripe checkout failure launch pending and query false",
+    "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-query-error-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-stripe-query-error-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-query-error-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-stripe-query-error-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-query-error-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/feeding-confidence",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Order query 503 → retry retained",
+    "journey": {
+      "source": "test/goldens/ui_inventory/purchase-branches-current-stripe-query-error-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/purchase-branches-current-stripe-query-pending-393-1x.png",
+      "route": "/services/feeding-confidence",
+      "trigger": "Order query 503 → retry retained",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/purchase_branches_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/purchase-branches-current-stripe-query-pending",
+    "module": "专家服务与咨询",
+    "label": "喂养安心服务包",
+    "state": "purchase-branches-current-stripe-query-pending",
+    "image": "08-expert-service/purchase-branches-current-stripe-query-pending/default.png",
+    "viewport": "08-expert-service/purchase-branches-current-stripe-query-pending/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/feeding-confidence"
+    ],
+    "mapped_design_candidates": [
+      "services/package",
+      "services/purchase",
+      "common/not-found",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24",
+      "services/state-25",
+      "services/state-26",
+      "services/state-27",
+      "services/state-28",
+      "services/state-29",
+      "services/state-30"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/mom_service_widgets.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/modules/services/presentation/service_purchase_dialog.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/purchase_branches_current_inventory_test.dart",
+    "test_case": "current Stripe checkout failure launch pending and query false",
+    "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-query-pending-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-stripe-query-pending-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-query-pending-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-stripe-query-pending-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-query-pending-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/feeding-confidence",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Return/query from external payment → order GET pending",
+    "journey": {
+      "source": "test/goldens/ui_inventory/purchase-branches-current-stripe-query-pending-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/purchase-branches-current-launch-accepted-393-1x.png",
+      "route": "/services/feeding-confidence",
+      "trigger": "Return/query from external payment → order GET pending",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/purchase_branches_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/purchase-branches-current-stripe-repurchase",
+    "module": "专家服务与咨询",
+    "label": "喂养安心服务包",
+    "state": "purchase-branches-current-stripe-repurchase",
+    "image": "08-expert-service/purchase-branches-current-stripe-repurchase/default.png",
+    "viewport": "08-expert-service/purchase-branches-current-stripe-repurchase/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/feeding-confidence"
+    ],
+    "mapped_design_candidates": [
+      "services/package",
+      "services/purchase",
+      "common/not-found",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24",
+      "services/state-25",
+      "services/state-26",
+      "services/state-27",
+      "services/state-28",
+      "services/state-29",
+      "services/state-30"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/mom_service_widgets.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/modules/services/presentation/service_purchase_dialog.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/purchase_branches_current_inventory_test.dart",
+    "test_case": "current Stripe checkout failure launch pending and query false",
+    "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-repurchase-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-stripe-repurchase-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-repurchase-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-stripe-repurchase-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-repurchase-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/feeding-confidence",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Repurchase after cancellation → new Stripe order",
+    "journey": {
+      "source": "test/goldens/ui_inventory/purchase-branches-current-stripe-repurchase-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/purchase-branches-current-stripe-cancel-return-393-1x.png",
+      "route": "/services/feeding-confidence",
+      "trigger": "Repurchase after cancellation → new Stripe order",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/purchase_branches_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/purchase-branches-current-stripe-success",
+    "module": "专家服务与咨询",
+    "label": "喂养安心服务包",
+    "state": "purchase-branches-current-stripe-success",
+    "image": "08-expert-service/purchase-branches-current-stripe-success/default.png",
+    "viewport": "08-expert-service/purchase-branches-current-stripe-success/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/feeding-confidence"
+    ],
+    "mapped_design_candidates": [
+      "services/package",
+      "services/purchase",
+      "common/not-found",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24",
+      "services/state-25",
+      "services/state-26",
+      "services/state-27",
+      "services/state-28",
+      "services/state-29",
+      "services/state-30"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/mom_service_widgets.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/modules/services/presentation/service_purchase_dialog.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/purchase_branches_current_inventory_test.dart",
+    "test_case": "current Stripe checkout failure launch pending and query false",
+    "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-success-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-stripe-success-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-success-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-stripe-success-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-success-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/feeding-confidence",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Query paid episode → success and booking actions",
+    "journey": {
+      "source": "test/goldens/ui_inventory/purchase-branches-current-stripe-success-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/purchase-branches-current-stripe-syncing-393-1x.png",
+      "route": "/services/feeding-confidence",
+      "trigger": "Query paid episode → success and booking actions",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/purchase_branches_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/purchase-branches-current-stripe-syncing",
+    "module": "专家服务与咨询",
+    "label": "喂养安心服务包",
+    "state": "purchase-branches-current-stripe-syncing",
+    "image": "08-expert-service/purchase-branches-current-stripe-syncing/default.png",
+    "viewport": "08-expert-service/purchase-branches-current-stripe-syncing/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/feeding-confidence"
+    ],
+    "mapped_design_candidates": [
+      "services/package",
+      "services/purchase",
+      "common/not-found",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24",
+      "services/state-25",
+      "services/state-26",
+      "services/state-27",
+      "services/state-28",
+      "services/state-29",
+      "services/state-30"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/mom_service_widgets.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/modules/services/presentation/service_purchase_dialog.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/purchase_branches_current_inventory_test.dart",
+    "test_case": "current Stripe checkout failure launch pending and query false",
+    "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-syncing-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-stripe-syncing-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-syncing-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-stripe-syncing-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-stripe-syncing-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/feeding-confidence",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Stripe paid without episode → entitlement sync",
+    "journey": {
+      "source": "test/goldens/ui_inventory/purchase-branches-current-stripe-syncing-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/purchase-branches-current-stripe-processing-393-1x.png",
+      "route": "/services/feeding-confidence",
+      "trigger": "Stripe paid without episode → entitlement sync",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/purchase_branches_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/purchase-branches-current-submitted-challenge",
+    "module": "专家服务与咨询",
+    "label": "喂养安心服务包",
+    "state": "purchase-branches-current-submitted-challenge",
+    "image": "08-expert-service/purchase-branches-current-submitted-challenge/default.png",
+    "viewport": "08-expert-service/purchase-branches-current-submitted-challenge/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/feeding-confidence"
+    ],
+    "mapped_design_candidates": [
+      "services/package",
+      "services/purchase",
+      "common/not-found",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24",
+      "services/state-25",
+      "services/state-26",
+      "services/state-27",
+      "services/state-28",
+      "services/state-29",
+      "services/state-30"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/mom_service_widgets.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/modules/services/presentation/service_purchase_dialog.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/purchase_branches_current_inventory_test.dart",
+    "test_case": "current purchase idle dismissal and reopened verification false",
+    "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-submitted-challenge-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-submitted-challenge-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-submitted-challenge-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-submitted-challenge-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-submitted-challenge-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/feeding-confidence",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Submitted card → challenge with locked fields",
+    "journey": {
+      "source": "test/goldens/ui_inventory/purchase-branches-current-submitted-challenge-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/purchase-branches-current-new-card-393-1x.png",
+      "route": "/services/feeding-confidence",
+      "trigger": "Submitted card → challenge with locked fields",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/purchase_branches_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/purchase-branches-current-success-close",
+    "module": "专家服务与咨询",
+    "label": "我的陪伴计划",
+    "state": "purchase-branches-current-success-close",
+    "image": "08-expert-service/purchase-branches-current-success-close/default.png",
+    "viewport": "08-expert-service/purchase-branches-current-success-close/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/feeding-confidence"
+    ],
+    "mapped_design_candidates": [
+      "services/package",
+      "common/not-found",
+      "services/state-21",
+      "services/state-22",
+      "services/state-23",
+      "services/state-24"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/mom_service_widgets.dart",
+      "lib/modules/services/presentation/service_package_page.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/purchase_branches_current_inventory_test.dart",
+    "test_case": "current purchase idle dismissal and reopened verification false",
+    "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-success-close-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-success-close-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-success-close-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/purchase-branches-current-success-close-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/purchase-branches-current-success-close-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/feeding-confidence",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Success Close → owned package",
+    "journey": {
+      "source": "test/goldens/ui_inventory/purchase-branches-current-success-close-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/purchase-branches-current-reopened-challenge-success-393-1x.png",
+      "route": "/services/feeding-confidence",
+      "trigger": "Success Close → owned package",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/purchase_branches_current_inventory_test.dart"
+    }
+  }
+]

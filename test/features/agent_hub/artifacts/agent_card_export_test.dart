@@ -1,5 +1,4 @@
 import 'package:momcozy_flutter_app/shared/design_system/momcozy_theme.dart';
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -46,21 +45,12 @@ Future<void> _pumpPanel(WidgetTester tester, {required double width}) async {
           child: AgentArtifactPanel(
             cards: const [_ibclcCard],
             onAction: (_) {},
-            cardExportService: _NoopCardExportService(),
           ),
         ),
       ),
     ),
   );
   await tester.pumpAndSettle();
-}
-
-class _NoopCardExportService implements AgentCardExportService {
-  @override
-  Future<void> sharePng({
-    required Uint8List bytes,
-    required String filename,
-  }) async {}
 }
 
 const _ibclcCard = AgentArtifactCardView(

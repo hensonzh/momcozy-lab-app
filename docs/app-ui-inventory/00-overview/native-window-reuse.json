@@ -1,0 +1,188 @@
+{
+  "gap": "G10",
+  "completion": "CLOSED_FOR_RECORDED_ANDROID_EVIDENCE",
+  "scope": "Reuse recorded Android system-window evidence. Background App versions and platform boundary explicitly retained; no claim of current installed build or cross-platform equivalence.",
+  "windows": [
+    {
+      "image": "native/notification-permission/native-permission-deny-system-request.png",
+      "xml": "native/notification-permission/native-permission-deny-system-request.xml",
+      "title": "Android 首次通知申请（拒绝恢复链）",
+      "entry": "App Continue → actual Android request; choose deny",
+      "reference": "native/permission-manifest.json",
+      "sha256": "f3c313eb4bae5de03534c8e97c25cc7d284561d29367f20ac1c684d6ce1b3c59",
+      "xml_sha256": "151a04136f4d480478625cbb604090efad921e6373e38e23de442cca4d46a86d",
+      "packages": [
+        "com.google.android.permissioncontroller"
+      ]
+    },
+    {
+      "image": "native/notification-permission/native-permission-deny-system-settings-off.png",
+      "xml": "native/notification-permission/native-permission-deny-system-settings-off.xml",
+      "title": "Android 通知总开关关闭（拒绝恢复链）",
+      "entry": "App Open settings → Android notification master switch off",
+      "reference": "native/permission-manifest.json",
+      "sha256": "28dcc42babbb31957016b40e4527dd601b620b51db797bfcaedab8b4011fa4f3",
+      "xml_sha256": "bb789776345655e6b31e89aee177ae9512cd4075a099be2170ec83f69c1b6d85",
+      "packages": [
+        "com.android.settings"
+      ]
+    },
+    {
+      "image": "native/notification-permission/native-permission-deny-system-settings-on.png",
+      "xml": "native/notification-permission/native-permission-deny-system-settings-on.xml",
+      "title": "Android 通知总开关开启（拒绝恢复链）",
+      "entry": "Turn on Android master switch → enabled; system Back returns to App",
+      "reference": "native/permission-manifest.json",
+      "sha256": "6d685b66de9b64d34129b2f17083e818a503be9fff5b34ca71280c22eece70f4",
+      "xml_sha256": "876cbd6be23f6a13bb7e18643310ee74a41100a33235701feb6cfc8069e875d2",
+      "packages": [
+        "com.android.settings"
+      ]
+    },
+    {
+      "image": "native/notification-permission/native-permission-allow-system-request.png",
+      "xml": "native/notification-permission/native-permission-allow-system-request.xml",
+      "title": "Android 首次通知申请（首次允许链）",
+      "entry": "App Continue → actual Android request; choose allow",
+      "reference": "native/permission-manifest.json",
+      "sha256": "b92e9f31c965183344276a61c64cb697d0dd09d98586c75b2ab85728e9e1e408",
+      "xml_sha256": "151a04136f4d480478625cbb604090efad921e6373e38e23de442cca4d46a86d",
+      "packages": [
+        "com.google.android.permissioncontroller"
+      ]
+    },
+    {
+      "image": "native/consultation-devices/native-device-deny-camera.png",
+      "xml": "native/consultation-devices/native-device-deny-camera.xml",
+      "title": "Android 摄像头申请（拒绝）",
+      "entry": "Actual Android camera permission → choose deny",
+      "reference": "native/device-manifest.json",
+      "sha256": "066d2775df261d4ac03888196cf56b34d252b9381fea9aba19277d1f1501884e",
+      "xml_sha256": "6a3daf64cc129ad7269ee4334f77e658975ffc7d0b1e9bbd17d5bd4216647b33",
+      "packages": [
+        "com.google.android.permissioncontroller"
+      ]
+    },
+    {
+      "image": "native/consultation-devices/native-device-deny-microphone.png",
+      "xml": "native/consultation-devices/native-device-deny-microphone.xml",
+      "title": "Android 麦克风申请（拒绝）",
+      "entry": "Actual Android microphone permission → choose deny",
+      "reference": "native/device-manifest.json",
+      "sha256": "a00b17d65493a6e94ed026b05e103ce43074679dd3109793d36825ecd06d9cc4",
+      "xml_sha256": "cd4f170187f248f4bb40535bbcd9db8cd8901e3741cdcdfc274a3f1d9d68863b",
+      "packages": [
+        "com.google.android.permissioncontroller"
+      ]
+    },
+    {
+      "image": "native/consultation-devices/native-device-allow-camera.png",
+      "xml": "native/consultation-devices/native-device-allow-camera.xml",
+      "title": "Android 再次申请摄像头（允许）",
+      "entry": "Actual Android camera permission → choose allow",
+      "reference": "native/device-manifest.json",
+      "sha256": "1d55a9aaf61d6f832941e721f73630c106204aac49a1a7453de9134fb7d0c6a2",
+      "xml_sha256": "28ee5d329d0d135fa4ebda5921e85e9d42cc011a4c658904f5ad256a361fdc42",
+      "packages": [
+        "com.google.android.permissioncontroller"
+      ]
+    },
+    {
+      "image": "native/consultation-devices/native-device-allow-microphone.png",
+      "xml": "native/consultation-devices/native-device-allow-microphone.xml",
+      "title": "Android 再次申请麦克风（允许）",
+      "entry": "Actual Android microphone permission → choose allow",
+      "reference": "native/device-manifest.json",
+      "sha256": "8a6aa6c6c0edcca698c43eb19b57e27a1d16f33b044f24c08e35bbc89022ff1c",
+      "xml_sha256": "843be6219323e691ec437c1c5908c854087d01f461e8aa223ee488a047915561",
+      "packages": [
+        "com.google.android.permissioncontroller"
+      ]
+    },
+    {
+      "image": "native/agent/photo-picker.png",
+      "xml": "native/agent/photo-picker.xml",
+      "title": "photo-picker",
+      "entry": "照片 → Android Photos 空列表",
+      "reference": "native/agent/evidence.json",
+      "sha256": "3fb5cfa21ce020ac1117d7f83317ad5800356f635b751eb3ab2b427a9cbf32bb",
+      "xml_sha256": "f2e41706667e21b267a72361b6b50dc4a28932be4919e0f3efe39ecc1e941c98",
+      "packages": [
+        "com.google.android.photopicker"
+      ]
+    },
+    {
+      "image": "native/agent/photo-collections.png",
+      "xml": "native/agent/photo-collections.xml",
+      "title": "photo-collections",
+      "entry": "Collections → 收藏与相机分类",
+      "reference": "native/agent/evidence.json",
+      "sha256": "69bee860916cfc75dc29f68d5811cc4aeef5edf931ac80cbeedf0986cf2e982f",
+      "xml_sha256": "62863114717d21e0ab388cc42f5eec391db07a9af6e82371627cf97e8fe8f44a",
+      "packages": [
+        "com.google.android.photopicker"
+      ]
+    },
+    {
+      "image": "native/agent/file-picker.png",
+      "xml": "native/agent/file-picker.xml",
+      "title": "file-picker",
+      "entry": "文件 → Android Recent 文件选择器，空列表",
+      "reference": "native/agent/evidence.json",
+      "sha256": "685900788690e0aaf93e404bddc88e98385cabe5fdc3cff6221a97b72d07b673",
+      "xml_sha256": "e186a867fa8872fea0f7c346a9620dc03497e83193e646eb65fe118e1c225960",
+      "packages": [
+        "com.google.android.documentsui"
+      ]
+    },
+    {
+      "image": "native/agent/camera-launch.png",
+      "xml": "native/agent/camera-launch.xml",
+      "title": "camera-launch",
+      "entry": "相机 → Android 首次相机权限申请",
+      "reference": "native/agent/evidence.json",
+      "sha256": "f6ef7d9cf59428e513d69fbca68b886ed2d0e73487a86a917e129d7c715ee2f1",
+      "xml_sha256": "6a3daf64cc129ad7269ee4334f77e658975ffc7d0b1e9bbd17d5bd4216647b33",
+      "packages": [
+        "com.google.android.permissioncontroller"
+      ]
+    },
+    {
+      "image": "native/baby-profile-software-keyboard.png",
+      "xml": "native/baby-profile-software-keyboard.xml",
+      "title": "软件键盘",
+      "entry": "宝宝资料 → 昵称 → 输入工具条菜单 → Show on-screen keyboard",
+      "reference": "native/README.md",
+      "sha256": "15a824dcbb068b3f22d56aa4517e004313ed15205279ad01e7e026e192a535c8",
+      "xml_sha256": "d9130f10b4d3cd886ced24e2003172aa8defa5a47b1e2ad35f9642ba254c9ba3",
+      "packages": [
+        "com.momcozymai.app.flutterpoc.local"
+      ]
+    },
+    {
+      "image": "native/baby-profile-input-menu.png",
+      "xml": "native/baby-profile-input-menu.xml",
+      "title": "输入工具条菜单",
+      "entry": "宝宝资料 → 昵称 → 输入工具条菜单",
+      "reference": "native/README.md",
+      "sha256": "b880b16010562fba3ccb91a585966a8333f7e15bd7a50d8a7cf9c74884e8ac4a",
+      "xml_sha256": "d9130f10b4d3cd886ced24e2003172aa8defa5a47b1e2ad35f9642ba254c9ba3",
+      "packages": [
+        "com.momcozymai.app.flutterpoc.local"
+      ]
+    },
+    {
+      "image": "native/knowledge-source/external-page.png",
+      "xml": "native/knowledge-source/external-page.xml",
+      "title": "外部浏览器已加载",
+      "entry": "Baby 知识卡 → WHO 来源 → 关闭 Chrome 引导",
+      "reference": "native/knowledge-source/evidence.json",
+      "sha256": "4051a9a29552d76b6a9686951c45e75bf0536864f040763a6452ff7332e5cc92",
+      "xml_sha256": "71368967a461d176dce67c5526c88c859c90f069e29787c419497b99967fa559",
+      "packages": [
+        "com.android.chrome"
+      ]
+    }
+  ],
+  "visual_review": "15 existing complete native windows reviewed in 3 sheets. No new native captures; source hashes checked against recorded manifests where available, keyboard hashes newly indexed from preserved files."
+}

@@ -1,0 +1,129 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_rest_control_inventory_test.dart
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/features/notifications/notification_permission_current_inventory_test.dart: (setUpAll)
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/features/notifications/notification_permission_current_inventory_test.dart: notification permission education cancellation denial and settings false
+00:02 +1: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_development_date_inventory_test.dart: inventory development date 393/1x
+00:02 +2: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_development_date_inventory_test.dart: inventory development date 393/1x
+00:03 +3: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_rest_control_inventory_test.dart: inventory Mom rest controls 393/1x all options
+00:03 +4: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_rest_control_inventory_test.dart: inventory Mom rest controls 393/1x all options
+00:04 +5: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_rest_control_inventory_test.dart: inventory Mom rest controls 393/1x all options
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/ui_inventory/mom-rest-control-more-return-393-1x.png": Pixel test failed,
+90.75%, 301016px diff detected.
+Failure feedback can be found at /Users/lute/project/momcozy-lab/app/test/modules/mom/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      _InventoryComparator.compare (file:///Users/lute/project/momcozy-lab/app/test/support/ui_inventory_capture.dart:95:20)
+<asynchronous suspension>
+#2      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#4      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#6      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#7      main.capture (file:///Users/lute/project/momcozy-lab/app/test/modules/mom/mom_rest_control_inventory_test.dart:145:5)
+<asynchronous suspension>
+#8      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/mom/mom_rest_control_inventory_test.dart:386:9)
+<asynchronous suspension>
+#9      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#10     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:05 +5 -1: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_development_date_inventory_test.dart: inventory development date 320/2x
+00:05 +5 -1: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_rest_control_inventory_test.dart: inventory Mom rest controls 393/1x all options [E]
+  Test failed. See exception logs above.
+  The test description was: inventory Mom rest controls 393/1x all options
+  
+00:05 +5 -1: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_development_date_inventory_test.dart: inventory development date 320/2x
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/ui_inventory/baby-development-date-more-return-320-2x.png": Pixel test failed,
+25.09%, 67770px diff detected.
+Failure feedback can be found at /Users/lute/project/momcozy-lab/app/test/modules/baby/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      _InventoryComparator.compare (file:///Users/lute/project/momcozy-lab/app/test/support/ui_inventory_capture.dart:95:20)
+<asynchronous suspension>
+#2      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#4      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#6      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#7      main.capture (file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_development_date_inventory_test.dart:161:5)
+<asynchronous suspension>
+#8      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_development_date_inventory_test.dart:433:7)
+<asynchronous suspension>
+#9      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#10     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:05 +5 -2: /Users/lute/project/momcozy-lab/app/test/features/notifications/notification_permission_current_inventory_test.dart: notification permission request failure retry and direct settings error true
+00:05 +5 -2: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_development_date_inventory_test.dart: inventory development date 320/2x [E]
+  Test failed. See exception logs above.
+  The test description was: inventory development date 320/2x
+  
+00:05 +5 -2: /Users/lute/project/momcozy-lab/app/test/features/notifications/notification_permission_current_inventory_test.dart: notification permission request failure retry and direct settings error true
+00:05 +6 -2: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_rest_control_inventory_test.dart: inventory Mom rest controls 320/2x
+00:06 +7 -2: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_rest_control_inventory_test.dart: inventory Mom rest controls 320/2x
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/ui_inventory/mom-rest-control-more-return-320-2x.png": Pixel test failed,
+86.02%, 232317px diff detected.
+Failure feedback can be found at /Users/lute/project/momcozy-lab/app/test/modules/mom/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      _InventoryComparator.compare (file:///Users/lute/project/momcozy-lab/app/test/support/ui_inventory_capture.dart:95:20)
+<asynchronous suspension>
+#2      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#4      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#6      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#7      main.capture (file:///Users/lute/project/momcozy-lab/app/test/modules/mom/mom_rest_control_inventory_test.dart:145:5)
+<asynchronous suspension>
+#8      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/mom/mom_rest_control_inventory_test.dart:386:9)
+<asynchronous suspension>
+#9      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#10     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:08 +7 -3: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_rest_control_inventory_test.dart: inventory Mom rest controls 320/2x [E]
+  Test failed. See exception logs above.
+  The test description was: inventory Mom rest controls 320/2x
+  
+00:08 +7 -3: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_rest_control_inventory_test.dart: (tearDownAll)
+00:08 +7 -3: Some tests failed.
+
+Failing tests:
+  /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_development_date_inventory_test.dart: inventory development date 320/2x
+  /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_rest_control_inventory_test.dart: inventory Mom rest controls 320/2x
+  /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_rest_control_inventory_test.dart: inventory Mom rest controls 393/1x all options

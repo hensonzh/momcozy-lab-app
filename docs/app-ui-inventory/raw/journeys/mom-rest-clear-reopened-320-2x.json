@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/mom-rest-clear-reopened-320-2x.png",
+  "previous_source": "test/goldens/ui_inventory/mom-rest-clear-home-refreshed-320-2x.png",
+  "route": "/me",
+  "trigger": "Reopen saved rest → interruptions and recovery restored; duration unset",
+  "root_entry": "Authenticated More → tap Me bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/mom/mom_rest_clear_inventory_test.dart"
+}

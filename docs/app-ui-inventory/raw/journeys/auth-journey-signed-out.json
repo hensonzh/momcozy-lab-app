@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/auth-journey-signed-out-393.png",
+  "previous_source": "test/goldens/ui_inventory/account-journey-verified-more-393.png",
+  "route": "/login",
+  "trigger": "More → Account settings → Sign out → anonymous login",
+  "root_entry": "Open More while signed out → real auth redirect",
+  "evidence": "Actual MomCozyFlutterApp and createMomCozyRouter; only HTTP/session/native-intent dependencies replaced with isolated fixtures",
+  "test": "test/features/auth/auth_inventory_journey_test.dart"
+}

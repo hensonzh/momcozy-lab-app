@@ -1,0 +1,7 @@
+{
+  "lib/modules/consultation/presentation/room_page.dart": "ba25951f213789d08c402f24dd412667f2ba30f73d3c9778e5c7ab503778418e",
+  "lib/app/mom_module_routes.dart": "02b8f0d9fe9b08a9e5ad5c9f06faa5ce2ae72c26b91c00b521152589c15a40d0",
+  "test/support/room_outcome_scenarios.dart": "e7c6eed9b55e01991af8f1efc03168a31a68c43e4ea0ebce6e7b133a52733072",
+  "test/modules/consultation/room_outcome_design_test.dart": "b282882ab9839b2b6a51c62ba23feb0787d2cb2ff90183ac8e9d7f218a59a3fe",
+  "integration_test/room_outcome_design_test.dart": "8d628f3548f45cb2bad9405bb09a5c2b75b87438364a61428a672aff1d657120"
+}

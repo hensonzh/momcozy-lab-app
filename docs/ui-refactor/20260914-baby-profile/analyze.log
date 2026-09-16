@@ -1,0 +1,5 @@
+Analyzing baby_profile_editor.dart...                           
+
+  error • The named parameter 'momStyle' isn't defined. Try correcting the name to an existing named parameter's name, or defining a named parameter with the name 'momStyle' • lib/modules/baby/presentation/baby_profile_editor.dart:323:33 • undefined_named_parameter
+
+1 issue found. (ran in 0.9s)

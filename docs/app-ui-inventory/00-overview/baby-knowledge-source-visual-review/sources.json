@@ -1,0 +1,2578 @@
+{
+  "method": "full-width continuous 650px strips; identical pixels reference prior reviewed Mom or Baby controls; remaining segments reviewed at native width",
+  "sources": [
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-development-detail-320-2x.long.png",
+      "sha256": "45603c30bbf90a90b6abed25f324d4def364b9207713593aefe35f9fd5ce25ba",
+      "width": 320,
+      "height": 1721,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "e4b4ee71c3c77661cd5ca6d1e293f27d4924d9a77bc035910fe7d86f66902b52",
+          "review": "sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "9138e42942c62e50b53fc133f3189c12c1c18cf24d4c64b416545efb487f100f",
+          "review": "sheet-01.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1721,
+          "pixel_sha256": "6c594b6f734a36550f49479d4b6c30affa526315f8ee166d911346467ae35efb",
+          "review": "sheet-01.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-development-detail-320-2x.png",
+      "sha256": "fbd47f903e9145e1bd0c34ed3e8fff0b25f5fcbfcd70f801fa7ded096ae11323",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a6f75592e30c582a18da4bc632963a07499aab5a0e4e8aacb2ffb941de0eb633",
+          "review": "sheet-01.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "0e745435ac4429c70e4c6e9792063fe5e608786f329f58a708dfb27bcf0cbe9b",
+          "review": "sheet-01.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-development-detail-393-1x.png",
+      "sha256": "6571cad29fca063f8a39ffce3061b75e27ab7b8eaab056fb4f0cde20c1b0dd8e",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ead30c1854274237aadf47766b3a4f73d845787de7ca3473ce244c3cd6d7bca3",
+          "review": "sheet-01.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3901cc9db6507b95c7df9a95714ad94c09d0f6577051b327f900acbedd0e7c1e",
+          "review": "sheet-02.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-development-home-320-2x.long.png",
+      "sha256": "a79c72b16e764e011bfdcb310085b9857b91a7243fd24a15ce6de91315a6ba74",
+      "width": 320,
+      "height": 3364,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "afa219c4c90c8f3dfbc114728bfef359e5a30ffd185482cbb45955052f6fe53d",
+          "review": "sheet-02.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "209b5ed47f6fa04dd2b40b76aa5ee0a0f82323dd5c27ebb96eedec27990adda6",
+          "review": "sheet-02.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "e3f30cf8805caa106fb741a2ed323c23151aee1ca49db90cdc83e43c1a7f70a8",
+          "review": "sheet-02.png#tile-3"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "a5ac62af08b30f01d442d6868b71cc2c73ccc8294afc2c44565808499c506bb8",
+          "review": "sheet-02.png#tile-4"
+        },
+        {
+          "y0": 2600,
+          "y1": 3250,
+          "pixel_sha256": "ca17ee603c2817571f919c754f7bdc3b143fa4bf6d9d029f63fab99dc729e255",
+          "review": "sheet-02.png#tile-5"
+        },
+        {
+          "y0": 3250,
+          "y1": 3364,
+          "pixel_sha256": "174daf9358c5142131a3e53dc03a00f800f750078c6e8a3c111f1db8268b07a2",
+          "review": "sheet-03.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-development-home-320-2x.png",
+      "sha256": "805282e83e713fe71c9c5a46894c9065cc919bf66da95bede7a3352cd69cf209",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "afa219c4c90c8f3dfbc114728bfef359e5a30ffd185482cbb45955052f6fe53d",
+          "review": "sheet-02.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "4ed6a0a792b8ed3464c4cff8c5e5145f4d9c6d68542848808ec5ab122c97316a",
+          "review": "sheet-03.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-development-home-393-1x.long.png",
+      "sha256": "17acb83ad9318146c16e96beed3b7efe94db636fd0e85421a951dba82622a240",
+      "width": 393,
+      "height": 1752,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "7e924792233a4ea4d444d6ec1877fd257b94e58b0e5dcc3cb498ca48649f0121",
+          "review": "sheet-03.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "462243825730002d5a7b26fe7e1bbdb2f381ea57afabfc7a0cad762ed9541c1e",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1752,
+          "pixel_sha256": "5d1142fe86ef6e5a8664871afce9928bf15cf58f7b773ac5f1080f1b7fead23c",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-development-home-393-1x.png",
+      "sha256": "808861a1c4b440001b4ff87f9af3fed2a00b82e693f616f9bbf60cebdacc87df",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "7e924792233a4ea4d444d6ec1877fd257b94e58b0e5dcc3cb498ca48649f0121",
+          "review": "sheet-03.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a1f9a5a5f828e0a335129ce0d0a8a7cf54c1ab1e6b87423f882a64c1946d8f9e",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-development-return-320-2x.long.png",
+      "sha256": "a79c72b16e764e011bfdcb310085b9857b91a7243fd24a15ce6de91315a6ba74",
+      "width": 320,
+      "height": 3364,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "afa219c4c90c8f3dfbc114728bfef359e5a30ffd185482cbb45955052f6fe53d",
+          "review": "sheet-02.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "209b5ed47f6fa04dd2b40b76aa5ee0a0f82323dd5c27ebb96eedec27990adda6",
+          "review": "sheet-02.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "e3f30cf8805caa106fb741a2ed323c23151aee1ca49db90cdc83e43c1a7f70a8",
+          "review": "sheet-02.png#tile-3"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "a5ac62af08b30f01d442d6868b71cc2c73ccc8294afc2c44565808499c506bb8",
+          "review": "sheet-02.png#tile-4"
+        },
+        {
+          "y0": 2600,
+          "y1": 3250,
+          "pixel_sha256": "ca17ee603c2817571f919c754f7bdc3b143fa4bf6d9d029f63fab99dc729e255",
+          "review": "sheet-02.png#tile-5"
+        },
+        {
+          "y0": 3250,
+          "y1": 3364,
+          "pixel_sha256": "174daf9358c5142131a3e53dc03a00f800f750078c6e8a3c111f1db8268b07a2",
+          "review": "sheet-03.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-development-return-320-2x.png",
+      "sha256": "a68b6cd44b2462fe6e0aa76355eb8c91d0c4c77061d73493f7852d83e974df03",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "65ecc7c0f142d574d7f0b07b9b2a4126057aa488283e3d348edfd26f2d7d1529",
+          "review": "sheet-03.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "39694a5d1e8b3677da71d5917e6ea15aaa15269e69b68ecd43215cc3ba2aa3f5",
+          "review": "sheet-03.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-development-return-393-1x.long.png",
+      "sha256": "17acb83ad9318146c16e96beed3b7efe94db636fd0e85421a951dba82622a240",
+      "width": 393,
+      "height": 1752,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "7e924792233a4ea4d444d6ec1877fd257b94e58b0e5dcc3cb498ca48649f0121",
+          "review": "sheet-03.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "462243825730002d5a7b26fe7e1bbdb2f381ea57afabfc7a0cad762ed9541c1e",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1752,
+          "pixel_sha256": "5d1142fe86ef6e5a8664871afce9928bf15cf58f7b773ac5f1080f1b7fead23c",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-development-return-393-1x.png",
+      "sha256": "42fc45ac6d07bd6a796059f57e6c79cdbc19fc0c88ecac4b617dc7f229255475",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a8203dadb2781c7ef78db1e9b148872639494a81c7826a2831ee7add018a32f4",
+          "review": "sheet-03.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "36e79d56e7e3fcfff82fb78753158bce72e09d267b03df04cea3833dffc56c9b",
+          "review": "sheet-04.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-development-source-dispatched-320-2x.long.png",
+      "sha256": "45603c30bbf90a90b6abed25f324d4def364b9207713593aefe35f9fd5ce25ba",
+      "width": 320,
+      "height": 1721,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "e4b4ee71c3c77661cd5ca6d1e293f27d4924d9a77bc035910fe7d86f66902b52",
+          "review": "sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "9138e42942c62e50b53fc133f3189c12c1c18cf24d4c64b416545efb487f100f",
+          "review": "sheet-01.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1721,
+          "pixel_sha256": "6c594b6f734a36550f49479d4b6c30affa526315f8ee166d911346467ae35efb",
+          "review": "sheet-01.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-development-source-dispatched-320-2x.png",
+      "sha256": "cada288cd36c0d46bbfb2686d118750f98002a520f0ce05e7147b99eb7661704",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ee6a3c1167d1e54836e736fe603345293814aca751fb77fffcb35edb320e21d7",
+          "review": "sheet-04.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "53bcabf57f9403587e4bad0002e105777155bea36e76b8d32d38b9d80a747517",
+          "review": "sheet-04.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-development-source-dispatched-393-1x.png",
+      "sha256": "6571cad29fca063f8a39ffce3061b75e27ab7b8eaab056fb4f0cde20c1b0dd8e",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ead30c1854274237aadf47766b3a4f73d845787de7ca3473ce244c3cd6d7bca3",
+          "review": "sheet-01.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3901cc9db6507b95c7df9a95714ad94c09d0f6577051b327f900acbedd0e7c1e",
+          "review": "sheet-02.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-diaper-detail-320-2x.long.png",
+      "sha256": "82d58d3d0b43e81a52f6548d38de9a1f13bf942df012864fea11b78490d9246e",
+      "width": 320,
+      "height": 1826,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "de14016505be4907a341cc3e26814317dde091cb53d074f78c5f0d77e27b5f75",
+          "review": "sheet-04.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "dc796b6ce2cf93bb7cad6bf6e19c3d9733cdc2e5e559349e7c2bc49003da439d",
+          "review": "sheet-04.png#tile-4"
+        },
+        {
+          "y0": 1300,
+          "y1": 1826,
+          "pixel_sha256": "18732e898b1eb48a1ba722a9d3b5ee508b40534c62db79252ff1df486caa3274",
+          "review": "sheet-04.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-diaper-detail-320-2x.png",
+      "sha256": "2f2c65e2ea8668325a236a2ad1deb8d8c4f464feda9592c4e4b184293bb1b21d",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "941d2297e2e8c21996ee036931bf793aa7cf32296f4491ad37a318f1eb54e161",
+          "review": "sheet-05.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "53bcabf57f9403587e4bad0002e105777155bea36e76b8d32d38b9d80a747517",
+          "review": "sheet-04.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-diaper-detail-393-1x.png",
+      "sha256": "49ceee3f942b51a34ffab027cab185ef58ade3cc9f627cd0d47a24c523c2922a",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "aaf8b3f8650d95c811d6568607327cc48d7b657abbc622d44525e339257508a0",
+          "review": "sheet-05.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "68ccabaef9183a4ec98b30161e9b537ea28d37ae4096f223eae2c6f96b137d6a",
+          "review": "../baby-profile-control-visual-review/sheet-16.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-diaper-home-320-2x.long.png",
+      "sha256": "4ec4309db9e83add3a2ee296c63b446749389afebb9a97fa0c5d3798a94d5ad7",
+      "width": 320,
+      "height": 3421,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "7de4c515d7d5ea83ec45b9866a421c1e44e9134a9908acaaf82ae62de38af53e",
+          "review": "sheet-05.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "a92fb544db3ce7d95e3366e5cf1b5023e10a3065a9d424788f09cc40073665e9",
+          "review": "sheet-05.png#tile-3"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "0ff4b0777f8b8da02b0f39beead4255ee76799d7380a55ababea3c89104105af",
+          "review": "sheet-05.png#tile-4"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "bae98f292fe88c6b4b312a2c739a4e4fddc028e53cab3d0d3cb2ad029aef8664",
+          "review": "sheet-05.png#tile-5"
+        },
+        {
+          "y0": 2600,
+          "y1": 3250,
+          "pixel_sha256": "1a0df61bcff244d3347d4211d7d59e3308c3f0b72ca65f167cc9644856712c78",
+          "review": "sheet-06.png#tile-0"
+        },
+        {
+          "y0": 3250,
+          "y1": 3421,
+          "pixel_sha256": "38bc2e0c81a07cd0340fbc2e078223e7d8aeec9f43020dfbf0d164550a236be4",
+          "review": "sheet-06.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-diaper-home-320-2x.png",
+      "sha256": "9d11aa01626bef8396aa18611143ec0cd44f62a60b3474841830a1955fb2711c",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "7de4c515d7d5ea83ec45b9866a421c1e44e9134a9908acaaf82ae62de38af53e",
+          "review": "sheet-05.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "0e66f77922e6e47f96b1d14ea7ebb6d222c4281e5dc7de14f25e64f0ade1ccc1",
+          "review": "sheet-06.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-diaper-home-393-1x.long.png",
+      "sha256": "4e32c5f1b3e4e931bddf7aa44623cb1e8f6bc3214adfb4a9718f466485c2af70",
+      "width": 393,
+      "height": 1752,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "f85597ff432acda242196f17329f62edf16b5038ba91bf65ff427c0adbe3a221",
+          "review": "sheet-06.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "462243825730002d5a7b26fe7e1bbdb2f381ea57afabfc7a0cad762ed9541c1e",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1752,
+          "pixel_sha256": "5d1142fe86ef6e5a8664871afce9928bf15cf58f7b773ac5f1080f1b7fead23c",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-diaper-home-393-1x.png",
+      "sha256": "51eb1ac8e18f183d516384cc82128ae8880aee7f100f8e726d72d2a4ba0aa143",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "f85597ff432acda242196f17329f62edf16b5038ba91bf65ff427c0adbe3a221",
+          "review": "sheet-06.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a1f9a5a5f828e0a335129ce0d0a8a7cf54c1ab1e6b87423f882a64c1946d8f9e",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-diaper-return-320-2x.long.png",
+      "sha256": "4ec4309db9e83add3a2ee296c63b446749389afebb9a97fa0c5d3798a94d5ad7",
+      "width": 320,
+      "height": 3421,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "7de4c515d7d5ea83ec45b9866a421c1e44e9134a9908acaaf82ae62de38af53e",
+          "review": "sheet-05.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "a92fb544db3ce7d95e3366e5cf1b5023e10a3065a9d424788f09cc40073665e9",
+          "review": "sheet-05.png#tile-3"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "0ff4b0777f8b8da02b0f39beead4255ee76799d7380a55ababea3c89104105af",
+          "review": "sheet-05.png#tile-4"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "bae98f292fe88c6b4b312a2c739a4e4fddc028e53cab3d0d3cb2ad029aef8664",
+          "review": "sheet-05.png#tile-5"
+        },
+        {
+          "y0": 2600,
+          "y1": 3250,
+          "pixel_sha256": "1a0df61bcff244d3347d4211d7d59e3308c3f0b72ca65f167cc9644856712c78",
+          "review": "sheet-06.png#tile-0"
+        },
+        {
+          "y0": 3250,
+          "y1": 3421,
+          "pixel_sha256": "38bc2e0c81a07cd0340fbc2e078223e7d8aeec9f43020dfbf0d164550a236be4",
+          "review": "sheet-06.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-diaper-return-320-2x.png",
+      "sha256": "eeb498d7bda735448ce067c09b952637182482e865a8bfcf4c765a3e1ff2169a",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "e30309fabf60444d370a3bcb133d5c5c63f7bfa531df916b5bb29b80883bbd4c",
+          "review": "sheet-06.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "7d50ba87c6747a2827e9fbbcc13566cf95e30e2171b470ddf616277cb491538e",
+          "review": "sheet-06.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-diaper-return-393-1x.long.png",
+      "sha256": "4e32c5f1b3e4e931bddf7aa44623cb1e8f6bc3214adfb4a9718f466485c2af70",
+      "width": 393,
+      "height": 1752,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "f85597ff432acda242196f17329f62edf16b5038ba91bf65ff427c0adbe3a221",
+          "review": "sheet-06.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "462243825730002d5a7b26fe7e1bbdb2f381ea57afabfc7a0cad762ed9541c1e",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1752,
+          "pixel_sha256": "5d1142fe86ef6e5a8664871afce9928bf15cf58f7b773ac5f1080f1b7fead23c",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-diaper-return-393-1x.png",
+      "sha256": "d98c7e145325fa9b6f41d5df0b4f90de4bcf232d029e643fd41846147f652dca",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "cf2591278600e5e11660c26b7a62e308a0b7e7d4f9d6c436bf43dd4daeebb1ad",
+          "review": "sheet-07.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "36e79d56e7e3fcfff82fb78753158bce72e09d267b03df04cea3833dffc56c9b",
+          "review": "sheet-04.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-diaper-source-dispatched-320-2x.long.png",
+      "sha256": "82d58d3d0b43e81a52f6548d38de9a1f13bf942df012864fea11b78490d9246e",
+      "width": 320,
+      "height": 1826,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "de14016505be4907a341cc3e26814317dde091cb53d074f78c5f0d77e27b5f75",
+          "review": "sheet-04.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "dc796b6ce2cf93bb7cad6bf6e19c3d9733cdc2e5e559349e7c2bc49003da439d",
+          "review": "sheet-04.png#tile-4"
+        },
+        {
+          "y0": 1300,
+          "y1": 1826,
+          "pixel_sha256": "18732e898b1eb48a1ba722a9d3b5ee508b40534c62db79252ff1df486caa3274",
+          "review": "sheet-04.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-diaper-source-dispatched-320-2x.png",
+      "sha256": "8c60ed4d25d4cf161e3968bc5c068d565558f2a60b060d8e7a97a34560ecd2d7",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ff24799a99cc201bc0b3c7d54c4f7b37ed12d46345f2950402ab3104aa5b576a",
+          "review": "sheet-07.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "53bcabf57f9403587e4bad0002e105777155bea36e76b8d32d38b9d80a747517",
+          "review": "sheet-04.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-diaper-source-dispatched-393-1x.png",
+      "sha256": "49ceee3f942b51a34ffab027cab185ef58ade3cc9f627cd0d47a24c523c2922a",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "aaf8b3f8650d95c811d6568607327cc48d7b657abbc622d44525e339257508a0",
+          "review": "sheet-05.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "68ccabaef9183a4ec98b30161e9b537ea28d37ae4096f223eae2c6f96b137d6a",
+          "review": "../baby-profile-control-visual-review/sheet-16.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-feeding-detail-320-2x.long.png",
+      "sha256": "1ddc3d55721c20d4f1f0df3b7050b54f1b6481e77f77592704e7ffd781c5fce7",
+      "width": 320,
+      "height": 1860,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "244c2d302328ac473c32e442809c426d45edb9babf831e2c1d46146d3d07eb8c",
+          "review": "sheet-07.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "a75d3963ce9b5612855777e8aa84abb822963e6b97ef1eec35ea7b50c5a9d3e4",
+          "review": "sheet-07.png#tile-3"
+        },
+        {
+          "y0": 1300,
+          "y1": 1860,
+          "pixel_sha256": "c5631fe84ee86b23d6afb6bf812e4ad1f66b4a071642cc8059e6a9f7ca5e885a",
+          "review": "sheet-07.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-feeding-detail-320-2x.png",
+      "sha256": "b57b4bac44663693dd9abe494d741b1ac019fcf64b7d684ec85fcf351fa8a0c2",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "48e5fb931a115bc81d814208ad095abcedea7800b15f295adb9af30c08f16425",
+          "review": "sheet-07.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "53bcabf57f9403587e4bad0002e105777155bea36e76b8d32d38b9d80a747517",
+          "review": "sheet-04.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-feeding-detail-393-1x.png",
+      "sha256": "39f63c3da0b6730ed92af458f8c10cfc7bf2f63bd221875dd37b29c9e0ea8536",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2b581e81c0d28939203925329097e795a94331b26e85fbe270899b5abc44e3cf",
+          "review": "sheet-08.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "fe86eb2a0fdda4e7a3f3f2fe4ba623dcca365d91b6bff0d19419871926b04369",
+          "review": "sheet-08.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-feeding-home-320-2x.long.png",
+      "sha256": "243d13b69aaa0c13d8ecfacd234983ba10c85f11ffbf906edd05ac445bf32c1b",
+      "width": 320,
+      "height": 3504,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "05e4ed291178f1ee5c315d8bf362bec72e9b1b7658e9279c8f00750f7b273e07",
+          "review": "sheet-08.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "f692338ce95f705eb2ddf4633a15e240e24e6b3c0ce7e6669b5445d99e6e4a36",
+          "review": "sheet-08.png#tile-3"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "067c8d259d9690a5faadea35cbc389f55ef7c42f2083f61887f0c9c3becdc45b",
+          "review": "sheet-08.png#tile-4"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "d804b0ab559b409f0dd5fdca030066712ae0591e340c780c73f625935686b014",
+          "review": "sheet-08.png#tile-5"
+        },
+        {
+          "y0": 2600,
+          "y1": 3250,
+          "pixel_sha256": "12c2b7abd9d10a50dddd3e108de4abba42883afba40fe2891cefdee5e472fd24",
+          "review": "sheet-09.png#tile-0"
+        },
+        {
+          "y0": 3250,
+          "y1": 3504,
+          "pixel_sha256": "d0e955cfaaca3dbbc53eee761cddd7a4fd95f5db04aadb1186cc22460e972fc5",
+          "review": "sheet-09.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-feeding-home-320-2x.png",
+      "sha256": "052e6186c76161be67efcdabf53a720e6dd0379d2df17f9e4e06798c9ce8f4b1",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "05e4ed291178f1ee5c315d8bf362bec72e9b1b7658e9279c8f00750f7b273e07",
+          "review": "sheet-08.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "503577221a4a54869fb508d7d40f69c09ea306e5fbf735ec75e3a98120ba8d0f",
+          "review": "sheet-09.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-feeding-home-393-1x.long.png",
+      "sha256": "7eaac8dbb7c0e7946d3916c2b6c7b63e3ca4b0c99a2fc79ed5e2b3fb844693c8",
+      "width": 393,
+      "height": 1752,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "37b4b4192b10eb86e87ebd01a3e830e01471a949f2223a42399d41b85f214c75",
+          "review": "sheet-09.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "e2f236858ea256938996a4a217052f82804c541dde728dc9ee7803bb666d0bd6",
+          "review": "sheet-09.png#tile-4"
+        },
+        {
+          "y0": 1300,
+          "y1": 1752,
+          "pixel_sha256": "5d1142fe86ef6e5a8664871afce9928bf15cf58f7b773ac5f1080f1b7fead23c",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-feeding-home-393-1x.png",
+      "sha256": "2e3b92fcc2ada74dbeb8dc153ae860e644b6ea955b5aa8587afa6f71f3ac9011",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "37b4b4192b10eb86e87ebd01a3e830e01471a949f2223a42399d41b85f214c75",
+          "review": "sheet-09.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a95470829a8b1039be557a3b245bddc356ecd1fecba64ee1e8e68eac837c3f2c",
+          "review": "sheet-09.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-feeding-return-320-2x.long.png",
+      "sha256": "243d13b69aaa0c13d8ecfacd234983ba10c85f11ffbf906edd05ac445bf32c1b",
+      "width": 320,
+      "height": 3504,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "05e4ed291178f1ee5c315d8bf362bec72e9b1b7658e9279c8f00750f7b273e07",
+          "review": "sheet-08.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "f692338ce95f705eb2ddf4633a15e240e24e6b3c0ce7e6669b5445d99e6e4a36",
+          "review": "sheet-08.png#tile-3"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "067c8d259d9690a5faadea35cbc389f55ef7c42f2083f61887f0c9c3becdc45b",
+          "review": "sheet-08.png#tile-4"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "d804b0ab559b409f0dd5fdca030066712ae0591e340c780c73f625935686b014",
+          "review": "sheet-08.png#tile-5"
+        },
+        {
+          "y0": 2600,
+          "y1": 3250,
+          "pixel_sha256": "12c2b7abd9d10a50dddd3e108de4abba42883afba40fe2891cefdee5e472fd24",
+          "review": "sheet-09.png#tile-0"
+        },
+        {
+          "y0": 3250,
+          "y1": 3504,
+          "pixel_sha256": "d0e955cfaaca3dbbc53eee761cddd7a4fd95f5db04aadb1186cc22460e972fc5",
+          "review": "sheet-09.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-feeding-return-320-2x.png",
+      "sha256": "25c7024002e1b87d9187aa52a70f77ed65b97d8cf5af4019b571995d01ecfd2f",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2e78edeaff87d85e27cc6701c183ac96f2799fe7aebe182cbbe0c8f67d953256",
+          "review": "sheet-10.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "c9d96460216eaa8b95bfaeab04af68028b056cfb9db418d679513be4258d3591",
+          "review": "sheet-10.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-feeding-return-393-1x.long.png",
+      "sha256": "7eaac8dbb7c0e7946d3916c2b6c7b63e3ca4b0c99a2fc79ed5e2b3fb844693c8",
+      "width": 393,
+      "height": 1752,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "37b4b4192b10eb86e87ebd01a3e830e01471a949f2223a42399d41b85f214c75",
+          "review": "sheet-09.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "e2f236858ea256938996a4a217052f82804c541dde728dc9ee7803bb666d0bd6",
+          "review": "sheet-09.png#tile-4"
+        },
+        {
+          "y0": 1300,
+          "y1": 1752,
+          "pixel_sha256": "5d1142fe86ef6e5a8664871afce9928bf15cf58f7b773ac5f1080f1b7fead23c",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-feeding-return-393-1x.png",
+      "sha256": "cf0382b7237e13005460717f2a9ec0b486b7a477b00faf7e0d90a9749d25118b",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "1e5ec89b9cd70ddbd47a4874c09cf7d2df1b38022d63411a9dcfc5d7ea554daa",
+          "review": "sheet-10.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "36e79d56e7e3fcfff82fb78753158bce72e09d267b03df04cea3833dffc56c9b",
+          "review": "sheet-04.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-feeding-source-dispatched-320-2x.long.png",
+      "sha256": "1ddc3d55721c20d4f1f0df3b7050b54f1b6481e77f77592704e7ffd781c5fce7",
+      "width": 320,
+      "height": 1860,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "244c2d302328ac473c32e442809c426d45edb9babf831e2c1d46146d3d07eb8c",
+          "review": "sheet-07.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "a75d3963ce9b5612855777e8aa84abb822963e6b97ef1eec35ea7b50c5a9d3e4",
+          "review": "sheet-07.png#tile-3"
+        },
+        {
+          "y0": 1300,
+          "y1": 1860,
+          "pixel_sha256": "c5631fe84ee86b23d6afb6bf812e4ad1f66b4a071642cc8059e6a9f7ca5e885a",
+          "review": "sheet-07.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-feeding-source-dispatched-320-2x.png",
+      "sha256": "7abf474f407c2ebf791bbefafa210da175042a0d5366d4fed6af4dfe595bfbfc",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "122abe30046f53783a199be983695a1e6e161bffee721a59deb7c7e7a905d44e",
+          "review": "sheet-10.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "53bcabf57f9403587e4bad0002e105777155bea36e76b8d32d38b9d80a747517",
+          "review": "sheet-04.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-feeding-source-dispatched-393-1x.png",
+      "sha256": "39f63c3da0b6730ed92af458f8c10cfc7bf2f63bd221875dd37b29c9e0ea8536",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2b581e81c0d28939203925329097e795a94331b26e85fbe270899b5abc44e3cf",
+          "review": "sheet-08.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "fe86eb2a0fdda4e7a3f3f2fe4ba623dcca365d91b6bff0d19419871926b04369",
+          "review": "sheet-08.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-feedingCues-detail-320-2x.long.png",
+      "sha256": "d51d3a35e18799e7921223dad8b26032b8ce3dbbbd1bc8f3e69aaa9ad29c6024",
+      "width": 320,
+      "height": 1770,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "99739c178e3b4dfdd2daaf572fa86c6c7bb08fe42a214af75d8beef6140f1b6c",
+          "review": "sheet-10.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "0b93d0474863ad024a5f1954c6d78bac571cdcbc8d020f81e7c8efb6b0ff1227",
+          "review": "sheet-10.png#tile-5"
+        },
+        {
+          "y0": 1300,
+          "y1": 1770,
+          "pixel_sha256": "f57119ddd51d1f523d7a1ce77dc962417d5ab6f9b8e2619010d183e81e1d40e1",
+          "review": "sheet-11.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-feedingCues-detail-320-2x.png",
+      "sha256": "3dfa5551869a375de8c3d172d00f2b74e5ed53aef45116c6702487fe517ac318",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "f25d48587639159d85c26af145680ff0290f6560e52044b724aa6291495f595a",
+          "review": "sheet-11.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "53bcabf57f9403587e4bad0002e105777155bea36e76b8d32d38b9d80a747517",
+          "review": "sheet-04.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-feedingCues-detail-393-1x.png",
+      "sha256": "771cd264e23dc0c7bdd621c324bd41657a3000a6d5f6e9cf665b9ba57d2ec289",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "08f22f17446b51eb5a1477d7dc10836aa2009b2489fdafd86b855a2480ede6d6",
+          "review": "sheet-11.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "68ccabaef9183a4ec98b30161e9b537ea28d37ae4096f223eae2c6f96b137d6a",
+          "review": "../baby-profile-control-visual-review/sheet-16.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-feedingCues-home-320-2x.long.png",
+      "sha256": "2a7eed3eaa881740523730a74f99487a3935cee5f5e500fdea7e513a60082fc7",
+      "width": 320,
+      "height": 3460,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "58578630282c08ed070b330c5092b2346554d47e291ecce03bfa1790d2ebdd62",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "034c398b12fe2df5aaef1e8fd2e151d4092f4bc550a8179f7524acfdf8572a5d",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "fa27bf1b8f7135cf78bb1380036cbe25b805799678f9c6338d1b09862168215b",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "cf7b9827ee12ea5f4ce473b5b04736e9eca7e63163a06350e8ad0569b0e9a58a",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-3"
+        },
+        {
+          "y0": 2600,
+          "y1": 3250,
+          "pixel_sha256": "830120be56be43c6e4e4a7527c94577138b4175b12f8b7b606a89d5ff059987b",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-4"
+        },
+        {
+          "y0": 3250,
+          "y1": 3460,
+          "pixel_sha256": "347ac7ec17d5bdaf8c362c53e6be84275398444203824d119dff6d55c72c68e4",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-feedingCues-home-320-2x.png",
+      "sha256": "32e02297eb960cf9da693d3ed9a4e380131ba98e63d64680e1c452112635af75",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "58578630282c08ed070b330c5092b2346554d47e291ecce03bfa1790d2ebdd62",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "98ef9a2ad09f8a3c8229ac286c7eb3cb28273ffd01708531c25ae3c0ce531fd2",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-feedingCues-home-393-1x.long.png",
+      "sha256": "f0cba396e8a9efa775fb9fbb71adccd863e4ce8dace888759be74db253f099a6",
+      "width": 393,
+      "height": 1752,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2541e10f43029eb71329290bf405fa83fabe418cf9eb6676ed4e3eb8498f6856",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "462243825730002d5a7b26fe7e1bbdb2f381ea57afabfc7a0cad762ed9541c1e",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1752,
+          "pixel_sha256": "5d1142fe86ef6e5a8664871afce9928bf15cf58f7b773ac5f1080f1b7fead23c",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-feedingCues-home-393-1x.png",
+      "sha256": "f7c02c89b1acb7e0cd4ab4adc0593819b05f05ed599398d49ea569c924ea6a82",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2541e10f43029eb71329290bf405fa83fabe418cf9eb6676ed4e3eb8498f6856",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a1f9a5a5f828e0a335129ce0d0a8a7cf54c1ab1e6b87423f882a64c1946d8f9e",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-feedingCues-source-dispatched-320-2x.long.png",
+      "sha256": "d51d3a35e18799e7921223dad8b26032b8ce3dbbbd1bc8f3e69aaa9ad29c6024",
+      "width": 320,
+      "height": 1770,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "99739c178e3b4dfdd2daaf572fa86c6c7bb08fe42a214af75d8beef6140f1b6c",
+          "review": "sheet-10.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "0b93d0474863ad024a5f1954c6d78bac571cdcbc8d020f81e7c8efb6b0ff1227",
+          "review": "sheet-10.png#tile-5"
+        },
+        {
+          "y0": 1300,
+          "y1": 1770,
+          "pixel_sha256": "f57119ddd51d1f523d7a1ce77dc962417d5ab6f9b8e2619010d183e81e1d40e1",
+          "review": "sheet-11.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-feedingCues-source-dispatched-320-2x.png",
+      "sha256": "e589e561def7628f4869b6ffe8b81fc2630fc6ab0ff0a722f272f5380b20cda9",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "e45d5a32b59917d11b84525df77dbf70e690dc87ceb44f5b8099174bba714801",
+          "review": "sheet-11.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "53bcabf57f9403587e4bad0002e105777155bea36e76b8d32d38b9d80a747517",
+          "review": "sheet-04.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-feedingCues-source-dispatched-393-1x.png",
+      "sha256": "771cd264e23dc0c7bdd621c324bd41657a3000a6d5f6e9cf665b9ba57d2ec289",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "08f22f17446b51eb5a1477d7dc10836aa2009b2489fdafd86b855a2480ede6d6",
+          "review": "sheet-11.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "68ccabaef9183a4ec98b30161e9b537ea28d37ae4096f223eae2c6f96b137d6a",
+          "review": "../baby-profile-control-visual-review/sheet-16.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-growth-detail-320-2x.long.png",
+      "sha256": "634eb8f6b3350f7d1e249c665ee69cb31aed31d85631a3efd85df91df915094a",
+      "width": 320,
+      "height": 1723,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "40264d4cd6a21f9ef233974f3a63c21499cd39714648700071e9917e9e239a56",
+          "review": "sheet-11.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "29d4ff13eddabeff71c41bd8faa616f3c6314ddfbd48cc4f11a9308ad08b0bcf",
+          "review": "sheet-11.png#tile-5"
+        },
+        {
+          "y0": 1300,
+          "y1": 1723,
+          "pixel_sha256": "5322e631bd4a0e2b84ba6f640255c1bfed5c73acc957ada7e7cddfae7f72888f",
+          "review": "sheet-12.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-growth-detail-320-2x.png",
+      "sha256": "cf9549af9905e5a2e31be0b1a3a5fe7485c58d0fd2380b8ac097a5c38aa8495e",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9b511920662373de197c2ab731c1803a552163fd069c6e8db1bbbd8e98b4069a",
+          "review": "sheet-12.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "53bcabf57f9403587e4bad0002e105777155bea36e76b8d32d38b9d80a747517",
+          "review": "sheet-04.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-growth-detail-393-1x.png",
+      "sha256": "08eb139028a7b7064a445ac0d56260e43591d289f852e5a3a3f886eb494002df",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "5830e96487d492bbabca29a6d8d0b99518f8303339bc2ea51beb528c8dc009df",
+          "review": "sheet-12.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1c4c4bd3922dfa72c8614daa71fa5b4d02ea532170332ebdb0b4a48ebcb7fea3",
+          "review": "sheet-12.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-growth-home-320-2x.long.png",
+      "sha256": "c59661b0235e5e2b6bd859d4e01acfa093d32f567c5bc160359061c773e35f9b",
+      "width": 320,
+      "height": 3388,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "20d18e665fb4955d5c1bf9bfc8f29676974c3f9bf6588a8e7a3a7dc0da7d3854",
+          "review": "sheet-12.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "2dde507d4de1bd0857a192b58b5f129d5cf5e35806bf8b81a5617f7fca0bdf6c",
+          "review": "sheet-12.png#tile-5"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "6873f8c89de47aba54008dd6650738c50b97f9fcf31b4ca3c3f14613efba0fa9",
+          "review": "sheet-13.png#tile-0"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "a8083d85b09355b3379058092e4a351acabecfb28b752359eda68993a703038c",
+          "review": "sheet-13.png#tile-1"
+        },
+        {
+          "y0": 2600,
+          "y1": 3250,
+          "pixel_sha256": "d3d14fb3be518845c707e291a8d0d75920b494e2bc68ba21e48cf1c149512782",
+          "review": "sheet-13.png#tile-2"
+        },
+        {
+          "y0": 3250,
+          "y1": 3388,
+          "pixel_sha256": "d46b620d124c5ac469c5e2f8c560eb1a62a63c4b5d0b2b7cadff09c701fc12f3",
+          "review": "sheet-13.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-growth-home-320-2x.png",
+      "sha256": "b4cbec114658f87d440e2ddf15fdbebbbf1caa3a6161e938b61e687f2c4cb4bc",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "20d18e665fb4955d5c1bf9bfc8f29676974c3f9bf6588a8e7a3a7dc0da7d3854",
+          "review": "sheet-12.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1a1dfe240e5aa63c9af610bb1538499bed372b0aeebf8e539086bbac024d5097",
+          "review": "sheet-13.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-growth-home-393-1x.long.png",
+      "sha256": "4ae451f0a13218950d11b1480217cb6d3a45b0dc64b6371825f2289aa5f10f41",
+      "width": 393,
+      "height": 1729,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2b5fac860471e09b97a302b7a9745405e7d7582c6a128706d76096932e376260",
+          "review": "sheet-13.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "60ec98f9653ff93a21b5481d6fa8255a8478dd3d570984f0df3c0bd5d8da5fdb",
+          "review": "sheet-14.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1729,
+          "pixel_sha256": "756044226ab8f986f81de40e54cd4cec35c8c9cb39cb3313069fa16bd6583540",
+          "review": "sheet-14.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-growth-home-393-1x.png",
+      "sha256": "ac32275c2c5b1f88a8a847e4d0849c8a4a1d61025e21b657c52255f82c31f019",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2b5fac860471e09b97a302b7a9745405e7d7582c6a128706d76096932e376260",
+          "review": "sheet-13.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a1f9a5a5f828e0a335129ce0d0a8a7cf54c1ab1e6b87423f882a64c1946d8f9e",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-growth-return-320-2x.long.png",
+      "sha256": "c59661b0235e5e2b6bd859d4e01acfa093d32f567c5bc160359061c773e35f9b",
+      "width": 320,
+      "height": 3388,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "20d18e665fb4955d5c1bf9bfc8f29676974c3f9bf6588a8e7a3a7dc0da7d3854",
+          "review": "sheet-12.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "2dde507d4de1bd0857a192b58b5f129d5cf5e35806bf8b81a5617f7fca0bdf6c",
+          "review": "sheet-12.png#tile-5"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "6873f8c89de47aba54008dd6650738c50b97f9fcf31b4ca3c3f14613efba0fa9",
+          "review": "sheet-13.png#tile-0"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "a8083d85b09355b3379058092e4a351acabecfb28b752359eda68993a703038c",
+          "review": "sheet-13.png#tile-1"
+        },
+        {
+          "y0": 2600,
+          "y1": 3250,
+          "pixel_sha256": "d3d14fb3be518845c707e291a8d0d75920b494e2bc68ba21e48cf1c149512782",
+          "review": "sheet-13.png#tile-2"
+        },
+        {
+          "y0": 3250,
+          "y1": 3388,
+          "pixel_sha256": "d46b620d124c5ac469c5e2f8c560eb1a62a63c4b5d0b2b7cadff09c701fc12f3",
+          "review": "sheet-13.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-growth-return-320-2x.png",
+      "sha256": "6832bb1297f68576ba9d55ac8d317e275a691911e0779faca342f2324b7aa6c5",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "063131dfc66e30c029e126b6f8207e1b6b7624f4c58b538a877270bce13fd1c1",
+          "review": "sheet-14.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "7d50ba87c6747a2827e9fbbcc13566cf95e30e2171b470ddf616277cb491538e",
+          "review": "sheet-06.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-growth-return-393-1x.long.png",
+      "sha256": "4ae451f0a13218950d11b1480217cb6d3a45b0dc64b6371825f2289aa5f10f41",
+      "width": 393,
+      "height": 1729,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2b5fac860471e09b97a302b7a9745405e7d7582c6a128706d76096932e376260",
+          "review": "sheet-13.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "60ec98f9653ff93a21b5481d6fa8255a8478dd3d570984f0df3c0bd5d8da5fdb",
+          "review": "sheet-14.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1729,
+          "pixel_sha256": "756044226ab8f986f81de40e54cd4cec35c8c9cb39cb3313069fa16bd6583540",
+          "review": "sheet-14.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-growth-return-393-1x.png",
+      "sha256": "5b9489c9676fccf036a690ef8bb4a88141f8fa46e5230faf808d23cd3d2e0559",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ed8fe2b41500a135e38634e8db2eb38397646b7a7841df9106b3daa99f50a910",
+          "review": "sheet-14.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3b778e303c05e7dab5c02219f126c85e20b89630cc67d338042fec2670906f51",
+          "review": "sheet-14.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-growth-source-dispatched-320-2x.long.png",
+      "sha256": "634eb8f6b3350f7d1e249c665ee69cb31aed31d85631a3efd85df91df915094a",
+      "width": 320,
+      "height": 1723,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "40264d4cd6a21f9ef233974f3a63c21499cd39714648700071e9917e9e239a56",
+          "review": "sheet-11.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "29d4ff13eddabeff71c41bd8faa616f3c6314ddfbd48cc4f11a9308ad08b0bcf",
+          "review": "sheet-11.png#tile-5"
+        },
+        {
+          "y0": 1300,
+          "y1": 1723,
+          "pixel_sha256": "5322e631bd4a0e2b84ba6f640255c1bfed5c73acc957ada7e7cddfae7f72888f",
+          "review": "sheet-12.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-growth-source-dispatched-320-2x.png",
+      "sha256": "cfc88e1d6ead8fb74724af92646c6653a30aecc917484a51f4d44d0c324ddab8",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "e9f1f19f39eeb2a017731f8a142ea2ea1082e717ad12c1b221e8dd73568d0caa",
+          "review": "sheet-14.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "53bcabf57f9403587e4bad0002e105777155bea36e76b8d32d38b9d80a747517",
+          "review": "sheet-04.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-growth-source-dispatched-393-1x.png",
+      "sha256": "08eb139028a7b7064a445ac0d56260e43591d289f852e5a3a3f886eb494002df",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "5830e96487d492bbabca29a6d8d0b99518f8303339bc2ea51beb528c8dc009df",
+          "review": "sheet-12.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1c4c4bd3922dfa72c8614daa71fa5b4d02ea532170332ebdb0b4a48ebcb7fea3",
+          "review": "sheet-12.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-more-return-320-2x.png",
+      "sha256": "90ff3249f64fc7750a5da2a6bac0e2e90a64014893d9e85c3df4c76dbe8dea38",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "7925ed8e5939f589376b72745969839e14c7fb166cfb48866eed469fa66c4d02",
+          "review": "../baby-profile-control-visual-review/sheet-19.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "f95aac7cc67095efb73a4ae0b9ee5dc9518b86f20195158e860fce9621ec483a",
+          "review": "../mom-rest-control-visual-review/sheet-19.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-more-return-393-1x.png",
+      "sha256": "1905827f337ce2fe60b46266600cce9aa8dea3b9aac6828fb6a1d3f67f020b35",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c8e12900bddbe318fd8d03ad9b384466fc1af1f6c371f72f999f20bc96cac1d6",
+          "review": "../baby-profile-control-visual-review/sheet-19.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "ae62a60cadfc8bfb09e3e94acb0dc8f7d481c4c260eae5960e33ebdc5f0799db",
+          "review": "../mom-rest-control-visual-review/sheet-20.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-sleep-detail-320-2x.long.png",
+      "sha256": "e303c98d5007b39b3446ecbab9b12363d6df270e31c4480d6d2683b7bbf75bc5",
+      "width": 320,
+      "height": 1766,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "da8ad1c5bb4a67964ee7817f7adf0e4fa876287ac571f37e515b467905f31505",
+          "review": "sheet-15.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "8813058fcc5b2461c6b7704944ac37b32b5345a53741e4ce42d9a4e480ed9323",
+          "review": "sheet-15.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1766,
+          "pixel_sha256": "c7a0c216761825ea385c98d879d7312a929305d2600212f54205de365a5c0d06",
+          "review": "sheet-15.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-sleep-detail-320-2x.png",
+      "sha256": "800682b7d9f9990a08474a720378aacd27185d26b36b4fc4c89d25e6f4cab536",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "205c2b85b244a2eb933653676e6b864ec9be9c27dd1a4bda96b9873d3c3bb12c",
+          "review": "sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "53bcabf57f9403587e4bad0002e105777155bea36e76b8d32d38b9d80a747517",
+          "review": "sheet-04.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-sleep-detail-393-1x.png",
+      "sha256": "83cb7cd8e2ae14d13d806cb0d73294b7cb8890e4a509546dcf0dd2cf3d95e6c2",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6b88ba4dba5d803f51d5fed9ad24a9ed9815ed1541034bff7317fae0fbba3b10",
+          "review": "sheet-15.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "460503b7bdc11a6d2a34b4349e6d97fa0dd786e4da670613556d0cda257bd300",
+          "review": "sheet-15.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-sleep-home-320-2x.long.png",
+      "sha256": "237b74058546b38c3faf1c7fa0afcb72b1703f4bf9ee7c8198c1e82b4eff85e3",
+      "width": 320,
+      "height": 3410,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "7967148aa362aa2cb00b3395aaa6c6787958d9eb231862535f5d30b5b66f4e96",
+          "review": "sheet-16.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "9309c51a649abcb9823cbb974c36bf15310e652a124a7d234897530faf61c50f",
+          "review": "sheet-16.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "b58282de6e63279c9757b8a84f64969258ecad37576374cd5122790d18e01247",
+          "review": "sheet-16.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "f4eac304c473252bd89993ebeb811605352cfb742dfd0b47a770eef693c3de29",
+          "review": "sheet-16.png#tile-3"
+        },
+        {
+          "y0": 2600,
+          "y1": 3250,
+          "pixel_sha256": "de6168f5c7a691b10771b65fbb0db93141cfd1931ec87015d927062d4bf29d28",
+          "review": "sheet-16.png#tile-4"
+        },
+        {
+          "y0": 3250,
+          "y1": 3410,
+          "pixel_sha256": "50502b3e0b0b30011b9eff354c00929f0b568d1c5446a9c448b9c023661248b4",
+          "review": "sheet-16.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-sleep-home-320-2x.png",
+      "sha256": "c64d104fc2d7c937157b6c2775d94b69d1b93a89d4de107cde77391cc415b535",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "7967148aa362aa2cb00b3395aaa6c6787958d9eb231862535f5d30b5b66f4e96",
+          "review": "sheet-16.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "d583d2cf3fbf3ed53d3c40a10685d8538cddb182e27130225c79d0c69c75a8a1",
+          "review": "sheet-17.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-sleep-home-393-1x.long.png",
+      "sha256": "948cf666f85be8499991c726f935a0233fa75d86b41c9ae6681e0c61ededde17",
+      "width": 393,
+      "height": 1755,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "f344db13f39fec1d621c282fbb8ce4fd696fb28000cbd79ff220b69bb98debe7",
+          "review": "sheet-17.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "ae5d1595a7639e8537cb644bbd6aad85a2195196afb226adfd6a43624225592b",
+          "review": "sheet-17.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1755,
+          "pixel_sha256": "05b7f814fd5b133f9d4e9fbce89da3867e58d807adbb990722eca96306471d4a",
+          "review": "sheet-17.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-sleep-home-393-1x.png",
+      "sha256": "316296cc3f9a9a3f4bad96e4cd3dae070b1fc01ab539306b6b74af611af1be0f",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "f344db13f39fec1d621c282fbb8ce4fd696fb28000cbd79ff220b69bb98debe7",
+          "review": "sheet-17.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a23c1eb60e709d9e3c86a14a381bc4fe793cf4e36a4e8631aad6937bd8a156a1",
+          "review": "sheet-17.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-sleep-return-320-2x.long.png",
+      "sha256": "237b74058546b38c3faf1c7fa0afcb72b1703f4bf9ee7c8198c1e82b4eff85e3",
+      "width": 320,
+      "height": 3410,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "7967148aa362aa2cb00b3395aaa6c6787958d9eb231862535f5d30b5b66f4e96",
+          "review": "sheet-16.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "9309c51a649abcb9823cbb974c36bf15310e652a124a7d234897530faf61c50f",
+          "review": "sheet-16.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "b58282de6e63279c9757b8a84f64969258ecad37576374cd5122790d18e01247",
+          "review": "sheet-16.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "f4eac304c473252bd89993ebeb811605352cfb742dfd0b47a770eef693c3de29",
+          "review": "sheet-16.png#tile-3"
+        },
+        {
+          "y0": 2600,
+          "y1": 3250,
+          "pixel_sha256": "de6168f5c7a691b10771b65fbb0db93141cfd1931ec87015d927062d4bf29d28",
+          "review": "sheet-16.png#tile-4"
+        },
+        {
+          "y0": 3250,
+          "y1": 3410,
+          "pixel_sha256": "50502b3e0b0b30011b9eff354c00929f0b568d1c5446a9c448b9c023661248b4",
+          "review": "sheet-16.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-sleep-return-320-2x.png",
+      "sha256": "20269cdacc2de54fba9e0dc09fc9a9a292aec9ea1f79454042f9d54fa7dd618a",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "12633637391edb7b174cc2a3012dc79d7bbbeb92140654559845c29f4285a14e",
+          "review": "sheet-17.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "ae609d909df94c2be4bbe93e3baed89b216f343048bbbae54e77268f1dbd75fd",
+          "review": "sheet-18.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-sleep-return-393-1x.long.png",
+      "sha256": "948cf666f85be8499991c726f935a0233fa75d86b41c9ae6681e0c61ededde17",
+      "width": 393,
+      "height": 1755,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "f344db13f39fec1d621c282fbb8ce4fd696fb28000cbd79ff220b69bb98debe7",
+          "review": "sheet-17.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "ae5d1595a7639e8537cb644bbd6aad85a2195196afb226adfd6a43624225592b",
+          "review": "sheet-17.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1755,
+          "pixel_sha256": "05b7f814fd5b133f9d4e9fbce89da3867e58d807adbb990722eca96306471d4a",
+          "review": "sheet-17.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-sleep-return-393-1x.png",
+      "sha256": "40d4d9df1a029e95d09b4075bb907e6b990994a917f17cca9e03225729c3ca6e",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c2b17f9cafb011727f5e68143400cbeaa4a4a99d4dece8a12019f4192dbc574d",
+          "review": "sheet-18.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1abf52ddf1045bb7f0cef7552c38d74545cc58a1944969152f0eccac6e482e25",
+          "review": "sheet-18.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-sleep-source-dispatched-320-2x.long.png",
+      "sha256": "e303c98d5007b39b3446ecbab9b12363d6df270e31c4480d6d2683b7bbf75bc5",
+      "width": 320,
+      "height": 1766,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "da8ad1c5bb4a67964ee7817f7adf0e4fa876287ac571f37e515b467905f31505",
+          "review": "sheet-15.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "8813058fcc5b2461c6b7704944ac37b32b5345a53741e4ce42d9a4e480ed9323",
+          "review": "sheet-15.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1766,
+          "pixel_sha256": "c7a0c216761825ea385c98d879d7312a929305d2600212f54205de365a5c0d06",
+          "review": "sheet-15.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-sleep-source-dispatched-320-2x.png",
+      "sha256": "c963ddf0d4c72259a83f2699b87b9ea66ed898cd0a4ad413a5862ef20c7ee762",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "0f54961f3156a8cdb6e49f2c4c4b6d7f4cdbd49d71ad24b09e1cdce2d3f5780e",
+          "review": "sheet-18.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "53bcabf57f9403587e4bad0002e105777155bea36e76b8d32d38b9d80a747517",
+          "review": "sheet-04.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-sleep-source-dispatched-393-1x.png",
+      "sha256": "83cb7cd8e2ae14d13d806cb0d73294b7cb8890e4a509546dcf0dd2cf3d95e6c2",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6b88ba4dba5d803f51d5fed9ad24a9ed9815ed1541034bff7317fae0fbba3b10",
+          "review": "sheet-15.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "460503b7bdc11a6d2a34b4349e6d97fa0dd786e4da670613556d0cda257bd300",
+          "review": "sheet-15.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-source-error-dialog-closed-320-2x.long.png",
+      "sha256": "c3abafeb0086594fd8ad0993e8504d71a09955845626534a31055836f604374b",
+      "width": 320,
+      "height": 3460,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "58578630282c08ed070b330c5092b2346554d47e291ecce03bfa1790d2ebdd62",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "4dda8179cff40a3adf986bd1a684d26ee5fcd340c2699ec1efedaca703960889",
+          "review": "sheet-18.png#tile-4"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "9d6507fffc0bc6034f47db8d49043015eecbf3959472099584cfbb0f9908685b",
+          "review": "sheet-18.png#tile-5"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "cf7b9827ee12ea5f4ce473b5b04736e9eca7e63163a06350e8ad0569b0e9a58a",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-3"
+        },
+        {
+          "y0": 2600,
+          "y1": 3250,
+          "pixel_sha256": "37ad12097cfe22a8e9dbc657cb28f346e8c0fb8c47506593c69f67c441b7e097",
+          "review": "sheet-19.png#tile-0"
+        },
+        {
+          "y0": 3250,
+          "y1": 3460,
+          "pixel_sha256": "2a23072faf1eaacb5fa7bdf73863accd4cd8d23db905514a2a52e0e67e323d47",
+          "review": "sheet-19.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-source-error-dialog-closed-320-2x.png",
+      "sha256": "053ca6a9c35876e8cf1a08875a012b4648ba23eec23edf43f14bdec33c26b2c4",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "65085baaaa48a685ce86ed0a47301a264ad39543857391c89ac8a68e908027d5",
+          "review": "sheet-19.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "e3bd7bf0ff1b6f0b13616f685519fab8f7aff164f0373651fe3dcd633affe4b3",
+          "review": "sheet-19.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-source-error-dialog-closed-393-1x.long.png",
+      "sha256": "15f5955149913c2d6c99cd5cd8950e6cc404015b07bc040d023907a1b1afe8fb",
+      "width": 393,
+      "height": 1752,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2541e10f43029eb71329290bf405fa83fabe418cf9eb6676ed4e3eb8498f6856",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "098acd243c3c7300651c59145c78009a02c605afd42a7496abf1ee9c8893c418",
+          "review": "sheet-19.png#tile-4"
+        },
+        {
+          "y0": 1300,
+          "y1": 1752,
+          "pixel_sha256": "d33fd6447c5c00d12a0f3ebbfdec3e9bcf680c3b4f46469bbf8a8ceeead1729c",
+          "review": "sheet-19.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-source-error-dialog-closed-393-1x.png",
+      "sha256": "ab36c3745f35d2798f18ebb12846edac1050bcec7c4e87e9cb72ae40ee3029bd",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "45fdded1aec091961c9048d3c71bcb52de9086a70b81a570501db482b51a3b04",
+          "review": "sheet-20.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "13433e9d89e2da3231a8d9560d725bae27335e11881a1a050bce206888bb82d6",
+          "review": "sheet-20.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-source-exception-error-320-2x.long.png",
+      "sha256": "0c56596906d583c6423fb8e834af84672cbe0b0ad7a5e48fb509ed537b54462b",
+      "width": 320,
+      "height": 1770,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "99739c178e3b4dfdd2daaf572fa86c6c7bb08fe42a214af75d8beef6140f1b6c",
+          "review": "sheet-10.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "0b93d0474863ad024a5f1954c6d78bac571cdcbc8d020f81e7c8efb6b0ff1227",
+          "review": "sheet-10.png#tile-5"
+        },
+        {
+          "y0": 1300,
+          "y1": 1770,
+          "pixel_sha256": "32ef8f70624b62e47c203117f8151e7af31d6bef9a847a807c5bd4a0cc55cbdd",
+          "review": "sheet-20.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-source-exception-error-320-2x.png",
+      "sha256": "7f2d836db587ce2979e5b1a54e39b508babf7fff81ab0b88d48b05b34734dde3",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "0c1786b80690308e5369ac2b59ad6f0ae487f52a923a79564ce91319193d9540",
+          "review": "sheet-20.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "aa4eb1a2a98652652987f0b2576344452b693adf42deb2f55c24151c14aacdbc",
+          "review": "sheet-20.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-source-exception-error-393-1x.png",
+      "sha256": "9507f0c6f76d9827821a74d59d7421a93bbf79f7af5a516ccd2a30c065ecefee",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "08f22f17446b51eb5a1477d7dc10836aa2009b2489fdafd86b855a2480ede6d6",
+          "review": "sheet-11.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "8b48e3d88165a742afd6e50cf6545362636e84b64164c132ecddf00fad6c67e1",
+          "review": "sheet-20.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-source-false-error-320-2x.long.png",
+      "sha256": "0c56596906d583c6423fb8e834af84672cbe0b0ad7a5e48fb509ed537b54462b",
+      "width": 320,
+      "height": 1770,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "99739c178e3b4dfdd2daaf572fa86c6c7bb08fe42a214af75d8beef6140f1b6c",
+          "review": "sheet-10.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "0b93d0474863ad024a5f1954c6d78bac571cdcbc8d020f81e7c8efb6b0ff1227",
+          "review": "sheet-10.png#tile-5"
+        },
+        {
+          "y0": 1300,
+          "y1": 1770,
+          "pixel_sha256": "32ef8f70624b62e47c203117f8151e7af31d6bef9a847a807c5bd4a0cc55cbdd",
+          "review": "sheet-20.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-source-false-error-320-2x.png",
+      "sha256": "7f2d836db587ce2979e5b1a54e39b508babf7fff81ab0b88d48b05b34734dde3",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "0c1786b80690308e5369ac2b59ad6f0ae487f52a923a79564ce91319193d9540",
+          "review": "sheet-20.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "aa4eb1a2a98652652987f0b2576344452b693adf42deb2f55c24151c14aacdbc",
+          "review": "sheet-20.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-source-false-error-393-1x.png",
+      "sha256": "9507f0c6f76d9827821a74d59d7421a93bbf79f7af5a516ccd2a30c065ecefee",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "08f22f17446b51eb5a1477d7dc10836aa2009b2489fdafd86b855a2480ede6d6",
+          "review": "sheet-11.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "8b48e3d88165a742afd6e50cf6545362636e84b64164c132ecddf00fad6c67e1",
+          "review": "sheet-20.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-source-late-failure-320-2x.long.png",
+      "sha256": "2a7eed3eaa881740523730a74f99487a3935cee5f5e500fdea7e513a60082fc7",
+      "width": 320,
+      "height": 3460,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "58578630282c08ed070b330c5092b2346554d47e291ecce03bfa1790d2ebdd62",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "034c398b12fe2df5aaef1e8fd2e151d4092f4bc550a8179f7524acfdf8572a5d",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "fa27bf1b8f7135cf78bb1380036cbe25b805799678f9c6338d1b09862168215b",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "cf7b9827ee12ea5f4ce473b5b04736e9eca7e63163a06350e8ad0569b0e9a58a",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-3"
+        },
+        {
+          "y0": 2600,
+          "y1": 3250,
+          "pixel_sha256": "830120be56be43c6e4e4a7527c94577138b4175b12f8b7b606a89d5ff059987b",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-4"
+        },
+        {
+          "y0": 3250,
+          "y1": 3460,
+          "pixel_sha256": "347ac7ec17d5bdaf8c362c53e6be84275398444203824d119dff6d55c72c68e4",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-source-late-failure-320-2x.png",
+      "sha256": "22eb0d88b4b48812033ade4ae96a315ffebb4f84a5e2a94ad9bf43c9d51b94b7",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9b19aed086bdd7588051b77826e6f5b37cde9bb37953216fd0ba8227cbd34883",
+          "review": "sheet-21.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "c9d96460216eaa8b95bfaeab04af68028b056cfb9db418d679513be4258d3591",
+          "review": "sheet-10.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-source-late-failure-393-1x.long.png",
+      "sha256": "f0cba396e8a9efa775fb9fbb71adccd863e4ce8dace888759be74db253f099a6",
+      "width": 393,
+      "height": 1752,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2541e10f43029eb71329290bf405fa83fabe418cf9eb6676ed4e3eb8498f6856",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "462243825730002d5a7b26fe7e1bbdb2f381ea57afabfc7a0cad762ed9541c1e",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1752,
+          "pixel_sha256": "5d1142fe86ef6e5a8664871afce9928bf15cf58f7b773ac5f1080f1b7fead23c",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-source-late-failure-393-1x.png",
+      "sha256": "3df52f0fbf2c7aba9c16545fcf685d601a68015d8ee9ffe572148e5f99fd84f1",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "45fdded1aec091961c9048d3c71bcb52de9086a70b81a570501db482b51a3b04",
+          "review": "sheet-20.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "36e79d56e7e3fcfff82fb78753158bce72e09d267b03df04cea3833dffc56c9b",
+          "review": "sheet-04.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-source-pending-320-2x.long.png",
+      "sha256": "caad800c4d817d380514dfa598b28d13bbc0695940401d82092f0fa10c97c520",
+      "width": 320,
+      "height": 1770,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "99739c178e3b4dfdd2daaf572fa86c6c7bb08fe42a214af75d8beef6140f1b6c",
+          "review": "sheet-10.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "0b93d0474863ad024a5f1954c6d78bac571cdcbc8d020f81e7c8efb6b0ff1227",
+          "review": "sheet-10.png#tile-5"
+        },
+        {
+          "y0": 1300,
+          "y1": 1770,
+          "pixel_sha256": "1c8f0ff4c3ad28bb4e01a2f0438590bc508e3d03890acd339324dac336821c79",
+          "review": "sheet-21.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-source-pending-320-2x.png",
+      "sha256": "f7314808e699a2264dcf01dc0a55b95a33aec8c34ff1e81c1005fb3a457218e0",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "f200e29e0602269e5c1fedd7c9b14a67dce5a697491480080ce14c1bf355bc30",
+          "review": "sheet-21.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "53bcabf57f9403587e4bad0002e105777155bea36e76b8d32d38b9d80a747517",
+          "review": "sheet-04.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-source-pending-393-1x.png",
+      "sha256": "49734940fcdbb3a016ddad2643af572edf8d5a001f6db6e8d875dca1fdb10ca7",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "3ddb51c74708b0400d20096d35719c5bcee151640bc3df161f9d6391e695cb37",
+          "review": "sheet-21.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "68ccabaef9183a4ec98b30161e9b537ea28d37ae4096f223eae2c6f96b137d6a",
+          "review": "../baby-profile-control-visual-review/sheet-16.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-source-pending-closed-320-2x.long.png",
+      "sha256": "2a7eed3eaa881740523730a74f99487a3935cee5f5e500fdea7e513a60082fc7",
+      "width": 320,
+      "height": 3460,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "58578630282c08ed070b330c5092b2346554d47e291ecce03bfa1790d2ebdd62",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "034c398b12fe2df5aaef1e8fd2e151d4092f4bc550a8179f7524acfdf8572a5d",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "fa27bf1b8f7135cf78bb1380036cbe25b805799678f9c6338d1b09862168215b",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "cf7b9827ee12ea5f4ce473b5b04736e9eca7e63163a06350e8ad0569b0e9a58a",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-3"
+        },
+        {
+          "y0": 2600,
+          "y1": 3250,
+          "pixel_sha256": "830120be56be43c6e4e4a7527c94577138b4175b12f8b7b606a89d5ff059987b",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-4"
+        },
+        {
+          "y0": 3250,
+          "y1": 3460,
+          "pixel_sha256": "347ac7ec17d5bdaf8c362c53e6be84275398444203824d119dff6d55c72c68e4",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-source-pending-closed-320-2x.png",
+      "sha256": "22eb0d88b4b48812033ade4ae96a315ffebb4f84a5e2a94ad9bf43c9d51b94b7",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9b19aed086bdd7588051b77826e6f5b37cde9bb37953216fd0ba8227cbd34883",
+          "review": "sheet-21.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "c9d96460216eaa8b95bfaeab04af68028b056cfb9db418d679513be4258d3591",
+          "review": "sheet-10.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-source-pending-closed-393-1x.long.png",
+      "sha256": "f0cba396e8a9efa775fb9fbb71adccd863e4ce8dace888759be74db253f099a6",
+      "width": 393,
+      "height": 1752,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2541e10f43029eb71329290bf405fa83fabe418cf9eb6676ed4e3eb8498f6856",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "462243825730002d5a7b26fe7e1bbdb2f381ea57afabfc7a0cad762ed9541c1e",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1752,
+          "pixel_sha256": "5d1142fe86ef6e5a8664871afce9928bf15cf58f7b773ac5f1080f1b7fead23c",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-knowledge-source-source-pending-closed-393-1x.png",
+      "sha256": "3df52f0fbf2c7aba9c16545fcf685d601a68015d8ee9ffe572148e5f99fd84f1",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "45fdded1aec091961c9048d3c71bcb52de9086a70b81a570501db482b51a3b04",
+          "review": "sheet-20.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "36e79d56e7e3fcfff82fb78753158bce72e09d267b03df04cea3833dffc56c9b",
+          "review": "sheet-04.png#tile-0"
+        }
+      ]
+    }
+  ],
+  "unique_segments": 140,
+  "new_segments": 124,
+  "new_sheets": 21
+}

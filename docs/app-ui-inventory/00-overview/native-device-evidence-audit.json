@@ -1,0 +1,13 @@
+{
+  "status": "PASS",
+  "scope": "new native device flow report, screenshot hashes, source hashes, predecessor references and restored permission evidence; not entire goal completion",
+  "report_links": 41,
+  "ordered_states": 15,
+  "visually_reviewed_originals": 18,
+  "continuous_visual_segments": 58,
+  "review_sheets_viewed": 15,
+  "source_sha256": {
+    "integration_test/consultation_native_device_test.dart": "5dbceba28da573ed72243a517886371eeea3e55f745c2263993bfd2ecd80e727",
+    "scripts/capture-native-consultation-devices.py": "28257e778e4029de2abb4af2a13670cbf85fa3098ea46b2f29ff92d343451a53"
+  }
+}

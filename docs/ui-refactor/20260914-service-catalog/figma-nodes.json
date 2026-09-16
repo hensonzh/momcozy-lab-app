@@ -1,0 +1,24 @@
+{
+  "file_key": "ePIoJkiMiXiug9ibpcgRbl",
+  "page": "0:1",
+  "component": "149:548",
+  "handoff": "153:1253",
+  "frames": {
+    "Default": "149:565",
+    "Owned plan": "149:660",
+    "Pending order": "149:757",
+    "Empty": "149:845",
+    "Initial loading": "149:875",
+    "Initial error": "149:884",
+    "Refresh failed": "149:894",
+    "Paused plan": "149:993",
+    "Large text": "149:1090",
+    "Large owned": "149:1253",
+    "Team empty": "149:1401",
+    "Team populated": "149:1443",
+    "Paid without ongoing service": "150:958",
+    "Provisioning plan": "150:1024",
+    "Long name and currency": "153:1044",
+    "Team at 2x text": "153:1139"
+  }
+}

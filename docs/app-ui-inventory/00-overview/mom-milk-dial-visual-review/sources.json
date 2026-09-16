@@ -1,0 +1,1248 @@
+{
+  "method": "full-width continuous 650px strips; byte-identical decoded pixels reference previously reviewed Rest/Body/Mood or one new lactation tile",
+  "sources": [
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-dial-accepted-320-1x.png",
+      "sha256": "1ea54dcacf6702bda444372bc1cfc420bacb5be16bd18b0faa5654bc9493a0ba",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ebb533c91da0d2b12cd10bf295bd9e496109e162308915379ee1fd1a176d5938",
+          "review": "sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "81eb62aade748651d46cbc846fe7c10ac8d9ced3dfc6982daf68c00a71eb6e63",
+          "review": "sheet-01.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-dial-accepted-393-1x.png",
+      "sha256": "0f76b5985b2ef63e0778ba2def21a60c753c8bde9ef5f3c96dbf42017479fe03",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9cc8e89238736a93360e47f6f45ed6d4878288282b4254db25c8edbc692c5303",
+          "review": "sheet-01.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "d5f95c9b13cbe4acb534e4b5760d2af6840a7f5351ea68eff0fb0aeae0d9aa95",
+          "review": "../mom-milk-control-visual-review/sheet-10.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-dial-am-320-1x.png",
+      "sha256": "353f5432d21786c1c1a68b5a01a0a182641295d81ee1a2c133e6585e8bce6853",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "16df8b1bb6ff625944ef428c9005a21a616c8a35a008fb6cb18b2971ca490704",
+          "review": "sheet-01.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a827305fbd9342e70c19f02c1d26aa631ccfc4d68bc30d8d71612eb7d8b4ec6c",
+          "review": "sheet-01.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-dial-am-393-1x.png",
+      "sha256": "3c797ae78f06e63cd8db75380ff353d39ef6c20cdc07e1e9f52e7dee1974ba43",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "f5083f6d8edd46443f0229dac630184007a378fb24b8c9af5ea5126229282fb9",
+          "review": "sheet-01.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "f734e9a7ae0485e886359b0ffa919640ea819b5085f32a590b6d91700fd45435",
+          "review": "../mom-milk-control-visual-review/sheet-20.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-dial-cancel-selection-320-1x.png",
+      "sha256": "ac8d893a2e5437ed13fafca1537a2bd6d2764995e03758406a8ca52c460a61e9",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "74c04049fb8bda923005b2d414b14466ca4580377055a97b302e76659011491e",
+          "review": "sheet-02.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3b392f43b0cbd7948a65247e93a531538fc8ac56cdeb844484b8b80b3a5d2238",
+          "review": "sheet-02.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-dial-cancel-selection-393-1x.png",
+      "sha256": "fa410535b9387a6bd2980916cf058c28336bbadb56d15202a9248525846bd690",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "3ee203c30b96b06868a74250d30a83f184e709a88eee34db9944ca1bc0767f67",
+          "review": "sheet-02.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "e6405349637f82b3c1074ff2a2af88f0de761ef0a5644f2d270dd619977be9a7",
+          "review": "../mom-milk-validation-visual-review/sheet-21.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-dial-cancelled-320-1x.long.png",
+      "sha256": "82795b5b842a6d4b8d0acf970ec2015889cddc9512fec9408f57c21ac6af37b8",
+      "width": 320,
+      "height": 854,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "43d5e3f2071ea949c32a36ab7d29a9f48846ca9452f19abae140aa220f818ab8",
+          "review": "sheet-02.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 854,
+          "pixel_sha256": "cd163a693224554b93c67152f4b628992bade3b434fa9a8712c59c41cbfe1591",
+          "review": "sheet-02.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-dial-cancelled-320-1x.png",
+      "sha256": "b81027ba0c1e0bc575f516a28f8ed711c45f122c22b3828c2d88fbae6e562fa2",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "97dc9be512629c987a19c6679c99821303a1106e4566ead4b205d8a355498e89",
+          "review": "sheet-02.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "fedf8a606048f4ce4643148fbaa61f28434ea53e88e478b537aad7c0aeb6d3b3",
+          "review": "sheet-03.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-dial-cancelled-393-1x.long.png",
+      "sha256": "4871fb625a88c47f44bca643e3473b8a3d1feb2428fd983edac84dd7092de2dc",
+      "width": 393,
+      "height": 854,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "aad838527608df51080ff7a7f052ee72f316660fbf468edf99ada5039d20c6b5",
+          "review": "sheet-03.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 854,
+          "pixel_sha256": "1dc59b4973ea689d93524b2464bf49669a38a754174563444758990cd149be5b",
+          "review": "../mom-milk-validation-visual-review/sheet-02.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-dial-cancelled-393-1x.png",
+      "sha256": "b77d1d4c886beb7a24835e1e9685d0b8f4bec80867c1fa16f35768af26eacc37",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9bc7bc2cfb5edd7577b3906c5ca7093fa2b4da9bf2862ed04524a7187c3f3256",
+          "review": "sheet-03.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1b36a61364b32fa5b20a84fd60a28b9ef148160641b32a4a3934b76c5fbfe8b8",
+          "review": "../mom-note-boundary-visual-review/sheet-13.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-dial-close-confirm-320-1x.png",
+      "sha256": "c337ed38af8659a4b8791ec046fb30df58418d4b0091be000489778d4635d255",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "f2376bb8e24f583b1761cac2f5cdfb98731243335f54014109e6624a026dba89",
+          "review": "sheet-03.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "34048d02adeab8ac7f173a1b206f6e635880ceeb45e3a381022768bcd985fa1a",
+          "review": "sheet-03.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-dial-close-confirm-393-1x.png",
+      "sha256": "797f7268c9a1b95fea577399fa04ab009c072cb91a464d9da773c9ec28d22180",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b8e76510a1ce49e0ff1971468865b360f4e644b8de82524b1cc4e0c7937ab3f6",
+          "review": "sheet-03.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "aaa83fc8f784de8c40e84b9fe793d17c12ef9374e6098e635b1326760e298002",
+          "review": "../mom-note-boundary-visual-review/sheet-14.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-dial-form-filled-320-1x.png",
+      "sha256": "e244353ee4caafee3ab0e5dace90645ba1ae831dce59870dee1de3ce28eff603",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "3892b8e60ea0fa904b5b395efd91f43686200f4234163db5252644f87251d919",
+          "review": "sheet-04.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "81eb62aade748651d46cbc846fe7c10ac8d9ced3dfc6982daf68c00a71eb6e63",
+          "review": "sheet-01.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-dial-form-filled-393-1x.png",
+      "sha256": "5f42aa842a43525fb72d98fe5fa0ad75ec6da2c392b386f598ae5c6bdb8646f3",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "523ab4ebc7affd0e1c62ce0caf63ef578570125eb797fe667a6d65c205e9b828",
+          "review": "sheet-04.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "d5f95c9b13cbe4acb534e4b5760d2af6840a7f5351ea68eff0fb0aeae0d9aa95",
+          "review": "../mom-milk-control-visual-review/sheet-10.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-dial-home-entry-320-1x.long.png",
+      "sha256": "f243a0aa9f33ed11c33bc1434cbbcc13b81d4c12c9a435addcb90f5985171cc8",
+      "width": 320,
+      "height": 975,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "77de1e0d87eb22c309aa404f54b1736e63932f5d0964670110215d9824e2864c",
+          "review": "sheet-04.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 975,
+          "pixel_sha256": "d80d0a487f8544514e236652224a217b4a2d9d42bf2e0fa47d48bb7a820a3da9",
+          "review": "sheet-04.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-dial-home-entry-320-1x.png",
+      "sha256": "ecfb569bae2526219cd5793c87088f5b1c6aa4fb1f704191c1bf2765f6502959",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "77de1e0d87eb22c309aa404f54b1736e63932f5d0964670110215d9824e2864c",
+          "review": "sheet-04.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "27a0bf945280b3685ff0bcdfb7f9bb1ccbae4f77dbf7914277872271272bd92f",
+          "review": "sheet-04.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-dial-home-entry-393-1x.long.png",
+      "sha256": "0a4e3294f0ff67f0d7ed84ee3eacb393b50571fb4db300a7d15899ba9359a330",
+      "width": 393,
+      "height": 917,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa661999d6307948942c23dc2e7dad221367a614b3ae09dd12dec24bc67fec6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 917,
+          "pixel_sha256": "134109b5afc9a0d972ecc00b197fb963d8131bfc37dbfad2a4c51a0a091a86ad",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-dial-home-entry-393-1x.png",
+      "sha256": "be291808401e7f353b8f14552b0df4a698f3edd191e5e2d770c66c2e129fc145",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "baa661999d6307948942c23dc2e7dad221367a614b3ae09dd12dec24bc67fec6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3208ac8b3b1d4a7464bc46ef7618c8e19bd85dee870d86c1847457571b6198a6",
+          "review": "../mom-rest-control-visual-review/sheet-15.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-dial-home-return-320-1x.long.png",
+      "sha256": "c9578a4f41f531fea3df96da9785b47c70fc0f3e5e68ec54342f25170e3afb18",
+      "width": 320,
+      "height": 1000,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "74ef00488433941a7ffe45bd45223ca38811af7e1856144a3ab1a24927f4ac30",
+          "review": "sheet-04.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1000,
+          "pixel_sha256": "09d0f9c86a15bb9b15851a0bcc2ede55b87007e759c65b1943c56645eec9985d",
+          "review": "sheet-05.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-dial-home-return-320-1x.png",
+      "sha256": "cbd8e0e461379c763560b20159540dce8efdd074931c2371986c6467f53a6894",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "75168c99a8eb95151213719f14d1d2a776c22292f55c0140a959f1329a01ead2",
+          "review": "sheet-05.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "6721ed3fcfbdee66089ecdedb51982ac673c7c9adb569b35f8385204dcded02d",
+          "review": "sheet-05.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-dial-home-return-393-1x.long.png",
+      "sha256": "cd0d09e1d5c9b9d4299baeba31591cdf2f5cd862c9a17983cc55359e3ebd6ecc",
+      "width": 393,
+      "height": 920,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "3f9aa5b9aafcefd1fc99f5af42c5932636f9df1a114317bba9cde120eeb00d03",
+          "review": "sheet-05.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 920,
+          "pixel_sha256": "5114e61c90da9079afee7e92bb8d1e1588f7d4ff461871c84ba4a415660ed95d",
+          "review": "../mom-rest-control-visual-review/sheet-17.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-dial-home-return-393-1x.png",
+      "sha256": "fea52b5691da288ad281f02b466288d7d5d0b8a8bcfd39b41f86ea2090635826",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "7bf6e71fd2673b543f3337862eb720fdd47f1ccc245b2d2ef58005fa416e4060",
+          "review": "sheet-05.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "01ad37a83090b22440e753afe9b5efb12045ec1509aa7b52fb6caa7377abd650",
+          "review": "../mom-rest-control-visual-review/sheet-17.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-dial-hour-eleven-320-1x.png",
+      "sha256": "5593bd8a63ae107adcbca91d0de8c6bf91cc9c161d4a5856fe06dcb83bc001f0",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "744a9b993b48b093fe2bc1650fa3ff4065fc1317768fef6c433b9dc85d7e0268",
+          "review": "sheet-05.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a827305fbd9342e70c19f02c1d26aa631ccfc4d68bc30d8d71612eb7d8b4ec6c",
+          "review": "sheet-01.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-dial-hour-eleven-393-1x.png",
+      "sha256": "19f110a4a7ebd059f262b7aa36e59f833b45ccf3ba6d79a49cd5bfccfa3a4dd2",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "83e7adf61956352e3feca494200d45e992750ffa6de9d5e95175b4f3f9d6fe9d",
+          "review": "sheet-06.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "f734e9a7ae0485e886359b0ffa919640ea819b5085f32a590b6d91700fd45435",
+          "review": "../mom-milk-control-visual-review/sheet-20.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-dial-hour-header-320-1x.png",
+      "sha256": "6f8905389567d00d5fee608d7ce3edbb7eef644dd14a0b259466ad2000a321fc",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "5796352ae09ab43bb4889fbd8f235e522af2780f8b28305bf38fb2d2235d5afc",
+          "review": "sheet-06.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a827305fbd9342e70c19f02c1d26aa631ccfc4d68bc30d8d71612eb7d8b4ec6c",
+          "review": "sheet-01.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-dial-hour-header-393-1x.png",
+      "sha256": "44b4b22f64b92361fb72758da1863901858f90ec9d4aa33e5ca26ce4a665dd66",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "4850b8fcaa523aea562fc081a0d7221359e6c17752783ceb0edb59b2834578c3",
+          "review": "sheet-06.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "f734e9a7ae0485e886359b0ffa919640ea819b5085f32a590b6d91700fd45435",
+          "review": "../mom-milk-control-visual-review/sheet-20.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-dial-hour-nine-320-1x.png",
+      "sha256": "f1347ad330c15c76f2c124fe2b0850919c10ecb3ed75f62d30c6ab8d0bee3874",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "477321690ba9447f76a11feb9b3f8cb65e54d5e1a2d2b3894de46d36e62483a7",
+          "review": "sheet-06.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a827305fbd9342e70c19f02c1d26aa631ccfc4d68bc30d8d71612eb7d8b4ec6c",
+          "review": "sheet-01.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-dial-hour-nine-393-1x.png",
+      "sha256": "0a92b1d8aa312a7a82c3281307dea9c0fc605aa5343bbc6b192f05d8bc63081b",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b16b8c54dbd17b332b0623ef3ab1ad922113219564471f20307607d874404b3f",
+          "review": "sheet-06.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "f734e9a7ae0485e886359b0ffa919640ea819b5085f32a590b6d91700fd45435",
+          "review": "../mom-milk-control-visual-review/sheet-20.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-dial-input-mode-320-1x.png",
+      "sha256": "4dadf4ccfdec3614e6672204edc684af1be859454ceabc86b5b9d534306816d8",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "34e03f17bc9e0c485f692ddd8bf2bf4f4a6bb14ae89bf66c07d96080b1046c79",
+          "review": "sheet-06.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "34048d02adeab8ac7f173a1b206f6e635880ceeb45e3a381022768bcd985fa1a",
+          "review": "sheet-03.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-dial-input-mode-393-1x.png",
+      "sha256": "f5750535033b08517a666406049bb815dbb2414600913df58d35c3dcdc94bb10",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b6310d60fb636083aae541187aa33666d82b067bfb5bb0a464be9fb4602595a2",
+          "review": "sheet-07.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "aaa83fc8f784de8c40e84b9fe793d17c12ef9374e6098e635b1326760e298002",
+          "review": "../mom-note-boundary-visual-review/sheet-14.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-dial-invalid-input-320-1x.png",
+      "sha256": "7f506c913492058fa256873bfb5c0e2fdf1b34ce4d51d0f6255ec25c9f13ca35",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "1652e70577ab794a8dfd4bac7d39e20ff38d9406cf0fce841b20cfc1fd7810bc",
+          "review": "sheet-07.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "34048d02adeab8ac7f173a1b206f6e635880ceeb45e3a381022768bcd985fa1a",
+          "review": "sheet-03.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-dial-invalid-input-393-1x.png",
+      "sha256": "3f3760dbc908f43a0214aad0666a8810cff82aff4278350de752232ca2429d3b",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "0fdea5a52bd4d18f27ed30860a84f00322bcb526050b3fc434ace78c4fffbd34",
+          "review": "sheet-07.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "aaa83fc8f784de8c40e84b9fe793d17c12ef9374e6098e635b1326760e298002",
+          "review": "../mom-note-boundary-visual-review/sheet-14.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-dial-invalid-input-left-edge-320-1x.png",
+      "sha256": "0d77e6d8ed2d86901576ec255953b9c7be21511784231eed21335e0454233ab3",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "80d0e0ca6b916b590185a6d79ddc8be3d8869e7a46a64299298768d23c44b903",
+          "review": "sheet-07.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "34048d02adeab8ac7f173a1b206f6e635880ceeb45e3a381022768bcd985fa1a",
+          "review": "sheet-03.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-dial-invalid-input-right-edge-320-1x.png",
+      "sha256": "7f506c913492058fa256873bfb5c0e2fdf1b34ce4d51d0f6255ec25c9f13ca35",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "1652e70577ab794a8dfd4bac7d39e20ff38d9406cf0fce841b20cfc1fd7810bc",
+          "review": "sheet-07.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "34048d02adeab8ac7f173a1b206f6e635880ceeb45e3a381022768bcd985fa1a",
+          "review": "sheet-03.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-dial-midnight-dial-320-1x.png",
+      "sha256": "070089f4f77a03227cb01474a9712353349cdfb862a98fef60b37bbe1add9c51",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "330a1d0bd38f05afacbf86c338ace837bb8cde1143fc6a3b14bbbdd25100537a",
+          "review": "sheet-07.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3b392f43b0cbd7948a65247e93a531538fc8ac56cdeb844484b8b80b3a5d2238",
+          "review": "sheet-02.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-dial-midnight-dial-393-1x.png",
+      "sha256": "c0d55647b3fee3f68ea84f51ec3aaa36a5a713d788f78bd6f2e925c50691d31b",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "482564b89fead699fc6884634acb9b900936c663951482d97b9a99c140d998db",
+          "review": "sheet-07.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "e6405349637f82b3c1074ff2a2af88f0de761ef0a5644f2d270dd619977be9a7",
+          "review": "../mom-milk-validation-visual-review/sheet-21.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-dial-minute-forty-five-320-1x.png",
+      "sha256": "72dc94b0676822b9fcf84bf866dbecc9e336ec21826e02e9da9cff8a4121e1fb",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "558a641ba1b62ff4afb538480aff73bf0cb0b21d81c40960d97579e263e9816a",
+          "review": "sheet-08.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a827305fbd9342e70c19f02c1d26aa631ccfc4d68bc30d8d71612eb7d8b4ec6c",
+          "review": "sheet-01.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-dial-minute-forty-five-393-1x.png",
+      "sha256": "a3c899e5a179a9707e4a4600dccfedd6a46aa2d00f044fa790fd99695daebe64",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "241132fcfe3158dd2928da40482bb47e48490d990ed68efda7027e4e61a76dfe",
+          "review": "sheet-08.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "f734e9a7ae0485e886359b0ffa919640ea819b5085f32a590b6d91700fd45435",
+          "review": "../mom-milk-control-visual-review/sheet-20.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-dial-minute-header-320-1x.png",
+      "sha256": "2486ec1e1d5718eb896b08220934d2c7b5674d9f9cb9117709854dda832396ff",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2e02fb3a59427cdc38959af5ccb75e6aa87013ca93490488b5848c354287f9d0",
+          "review": "sheet-08.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3b392f43b0cbd7948a65247e93a531538fc8ac56cdeb844484b8b80b3a5d2238",
+          "review": "sheet-02.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-dial-minute-header-393-1x.png",
+      "sha256": "76f9481b42f8f705fe2e9aa663f7dfd1c717f7b61b4775475421e7e0b1006f45",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ce76e4db4dfbcb530b555f3290a90afa3c2008c2bc16e6bd8603c157ceb6db20",
+          "review": "sheet-08.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "e6405349637f82b3c1074ff2a2af88f0de761ef0a5644f2d270dd619977be9a7",
+          "review": "../mom-milk-validation-visual-review/sheet-21.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-dial-minute-twenty-320-1x.png",
+      "sha256": "a02801cddca0e64799eea5d59e318df4bb776c409dfaa32a4ad5acd7c6e6a846",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ad6e3971be79e8b3cfc29e27ce1ba847e4c9deda88f6f3a5039805718e9e7de2",
+          "review": "sheet-08.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a827305fbd9342e70c19f02c1d26aa631ccfc4d68bc30d8d71612eb7d8b4ec6c",
+          "review": "sheet-01.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-dial-minute-twenty-393-1x.png",
+      "sha256": "b9504a0eb0b39634f2b9daec47599834ae21a1107464bcada438a1eefaff9bd8",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "46463c28a2cb02303e9f83fda137c12ef1036a303cb171b5e01fbcba161f1a1b",
+          "review": "sheet-08.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "f734e9a7ae0485e886359b0ffa919640ea819b5085f32a590b6d91700fd45435",
+          "review": "../mom-milk-control-visual-review/sheet-20.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-dial-more-return-320-1x.png",
+      "sha256": "9cb121886d7cb1614151852c40f2d7e465bd1e9bb4fad00e28be60863c6346ea",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2a9079d023170a26b5b27c224d02d32c5bd87c6bb1d822f0827d444d658f4532",
+          "review": "sheet-09.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3c72df3794646eac91498e2b88917df8baa1b703cc211b94f54d9c3e7bd1b084",
+          "review": "sheet-09.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-dial-more-return-393-1x.png",
+      "sha256": "6ac33e6dd952b54bfe0bbfa4209df0bf816602f324b0120ff7730cb4d19cfda7",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "f3c49068f287b436aca5535634e7bf245847c3c294038c70cc0fc5537f4560a7",
+          "review": "../mom-rest-control-visual-review/sheet-19.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "ae62a60cadfc8bfb09e3e94acb0dc8f7d481c4c260eae5960e33ebdc5f0799db",
+          "review": "../mom-rest-control-visual-review/sheet-20.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-dial-noon-accepted-320-1x.long.png",
+      "sha256": "82795b5b842a6d4b8d0acf970ec2015889cddc9512fec9408f57c21ac6af37b8",
+      "width": 320,
+      "height": 854,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "43d5e3f2071ea949c32a36ab7d29a9f48846ca9452f19abae140aa220f818ab8",
+          "review": "sheet-02.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 854,
+          "pixel_sha256": "cd163a693224554b93c67152f4b628992bade3b434fa9a8712c59c41cbfe1591",
+          "review": "sheet-02.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-dial-noon-accepted-320-1x.png",
+      "sha256": "b81027ba0c1e0bc575f516a28f8ed711c45f122c22b3828c2d88fbae6e562fa2",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "97dc9be512629c987a19c6679c99821303a1106e4566ead4b205d8a355498e89",
+          "review": "sheet-02.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "fedf8a606048f4ce4643148fbaa61f28434ea53e88e478b537aad7c0aeb6d3b3",
+          "review": "sheet-03.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-dial-noon-accepted-393-1x.long.png",
+      "sha256": "4871fb625a88c47f44bca643e3473b8a3d1feb2428fd983edac84dd7092de2dc",
+      "width": 393,
+      "height": 854,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "aad838527608df51080ff7a7f052ee72f316660fbf468edf99ada5039d20c6b5",
+          "review": "sheet-03.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 854,
+          "pixel_sha256": "1dc59b4973ea689d93524b2464bf49669a38a754174563444758990cd149be5b",
+          "review": "../mom-milk-validation-visual-review/sheet-02.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-dial-noon-accepted-393-1x.png",
+      "sha256": "b77d1d4c886beb7a24835e1e9685d0b8f4bec80867c1fa16f35768af26eacc37",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9bc7bc2cfb5edd7577b3906c5ca7093fa2b4da9bf2862ed04524a7187c3f3256",
+          "review": "sheet-03.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1b36a61364b32fa5b20a84fd60a28b9ef148160641b32a4a3934b76c5fbfe8b8",
+          "review": "../mom-note-boundary-visual-review/sheet-13.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-dial-noon-dial-320-1x.png",
+      "sha256": "001d505f34c1a336f6d62fdcc61aa752edcde615dbb5b753b23b9438daacc95b",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ab5c4b2d8752d8786e01c5a3a9e44d8e52791cf40232a49184dc80d140bdeb1d",
+          "review": "sheet-09.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3b392f43b0cbd7948a65247e93a531538fc8ac56cdeb844484b8b80b3a5d2238",
+          "review": "sheet-02.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-dial-noon-dial-393-1x.png",
+      "sha256": "2d7c121ebb6090b58d499888e43dfb651165d3adcb540c6a7d3b66e343bde2ad",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "65a5a1113e60ccaacabed8a762ce7ef2df91f6af38f037353a349edc9f748a71",
+          "review": "sheet-09.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "e6405349637f82b3c1074ff2a2af88f0de761ef0a5644f2d270dd619977be9a7",
+          "review": "../mom-milk-validation-visual-review/sheet-21.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-dial-noon-saved-320-1x.long.png",
+      "sha256": "770b8cefd2cdb8705ff3b4361838a20d1066b5d57a1e16cb0a1ef106bdf16ebf",
+      "width": 320,
+      "height": 902,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "e622162f03ab90586c9ffc03a8acc1c7569d87dffdc85365832e8ff19f00a93a",
+          "review": "sheet-09.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 902,
+          "pixel_sha256": "93ffd25d761bf5e3a00d720a70b2a00814cc7face721534fc23af0ca588e9d49",
+          "review": "sheet-09.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-dial-noon-saved-320-1x.png",
+      "sha256": "5614de8640811cef66174b20c2157bd8e7e988dfcdf1bd00fff835c19a92058b",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "e622162f03ab90586c9ffc03a8acc1c7569d87dffdc85365832e8ff19f00a93a",
+          "review": "sheet-09.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "65c151174bb56d363c4d928d9b4983320b5ff3d3a5a70e0271f70efe2f566962",
+          "review": "sheet-10.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-dial-noon-saved-393-1x.long.png",
+      "sha256": "c6c1f1910e94e2af44760f1a042e941e4bbc2dcbd59bbe65340480381e6fa438",
+      "width": 393,
+      "height": 974,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "791dcafe106c5aaaa36ef43d92210a9ebbe63c421918d6bbcd7ceb2a9bbdfafc",
+          "review": "sheet-10.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 974,
+          "pixel_sha256": "60b147e119995fd491a645c930bb3ddba34a8a4d5a4cce457ac96e13d5044ff2",
+          "review": "sheet-10.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-dial-noon-saved-393-1x.png",
+      "sha256": "eac323927e06dc7116c705dd517b40560428ebebdd457d040d841bb5d9ed486d",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "fe811ebaa2f95d5286341e221ee75c961b1071fbfae37ea0b6030dcdc1cd422b",
+          "review": "sheet-10.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "b950cf4332eb5a28ff0e632abfa0002f5c1dbc60060024058d09708449b87285",
+          "review": "sheet-10.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-dial-open-320-1x.png",
+      "sha256": "ca96d1165dc20cd62121fce2f67685e43ea6f941e81b4a81906944b3044822f2",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "e1ed4785dc9bbc2d908919d339f6909f2ca318b3b32b6612fe336456497a786c",
+          "review": "sheet-10.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a827305fbd9342e70c19f02c1d26aa631ccfc4d68bc30d8d71612eb7d8b4ec6c",
+          "review": "sheet-01.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-dial-open-393-1x.png",
+      "sha256": "509142873a1e480e81295e61e8f8d70649e0486994aa8893436e71a68989f87c",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "dbc5dd003c5e5ba0af0391b59dfac3e63c166309d3fba9534dbe2e4b1fa37058",
+          "review": "../mom-milk-control-visual-review/sheet-20.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "f734e9a7ae0485e886359b0ffa919640ea819b5085f32a590b6d91700fd45435",
+          "review": "../mom-milk-control-visual-review/sheet-20.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-dial-reopened-320-1x.png",
+      "sha256": "a3fd548bb69257030c73166c06b93aa4f9e6644353977c3a6a69600d1053ff32",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c1c96ee43fcd3b64e00e9550f6ccad486ce6d40f86512eb4653acd05fd11b92b",
+          "review": "sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3b392f43b0cbd7948a65247e93a531538fc8ac56cdeb844484b8b80b3a5d2238",
+          "review": "sheet-02.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-dial-reopened-393-1x.png",
+      "sha256": "ec439aa323b38c5b6c54ece43f69d27452a1a12d68665ed838481fdcb0de51e3",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ef7c1c00c4bfe4ce40eb0d216ec74f337072cf8ec76b112296d770e9a5c0ba07",
+          "review": "sheet-11.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "e6405349637f82b3c1074ff2a2af88f0de761ef0a5644f2d270dd619977be9a7",
+          "review": "../mom-milk-validation-visual-review/sheet-21.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-dial-saved-320-1x.long.png",
+      "sha256": "2a895a66b38546c56c52d76cda675233c54a8bb8061ce24c03523911ecd07810",
+      "width": 320,
+      "height": 902,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "e622162f03ab90586c9ffc03a8acc1c7569d87dffdc85365832e8ff19f00a93a",
+          "review": "sheet-09.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 902,
+          "pixel_sha256": "27f02bd30ff1e24abba7427565da7d75907ec547a8768054b33d50ed79c32431",
+          "review": "sheet-11.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-dial-saved-320-1x.png",
+      "sha256": "26c255e061774eecef43da926b047a1a50a91018f0d22b9ec1beef2a70e875fd",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "e622162f03ab90586c9ffc03a8acc1c7569d87dffdc85365832e8ff19f00a93a",
+          "review": "sheet-09.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "5e0c0641afc30b9c673877ad5155cc58952da7d4fa20049f392dd07065d01e61",
+          "review": "sheet-11.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-dial-saved-393-1x.long.png",
+      "sha256": "6be245aa2b635359946b1f138ec57c61782121b52b7c68ec39dafabe9e5a0ef5",
+      "width": 393,
+      "height": 974,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "791dcafe106c5aaaa36ef43d92210a9ebbe63c421918d6bbcd7ceb2a9bbdfafc",
+          "review": "sheet-10.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 974,
+          "pixel_sha256": "b545335f67b17a2ac6e728aed12d6af2f9b3f855342fa39c900ada755440a32a",
+          "review": "sheet-11.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-milk-dial-saved-393-1x.png",
+      "sha256": "7f0943203ca10cc1313d3832da6654fa26200a2b1baa962b43d34a064cd928b6",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "fe811ebaa2f95d5286341e221ee75c961b1071fbfae37ea0b6030dcdc1cd422b",
+          "review": "sheet-10.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "714381d0817ab69513777de51757e5fa5bb8a441956549259199338a7fcbefc2",
+          "review": "sheet-11.png#tile-5"
+        }
+      ]
+    }
+  ],
+  "unique_segments": 80,
+  "new_segments": 66,
+  "new_sheets": 11
+}

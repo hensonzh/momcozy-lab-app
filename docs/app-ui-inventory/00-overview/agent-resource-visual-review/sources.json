@@ -1,0 +1,366 @@
+[
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-image-cached-320-2x.png",
+    "sha256": "77ead7ebffc559418c16e15194b0ad50527027fec050894de1a291d0a06aa38f"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-image-cached-393.png",
+    "sha256": "5d7d5d28562ce0c45bcedd4ad5db69c7e17f0061efae84af1375fb06fa009ef8"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-image-card-320-2x.png",
+    "sha256": "d84f8118d9a8a8c85168934c5f31478e7834bff6c00532f93884deca67db5c07"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-image-card-320-2x.long.png",
+    "sha256": "e5f3523c92a1220e806a516f55e43addd14cfdca1ac68b3dd79435216831d95a"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-image-card-393.png",
+    "sha256": "a6d53637b80fc87cac104016edf1401d71ae3ddbb48fd85736dcafbbb7965603"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-image-card-393.long.png",
+    "sha256": "f227db1d2ae1e35bec844f9e3ecdf6e8800d90324dad8d343dda90f6ae161983"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-image-error-320-2x.png",
+    "sha256": "f6ed21d85ac95cb788682dec468eb5c08b6ab0a53f68120b0cc222920a1394ef"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-image-error-393.png",
+    "sha256": "1e8533d627c01fbc79efa6013d65c2e65043e865d1045f41d025dcec8e37428a"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-image-loaded-320-2x.png",
+    "sha256": "77ead7ebffc559418c16e15194b0ad50527027fec050894de1a291d0a06aa38f"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-image-loaded-393.png",
+    "sha256": "5d7d5d28562ce0c45bcedd4ad5db69c7e17f0061efae84af1375fb06fa009ef8"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-image-loading-320-2x.png",
+    "sha256": "76d4b936ecf8581e08eb9e8363de8401af1beb727842a013a93dd529be6298b1"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-image-loading-393.png",
+    "sha256": "3d30426c5f74c0bff128accd913585186bddb57cc4b3009e21e3bc92c3e88446"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-image-panned-320-2x.png",
+    "sha256": "4300119d5c0a66f6a8df16c86a35107b7d9a17002e9412c791e1825ef3305281"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-image-panned-393.png",
+    "sha256": "8b1f90058933a83614a6144b32bdf6a3b5fe95025748d37892e30a680e14f7ad"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-image-reset-320-2x.png",
+    "sha256": "77ead7ebffc559418c16e15194b0ad50527027fec050894de1a291d0a06aa38f"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-image-reset-393.png",
+    "sha256": "5d7d5d28562ce0c45bcedd4ad5db69c7e17f0061efae84af1375fb06fa009ef8"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-image-return-320-2x.png",
+    "sha256": "d84f8118d9a8a8c85168934c5f31478e7834bff6c00532f93884deca67db5c07"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-image-return-320-2x.long.png",
+    "sha256": "e5f3523c92a1220e806a516f55e43addd14cfdca1ac68b3dd79435216831d95a"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-image-return-393.png",
+    "sha256": "a6d53637b80fc87cac104016edf1401d71ae3ddbb48fd85736dcafbbb7965603"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-image-return-393.long.png",
+    "sha256": "f227db1d2ae1e35bec844f9e3ecdf6e8800d90324dad8d343dda90f6ae161983"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-image-zoomed-320-2x.png",
+    "sha256": "1d06cba6be75016db0a65dd0480f61a9e41828f2d0ea79f1563650faf3fb295d"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-image-zoomed-393.png",
+    "sha256": "d172f300ec2922912078e0ebfe55c1b50338929452ba72cbeacc36fe26b5316b"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-invalid-card-393.png",
+    "sha256": "a6d53637b80fc87cac104016edf1401d71ae3ddbb48fd85736dcafbbb7965603"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-invalid-card-393.long.png",
+    "sha256": "f227db1d2ae1e35bec844f9e3ecdf6e8800d90324dad8d343dda90f6ae161983"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-invalid-no-navigation-393.png",
+    "sha256": "a6d53637b80fc87cac104016edf1401d71ae3ddbb48fd85736dcafbbb7965603"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-invalid-no-navigation-393.long.png",
+    "sha256": "f227db1d2ae1e35bec844f9e3ecdf6e8800d90324dad8d343dda90f6ae161983"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-pdf-card-320-2x.png",
+    "sha256": "0ce51ab0916803726f97a19d0e252964c0dd332bcdfa7fa490e551ca6a935ba4"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-pdf-card-320-2x.long.png",
+    "sha256": "3d518d369e6069f196e975c5186d1360eff707cf37bb3a85ac4048a41d5d317d"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-pdf-card-393.png",
+    "sha256": "7506cde862e04c8fe035a3833b5be7d0304e8165eea009015248e28a136d337e"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-pdf-card-393.long.png",
+    "sha256": "5f724c54a3ddebfecd4ebe28fa8910d4379e12aca1ce75272faa1c38dc16094c"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-pdf-error-320-2x.png",
+    "sha256": "6b4b06cba17ad10722c3ca37a3598a02c608282162c01a8c50552f78ce059f6e"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-pdf-error-393.png",
+    "sha256": "820c6dd5bcd83cd9adcef69b65c73a6179998c87be2565c89cd7e3bfc321cb78"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-pdf-forbidden-320-2x.png",
+    "sha256": "6b4b06cba17ad10722c3ca37a3598a02c608282162c01a8c50552f78ce059f6e"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-pdf-forbidden-393.png",
+    "sha256": "820c6dd5bcd83cd9adcef69b65c73a6179998c87be2565c89cd7e3bfc321cb78"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-pdf-loading-320-2x.png",
+    "sha256": "ff24a06c629008113ae905f8bb33053f2913f90ab0cdb9bfe82c0e6c1ef6d8fe"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-pdf-loading-393.png",
+    "sha256": "b856e2178d921ccbd7138a39e796275852ff0bef48f8b7adda1166fdf094cc73"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-pdf-pending-return-320-2x.png",
+    "sha256": "0ce51ab0916803726f97a19d0e252964c0dd332bcdfa7fa490e551ca6a935ba4"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-pdf-pending-return-320-2x.long.png",
+    "sha256": "3d518d369e6069f196e975c5186d1360eff707cf37bb3a85ac4048a41d5d317d"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-pdf-pending-return-393.png",
+    "sha256": "7506cde862e04c8fe035a3833b5be7d0304e8165eea009015248e28a136d337e"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-pdf-pending-return-393.long.png",
+    "sha256": "5f724c54a3ddebfecd4ebe28fa8910d4379e12aca1ce75272faa1c38dc16094c"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-pdf-retrying-320-2x.png",
+    "sha256": "ff24a06c629008113ae905f8bb33053f2913f90ab0cdb9bfe82c0e6c1ef6d8fe"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-pdf-retrying-393.png",
+    "sha256": "b856e2178d921ccbd7138a39e796275852ff0bef48f8b7adda1166fdf094cc73"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-renew-back-mom-320-2x.png",
+    "sha256": "6b61a480f7a3fd5ddb29685624aed748a99b94ad55016153855b11225ef09868"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-renew-back-mom-320-2x.long.png",
+    "sha256": "b29f1f9dc909ca023dcd2865b0d4424a7485a4fb1dd4d05f54d8ee61e6cf46ef"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-renew-back-mom-393.png",
+    "sha256": "be291808401e7f353b8f14552b0df4a698f3edd191e5e2d770c66c2e129fc145"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-renew-back-mom-393.long.png",
+    "sha256": "0a4e3294f0ff67f0d7ed84ee3eacb393b50571fb4db300a7d15899ba9359a330"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-renew-card-320-2x.png",
+    "sha256": "01f35aea7335e53abc7759c8971efff437b679f9be1119c3d40d734824e09de4"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-renew-card-320-2x.long.png",
+    "sha256": "a6dc51f3925cc26478c3d5ae016ee3368cc13714eff49100e1de548c76335a7b"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-renew-card-393.png",
+    "sha256": "71ffb1deb7db92da4c7731e06150e061ba4ead1543b5eb135c399c4dc3b3f91f"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-renew-card-393.long.png",
+    "sha256": "34f8ffe175d7a9e7918112b13c794fcd0d3c9149a49a48c14d9013aec673e573"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-renew-card-return-320-2x.png",
+    "sha256": "01f35aea7335e53abc7759c8971efff437b679f9be1119c3d40d734824e09de4"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-renew-card-return-320-2x.long.png",
+    "sha256": "a6dc51f3925cc26478c3d5ae016ee3368cc13714eff49100e1de548c76335a7b"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-renew-card-return-393.png",
+    "sha256": "71ffb1deb7db92da4c7731e06150e061ba4ead1543b5eb135c399c4dc3b3f91f"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-renew-card-return-393.long.png",
+    "sha256": "34f8ffe175d7a9e7918112b13c794fcd0d3c9149a49a48c14d9013aec673e573"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-renew-closed-320-2x.png",
+    "sha256": "7221da8ae5ec454b88ea973803333c7d87900f15302b3bffabdd12c5e859c091"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-renew-closed-320-2x.long.png",
+    "sha256": "c195f9a915308e8d6cea12ec9ad11ec15ff67a135ae3f0fd0dc4729d58dec38c"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-renew-closed-393.png",
+    "sha256": "86f0d08ed2564d46fe4f51678bfdde301e1e18ec5169e0764903b73bb33b15a9"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-renew-eligibility-320-2x.png",
+    "sha256": "b9e4637a1cd3a1a6de919101a5f5346dc2b6316488fb10d54d592f1e9345b9e6"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-renew-eligibility-320-2x.long.png",
+    "sha256": "ef9233f9f6cc525c36b418f6e4aa087918f3c6e31148a7ea56d51bc7a71d9e31"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-renew-eligibility-393.png",
+    "sha256": "9d75dcc716680a760f36d6369965e855ea9fbafec826cb1599af392b4742ae92"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-renew-list-320-2x.png",
+    "sha256": "b88c104bbfd37419a118519e1b25d690d87e59164b6d6b446457e1da304b3ec1"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-renew-list-320-2x.long.png",
+    "sha256": "fa84a281734716c638196064ebd0d6f468353e1f685323be6440a35f391c17b3"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-renew-list-393.png",
+    "sha256": "812690d7d92eebc852770cf46cec86743e8507a32ef2f4a811ea974abd2753d6"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-video-card-320-2x.png",
+    "sha256": "d84f8118d9a8a8c85168934c5f31478e7834bff6c00532f93884deca67db5c07"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-video-card-320-2x.long.png",
+    "sha256": "e5f3523c92a1220e806a516f55e43addd14cfdca1ac68b3dd79435216831d95a"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-video-card-393.png",
+    "sha256": "a6d53637b80fc87cac104016edf1401d71ae3ddbb48fd85736dcafbbb7965603"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-video-card-393.long.png",
+    "sha256": "f227db1d2ae1e35bec844f9e3ecdf6e8800d90324dad8d343dda90f6ae161983"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-video-error-320-2x.png",
+    "sha256": "463f3a0271a7a5e18949b67334112631b4a31622f5d7a487127a2ad3e17e9444"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-video-error-393.png",
+    "sha256": "5f538656ffc3fa3b909362c7280bd0ab67982f9d15884ec6a288004c7a7c8093"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-video-exit-fullscreen-320-2x.png",
+    "sha256": "46df7e7f8fd2f65cdc92bca3aa1758886b8a3b02f4e5627c869c64f7de6a943a"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-video-exit-fullscreen-393.png",
+    "sha256": "99de48c3b655277e83e6006d755be90f7315c0215eb6a19e928d77f1d4d23d19"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-video-fullscreen-320-2x.png",
+    "sha256": "71e1cabcd06100ed36bfef68345bdf79d19c59a4948a33e3810f354a1f53dbcf"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-video-fullscreen-393.png",
+    "sha256": "463dc9a8a5521be42a7632d3fede9de0cab009baa95a7a5c9be1ac71fa0a5073"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-video-muted-320-2x.png",
+    "sha256": "46df7e7f8fd2f65cdc92bca3aa1758886b8a3b02f4e5627c869c64f7de6a943a"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-video-muted-393.png",
+    "sha256": "99de48c3b655277e83e6006d755be90f7315c0215eb6a19e928d77f1d4d23d19"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-video-paused-320-2x.png",
+    "sha256": "b14d8fd32f32a4f533a0cb954aeff11f2d773860ed79fd9be0f24c392033f936"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-video-paused-393.png",
+    "sha256": "dfe56631bf2183656b528ceadf835bbe7960b33720fa111a1fd64d00d0638240"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-video-playing-320-2x.png",
+    "sha256": "99e694aa35535102101902dea7ad7acc496bd894d77ed5212183f5cfb7848632"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-video-playing-393.png",
+    "sha256": "64a075380fb9818505c2ff3ab9d4983614ba036f73959c7223a22a5868fee8c5"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-video-ready-320-2x.png",
+    "sha256": "b14d8fd32f32a4f533a0cb954aeff11f2d773860ed79fd9be0f24c392033f936"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-video-ready-393.png",
+    "sha256": "dfe56631bf2183656b528ceadf835bbe7960b33720fa111a1fd64d00d0638240"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-video-recovered-320-2x.png",
+    "sha256": "b14d8fd32f32a4f533a0cb954aeff11f2d773860ed79fd9be0f24c392033f936"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-video-recovered-393.png",
+    "sha256": "dfe56631bf2183656b528ceadf835bbe7960b33720fa111a1fd64d00d0638240"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-video-return-320-2x.png",
+    "sha256": "d84f8118d9a8a8c85168934c5f31478e7834bff6c00532f93884deca67db5c07"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-video-return-320-2x.long.png",
+    "sha256": "e5f3523c92a1220e806a516f55e43addd14cfdca1ac68b3dd79435216831d95a"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-video-return-393.png",
+    "sha256": "a6d53637b80fc87cac104016edf1401d71ae3ddbb48fd85736dcafbbb7965603"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-video-return-393.long.png",
+    "sha256": "f227db1d2ae1e35bec844f9e3ecdf6e8800d90324dad8d343dda90f6ae161983"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-video-runtime-error-320-2x.png",
+    "sha256": "463f3a0271a7a5e18949b67334112631b4a31622f5d7a487127a2ad3e17e9444"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-video-runtime-error-393.png",
+    "sha256": "5f538656ffc3fa3b909362c7280bd0ab67982f9d15884ec6a288004c7a7c8093"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-video-seeked-320-2x.png",
+    "sha256": "43b8f959e2de50578f2740302159cc9b276b95df46ab1a530abd44c05e6d8525"
+  },
+  {
+    "source": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-resource-journey-video-seeked-393.png",
+    "sha256": "d15b4cbe532fde880442d01da9e9c32c496e2c1d2d98136b92b59291fe0d1b40"
+  }
+]

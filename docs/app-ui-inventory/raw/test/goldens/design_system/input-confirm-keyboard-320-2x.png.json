@@ -1,0 +1,379 @@
+{
+  "source": "test/goldens/design_system/input-confirm-keyboard-320-2x.png",
+  "evidence": "current-widget-test-render; golden comparison passed",
+  "test_description": "large input and confirmation remain usable above a keyboard",
+  "sequence": 3,
+  "sha256": "615536e61f29864665587a0c43b72498993066e7ed031722ea0673de073183be",
+  "width": 320,
+  "height": 568,
+  "captured_at": "2026-09-13T13:38:19.419427Z",
+  "widget_types": [
+    "AbsorbPointer",
+    "Actions",
+    "AlertDialog",
+    "Align",
+    "AnimatedBuilder",
+    "AnimatedDefaultTextStyle",
+    "AnimatedModalBarrier",
+    "AnimatedOpacity",
+    "AnimatedPadding",
+    "AnimatedPhysicalModel",
+    "AnimatedTheme",
+    "BlockSemantics",
+    "Builder",
+    "ClipRect",
+    "ColoredBox",
+    "Column",
+    "CompositedTransformTarget",
+    "ConstrainedBox",
+    "CupertinoTheme",
+    "CustomMultiChildLayout",
+    "CustomPaint",
+    "DefaultSelectionStyle",
+    "DefaultTextEditingShortcuts",
+    "DefaultTextStyle",
+    "Dialog",
+    "Directionality",
+    "DisplayFeatureSubScreen",
+    "DualTransitionBuilder",
+    "EditableText",
+    "ExcludeSemantics",
+    "FadeTransition",
+    "FilledButton",
+    "Flexible",
+    "Focus",
+    "FocusScope",
+    "FocusTraversalGroup",
+    "FractionalTranslation",
+    "GestureDetector",
+    "HeroControllerScope",
+    "IconTheme",
+    "IgnorePointer",
+    "InheritedCupertinoTheme",
+    "InkWell",
+    "InputDecorator",
+    "IntrinsicWidth",
+    "KeyedSubtree",
+    "LayoutId",
+    "ListenableBuilder",
+    "Listener",
+    "Localizations",
+    "Material",
+    "MaterialApp",
+    "MatrixTransition",
+    "MediaQuery",
+    "ModalBarrier",
+    "MouseRegion",
+    "Navigator",
+    "NotificationListener<LayoutChangedNotification>",
+    "NotificationListener<NavigationNotification>",
+    "NotificationListener<ScrollMetricsNotification>",
+    "NotificationListener<ScrollNotification>",
+    "Offstage",
+    "OverflowBar",
+    "Overlay",
+    "Padding",
+    "PageStorage",
+    "PhysicalModel",
+    "PhysicalShape",
+    "PrimaryScrollController",
+    "RawGestureDetector",
+    "RawView",
+    "RepaintBoundary",
+    "RestorationScope",
+    "RichText",
+    "RootRestorationScope",
+    "RotationTransition",
+    "SafeArea",
+    "Scaffold",
+    "ScaffoldMessenger",
+    "ScaleTransition",
+    "ScrollConfiguration",
+    "ScrollNotificationObserver",
+    "Scrollable",
+    "Semantics",
+    "SharedAppData",
+    "ShortcutRegistrar",
+    "Shortcuts",
+    "SingleChildScrollView",
+    "SizeChangedLayoutNotifier",
+    "SizedBox",
+    "SlideTransition",
+    "Stack",
+    "StretchEffect",
+    "StretchingOverscrollIndicator",
+    "TapRegionSurface",
+    "Text",
+    "TextButton",
+    "TextField",
+    "TextFieldTapRegion",
+    "TextSelectionGestureDetector",
+    "Theme",
+    "TickerMode",
+    "Title",
+    "Transform",
+    "UndoHistory<TextEditingValue>",
+    "UnmanagedRestorationScope",
+    "ValueListenableBuilder<Widget>",
+    "ValueListenableBuilder<bool>",
+    "View",
+    "WidgetsApp",
+    "_ActionsScope",
+    "_BodyBuilder",
+    "_BorderContainer",
+    "_CaptureAll",
+    "_CompositionCallback",
+    "_Decorator",
+    "_Editable",
+    "_EffectiveTickerMode",
+    "_FadeForwardsPageTransition",
+    "_FloatingActionButtonTransition",
+    "_FocusInheritedScope",
+    "_FocusScopeWithExternalFocusNode",
+    "_GestureSemantics",
+    "_HelperError",
+    "_InheritedTheme",
+    "_InkFeatures",
+    "_InkResponseStateWidget",
+    "_InputPadding",
+    "_LocalizationsScope",
+    "_MaterialInterior",
+    "_MediaQueryFromView",
+    "_ModalBarrierGestureDetector",
+    "_ModalScope<bool>",
+    "_ModalScope<dynamic>",
+    "_ModalScopeStatus",
+    "_OverlayEntryWidget",
+    "_PageTransitionsThemeTransitions<dynamic>",
+    "_ParentInkResponseProvider",
+    "_PipelineOwnerScope",
+    "_PredictiveBackGestureDetector",
+    "_RawViewInternal",
+    "_RenderTheaterMarker",
+    "_ScaffoldMessengerScope",
+    "_ScaffoldScope",
+    "_ScribbleFocusable",
+    "_ScrollNotificationObserverScope",
+    "_ScrollSemantics",
+    "_ScrollableScope",
+    "_ShapeBorderPaint",
+    "_SharedAppModel",
+    "_ShortcutRegistrarScope",
+    "_SingleChildViewport",
+    "_Theater",
+    "_ViewScope"
+  ],
+  "texts": [
+    "备注",
+    "关闭记录",
+    "离开这次记录？",
+    "还未保存的修改会被放弃。",
+    "继续填写",
+    "放弃修改"
+  ],
+  "scrolls": [
+    {
+      "foreground": false,
+      "axis": "vertical",
+      "direction": "down",
+      "pixels": 0.0,
+      "min": 0.0,
+      "max": 0.0,
+      "viewport": 179.0
+    },
+    {
+      "foreground": false,
+      "axis": "horizontal",
+      "direction": "right",
+      "pixels": 0.0,
+      "min": 0.0,
+      "max": 23.0,
+      "viewport": 256.0
+    },
+    {
+      "foreground": true,
+      "axis": "vertical",
+      "direction": "down",
+      "pixels": 84.0,
+      "min": 0.0,
+      "max": 84.0,
+      "viewport": 144.0
+    }
+  ],
+  "controls": [
+    {
+      "widget": "TextButton",
+      "key": null,
+      "labels": [
+        "继续填写"
+      ],
+      "enabled": true,
+      "bounds": [
+        156.0,
+        156.0,
+        128.0,
+        48.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [
+        "继续填写"
+      ],
+      "enabled": true,
+      "bounds": [
+        156.0,
+        158.0,
+        128.0,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "FilledButton",
+      "key": null,
+      "labels": [
+        "放弃修改"
+      ],
+      "enabled": true,
+      "bounds": [
+        148.0,
+        204.0,
+        136.0,
+        48.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [
+        "放弃修改"
+      ],
+      "enabled": true,
+      "bounds": [
+        148.0,
+        206.0,
+        136.0,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    }
+  ],
+  "needs_long_capture": true,
+  "interactions_since_previous_capture": [
+    {
+      "action": "tap",
+      "labels_at_start": [
+        "取消"
+      ],
+      "from": [
+        152.0,
+        228.0
+      ],
+      "to": [
+        152.0,
+        228.0
+      ]
+    },
+    {
+      "action": "tap",
+      "labels_at_start": [
+        "2026-09-12 10:30 CST"
+      ],
+      "from": [
+        160.0,
+        123.0
+      ],
+      "to": [
+        160.0,
+        123.0
+      ]
+    },
+    {
+      "action": "tap",
+      "labels_at_start": [
+        "清除时间",
+        "确定"
+      ],
+      "from": [
+        260.0,
+        238.0
+      ],
+      "to": [
+        260.0,
+        238.0
+      ]
+    },
+    {
+      "action": "tap",
+      "labels_at_start": [
+        "清除时间",
+        "确定"
+      ],
+      "from": [
+        236.0,
+        228.0
+      ],
+      "to": [
+        236.0,
+        228.0
+      ]
+    },
+    {
+      "action": "tap",
+      "labels_at_start": [
+        "清除时间"
+      ],
+      "from": [
+        240.0,
+        219.0
+      ],
+      "to": [
+        240.0,
+        219.0
+      ]
+    },
+    {
+      "action": "tap",
+      "labels_at_start": [
+        "关闭记录"
+      ],
+      "from": [
+        160.0,
+        139.0
+      ],
+      "to": [
+        160.0,
+        139.0
+      ]
+    }
+  ],
+  "call_stack": "#0      _InventoryComparator._record (file:///Users/lute/project/momcozy-lab/app/test/support/ui_inventory_capture.dart:169:32)\n<asynchronous suspension>\n#1      _InventoryComparator.compare (file:///Users/lute/project/momcozy-lab/app/test/support/ui_inventory_capture.dart:96:17)\n<asynchronous suspension>\n#2      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)\n<asynchronous suspension>\n#3      _AsyncCompleter.complete (dart:async/future_impl.dart:96:3)\n<asynchronous suspension>\n#4      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)\n<asynchronous suspension>\n#5      StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)\n<asynchronous suspension>\n#6      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)\n<asynchronous suspension>\n#7      main.<anonymous closure>.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/shared/input_confirmation_test.dart:25:11)\n<asynchronous suspension>\n#8      verifyInputConfirmation (file:///Users/lute/project/momcozy-lab/app/test/support/input_confirmation_scenarios.dart:234:3)\n<asynchronous suspension>\n#9      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/shared/input_confirmation_test.dart:17:5)\n<asynchronous suspension>\n#10     testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)\n<asynchronous suspension>\n#11     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)\n<asynchronous suspension>\n#12     StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)\n<asynchronous suspension>\n",
+  "long_capture": {
+    "status": "complete-measured-scroll-stitch",
+    "file": "/Users/lute/project/momcozy-lab/app/docs/app-ui-inventory/raw/test/goldens/design_system/input-confirm-keyboard-320-2x.long.png",
+    "offsets": [
+      0.0,
+      54.0,
+      84.0
+    ],
+    "scroll_bounds": [
+      12.0,
+      12.0,
+      296.0,
+      144.0
+    ],
+    "content_height": 228.0,
+    "interior_strip_edge_guard": 36.0,
+    "fixed_bottom_overlay_bounds": [],
+    "original_scroll_offset": 84.0,
+    "tooltip_preserved_from_matched_viewport": false
+  }
+}

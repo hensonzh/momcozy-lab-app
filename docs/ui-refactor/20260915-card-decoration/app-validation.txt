@@ -1,0 +1,20 @@
+2026-09-15 本地 App 背景元素同步
+
+flutter test（未使用 --update-goldens）:
+  test/shared/mom_card_background_test.dart
+  test/modules/baby/baby_home_redesign_test.dart
+  test/modules/schedule/schedule_page_golden_test.dart
+  test/app/more_figma_alignment_test.dart
+  test/app/more_redesign_states_test.dart
+  test/app/more_design_test.dart
+  test/features/agent_hub/*design_test.dart
+
+00:11 +147: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: greeting playback and replay indicator 390.0/1.0
+00:11 +148: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: greeting playback and replay indicator 320.0/2.0
+00:11 +149: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_voice_design_test.dart: (tearDownAll)
+00:11 +149: All tests passed!
+
+Analyzing 12 items...                                           
+No issues found! (ran in 1.7s)
+
+本地 Android App 热更新成功；More、Baby、Schedule 已实机渲染抽查。

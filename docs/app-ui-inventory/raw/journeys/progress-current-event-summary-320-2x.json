@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/progress-current-event-summary-320-2x.png",
+  "previous_source": "test/goldens/ui_inventory/progress-current-events-latest-return-320-2x.png",
+  "route": "/services/appointments/completed-event/summary",
+  "trigger": "Completed event → published summary",
+  "root_entry": "Authenticated More → tap Me bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/services/progress_current_inventory_test.dart"
+}

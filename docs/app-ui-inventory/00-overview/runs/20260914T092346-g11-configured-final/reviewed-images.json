@@ -1,0 +1,50 @@
+[
+  {
+    "name": "auth-invite-submit-pending",
+    "image": "raw/test/goldens/ui_inventory/auth-invite-submit-pending-390.png",
+    "sha256": "90bc8e5dec0bf73a5f1d102442302b2c2f593bdfc78b3e66ec9a72b6128f1e8e",
+    "long": {
+      "status": "no-active-vertical-overflow"
+    }
+  },
+  {
+    "name": "auth-invite-device-error",
+    "image": "raw/test/goldens/ui_inventory/auth-invite-device-error-390.png",
+    "sha256": "102a5942a342fabab06c49b44138ba970ca6bc63567b78382e4ec9e890124719",
+    "long": {
+      "status": "no-active-vertical-overflow"
+    }
+  },
+  {
+    "name": "auth-invite-storage-error",
+    "image": "raw/test/goldens/ui_inventory/auth-invite-storage-error-390.png",
+    "sha256": "485339566778ab58c11303894b192252728d9694d035179bf2cde6dd0dfabdf7",
+    "long": {
+      "status": "no-active-vertical-overflow"
+    }
+  },
+  {
+    "name": "onboarding-request-error",
+    "image": "raw/test/goldens/ui_inventory/onboarding-request-error-390.png",
+    "sha256": "aac3c38310a8070374775d84587d8f6dafc39e9e523490428ac5dc40edbbb82d",
+    "long": {
+      "status": "no-active-vertical-overflow"
+    }
+  },
+  {
+    "name": "onboarding-upload-pending",
+    "image": "raw/test/goldens/ui_inventory/onboarding-upload-pending-390.png",
+    "sha256": "8129534337756616dff003522b93a1ff06eb9e078b60993cebdb987e06d2c095",
+    "long": {
+      "status": "no-active-vertical-overflow"
+    }
+  },
+  {
+    "name": "onboarding-generation-handoff",
+    "image": "raw/test/goldens/ui_inventory/onboarding-generation-handoff-390.png",
+    "sha256": "50af9db12054378397830200949b119037b5f5a4caf44da0ed6c904e8fda9f94",
+    "long": {
+      "status": "no-active-vertical-overflow"
+    }
+  }
+]

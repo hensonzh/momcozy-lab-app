@@ -1,0 +1,18 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_inventory_journey_test.dart
+test/support/ui_inventory_capture.dart:367:42: Error: The method 'listEquals' isn't defined for the type '_InventoryComparator'.
+ - '_InventoryComparator' is from 'test/support/ui_inventory_capture.dart'.
+Try correcting the name to the name of an existing method, or defining a method named 'listEquals'.
+        if (!fixedOverlays.any((item) => listEquals(item, measured))) {
+                                         ^^^^^^^^^^
+00:00 +0 -1: loading /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_inventory_journey_test.dart [E]
+  Failed to load "/Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_inventory_journey_test.dart":
+  Compilation failed for testPath=/Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_inventory_journey_test.dart: test/support/ui_inventory_capture.dart:367:42: Error: The method 'listEquals' isn't defined for the type '_InventoryComparator'.
+   - '_InventoryComparator' is from 'test/support/ui_inventory_capture.dart'.
+  Try correcting the name to the name of an existing method, or defining a method named 'listEquals'.
+          if (!fixedOverlays.any((item) => listEquals(item, measured))) {
+                                           ^^^^^^^^^^
+  .
+00:00 +0 -1: Some tests failed.
+
+Failing tests:
+  /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_inventory_journey_test.dart: loading /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_inventory_journey_test.dart

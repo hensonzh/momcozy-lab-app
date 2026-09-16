@@ -1,0 +1,126 @@
+{
+  "scope": "固定收尾工作项；每项对应具名页面或浮层。任务不是新增 12 组测试。",
+  "items": [
+    {
+      "id": "G01",
+      "page": "consultation",
+      "states": "新咨询结束页面：正常结束、技术失败、未出席、安全升级、已取消、结束原因尚未返回",
+      "status": "已完成：当前正式路由、完整页面及全部 11 个结果 CTA 已核对",
+      "evidence": "6 种结果图均完整显示；10 个截图条目共享入口/去向，11 个 CTA 实际跳转通过；相关源码及测试快照一致。",
+      "next_action": "本项关闭；如相关布局发生变化，仅核对差异。",
+      "reference": "CONSULTATION-OUTCOME-CURRENT.md",
+      "completion": "CLOSED_FOR_RECORDED_SOURCE"
+    },
+    {
+      "id": "G02",
+      "page": "consultation",
+      "states": "当前咨询中页面、离开确认、离开失败",
+      "status": "已完成：当前通话、离开/留在/重入链及媒体反馈已核对",
+      "evidence": "11 张已有金图严格复用，5 张缺口图；3 项定向场景通过，媒体错误页完整长图已检查。",
+      "next_action": "本项关闭；系统权限和真实双端视频不由本项冒充验收。",
+      "reference": "CONSULTATION-LIVE-CURRENT.md",
+      "completion": "CLOSED_FOR_RECORDED_SOURCE"
+    },
+    {
+      "id": "G03",
+      "page": "summary",
+      "states": "待发布、已发布长内容、任务操作和失败反馈",
+      "status": "已完成：总结、行动状态、长图及日程/进度去向已核对",
+      "evidence": "复用 16 张已有金图，补齐 10 张当前路由证据；26 张完整图已检查，行动详情单列归属。",
+      "next_action": "本项关闭；后续仅在相关产品界面变化时核对差异。",
+      "reference": "CONSULTATION-SUMMARY-CURRENT.md",
+      "completion": "CLOSED_FOR_RECORDED_SOURCE"
+    },
+    {
+      "id": "G04",
+      "page": "auth-forgot",
+      "states": "登录、注册、验证、找回与重置五个表单的当前视觉",
+      "status": "已完成：五表单当前图、认证操作链和完整长图已归档",
+      "evidence": "找到已有找回密码金图；复用既有 9 个场景，仅补密码可见一张；检查 40 个完整窗口，其中 8 张长图。",
+      "next_action": "本项关闭；共享状态历史证据、系统窗口与配置入口分别沿用 G11、G10、G12。",
+      "reference": "AUTH-CURRENT.md",
+      "completion": "CLOSED_FOR_RECORDED_SOURCE"
+    },
+    {
+      "id": "G05",
+      "page": "schedule",
+      "states": "日程、个人事项新增/编辑/删除、日期时间选择",
+      "status": "已完成：当前代表图与完整长图归档，历史操作链保留",
+      "evidence": "复用 19 张现有状态图；6 张完整长图已检查；相关实现哈希匹配。",
+      "next_action": "本项关闭；共用状态与历史条目版本核对沿用 G11，不复制路由或尺寸组合。",
+      "reference": "SCHEDULE-CURRENT.md",
+      "completion": "CLOSED_FOR_RECORDED_SOURCE"
+    },
+    {
+      "id": "G06",
+      "page": "service-renew",
+      "states": "续购服务各可见业务状态",
+      "status": "已完成：当前代表图与完整长图归档，历史操作链保留",
+      "evidence": "复用 12 张现有状态图；8 张完整长图已检查；相关实现哈希匹配。",
+      "next_action": "本项关闭；共用状态与历史条目版本核对沿用 G11，不复制路由或尺寸组合。",
+      "reference": "RENEW-CURRENT.md",
+      "completion": "CLOSED_FOR_RECORDED_SOURCE"
+    },
+    {
+      "id": "G07",
+      "page": "booking",
+      "states": "确认预约时启用提醒 → 权限说明／拒绝引导／设置返回",
+      "status": "已完成：正式协调器下预约提醒入口及授权恢复链已核对",
+      "evidence": "共享权限弹窗直接复用；补 1 张预约提醒开启结果图，1 条实际入口链通过。",
+      "next_action": "本项关闭；系统窗口归 G10，其它共享状态版本归 G11，不扩展测试组合。",
+      "reference": "BOOKING-REMINDER-ENTRY-CURRENT.md",
+      "completion": "CLOSED_FOR_RECORDED_SOURCE"
+    },
+    {
+      "id": "G08",
+      "page": "agent-home",
+      "states": "指定会话通知入口与历史抽屉",
+      "status": "已完成：当前指定会话成功入口及历史抽屉条件已核对",
+      "evidence": "旧初始化异常已修复；复用 9 张当前图含 5 张长图，实际打开并关闭历史抽屉。",
+      "next_action": "本项关闭；系统窗口归 G10，其它共享状态版本归 G11，不扩展测试组合。",
+      "reference": "AGENT-ENTRY-CURRENT.md",
+      "completion": "CLOSED_FOR_RECORDED_SOURCE"
+    },
+    {
+      "id": "G09",
+      "page": "intake",
+      "states": "信息使用说明、保存成功浮层、表单完整长图",
+      "status": "已完成：表单长图与两类浮层已归属，保留真实操作链",
+      "evidence": "修正空组件匹配造成的 0 候选；复用 5 张当前图，其中 3 张长图；1 个既有场景通过。",
+      "next_action": "本项关闭；历史其它状态版本仍沿用 G11，返回目的页相同图不重拍。",
+      "reference": "INTAKE-CURRENT.md",
+      "completion": "CLOSED_FOR_RECORDED_SOURCE"
+    },
+    {
+      "id": "G10",
+      "page": "shared",
+      "states": "原生键盘、照片/文件选择、通知和相机/麦克风授权",
+      "status": "已完成：既有 Android 系统窗口归并与平台边界核对",
+      "evidence": "15 张原生窗口及 XML 已复核；所列键盘、选择器和权限类别均有证据，无需重复采集。",
+      "next_action": "本项关闭；平台与外部应用边界保留，不增加跨平台或权限交叉矩阵。",
+      "reference": "NATIVE-WINDOWS-CATALOG.md",
+      "completion": "CLOSED_FOR_RECORDED_ANDROID_EVIDENCE"
+    },
+    {
+      "id": "G11",
+      "page": "shared",
+      "states": "所有长页与共享错误组件的当前版本",
+      "status": "已完成：逐状态映射、当前版本和完整长图验收",
+      "evidence": "213 条页面状态、166 条浮层状态逐项对应；13 个页面待定位项和9个源码待审项闭环，最终完整性检查通过。",
+      "next_action": "本项关闭；历史范围保留，不再扩展测试组合。",
+      "reference": "AUDIT.md",
+      "completion": "CLOSED_FOR_RECORDED_SOURCE"
+    },
+    {
+      "id": "G12",
+      "page": "configured",
+      "states": "邀请、首次资料与数字形象页面",
+      "status": "已完成：4 个配置页面当前代表图与启用条件已核对",
+      "evidence": "复用 25 张完整图含 9 张长图；11 个视觉场景、单独 2 个配置开关场景通过。",
+      "next_action": "本项关闭；旧状态版本由 G11 具名清单核对，不扩展配置或尺寸矩阵。",
+      "reference": "CONFIGURED-PAGES-CURRENT.md",
+      "completion": "CLOSED_FOR_RECORDED_SOURCE"
+    }
+  ],
+  "new_gap_rule": "仅当当前产品存在可见状态且已有运行图/长图不能复用时，标记 missing-image 并补图；纯请求参数和视觉相同错误不增加状态。"
+}

@@ -1,0 +1,8 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/shared/route_motion_test.dart
+00:00 +0: TargetPlatform.android route motion reduced=false
+00:00 +1: TargetPlatform.android route motion reduced=true
+00:00 +2: TargetPlatform.iOS route motion reduced=false
+00:00 +3: TargetPlatform.iOS route motion reduced=true
+00:00 +4: discard opens fully and preserves cancel with reduced motion
+00:00 +5: language sheet opens fully without elapsed animation
+00:00 +6: All tests passed!

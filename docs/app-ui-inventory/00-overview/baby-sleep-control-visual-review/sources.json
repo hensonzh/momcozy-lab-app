@@ -1,0 +1,2680 @@
+{
+  "method": "full-width continuous 650px strips; identical pixels reference prior reviewed Mom or Baby controls; remaining segments reviewed at native width",
+  "sources": [
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-active-collapsed-320-2x.long.png",
+      "sha256": "d8aaaf9ba9899b433ab14af9bcce307bc093d1e4ebfbbfb4de7c040107334f9a",
+      "width": 320,
+      "height": 962,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "e8d4a05b7508b0244fd523c77e9144c338b332906b355b9668bbe1167907b032",
+          "review": "sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 962,
+          "pixel_sha256": "6620725b25e2439be5ab88eb266546372c73f2602c1a4b362edc78d710d247df",
+          "review": "sheet-01.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-active-collapsed-320-2x.png",
+      "sha256": "52a6fedcd3fb6aac18e0103a7ef5348a4a491226b28acd41a41c6fda75467539",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "bfe08c1d2c1ae9989cdc4a8e0cd49b95b979a0201150cc85edb1546b32a0ec54",
+          "review": "sheet-01.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "c37edaa5bb886b652b6764227b3534db505355df87a3a879652b185f76cc1d79",
+          "review": "sheet-01.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-active-collapsed-393-1x.png",
+      "sha256": "96a84b8cfd6c665ae562cff9a2564d980c8d9e0561233c07dfe8de97ff2c42cf",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b018a32f77836df76cc7955d021e31f748374e4e0c65c951e65e9862b7e24583",
+          "review": "sheet-01.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "388666ba5f08b4c9319d104bcd48498b2ed24c78a1c8b8136b8ff0c2b1442eb3",
+          "review": "sheet-01.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-active-expanded-320-2x.long.png",
+      "sha256": "71eeb7ee0c9ea6ebad95a0b3f6571c85d9f92a824bb0d4df318826a0d65e839a",
+      "width": 320,
+      "height": 1802,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "e8d4a05b7508b0244fd523c77e9144c338b332906b355b9668bbe1167907b032",
+          "review": "sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "43fba0d53728d2ded87d93880b20439ca1e56592e3feb0163328dba684e81da7",
+          "review": "sheet-02.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1802,
+          "pixel_sha256": "01275c211ab205e113735225b618e4005d1d2980c16754199b6eb94a4a40b5b2",
+          "review": "sheet-02.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-active-expanded-320-2x.png",
+      "sha256": "a6d81329eb2ff9eefc4fd4c8a876fdd7f7a95ef4f8f5fbadf7c1fe160d2fb763",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "5e89d4a91e7298377d48fec4956adc0427ca918b0fd84fa2ca212010a07fcf90",
+          "review": "sheet-02.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "c37edaa5bb886b652b6764227b3534db505355df87a3a879652b185f76cc1d79",
+          "review": "sheet-01.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-active-expanded-393-1x.long.png",
+      "sha256": "8cb9ac74d22c3f9e1bcc1e1e891ceae8a88a2d77cb69bc25c054f7bee975ad35",
+      "width": 393,
+      "height": 1155,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "86dd9831d99d9774a8a12e7286a4ff929ca362294f88285406ec9d35261e5726",
+          "review": "sheet-02.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1155,
+          "pixel_sha256": "acc4f227a1bb1fee5cf6a3d9e4a4dece8ee836957f6007f98e7c27b74d0de3a3",
+          "review": "sheet-02.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-active-expanded-393-1x.png",
+      "sha256": "142ea30a6fbd7ac81cadf2fc1e993809229d303bbc4c99de7024aa13370f7d56",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a722713f03f24d48de03a468d841651e727b802db4668d88b7d6b1e2e667173f",
+          "review": "sheet-02.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "326fa295178ef524ee4d9fbb9e5eb8f3f7aba0353461aac40b438d8e3ac90095",
+          "review": "sheet-03.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-active-manual-wake-320-2x.long.png",
+      "sha256": "00479bef5237dc450dda41c747a24c71511aeedf1b6aeadba81ddfbd0a35f1e6",
+      "width": 320,
+      "height": 1858,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "e8d4a05b7508b0244fd523c77e9144c338b332906b355b9668bbe1167907b032",
+          "review": "sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "ac56152dfe68db824434b0b49f9f3da4c7ae738cc5cb3d1e7538870ce30ee221",
+          "review": "sheet-03.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1858,
+          "pixel_sha256": "e2758f9c4cb7687eeb7fb17e8d5772fe9fda2049f940021638da602d209603f2",
+          "review": "sheet-03.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-active-manual-wake-320-2x.png",
+      "sha256": "8dfb94912e6303bcea50b21a548e3da3801ad44a38fd4eea36418f9afb10b97f",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "3a0b0a24aa970f79b9a3d5ae12dd620926ece2c7e1125918a34d6b73a7ab02b9",
+          "review": "sheet-03.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "e84ae2e6fe46c75d28c5c3da3c1a118d441227f0dcbf2ca29adc5148592e946e",
+          "review": "sheet-03.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-active-manual-wake-393-1x.long.png",
+      "sha256": "c134148f361cecf050540831c806f5aa1f3c02f7aabb2283e1ed0bedf257fc91",
+      "width": 393,
+      "height": 1203,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "86dd9831d99d9774a8a12e7286a4ff929ca362294f88285406ec9d35261e5726",
+          "review": "sheet-02.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1203,
+          "pixel_sha256": "92edf9626a7f81322fb96acc127ba306007aca01ab5a2badc6ee5fddef39d450",
+          "review": "sheet-03.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-active-manual-wake-393-1x.png",
+      "sha256": "1b912c8f142e6951387a716c7d4087f968bcc3ede4a46aedd8b049872ede6ae3",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "f5546399a71730b8b271c0c5095396e9c8ef67bb52b99bcf36f5ac079dcc0663",
+          "review": "sheet-04.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "919da64039167e208ddefc06ec5b27d820c30ada7b6b0744edf59a25931a5da3",
+          "review": "sheet-04.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-active-open-320-2x.long.png",
+      "sha256": "d8aaaf9ba9899b433ab14af9bcce307bc093d1e4ebfbbfb4de7c040107334f9a",
+      "width": 320,
+      "height": 962,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "e8d4a05b7508b0244fd523c77e9144c338b332906b355b9668bbe1167907b032",
+          "review": "sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 962,
+          "pixel_sha256": "6620725b25e2439be5ab88eb266546372c73f2602c1a4b362edc78d710d247df",
+          "review": "sheet-01.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-active-open-320-2x.png",
+      "sha256": "5330bf59488e8749ca35023d4a295011192999d85dd835c3fcf7d08701c7c0b3",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "e8d4a05b7508b0244fd523c77e9144c338b332906b355b9668bbe1167907b032",
+          "review": "sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "c37edaa5bb886b652b6764227b3534db505355df87a3a879652b185f76cc1d79",
+          "review": "sheet-01.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-active-open-393-1x.png",
+      "sha256": "96a84b8cfd6c665ae562cff9a2564d980c8d9e0561233c07dfe8de97ff2c42cf",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b018a32f77836df76cc7955d021e31f748374e4e0c65c951e65e9862b7e24583",
+          "review": "sheet-01.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "388666ba5f08b4c9319d104bcd48498b2ed24c78a1c8b8136b8ff0c2b1442eb3",
+          "review": "sheet-01.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-active-saved-320-2x.long.png",
+      "sha256": "38b64eda38958d44052aac38060d9bab2ae494f5ccb1b15fc1638296bc6a4341",
+      "width": 320,
+      "height": 3597,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "58578630282c08ed070b330c5092b2346554d47e291ecce03bfa1790d2ebdd62",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "ee77027e21326fac98d9434f3e6cc092eefb9b7644ab2eff44c1f2f78801beac",
+          "review": "sheet-04.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "202cda33957fef99135a526b005123221cbd28aa18be6677cd48eab15a275772",
+          "review": "sheet-04.png#tile-3"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "60c51021c93f42bbefbea80a457230bf5e2a747132a908a9a31bc95582cd64d7",
+          "review": "sheet-04.png#tile-4"
+        },
+        {
+          "y0": 2600,
+          "y1": 3250,
+          "pixel_sha256": "5e4c2fe9af05e87d0f8d9b5fa52c0ac38a3d83a2f5fafd0d13189ec53cedfde7",
+          "review": "sheet-04.png#tile-5"
+        },
+        {
+          "y0": 3250,
+          "y1": 3597,
+          "pixel_sha256": "c4ed88c24388ca769d0315caea05b26b3a3e0bbd8d7644241f298b649ab769ea",
+          "review": "sheet-05.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-active-saved-320-2x.png",
+      "sha256": "4ee237eb3db792181255af491c1450a99ac96b7c2dd813bead231ba2bd11adf8",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "f2db455f3e1b1ba7cd01ec06b5a31ed86791fbbbb80d8916bd4426cec58597d3",
+          "review": "sheet-05.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "563dd0eb6127eff7c02d4cf0854f116747677cf072bd11574cc7adf5267526f7",
+          "review": "../baby-feeding-control-visual-review/sheet-18.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-active-saved-393-1x.long.png",
+      "sha256": "71e1090d2fabbd3efceb721d0871bff503e02f06165d01b117b5a5d78da6d342",
+      "width": 393,
+      "height": 1841,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b08728b616e8fc5d261fc6153fd74a67673d8004205519bdd465e897cf0f5526",
+          "review": "sheet-05.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "462243825730002d5a7b26fe7e1bbdb2f381ea57afabfc7a0cad762ed9541c1e",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1841,
+          "pixel_sha256": "ecde6ca0119d1c86ad60daf72e7e3b8a4773a12c2e44fe43c2baebf7311708b6",
+          "review": "sheet-05.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-active-saved-393-1x.png",
+      "sha256": "0d2edbe670723dfd3ec83434c4c2f2093de94149503754e6b5499c5cc27feba6",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "bfcc37066f48bc675a29a9e5be15e8ece4926e699d7a4561d33cb6693804e500",
+          "review": "sheet-05.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "fa89fc35c134e2b3ed02a70a1f9d3864370f0c315bb200f409eb54a07652e2d5",
+          "review": "../baby-feeding-control-visual-review/sheet-18.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-active-wake-cleared-320-2x.long.png",
+      "sha256": "71eeb7ee0c9ea6ebad95a0b3f6571c85d9f92a824bb0d4df318826a0d65e839a",
+      "width": 320,
+      "height": 1802,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "e8d4a05b7508b0244fd523c77e9144c338b332906b355b9668bbe1167907b032",
+          "review": "sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "43fba0d53728d2ded87d93880b20439ca1e56592e3feb0163328dba684e81da7",
+          "review": "sheet-02.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1802,
+          "pixel_sha256": "01275c211ab205e113735225b618e4005d1d2980c16754199b6eb94a4a40b5b2",
+          "review": "sheet-02.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-active-wake-cleared-320-2x.png",
+      "sha256": "397661be6148cc5a1b58fd2eed7c8536986fea05c61783dbc572b1135a33ff6a",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "640c811420511a907d55ea67671e6b385c5d98c9278217e1343251d4bcbd111d",
+          "review": "sheet-05.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a1ae867e7f06f6c2df57901611b51307f9e8887ce847dd334ccfd482777cf987",
+          "review": "sheet-06.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-active-wake-cleared-393-1x.long.png",
+      "sha256": "8cb9ac74d22c3f9e1bcc1e1e891ceae8a88a2d77cb69bc25c054f7bee975ad35",
+      "width": 393,
+      "height": 1155,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "86dd9831d99d9774a8a12e7286a4ff929ca362294f88285406ec9d35261e5726",
+          "review": "sheet-02.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1155,
+          "pixel_sha256": "acc4f227a1bb1fee5cf6a3d9e4a4dece8ee836957f6007f98e7c27b74d0de3a3",
+          "review": "sheet-02.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-active-wake-cleared-393-1x.png",
+      "sha256": "4fb360c511648c3b20b2c020c0aaabf9066a0aed72d42fdf694233362fd39f53",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "0d74f369f9644d2bc69d191ddf3e42c0df9c626b0c72d765c426c152b18fc04b",
+          "review": "sheet-06.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "81b0f253be9b1253d68fcd832d7dbd1302fdcef3d8bc2cecaa7d0012950f852c",
+          "review": "sheet-06.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-completed-now-320-2x.long.png",
+      "sha256": "ed812763655566f341ee43a26201dd45ffc2dc568343a113d41a402a297320ec",
+      "width": 320,
+      "height": 3558,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "58578630282c08ed070b330c5092b2346554d47e291ecce03bfa1790d2ebdd62",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "44f699c0c8c48eaffd56a47fc2142c2dc6b0f74d940aa6822d02a26f3f7a5a31",
+          "review": "sheet-06.png#tile-3"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "61223e5c16da69cc9fdeb646a19f396a6a5e129b989330b4a808f5af506f916e",
+          "review": "sheet-06.png#tile-4"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "6e68a2beb70079f5560c2d368ab923e05594891e0b95ea06518a220906b35185",
+          "review": "sheet-06.png#tile-5"
+        },
+        {
+          "y0": 2600,
+          "y1": 3250,
+          "pixel_sha256": "7755c131d8c7c39cf46f4030dd65a4480311124f08458de0dd1ca25e9a267297",
+          "review": "sheet-07.png#tile-0"
+        },
+        {
+          "y0": 3250,
+          "y1": 3558,
+          "pixel_sha256": "2a33e58a5c135a3e9e87bc3a63e55d07ac7eb625a6239e01486438d7393bea36",
+          "review": "sheet-07.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-completed-now-320-2x.png",
+      "sha256": "97d1d6dd3645695f02dbb6b430e6a314755db6c374174cdb0c2812ec8b44df52",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b9bc2fe7bcb817121fb7db10f9d23388deb4c29147c3aa4bb7fe2ff237f41a2b",
+          "review": "sheet-07.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "563dd0eb6127eff7c02d4cf0854f116747677cf072bd11574cc7adf5267526f7",
+          "review": "../baby-feeding-control-visual-review/sheet-18.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-completed-now-393-1x.long.png",
+      "sha256": "bb9055a4e4d6d1e2d6262fa936450218386c207854a003d5a0dce6f26cef211d",
+      "width": 393,
+      "height": 1819,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2f77c48f2957c69158cbbd95852be6e701087b0b5c71146956ded9c699893646",
+          "review": "sheet-07.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "ae5d1595a7639e8537cb644bbd6aad85a2195196afb226adfd6a43624225592b",
+          "review": "../baby-knowledge-source-visual-review/sheet-17.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1819,
+          "pixel_sha256": "7c129cd38ab093881cf0019ec6ecfd27789eeb790eb59035cbef764bb6677845",
+          "review": "sheet-07.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-completed-now-393-1x.png",
+      "sha256": "821b763b8893dd2632753f835b3ffc2b3957af1d2c229f8d9685d07e9356335c",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b89b9bf1c4ab48dd8a5b72529c2dd2a40483b108e4ccbc4e7cfc41daa7eb6992",
+          "review": "sheet-07.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "08ff2598cb3c54f266d2a49c5fb8b0a36caef42a38bda26a0929dd066aaacbd7",
+          "review": "sheet-08.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-history-active-reopened-320-2x.long.png",
+      "sha256": "6ffe8503b6dbe28ffce184e2ea0b4a4a9421e1e25692b73e7bb4e43b70ac7ed9",
+      "width": 320,
+      "height": 1185,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "af2cdee42bf790632807a638cf2fba415e04e78c0979c1c8a5c740f32d3d5b43",
+          "review": "sheet-08.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1185,
+          "pixel_sha256": "5680d924eaa9d1128ac58bd6d47221e01287b1236013c621121f2f9df8a4ed4b",
+          "review": "sheet-08.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-history-active-reopened-320-2x.png",
+      "sha256": "32e5b6d700c8e3ae1fbd6c3e987c93d13a7f1650714ea0198446b8be915ef463",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "af2cdee42bf790632807a638cf2fba415e04e78c0979c1c8a5c740f32d3d5b43",
+          "review": "sheet-08.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2fd73e0dba60206932080dde5061ffd168b2ae56bbd8c655aeb55909f1dd5ad0",
+          "review": "sheet-08.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-history-active-reopened-393-1x.png",
+      "sha256": "ee1e30868b60f6951e5dccaa0fd48935649e47c457e19e347d02422684215747",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "727651f7678a57ab9e1a46c305a28c9db1445d501c53c5281204821a5c99ec54",
+          "review": "sheet-08.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "abf3f6e4299d42b21c6d3658c51c9c1dce452c992dc0d69a8d8c88efa4c644f6",
+          "review": "../baby-diaper-control-visual-review/sheet-23.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-history-active-saved-320-2x.png",
+      "sha256": "2c39ad8bfd3b6c2fc152abefdab102b9a50612ef59463116cd8b1687beff74b1",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a14d5bd1969fbf7cea4299bec909763ae43107f15f46d9e72dbcf8dd3c59a1e8",
+          "review": "sheet-08.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "50b472f56511423c0bda6ec3cbfda30b48203d2ace3b579f099f7282ff77fa65",
+          "review": "../baby-diaper-control-visual-review/sheet-21.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-history-active-saved-393-1x.png",
+      "sha256": "bc9d39968947483b50338fa2f226bbbd3471089d61a5dd31ea88949b07455f77",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ffb80ac2dce0a591bd1513920b1952ba3c5de2bc804015e916c2f9b62a6b3109",
+          "review": "sheet-09.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "6a5a78b0156f5d4fa1018d72fc617139ab47cbd88d0c51728ccdb569d098ce8f",
+          "review": "../baby-feeding-control-visual-review/sheet-09.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-history-completed-320-2x.long.png",
+      "sha256": "a3c954211ea5b14b89ed046e373ccfae45574e3541876674a2f256b0d1da5c97",
+      "width": 320,
+      "height": 866,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c0df5ff02ee3494449a7f9c06d2318a33fef44eae61afb2e47444298d07d52d9",
+          "review": "sheet-09.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 866,
+          "pixel_sha256": "ecdca4ef46bc57b541559ce1e35998dc8a21922d3499fc1174af3424339a34fd",
+          "review": "sheet-09.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-history-completed-320-2x.png",
+      "sha256": "81cfceef93f8e6b12b4e623c048f09990527459c61356db82f59798ee45c883a",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c0df5ff02ee3494449a7f9c06d2318a33fef44eae61afb2e47444298d07d52d9",
+          "review": "sheet-09.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "b66030a204f762920a053cc08bb85f13bbc1f022e826c97cf40a088f3598e5cd",
+          "review": "sheet-09.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-history-completed-393-1x.png",
+      "sha256": "d5d066bffbef2b78a715527a30c4ebd314cf97f7079dfbb913948b69f34b4b5f",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ff77263ace6d2e69b6f4098d19ae5d6731bf5b96035004d720dbd4fab9b99fc9",
+          "review": "sheet-09.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "8bdeffc41d4a3f4c9ce4bf04d242795fab314a5a6f5ce005f84e01795430343f",
+          "review": "../baby-feeding-control-visual-review/sheet-16.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-history-editor-320-2x.long.png",
+      "sha256": "32057ab514a27851ef32a265246ef49255dc64fe30455f3564f17f91478773d1",
+      "width": 320,
+      "height": 1531,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "fb146fe86817ab0982110b2664d95a8bd77381c76e0f1cb6a67cf6f4ce43ade7",
+          "review": "sheet-09.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "91523efd16b9da4c495e0fe97661feab881848f975aaadb0ec5464f90dbedd28",
+          "review": "sheet-10.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1531,
+          "pixel_sha256": "413f4988c8f1babad80cd96c1638e315f75843b4b2fbacaa4c46141c0865b999",
+          "review": "sheet-10.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-history-editor-320-2x.png",
+      "sha256": "234e3cbb2c295972e69f1bb46d20d396cd14fd374415f574f516dbe54568ae17",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "fb146fe86817ab0982110b2664d95a8bd77381c76e0f1cb6a67cf6f4ce43ade7",
+          "review": "sheet-09.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "172d3ee9fbf3d0c5cafab7095520327c1b13716766e2adf799a0cb7d59d9ef9a",
+          "review": "sheet-10.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-history-editor-393-1x.long.png",
+      "sha256": "748ea31a9db2d178673d516709387566ec045869985a15179ebaa06f4dff479a",
+      "width": 393,
+      "height": 916,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b453be147b2976cc2f31c3086e5171b4ec676b3921226bf0ea7bce9d019babb2",
+          "review": "sheet-10.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 916,
+          "pixel_sha256": "346069b9ccac9d1702a27f82ef17ac733b03cd4785e88c3d296d0c12a689fb73",
+          "review": "sheet-10.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-history-editor-393-1x.png",
+      "sha256": "275a620d311e7c0502f9ef23f5f02fb73b73d4caa644ccffc93cfacf06889342",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b453be147b2976cc2f31c3086e5171b4ec676b3921226bf0ea7bce9d019babb2",
+          "review": "sheet-10.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "bfe7d3f55562063cd34c6a41cc31026be4cc2aa84ed9f036f1e660737fd99e94",
+          "review": "sheet-10.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-history-wake-cleared-320-2x.long.png",
+      "sha256": "f2dad7ee131f5066b39d0257aee65a49f5f830b12c9aa48b395ed0a5255856b3",
+      "width": 320,
+      "height": 1443,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "fb146fe86817ab0982110b2664d95a8bd77381c76e0f1cb6a67cf6f4ce43ade7",
+          "review": "sheet-09.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "3e4fba2c0b6742cfc501085cf7be2e9c0ef59e0cf2cf55fc97ffb1a2dfa7b31d",
+          "review": "sheet-11.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1443,
+          "pixel_sha256": "f2db9c6ec2c03f50d8929b2a2a81d2ded3e604a29416d83798a44397e5c07921",
+          "review": "sheet-11.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-history-wake-cleared-320-2x.png",
+      "sha256": "949a89576c77b68b6f78e946147bd599187c9bdbaa002e8cd5cc338275a15734",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9ba4597c20d96917460bc29d1791989cdbd58856e43c84e4f25072e21c164ea7",
+          "review": "sheet-11.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "50ee42bd4c45acd2bc33883e48a0d54f8fa8f502f7b9eb55a86c940007bcaebd",
+          "review": "sheet-11.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-history-wake-cleared-393-1x.long.png",
+      "sha256": "f20c7514930b9c140af4fb2d65563119d92c4c3229b75f238ade80daa955f732",
+      "width": 393,
+      "height": 868,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "240f44c5f645fd824356b1f241a1bb74d2bd25514d3b8643a51a7bb671ca3980",
+          "review": "sheet-11.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 868,
+          "pixel_sha256": "e679508d3c92d08b2ad56a94381d8f02b57e0483f392fa0505f310f4e098122b",
+          "review": "sheet-11.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-history-wake-cleared-393-1x.png",
+      "sha256": "617a5f7deb3f64319902524847b25fcaf194b61c9fc38f79d5cb6304425f4103",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "0d30463f4c837abcd7f553aefba9bd7feff6c607e49ab50dc536d03cc53c7a06",
+          "review": "sheet-12.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "4e26c7b0aab4f2dfe6afe81c9ddde9162483db36207cbfbcfe51007b5504701b",
+          "review": "sheet-12.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-home-active-return-320-2x.long.png",
+      "sha256": "3bc51e856f8e94b05e3bb0d5fbbc5538177b75ebfc76a5ebf8e02c8fb02746da",
+      "width": 320,
+      "height": 3490,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "58578630282c08ed070b330c5092b2346554d47e291ecce03bfa1790d2ebdd62",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "ee77027e21326fac98d9434f3e6cc092eefb9b7644ab2eff44c1f2f78801beac",
+          "review": "sheet-04.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "202cda33957fef99135a526b005123221cbd28aa18be6677cd48eab15a275772",
+          "review": "sheet-04.png#tile-3"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "60c51021c93f42bbefbea80a457230bf5e2a747132a908a9a31bc95582cd64d7",
+          "review": "sheet-04.png#tile-4"
+        },
+        {
+          "y0": 2600,
+          "y1": 3250,
+          "pixel_sha256": "6071be497837601df0d677a47fda739388a2e381450916cee447b18d8286f9ac",
+          "review": "sheet-12.png#tile-2"
+        },
+        {
+          "y0": 3250,
+          "y1": 3490,
+          "pixel_sha256": "bb436c8d6af3f5d250acbf108e05c0e1edda21a8fc606786e9ed653d300c20c7",
+          "review": "sheet-12.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-home-active-return-320-2x.png",
+      "sha256": "32e02297eb960cf9da693d3ed9a4e380131ba98e63d64680e1c452112635af75",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "58578630282c08ed070b330c5092b2346554d47e291ecce03bfa1790d2ebdd62",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "98ef9a2ad09f8a3c8229ac286c7eb3cb28273ffd01708531c25ae3c0ce531fd2",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-home-active-return-393-1x.long.png",
+      "sha256": "5a057c24fdc62f41a2f0f79efd42332d2fe876d856c4f42baeb2cde447661500",
+      "width": 393,
+      "height": 1752,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b08728b616e8fc5d261fc6153fd74a67673d8004205519bdd465e897cf0f5526",
+          "review": "sheet-05.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "462243825730002d5a7b26fe7e1bbdb2f381ea57afabfc7a0cad762ed9541c1e",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1752,
+          "pixel_sha256": "5d1142fe86ef6e5a8664871afce9928bf15cf58f7b773ac5f1080f1b7fead23c",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-home-active-return-393-1x.png",
+      "sha256": "9fe18e330da37a6d3ee0d74931c3b349a685c4b9d7aadcfac4a7e3f0a56b3203",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b08728b616e8fc5d261fc6153fd74a67673d8004205519bdd465e897cf0f5526",
+          "review": "sheet-05.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a1f9a5a5f828e0a335129ce0d0a8a7cf54c1ab1e6b87423f882a64c1946d8f9e",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-home-entry-320-2x.long.png",
+      "sha256": "2a7eed3eaa881740523730a74f99487a3935cee5f5e500fdea7e513a60082fc7",
+      "width": 320,
+      "height": 3460,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "58578630282c08ed070b330c5092b2346554d47e291ecce03bfa1790d2ebdd62",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "034c398b12fe2df5aaef1e8fd2e151d4092f4bc550a8179f7524acfdf8572a5d",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "fa27bf1b8f7135cf78bb1380036cbe25b805799678f9c6338d1b09862168215b",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "cf7b9827ee12ea5f4ce473b5b04736e9eca7e63163a06350e8ad0569b0e9a58a",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-3"
+        },
+        {
+          "y0": 2600,
+          "y1": 3250,
+          "pixel_sha256": "830120be56be43c6e4e4a7527c94577138b4175b12f8b7b606a89d5ff059987b",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-4"
+        },
+        {
+          "y0": 3250,
+          "y1": 3460,
+          "pixel_sha256": "347ac7ec17d5bdaf8c362c53e6be84275398444203824d119dff6d55c72c68e4",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-home-entry-320-2x.png",
+      "sha256": "32e02297eb960cf9da693d3ed9a4e380131ba98e63d64680e1c452112635af75",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "58578630282c08ed070b330c5092b2346554d47e291ecce03bfa1790d2ebdd62",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "98ef9a2ad09f8a3c8229ac286c7eb3cb28273ffd01708531c25ae3c0ce531fd2",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-home-entry-393-1x.long.png",
+      "sha256": "f0cba396e8a9efa775fb9fbb71adccd863e4ce8dace888759be74db253f099a6",
+      "width": 393,
+      "height": 1752,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2541e10f43029eb71329290bf405fa83fabe418cf9eb6676ed4e3eb8498f6856",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "462243825730002d5a7b26fe7e1bbdb2f381ea57afabfc7a0cad762ed9541c1e",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1752,
+          "pixel_sha256": "5d1142fe86ef6e5a8664871afce9928bf15cf58f7b773ac5f1080f1b7fead23c",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-home-entry-393-1x.png",
+      "sha256": "f7c02c89b1acb7e0cd4ab4adc0593819b05f05ed599398d49ea569c924ea6a82",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2541e10f43029eb71329290bf405fa83fabe418cf9eb6676ed4e3eb8498f6856",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a1f9a5a5f828e0a335129ce0d0a8a7cf54c1ab1e6b87423f882a64c1946d8f9e",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-more-return-320-2x.png",
+      "sha256": "90ff3249f64fc7750a5da2a6bac0e2e90a64014893d9e85c3df4c76dbe8dea38",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "7925ed8e5939f589376b72745969839e14c7fb166cfb48866eed469fa66c4d02",
+          "review": "../baby-profile-control-visual-review/sheet-19.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "f95aac7cc67095efb73a4ae0b9ee5dc9518b86f20195158e860fce9621ec483a",
+          "review": "../mom-rest-control-visual-review/sheet-19.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-more-return-393-1x.png",
+      "sha256": "1905827f337ce2fe60b46266600cce9aa8dea3b9aac6828fb6a1d3f67f020b35",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c8e12900bddbe318fd8d03ad9b384466fc1af1f6c371f72f999f20bc96cac1d6",
+          "review": "../baby-profile-control-visual-review/sheet-19.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "ae62a60cadfc8bfb09e3e94acb0dc8f7d481c4c260eae5960e33ebdc5f0799db",
+          "review": "../mom-rest-control-visual-review/sheet-20.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-new-open-320-2x.long.png",
+      "sha256": "e43ee782820c9cadd4bf232c5e79bcd3fb2fbf32e6b23e01e5300cde86f5547a",
+      "width": 320,
+      "height": 1431,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "086ea95fbac8e36f4fafd66b62a4f4f7ed467aba5078d9b358ef064d423aabed",
+          "review": "sheet-12.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "1f4d95760546659e2ccfbca0a3f4693df0f771b283c2f47b6bd1b14d7fa071bb",
+          "review": "sheet-12.png#tile-5"
+        },
+        {
+          "y0": 1300,
+          "y1": 1431,
+          "pixel_sha256": "05df602cf5ccfad08a25291bad942aa839b6c631eeb3395c8a3244dae2faf9a7",
+          "review": "sheet-13.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-new-open-320-2x.png",
+      "sha256": "bbd8b84b644519cef7f59196a415b52cf6e9ee3b67fa7e04f9ceb5bab18e161d",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "fd57060889687adaf40326d92baf5edb9224d89692b1c2f906fd086cbdedda5d",
+          "review": "sheet-13.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "9a287963975c64419ea955b364d281c90b3ec221a5f030a7f3356716c18b5abd",
+          "review": "sheet-13.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-new-open-393-1x.png",
+      "sha256": "fce931c8a72f1a20abba88135fbc5912e001198c5c50721aa4647fd566cd4622",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a7b7d843b74c9c7ec41343c02ff8ef076ae7c63a6708f692492bde066645f455",
+          "review": "sheet-13.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "63a19c3d2067cb66d9ee8610d03ca7cbcbec05fbe5af3e8b6bf7442b6deb9c6f",
+          "review": "sheet-13.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-note-collapsed-320-2x.long.png",
+      "sha256": "89c09523ac069ee28ebb6e834aac2d196178c1c936711aab7a61c6e8a89a83ac",
+      "width": 320,
+      "height": 1398,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "086ea95fbac8e36f4fafd66b62a4f4f7ed467aba5078d9b358ef064d423aabed",
+          "review": "sheet-12.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "410621089194d12a2ec1cf7ff6e6ffc84c5f871ae3d0f31cc1fd76436be55eb4",
+          "review": "sheet-13.png#tile-5"
+        },
+        {
+          "y0": 1300,
+          "y1": 1398,
+          "pixel_sha256": "1d2a48f4465d887afeae3f0c0b948af6f00dd8ca4fe30a831857332270674937",
+          "review": "sheet-14.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-note-collapsed-320-2x.png",
+      "sha256": "4153fb7ad722702ddc7aa2299baea824c5eb21665f29208e50cef6e95e50d73c",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "f54df74c28c748dadded1a9f16031583988c6e599edaea489abeb4e225e00f73",
+          "review": "sheet-14.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "8fc6cbaa3d7bf3d7420671fe33c539d999b2cf715774cc240dfc9097f33c756b",
+          "review": "sheet-14.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-note-collapsed-393-1x.png",
+      "sha256": "6d68fc1886844fbe65cced9ee9ae1c4b64b25609dbeec33ca53ce68ada70258f",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "d1b2ef79daf236672a6b63ddc5c82dc144e487e625c2829cc0dff5e62511c9c5",
+          "review": "sheet-14.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "63a19c3d2067cb66d9ee8610d03ca7cbcbec05fbe5af3e8b6bf7442b6deb9c6f",
+          "review": "sheet-13.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-note-expanded-320-2x.long.png",
+      "sha256": "73f420bc40a17daa294811bda51e9c513f435228cca021998acdafeecf01f564",
+      "width": 320,
+      "height": 1625,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "086ea95fbac8e36f4fafd66b62a4f4f7ed467aba5078d9b358ef064d423aabed",
+          "review": "sheet-12.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "027953b5b408a64c767bd52f0bc3876e29933e7cd0170052a0d9ae76f977c886",
+          "review": "sheet-14.png#tile-4"
+        },
+        {
+          "y0": 1300,
+          "y1": 1625,
+          "pixel_sha256": "1c731b1b9680978f1e8882fc7a894755753a7767f4748ad32ad77a5e2cdb3c6c",
+          "review": "sheet-14.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-note-expanded-320-2x.png",
+      "sha256": "19b838ffaa0c1c9b474a44046b7dce5f8bbb52c89fd19934595e45ba7c88b9a0",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "76290eb0e90869fdce4e2f729ef917b021968186161f13365d357ff94080424f",
+          "review": "sheet-15.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "fd9c733b279f40d515ad383b7f597fa885e8767313be2dcc652418ebc33ca25a",
+          "review": "sheet-15.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-note-expanded-393-1x.long.png",
+      "sha256": "c8b17f7aee3f1571a707cf3c41cface83ae03057b8c60984982da9ec107d8021",
+      "width": 393,
+      "height": 940,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "76c8a8b745af188af9c678abf6d13a9aed368c7d7d38cf68416d0b6ece748cd2",
+          "review": "sheet-15.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 940,
+          "pixel_sha256": "4413424ad31200eef6ca42e218e4c23209ae1be0f5e03743ab908c943a071889",
+          "review": "sheet-15.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-note-expanded-393-1x.png",
+      "sha256": "a90148efc8061db4b8a8d991b18e7a7d401377d8a7193ffbb20323f6bd9e4656",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "43cfb92f9d42acd7c252cb29e3c6cd7bacce36067d2e9936a868ad2785d0c8e4",
+          "review": "sheet-15.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "95d0bad62cadc024d2d221be4e674b1216f7d8d80b6ce9569c93257bb19c98dd",
+          "review": "sheet-15.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-note-filled-320-2x.long.png",
+      "sha256": "b92226ff7266c9781e8cdf90e27d38749f3c0b7b45090401785f6a296b7f89c3",
+      "width": 320,
+      "height": 1694,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "086ea95fbac8e36f4fafd66b62a4f4f7ed467aba5078d9b358ef064d423aabed",
+          "review": "sheet-12.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "a75f3a879cdfca0ef19eba1bd648b2b8f0495a8e150b17a60f670d87abb8a82b",
+          "review": "sheet-16.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1694,
+          "pixel_sha256": "835be0bc7c493f57941d42c64143671f907e7af0ae33c5d6b5804aa5755463d0",
+          "review": "sheet-16.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-note-filled-320-2x.png",
+      "sha256": "641b246134d711568eb85a53b1e30c2922037791b94e980a97302577cd23b7e5",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "3b06094352138d298b17c78054ee0887ec0ae37dd7f5e9c356da32ab0a742c67",
+          "review": "sheet-16.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "30845e360d2d76b97d57ce8741fe9f2385d88f6e5e6f21c2a6d410cb1a5eabd9",
+          "review": "sheet-16.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-note-filled-393-1x.long.png",
+      "sha256": "8c05880dc48abe907d9c66a2d762bdbffe8cfbeaf2675addbcaad0a27b388b03",
+      "width": 393,
+      "height": 940,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "52de3fab917bd5a229adcf466b42a534596f4878884511894c3c232b8e89688a",
+          "review": "sheet-16.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 940,
+          "pixel_sha256": "55c56125dae601ddd95228b88827dfd86d52ff853fa6e078d64d9a3d80b8d7ed",
+          "review": "sheet-16.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-note-filled-393-1x.png",
+      "sha256": "7a234f8abf0352bada630a6888485ce1bd88648aeba1d132278f700b2c559350",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "eec300519d1c96231108d1b849c3e77c5eb69aa1fcf2bb117469f6b86b2d0283",
+          "review": "sheet-17.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2fa75b64e2f29bb480d0da121c92856ad0ad075bb5f7f7cb786808787d381e38",
+          "review": "sheet-17.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-start-cancelled-320-2x.long.png",
+      "sha256": "e43ee782820c9cadd4bf232c5e79bcd3fb2fbf32e6b23e01e5300cde86f5547a",
+      "width": 320,
+      "height": 1431,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "086ea95fbac8e36f4fafd66b62a4f4f7ed467aba5078d9b358ef064d423aabed",
+          "review": "sheet-12.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "1f4d95760546659e2ccfbca0a3f4693df0f771b283c2f47b6bd1b14d7fa071bb",
+          "review": "sheet-12.png#tile-5"
+        },
+        {
+          "y0": 1300,
+          "y1": 1431,
+          "pixel_sha256": "05df602cf5ccfad08a25291bad942aa839b6c631eeb3395c8a3244dae2faf9a7",
+          "review": "sheet-13.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-start-cancelled-320-2x.png",
+      "sha256": "08d358088a37fa45062992eb0aac09204efd2ca140da78d9618731c322381210",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "4b4e20323ce5f8f6361d077e330d79ab20ad83fca91b26d348aca70f432028a8",
+          "review": "sheet-17.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "fd04a743ab8cb75b613107b49f9445a922baab54428930773df2a8d3051aa222",
+          "review": "sheet-17.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-start-cancelled-393-1x.png",
+      "sha256": "fce931c8a72f1a20abba88135fbc5912e001198c5c50721aa4647fd566cd4622",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a7b7d843b74c9c7ec41343c02ff8ef076ae7c63a6708f692492bde066645f455",
+          "review": "sheet-13.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "63a19c3d2067cb66d9ee8610d03ca7cbcbec05fbe5af3e8b6bf7442b6deb9c6f",
+          "review": "sheet-13.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-start-date-320-2x.png",
+      "sha256": "8aca6abde076fa11431130003587485a05c33273194125e0623052bc35c24378",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "bef3377f5aad28927020e6430bc041bdd3e14c621a5dbff4f3fca5551e7d1622",
+          "review": "sheet-17.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "c3e9ab0e6c12aec33591858d77eb27a8f3d8670267e7cebe98415b46995f1337",
+          "review": "sheet-17.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-start-date-393-1x.png",
+      "sha256": "8e6a3ae600654e5e905a90d22c4754d25094a9ca4d01393a227437bd06842897",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "4929e4f81bc502c472d9e72344c2fa9d9bbc70b86f9f392601b49190bf6c9835",
+          "review": "sheet-18.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "62a7020569ccf5dea09eea1811335cb13cd370f614cc4596fe90a41ef7a9a42e",
+          "review": "sheet-18.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-start-future-320-2x.long.png",
+      "sha256": "7a58ff6474b6bb581468d67366702a5de4862ce13f31bd82cba381dc10100c90",
+      "width": 320,
+      "height": 1431,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "086ea95fbac8e36f4fafd66b62a4f4f7ed467aba5078d9b358ef064d423aabed",
+          "review": "sheet-12.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "6689ce308d6cfa2d753ef5a35e91f2f286e137ea71d4f031c2f547fe241f1c52",
+          "review": "sheet-18.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1431,
+          "pixel_sha256": "05df602cf5ccfad08a25291bad942aa839b6c631eeb3395c8a3244dae2faf9a7",
+          "review": "sheet-13.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-start-future-320-2x.png",
+      "sha256": "a65034a608adf9da01cad137f5d72bda1bf7765b026fe630c2c03163bd8a1da6",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "3ab30f2852dc2cc06756401bbf093d8a882a3700f2fe9b513b27f39784c14d18",
+          "review": "sheet-18.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "fd04a743ab8cb75b613107b49f9445a922baab54428930773df2a8d3051aa222",
+          "review": "sheet-17.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-start-future-393-1x.png",
+      "sha256": "93e1d54a6e873c7188ea7522d1e832222295bfc5b9d2e02fb4935d14e35fa8d6",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9c0d2133bff7977f63cc796451edf23a2116a89e55c46925370b35b75a417d4c",
+          "review": "sheet-18.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "63a19c3d2067cb66d9ee8610d03ca7cbcbec05fbe5af3e8b6bf7442b6deb9c6f",
+          "review": "sheet-13.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-start-future-rejected-320-2x.long.png",
+      "sha256": "c747fdd88a86632bb9b2605bf0f8ed36e1382b2ca5e3b99f35af8b4c8995aa91",
+      "width": 320,
+      "height": 1525,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "086ea95fbac8e36f4fafd66b62a4f4f7ed467aba5078d9b358ef064d423aabed",
+          "review": "sheet-12.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "6892964618600697ea8c777e22db982400328c61029b79cd3161be7d7637dba3",
+          "review": "sheet-18.png#tile-5"
+        },
+        {
+          "y0": 1300,
+          "y1": 1525,
+          "pixel_sha256": "d1c37135f94f6f2567602be2f10df3902a65559865507948b49cfe2e4f47beb2",
+          "review": "sheet-19.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-start-future-rejected-320-2x.png",
+      "sha256": "22d1fd7c855084ee384d094bc10e52de4515ac3c0e81df26fdcdd90bc63d4589",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "d3bae7a6babe9f199d0cf5b41b8d4b42bb6cfcab2f0fe8ba9c249e99ef88b15f",
+          "review": "sheet-19.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "923bd30c4c8dd2aa808bd3c298337038015832e1dec47d84855c1478a4bb9591",
+          "review": "sheet-19.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-start-future-rejected-393-1x.long.png",
+      "sha256": "65a9a6a939ebf156fb811c32bf36916d6058dc7851b60a666f5f158c387826ba",
+      "width": 393,
+      "height": 858,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9c0d2133bff7977f63cc796451edf23a2116a89e55c46925370b35b75a417d4c",
+          "review": "sheet-18.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 858,
+          "pixel_sha256": "979e839a0a851e86c3f71a1e4dd8ba1694e8bca0a5a66060c572a45e5e5ffd0d",
+          "review": "sheet-19.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-start-future-rejected-393-1x.png",
+      "sha256": "c5446c4c8374085b510dbc6436d8f5ffadf2a3f443b655fc8b829daa28d2cec4",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b405cd493926b815e2b3c4917a9c98de0a081c07644a6acfab887d2f3bf12b49",
+          "review": "sheet-19.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "72bec5d65da626a9036a0ec5bc62dcf486fa4cfeae6db8f971bffdcec8dc94f2",
+          "review": "sheet-19.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-start-past-320-2x.long.png",
+      "sha256": "1c4168ec2ab867883a3099af2780ef67523122e00cb7b3005215ee47afaa2062",
+      "width": 320,
+      "height": 1431,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "086ea95fbac8e36f4fafd66b62a4f4f7ed467aba5078d9b358ef064d423aabed",
+          "review": "sheet-12.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "026eefa0d619e26dd1c5bb22e94022c8005e1478a13bfc8561d115840bb71fd1",
+          "review": "sheet-20.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1431,
+          "pixel_sha256": "05df602cf5ccfad08a25291bad942aa839b6c631eeb3395c8a3244dae2faf9a7",
+          "review": "sheet-13.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-start-past-320-2x.png",
+      "sha256": "ea86c3216352bd282672da9628e41b341a0edbf357588faa98dbeb635831a71d",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "efc398d01a054e5233cae56d646e65011a767a84c509ed0234c55652f04a306e",
+          "review": "sheet-20.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "fd04a743ab8cb75b613107b49f9445a922baab54428930773df2a8d3051aa222",
+          "review": "sheet-17.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-start-past-393-1x.png",
+      "sha256": "8ff06f51e8f1d411f126254b675268abc01db6abe1255e8433103d8a4d654690",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2cac8bdf03f7e4c00664e29c927f44102c34aee5a32bc37da3d494079ca9426c",
+          "review": "sheet-20.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "63a19c3d2067cb66d9ee8610d03ca7cbcbec05fbe5af3e8b6bf7442b6deb9c6f",
+          "review": "sheet-13.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-start-time-320-2x.png",
+      "sha256": "848fc0dc43b396be1f41c7879555d5dc49c95e8f565bd7c875580f5acbc92834",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6e16242f988caf5c1d4efa1fa3a4c3c15af67819b935693103df771d16b877af",
+          "review": "sheet-20.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "4fbe97a47985074123eb86e1506d476bdc49cd5b1b5cf765006d7373aed39a9e",
+          "review": "sheet-20.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-start-time-393-1x.png",
+      "sha256": "d83971392ae3ff2315f047d367cda30837cdba2444fc32ecbdad4394a09bcd73",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "1190fcedb5d9801443713b59b3d20f3948575a2b7c873593b4e5d9fdc5995b5c",
+          "review": "sheet-20.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "55d915e15c9a5876625d0713ddf66269bcecff4c8b9f3b5908e756c8d3ced942",
+          "review": "sheet-21.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-wake-before-320-2x.long.png",
+      "sha256": "acb5df12fc158886ba4f062e1cd8535ca3591240f6ac1b1f8a9343208bda0081",
+      "width": 320,
+      "height": 1519,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "086ea95fbac8e36f4fafd66b62a4f4f7ed467aba5078d9b358ef064d423aabed",
+          "review": "sheet-12.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "478636f3cfe60866fbd56c285fefed43be803a0a0f38d00bb7e18effcbad2e42",
+          "review": "sheet-21.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1519,
+          "pixel_sha256": "6c37b7086fefdc521ac22a643cb267d03c183bf1e537fbbb56c9aa6c47d485a2",
+          "review": "sheet-21.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-wake-before-320-2x.png",
+      "sha256": "b606fb59e1111fea1965719f8e297dec50730565618695cb1bf7f960ab1ad2e6",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2215f1447fb8b4605a631dc89c980a8b90de5f56113e2b994ff6cc40aead1762",
+          "review": "sheet-21.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "d0f48663fe10929a78814e7eb4cfba94873bc2813ae8da413ff05c7ee5e24623",
+          "review": "sheet-21.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-wake-before-393-1x.long.png",
+      "sha256": "582a3df4b8f031cbb7a622573941622e9f719e0b67d02e22df9923d24a5706e0",
+      "width": 393,
+      "height": 860,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "44b192c87f08eb8e0086c82680a1c0e7c4e9b9429ba3391d6a78d8b2f498525f",
+          "review": "sheet-21.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 860,
+          "pixel_sha256": "5f8ccb5c57e005868ebd1184a428eeecd14827f4cad620755fb2542dc1f36281",
+          "review": "sheet-22.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-wake-before-393-1x.png",
+      "sha256": "986cfbc1d09152c522636892ec7d844f28d5d22da469d796c2e6cb757773be78",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "92b94754be2d07a653ea27105e2391d2051ef19b6b66a4c524df8de63f811943",
+          "review": "sheet-22.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "9f00456d3c780c8117a72b9be9f5cef59bce16974fe83e25515f9cd4b8430933",
+          "review": "sheet-22.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-wake-before-rejected-320-2x.long.png",
+      "sha256": "16ea2302198432b8a835162913e50346f732574c57692582b6e1af4790d4b8ab",
+      "width": 320,
+      "height": 1645,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "086ea95fbac8e36f4fafd66b62a4f4f7ed467aba5078d9b358ef064d423aabed",
+          "review": "sheet-12.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "478636f3cfe60866fbd56c285fefed43be803a0a0f38d00bb7e18effcbad2e42",
+          "review": "sheet-21.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1645,
+          "pixel_sha256": "7d76e5f54a1ae0b7657393f6f0fe565d9e889410e3ac37bd1aa3c69739dbecea",
+          "review": "sheet-22.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-wake-before-rejected-320-2x.png",
+      "sha256": "bfa2ff9d82a1dfb821933df6cc58f44bef247bc105989dbbe29f3d151b7eeed3",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b763dba90e2b63307c581272061820fbe732054d06416e80f4c7e321a1b44e59",
+          "review": "sheet-22.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "831b77247d534d87f01324db3443cc9ebdce2370b80861db61d24fda5cc0428a",
+          "review": "sheet-22.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-wake-before-rejected-393-1x.long.png",
+      "sha256": "3af3610711e9df3ee2afd3916cb0a1f18fab7f7fad8dcd5b32859eba3cb7e6bf",
+      "width": 393,
+      "height": 906,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "44b192c87f08eb8e0086c82680a1c0e7c4e9b9429ba3391d6a78d8b2f498525f",
+          "review": "sheet-21.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 906,
+          "pixel_sha256": "b958f06134e561feb4d20c723f60c240f4604496f02cade461fdd8a1db658bdf",
+          "review": "sheet-23.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-wake-before-rejected-393-1x.png",
+      "sha256": "91394b18aad2f6172d638b1a613004253d372d9450f172adf6d11e315ede2250",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "5c605454e5282cc8ff7741cdc7a370c417bcc550e240311dd697dded5c502638",
+          "review": "sheet-23.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "984393a60a20378ca99053dffc1c0f3be4d1d36c51219bee3ddcc74cc7da13fc",
+          "review": "sheet-23.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-wake-cancelled-320-2x.long.png",
+      "sha256": "1c4168ec2ab867883a3099af2780ef67523122e00cb7b3005215ee47afaa2062",
+      "width": 320,
+      "height": 1431,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "086ea95fbac8e36f4fafd66b62a4f4f7ed467aba5078d9b358ef064d423aabed",
+          "review": "sheet-12.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "026eefa0d619e26dd1c5bb22e94022c8005e1478a13bfc8561d115840bb71fd1",
+          "review": "sheet-20.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1431,
+          "pixel_sha256": "05df602cf5ccfad08a25291bad942aa839b6c631eeb3395c8a3244dae2faf9a7",
+          "review": "sheet-13.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-wake-cancelled-320-2x.png",
+      "sha256": "4bce1df9a6bfb6a619225c20b4cb1b329149e1d2cee5f4bb24e5d1a693175014",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "bcbcd1286506a88f8a0c80cbbc9b0b7fdf607c59867bdbbb24fe03637f27ea1c",
+          "review": "sheet-23.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "ab006d0fa3eb0336b81d514602a6d5ef50e9a37f5aa128573748dcc1b60559e7",
+          "review": "sheet-23.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-wake-cancelled-393-1x.png",
+      "sha256": "8ff06f51e8f1d411f126254b675268abc01db6abe1255e8433103d8a4d654690",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2cac8bdf03f7e4c00664e29c927f44102c34aee5a32bc37da3d494079ca9426c",
+          "review": "sheet-20.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "63a19c3d2067cb66d9ee8610d03ca7cbcbec05fbe5af3e8b6bf7442b6deb9c6f",
+          "review": "sheet-13.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-wake-cleared-320-2x.long.png",
+      "sha256": "1c4168ec2ab867883a3099af2780ef67523122e00cb7b3005215ee47afaa2062",
+      "width": 320,
+      "height": 1431,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "086ea95fbac8e36f4fafd66b62a4f4f7ed467aba5078d9b358ef064d423aabed",
+          "review": "sheet-12.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "026eefa0d619e26dd1c5bb22e94022c8005e1478a13bfc8561d115840bb71fd1",
+          "review": "sheet-20.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1431,
+          "pixel_sha256": "05df602cf5ccfad08a25291bad942aa839b6c631eeb3395c8a3244dae2faf9a7",
+          "review": "sheet-13.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-wake-cleared-320-2x.png",
+      "sha256": "4bce1df9a6bfb6a619225c20b4cb1b329149e1d2cee5f4bb24e5d1a693175014",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "bcbcd1286506a88f8a0c80cbbc9b0b7fdf607c59867bdbbb24fe03637f27ea1c",
+          "review": "sheet-23.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "ab006d0fa3eb0336b81d514602a6d5ef50e9a37f5aa128573748dcc1b60559e7",
+          "review": "sheet-23.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-wake-cleared-393-1x.png",
+      "sha256": "8ff06f51e8f1d411f126254b675268abc01db6abe1255e8433103d8a4d654690",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2cac8bdf03f7e4c00664e29c927f44102c34aee5a32bc37da3d494079ca9426c",
+          "review": "sheet-20.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "63a19c3d2067cb66d9ee8610d03ca7cbcbec05fbe5af3e8b6bf7442b6deb9c6f",
+          "review": "sheet-13.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-wake-date-empty-320-2x.png",
+      "sha256": "806b97097de8d5090e95bc789c0486f205f0e4ee5fbbbe5e32f92b1bf79c5b03",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6e3bdd4b50a44c2065edb8e1ba109c64d8931ed32c87d5845eb5bb963c2368fe",
+          "review": "sheet-23.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "c3e9ab0e6c12aec33591858d77eb27a8f3d8670267e7cebe98415b46995f1337",
+          "review": "sheet-17.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-wake-date-empty-393-1x.png",
+      "sha256": "5575a304717f3da5c39d2c4c1c3381010e4db1cd984f431d24db07b1d0ab54d6",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "26685d190d5b9c55c344597554619f28e64efa725e359835b27ce5fa68d8a7ea",
+          "review": "sheet-24.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "62a7020569ccf5dea09eea1811335cb13cd370f614cc4596fe90a41ef7a9a42e",
+          "review": "sheet-18.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-wake-equal-320-2x.long.png",
+      "sha256": "7d56df9cffbf8e7e87c3e88821b2a6c55c9d9f4e58f1e2cb6ccac73afe238f96",
+      "width": 320,
+      "height": 1519,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "086ea95fbac8e36f4fafd66b62a4f4f7ed467aba5078d9b358ef064d423aabed",
+          "review": "sheet-12.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "b9c44b2e71434f7c8cbb188b9fa9b3c98d269cc83ccd81d7a945d1080f4298b4",
+          "review": "sheet-24.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1519,
+          "pixel_sha256": "6c37b7086fefdc521ac22a643cb267d03c183bf1e537fbbb56c9aa6c47d485a2",
+          "review": "sheet-21.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-wake-equal-320-2x.png",
+      "sha256": "c96592410cb25fe8e6bcc89db764c59bd51a6b26bf1b2d6f56a7dcb8ab15361e",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "302422299b297c6bae7c8dfa8a996f4399656f16abbe16b1277913cd1b049c2e",
+          "review": "sheet-24.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "893366584f49fa85241613056cfdc5a019c58bf2db28bc0981903e1d10352d60",
+          "review": "sheet-24.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-wake-equal-393-1x.long.png",
+      "sha256": "5215de971fd40ff7d8e959261f5fdd613e3dd1a55bb79366413096df67245e67",
+      "width": 393,
+      "height": 860,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "1b5d988f16cc4093ec70149f2323dd136ce6bf21e88500d98fd658200740803f",
+          "review": "sheet-24.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 860,
+          "pixel_sha256": "5f8ccb5c57e005868ebd1184a428eeecd14827f4cad620755fb2542dc1f36281",
+          "review": "sheet-22.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-wake-equal-393-1x.png",
+      "sha256": "22691386d15816aa439d714d069e665ff434ab47bf63c9d5a052d95e62cdb5b7",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "1b5d988f16cc4093ec70149f2323dd136ce6bf21e88500d98fd658200740803f",
+          "review": "sheet-24.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "c2bbc27544cf35ad98b6c85c2015ac7562de565dd665b0f48820d986ee3f6810",
+          "review": "sheet-24.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-wake-equal-rejected-320-2x.long.png",
+      "sha256": "2a8c84df96aa3428a0e15252ddce903543d041348813c53097baf140d2a4757f",
+      "width": 320,
+      "height": 1645,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "086ea95fbac8e36f4fafd66b62a4f4f7ed467aba5078d9b358ef064d423aabed",
+          "review": "sheet-12.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "b9c44b2e71434f7c8cbb188b9fa9b3c98d269cc83ccd81d7a945d1080f4298b4",
+          "review": "sheet-24.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1645,
+          "pixel_sha256": "7d76e5f54a1ae0b7657393f6f0fe565d9e889410e3ac37bd1aa3c69739dbecea",
+          "review": "sheet-22.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-wake-equal-rejected-320-2x.png",
+      "sha256": "bfa2ff9d82a1dfb821933df6cc58f44bef247bc105989dbbe29f3d151b7eeed3",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b763dba90e2b63307c581272061820fbe732054d06416e80f4c7e321a1b44e59",
+          "review": "sheet-22.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "831b77247d534d87f01324db3443cc9ebdce2370b80861db61d24fda5cc0428a",
+          "review": "sheet-22.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-wake-equal-rejected-393-1x.long.png",
+      "sha256": "28582511ea6139cc509b60905837c6d0e4d9d833e8383cda438e14832b8b51e8",
+      "width": 393,
+      "height": 906,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "1b5d988f16cc4093ec70149f2323dd136ce6bf21e88500d98fd658200740803f",
+          "review": "sheet-24.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 906,
+          "pixel_sha256": "b958f06134e561feb4d20c723f60c240f4604496f02cade461fdd8a1db658bdf",
+          "review": "sheet-23.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-wake-equal-rejected-393-1x.png",
+      "sha256": "9acfd30bd7682a6e41e91c32f955ddd4affd6acc2adf850e02738c46114838c0",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "4e5b3fd4380e42ecf986027c2073d8a60dae9b52cf8f55138bb15d0d0b86dca8",
+          "review": "sheet-25.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "984393a60a20378ca99053dffc1c0f3be4d1d36c51219bee3ddcc74cc7da13fc",
+          "review": "sheet-23.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-wake-future-320-2x.long.png",
+      "sha256": "cb3e69fb7081e220b3ade6b6abedcaf66be20b4a38d6f313cfc6c1239a82dfea",
+      "width": 320,
+      "height": 1519,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "086ea95fbac8e36f4fafd66b62a4f4f7ed467aba5078d9b358ef064d423aabed",
+          "review": "sheet-12.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "ed989441c8b91c3738d05f8b623bc1e46e0a65421c36cefa67a9bde90f9d17ee",
+          "review": "sheet-25.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1519,
+          "pixel_sha256": "6c37b7086fefdc521ac22a643cb267d03c183bf1e537fbbb56c9aa6c47d485a2",
+          "review": "sheet-21.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-wake-future-320-2x.png",
+      "sha256": "3c66dc12b81a8ba9650946dd612675f4252fc566a6ed70ae3386e097a9f11e44",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "61507d12b903298a3e0b2ac855b4652d14d54571154b8fd80926389e4b4c87ee",
+          "review": "sheet-25.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "d0f48663fe10929a78814e7eb4cfba94873bc2813ae8da413ff05c7ee5e24623",
+          "review": "sheet-21.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-wake-future-393-1x.long.png",
+      "sha256": "514e3f3043409099deb8ec94daff9d44d2dc8c6a6bb6b073a955e4273d4283cf",
+      "width": 393,
+      "height": 860,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "cff0cf4beb4e1375e2c72e158e9ca971a473b59b6f2480a805de08e23ef7bede",
+          "review": "sheet-25.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 860,
+          "pixel_sha256": "5f8ccb5c57e005868ebd1184a428eeecd14827f4cad620755fb2542dc1f36281",
+          "review": "sheet-22.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-wake-future-393-1x.png",
+      "sha256": "6e84ece1aee90928a9497205c81d105c6626bca82dc870f4405c703fbd36ba84",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "e1c621cd6a0f7619c1e39a093f61c52347bb2f3099dedfc35300327676216079",
+          "review": "sheet-25.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "9f00456d3c780c8117a72b9be9f5cef59bce16974fe83e25515f9cd4b8430933",
+          "review": "sheet-22.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-wake-future-rejected-320-2x.long.png",
+      "sha256": "81a5d56615bfcd7fede6e963dc7eb62a64f6c86c25266e51f536b80ad1c62dc6",
+      "width": 320,
+      "height": 1645,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "086ea95fbac8e36f4fafd66b62a4f4f7ed467aba5078d9b358ef064d423aabed",
+          "review": "sheet-12.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "ed989441c8b91c3738d05f8b623bc1e46e0a65421c36cefa67a9bde90f9d17ee",
+          "review": "sheet-25.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1645,
+          "pixel_sha256": "7d76e5f54a1ae0b7657393f6f0fe565d9e889410e3ac37bd1aa3c69739dbecea",
+          "review": "sheet-22.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-wake-future-rejected-320-2x.png",
+      "sha256": "bfa2ff9d82a1dfb821933df6cc58f44bef247bc105989dbbe29f3d151b7eeed3",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b763dba90e2b63307c581272061820fbe732054d06416e80f4c7e321a1b44e59",
+          "review": "sheet-22.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "831b77247d534d87f01324db3443cc9ebdce2370b80861db61d24fda5cc0428a",
+          "review": "sheet-22.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-wake-future-rejected-393-1x.long.png",
+      "sha256": "4630e71cbfffa0069c76d9c3e034a330b25c5d6f80ef90986db0f5b9449e74c5",
+      "width": 393,
+      "height": 906,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "cff0cf4beb4e1375e2c72e158e9ca971a473b59b6f2480a805de08e23ef7bede",
+          "review": "sheet-25.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 906,
+          "pixel_sha256": "b958f06134e561feb4d20c723f60c240f4604496f02cade461fdd8a1db658bdf",
+          "review": "sheet-23.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-wake-future-rejected-393-1x.png",
+      "sha256": "b70c0c3f387735345a9e3274f33258d9467a97f7a4a56335f9bffc828d9970e0",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b68db3fb3603ab3e335f2df4e2c0b37513cf7d57e7f36d93e730e1f0983d4e3c",
+          "review": "sheet-25.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "984393a60a20378ca99053dffc1c0f3be4d1d36c51219bee3ddcc74cc7da13fc",
+          "review": "sheet-23.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-wake-time-empty-320-2x.png",
+      "sha256": "577c7802808deef428cbd0b525a2cde9e6c318fcb2537b54fc6c5e697fdc59ef",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b23067ae3cac58c482ecc169a9c902e6d0f442c5ae3c53af468ba1fb4bfec4e3",
+          "review": "sheet-26.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "92ca7b10c1a17dad9738a6e9d1a25426fa3619174f9aa0640e278e7271c94b22",
+          "review": "sheet-26.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-wake-time-empty-393-1x.png",
+      "sha256": "c3439c6834345d94bd992a9a451bb20d3eaff4084e05594b253d5ae3a7767027",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "294d0fedd400b4d885d0a20969fa47859723c8eddf339f7b74ade0ebd73b344f",
+          "review": "sheet-26.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "55d915e15c9a5876625d0713ddf66269bcecff4c8b9f3b5908e756c8d3ced942",
+          "review": "sheet-21.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-wake-valid-320-2x.long.png",
+      "sha256": "aabe34d8840a62af5ed4fb7866dcf1d38bdf57a90d5b377dcf251cff044e432d",
+      "width": 320,
+      "height": 1519,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "086ea95fbac8e36f4fafd66b62a4f4f7ed467aba5078d9b358ef064d423aabed",
+          "review": "sheet-12.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "b1ef26a42c2f9baeff93d8f144a4f17858c73b613a2d055adb314057f14ef24e",
+          "review": "sheet-26.png#tile-3"
+        },
+        {
+          "y0": 1300,
+          "y1": 1519,
+          "pixel_sha256": "6c37b7086fefdc521ac22a643cb267d03c183bf1e537fbbb56c9aa6c47d485a2",
+          "review": "sheet-21.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-wake-valid-320-2x.png",
+      "sha256": "39f3a01ce15ee172d7346451da93752afa05a28fcac16ba0da471a0046f6770d",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c20beae6be55282919d91af8788318b603c598353ddd61ce64ea10ee7083a188",
+          "review": "sheet-26.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "d0f48663fe10929a78814e7eb4cfba94873bc2813ae8da413ff05c7ee5e24623",
+          "review": "sheet-21.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-wake-valid-393-1x.long.png",
+      "sha256": "dc7c95bb0636d6c0875f09e9afb97c0e940339404288b0a689e09c8a83ef42a5",
+      "width": 393,
+      "height": 860,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "357cc20de645c3aa74146d12833b81413f511b61a2759b2899cb3b092b900f9a",
+          "review": "sheet-26.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 860,
+          "pixel_sha256": "5f8ccb5c57e005868ebd1184a428eeecd14827f4cad620755fb2542dc1f36281",
+          "review": "sheet-22.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-sleep-controls-wake-valid-393-1x.png",
+      "sha256": "10129d988ca7e25a88588f5a11de3cd475f810eaeb0a1b31aa815d392c44fcba",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "25d5a95e2344871a0dab64adb8177e1cbf97b0b8a6cf70a0696372f293fc38c5",
+          "review": "sheet-27.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "9f00456d3c780c8117a72b9be9f5cef59bce16974fe83e25515f9cd4b8430933",
+          "review": "sheet-22.png#tile-2"
+        }
+      ]
+    }
+  ],
+  "unique_segments": 179,
+  "new_segments": 157,
+  "new_sheets": 27
+}

@@ -1,0 +1,82 @@
+[
+  {
+    "stage": "20260914-auth",
+    "file": "lib/features/auth/presentation/auth_page.dart",
+    "expected_sha256": "77bf0ab04f1599f353bbb66c4a3dab2fe826d5e5e04f7f1b106f0b73ec07475f",
+    "current_sha256": "77bf0ab04f1599f353bbb66c4a3dab2fe826d5e5e04f7f1b106f0b73ec07475f",
+    "matches_current": true,
+    "superseded_by": null
+  },
+  {
+    "stage": "20260914-auth",
+    "file": "lib/features/auth/presentation/auth_login_chrome.dart",
+    "expected_sha256": "3808b5484b0cda026e8007c5ce940027bc672e1185ba2fc4ac354d3d385ab7bb",
+    "current_sha256": "3808b5484b0cda026e8007c5ce940027bc672e1185ba2fc4ac354d3d385ab7bb",
+    "matches_current": true,
+    "superseded_by": null
+  },
+  {
+    "stage": "20260914-auth",
+    "file": "lib/features/auth/presentation/invite_auth_page.dart",
+    "expected_sha256": "51b02cb9d3c973aa931abbeb7e9ec3352476b889db496b7cd583ef757732c51b",
+    "current_sha256": "51b02cb9d3c973aa931abbeb7e9ec3352476b889db496b7cd583ef757732c51b",
+    "matches_current": true,
+    "superseded_by": null
+  },
+  {
+    "stage": "20260914-auth",
+    "file": "test/features/auth/auth_design_test.dart",
+    "expected_sha256": "21a46fbbab3b280eac940b685659cace8021dea887b0aa0472297d424d39a4ca",
+    "current_sha256": "21a46fbbab3b280eac940b685659cace8021dea887b0aa0472297d424d39a4ca",
+    "matches_current": true,
+    "superseded_by": null
+  },
+  {
+    "stage": "20260914-auth",
+    "file": "test/features/auth/auth_redesign_states_test.dart",
+    "expected_sha256": "a4ccda8389947cc59c3a8911f9cf7046b64a1b0c84d647f355078da0b8b35094",
+    "current_sha256": "a4ccda8389947cc59c3a8911f9cf7046b64a1b0c84d647f355078da0b8b35094",
+    "matches_current": true,
+    "superseded_by": null
+  },
+  {
+    "stage": "20260914-onboarding-profile",
+    "file": "lib/features/onboarding/presentation/onboarding_page.dart",
+    "expected_sha256": "3839711ce7ff7268f6b6e2999a4ebd6dd5421e9280e23016761b9c0e96d0bd60",
+    "current_sha256": "2d5ec507c926086540c9bbdc770e3aa68c319dbe3357a7b57d7a0ff1a28487dc",
+    "matches_current": false,
+    "superseded_by": "20260914-onboarding-avatar"
+  },
+  {
+    "stage": "20260914-onboarding-profile",
+    "file": "test/features/onboarding/onboarding_design_test.dart",
+    "expected_sha256": "fb0d90274f0d3d7336ef07f10eaeaac458586b259b8f36d3695cfb329ea275b0",
+    "current_sha256": "7433288e6092533856f303b01adf2c41d2f0ef08fee05b6fd19e34040447670e",
+    "matches_current": false,
+    "superseded_by": "20260914-onboarding-avatar"
+  },
+  {
+    "stage": "20260914-onboarding-avatar",
+    "file": "lib/features/onboarding/presentation/onboarding_page.dart",
+    "expected_sha256": "2d5ec507c926086540c9bbdc770e3aa68c319dbe3357a7b57d7a0ff1a28487dc",
+    "current_sha256": "2d5ec507c926086540c9bbdc770e3aa68c319dbe3357a7b57d7a0ff1a28487dc",
+    "matches_current": true,
+    "superseded_by": null
+  },
+  {
+    "stage": "20260914-onboarding-avatar",
+    "file": "lib/features/onboarding/presentation/avatar_task_banner.dart",
+    "expected_sha256": "38ba39c2419ef2b34c8c0993862106d2c19d77c18a474cf8a8fd374fea77946e",
+    "current_sha256": "38ba39c2419ef2b34c8c0993862106d2c19d77c18a474cf8a8fd374fea77946e",
+    "matches_current": true,
+    "superseded_by": null
+  },
+  {
+    "stage": "20260914-onboarding-avatar",
+    "file": "test/features/onboarding/onboarding_design_test.dart",
+    "expected_sha256": "7433288e6092533856f303b01adf2c41d2f0ef08fee05b6fd19e34040447670e",
+    "current_sha256": "7433288e6092533856f303b01adf2c41d2f0ef08fee05b6fd19e34040447670e",
+    "matches_current": true,
+    "superseded_by": null
+  }
+]

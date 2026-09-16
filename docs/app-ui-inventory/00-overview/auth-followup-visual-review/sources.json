@@ -1,0 +1,374 @@
+[
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/auth-followup-forgot-back-entry-393-1x.png",
+    "sha256": "703939216a75e055fac74635f421056a906577660fc394b83b9ba905bd8156cd",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/auth-followup-forgot-back-login-393-1x.png",
+    "sha256": "7c40c2ee7ff4edf561cc0554da204b1f1dc6f49fce99bf9c8189424dd589264d",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/auth-followup-forgot-email-unavailable-320-2x.long.png",
+    "sha256": "b28bf83b66fd5416261a3b5ca9b2f4e5ef574353dd2722ffbdacfa9c279acef8",
+    "width": 320,
+    "height": 970
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/auth-followup-forgot-email-unavailable-320-2x.png",
+    "sha256": "fbfdfd7f9338c929c61eabdaa19f0563016ba9ed14a57b6fe92f5f42361157a2",
+    "width": 320,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/auth-followup-forgot-email-unavailable-393-1x.png",
+    "sha256": "0be08c27e01834b6541eaaae1b0effebedcf5d4836b3b2fea5d3dd2fff1d77a0",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/auth-followup-forgot-empty-320-2x.png",
+    "sha256": "362908b1aa7e75d467a5e5d5a06d6d4a174192290cc0e4cacb3b53bca3582ccb",
+    "width": 320,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/auth-followup-forgot-empty-393-1x.png",
+    "sha256": "28ce5a4df364820b755bb6b1324da1d11dc74d77ee891b7f6da145c76e7bdf91",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/auth-followup-forgot-offline-320-2x.long.png",
+    "sha256": "ff0a56e7f65e9382525a1dfe53c605cc690b0e5534bb5368d01722922457be1c",
+    "width": 320,
+    "height": 1010
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/auth-followup-forgot-offline-320-2x.png",
+    "sha256": "146d401e5a22248f3c30aeccdbcff9ea0fad32647f91916f8c3ec3a31b2f9958",
+    "width": 320,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/auth-followup-forgot-offline-393-1x.png",
+    "sha256": "d79a46896f4e8a2a32013dfd67ed1dfaa447d5a47ac5c83217e448618c2c423c",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/auth-followup-forgot-pending-320-2x.png",
+    "sha256": "1a5e0a9bb7898bbaf92198515046aaf616b7ac188a4939a58993e5911644a181",
+    "width": 320,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/auth-followup-forgot-pending-393-1x.png",
+    "sha256": "4f7e388bbb170e31d52460cb11beadff24ca2cb2c89ffc5ec495593a88fbac3b",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/auth-followup-forgot-validation-320-2x.long.png",
+    "sha256": "2cfabf5e25a4937ce8ee58d40fc2cfbe1ba3fc97c5b943511c9c4fbf0c9c6b89",
+    "width": 320,
+    "height": 862
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/auth-followup-forgot-validation-320-2x.png",
+    "sha256": "3eb9136487e0196f53a6a73f60f3784cbbd20c8d8e9c149dae58f6d14d45ee33",
+    "width": 320,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/auth-followup-forgot-validation-393-1x.png",
+    "sha256": "efa3deaee6d2bb504ea03b96913bc3442ab69eda441ebaf1ac59ee8b1b78bbb5",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/auth-followup-language-dismissed-393-1x.png",
+    "sha256": "da403b6e26d8cc5a550d39d9a810c345082d78a6557d20c346382f288158d938",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/auth-followup-language-entry-393-1x.png",
+    "sha256": "055f785cd6c52c5d57d3c987069de02f378e9645594aa1490e7bb18a5d0d9a82",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/auth-followup-language-selected-393-1x.png",
+    "sha256": "da403b6e26d8cc5a550d39d9a810c345082d78a6557d20c346382f288158d938",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/auth-followup-language-sheet-393-1x.png",
+    "sha256": "cf4dc7478bb888d7535571da7063f87f4055b8dfa8166d894f4e7fa6b3f674f7",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/auth-followup-privacy-open-error-393-1x.png",
+    "sha256": "1338a3142f41943c1247cd4d142c63d4dede7baaab6e36f63d7617f09af609b1",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/auth-followup-register-back-entry-393-1x.png",
+    "sha256": "1326aecaaf05339c6914aecc26a722d57333f2342614435929f00d40bd4ead23",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/auth-followup-register-back-login-393-1x.png",
+    "sha256": "7c40c2ee7ff4edf561cc0554da204b1f1dc6f49fce99bf9c8189424dd589264d",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/auth-followup-reset-code-form-320-2x.long.png",
+    "sha256": "ea5913f832c802bf136b414bacbf85af12f31e99982d4568f6218080275ace42",
+    "width": 320,
+    "height": 1460
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/auth-followup-reset-code-form-320-2x.png",
+    "sha256": "30a65f3783067f0e28faa0522cc52b991ef923eb549148cb0ac63a3a1980aec1",
+    "width": 320,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/auth-followup-reset-code-form-393-1x.png",
+    "sha256": "b13fce1d7cf11a9a7ed4cda6e68a055e3c861e79f9fe019c25486b84c124d6de",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/auth-followup-reset-complete-320-2x.long.png",
+    "sha256": "ca82a85befb5880bf7f28f58d61aa3e394436ad599bf79da241c81ac7e6d9052",
+    "width": 320,
+    "height": 1705
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/auth-followup-reset-complete-320-2x.png",
+    "sha256": "31cdb33199c2d044df8b151418f9bfbd0ae344058ed1b8963bb77155acdb9007",
+    "width": 320,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/auth-followup-reset-complete-393-1x.long.png",
+    "sha256": "1fc3611aa17be1b7cf1f890fb886e261302e1fe51303066c8a39654baffcc9c4",
+    "width": 393,
+    "height": 869
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/auth-followup-reset-complete-393-1x.png",
+    "sha256": "98525641ebeb753406ae3194f4c1176f05405ca262194945688004e7d636cf6e",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/auth-followup-reset-empty-validation-320-2x.long.png",
+    "sha256": "84f8b175783a70383750eb2a8c5ed936fa32e2afd09e6deeb436b598167b7a95",
+    "width": 320,
+    "height": 1488
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/auth-followup-reset-empty-validation-320-2x.png",
+    "sha256": "c24866717ae90658c80b02b76882b8b2fcbe47414a105774ebd7ef5737adbac2",
+    "width": 320,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/auth-followup-reset-empty-validation-393-1x.png",
+    "sha256": "8c9457a48323a5310e6976ddcbe5e1a7117328f1e2b860c9b2d0bb0a2b8d4cc3",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/auth-followup-reset-entry-320-2x.long.png",
+    "sha256": "2d713b3b0ed51095ff743249756547fd04bb0118b562100c99164c61aab2154b",
+    "width": 320,
+    "height": 1569
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/auth-followup-reset-entry-320-2x.png",
+    "sha256": "cd936eab5a26f8d098ff304db01566ec757b5755928eb383ef88e123b708ee3c",
+    "width": 320,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/auth-followup-reset-entry-393-1x.png",
+    "sha256": "782099a0927aee729489edde1a799b95f075d553f628629f1935b37dc102b8e3",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/auth-followup-reset-expired-code-320-2x.long.png",
+    "sha256": "40d85c7a67215e4f7ae87554cc562e581f76712c59c75ced5eaaf7cf708d75b1",
+    "width": 320,
+    "height": 1580
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/auth-followup-reset-expired-code-320-2x.png",
+    "sha256": "a133bcf0cb31c2539bf78c9be169145fea86df9650ba3625140cdec00d2bfe76",
+    "width": 320,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/auth-followup-reset-expired-code-393-1x.png",
+    "sha256": "2b46484950b87d9da22bfe6e703bc47310f78d8fef0710a31149562c62f8cf55",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/auth-followup-reset-login-more-320-2x.png",
+    "sha256": "6c4b158664b0d032a5a10dff5b68a4c2a02807d1aca50d20aa32e6f3d6acb750",
+    "width": 320,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/auth-followup-reset-login-more-393-1x.png",
+    "sha256": "6ef8f58edfceea11057a36e5fcd1986ac15961368753fa539d54fa041ef8e1a3",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/auth-followup-reset-password-validation-320-2x.long.png",
+    "sha256": "97c2f0cc42985a12000978610473904373becf53364fa623dba0858b2f9bcbb9",
+    "width": 320,
+    "height": 1420
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/auth-followup-reset-password-validation-320-2x.png",
+    "sha256": "6463d2f28632f37a8232dfa1568f673d4f0af36664c1011b11d614620a592f6a",
+    "width": 320,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/auth-followup-reset-password-validation-393-1x.png",
+    "sha256": "00ddd12251454da16d1ae1cce8571cda9bdc8679d13c8cdf033edcb91ad1f56b",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/auth-followup-reset-pending-320-2x.long.png",
+    "sha256": "4549db7b32a45e2559ae1bb85ff2a4e4f68332f09d0c18a79b6cbdf0a3bbdef8",
+    "width": 320,
+    "height": 1348
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/auth-followup-reset-pending-320-2x.png",
+    "sha256": "fb511a244b8f2cd74344cd5f860ffae16a246a87c587b7e41d937fb19fc96279",
+    "width": 320,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/auth-followup-reset-pending-393-1x.png",
+    "sha256": "96bda7cc33a53bc993d560cd18e22551173263b468d8402f5e6ced14750f88ee",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/auth-followup-reset-rate-limited-320-2x.long.png",
+    "sha256": "c5a683ae7615277b22719a0cc953ce45d14fa7248636875c3245d0f4450056c1",
+    "width": 320,
+    "height": 1540
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/auth-followup-reset-rate-limited-320-2x.png",
+    "sha256": "f436e1ea915f94b6fd65294e346ce8fe07cd1662d49377fb32311ed00723677d",
+    "width": 320,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/auth-followup-reset-rate-limited-393-1x.png",
+    "sha256": "75e5e99d2c5cf3011f7be9d654923a1957179e2dfc3e53226b08902a96c36e61",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/auth-followup-reset-resend-cooldown-320-2x.long.png",
+    "sha256": "ac7fe28b81c51b7f695c227b059939c4ca56959c481cfa2774602bc0408b67c1",
+    "width": 320,
+    "height": 1420
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/auth-followup-reset-resend-cooldown-320-2x.png",
+    "sha256": "c08515f330255f43b79fd61631c335187d07d1e59ab150a6ec589cb8b08a264b",
+    "width": 320,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/auth-followup-reset-resend-cooldown-393-1x.png",
+    "sha256": "df9a603c626f1ec425fe81147db16479b8654a42a61d601ef281a8d3eebbdf08",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/auth-followup-terms-open-error-393-1x.png",
+    "sha256": "5bc89cd9f8e409e244b43ab4ef4c5f1170d7f5141744548e93e8a5604ac67eac",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/auth-followup-verify-entry-393-1x.png",
+    "sha256": "782099a0927aee729489edde1a799b95f075d553f628629f1935b37dc102b8e3",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/auth-followup-verify-from-login-393-1x.png",
+    "sha256": "a25edd34365d1e6fa8455d71b4e89a0625741ea386177c04b99d4e98ff3c0413",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/auth-followup-verify-initial-send-error-393-1x.long.png",
+    "sha256": "2d69f40bd8c2c6d7398efe34af6461ba548e00e27983a98ef82e6cb517181aa1",
+    "width": 393,
+    "height": 889
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/auth-followup-verify-initial-send-error-393-1x.png",
+    "sha256": "a26462b6f4dd5514a9ba63909878217f781a29d14ad879feeed744205701f0e7",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/auth-followup-verify-more-393-1x.png",
+    "sha256": "c1d6f8c3616f605ffa9a162dc135266133011920f784693f0eed954ed285accd",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/auth-followup-verify-resend-email-required-393-1x.png",
+    "sha256": "a9441a3e5ee9aa0d81d1cbe231967c31182f7388a53473c751752ddb68b1821e",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/auth-followup-verify-resend-pending-393-1x.png",
+    "sha256": "acf8c80751468dc5e01b331d4239af7e995e02ed751f967b71cf5e5b02a412fb",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/auth-followup-verify-resend-rate-limited-393-1x.png",
+    "sha256": "845ea291310551d91a4ae7d726f409ed91623d3a329f32e1485de15c43cdac5f",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/auth-followup-verify-resend-success-393-1x.png",
+    "sha256": "71eee1cff10a9edacd99a95c134793b9f48898cf9dfd80596d835cee456ce414",
+    "width": 393,
+    "height": 844
+  }
+]

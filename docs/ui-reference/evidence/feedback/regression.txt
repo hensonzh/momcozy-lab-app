@@ -1,0 +1,310 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/shared/knowledge_article_design_test.dart
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/shared/knowledge_article_design_test.dart: (setUpAll)
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/shared/me_components_test.dart: (setUpAll)
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/shared/choice_field_test.dart: exclusive selection and toggling work with chips
+00:00 +1: /Users/lute/project/momcozy-lab/app/test/shared/choice_field_test.dart: exclusive selection and toggling work with chips
+00:00 +2: /Users/lute/project/momcozy-lab/app/test/shared/choice_field_test.dart: exclusive selection and toggling work with chips
+00:00 +3: /Users/lute/project/momcozy-lab/app/test/shared/knowledge_article_design_test.dart: knowledge mom at 320.0 / 1.0
+00:00 +4: /Users/lute/project/momcozy-lab/app/test/shared/knowledge_article_design_test.dart: knowledge mom at 320.0 / 1.0
+00:00 +5: /Users/lute/project/momcozy-lab/app/test/shared/knowledge_article_design_test.dart: knowledge mom at 320.0 / 1.0
+00:00 +6: /Users/lute/project/momcozy-lab/app/test/shared/knowledge_article_design_test.dart: knowledge mom at 320.0 / 1.0
+00:00 +7: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 320.0/1.0
+00:00 +8: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 320.0/1.0
+00:00 +9: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 320.0/1.0
+00:00 +10: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 320.0/1.0
+00:00 +11: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 320.0/1.0
+00:00 +12: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 320.0/1.0
+00:00 +13: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 320.0/1.0
+00:00 +14: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 320.0/1.0
+00:00 +15: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 320.0/1.0
+00:00 +16: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 320.0/1.0
+00:00 +17: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 320.0/1.0
+00:00 +18: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 320.0/1.0
+00:00 +19: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 320.0/1.0
+00:01 +20: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 320.0/1.0
+00:01 +21: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 320.0/1.0
+00:01 +22: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 320.0/1.0
+00:01 +23: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 320.0/1.0
+00:01 +24: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 320.0/1.0
+00:01 +25: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 320.0/1.0
+00:01 +26: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 320.0/1.0
+00:01 +27: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 320.0/1.0
+00:01 +28: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 320.0/1.0
+00:01 +29: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 320.0/1.0
+00:01 +30: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 320.0/1.0
+00:01 +31: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 320.0/1.0
+00:01 +32: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 320.0/1.0
+00:01 +33: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 320.0/1.0
+00:01 +34: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 320.0/1.0
+00:01 +35: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 320.0/1.0
+00:01 +36: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 320.0/1.0
+00:01 +37: /Users/lute/project/momcozy-lab/app/test/modules/services/booking_test.dart: booking precheck and held dialog flow at 320.0 / 1.0
+00:01 +38: /Users/lute/project/momcozy-lab/app/test/modules/services/booking_test.dart: booking precheck and held dialog flow at 320.0 / 1.0
+00:02 +39: /Users/lute/project/momcozy-lab/app/test/modules/services/booking_test.dart: booking precheck and held dialog flow at 320.0 / 1.0
+00:02 +40: /Users/lute/project/momcozy-lab/app/test/modules/services/booking_test.dart: booking precheck and held dialog flow at 320.0 / 1.0
+00:02 +41: /Users/lute/project/momcozy-lab/app/test/modules/services/intake_test.dart: intake design disclosures consent and save at 320.0 / 1.0
+00:02 +42: /Users/lute/project/momcozy-lab/app/test/modules/services/intake_test.dart: intake design disclosures consent and save at 320.0 / 1.0
+00:02 +43: /Users/lute/project/momcozy-lab/app/test/modules/services/intake_test.dart: intake design disclosures consent and save at 320.0 / 1.0
+00:02 +44: /Users/lute/project/momcozy-lab/app/test/modules/services/intake_test.dart: intake design disclosures consent and save at 320.0 / 1.0
+00:02 +45: /Users/lute/project/momcozy-lab/app/test/modules/services/intake_test.dart: intake design disclosures consent and save at 320.0 / 1.0
+00:02 +46: /Users/lute/project/momcozy-lab/app/test/modules/services/intake_test.dart: intake design disclosures consent and save at 320.0 / 1.0
+00:02 +47: /Users/lute/project/momcozy-lab/app/test/modules/services/intake_test.dart: intake design disclosures consent and save at 320.0 / 1.0
+00:02 +48: /Users/lute/project/momcozy-lab/app/test/modules/services/intake_test.dart: intake design disclosures consent and save at 320.0 / 1.0
+00:02 +49: /Users/lute/project/momcozy-lab/app/test/modules/services/intake_test.dart: intake design disclosures consent and save at 320.0 / 1.0
+00:02 +50: /Users/lute/project/momcozy-lab/app/test/modules/services/intake_test.dart: intake design disclosures consent and save at 320.0 / 1.0
+00:03 +51: /Users/lute/project/momcozy-lab/app/test/modules/services/intake_test.dart: intake design disclosures consent and save at 320.0 / 1.0
+00:03 +52: /Users/lute/project/momcozy-lab/app/test/modules/services/intake_test.dart: intake design disclosures consent and save at 320.0 / 1.0
+00:03 +53: /Users/lute/project/momcozy-lab/app/test/modules/services/booking_test.dart: booking precheck and held dialog flow at 390.0 / 1.0
+00:03 +54: /Users/lute/project/momcozy-lab/app/test/modules/services/booking_test.dart: booking precheck and held dialog flow at 390.0 / 1.0
+00:03 +55: /Users/lute/project/momcozy-lab/app/test/modules/services/booking_test.dart: booking precheck and held dialog flow at 390.0 / 1.0
+00:03 +56: /Users/lute/project/momcozy-lab/app/test/modules/services/booking_test.dart: booking precheck and held dialog flow at 390.0 / 1.0
+00:03 +57: /Users/lute/project/momcozy-lab/app/test/modules/services/booking_test.dart: booking precheck and held dialog flow at 390.0 / 1.0
+00:03 +58: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 390.0/2.0
+00:03 +59: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 390.0/2.0
+00:03 +60: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 390.0/2.0
+00:03 +61: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 390.0/2.0
+00:03 +62: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 390.0/2.0
+00:03 +63: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 390.0/2.0
+00:03 +64: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 390.0/2.0
+00:03 +65: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 390.0/2.0
+00:03 +66: /Users/lute/project/momcozy-lab/app/test/modules/services/intake_test.dart: intake design disclosures consent and save at 320.0 / 2.0
+00:03 +67: /Users/lute/project/momcozy-lab/app/test/modules/services/intake_test.dart: intake design disclosures consent and save at 320.0 / 2.0
+00:03 +68: /Users/lute/project/momcozy-lab/app/test/modules/services/intake_test.dart: intake design disclosures consent and save at 320.0 / 2.0
+00:03 +69: /Users/lute/project/momcozy-lab/app/test/modules/services/intake_test.dart: intake design disclosures consent and save at 320.0 / 2.0
+00:03 +70: /Users/lute/project/momcozy-lab/app/test/modules/services/intake_test.dart: intake design disclosures consent and save at 320.0 / 2.0
+00:03 +71: /Users/lute/project/momcozy-lab/app/test/modules/services/service_purchase_test.dart: pending payment blocks back and uncertain retry keeps original card and outcome
+00:03 +72: /Users/lute/project/momcozy-lab/app/test/modules/services/service_purchase_test.dart: pending payment blocks back and uncertain retry keeps original card and outcome
+00:03 +73: /Users/lute/project/momcozy-lab/app/test/modules/services/service_purchase_test.dart: pending payment blocks back and uncertain retry keeps original card and outcome
+00:03 +74: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 430.0/1.0
+00:03 +75: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 430.0/1.0
+00:03 +76: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 430.0/1.0
+00:03 +77: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 430.0/1.0
+00:04 +78: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 430.0/1.0
+00:04 +79: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 430.0/1.0
+00:04 +80: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 430.0/1.0
+00:04 +81: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 430.0/1.0
+00:04 +82: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 430.0/1.0
+00:04 +83: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 430.0/1.0
+00:04 +84: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 430.0/1.0
+00:04 +85: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 430.0/1.0
+00:04 +86: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 430.0/1.0
+00:04 +87: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 430.0/1.0
+00:04 +88: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 430.0/1.0
+00:04 +89: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 430.0/1.0
+00:04 +90: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 430.0/1.0
+00:04 +91: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 430.0/1.0
+00:04 +92: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 430.0/1.0
+00:04 +93: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 430.0/1.0
+00:04 +94: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 430.0/1.0
+00:04 +95: /Users/lute/project/momcozy-lab/app/test/modules/services/intake_test.dart: intake design disclosures consent and save at 390.0 / 1.0
+00:04 +96: /Users/lute/project/momcozy-lab/app/test/modules/services/intake_test.dart: intake design disclosures consent and save at 390.0 / 1.0
+00:04 +97: /Users/lute/project/momcozy-lab/app/test/modules/services/intake_test.dart: intake design disclosures consent and save at 390.0 / 1.0
+00:04 +98: /Users/lute/project/momcozy-lab/app/test/modules/services/intake_test.dart: intake design disclosures consent and save at 390.0 / 1.0
+00:04 +99: /Users/lute/project/momcozy-lab/app/test/modules/services/appointment_detail_test.dart: cancel pending locks return and retry uses original appointment version
+00:04 +100: /Users/lute/project/momcozy-lab/app/test/modules/services/appointment_detail_test.dart: cancel pending locks return and retry uses original appointment version
+00:04 +101: /Users/lute/project/momcozy-lab/app/test/modules/services/booking_test.dart: booking precheck and held dialog flow at 430.0 / 2.0
+00:04 +102: /Users/lute/project/momcozy-lab/app/test/modules/services/booking_test.dart: booking precheck and held dialog flow at 430.0 / 2.0
+00:04 +103: /Users/lute/project/momcozy-lab/app/test/modules/services/booking_test.dart: booking precheck and held dialog flow at 430.0 / 2.0
+00:04 +104: /Users/lute/project/momcozy-lab/app/test/modules/services/booking_test.dart: booking precheck and held dialog flow at 430.0 / 2.0
+00:04 +105: /Users/lute/project/momcozy-lab/app/test/modules/services/booking_test.dart: booking precheck and held dialog flow at 430.0 / 2.0
+00:04 +106: /Users/lute/project/momcozy-lab/app/test/modules/services/booking_test.dart: booking precheck and held dialog flow at 430.0 / 2.0
+00:04 +107: /Users/lute/project/momcozy-lab/app/test/modules/services/booking_test.dart: booking precheck and held dialog flow at 430.0 / 2.0
+00:04 +108: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 430.0/2.0
+00:04 +109: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 430.0/2.0
+00:04 +110: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 430.0/2.0
+00:04 +111: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 430.0/2.0
+00:04 +112: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_states_test.dart: four catalog packages open the matching detail and purchase confirmation 430.0/2.0
+00:04 +113: /Users/lute/project/momcozy-lab/app/test/modules/services/intake_test.dart: intake design disclosures consent and save at 390.0 / 2.0
+00:04 +114: /Users/lute/project/momcozy-lab/app/test/modules/services/intake_test.dart: intake design disclosures consent and save at 390.0 / 2.0
+00:04 +115: /Users/lute/project/momcozy-lab/app/test/modules/services/intake_test.dart: intake design disclosures consent and save at 390.0 / 2.0
+00:04 +116: /Users/lute/project/momcozy-lab/app/test/modules/services/intake_test.dart: intake design disclosures consent and save at 390.0 / 2.0
+00:04 +117: /Users/lute/project/momcozy-lab/app/test/modules/services/service_renew_test.dart: renew selection opens existing eligibility flow 320.0/1.0
+00:04 +118: /Users/lute/project/momcozy-lab/app/test/modules/services/service_renew_test.dart: renew selection opens existing eligibility flow 320.0/1.0
+00:04 +119: /Users/lute/project/momcozy-lab/app/test/modules/services/service_renew_test.dart: renew selection opens existing eligibility flow 320.0/1.0
+00:04 +120: /Users/lute/project/momcozy-lab/app/test/modules/services/service_renew_test.dart: renew selection opens existing eligibility flow 320.0/1.0
+00:04 +121: /Users/lute/project/momcozy-lab/app/test/modules/services/service_renew_test.dart: renew selection opens existing eligibility flow 320.0/1.0
+00:04 +122: /Users/lute/project/momcozy-lab/app/test/modules/services/service_renew_test.dart: renew selection opens existing eligibility flow 320.0/1.0
+00:04 +123: /Users/lute/project/momcozy-lab/app/test/modules/services/service_renew_test.dart: renew selection opens existing eligibility flow 320.0/1.0
+00:04 +124: /Users/lute/project/momcozy-lab/app/test/modules/services/service_renew_test.dart: renew selection opens existing eligibility flow 320.0/1.0
+00:04 +125: /Users/lute/project/momcozy-lab/app/test/modules/services/service_renew_test.dart: renew selection opens existing eligibility flow 320.0/1.0
+00:05 +126: /Users/lute/project/momcozy-lab/app/test/modules/services/service_renew_test.dart: renew selection opens existing eligibility flow 320.0/1.0
+00:05 +127: /Users/lute/project/momcozy-lab/app/test/modules/services/service_renew_test.dart: renew selection opens existing eligibility flow 320.0/1.0
+00:05 +128: /Users/lute/project/momcozy-lab/app/test/modules/services/service_renew_test.dart: renew selection opens existing eligibility flow 320.0/1.0
+00:05 +129: /Users/lute/project/momcozy-lab/app/test/modules/services/service_renew_test.dart: renew selection opens existing eligibility flow 320.0/1.0
+00:05 +130: /Users/lute/project/momcozy-lab/app/test/modules/services/service_renew_test.dart: renew selection opens existing eligibility flow 320.0/1.0
+00:05 +131: /Users/lute/project/momcozy-lab/app/test/modules/services/service_renew_test.dart: renew selection opens existing eligibility flow 320.0/1.0
+00:05 +132: /Users/lute/project/momcozy-lab/app/test/modules/services/service_renew_test.dart: renew selection opens existing eligibility flow 320.0/1.0
+00:05 +133: /Users/lute/project/momcozy-lab/app/test/modules/services/service_renew_test.dart: renew selection opens existing eligibility flow 320.0/1.0
+00:05 +134: /Users/lute/project/momcozy-lab/app/test/modules/services/service_renew_test.dart: renew selection opens existing eligibility flow 320.0/1.0
+00:05 +135: /Users/lute/project/momcozy-lab/app/test/modules/services/service_renew_test.dart: renew selection opens existing eligibility flow 320.0/1.0
+00:05 +136: /Users/lute/project/momcozy-lab/app/test/modules/services/service_renew_test.dart: renew selection opens existing eligibility flow 320.0/1.0
+00:05 +137: /Users/lute/project/momcozy-lab/app/test/modules/services/service_renew_test.dart: renew selection opens existing eligibility flow 320.0/1.0
+00:05 +138: /Users/lute/project/momcozy-lab/app/test/modules/services/service_renew_test.dart: renew selection opens existing eligibility flow 320.0/1.0
+00:05 +139: /Users/lute/project/momcozy-lab/app/test/modules/services/service_renew_test.dart: renew selection opens existing eligibility flow 320.0/1.0
+00:05 +140: /Users/lute/project/momcozy-lab/app/test/modules/services/service_renew_test.dart: renew selection opens existing eligibility flow 320.0/1.0
+00:05 +141: /Users/lute/project/momcozy-lab/app/test/modules/services/service_renew_test.dart: renew selection opens existing eligibility flow 320.0/1.0
+00:05 +142: /Users/lute/project/momcozy-lab/app/test/modules/services/service_renew_test.dart: renew selection opens existing eligibility flow 320.0/1.0
+00:05 +143: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 320.0 / 1.0
+00:05 +144: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 320.0 / 1.0
+00:05 +145: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 320.0 / 1.0
+00:05 +146: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 320.0 / 1.0
+00:05 +147: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 320.0 / 1.0
+00:05 +148: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 320.0 / 1.0
+00:05 +149: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 320.0 / 1.0
+00:05 +150: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 320.0 / 1.0
+00:05 +151: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 320.0 / 1.0
+00:05 +152: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 320.0 / 1.0
+00:05 +153: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 320.0 / 1.0
+00:05 +154: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 320.0 / 1.0
+00:05 +155: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 320.0 / 1.0
+00:05 +156: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 320.0 / 1.0
+00:05 +157: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 320.0 / 1.0
+00:05 +158: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 320.0 / 1.0
+00:06 +159: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 320.0 / 1.0
+00:06 +160: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 320.0 / 1.0
+00:06 +161: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 320.0 / 1.0
+00:06 +162: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 320.0 / 1.0
+00:06 +163: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 320.0 / 1.0
+00:06 +164: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 320.0 / 1.0
+00:06 +165: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 320.0 / 1.0
+00:06 +166: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 320.0 / 1.0
+00:06 +167: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 320.0 / 1.0
+00:06 +168: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 320.0 / 1.0
+00:06 +169: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 320.0 / 1.0
+00:06 +170: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 320.0 / 1.0
+00:06 +171: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart: feeding validation, save, uncertain undo and feedback at 320.0/1.0
+00:06 +172: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart: feeding validation, save, uncertain undo and feedback at 320.0/1.0
+00:06 +173: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart: feeding validation, save, uncertain undo and feedback at 320.0/1.0
+00:06 +174: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart: feeding validation, save, uncertain undo and feedback at 320.0/1.0
+00:06 +175: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart: feeding validation, save, uncertain undo and feedback at 320.0/1.0
+00:06 +176: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart: feeding validation, save, uncertain undo and feedback at 320.0/1.0
+00:06 +177: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart: feeding validation, save, uncertain undo and feedback at 320.0/1.0
+00:06 +178: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart: feeding validation, save, uncertain undo and feedback at 320.0/1.0
+00:06 +179: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart: feeding validation, save, uncertain undo and feedback at 320.0/1.0
+00:06 +180: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart: feeding validation, save, uncertain undo and feedback at 320.0/1.0
+00:06 +181: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart: feeding validation, save, uncertain undo and feedback at 320.0/1.0
+00:06 +182: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart: feeding validation, save, uncertain undo and feedback at 320.0/1.0
+00:06 +183: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart: feeding validation, save, uncertain undo and feedback at 320.0/1.0
+00:06 +184: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart: feeding validation, save, uncertain undo and feedback at 320.0/1.0
+00:06 +185: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart: feeding validation, save, uncertain undo and feedback at 320.0/1.0
+00:06 +186: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart: feeding validation, save, uncertain undo and feedback at 320.0/1.0
+00:06 +187: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/1.0
+00:06 +188: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/1.0
+00:06 +189: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/1.0
+00:06 +190: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/1.0
+00:07 +191: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/1.0
+00:07 +192: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/1.0
+00:07 +193: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/1.0
+00:07 +194: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/1.0
+00:07 +195: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/1.0
+00:07 +196: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/1.0
+00:07 +197: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/1.0
+00:07 +198: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/1.0
+00:07 +199: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/1.0
+00:07 +200: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 390.0 / 2.0
+00:07 +201: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 390.0 / 2.0
+00:07 +202: /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart: summary content task and destinations 390.0 / 2.0
+00:07 +203: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart: feeding validation, save, uncertain undo and feedback at 390.0/1.0
+00:07 +204: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart: feeding validation, save, uncertain undo and feedback at 390.0/1.0
+00:07 +205: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart: feeding validation, save, uncertain undo and feedback at 390.0/1.0
+00:07 +206: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/2.0
+00:07 +207: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/2.0
+00:07 +208: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/2.0
+00:07 +209: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/2.0
+00:07 +210: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/2.0
+00:07 +211: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/2.0
+00:07 +212: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/2.0
+00:07 +213: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart: feeding validation, save, uncertain undo and feedback at 430.0/1.0
+00:07 +214: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart: feeding validation, save, uncertain undo and feedback at 430.0/1.0
+00:08 +215: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 390.0/1.0
+00:08 +216: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 390.0/1.0
+00:08 +217: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 390.0/1.0
+00:08 +218: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 390.0/1.0
+00:08 +219: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 390.0/1.0
+00:08 +220: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 390.0/2.0
+00:08 +221: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 430.0/1.0
+00:09 +222: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 430.0/2.0
+00:09 +223: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: (tearDownAll)
+00:10 +223: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_api_repository_test.dart: requests an idempotent cloud reset for the current release
+00:10 +224: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_api_repository_test.dart: maps required onboarding state
+00:10 +225: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_api_repository_test.dart: preserves the avatar worker phase for truthful progress UI
+00:10 +226: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_api_repository_test.dart: serializes one shared postpartum delivery and infant set
+00:10 +227: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_api_repository_test.dart: uploads portrait to dedicated endpoint before generation
+00:10 +228: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_api_repository_test.dart: maps four avatar candidates and completes with one candidate
+00:10 +229: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_api_repository_test.dart: completes with the explicit MomCozy default selection
+00:10 +230: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_api_repository_test.dart: dismisses a pending replacement without changing the active avatar
+00:10 +231: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_release_reset_test.dart: pending release reset runs before onboarding state is loaded
+00:10 +232: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_release_reset_test.dart: cloud reset failure blocks onboarding state and app entry
+00:10 +233: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_release_reset_test.dart: completed onboarding marks the current release for that user
+00:10 +234: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_release_reset_test.dart: accepted avatar generation marks onboarding release complete
+00:10 +235: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_release_reset_test.dart: local completion marker failure does not revoke cloud app entry
+00:10 +236: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_handoff_test.dart: accepted avatar task explains the wait before entering the app
+00:10 +237: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_handoff_test.dart: accepted avatar task explains the wait before entering the app
+00:10 +238: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_handoff_test.dart: accepted avatar task explains the wait before entering the app
+00:10 +239: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_handoff_test.dart: accepted avatar task explains the wait before entering the app
+00:10 +240: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_handoff_test.dart: accepted avatar task explains the wait before entering the app
+00:10 +241: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_capability_gate_test.dart: default app startup bypasses the unsupported onboarding gate
+00:11 +242: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_capability_gate_test.dart: default app startup bypasses the unsupported onboarding gate
+00:11 +243: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding profile forms at 320.0 / 1.0
+00:11 +244: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding profile forms at 320.0 / 1.0
+00:11 +245: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding profile forms at 320.0 / 1.0
+00:11 +246: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding profile forms at 320.0 / 1.0
+00:11 +247: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding profile forms at 320.0 / 1.0
+00:11 +248: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding profile forms at 320.0 / 1.0
+00:11 +249: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding profile forms at 320.0 / 1.0
+00:11 +250: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding profile forms at 320.0 / 1.0
+00:11 +251: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding profile forms at 320.0 / 1.0
+00:11 +252: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding profile forms at 320.0 / 1.0
+00:11 +253: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding profile forms at 320.0 / 1.0
+00:11 +254: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding profile forms at 320.0 / 1.0
+00:11 +255: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_route_test.dart: app shell shows a restorable avatar task and opens review
+00:11 +256: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding load failure retries at 320.0 / 1.0
+00:11 +257: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding load failure retries at 320.0 / 1.0
+00:11 +258: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: avatar task banners at 320.0 / 1.0
+00:11 +259: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: avatar photo failure and default confirmation at 320.0 / 1.0
+00:12 +260: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding avatar required at 320.0 / 1.0
+00:12 +261: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding avatar generating at 320.0 / 1.0
+00:12 +262: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding avatar review at 320.0 / 1.0
+00:12 +263: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding avatar failed at 320.0 / 1.0
+00:12 +264: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding profile forms at 320.0 / 2.0
+00:12 +265: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding load failure retries at 320.0 / 2.0
+00:12 +266: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: avatar task banners at 320.0 / 2.0
+00:12 +267: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: avatar photo failure and default confirmation at 320.0 / 2.0
+00:12 +268: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding avatar required at 320.0 / 2.0
+00:12 +269: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding avatar generating at 320.0 / 2.0
+00:12 +270: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding avatar review at 320.0 / 2.0
+00:12 +271: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding avatar failed at 320.0 / 2.0
+00:12 +272: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding profile forms at 390.0 / 1.0
+00:13 +273: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding load failure retries at 390.0 / 1.0
+00:13 +274: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: avatar task banners at 390.0 / 1.0
+00:13 +275: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: avatar photo failure and default confirmation at 390.0 / 1.0
+00:13 +276: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding avatar required at 390.0 / 1.0
+00:13 +277: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding avatar generating at 390.0 / 1.0
+00:13 +278: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding avatar review at 390.0 / 1.0
+00:13 +279: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding avatar failed at 390.0 / 1.0
+00:13 +280: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding profile forms at 390.0 / 2.0
+00:13 +281: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding load failure retries at 390.0 / 2.0
+00:13 +282: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: avatar task banners at 390.0 / 2.0
+00:13 +283: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: avatar photo failure and default confirmation at 390.0 / 2.0
+00:13 +284: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding avatar required at 390.0 / 2.0
+00:13 +285: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding avatar generating at 390.0 / 2.0
+00:13 +286: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding avatar review at 390.0 / 2.0
+00:13 +287: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding avatar failed at 390.0 / 2.0
+00:13 +288: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding profile forms at 430.0 / 1.0
+00:13 +289: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding load failure retries at 430.0 / 1.0
+00:13 +290: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: avatar task banners at 430.0 / 1.0
+00:13 +291: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: avatar photo failure and default confirmation at 430.0 / 1.0
+00:14 +292: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding avatar required at 430.0 / 1.0
+00:14 +293: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding avatar generating at 430.0 / 1.0
+00:14 +294: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding avatar review at 430.0 / 1.0
+00:14 +295: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding avatar failed at 430.0 / 1.0
+00:14 +296: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding profile forms at 430.0 / 2.0
+00:14 +297: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding load failure retries at 430.0 / 2.0
+00:14 +298: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: avatar task banners at 430.0 / 2.0
+00:14 +299: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: avatar photo failure and default confirmation at 430.0 / 2.0
+00:14 +300: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding avatar required at 430.0 / 2.0
+00:14 +301: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding avatar generating at 430.0 / 2.0
+00:14 +302: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding avatar review at 430.0 / 2.0
+00:14 +303: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding avatar failed at 430.0 / 2.0
+00:14 +304: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: (tearDownAll)
+00:14 +304: All tests passed!

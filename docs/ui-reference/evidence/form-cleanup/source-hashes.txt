@@ -1,0 +1,3 @@
+cf3279292d0125286d6708db8c35858f6ca44cd8e9a8b7b2af82f2927eecdc46  lib/features/agent_hub/artifacts/forms/agent_artifact_form.dart
+a8d1968c76d9badd5a76806bcfd3ed4c409c128b74a4986b6d9f9e03cf87b904  lib/features/agent_hub/artifacts/forms/agent_artifact_form_dialog.dart
+2d814b66f9af420b5e8476e60f6c4d29607b7cd80be3f8587d22645ab2f84f24  docs/ui-reference/agent/derived/form.md

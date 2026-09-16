@@ -1,0 +1,17 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart
+00:00 +0 -1: loading /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_artifact_form_dialog_test.dart [E]
+  Failed to load "/Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_artifact_form_dialog_test.dart": Does not exist.
+00:00 +0 -1: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: (setUpAll)
+00:00 +0 -1: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: form state rejects duplicate and completed submissions
+00:00 +1 -1: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: form states 320.0/1.0
+00:00 +2 -1: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: form states 320.0/2.0
+00:01 +3 -1: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: form states 390.0/1.0
+00:01 +4 -1: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: form states 390.0/2.0
+00:01 +5 -1: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: form states 430.0/1.0
+00:02 +6 -1: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: form states 430.0/2.0
+00:02 +7 -1: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: short screen keyboard leaves form content and actions reachable
+00:02 +8 -1: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: (tearDownAll)
+00:02 +8 -1: Some tests failed.
+
+Failing tests:
+  /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_artifact_form_dialog_test.dart: loading /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_artifact_form_dialog_test.dart

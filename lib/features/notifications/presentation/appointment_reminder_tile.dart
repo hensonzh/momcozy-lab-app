@@ -71,22 +71,26 @@ class _AppointmentReminderTileState extends State<AppointmentReminderTile> {
       children: [
         SwitchListTile(
           contentPadding: EdgeInsets.zero,
-          title: const Text('Appointment reminder'),
+          title: const Text(
+            '预约提醒',
+            style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+          ),
           subtitle: Text(
             _failed
-                ? 'Could not load reminder status'
+                ? '暂时无法读取提醒状态'
                 : _reminder?.enabled == true && ready
-                ? '15 minutes before your appointment'
-                : 'Off on this device. Your appointment is saved.',
+                ? '预约开始前 15 分钟提醒'
+                : '此设备尚未开启提醒，预约已保存。',
+            style: const TextStyle(fontSize: 11, height: 1.5),
           ),
           value: _reminder?.enabled == true && ready,
           onChanged: _busy || _coordinator == null ? null : _set,
         ),
         if (_busy) const LinearProgressIndicator(),
-        if (_failed) TextButton(onPressed: _load, child: const Text('Retry')),
+        if (_failed) TextButton(onPressed: _load, child: const Text('重试')),
         TextButton(
           onPressed: () => context.push('/notifications/settings'),
-          child: const Text('Notification settings'),
+          child: const Text('通知设置'),
         ),
       ],
     );

@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/service-journey-purchase-eligibility-ready-393.png",
+  "previous_source": "test/goldens/ui_inventory/service-journey-purchase-unsupported-region-393.png",
+  "route": "/services/feeding-confidence",
+  "trigger": "Supported state → eligibility can be submitted",
+  "root_entry": "Authenticated More → tap Me bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/services/service_inventory_journey_test.dart"
+}

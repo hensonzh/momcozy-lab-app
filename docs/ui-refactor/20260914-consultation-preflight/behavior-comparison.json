@@ -1,0 +1,6 @@
+{
+  "device_probe_lifecycle_start_and_release_unchanged": true,
+  "start_location_consent_close_intake_methods_unchanged": true,
+  "video_consent_save_unchanged": true,
+  "start_readiness_conditions_unchanged": true
+}

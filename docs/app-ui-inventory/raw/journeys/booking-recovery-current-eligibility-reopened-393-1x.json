@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/booking-recovery-current-eligibility-reopened-393-1x.png",
+  "previous_source": "test/goldens/ui_inventory/booking-recovery-current-hold-eligibility_required-393-1x.png",
+  "route": "/services/episodes/service-episode/booking",
+  "trigger": "Expired precheck → Start confirmation with prior choices retained",
+  "root_entry": "Authenticated More → tap Me bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/services/booking_recovery_current_inventory_test.dart"
+}

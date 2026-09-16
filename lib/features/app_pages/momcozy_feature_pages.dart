@@ -74,7 +74,9 @@ class MomCozyFeaturePage extends StatelessWidget {
         final coordinator = NotificationScope.maybeOf(context);
         final runtime = MomCozyRuntimeScope.of(context);
         return NotificationsPage(
-          key: ValueKey('notifications-${runtime.currentSession.userId}-${identityHashCode(coordinator?.inbox)}'),
+          key: ValueKey(
+            'notifications-${runtime.currentSession.userId}-${identityHashCode(coordinator?.inbox)}',
+          ),
           controller: coordinator?.inbox,
           onOpen: coordinator?.openInboxNotification,
           onSettings: () => context.push('/notifications/settings'),

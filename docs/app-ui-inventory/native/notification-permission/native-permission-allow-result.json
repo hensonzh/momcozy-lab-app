@@ -1,0 +1,1 @@
+{"status":"PASS","branch":"allow","states":8,"preference_writes":["appointments:true","appointments:false"],"permission":"authorized","data":"isolated HTTP, gateway and installation store; actual native permission platform"}

@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/mom-journey-purchased-progress-393.png",
+  "previous_source": "test/goldens/ui_inventory/mom-journey-purchased-home-393.png",
+  "route": "/services/episodes/inventory-episode",
+  "trigger": "Owned plan → actual service timeline route",
+  "root_entry": "Authenticated More → tap Me bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/mom/mom_inventory_journey_test.dart"
+}

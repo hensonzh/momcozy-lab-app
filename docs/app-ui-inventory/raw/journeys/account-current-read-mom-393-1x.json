@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/account-current-read-mom-393-1x.png",
+  "previous_source": null,
+  "route": "/me",
+  "trigger": "Authenticated Me",
+  "root_entry": "Authenticated Me → tap More bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production More/account/privacy/service pages and notification coordinator/repositories; isolated HTTP, push gateway and permission platform; real router.go and ScaffoldMessenger callbacks, no native OS dialog or remote push",
+  "test": "test/modules/profile/account_current_inventory_test.dart"
+}

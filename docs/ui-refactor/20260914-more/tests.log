@@ -1,0 +1,48 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/app/more_design_test.dart
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/app/more_design_test.dart: (setUpAll)
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/app/more_redesign_states_test.dart: (setUpAll)
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/features/notifications/notification_widgets_test.dart: first reminder uses education and denial leaves it off
+00:00 +1: /Users/lute/project/momcozy-lab/app/test/app/more_design_test.dart: More navigation and privacy at 320.0 / 1.0
+00:00 +2: /Users/lute/project/momcozy-lab/app/test/app/more_design_test.dart: More navigation and privacy at 320.0 / 1.0
+00:00 +3: /Users/lute/project/momcozy-lab/app/test/app/more_design_test.dart: More navigation and privacy at 320.0 / 1.0
+00:00 +4: /Users/lute/project/momcozy-lab/app/test/app/more_design_test.dart: More navigation and privacy at 320.0 / 1.0
+00:00 +5: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: quick mood starts a draft; save preserves other groups and refreshes home
+00:00 +6: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: quick mood starts a draft; save preserves other groups and refreshes home
+00:00 +7: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: quick mood starts a draft; save preserves other groups and refreshes home
+00:00 +8: /Users/lute/project/momcozy-lab/app/test/app/more_design_test.dart: More navigation and privacy at 320.0 / 2.0
+00:00 +9: /Users/lute/project/momcozy-lab/app/test/app/more_design_test.dart: More navigation and privacy at 320.0 / 2.0
+00:00 +10: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: lactation create uses the existing editor and refreshes total and analysis
+00:01 +11: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: lactation create uses the existing editor and refreshes total and analysis
+00:01 +12: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: lactation create uses the existing editor and refreshes total and analysis
+00:01 +13: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: lactation create uses the existing editor and refreshes total and analysis
+00:01 +14: /Users/lute/project/momcozy-lab/app/test/app/more_design_test.dart: More navigation and privacy at 430.0 / 1.0
+00:01 +15: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: first frame uses skeleton then independent purchased and empty records
+00:01 +16: /Users/lute/project/momcozy-lab/app/test/app/more_design_test.dart: More navigation and privacy at 430.0 / 2.0
+00:01 +17: /Users/lute/project/momcozy-lab/app/test/app/more_design_test.dart: More navigation and privacy at 430.0 / 2.0
+00:01 +18: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: failed portrait uses single expert fallback and keeps service actions
+00:01 +19: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: paused service retains progress and disables new booking
+00:01 +20: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: expired service retains progress and disables new booking
+00:01 +21: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: exhausted service retains progress and disables new booking
+00:01 +22: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: partial records preserve missing sections and unknown percentages
+00:01 +23: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: record refresh reloads insight; failure cannot show a stale conclusion
+00:01 +24: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: diary failure is local; missing delivery date has honest stage fallback
+00:01 +25: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: handoff initial 320.0/1.0
+00:01 +26: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: handoff recorded 320.0/1.0
+00:01 +27: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: handoff purchased 320.0/1.0
+00:01 +28: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: handoff initial 320.0/2.0
+00:01 +29: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: handoff recorded 320.0/2.0
+00:01 +30: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: handoff purchased 320.0/2.0
+00:02 +31: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: handoff initial 360.0/1.0
+00:02 +32: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: handoff recorded 360.0/1.0
+00:02 +33: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: handoff purchased 360.0/1.0
+00:02 +34: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: handoff initial 360.0/2.0
+00:02 +35: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: handoff recorded 360.0/2.0
+00:02 +36: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: handoff purchased 360.0/2.0
+00:02 +37: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: handoff initial 393.0/1.0
+00:02 +38: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: handoff recorded 393.0/1.0
+00:02 +39: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: handoff purchased 393.0/1.0
+00:03 +40: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: handoff initial 393.0/2.0
+00:03 +41: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: handoff recorded 393.0/2.0
+00:03 +42: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: handoff purchased 393.0/2.0
+00:03 +43: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: (tearDownAll)
+00:03 +43: All tests passed!

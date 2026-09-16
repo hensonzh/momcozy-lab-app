@@ -1,0 +1,709 @@
+[
+  {
+    "id": "05-agent/agent-attachment-journey-camera-failure-dismissed",
+    "status": "reviewed_reused_design",
+    "figma_nodes": [
+      "246:1086",
+      "247:1086"
+    ],
+    "note": "Shared design reviewed against the existing source screenshot; widget behavior covered, without replaying Session A inventory writers. Dismissed/cancelled/empty/removed state reuses the completed conversation composer."
+  },
+  {
+    "id": "05-agent/agent-attachment-journey-camera-pick-cancelled",
+    "status": "reviewed_reused_design",
+    "figma_nodes": [
+      "246:1086",
+      "247:1086"
+    ],
+    "note": "Shared design reviewed against the existing source screenshot; widget behavior covered, without replaying Session A inventory writers. Dismissed/cancelled/empty/removed state reuses the completed conversation composer."
+  },
+  {
+    "id": "05-agent/agent-attachment-journey-camera-pick-failed",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "267:1754",
+      "267:1978"
+    ],
+    "note": "Shared design reviewed against the existing source screenshot; widget behavior covered, without replaying Session A inventory writers."
+  },
+  {
+    "id": "05-agent/agent-attachment-journey-camera-pick-pending",
+    "status": "reviewed_reused_design",
+    "figma_nodes": [
+      "259:1194",
+      "259:1440"
+    ],
+    "note": "Shared design reviewed against the existing source screenshot; widget behavior covered, without replaying Session A inventory writers. Existing pending composer lock and upload progress reused."
+  },
+  {
+    "id": "05-agent/agent-attachment-journey-file-pick-cancelled",
+    "status": "reviewed_reused_design",
+    "figma_nodes": [
+      "246:1086",
+      "247:1086"
+    ],
+    "note": "Shared design reviewed against the existing source screenshot; widget behavior covered, without replaying Session A inventory writers. Dismissed/cancelled/empty/removed state reuses the completed conversation composer."
+  },
+  {
+    "id": "05-agent/agent-attachment-journey-file-pick-failed",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "267:1802",
+      "267:2029"
+    ],
+    "note": "Shared design reviewed against the existing source screenshot; widget behavior covered, without replaying Session A inventory writers."
+  },
+  {
+    "id": "05-agent/agent-attachment-journey-file-pick-pending",
+    "status": "reviewed_reused_design",
+    "figma_nodes": [
+      "259:1194",
+      "259:1440"
+    ],
+    "note": "Shared design reviewed against the existing source screenshot; widget behavior covered, without replaying Session A inventory writers. Existing pending composer lock and upload progress reused."
+  },
+  {
+    "id": "05-agent/agent-attachment-journey-image-decode-fallback",
+    "status": "reviewed_reused_design",
+    "figma_nodes": [
+      "259:1130",
+      "259:1370"
+    ],
+    "note": "Shared design reviewed against the existing source screenshot; widget behavior covered, without replaying Session A inventory writers."
+  },
+  {
+    "id": "05-agent/agent-attachment-journey-image-ready",
+    "status": "reviewed_reused_design",
+    "figma_nodes": [
+      "259:1130",
+      "259:1370"
+    ],
+    "note": "Shared design reviewed against the existing source screenshot; widget behavior covered, without replaying Session A inventory writers."
+  },
+  {
+    "id": "05-agent/agent-attachment-journey-image-remove-failed",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "267:1930",
+      "267:2166"
+    ],
+    "note": "Shared design reviewed against the existing source screenshot; widget behavior covered, without replaying Session A inventory writers."
+  },
+  {
+    "id": "05-agent/agent-attachment-journey-image-remove-notice-dismissed",
+    "status": "reviewed_reused_design",
+    "figma_nodes": [
+      "259:1130",
+      "259:1370"
+    ],
+    "note": "Shared design reviewed against the existing source screenshot; widget behavior covered, without replaying Session A inventory writers."
+  },
+  {
+    "id": "05-agent/agent-attachment-journey-image-remove-pending",
+    "status": "reviewed_reused_design",
+    "figma_nodes": [
+      "259:1194",
+      "259:1440"
+    ],
+    "note": "Shared design reviewed against the existing source screenshot; widget behavior covered, without replaying Session A inventory writers. Existing pending composer lock and upload progress reused."
+  },
+  {
+    "id": "05-agent/agent-attachment-journey-image-removed",
+    "status": "reviewed_reused_design",
+    "figma_nodes": [
+      "246:1086",
+      "247:1086"
+    ],
+    "note": "Shared design reviewed against the existing source screenshot; widget behavior covered, without replaying Session A inventory writers. Dismissed/cancelled/empty/removed state reuses the completed conversation composer."
+  },
+  {
+    "id": "05-agent/agent-attachment-journey-image-tab-away",
+    "status": "reviewed_reused_design",
+    "figma_nodes": [
+      "122:9",
+      "122:105"
+    ],
+    "note": "Away state reuses completed More page; voice cancellation/navigation behavior remains unchanged."
+  },
+  {
+    "id": "05-agent/agent-attachment-journey-image-tab-return",
+    "status": "reviewed_reused_design",
+    "figma_nodes": [
+      "259:1130",
+      "259:1370"
+    ],
+    "note": "Shared design reviewed against the existing source screenshot; widget behavior covered, without replaying Session A inventory writers."
+  },
+  {
+    "id": "05-agent/agent-attachment-journey-image-upload-failed",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "267:1754",
+      "267:1978"
+    ],
+    "note": "Shared design reviewed against the existing source screenshot; widget behavior covered, without replaying Session A inventory writers."
+  },
+  {
+    "id": "05-agent/agent-attachment-journey-image-upload-failure-dismissed",
+    "status": "reviewed_reused_design",
+    "figma_nodes": [
+      "246:1086",
+      "247:1086"
+    ],
+    "note": "Shared design reviewed against the existing source screenshot; widget behavior covered, without replaying Session A inventory writers. Dismissed/cancelled/empty/removed state reuses the completed conversation composer."
+  },
+  {
+    "id": "05-agent/agent-attachment-journey-image-uploading",
+    "status": "reviewed_reused_design",
+    "figma_nodes": [
+      "259:1194",
+      "259:1440"
+    ],
+    "note": "Shared design reviewed against the existing source screenshot; widget behavior covered, without replaying Session A inventory writers. Existing pending composer lock and upload progress reused."
+  },
+  {
+    "id": "05-agent/agent-attachment-journey-mixed-completed",
+    "status": "reviewed_reused_design",
+    "figma_nodes": [
+      "259:1226",
+      "259:1475",
+      "262:1086",
+      "262:1115",
+      "246:1144",
+      "247:1150"
+    ],
+    "note": "Shared design reviewed against the existing source screenshot; widget behavior covered, without replaying Session A inventory writers. Sent metadata and reply body reuse completed attachment and conversation designs."
+  },
+  {
+    "id": "05-agent/agent-attachment-journey-mixed-ready-file",
+    "status": "reviewed_reused_design",
+    "figma_nodes": [
+      "259:1162",
+      "259:1405"
+    ],
+    "note": "Shared design reviewed against the existing source screenshot; widget behavior covered, without replaying Session A inventory writers."
+  },
+  {
+    "id": "05-agent/agent-attachment-journey-mixed-ready-image",
+    "status": "reviewed_reused_design",
+    "figma_nodes": [
+      "259:1130",
+      "259:1370"
+    ],
+    "note": "Shared design reviewed against the existing source screenshot; widget behavior covered, without replaying Session A inventory writers."
+  },
+  {
+    "id": "05-agent/agent-attachment-journey-mixed-sent",
+    "status": "reviewed_reused_design",
+    "figma_nodes": [
+      "259:1226",
+      "259:1475",
+      "262:1086",
+      "262:1115",
+      "246:1144",
+      "247:1150"
+    ],
+    "note": "Shared design reviewed against the existing source screenshot; widget behavior covered, without replaying Session A inventory writers. Sent metadata and reply body reuse completed attachment and conversation designs."
+  },
+  {
+    "id": "05-agent/agent-attachment-journey-new-cleanup-completed",
+    "status": "reviewed_reused_design",
+    "figma_nodes": [
+      "246:1086",
+      "247:1086"
+    ],
+    "note": "Shared design reviewed against the existing source screenshot; widget behavior covered, without replaying Session A inventory writers. Dismissed/cancelled/empty/removed state reuses the completed conversation composer."
+  },
+  {
+    "id": "05-agent/agent-attachment-journey-new-cleanup-failed",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "267:1930",
+      "267:2166"
+    ],
+    "note": "Shared design reviewed against the existing source screenshot; widget behavior covered, without replaying Session A inventory writers."
+  },
+  {
+    "id": "05-agent/agent-attachment-journey-new-cleanup-notice-dismissed",
+    "status": "reviewed_reused_design",
+    "figma_nodes": [
+      "259:1162",
+      "259:1405"
+    ],
+    "note": "Shared design reviewed against the existing source screenshot; widget behavior covered, without replaying Session A inventory writers."
+  },
+  {
+    "id": "05-agent/agent-attachment-journey-new-cleanup-pending",
+    "status": "reviewed_reused_design",
+    "figma_nodes": [
+      "259:1194",
+      "259:1440"
+    ],
+    "note": "Shared design reviewed against the existing source screenshot; widget behavior covered, without replaying Session A inventory writers. Existing pending composer lock and upload progress reused."
+  },
+  {
+    "id": "05-agent/agent-attachment-journey-pdf-empty",
+    "status": "reviewed_reused_design",
+    "figma_nodes": [
+      "246:1086",
+      "247:1086"
+    ],
+    "note": "Shared design reviewed against the existing source screenshot; widget behavior covered, without replaying Session A inventory writers. Dismissed/cancelled/empty/removed state reuses the completed conversation composer."
+  },
+  {
+    "id": "05-agent/agent-attachment-journey-pdf-metadata-tapped",
+    "status": "reviewed_reused_design",
+    "figma_nodes": [
+      "259:1226",
+      "259:1475",
+      "262:1086",
+      "262:1115",
+      "246:1144",
+      "247:1150"
+    ],
+    "note": "Shared design reviewed against the existing source screenshot; widget behavior covered, without replaying Session A inventory writers. Sent metadata and reply body reuse completed attachment and conversation designs."
+  },
+  {
+    "id": "05-agent/agent-attachment-journey-pdf-only-completed",
+    "status": "reviewed_reused_design",
+    "figma_nodes": [
+      "259:1226",
+      "259:1475",
+      "262:1086",
+      "262:1115",
+      "246:1144",
+      "247:1150"
+    ],
+    "note": "Shared design reviewed against the existing source screenshot; widget behavior covered, without replaying Session A inventory writers. Sent metadata and reply body reuse completed attachment and conversation designs."
+  },
+  {
+    "id": "05-agent/agent-attachment-journey-pdf-oversized",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "267:1850",
+      "267:2080"
+    ],
+    "note": "Shared design reviewed against the existing source screenshot; widget behavior covered, without replaying Session A inventory writers."
+  },
+  {
+    "id": "05-agent/agent-attachment-journey-pdf-oversized-notice-dismissed",
+    "status": "reviewed_reused_design",
+    "figma_nodes": [
+      "246:1086",
+      "247:1086"
+    ],
+    "note": "Shared design reviewed against the existing source screenshot; widget behavior covered, without replaying Session A inventory writers. Dismissed/cancelled/empty/removed state reuses the completed conversation composer."
+  },
+  {
+    "id": "05-agent/agent-attachment-journey-pdf-unsupported",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "267:1890",
+      "267:2123"
+    ],
+    "note": "Shared design reviewed against the existing source screenshot; widget behavior covered, without replaying Session A inventory writers."
+  },
+  {
+    "id": "05-agent/agent-attachment-journey-pdf-unsupported-notice-dismissed",
+    "status": "reviewed_reused_design",
+    "figma_nodes": [
+      "246:1086",
+      "247:1086"
+    ],
+    "note": "Shared design reviewed against the existing source screenshot; widget behavior covered, without replaying Session A inventory writers. Dismissed/cancelled/empty/removed state reuses the completed conversation composer."
+  },
+  {
+    "id": "05-agent/agent-attachment-journey-pdf-upload-failed",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "267:1802",
+      "267:2029"
+    ],
+    "note": "Shared design reviewed against the existing source screenshot; widget behavior covered, without replaying Session A inventory writers."
+  },
+  {
+    "id": "05-agent/agent-attachment-journey-pdf-upload-failure-dismissed",
+    "status": "reviewed_reused_design",
+    "figma_nodes": [
+      "246:1086",
+      "247:1086"
+    ],
+    "note": "Shared design reviewed against the existing source screenshot; widget behavior covered, without replaying Session A inventory writers. Dismissed/cancelled/empty/removed state reuses the completed conversation composer."
+  },
+  {
+    "id": "05-agent/agent-attachment-journey-pdf-upload-recovered",
+    "status": "reviewed_reused_design",
+    "figma_nodes": [
+      "259:1162",
+      "259:1405"
+    ],
+    "note": "Shared design reviewed against the existing source screenshot; widget behavior covered, without replaying Session A inventory writers."
+  },
+  {
+    "id": "05-agent/agent-attachment-journey-photo-pick-cancelled",
+    "status": "reviewed_reused_design",
+    "figma_nodes": [
+      "246:1086",
+      "247:1086"
+    ],
+    "note": "Shared design reviewed against the existing source screenshot; widget behavior covered, without replaying Session A inventory writers. Dismissed/cancelled/empty/removed state reuses the completed conversation composer."
+  },
+  {
+    "id": "05-agent/agent-attachment-journey-photo-pick-pending",
+    "status": "reviewed_reused_design",
+    "figma_nodes": [
+      "259:1194",
+      "259:1440"
+    ],
+    "note": "Shared design reviewed against the existing source screenshot; widget behavior covered, without replaying Session A inventory writers. Existing pending composer lock and upload progress reused."
+  },
+  {
+    "id": "05-agent/agent-journey-voice-off",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "267:1216",
+      "267:1527"
+    ],
+    "note": "Shared design reviewed against the existing source screenshot; widget behavior covered, without replaying Session A inventory writers."
+  },
+  {
+    "id": "05-agent/agent-journey-voice-on",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "267:1254",
+      "267:1568"
+    ],
+    "note": "Shared design reviewed against the existing source screenshot; widget behavior covered, without replaying Session A inventory writers."
+  },
+  {
+    "id": "05-agent/agent-voice-dismissed",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "267:1292",
+      "267:1609"
+    ],
+    "note": "Shared design reviewed against the existing source screenshot; widget behavior covered, without replaying Session A inventory writers."
+  },
+  {
+    "id": "05-agent/agent-voice-greeting-error",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "267:1086",
+      "267:1388"
+    ],
+    "note": "Shared design reviewed against the existing source screenshot; widget behavior covered, without replaying Session A inventory writers."
+  },
+  {
+    "id": "05-agent/agent-voice-journey-active-audio-away",
+    "status": "reviewed_reused_design",
+    "figma_nodes": [
+      "122:9",
+      "122:105"
+    ],
+    "note": "Away state reuses completed More page; voice cancellation/navigation behavior remains unchanged."
+  },
+  {
+    "id": "05-agent/agent-voice-journey-active-audio-return",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "267:1254",
+      "267:1568"
+    ],
+    "note": "Shared design reviewed against the existing source screenshot; widget behavior covered, without replaying Session A inventory writers."
+  },
+  {
+    "id": "05-agent/agent-voice-journey-completed-text-playing",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "267:1350",
+      "267:1673"
+    ],
+    "note": "Shared design reviewed against the existing source screenshot; widget behavior covered, without replaying Session A inventory writers."
+  },
+  {
+    "id": "05-agent/agent-voice-journey-greeting-failed",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "267:1086",
+      "267:1388"
+    ],
+    "note": "Shared design reviewed against the existing source screenshot; widget behavior covered, without replaying Session A inventory writers."
+  },
+  {
+    "id": "05-agent/agent-voice-journey-greeting-finished",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "267:1292",
+      "267:1609"
+    ],
+    "note": "Shared design reviewed against the existing source screenshot; widget behavior covered, without replaying Session A inventory writers."
+  },
+  {
+    "id": "05-agent/agent-voice-journey-greeting-finished-away",
+    "status": "reviewed_reused_design",
+    "figma_nodes": [
+      "122:9",
+      "122:105"
+    ],
+    "note": "Away state reuses completed More page; voice cancellation/navigation behavior remains unchanged."
+  },
+  {
+    "id": "05-agent/agent-voice-journey-greeting-finished-return",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "267:1292",
+      "267:1609"
+    ],
+    "note": "Shared design reviewed against the existing source screenshot; widget behavior covered, without replaying Session A inventory writers."
+  },
+  {
+    "id": "05-agent/agent-voice-journey-greeting-playing",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "267:1321",
+      "267:1641"
+    ],
+    "note": "Shared design reviewed against the existing source screenshot; widget behavior covered, without replaying Session A inventory writers."
+  },
+  {
+    "id": "05-agent/agent-voice-journey-greeting-replaying",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "267:1321",
+      "267:1641"
+    ],
+    "note": "Shared design reviewed against the existing source screenshot; widget behavior covered, without replaying Session A inventory writers."
+  },
+  {
+    "id": "05-agent/agent-voice-journey-keyboard-dismissed",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "247:1118"
+    ],
+    "note": "Shared design reviewed against the existing source screenshot; widget behavior covered, without replaying Session A inventory writers."
+  },
+  {
+    "id": "05-agent/agent-voice-journey-keyboard-failed",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "267:1714"
+    ],
+    "note": "Shared design reviewed against the existing source screenshot; widget behavior covered, without replaying Session A inventory writers."
+  },
+  {
+    "id": "05-agent/agent-voice-journey-later-text-failed",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "267:1123",
+      "267:1428"
+    ],
+    "note": "Shared design reviewed against the existing source screenshot; widget behavior covered, without replaying Session A inventory writers."
+  },
+  {
+    "id": "05-agent/agent-voice-journey-later-text-full-finished",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "267:1254",
+      "267:1568"
+    ],
+    "note": "Shared design reviewed against the existing source screenshot; widget behavior covered, without replaying Session A inventory writers."
+  },
+  {
+    "id": "05-agent/agent-voice-journey-later-text-full-replay",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "267:1350",
+      "267:1673"
+    ],
+    "note": "Shared design reviewed against the existing source screenshot; widget behavior covered, without replaying Session A inventory writers."
+  },
+  {
+    "id": "05-agent/agent-voice-journey-later-text-recovered",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "267:1254",
+      "267:1568"
+    ],
+    "note": "Shared design reviewed against the existing source screenshot; widget behavior covered, without replaying Session A inventory writers."
+  },
+  {
+    "id": "05-agent/agent-voice-journey-later-text-terminal-failed",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "267:1170",
+      "267:1478"
+    ],
+    "note": "Shared design reviewed against the existing source screenshot; widget behavior covered, without replaying Session A inventory writers."
+  },
+  {
+    "id": "05-agent/agent-voice-journey-new-greeting-off",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "267:1216",
+      "267:1527"
+    ],
+    "note": "Shared design reviewed against the existing source screenshot; widget behavior covered, without replaying Session A inventory writers."
+  },
+  {
+    "id": "05-agent/agent-voice-journey-new-greeting-off-away",
+    "status": "reviewed_reused_design",
+    "figma_nodes": [
+      "122:9",
+      "122:105"
+    ],
+    "note": "Away state reuses completed More page; voice cancellation/navigation behavior remains unchanged."
+  },
+  {
+    "id": "05-agent/agent-voice-journey-new-greeting-off-return",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "267:1216",
+      "267:1527"
+    ],
+    "note": "Shared design reviewed against the existing source screenshot; widget behavior covered, without replaying Session A inventory writers."
+  },
+  {
+    "id": "05-agent/agent-voice-journey-new-greeting-playing",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "267:1321",
+      "267:1641"
+    ],
+    "note": "Shared design reviewed against the existing source screenshot; widget behavior covered, without replaying Session A inventory writers."
+  },
+  {
+    "id": "05-agent/agent-voice-journey-reply-audio-completed",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "267:1254",
+      "267:1568"
+    ],
+    "note": "Shared design reviewed against the existing source screenshot; widget behavior covered, without replaying Session A inventory writers."
+  },
+  {
+    "id": "05-agent/agent-voice-journey-reply-ended-failed",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "267:1254",
+      "267:1568"
+    ],
+    "note": "Shared design reviewed against the existing source screenshot; widget behavior covered, without replaying Session A inventory writers."
+  },
+  {
+    "id": "05-agent/agent-voice-journey-reply-off",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "267:1216",
+      "267:1527"
+    ],
+    "note": "Shared design reviewed against the existing source screenshot; widget behavior covered, without replaying Session A inventory writers."
+  },
+  {
+    "id": "05-agent/agent-voice-journey-reply-on",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "267:1254",
+      "267:1568"
+    ],
+    "note": "Shared design reviewed against the existing source screenshot; widget behavior covered, without replaying Session A inventory writers."
+  },
+  {
+    "id": "05-agent/agent-voice-journey-reply-on-away",
+    "status": "reviewed_reused_design",
+    "figma_nodes": [
+      "122:9",
+      "122:105"
+    ],
+    "note": "Away state reuses completed More page; voice cancellation/navigation behavior remains unchanged."
+  },
+  {
+    "id": "05-agent/agent-voice-journey-reply-on-return",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "267:1254",
+      "267:1568"
+    ],
+    "note": "Shared design reviewed against the existing source screenshot; widget behavior covered, without replaying Session A inventory writers."
+  },
+  {
+    "id": "05-agent/agent-voice-journey-reply-replaying",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "267:1350",
+      "267:1673"
+    ],
+    "note": "Shared design reviewed against the existing source screenshot; widget behavior covered, without replaying Session A inventory writers."
+  },
+  {
+    "id": "05-agent/agent-voice-journey-reply-stream-failed",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "267:1123",
+      "267:1428"
+    ],
+    "note": "Shared design reviewed against the existing source screenshot; widget behavior covered, without replaying Session A inventory writers."
+  },
+  {
+    "id": "05-agent/agent-voice-journey-reply-stream-playing",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "267:1350",
+      "267:1673"
+    ],
+    "note": "Shared design reviewed against the existing source screenshot; widget behavior covered, without replaying Session A inventory writers."
+  },
+  {
+    "id": "05-agent/agent-voice-journey-reply-waiting",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "267:1254",
+      "267:1568",
+      "246:1173"
+    ],
+    "note": "Shared design reviewed against the existing source screenshot; widget behavior covered, without replaying Session A inventory writers. Waiting status reuses existing conversation streaming layout (246:1173)."
+  },
+  {
+    "id": "05-agent/agent-voice-keyboard",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "267:1714"
+    ],
+    "note": "Shared design reviewed against the existing source screenshot; widget behavior covered, without replaying Session A inventory writers."
+  },
+  {
+    "id": "05-agent/agent-voice-off",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "267:1216",
+      "267:1527"
+    ],
+    "note": "Shared design reviewed against the existing source screenshot; widget behavior covered, without replaying Session A inventory writers."
+  },
+  {
+    "id": "05-agent/agent-voice-on",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "267:1254",
+      "267:1568"
+    ],
+    "note": "Shared design reviewed against the existing source screenshot; widget behavior covered, without replaying Session A inventory writers."
+  },
+  {
+    "id": "05-agent/agent-voice-reply-error",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "267:1170",
+      "267:1478"
+    ],
+    "note": "Shared design reviewed against the existing source screenshot; widget behavior covered, without replaying Session A inventory writers."
+  },
+  {
+    "id": "05-agent/agent-voice-stream-error",
+    "status": "implemented_widget_verified",
+    "figma_nodes": [
+      "267:1123",
+      "267:1428"
+    ],
+    "note": "Shared design reviewed against the existing source screenshot; widget behavior covered, without replaying Session A inventory writers."
+  }
+]

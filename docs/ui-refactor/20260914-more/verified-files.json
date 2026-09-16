@@ -1,0 +1,8 @@
+{
+  "lib/shared/design_system/mom_home_tokens.dart": "e03b79f53d47cb14b4de2256ac7095c4d850d039c2a655977c521f72e28c0b15",
+  "lib/shared/widgets/mom_companion_widgets.dart": "93c5cc4e022ac56ee5ca31dc5208f6c3a8df03d08e39ace0d761b101e04571ab",
+  "lib/shared/widgets/mom_settings_row.dart": "4821938015ac71d8f9e9fac8d2b481535930fdb8717228d8e2d218a386c4efff",
+  "lib/modules/mom/presentation/mom_home_sections.dart": "884f5cd02a0ec1e9df1225da58c381baad7ca1fadc8ce805bbda0534f1b7431a",
+  "lib/modules/profile/presentation/more_page.dart": "546a6a3221c0f6344c77f97b88f6f3419e4ea574479df1eede367438f151e60e",
+  "test/app/more_redesign_states_test.dart": "8c282cbf4c50a2634830a42e9fd43736f83a076915e5c09a3be4a9579e454938"
+}

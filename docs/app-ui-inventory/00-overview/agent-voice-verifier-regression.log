@@ -1,0 +1,3 @@
+PASS: injected short-viewport overflow misclassification rejected with exit 1.
+Read-only in-memory metadata injection; authoritative metadata and PASS report unchanged.
+{"artifact_integrity": "FAIL", "goal_completion": "NOT_PROVEN", "scope": "file integrity, PNG headers, recorded viewport hashes, measured scroll coverage, links, native document bounds and journey references only", "states": 1054, "pngs_checked": 5062, "metadata_hashes_checked": 2152, "links_checked": 8814, "long_bounds_checked": 802, "verified_route_states": 678, "errors": ["Overflow incorrectly reported as a non-scrolling page: /Users/lute/project/momcozy-lab/app/docs/app-ui-inventory/raw/test/goldens/ui_inventory/agent-voice-journey-keyboard-failed-320-2x.png.json"]}

@@ -1,0 +1,15 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_inventory_journey_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: inventory consultation current technical outcome onward routes primary
+00:01 +1: inventory consultation current technical outcome onward routes secondary
+00:02 +2: inventory consultation current no-show outcome onward routes primary
+00:02 +3: inventory consultation current no-show outcome onward routes secondary
+00:02 +4: inventory consultation current safety outcome onward routes primary
+00:03 +5: inventory consultation current safety outcome onward routes secondary
+00:03 +6: inventory consultation current completed outcome onward routes primary
+00:03 +7: inventory consultation current cancelled outcome onward routes primary
+00:04 +8: inventory consultation current cancelled outcome onward routes secondary
+00:04 +9: inventory consultation current pending-record outcome onward routes primary
+00:04 +10: inventory consultation current pending-record outcome onward routes secondary
+00:05 +11: (tearDownAll)
+00:05 +11: All tests passed!

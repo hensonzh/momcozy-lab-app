@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/mom-milk-dial-reopened-320-1x.png",
+  "previous_source": "test/goldens/ui_inventory/mom-milk-dial-saved-320-1x.png",
+  "route": "/me",
+  "trigger": "Edit saved record → picker retains 11:20",
+  "root_entry": "Authenticated More → tap Me bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/mom/mom_milk_dial_inventory_test.dart"
+}

@@ -1,0 +1,710 @@
+[
+  {
+    "path": "test/goldens/ui_refactor/lactation/30-days-320-1x.png",
+    "sha256": "2c9bc22024f37253fd919fd181f288fb2cf58e2f6ce6ba69108f7f84100031cf"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/30-days-320-2x.png",
+    "sha256": "6757da4d121f62cc47e5f94dae44f768cfcffa68189a544f32bd3698832f0369"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/30-days-390-1x.png",
+    "sha256": "fe19aed9851d5955d00606b13ed0703541d043a90ac0d4c4d13e677f1c8930f3"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/30-days-390-2x.png",
+    "sha256": "fc7acd937eab33462856aab7a4069e52b06c9e0fd4999ec842774ed472bf011d"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/30-days-430-1x.png",
+    "sha256": "7c69df74289bdd19bb5791eec90e125d16eeb0d34ab834b71e82af212798c30f"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/30-days-430-2x.png",
+    "sha256": "3b693e0d3d37c5df01347c3f21416738b618e4a4dcdefb1206e1d507aa750c0f"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/delete-error-320-1x.png",
+    "sha256": "17a0bf2a5d85e3def633aea40a2ab0591cfdaf36df154bcdb70b693edec4479b"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/delete-error-320-2x.png",
+    "sha256": "fc118200cdf1b73e6fdb6a1bcb659f853ad910d8f52854ea9377fb48b1e01454"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/delete-error-390-1x.png",
+    "sha256": "7a2aa0cd9ad3b081ddaa9249691deb73422e901811396898061c0dd381a0e215"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/delete-error-390-2x.png",
+    "sha256": "bb81c83d7989ccc0c04867dc7598551af546a13c2fa909462ffe5fea03b10b0a"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/delete-error-430-1x.png",
+    "sha256": "94ccfe4fa6ce550009190adef9b991b83e1071eac6e5e34b93be8acbcbae91f3"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/delete-error-430-2x.png",
+    "sha256": "1084ad0a6a7318185064d679b252bea3390d7f6ce364ba21e96501edcfa9dac1"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/leave-confirm-320-1x.png",
+    "sha256": "8f49481c849f63c7ef709553a472b69e030400114edca8932bda6a3b00feb3d7"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/leave-confirm-320-2x.png",
+    "sha256": "e4f2bdcc66d441c6394b16cc63a3699373c1ea36a02d0977588f65a51e9f074f"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/leave-confirm-390-1x.png",
+    "sha256": "2a9484700871f415116d80f44b348068a87a166ad5f20bb2a5c65455760072a2"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/leave-confirm-390-2x.png",
+    "sha256": "f11df3ae732a6df7713e2f3837c24e4fa9ea8d3799ad9d81e1bfad46d3d0e96f"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/leave-confirm-430-1x.png",
+    "sha256": "a7f75d2aff6a061c8dff94f0c658134adac6dcaf1ffc0ea8d5473a87b99e9b13"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/leave-confirm-430-2x.png",
+    "sha256": "07fde9f89b9e5acf66bb161dd109df386c0dcb2ffef5e93058a0e1683019c609"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/loading-320-1x.png",
+    "sha256": "23755b6af7313505efd48843471b28a602ab9d2ed1517c82f7fdb4a608888346"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/loading-320-2x.png",
+    "sha256": "e1ea3754ddf1d8aaf2dccbd0f313c1bd538d7057f7bc44b8995fb0197e46ccf5"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/loading-390-1x.png",
+    "sha256": "69a62371aa7b36a2a80e2cf9616a82818905575631b8d5f54b48a674e3b9f3bd"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/loading-390-2x.png",
+    "sha256": "6634b4abcd49cf052a645fea7697064cb734dd6480df03e998e8b143c535694b"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/loading-430-1x.png",
+    "sha256": "3fed6d80986f9a628c7e491f4178804a2da93d683e2ef1d132586310762c0071"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/loading-430-2x.png",
+    "sha256": "7a0d9b8ad57b980dcf46cc27969606450d358ca86c57c20ceb0d819a8038769f"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/long-note-end-320-1x.png",
+    "sha256": "6e785490fac5231edbfe6c64440057ec9511239d8171410fbe8e8d63ec3c9e86"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/long-note-end-320-2x.png",
+    "sha256": "67a2ac0c7feaeb503fdaa543a4fad7029c4af2afde4723ccc279f30d5878d5c6"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/long-note-end-390-1x.png",
+    "sha256": "869aeefccae4fa799ef277cafde02fbbe7686f7ae5596ed543161db5bb67496e"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/long-note-end-390-2x.png",
+    "sha256": "0c019561bec33e0b010cf108e52b535a9832f6ab9a7c79c858cf196d16a81156"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/long-note-end-430-1x.png",
+    "sha256": "feb9508f9fc09ea2082f82d7418342da8b025fb7aa534f8fdb74b567687b2fa8"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/long-note-end-430-2x.png",
+    "sha256": "b716970718420c9eabff38cf239da24c1f8799efbd55603bfe0729c6c594e7a5"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/long-note-start-320-1x.png",
+    "sha256": "66e8bac0280ee626f9c6520de5167671c224da6a277f1b9dc5da6aed37c06949"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/long-note-start-320-2x.png",
+    "sha256": "b90ce6076ed192f93e5a0e5b9966b59b122190e93b3e7042156ee7ab87ea1d56"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/long-note-start-390-1x.png",
+    "sha256": "5e9a6578b9c6bb72fef3f2b722f1c41079f70d1db15128c0552cf5e6226b00d0"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/long-note-start-390-2x.png",
+    "sha256": "fad038e3e6b48ebb8c02ec66f8eed4ee6686161e1876985ceac1969b59b90b1a"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/long-note-start-430-1x.png",
+    "sha256": "1e3afb2f2619be0a451d7f51611d159510858a981bef314b085a5ba2a1a7264b"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/long-note-start-430-2x.png",
+    "sha256": "7e2f679dcd4e7b6791e287947fa86dfc6244831676c27c2b0d865139164699c1"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/overview-320-1x.png",
+    "sha256": "bb859f3c9d639464f477ef4feda2d14c845b88fcc16fcba1b020396eaef85b54"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/overview-320-2x.png",
+    "sha256": "91169a638ed172dbd8357071c460fddd08597e95ef2d91e03752deef822399ce"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/overview-390-1x.png",
+    "sha256": "1630acbd9a16b827092af7b6beb8caca27b4ce4fe77bda912ea8a60cc9d92fcc"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/overview-390-2x.png",
+    "sha256": "0b45b9a4bd6c9598cff718cf7fd2244225409bf2376611b0be51b58d19e969c4"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/overview-430-1x.png",
+    "sha256": "f83b62cb4e43770efa9143fdf6850235941228f15fe0f715977616f96e4a253a"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/overview-430-2x.png",
+    "sha256": "48e9c1504257411c7c6cc3041e561ef1b7ccb3edc6da1174500f282c2f55522d"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/read-error-320-1x.png",
+    "sha256": "517f713e5fa0f8133a8cf1556f4e5e3230846c534ebc5c42cb10c86a0502eb18"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/read-error-320-2x.png",
+    "sha256": "a560ab4a687d6f5a50073ef77d6aa23e819c224adb1a45960761c8212a232ff5"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/read-error-390-1x.png",
+    "sha256": "2bdad4497eca107ae1c3828482f066ba49c4278476fb886925ee1949ffb9b234"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/read-error-390-2x.png",
+    "sha256": "e3567da1429e41e1865e672f31ef37055b4a56e9de81c486b2c634f5b1050da3"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/read-error-430-1x.png",
+    "sha256": "86c545aab2149fb1e9c621c482e356dcb09ed1d3e463383ca2cab21a46931f57"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/read-error-430-2x.png",
+    "sha256": "bec8cdbbd7feff55149bda715487d43c987098185a9173764a684293cdc2bb26"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/restore-error-320-1x.png",
+    "sha256": "c3003158171f942171864fa7f0ad61ab616b47e72d3a7bec5cb567f9463858c1"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/restore-error-320-2x.png",
+    "sha256": "dc50d9efc4963a94c5d2aaa45fc67e7df9a560414ddeef8942198169091c49ab"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/restore-error-390-1x.png",
+    "sha256": "bca56d1a6048b5ac284288b5335064914da29805b78ac8a127118b0cc349b220"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/restore-error-390-2x.png",
+    "sha256": "ae7ac4431ad2fb7ea4a29dc72a177ac8daa0171838e979bfa57462d2a5a93e3f"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/restore-error-430-1x.png",
+    "sha256": "0b8304db41cbaf94b6332371800ef25eeab4c17ae37af1418c5f01dd380555c9"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/restore-error-430-2x.png",
+    "sha256": "fbd074972eb8fc725c44f97a6c78deb83402b25286710843976db907d6f44c09"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/restored-320-1x.png",
+    "sha256": "0add0befa617d0c07ef1a982766af093c0f6d36859a6f5cf0d2873d10f5bba96"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/restored-320-2x.png",
+    "sha256": "a620eb9da4e25a8c3923cfd05dc2ce135d26dca1f27266a0d701ec24d5bb767c"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/restored-390-1x.png",
+    "sha256": "4004418089ed528663b8be5fa6386bd996b7a6e12e936ba025e07c44a4649ff9"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/restored-390-2x.png",
+    "sha256": "82fcc963f066a50d55d4e5339836647c26f91ea2cb98350355d7ce9fefc3c21a"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/restored-430-1x.png",
+    "sha256": "f00c969f10c9ff5b6c0a6166cc8e15cb67d7debaf91eb77774c1d36d9c8cd98f"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/restored-430-2x.png",
+    "sha256": "97922c730a05fed8c718e47f305ddf987d260ba1404cf0551a597e2721264713"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/save-conflict-320-1x.png",
+    "sha256": "8ccfe53436e84ddd97a96f55fc314215888542f710884a5112f8a3cebd65354c"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/save-conflict-320-2x.png",
+    "sha256": "4d237bdda4e375c712ff7f0f40a732142078721b7db5665d2b5e36063798f1fd"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/save-conflict-390-1x.png",
+    "sha256": "cc59e346804f425da1b3cc6947bb4398ec12320864449c01513bd04431fe1ecf"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/save-conflict-390-2x.png",
+    "sha256": "d565689c1de9d39a3a6817f5f23d45e2a5bead120db275a27244f8032557d93f"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/save-conflict-430-1x.png",
+    "sha256": "971e8ead0d66b13b36f9bddac124472ba25293e320c5aae7c24c4ad4856655ae"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/save-conflict-430-2x.png",
+    "sha256": "4603104baa9ca94ec4eacd96d9b015af9776535a8e5fecc9f29e7a3a997f38a3"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/saved-zero-320-1x.png",
+    "sha256": "c362ba5606021066689aa1fde4451cc14bf127b9aad0325a11f216c9d9380ba0"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/saved-zero-320-2x.png",
+    "sha256": "714eb178ea54e5a2b034749d72ccc98a6384b289ecb07be686c08a25cb684afe"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/saved-zero-390-1x.png",
+    "sha256": "2c3a9da9233f1391f3605108122ca735bbfaa90f0437230f9ee6461b6e24eb55"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/saved-zero-390-2x.png",
+    "sha256": "480fe0fd0f51ab209d2352f6cc441e47974f81dfcddc8b930d186db039ae7a2e"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/saved-zero-430-1x.png",
+    "sha256": "e1d7cada583926ee2b9b56d2da5d403769a793e5d146269d3a0f92e32707ad7c"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/saved-zero-430-2x.png",
+    "sha256": "6d539105cd85ac0744e711e7aa6d1c1e6e7f7a9d4ce6a59675d733ef5db2fa39"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/saving-320-1x.png",
+    "sha256": "b4f2bfbd030602abb4b8fd55d2e55f2606c0689f0891db31436598825f567afd"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/saving-320-2x.png",
+    "sha256": "b10fb85b19d20f34c6311490b8a664273f82f44c3672d576d7faac87c86a83ec"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/saving-390-1x.png",
+    "sha256": "888e95a759a54e7911f7d9a4ffa1d604089119457bbb42e60c5c90d928918dba"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/saving-390-2x.png",
+    "sha256": "b6723333996a93174add4252255c4a0517466272320426f890cbad0c040e1511"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/saving-430-1x.png",
+    "sha256": "b4de9165797df5a3e26abbfc2ff564196901c6c0014bd395ef51b05556b1561d"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/saving-430-2x.png",
+    "sha256": "e213feea60098cb4fe0e1d50b9ec50eb56cccf8f401f1153a35daa6823cf9cf0"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/time-dial-320-1x.png",
+    "sha256": "ca0bf28fcefd224ad1c2601d0cd9350191c11dee54b4c0ec1f17a43d933a799c"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/time-dial-390-1x.png",
+    "sha256": "933eb9e03c49e70fd231f14a5cfb706023395b9b413fbe591e87102a640669ed"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/time-dial-430-1x.png",
+    "sha256": "c90434d137c341e0cfd0c317f63cad8d6abd0847707ce0eca844d893df2518a7"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/time-input-320-1x.png",
+    "sha256": "3d636623c9bf961a5b0286139a7e362a9dd716603f2bd3dfdc40aaf73dee81c6"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/time-input-320-2x.png",
+    "sha256": "edd5a9c2350c385e1a1d0101326a60cead52f5d1e324b17abb1fed91183d4cc8"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/time-input-390-1x.png",
+    "sha256": "9a7a45f7afb674b9209037043a709a6e788a8e6f59523b3d0146fe8585a766f0"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/time-input-390-2x.png",
+    "sha256": "776e232c25f6a084755a3c51d557bd15ef0b2d8d2faea22b2192dfdee4e42143"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/time-input-430-1x.png",
+    "sha256": "28d4e85efee913b9ee0d3ca8a11f145eae0b2864f357abae4245d64d74a1ce9c"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/time-input-430-2x.png",
+    "sha256": "8455af901e5b5ca150c5870176ed157f6efa0504e43671a8b7ff08afbe5569fc"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/time-invalid-320-1x.png",
+    "sha256": "250c323ce4e7428405a08576277222e1bd94b20d194dd1afd42c697c0dfa7cf5"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/time-invalid-320-2x.png",
+    "sha256": "d1ee0721c8a0595b012a78ec2d9ed1c1276f5861c793a92913148e0b16d0b9ae"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/time-invalid-390-1x.png",
+    "sha256": "6cf7bd91c8f17a7e0c9653174fdd2e1b17eec91baf68fda19b440702bc36cb4b"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/time-invalid-390-2x.png",
+    "sha256": "2cc129d561a90c929917448f706c73d2f26846dfe9d1039482a6c05805c3b466"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/time-invalid-430-1x.png",
+    "sha256": "fa1afa2d9f8e3ed4b7628eade43d9c115c56e7730462956b02440e1f91b8c892"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/time-invalid-430-2x.png",
+    "sha256": "1130e03df21d6774a33c280b509c82b6ae3ab6ad6e9fec5cef0a9a9e3fc1b685"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/uncertain-leave-320-1x.png",
+    "sha256": "6e8d376774017e13675a8027d19919a412285af0013306edb8b5b81f9c985be2"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/uncertain-leave-320-2x.png",
+    "sha256": "9c8d6feb94f6f2e219a2d7bae8b0be97329ffad4dc295b23fb6c63d58b3ce0c3"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/uncertain-leave-390-1x.png",
+    "sha256": "24853d78014d7d8dc4280f2ec79126abf22dc57c7e6ddec530df1d19291c2ebd"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/uncertain-leave-390-2x.png",
+    "sha256": "a1a54b447078e5862dbffead05ece2cfe6994ff39a2b5273c093e166489a0494"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/uncertain-leave-430-1x.png",
+    "sha256": "1b32b0c65d5a5b2f852c58b946d98318f56fa9b733a9c3d04b3c3803c4d27173"
+  },
+  {
+    "path": "test/goldens/ui_refactor/lactation/uncertain-leave-430-2x.png",
+    "sha256": "145a4fba61408af0fa8dc9a005d59cab6bd9f5194a839009f2a8cb6b2bfbaea6"
+  },
+  {
+    "path": "test/goldens/design_system/milk-state-deleted-320-2x.png",
+    "sha256": "8e05a817f642d3009a518073944e2f6911998db41ee1231b9aeab1b7dd83da74"
+  },
+  {
+    "path": "test/goldens/design_system/milk-state-deleted-320.png",
+    "sha256": "50e8c017762f1aedcbb13eb88f25eb6a1f834b3dbe47b5ba3755f5b0897f95f4"
+  },
+  {
+    "path": "test/goldens/design_system/milk-state-deleted-390-2x.png",
+    "sha256": "abdab64d3c25438c4d75e6c18fab8d00283b0f3a5b8dd37f86defdf570dc050d"
+  },
+  {
+    "path": "test/goldens/design_system/milk-state-deleted-390.png",
+    "sha256": "39bcf1b1cfdbd66b99b849684922c1c24b2f967ab9dfb1696f4e7852e8ad586e"
+  },
+  {
+    "path": "test/goldens/design_system/milk-state-deleted-430-2x.png",
+    "sha256": "6ff8963d4296e380e06d9b5862adf24e14f7bf83e44e969dccb79a51649f8809"
+  },
+  {
+    "path": "test/goldens/design_system/milk-state-deleted-430.png",
+    "sha256": "f19b4dbb840d27c9548eb0bef509fb5395b07107aadcd1a9b4d4157298418664"
+  },
+  {
+    "path": "test/goldens/design_system/milk-state-editing-320-2x.png",
+    "sha256": "dfb897680d90eb1237ca5de519862a3239cb08fd304425b9bc963d127133a0bd"
+  },
+  {
+    "path": "test/goldens/design_system/milk-state-editing-320.png",
+    "sha256": "747148be16bbf22bc5501f09f6509b75269c172283c92c3b7d09a5e2a463e420"
+  },
+  {
+    "path": "test/goldens/design_system/milk-state-editing-390-2x.png",
+    "sha256": "d6e38d5005c73165f2fbae5e1bf8c1a8380d14c0399b44eff90ef2679f23c0c3"
+  },
+  {
+    "path": "test/goldens/design_system/milk-state-editing-390.png",
+    "sha256": "a8705b8266ba0ed3fd8f4d787d955440eae2776d3b810f7f953ca08ffcdd07b3"
+  },
+  {
+    "path": "test/goldens/design_system/milk-state-editing-430-2x.png",
+    "sha256": "6849df246a9a3c66ea6aac667d1426352eaf00ee436314f6a8e0db19ddad6ace"
+  },
+  {
+    "path": "test/goldens/design_system/milk-state-editing-430.png",
+    "sha256": "91aa0c0944c50b892cc6a27052897a862d269c2ce87c12c360a41a7b88e6e922"
+  },
+  {
+    "path": "test/goldens/design_system/milk-state-empty-320-2x.png",
+    "sha256": "24e2cb5e6842a1ecb3c117038574bedb79f01fb887b17fefc5a71fc6be2e24cc"
+  },
+  {
+    "path": "test/goldens/design_system/milk-state-empty-320.png",
+    "sha256": "04ec093dad957e8425c2b9825c018918c03633b43f4df1dc56286663139109c7"
+  },
+  {
+    "path": "test/goldens/design_system/milk-state-empty-390-2x.png",
+    "sha256": "7bd18b4f5ffced3fd1836f9cb06f0b26eb6de14d7ac73dc95940cd3902a6ab8a"
+  },
+  {
+    "path": "test/goldens/design_system/milk-state-empty-390.png",
+    "sha256": "f8592e9834a1b071a74b9aa755d4afdea4324bb456d963778774c5ed3eceb3af"
+  },
+  {
+    "path": "test/goldens/design_system/milk-state-empty-430-2x.png",
+    "sha256": "15b0cc80e37d86f54b6a92ffad96bbd6e9de577f91cacce54c2bda8a2007dc11"
+  },
+  {
+    "path": "test/goldens/design_system/milk-state-empty-430.png",
+    "sha256": "80a5e5ea8b83d0e358d2a40c5d46780c6fea155929a71f546b3ae7d6c60ed417"
+  },
+  {
+    "path": "test/goldens/design_system/milk-state-nurse-320-2x.png",
+    "sha256": "a975379cff8fbf149283225cdd092e083748f097f82c894fe83c6e04b7872f65"
+  },
+  {
+    "path": "test/goldens/design_system/milk-state-nurse-320.png",
+    "sha256": "c18d5842e9a3222b2e3058df7caf52f28ef0314e3043b39803e4e68d50a368e2"
+  },
+  {
+    "path": "test/goldens/design_system/milk-state-nurse-390-2x.png",
+    "sha256": "6a308691b9e68f4917c49bd07c2fbc6cfa203a87d2f453b607b923caab826c5d"
+  },
+  {
+    "path": "test/goldens/design_system/milk-state-nurse-390.png",
+    "sha256": "3c84ce32d30efc2e6fdcb312b533a24d45e23f9cdc0233778f4bc21bcabf6a71"
+  },
+  {
+    "path": "test/goldens/design_system/milk-state-nurse-430-2x.png",
+    "sha256": "60af7f4ebd20158e5ce9d195e436e627143cb6c4d1b92f8835969604b669fe41"
+  },
+  {
+    "path": "test/goldens/design_system/milk-state-nurse-430.png",
+    "sha256": "eb0979dccbd71da2b5cd50034faa1ae66ea561c25eda77b2d313ddc26baa9355"
+  },
+  {
+    "path": "test/goldens/design_system/milk-state-optional-keyboard-320-2x.png",
+    "sha256": "81cb53c17d2b5491aefb4d3098318d1ae627eb50140cce4d6e9ed647ec9710ef"
+  },
+  {
+    "path": "test/goldens/design_system/milk-state-optional-keyboard-320.png",
+    "sha256": "7a8d7a99b9af297537e1c971b9fcfee839e8a33a276bf11dd0b012c11a7a570a"
+  },
+  {
+    "path": "test/goldens/design_system/milk-state-optional-keyboard-390-2x.png",
+    "sha256": "fdb8700f65fc2711d9b07b07724811f6d321609ac050f6eeabc66a4bf0426f4a"
+  },
+  {
+    "path": "test/goldens/design_system/milk-state-optional-keyboard-390.png",
+    "sha256": "e269b41c8c24913bfcfe683bf9fb5bf2616f25d5577d5510e6028e57854fadc6"
+  },
+  {
+    "path": "test/goldens/design_system/milk-state-optional-keyboard-430-2x.png",
+    "sha256": "972a7b090d71462b890632306e779bdabcf551149676ba3b20ca46c30126f36d"
+  },
+  {
+    "path": "test/goldens/design_system/milk-state-optional-keyboard-430.png",
+    "sha256": "fe3d32cd9f3c3f9f4e7ee87ca2e82064f0cca8570cd0056fe2b9fd7ce5056741"
+  },
+  {
+    "path": "test/goldens/design_system/milk-state-pump-320-2x.png",
+    "sha256": "9d8976b7a7ad7f2ee24a6cdb7e928374d9251200ff541c91b993aba730493dd1"
+  },
+  {
+    "path": "test/goldens/design_system/milk-state-pump-320.png",
+    "sha256": "b30854ceead7e03fe78bf20f90d65a6ef4c9fe2225ddbbf8204b533349fe2a1e"
+  },
+  {
+    "path": "test/goldens/design_system/milk-state-pump-390-2x.png",
+    "sha256": "75805ccee81ac83dda25390cecce8ebb82e1061dc69b79fd74f01a1f42ce9376"
+  },
+  {
+    "path": "test/goldens/design_system/milk-state-pump-390.png",
+    "sha256": "c519c28dc8c9a0aa5f323faf1b500bb052deab18b2da22fdac3750118657eaf9"
+  },
+  {
+    "path": "test/goldens/design_system/milk-state-pump-430-2x.png",
+    "sha256": "71afa86c2dc87cadcabb1fb2ddd3cde576f5c0e812aeaecfc2fb84f9ca1d0baa"
+  },
+  {
+    "path": "test/goldens/design_system/milk-state-pump-430.png",
+    "sha256": "248e18dd07986e5d2dc70ace4d534e148e0069d44558ba3abde22b9e21ba5661"
+  },
+  {
+    "path": "test/goldens/design_system/milk-state-restored-320-2x.png",
+    "sha256": "f74bf85bdbb9d69fcdb583712d6a471d7670368674acba8be16813d699aaeb07"
+  },
+  {
+    "path": "test/goldens/design_system/milk-state-restored-320.png",
+    "sha256": "34b5f7a9e9aa36c0df1a5f7648dcc9ab4a6c8ae4396226e58a12db2c9c628e14"
+  },
+  {
+    "path": "test/goldens/design_system/milk-state-restored-390-2x.png",
+    "sha256": "12cb62cdbea13846d60eaf67f1ce3993455c6d6ea472fe6a29fe17f9aa3776ec"
+  },
+  {
+    "path": "test/goldens/design_system/milk-state-restored-390.png",
+    "sha256": "cedfe9624ad6c5cf469ef8fc2c920079a7a358573b54203d04b66901287b56ce"
+  },
+  {
+    "path": "test/goldens/design_system/milk-state-restored-430-2x.png",
+    "sha256": "b926a2c780a9cba9aef9a6f7b5d20e6848189c41f6e2ba614353fc295363a32a"
+  },
+  {
+    "path": "test/goldens/design_system/milk-state-restored-430.png",
+    "sha256": "b64de4a9d2d2bfadaf3b024bf8bb31ec9f127a283e22ff9e7dc91eb6eea4ef13"
+  },
+  {
+    "path": "test/goldens/design_system/milk-state-saved-320-2x.png",
+    "sha256": "000312d135cb422da35d90c6a989e376051a4e19a73a3607b0815a553eb8806c"
+  },
+  {
+    "path": "test/goldens/design_system/milk-state-saved-320.png",
+    "sha256": "0328aaddf245cf4b94dfd29591f7c4f05332b3e2c5653ab2196e2b26ce4f8ad0"
+  },
+  {
+    "path": "test/goldens/design_system/milk-state-saved-390-2x.png",
+    "sha256": "973ea5a1bef268bbe8085239a2e930ec9fbc6815092ac44b129b2903d89009c7"
+  },
+  {
+    "path": "test/goldens/design_system/milk-state-saved-390.png",
+    "sha256": "de0ffa49bd8eaae5af463c0598dc313d61a008c2ff98f99820b012b6fd63ffb2"
+  },
+  {
+    "path": "test/goldens/design_system/milk-state-saved-430-2x.png",
+    "sha256": "51d4e0e44d73e4c76a9a1a98d3ef4e875a12eed9f3ad4f5972afd36e81a5b9a9"
+  },
+  {
+    "path": "test/goldens/design_system/milk-state-saved-430.png",
+    "sha256": "486e3919377d1ece5994f53adee818d9aae0a40fed628d4200dfa32fe20ac27e"
+  },
+  {
+    "path": "test/goldens/design_system/milk-state-uncertain-320-2x.png",
+    "sha256": "d1a31d93a799e79cae9be83ff982b4bbb1035efa867e91f95d424a1829121a95"
+  },
+  {
+    "path": "test/goldens/design_system/milk-state-uncertain-320.png",
+    "sha256": "d24fb4407507d6216aba18d3dd3c583ceff90982e188cec6ef160197f42dc42f"
+  },
+  {
+    "path": "test/goldens/design_system/milk-state-uncertain-390-2x.png",
+    "sha256": "cc940b9f3f377c83fcc28c6c77624c89c2f2c489b344030674395d25e7eafb47"
+  },
+  {
+    "path": "test/goldens/design_system/milk-state-uncertain-390.png",
+    "sha256": "4ee4d5f082dff1e432d0b0f375575af6a44360ed2f4d67f5b5abd0bc89772780"
+  },
+  {
+    "path": "test/goldens/design_system/milk-state-uncertain-430-2x.png",
+    "sha256": "44751f842b317131aed3f4005515c9326e37763f362e85e0c9cbae708da87513"
+  },
+  {
+    "path": "test/goldens/design_system/milk-state-uncertain-430.png",
+    "sha256": "14f441f6774df037410abc02b0f866379788489f82593e7f76bcaaaa6b06766e"
+  },
+  {
+    "path": "test/goldens/design_system/milk-state-updated-320-2x.png",
+    "sha256": "31188223c2d40ba7b54a180569258f1fd6396e74fb0991d8b3f410c5808f86e3"
+  },
+  {
+    "path": "test/goldens/design_system/milk-state-updated-320.png",
+    "sha256": "69c14521585398187bfaf24f40a58d1ca2ff6c884e41c41b354ad657fbc1b6d5"
+  },
+  {
+    "path": "test/goldens/design_system/milk-state-updated-390-2x.png",
+    "sha256": "3143e9e37a512122bb80b538c4f69ae13367f510f0d4d624379b7ea6c25da0ce"
+  },
+  {
+    "path": "test/goldens/design_system/milk-state-updated-390.png",
+    "sha256": "efb2b130bfcd0c271700d0f8e9919196c61208c968fd902e10f3304dec8ee08c"
+  },
+  {
+    "path": "test/goldens/design_system/milk-state-updated-430-2x.png",
+    "sha256": "30d5434cd77245e5572510908c50f5412ed1793b1e56b071fcd25f0085804dca"
+  },
+  {
+    "path": "test/goldens/design_system/milk-state-updated-430.png",
+    "sha256": "32d69d821b1b140b6e7f5140fcf72fbfa399f6624a457281e2650b690f87cd79"
+  },
+  {
+    "path": "test/goldens/design_system/milk-state-validation-320-2x.png",
+    "sha256": "2f4a1e1640872a703a260038e60e9a75e233a1ce9a7515a53deae29f00c12bc5"
+  },
+  {
+    "path": "test/goldens/design_system/milk-state-validation-320.png",
+    "sha256": "5c9294fcda47df2a0574400edb3cf668e31d08c4f856b13bd716d50457adc8a5"
+  },
+  {
+    "path": "test/goldens/design_system/milk-state-validation-390-2x.png",
+    "sha256": "7cf69ef2620ef4cb1fec132952a69d2655e243f4b51eeef7397d7fbc400f97bc"
+  },
+  {
+    "path": "test/goldens/design_system/milk-state-validation-390.png",
+    "sha256": "3b9b67f49186529ec303b451f6cfaa6635f0fef0a2cbfd2afe1a5dba2a837a3e"
+  },
+  {
+    "path": "test/goldens/design_system/milk-state-validation-430-2x.png",
+    "sha256": "09c73022cba7fb32f924ee74f9d1b9685184bca50764168e5185d9ff8f74c38b"
+  },
+  {
+    "path": "test/goldens/design_system/milk-state-validation-430.png",
+    "sha256": "8a2bb4de2b88548e0292f4d3cdcf45fb5adf244a063b515b5ae8643975119667"
+  },
+  {
+    "path": "test/goldens/design_system/lactation-dialog-nurse-320.png",
+    "sha256": "2337978ea8f7db652e116d0df5c1b89a900a0eb1b340c9b12f58a079a31adb10"
+  },
+  {
+    "path": "test/goldens/design_system/lactation-dialog-nurse-390.png",
+    "sha256": "348bd81bc27fff53a11e76297e27c294af9138717b5dde7f77382dba91cb12b1"
+  },
+  {
+    "path": "test/goldens/design_system/lactation-dialog-nurse-430.png",
+    "sha256": "fded102d3735daff0cbf541c878f7e35b01817b9ace64db8f767a0c1bceaa0fb"
+  },
+  {
+    "path": "test/goldens/design_system/lactation-dialog-pump-320.png",
+    "sha256": "ba812ff4cfa6debee51205f77facbc1db352cca72ff7eaf66253d0306b997f74"
+  },
+  {
+    "path": "test/goldens/design_system/lactation-dialog-pump-390.png",
+    "sha256": "408e2728b9c7279392bb3b8cd6e6b904cc4413b3d4ed3705bddb7b29cf1aeb03"
+  },
+  {
+    "path": "test/goldens/design_system/lactation-dialog-pump-430.png",
+    "sha256": "d70468201743cb3ae526d0b9506b7190f22e450d244cfd08878c2ca1e865d92f"
+  },
+  {
+    "path": "test/goldens/product_baseline/lactation-entry-320.png",
+    "sha256": "6edd1da9a4700d9dd00eafc8cdc062e48ec428692e26ec94348c76504cd39077"
+  },
+  {
+    "path": "test/goldens/product_baseline/lactation-entry-390.png",
+    "sha256": "b4a85dab5844834e2d657e78fd6a107b1390520f8233383de574edef3f4d1ae9"
+  },
+  {
+    "path": "test/goldens/product_baseline/lactation-entry-430.png",
+    "sha256": "fc9d6fb50485b0965f917049b54e60a785a407972f223cd5327cc6c69174f325"
+  },
+  {
+    "path": "test/goldens/product_baseline/lactation-list-320.png",
+    "sha256": "96105e07b0e0651aef7e314a654bb3a265f35d661ecf7eab4a503a8c740f5f21"
+  },
+  {
+    "path": "test/goldens/product_baseline/lactation-list-390.png",
+    "sha256": "275e81b8829735edefa4d6f39ea20a69e55dfedbb5fb1e52d2617f09372a9053"
+  },
+  {
+    "path": "test/goldens/product_baseline/lactation-list-430.png",
+    "sha256": "178d63316950ac16f6c597a1669974543b7e93351bd1d07782f98dc0227f7e47"
+  }
+]

@@ -1,0 +1,11 @@
+{
+  "apk": "build/app/outputs/flutter-apk/app-local-debug.apk",
+  "sha256": "0d614dddf3076629fcbf450092409fcc5f16f4f29185e20d41f98e8a92ecda86",
+  "version": "1.0.0+57",
+  "flavor": "local",
+  "installed_on": "emulator-5554",
+  "native_checks": [
+    "missing appointment read failure",
+    "restored Mia home"
+  ]
+}

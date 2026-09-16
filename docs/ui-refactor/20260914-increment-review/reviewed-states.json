@@ -1,0 +1,800 @@
+[
+  {
+    "id": "07-me/account-current-delete-cancelled",
+    "route": "/account",
+    "trigger": "Cancel deletion → no mutation",
+    "report": "20260914-account/HANDOFF.md",
+    "figma_node": "128:68"
+  },
+  {
+    "id": "07-me/account-current-delete-confirm",
+    "route": "/account",
+    "trigger": "Request deletion → confirmation",
+    "report": "20260914-account/HANDOFF.md",
+    "figma_node": "128:68"
+  },
+  {
+    "id": "07-me/account-current-delete-error",
+    "route": "/account",
+    "trigger": "DELETE 503 → account retained with inline error",
+    "report": "20260914-account/HANDOFF.md",
+    "figma_node": "128:68"
+  },
+  {
+    "id": "07-me/account-current-delete-more",
+    "route": "/more",
+    "trigger": "More before Account settings",
+    "report": "20260914-more/HANDOFF.md",
+    "figma_node": "122:9"
+  },
+  {
+    "id": "07-me/account-current-delete-pending",
+    "route": "/account",
+    "trigger": "Confirm → DELETE pending, account actions disabled",
+    "report": "20260914-account/HANDOFF.md",
+    "figma_node": "128:68"
+  },
+  {
+    "id": "07-me/account-current-delete-ready",
+    "route": "/account",
+    "trigger": "Account before deletion",
+    "report": "20260914-account/HANDOFF.md",
+    "figma_node": "128:68"
+  },
+  {
+    "id": "07-me/account-current-delete-retry-confirm",
+    "route": "/account",
+    "trigger": "Retry deletion → confirmation again",
+    "report": "20260914-account/HANDOFF.md",
+    "figma_node": "128:68"
+  },
+  {
+    "id": "07-me/account-current-delete-retry-pending",
+    "route": "/account",
+    "trigger": "Confirm retry → clear error and disable actions",
+    "report": "20260914-account/HANDOFF.md",
+    "figma_node": "128:68"
+  },
+  {
+    "id": "07-me/account-current-disabled-empty-more",
+    "route": "/more",
+    "trigger": "More before Account settings",
+    "report": "20260914-more/HANDOFF.md",
+    "figma_node": "122:9"
+  },
+  {
+    "id": "07-me/account-current-disabled-empty-ready",
+    "route": "/account",
+    "trigger": "Account GET disabled-empty → real identity status and provider layout",
+    "report": "20260914-account/HANDOFF.md",
+    "figma_node": "128:68"
+  },
+  {
+    "id": "07-me/account-current-disabled-empty-return",
+    "route": "/more",
+    "trigger": "Tap page Back → /more",
+    "report": "20260914-more/HANDOFF.md",
+    "figma_node": "122:9"
+  },
+  {
+    "id": "07-me/account-current-google-only-more",
+    "route": "/more",
+    "trigger": "More before Account settings",
+    "report": "20260914-more/HANDOFF.md",
+    "figma_node": "122:9"
+  },
+  {
+    "id": "07-me/account-current-google-only-ready",
+    "route": "/account",
+    "trigger": "Account GET google-only → real identity status and provider layout",
+    "report": "20260914-account/HANDOFF.md",
+    "figma_node": "128:68"
+  },
+  {
+    "id": "07-me/account-current-google-only-return",
+    "route": "/more",
+    "trigger": "Tap page Back → /more",
+    "report": "20260914-more/HANDOFF.md",
+    "figma_node": "122:9"
+  },
+  {
+    "id": "07-me/account-current-google-reopen",
+    "route": "/account",
+    "trigger": "Retry Link Google → password dialog reopens",
+    "report": "20260914-account/HANDOFF.md",
+    "figma_node": "128:68"
+  },
+  {
+    "id": "07-me/account-current-google-retry-cancelled",
+    "route": "/account",
+    "trigger": "Cancel retry → previous error remains",
+    "report": "20260914-account/HANDOFF.md",
+    "figma_node": "128:68"
+  },
+  {
+    "id": "07-me/account-current-google-unavailable",
+    "route": "/account",
+    "trigger": "Native gateway lacks build client ID → inline unavailable feedback",
+    "report": "20260914-account/HANDOFF.md",
+    "figma_node": "128:68"
+  },
+  {
+    "id": "07-me/account-current-loading",
+    "route": "/account",
+    "trigger": "Account GET pending → loading",
+    "report": "20260914-account/HANDOFF.md",
+    "figma_node": "128:68"
+  },
+  {
+    "id": "07-me/account-current-logout-error-more",
+    "route": "/more",
+    "trigger": "More before Account settings",
+    "report": "20260914-more/HANDOFF.md",
+    "figma_node": "122:9"
+  },
+  {
+    "id": "07-me/account-current-logout-error-ready",
+    "route": "/account",
+    "trigger": "Account before sign out",
+    "report": "20260914-account/HANDOFF.md",
+    "figma_node": "128:68"
+  },
+  {
+    "id": "07-me/account-current-logout-success-more",
+    "route": "/more",
+    "trigger": "More before Account settings",
+    "report": "20260914-more/HANDOFF.md",
+    "figma_node": "122:9"
+  },
+  {
+    "id": "07-me/account-current-logout-success-ready",
+    "route": "/account",
+    "trigger": "Account before sign out",
+    "report": "20260914-account/HANDOFF.md",
+    "figma_node": "128:68"
+  },
+  {
+    "id": "07-me/account-current-long-pending-other-more",
+    "route": "/more",
+    "trigger": "More before Account settings",
+    "report": "20260914-more/HANDOFF.md",
+    "figma_node": "122:9"
+  },
+  {
+    "id": "07-me/account-current-long-pending-other-ready",
+    "route": "/account",
+    "trigger": "Account GET long-pending-other → real identity status and provider layout",
+    "report": "20260914-account/HANDOFF.md",
+    "figma_node": "128:68"
+  },
+  {
+    "id": "07-me/account-current-long-pending-other-return",
+    "route": "/more",
+    "trigger": "Tap page Back → /more",
+    "report": "20260914-more/HANDOFF.md",
+    "figma_node": "122:9"
+  },
+  {
+    "id": "07-me/account-current-password-cancelled",
+    "route": "/account",
+    "trigger": "Cancel filled password → no binding",
+    "report": "20260914-account/HANDOFF.md",
+    "figma_node": "128:68"
+  },
+  {
+    "id": "07-me/account-current-password-empty",
+    "route": "/account",
+    "trigger": "Link Google → empty password confirmation",
+    "report": "20260914-account/HANDOFF.md",
+    "figma_node": "128:68"
+  },
+  {
+    "id": "07-me/account-current-password-empty-dismissed",
+    "route": "/account",
+    "trigger": "Continue empty password → silently return without mutation",
+    "report": "20260914-account/HANDOFF.md",
+    "figma_node": "128:68"
+  },
+  {
+    "id": "07-me/account-current-password-entered",
+    "route": "/account",
+    "trigger": "Enter password → obscured input",
+    "report": "20260914-account/HANDOFF.md",
+    "figma_node": "128:68"
+  },
+  {
+    "id": "07-me/account-current-password-more",
+    "route": "/more",
+    "trigger": "More before Account settings",
+    "report": "20260914-more/HANDOFF.md",
+    "figma_node": "122:9"
+  },
+  {
+    "id": "07-me/account-current-password-ready",
+    "route": "/account",
+    "trigger": "Email-only account",
+    "report": "20260914-account/HANDOFF.md",
+    "figma_node": "128:68"
+  },
+  {
+    "id": "07-me/account-current-password-return",
+    "route": "/more",
+    "trigger": "Tap page Back → /more",
+    "report": "20260914-more/HANDOFF.md",
+    "figma_node": "122:9"
+  },
+  {
+    "id": "07-me/account-current-read-error",
+    "route": "/account",
+    "trigger": "GET 503 → account error and Retry",
+    "report": "20260914-account/HANDOFF.md",
+    "figma_node": "128:68"
+  },
+  {
+    "id": "07-me/account-current-read-more",
+    "route": "/more",
+    "trigger": "More before account read failure",
+    "report": "20260914-more/HANDOFF.md",
+    "figma_node": "122:9"
+  },
+  {
+    "id": "07-me/account-current-read-return",
+    "route": "/more",
+    "trigger": "Tap page Back → /more",
+    "report": "20260914-more/HANDOFF.md",
+    "figma_node": "122:9"
+  },
+  {
+    "id": "07-me/account-current-retry-pending",
+    "route": "/account",
+    "trigger": "Retry → loading again",
+    "report": "20260914-account/HANDOFF.md",
+    "figma_node": "128:68"
+  },
+  {
+    "id": "07-me/account-current-retry-ready",
+    "route": "/account",
+    "trigger": "Retried GET succeeds → active verified email account",
+    "report": "20260914-account/HANDOFF.md",
+    "figma_node": "128:68"
+  },
+  {
+    "id": "07-me/more-current-account-delete-cancel",
+    "route": "/account",
+    "trigger": "Cancel deletion → account retained",
+    "report": "20260914-account/HANDOFF.md",
+    "figma_node": "128:68"
+  },
+  {
+    "id": "07-me/more-current-account-link-cancel",
+    "route": "/account",
+    "trigger": "Cancel password confirmation → account unchanged",
+    "report": "20260914-account/HANDOFF.md",
+    "figma_node": "128:68"
+  },
+  {
+    "id": "07-me/more-current-account-return",
+    "route": "/more",
+    "trigger": "Tap page Back → /more",
+    "report": "20260914-more/HANDOFF.md",
+    "figma_node": "122:9"
+  },
+  {
+    "id": "07-me/more-current-catalog-return",
+    "route": "/more",
+    "trigger": "Tap page Back → /more",
+    "report": "20260914-more/HANDOFF.md",
+    "figma_node": "122:9"
+  },
+  {
+    "id": "07-me/more-current-identity-both-unavailable",
+    "route": "/more",
+    "trigger": "More identity both-unavailable from independent HTTP responses",
+    "report": "20260914-more/HANDOFF.md",
+    "figma_node": "122:9"
+  },
+  {
+    "id": "07-me/more-current-identity-email-unavailable",
+    "route": "/more",
+    "trigger": "More identity email-unavailable from independent HTTP responses",
+    "report": "20260914-more/HANDOFF.md",
+    "figma_node": "122:9"
+  },
+  {
+    "id": "07-me/more-current-identity-long",
+    "route": "/more",
+    "trigger": "More identity long from independent HTTP responses",
+    "report": "20260914-more/HANDOFF.md",
+    "figma_node": "122:9"
+  },
+  {
+    "id": "07-me/more-current-identity-name-only-arrived",
+    "route": "/more",
+    "trigger": "Name response arrived, email pending → combined identity still loading",
+    "report": "20260914-more/HANDOFF.md",
+    "figma_node": "122:9"
+  },
+  {
+    "id": "07-me/more-current-identity-name-unavailable",
+    "route": "/more",
+    "trigger": "More identity name-unavailable from independent HTTP responses",
+    "report": "20260914-more/HANDOFF.md",
+    "figma_node": "122:9"
+  },
+  {
+    "id": "07-me/more-current-identity-pending",
+    "route": "/more",
+    "trigger": "Both identity endpoints pending → loading account card",
+    "report": "20260914-more/HANDOFF.md",
+    "figma_node": "122:9"
+  },
+  {
+    "id": "07-me/more-current-identity-resolved",
+    "route": "/more",
+    "trigger": "Both responses arrived → name and email displayed",
+    "report": "20260914-more/HANDOFF.md",
+    "figma_node": "122:9"
+  },
+  {
+    "id": "07-me/more-current-inbox-return",
+    "route": "/more",
+    "trigger": "Tap page Back → /more",
+    "report": "20260914-more/HANDOFF.md",
+    "figma_node": "122:9"
+  },
+  {
+    "id": "07-me/more-current-logout-error-ready",
+    "route": "/more",
+    "trigger": "More before failed remote revoke",
+    "report": "20260914-more/HANDOFF.md",
+    "figma_node": "122:9"
+  },
+  {
+    "id": "07-me/more-current-logout-visible",
+    "route": "/more",
+    "trigger": "Scroll More to sign-out control",
+    "report": "20260914-more/HANDOFF.md",
+    "figma_node": "122:9"
+  },
+  {
+    "id": "07-me/more-current-privacy-return",
+    "route": "/more",
+    "trigger": "Tap page Back → /more",
+    "report": "20260914-more/HANDOFF.md",
+    "figma_node": "122:9"
+  },
+  {
+    "id": "07-me/more-current-routes-ready",
+    "route": "/more",
+    "trigger": "More current identity and three unread notifications",
+    "report": "20260914-more/HANDOFF.md",
+    "figma_node": "122:9"
+  },
+  {
+    "id": "07-me/notification-current-appointment-to-inbox",
+    "route": "/notifications",
+    "trigger": "Appointment back → notification center with read state",
+    "report": "20260914-notifications/HANDOFF.md",
+    "figma_node": "134:68"
+  },
+  {
+    "id": "07-me/notification-current-appointments-off",
+    "route": "/notifications/settings",
+    "trigger": "Disable appointments → saved false",
+    "report": "20260914-notifications/HANDOFF.md",
+    "figma_node": "135:274"
+  },
+  {
+    "id": "07-me/notification-current-appointments-on",
+    "route": "/notifications/settings",
+    "trigger": "Enable appointments → saved true",
+    "report": "20260914-notifications/HANDOFF.md",
+    "figma_node": "135:274"
+  },
+  {
+    "id": "07-me/notification-current-archive-error",
+    "route": "/notifications",
+    "trigger": "Archive request fails → row retained and error banner",
+    "report": "20260914-notifications/HANDOFF.md",
+    "figma_node": "134:68"
+  },
+  {
+    "id": "07-me/notification-current-archive-final-empty",
+    "route": "/notifications",
+    "trigger": "Archive only notification → empty inbox and count zero",
+    "report": "20260914-notifications/HANDOFF.md",
+    "figma_node": "134:68"
+  },
+  {
+    "id": "07-me/notification-current-archive-final-more",
+    "route": "/more",
+    "trigger": "Back More → no unread badge; scroll More back to top",
+    "report": "20260914-more/HANDOFF.md",
+    "figma_node": "122:9"
+  },
+  {
+    "id": "07-me/notification-current-archive-pending",
+    "route": "/notifications",
+    "trigger": "Archive update → row spinner while request pending",
+    "report": "20260914-notifications/HANDOFF.md",
+    "figma_node": "134:68"
+  },
+  {
+    "id": "07-me/notification-current-archive-pending-completed",
+    "route": "/notifications",
+    "trigger": "Archive response → row removed and count refreshed",
+    "report": "20260914-notifications/HANDOFF.md",
+    "figma_node": "134:68"
+  },
+  {
+    "id": "07-me/notification-current-archive-retry",
+    "route": "/notifications",
+    "trigger": "Retry archive same update → row removed",
+    "report": "20260914-notifications/HANDOFF.md",
+    "figma_node": "134:68"
+  },
+  {
+    "id": "07-me/notification-current-consultations-off",
+    "route": "/notifications/settings",
+    "trigger": "Disable consultations → saved false",
+    "report": "20260914-notifications/HANDOFF.md",
+    "figma_node": "135:274"
+  },
+  {
+    "id": "07-me/notification-current-consultations-on",
+    "route": "/notifications/settings",
+    "trigger": "Enable consultations → saved true",
+    "report": "20260914-notifications/HANDOFF.md",
+    "figma_node": "135:274"
+  },
+  {
+    "id": "07-me/notification-current-expert_feedback-off",
+    "route": "/notifications/settings",
+    "trigger": "Disable expert_feedback → saved false",
+    "report": "20260914-notifications/HANDOFF.md",
+    "figma_node": "135:274"
+  },
+  {
+    "id": "07-me/notification-current-expert_feedback-on",
+    "route": "/notifications/settings",
+    "trigger": "Enable expert_feedback → saved true",
+    "report": "20260914-notifications/HANDOFF.md",
+    "figma_node": "135:274"
+  },
+  {
+    "id": "07-me/notification-current-inbox-all-read",
+    "route": "/notifications",
+    "trigger": "Mark all read → server state refreshed, unread badge cleared",
+    "report": "20260914-notifications/HANDOFF.md",
+    "figma_node": "134:68"
+  },
+  {
+    "id": "07-me/notification-current-inbox-archived",
+    "route": "/notifications",
+    "trigger": "Archive last update → removed immediately, unread count refreshed",
+    "report": "20260914-notifications/HANDOFF.md",
+    "figma_node": "134:68"
+  },
+  {
+    "id": "07-me/notification-current-inbox-empty",
+    "route": "/notifications",
+    "trigger": "More notifications entry → empty inbox",
+    "report": "20260914-notifications/HANDOFF.md",
+    "figma_node": "134:68"
+  },
+  {
+    "id": "07-me/notification-current-inbox-first-page",
+    "route": "/notifications",
+    "trigger": "Retry → first three updates with unread count and load more",
+    "report": "20260914-notifications/HANDOFF.md",
+    "figma_node": "134:68"
+  },
+  {
+    "id": "07-me/notification-current-inbox-last-page",
+    "route": "/notifications",
+    "trigger": "Load final page → full list, no load-more CTA",
+    "report": "20260914-notifications/HANDOFF.md",
+    "figma_node": "134:68"
+  },
+  {
+    "id": "07-me/notification-current-inbox-loading",
+    "route": "/notifications",
+    "trigger": "Refresh empty inbox → pending response",
+    "report": "20260914-notifications/HANDOFF.md",
+    "figma_node": "134:68"
+  },
+  {
+    "id": "07-me/notification-current-inbox-open-entry",
+    "route": "/notifications",
+    "trigger": "More → unread service updates",
+    "report": "20260914-notifications/HANDOFF.md",
+    "figma_node": "134:68"
+  },
+  {
+    "id": "07-me/notification-current-inbox-read-error",
+    "route": "/notifications",
+    "trigger": "Empty inbox read fails → error and retry",
+    "report": "20260914-notifications/HANDOFF.md",
+    "figma_node": "134:68"
+  },
+  {
+    "id": "07-me/notification-current-inbox-second-page",
+    "route": "/notifications",
+    "trigger": "Load more → append second page",
+    "report": "20260914-notifications/HANDOFF.md",
+    "figma_node": "134:68"
+  },
+  {
+    "id": "07-me/notification-current-inbox-to-more",
+    "route": "/more",
+    "trigger": "Inbox back → More with updated unread badge; scroll More back to top",
+    "report": "20260914-more/HANDOFF.md",
+    "figma_node": "122:9"
+  },
+  {
+    "id": "07-me/notification-current-inbox-to-settings",
+    "route": "/notifications/settings",
+    "trigger": "Inbox settings toolbar → notification preferences",
+    "report": "20260914-notifications/HANDOFF.md",
+    "figma_node": "135:274"
+  },
+  {
+    "id": "07-me/notification-current-list-more",
+    "route": "/more",
+    "trigger": "Authenticated More before notifications; scroll More back to top",
+    "report": "20260914-more/HANDOFF.md",
+    "figma_node": "122:9"
+  },
+  {
+    "id": "07-me/notification-current-mark-all-error",
+    "route": "/notifications",
+    "trigger": "Mark-all request fails → unread updates and retry banner retained",
+    "report": "20260914-notifications/HANDOFF.md",
+    "figma_node": "134:68"
+  },
+  {
+    "id": "07-me/notification-current-mark-all-pending",
+    "route": "/notifications",
+    "trigger": "Mark all read pending → action disabled, unread count preserved",
+    "report": "20260914-notifications/HANDOFF.md",
+    "figma_node": "134:68"
+  },
+  {
+    "id": "07-me/notification-current-mark-all-retry",
+    "route": "/notifications",
+    "trigger": "Retry mark all read → read state refreshed",
+    "report": "20260914-notifications/HANDOFF.md",
+    "figma_node": "134:68"
+  },
+  {
+    "id": "07-me/notification-current-mutation-more",
+    "route": "/more",
+    "trigger": "Authenticated More before notifications; scroll More back to top",
+    "report": "20260914-more/HANDOFF.md",
+    "figma_node": "122:9"
+  },
+  {
+    "id": "07-me/notification-current-notification-open-error",
+    "route": "/notifications",
+    "trigger": "Open update request fails → inbox retained with Snackbar",
+    "report": "20260914-notifications/HANDOFF.md",
+    "figma_node": "134:68"
+  },
+  {
+    "id": "07-me/notification-current-notification-target-unavailable",
+    "route": "/notifications",
+    "trigger": "Retry open → server reports resource unavailable, item read, no navigation",
+    "report": "20260914-notifications/HANDOFF.md",
+    "figma_node": "134:68"
+  },
+  {
+    "id": "07-me/notification-current-open-more",
+    "route": "/more",
+    "trigger": "Authenticated More before notifications; scroll More back to top",
+    "report": "20260914-more/HANDOFF.md",
+    "figma_node": "122:9"
+  },
+  {
+    "id": "07-me/notification-current-pagination-error",
+    "route": "/notifications",
+    "trigger": "Next page read fails → first page and error banner retained",
+    "report": "20260914-notifications/HANDOFF.md",
+    "figma_node": "134:68"
+  },
+  {
+    "id": "07-me/notification-current-pagination-loading",
+    "route": "/notifications",
+    "trigger": "Load more → pending next page with first page retained",
+    "report": "20260914-notifications/HANDOFF.md",
+    "figma_node": "134:68"
+  },
+  {
+    "id": "07-me/notification-current-pagination-retry",
+    "route": "/notifications",
+    "trigger": "Retry load more with same cursor → append second page",
+    "report": "20260914-notifications/HANDOFF.md",
+    "figma_node": "134:68"
+  },
+  {
+    "id": "07-me/notification-current-preference-write-error",
+    "route": "/notifications/settings",
+    "trigger": "Write 503 → prior switch value plus Snackbar",
+    "report": "20260914-notifications/HANDOFF.md",
+    "figma_node": "135:274"
+  },
+  {
+    "id": "07-me/notification-current-preference-write-pending",
+    "route": "/notifications/settings",
+    "trigger": "Disable consultations → pending write, all switches disabled",
+    "report": "20260914-notifications/HANDOFF.md",
+    "figma_node": "135:274"
+  },
+  {
+    "id": "07-me/notification-current-preference-write-retry",
+    "route": "/notifications/settings",
+    "trigger": "Retry disable → saved false",
+    "report": "20260914-notifications/HANDOFF.md",
+    "figma_node": "135:274"
+  },
+  {
+    "id": "07-me/notification-current-preferences-initial-error",
+    "route": "/notifications/settings",
+    "trigger": "Initial preferences 503 → error and no editable values",
+    "report": "20260914-notifications/HANDOFF.md",
+    "figma_node": "135:274"
+  },
+  {
+    "id": "07-me/notification-current-preferences-initial-loading",
+    "route": "/notifications/settings",
+    "trigger": "Open settings → preference request pending, switches disabled",
+    "report": "20260914-notifications/HANDOFF.md",
+    "figma_node": "135:274"
+  },
+  {
+    "id": "07-me/notification-current-service_updates-off",
+    "route": "/notifications/settings",
+    "trigger": "Disable service_updates → saved false",
+    "report": "20260914-notifications/HANDOFF.md",
+    "figma_node": "135:274"
+  },
+  {
+    "id": "07-me/notification-current-service_updates-on",
+    "route": "/notifications/settings",
+    "trigger": "Enable service_updates → saved true",
+    "report": "20260914-notifications/HANDOFF.md",
+    "figma_node": "135:274"
+  },
+  {
+    "id": "07-me/notification-current-settings-authorized",
+    "route": "/notifications/settings",
+    "trigger": "Retry → system allowed and preference values loaded",
+    "report": "20260914-notifications/HANDOFF.md",
+    "figma_node": "135:274"
+  },
+  {
+    "id": "07-me/notification-current-settings-denied",
+    "route": "/notifications/settings",
+    "trigger": "Refresh after simulated system denial → unavailable delivery labels",
+    "report": "20260914-notifications/HANDOFF.md",
+    "figma_node": "135:274"
+  },
+  {
+    "id": "07-me/notification-current-settings-inbox",
+    "route": "/notifications",
+    "trigger": "More → empty inbox before settings",
+    "report": "20260914-notifications/HANDOFF.md",
+    "figma_node": "134:68"
+  },
+  {
+    "id": "07-me/notification-current-settings-more",
+    "route": "/more",
+    "trigger": "Authenticated More before notifications; scroll More back to top",
+    "report": "20260914-more/HANDOFF.md",
+    "figma_node": "122:9"
+  },
+  {
+    "id": "07-me/notification-current-settings-more-return",
+    "route": "/more",
+    "trigger": "Inbox Back → More; scroll More back to top",
+    "report": "20260914-more/HANDOFF.md",
+    "figma_node": "122:9"
+  },
+  {
+    "id": "07-me/notification-current-settings-open-platform",
+    "route": "/notifications/settings",
+    "trigger": "Settings calls fake platform, page remains; no OS screenshot claim",
+    "report": "20260914-notifications/HANDOFF.md",
+    "figma_node": "135:274"
+  },
+  {
+    "id": "07-me/notification-current-settings-provisional",
+    "route": "/notifications/settings",
+    "trigger": "Refresh after quiet authorization → delivery available",
+    "report": "20260914-notifications/HANDOFF.md",
+    "figma_node": "135:274"
+  },
+  {
+    "id": "07-me/notification-current-settings-return",
+    "route": "/notifications",
+    "trigger": "Settings Back → inbox",
+    "report": "20260914-notifications/HANDOFF.md",
+    "figma_node": "134:68"
+  },
+  {
+    "id": "07-me/notification-current-settings-unavailable",
+    "route": "/notifications/settings",
+    "trigger": "Unavailable platform and SDK → delivery unavailable",
+    "report": "20260914-notifications/HANDOFF.md",
+    "figma_node": "135:274"
+  },
+  {
+    "id": "07-me/notification-current-tooltip-archive-notification",
+    "route": "/notifications",
+    "trigger": "Long press Archive notification → tooltip, action not invoked",
+    "report": "20260914-notifications/HANDOFF.md",
+    "figma_node": "134:68"
+  },
+  {
+    "id": "07-me/notification-current-tooltip-archive-notification-dismissed",
+    "route": "/notifications",
+    "trigger": "Tooltip timeout → same inbox",
+    "report": "20260914-notifications/HANDOFF.md",
+    "figma_node": "134:68"
+  },
+  {
+    "id": "07-me/notification-current-tooltip-back",
+    "route": "/notifications",
+    "trigger": "Scroll inbox to top; Long press Back → tooltip, action not invoked",
+    "report": "20260914-notifications/HANDOFF.md",
+    "figma_node": "134:68"
+  },
+  {
+    "id": "07-me/notification-current-tooltip-back-dismissed",
+    "route": "/notifications",
+    "trigger": "Tooltip timeout → same inbox",
+    "report": "20260914-notifications/HANDOFF.md",
+    "figma_node": "134:68"
+  },
+  {
+    "id": "07-me/notification-current-tooltip-more",
+    "route": "/more",
+    "trigger": "Authenticated More before notifications; scroll More back to top",
+    "report": "20260914-more/HANDOFF.md",
+    "figma_node": "122:9"
+  },
+  {
+    "id": "07-me/notification-current-tooltip-notification-settings",
+    "route": "/notifications",
+    "trigger": "Long press Notification settings → tooltip, action not invoked",
+    "report": "20260914-notifications/HANDOFF.md",
+    "figma_node": "134:68"
+  },
+  {
+    "id": "07-me/notification-current-tooltip-notification-settings-dismissed",
+    "route": "/notifications",
+    "trigger": "Tooltip timeout → same inbox",
+    "report": "20260914-notifications/HANDOFF.md",
+    "figma_node": "134:68"
+  },
+  {
+    "id": "07-me/notification-current-tooltip-ready",
+    "route": "/notifications",
+    "trigger": "One unread notification",
+    "report": "20260914-notifications/HANDOFF.md",
+    "figma_node": "134:68"
+  },
+  {
+    "id": "07-me/notification-current-tooltip-refresh-notifications",
+    "route": "/notifications",
+    "trigger": "Long press Refresh notifications → tooltip, action not invoked",
+    "report": "20260914-notifications/HANDOFF.md",
+    "figma_node": "134:68"
+  },
+  {
+    "id": "07-me/notification-current-tooltip-refresh-notifications-dismissed",
+    "route": "/notifications",
+    "trigger": "Tooltip timeout → same inbox",
+    "report": "20260914-notifications/HANDOFF.md",
+    "figma_node": "134:68"
+  }
+]

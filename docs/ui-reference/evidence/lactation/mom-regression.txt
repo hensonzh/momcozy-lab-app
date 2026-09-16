@@ -1,0 +1,63 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart: wire contract keeps methods exclusive and carries the deletion version
+00:00 +1: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart: uncertain save retries the same payload and key, blocks duplicate taps, and undo uses receipt
+00:00 +2: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart: changing method clears the old measurement and rejects invalid typed input
+00:00 +3: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart: single record editor saves a real observation, then delete and undo change the list
+00:00 +4: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart: lactation modal switches to nursing and saves at 320.0 / 1.0
+00:00 +5: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart: lactation modal switches to nursing and saves at 320.0 / 2.0
+00:01 +6: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart: lactation list renders at 320.0 / 1.0
+00:01 +7: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart: lactation list renders at 320.0 / 2.0
+00:01 +8: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart: lactation entry renders at 320.0 / 1.0
+00:01 +9: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart: lactation entry renders at 320.0 / 2.0
+00:01 +10: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart: lactation modal switches to nursing and saves at 390.0 / 1.0
+00:01 +11: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart: lactation modal switches to nursing and saves at 390.0 / 2.0
+00:01 +12: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart: lactation list renders at 390.0 / 1.0
+00:01 +13: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart: lactation list renders at 390.0 / 2.0
+00:01 +14: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart: lactation entry renders at 390.0 / 1.0
+00:01 +15: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart: lactation entry renders at 390.0 / 2.0
+00:01 +16: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart: lactation modal switches to nursing and saves at 430.0 / 1.0
+00:01 +17: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart: lactation modal switches to nursing and saves at 430.0 / 2.0
+00:01 +18: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart: lactation list renders at 430.0 / 1.0
+00:02 +19: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart: lactation list renders at 430.0 / 2.0
+00:02 +20: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart: lactation entry renders at 430.0 / 1.0
+00:02 +21: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart: lactation entry renders at 430.0 / 2.0
+00:02 +22: /Users/lute/project/momcozy-lab/app/test/shared/choice_field_test.dart: exclusive selection and toggling work with chips
+00:02 +23: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_test.dart: app router opens the selected diary section with the current API
+00:02 +24: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_test.dart: app router opens the selected diary section with the current API
+00:03 +25: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_test.dart: app router opens the selected diary section with the current API
+00:03 +26: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_home_test.dart: default home opens grouped diary, saves and refreshes only current API data
+00:03 +27: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_home_test.dart: default home opens grouped diary, saves and refreshes only current API data
+00:03 +28: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_home_test.dart: default home opens grouped diary, saves and refreshes only current API data
+00:03 +29: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_home_test.dart: default home opens grouped diary, saves and refreshes only current API data
+00:03 +30: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_home_test.dart: default home opens grouped diary, saves and refreshes only current API data
+00:03 +31: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_home_test.dart: default home opens grouped diary, saves and refreshes only current API data
+00:03 +32: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_home_test.dart: default home opens grouped diary, saves and refreshes only current API data
+00:03 +33: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_home_test.dart: default home opens grouped diary, saves and refreshes only current API data
+00:03 +34: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_diary_test.dart: diary renders at 390px
+00:03 +35: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_forms_design_test.dart: diary body dialog at 320.0 / 1.0
+00:03 +36: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_forms_design_test.dart: diary body dialog at 320.0 / 1.0
+00:03 +37: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_forms_design_test.dart: diary body dialog at 320.0 / 1.0
+00:03 +38: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_home_test.dart: mother home matches the product baseline at 320.0 / 2.0
+00:03 +39: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_forms_design_test.dart: diary mood dialog at 320.0 / 1.0
+00:04 +40: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_home_test.dart: mother home matches the product baseline at 390.0 / 1.0
+00:04 +41: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_home_test.dart: mother home matches the product baseline at 390.0 / 1.0
+00:04 +42: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_forms_design_test.dart: diary body dialog at 320.0 / 2.0
+00:04 +43: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_forms_design_test.dart: diary body dialog at 320.0 / 2.0
+00:04 +44: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_home_test.dart: mother home matches the product baseline at 430.0 / 1.0
+00:04 +45: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_home_test.dart: mother home matches the product baseline at 430.0 / 1.0
+00:04 +46: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_forms_design_test.dart: diary rest dialog at 390.0 / 1.0
+00:04 +47: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_home_test.dart: mother home matches the product baseline at 430.0 / 2.0
+00:04 +48: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_forms_design_test.dart: diary body dialog at 390.0 / 1.0
+00:04 +49: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_forms_design_test.dart: diary body dialog at 390.0 / 1.0
+00:04 +50: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_forms_design_test.dart: diary mood dialog at 390.0 / 1.0
+00:04 +51: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_forms_design_test.dart: diary rest dialog at 390.0 / 2.0
+00:04 +52: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_forms_design_test.dart: diary body dialog at 390.0 / 2.0
+00:05 +53: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_forms_design_test.dart: diary mood dialog at 390.0 / 2.0
+00:05 +54: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_forms_design_test.dart: diary rest dialog at 430.0 / 1.0
+00:05 +55: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_forms_design_test.dart: diary body dialog at 430.0 / 1.0
+00:05 +56: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_forms_design_test.dart: diary mood dialog at 430.0 / 1.0
+00:05 +57: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_forms_design_test.dart: diary rest dialog at 430.0 / 2.0
+00:05 +58: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_forms_design_test.dart: diary body dialog at 430.0 / 2.0
+00:05 +59: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_forms_design_test.dart: diary mood dialog at 430.0 / 2.0
+00:05 +60: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_forms_design_test.dart: (tearDownAll)
+00:05 +60: All tests passed!

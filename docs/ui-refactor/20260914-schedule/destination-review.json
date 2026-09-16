@@ -1,0 +1,79 @@
+[
+  {
+    "id": "06-schedule/schedule-journey-appointment-cancelled-route",
+    "route": "/services/appointments/service-appointment/room",
+    "trigger": "Appointment action → actual room preparation for cancelled",
+    "existing_report": "20260914-consultation-preparation/HANDOFF.md",
+    "status": "existing_destination_design_retained"
+  },
+  {
+    "id": "06-schedule/schedule-journey-appointment-expired-intake",
+    "route": "/services/appointments/service-appointment/intake",
+    "trigger": "Preparation intake link → actual intake route for expired",
+    "existing_report": "20260914-intake/HANDOFF.md",
+    "status": "existing_destination_design_retained"
+  },
+  {
+    "id": "06-schedule/schedule-journey-appointment-expired-intake-return",
+    "route": "/services/appointments/service-appointment/room",
+    "trigger": "Unchanged intake system back → preparation",
+    "existing_report": "20260914-consultation-preparation/HANDOFF.md",
+    "status": "existing_destination_design_retained"
+  },
+  {
+    "id": "06-schedule/schedule-journey-appointment-expired-route",
+    "route": "/services/appointments/service-appointment/room",
+    "trigger": "Appointment action → actual room preparation for expired",
+    "existing_report": "20260914-consultation-preparation/HANDOFF.md",
+    "status": "existing_destination_design_retained"
+  },
+  {
+    "id": "06-schedule/schedule-journey-appointment-held-intake",
+    "route": "/services/appointments/service-appointment/intake",
+    "trigger": "Preparation intake link → actual intake route for held",
+    "existing_report": "20260914-intake/HANDOFF.md",
+    "status": "existing_destination_design_retained"
+  },
+  {
+    "id": "06-schedule/schedule-journey-appointment-held-intake-return",
+    "route": "/services/appointments/service-appointment/room",
+    "trigger": "Unchanged intake system back → preparation",
+    "existing_report": "20260914-consultation-preparation/HANDOFF.md",
+    "status": "existing_destination_design_retained"
+  },
+  {
+    "id": "06-schedule/schedule-journey-appointment-held-route",
+    "route": "/services/appointments/service-appointment/room",
+    "trigger": "Appointment action → actual room preparation for held",
+    "existing_report": "20260914-consultation-preparation/HANDOFF.md",
+    "status": "existing_destination_design_retained"
+  },
+  {
+    "id": "06-schedule/schedule-journey-appointment-room-route",
+    "route": "/services/appointments/service-appointment/room",
+    "trigger": "Confirmed consultation view → real preparation route",
+    "existing_report": "20260914-consultation-preparation/HANDOFF.md",
+    "status": "existing_destination_design_retained"
+  },
+  {
+    "id": "06-schedule/schedule-journey-consultation-summary-route",
+    "route": "/services/appointments/service-appointment/summary",
+    "trigger": "Completed appointment summary → actual published summary route",
+    "existing_report": "20260914-consultation-summary/HANDOFF.md",
+    "status": "existing_destination_design_retained"
+  },
+  {
+    "id": "06-schedule/schedule-journey-plan-route",
+    "route": "/services/episodes/service-episode",
+    "trigger": "View care plan → actual episode route",
+    "existing_report": "20260914-service-progress/HANDOFF.md",
+    "status": "existing_destination_design_retained"
+  },
+  {
+    "id": "06-schedule/schedule-journey-task-plan-route",
+    "route": "/services/episodes/service-episode",
+    "trigger": "Task menu view service plan → actual episode route",
+    "existing_report": "20260914-service-progress/HANDOFF.md",
+    "status": "existing_destination_design_retained"
+  }
+]

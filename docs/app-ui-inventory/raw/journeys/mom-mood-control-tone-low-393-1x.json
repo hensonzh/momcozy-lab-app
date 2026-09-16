@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/mom-mood-control-tone-low-393-1x.png",
+  "previous_source": "test/goldens/ui_inventory/mom-mood-control-tone-tense-393-1x.png",
+  "route": "/me",
+  "trigger": "Mood / 今天心里更接近哪一种 → select 低落 / 没力气",
+  "root_entry": "Authenticated More → tap Me bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/mom/mom_mood_control_inventory_test.dart"
+}

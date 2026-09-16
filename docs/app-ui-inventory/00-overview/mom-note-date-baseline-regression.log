@@ -1,0 +1,76 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: (setUpAll)
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: inventory schedule calendar create edit delete
+00:01 +0: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby growth batch date validation and undo recovery
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: FlutterError:<Golden
+"../../goldens/ui_inventory/baby-journey-growth-date-calendar-393.png": Pixel test failed, 0.18%,
+588px diff detected.
+          Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/modules/baby/failures>
+
+When the exception was thrown, this was the stack:
+#4      main.tap (file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart:135:5)
+<asynchronous suspension>
+#5      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart:687:5)
+<asynchronous suspension>
+#6      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#7      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart line 135
+The test description was:
+  inventory Baby growth batch date validation and undo recovery
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +0 -1: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: inventory schedule calendar create edit delete
+00:01 +0 -1: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby growth batch date validation and undo recovery [E]
+  Test failed. See exception logs above.
+  The test description was: inventory Baby growth batch date validation and undo recovery
+  
+Warning: At least one test in this suite creates an HttpClient. When running a test suite that uses
+TestWidgetsFlutterBinding, all HTTP requests will return status code 400, and no network request
+will actually be made. Any test expecting a real network connection and status code will fail.
+To test code that needs an HttpClient, provide your own HttpClient implementation to the code under
+test, so that your test can consistently provide a testable response to the code under test.
+00:01 +0 -1: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: inventory schedule calendar create edit delete
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: FlutterError:<Golden "../../goldens/ui_inventory/schedule-journey-date-picker-393.png":
+Pixel test failed, 0.18%, 595px diff detected.
+          Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/modules/schedule/failures>
+
+When the exception was thrown, this was the stack:
+#4      main.tap (file:///Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart:135:5)
+<asynchronous suspension>
+#5      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart:224:5)
+<asynchronous suspension>
+#6      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#7      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart line 135
+The test description was:
+  inventory schedule calendar create edit delete
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +0 -2: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: inventory schedule calendar create edit delete [E]
+  Test failed. See exception logs above.
+  The test description was: inventory schedule calendar create edit delete
+  
+00:01 +0 -2: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: (tearDownAll)
+00:01 +0 -2: Some tests failed.
+
+Failing tests:
+  /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby growth batch date validation and undo recovery
+  /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: inventory schedule calendar create edit delete

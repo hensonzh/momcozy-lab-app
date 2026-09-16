@@ -1,0 +1,35 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/modules/ibclc/documentation_page_test.dart
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/modules/ibclc/documentation_page_test.dart: professional note editor at 1024.0
+00:00 +1: /Users/lute/project/momcozy-lab/app/test/modules/ibclc/documentation_page_test.dart: professional plan editor at 1024.0
+00:00 +2: /Users/lute/project/momcozy-lab/app/test/modules/ibclc/documentation_page_test.dart: professional note editor at 1280.0
+00:00 +3: /Users/lute/project/momcozy-lab/app/test/modules/ibclc/documentation_page_test.dart: professional plan editor at 1280.0
+00:00 +4: /Users/lute/project/momcozy-lab/app/test/modules/ibclc/documentation_page_test.dart: published consultation summary at 320.0
+00:00 +5: /Users/lute/project/momcozy-lab/app/test/modules/ibclc/documentation_page_test.dart: published consultation summary at 390.0
+00:00 +6: /Users/lute/project/momcozy-lab/app/test/modules/ibclc/documentation_page_test.dart: published consultation summary at 430.0
+00:00 +7: /Users/lute/project/momcozy-lab/app/test/modules/ibclc/documentation_page_test.dart: signed note is read-only and amendment requires a reason in a new dialog
+00:01 +8: /Users/lute/project/momcozy-lab/app/test/modules/ibclc/documentation_page_test.dart: summary supports large text and records feedback only after an explicit choice
+00:02 +9: /Users/lute/project/momcozy-lab/app/test/modules/ibclc/reports_page_test.dart: report detail at 1024.0
+00:03 +10: /Users/lute/project/momcozy-lab/app/test/modules/ibclc/reports_page_test.dart: report detail at 1024.0
+00:03 +11: /Users/lute/project/momcozy-lab/app/test/modules/ibclc/workbench_page_test.dart: independent workbench clients at 1024.0
+00:03 +12: /Users/lute/project/momcozy-lab/app/test/modules/ibclc/reports_page_test.dart: report detail at 1280.0
+00:03 +13: /Users/lute/project/momcozy-lab/app/test/modules/ibclc/workbench_page_test.dart: independent workbench calendar at 1024.0
+00:03 +14: /Users/lute/project/momcozy-lab/app/test/modules/ibclc/reports_page_test.dart: report day selection updates the deep link and reloads its scope
+00:03 +15: /Users/lute/project/momcozy-lab/app/test/modules/ibclc/workbench_page_test.dart: independent workbench reminders at 1024.0
+00:03 +16: /Users/lute/project/momcozy-lab/app/test/modules/ibclc/reports_page_test.dart: feedback validates, persists and remains linked to the report on reload
+00:03 +17: /Users/lute/project/momcozy-lab/app/test/modules/ibclc/reports_page_test.dart: feedback validates, persists and remains linked to the report on reload
+00:03 +18: /Users/lute/project/momcozy-lab/app/test/modules/ibclc/workbench_page_test.dart: independent workbench appointments at 1280.0
+00:03 +19: /Users/lute/project/momcozy-lab/app/test/modules/ibclc/reports_page_test.dart: report and feedback dialog support narrow width and double text scale
+00:03 +20: /Users/lute/project/momcozy-lab/app/test/modules/ibclc/reports_page_test.dart: report and feedback dialog support narrow width and double text scale
+00:03 +21: /Users/lute/project/momcozy-lab/app/test/modules/ibclc/workbench_page_test.dart: independent workbench calendar at 1280.0
+00:03 +22: /Users/lute/project/momcozy-lab/app/test/modules/ibclc/workbench_page_test.dart: independent workbench calendar at 1280.0
+00:03 +23: /Users/lute/project/momcozy-lab/app/test/modules/ibclc/workbench_page_test.dart: independent workbench reminders at 1280.0
+00:04 +24: /Users/lute/project/momcozy-lab/app/test/modules/ibclc/workbench_page_test.dart: independent workbench followups at 1280.0
+00:04 +25: /Users/lute/project/momcozy-lab/app/test/modules/ibclc/workbench_page_test.dart: workbench navigation remains in the accessibility tree beside its nested route
+00:04 +26: /Users/lute/project/momcozy-lab/app/test/modules/ibclc/workbench_page_test.dart: work reminders persist read state and retain it after reloading
+00:04 +27: /Users/lute/project/momcozy-lab/app/test/modules/ibclc/workbench_page_test.dart: work reminders remain readable and operable on a narrow screen with large text
+00:04 +28: /Users/lute/project/momcozy-lab/app/test/modules/ibclc/workbench_page_test.dart: calendar month navigation is accessible with large text on a narrow screen
+00:04 +29: /Users/lute/project/momcozy-lab/app/test/modules/ibclc/workbench_page_test.dart: login protects a client deep link until both factors and the identity response succeed
+00:04 +30: /Users/lute/project/momcozy-lab/app/test/modules/ibclc/workbench_page_test.dart: small workbench with large text keeps navigation and appointment actions usable
+00:04 +31: /Users/lute/project/momcozy-lab/app/test/modules/ibclc/workbench_page_test.dart: opening a client updates the browser route for reload and sharing
+00:04 +32: /Users/lute/project/momcozy-lab/app/test/modules/ibclc/workbench_page_test.dart: consultation intake values are available to screen readers
+00:04 +33: All tests passed!

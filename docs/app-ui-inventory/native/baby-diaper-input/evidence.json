@@ -1,0 +1,190 @@
+{
+  "result": "PASS",
+  "scope": "12 native windows, actual observed coordinate actions, screenshots reviewed; no typed text or save action",
+  "actions_sha256": "3366ce90240e69bb8f51b63e4443e47aa4e968572d118cba6817eb05b9dbc115",
+  "chain": [
+    {
+      "source": "original-mom",
+      "previous": null,
+      "actions": [],
+      "png_sha256": "5135a0ad6fd534ee852ea880924fbff264ea219d8158ac82f64cdc57d0451627",
+      "xml_sha256": "674f1053c9f95cda22dc220f3818cba51356b13e38eab10a9978eb1315e2a5d9"
+    },
+    {
+      "source": "baby-entry",
+      "previous": "original-mom",
+      "actions": [
+        {
+          "at": "2026-09-13T22:01:44.609248+00:00",
+          "tap": "Baby",
+          "bounds": "[270,2571][517,2766]",
+          "coordinate": [
+            393,
+            2668
+          ]
+        }
+      ],
+      "png_sha256": "ccf283babcd4879b56ab87d3ff76004dcb4611cc560a96a6d676d6bbc64876e8",
+      "xml_sha256": "6ebaf71bc79c0da6344644784048e53eece2af6a2551d022e90f16b5cccd14f4"
+    },
+    {
+      "source": "wet-editor",
+      "previous": "baby-entry",
+      "actions": [
+        {
+          "at": "2026-09-13T22:02:37.789392+00:00",
+          "tap": "今日尿湿，未记录，每次换尿布记一条",
+          "bounds": "[445,1344][835,1788]",
+          "coordinate": [
+            640,
+            1566
+          ]
+        }
+      ],
+      "png_sha256": "277e4223da2eeda9a5e2448ec764b4fd80f729ca56b11161b68311de31ae7abf",
+      "xml_sha256": "02f78d0332c6bb531ec62d4aa02b1635bee3828425f6b1c8f603c9a726da203b"
+    },
+    {
+      "source": "note-expanded",
+      "previous": "wet-editor",
+      "actions": [
+        {
+          "at": "2026-09-13T22:03:13.078858+00:00",
+          "tap": "补充备注\n可选，不参与统计, 已收起",
+          "bounds": "[99,1569][1181,1737]",
+          "coordinate": [
+            640,
+            1653
+          ]
+        }
+      ],
+      "png_sha256": "5903a3f258639ed16077d8a2caae92145804d368cdbe613c90f9107f77ac35a8",
+      "xml_sha256": "f1cc948616cc3c7ce1fe9e843642edbf75bb9c698b34e39be1f54bf8c50efb1e"
+    },
+    {
+      "source": "note-input",
+      "previous": "note-expanded",
+      "actions": [
+        {
+          "at": "2026-09-13T22:04:15.872993+00:00",
+          "tap": "备注（可不填）",
+          "bounds": "[135,1773][1145,2085]",
+          "coordinate": [
+            640,
+            1929
+          ]
+        }
+      ],
+      "png_sha256": "801dbf7dc4c1cb80237d301241226ec6eca3bbe471a60fa50f5d735c55a5706d",
+      "xml_sha256": "45fcf8223dfaf0b674f60c7a58534f7faf2c1a0c5bc306761c34469656bc59bf"
+    },
+    {
+      "source": "note-input-settled",
+      "previous": "note-input",
+      "actions": [],
+      "png_sha256": "8c7683f1797d70d627dedb9c8650eff69e8bd9eaeefffb6c6c3050c0a784f1da",
+      "xml_sha256": "45fcf8223dfaf0b674f60c7a58534f7faf2c1a0c5bc306761c34469656bc59bf"
+    },
+    {
+      "source": "note-input-resumed",
+      "previous": "note-input-settled",
+      "actions": [],
+      "png_sha256": "1f0150577c4894cff9961fb8252014c8f41cb6bed6f62f54905647ab7fd723fb",
+      "xml_sha256": "45fcf8223dfaf0b674f60c7a58534f7faf2c1a0c5bc306761c34469656bc59bf"
+    },
+    {
+      "source": "keyboard-menu",
+      "previous": "note-input-resumed",
+      "actions": [
+        {
+          "at": "2026-09-13T22:08:59.317224+00:00",
+          "tap_screenshot": "Gboard floating toolbar menu",
+          "coordinate": [
+            107,
+            1792
+          ],
+          "source_png": "note-input-resumed.png",
+          "source_sha256": "1f0150577c4894cff9961fb8252014c8f41cb6bed6f62f54905647ab7fd723fb",
+          "basis": "Visible three horizontal lines at displayed (77,1285), scaled 918x2048 from native 1280x2856; absent from UI XML"
+        }
+      ],
+      "png_sha256": "1ddedb8f268ad2e27ca2e1da63210927121f6642cc8c51f3ebe34261e66ef0dd",
+      "xml_sha256": "45fcf8223dfaf0b674f60c7a58534f7faf2c1a0c5bc306761c34469656bc59bf"
+    },
+    {
+      "source": "keyboard-open",
+      "previous": "keyboard-menu",
+      "actions": [
+        {
+          "at": "2026-09-13T22:09:28.578831+00:00",
+          "tap_screenshot": "Show on-screen keyboard",
+          "coordinate": [
+            650,
+            1484
+          ],
+          "source_png": "keyboard-menu.png",
+          "source_sha256": "1ddedb8f268ad2e27ca2e1da63210927121f6642cc8c51f3ebe34261e66ef0dd",
+          "basis": "Visible menu row at displayed (466,1064), scaled 918x2048 from native 1280x2856; absent from UI XML"
+        }
+      ],
+      "png_sha256": "0246e4a77acd0cc207a536b40246e64ae83d19832a8cbe60619925bd041ff90a",
+      "xml_sha256": "45fcf8223dfaf0b674f60c7a58534f7faf2c1a0c5bc306761c34469656bc59bf"
+    },
+    {
+      "source": "keyboard-back",
+      "previous": "keyboard-open",
+      "actions": [
+        {
+          "at": "2026-09-13T22:10:00.124590+00:00",
+          "key": "BACK"
+        }
+      ],
+      "png_sha256": "fe33883b2bdb28ff0ad2a7d044d1110cd5816a67959794eb77d071ffbd96402d",
+      "xml_sha256": "30ed504edb20c908ae45d4291c3c426fedcb01ef04d6b881a8cf13c5e0550d2a"
+    },
+    {
+      "source": "editor-close",
+      "previous": "keyboard-back",
+      "actions": [],
+      "png_sha256": "fe33883b2bdb28ff0ad2a7d044d1110cd5816a67959794eb77d071ffbd96402d",
+      "xml_sha256": "30ed504edb20c908ae45d4291c3c426fedcb01ef04d6b881a8cf13c5e0550d2a"
+    },
+    {
+      "source": "restored-mom",
+      "previous": "editor-close",
+      "actions": [
+        {
+          "at": "2026-09-13T22:10:30.992368+00:00",
+          "tap": "Me",
+          "bounds": "[24,2571][270,2766]",
+          "coordinate": [
+            147,
+            2668
+          ]
+        }
+      ],
+      "png_sha256": "21dc6a258f687a6ea0c2c39a938e00d0bbad0f8a0ce5c2ea45cafa015f5e9eb4",
+      "xml_sha256": "1ab53a5fc55fbbfd9207570851e3ad8acfc7e36256a8004415d236a9061aeb3f"
+    }
+  ],
+  "restoration": [
+    {
+      "before": "baby-entry",
+      "after": "keyboard-back",
+      "match_ignoring_only": "focused attribute",
+      "reason": "root android.view.View gained focus after leaving text input"
+    },
+    {
+      "before": "original-mom",
+      "after": "restored-mom",
+      "match_ignoring_only": "focused attribute",
+      "reason": "root android.view.View gained focus after leaving text input"
+    }
+  ],
+  "limitations": [
+    "Gboard toolbar/menu/keyboard absent from UI XML; two clicks proven by observed screenshot coordinates",
+    "One Back dismissed both keyboard and empty editor; not a keyboard-only hide state",
+    "No real records saved; no system configuration changed",
+    "Native windows do not replace full host scroll images"
+  ]
+}

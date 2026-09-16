@@ -1,0 +1,284 @@
+[
+  {
+    "state": "agent-attachment-journey-camera-failure-dismissed",
+    "source": "05-agent/agent-attachment-journey-camera-failure-dismissed/viewport.png",
+    "sha256": "da01da1039a3a509281e4e51c1643eef957eb40f3a7d1cfadd519410c331fbd1",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "agent-attachment-journey-camera-pick-cancelled",
+    "source": "05-agent/agent-attachment-journey-camera-pick-cancelled/viewport.png",
+    "sha256": "da01da1039a3a509281e4e51c1643eef957eb40f3a7d1cfadd519410c331fbd1",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "agent-attachment-journey-camera-pick-failed",
+    "source": "05-agent/agent-attachment-journey-camera-pick-failed/viewport.png",
+    "sha256": "53d420c0640e89963be855187544e8e06e9662b60607f4bdf6480aa3fc6f6e05",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "agent-attachment-journey-camera-pick-pending",
+    "source": "05-agent/agent-attachment-journey-camera-pick-pending/viewport.png",
+    "sha256": "c530e396e788aa6a9c5a04c3436cda552fa0474edd77b6c928b5e634be13fb7e",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "agent-attachment-journey-file-pick-cancelled",
+    "source": "05-agent/agent-attachment-journey-file-pick-cancelled/viewport.png",
+    "sha256": "da01da1039a3a509281e4e51c1643eef957eb40f3a7d1cfadd519410c331fbd1",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "agent-attachment-journey-file-pick-failed",
+    "source": "05-agent/agent-attachment-journey-file-pick-failed/viewport.png",
+    "sha256": "28f860e95ba1083633cd58f40e2867e9563faf19c92d857343bc860f9fb0ecdb",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "agent-attachment-journey-file-pick-pending",
+    "source": "05-agent/agent-attachment-journey-file-pick-pending/viewport.png",
+    "sha256": "c530e396e788aa6a9c5a04c3436cda552fa0474edd77b6c928b5e634be13fb7e",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "agent-attachment-journey-image-decode-fallback",
+    "source": "05-agent/agent-attachment-journey-image-decode-fallback/viewport.png",
+    "sha256": "2305127e90c6f84866323599a214ba966d3deb29abc6ec84ca9c15c25c078b0a",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "agent-attachment-journey-image-panned",
+    "source": "05-agent/agent-attachment-journey-image-panned/viewport.png",
+    "sha256": "240234d70026ffe697c5b50378f6cf24397734cedf0503fce525fbfcfcb7feb3",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "agent-attachment-journey-image-ready",
+    "source": "05-agent/agent-attachment-journey-image-ready/viewport.png",
+    "sha256": "560fcd061014cd293c30fd36005673f8f072beada25e1aed1de22a337d5a5e02",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "agent-attachment-journey-image-remote-failed",
+    "source": "05-agent/agent-attachment-journey-image-remote-failed/viewport.png",
+    "sha256": "ab2fa8520773ca441acfa3e8ec77133ecd1c3451a70421dc0e3052b6777d582e",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "agent-attachment-journey-image-remote-loading",
+    "source": "05-agent/agent-attachment-journey-image-remote-loading/viewport.png",
+    "sha256": "df0fe5cdcf3fb712aee018a3140a28392b615973ec84abd955405e00de55af3e",
+    "sheet": "overview-1.jpg"
+  },
+  {
+    "state": "agent-attachment-journey-image-remote-recovered",
+    "source": "05-agent/agent-attachment-journey-image-remote-recovered/viewport.png",
+    "sha256": "658dd133af19efaa2befab97c2f69cb88dcb69b139c8dc97679178ecefe8fc3b",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "agent-attachment-journey-image-remote-return",
+    "source": "05-agent/agent-attachment-journey-image-remote-return/viewport.png",
+    "sha256": "e20f978b6450eb3822c286fbdde8231bd18054e845682c5b7abf1ddb0ff4879e",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "agent-attachment-journey-image-remove-failed",
+    "source": "05-agent/agent-attachment-journey-image-remove-failed/viewport.png",
+    "sha256": "56c2aee678eda63a32bd5e3bbda723f36fdc105a8d4f2c8a39e83ff3a728d000",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "agent-attachment-journey-image-remove-notice-dismissed",
+    "source": "05-agent/agent-attachment-journey-image-remove-notice-dismissed/viewport.png",
+    "sha256": "560fcd061014cd293c30fd36005673f8f072beada25e1aed1de22a337d5a5e02",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "agent-attachment-journey-image-remove-pending",
+    "source": "05-agent/agent-attachment-journey-image-remove-pending/viewport.png",
+    "sha256": "17338c842269f468034f33b9e0b3a8271b353dbf2dfe6541a1283a0358c98253",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "agent-attachment-journey-image-removed",
+    "source": "05-agent/agent-attachment-journey-image-removed/viewport.png",
+    "sha256": "bae3c7c18e9561aa1a6094f386cae3c0e3de3472a28279ed300339d4b275c92c",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "agent-attachment-journey-image-tab-away",
+    "source": "05-agent/agent-attachment-journey-image-tab-away/viewport.png",
+    "sha256": "6ac33e6dd952b54bfe0bbfa4209df0bf816602f324b0120ff7730cb4d19cfda7",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "agent-attachment-journey-image-tab-return",
+    "source": "05-agent/agent-attachment-journey-image-tab-return/viewport.png",
+    "sha256": "560fcd061014cd293c30fd36005673f8f072beada25e1aed1de22a337d5a5e02",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "agent-attachment-journey-image-upload-failed",
+    "source": "05-agent/agent-attachment-journey-image-upload-failed/viewport.png",
+    "sha256": "0ab6fe4e16ff8ea2ff3910270cc4ddae6d44138f127211908cd8e880a1318fed",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "agent-attachment-journey-image-upload-failure-dismissed",
+    "source": "05-agent/agent-attachment-journey-image-upload-failure-dismissed/viewport.png",
+    "sha256": "c6ea52c42a7d3b8cc151cb5ae038b22ff3b23712f2d9793bb8239756d72c5bb3",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "agent-attachment-journey-image-uploading",
+    "source": "05-agent/agent-attachment-journey-image-uploading/viewport.png",
+    "sha256": "0a3e6ce70e163bb5ca218a9ca26fab86fb846e8e4a9b74b7e0476d6707fb4524",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "agent-attachment-journey-image-viewer",
+    "source": "05-agent/agent-attachment-journey-image-viewer/viewport.png",
+    "sha256": "658dd133af19efaa2befab97c2f69cb88dcb69b139c8dc97679178ecefe8fc3b",
+    "sheet": "overview-2.jpg"
+  },
+  {
+    "state": "agent-attachment-journey-image-viewer-error",
+    "source": "05-agent/agent-attachment-journey-image-viewer-error/viewport.png",
+    "sha256": "ab2fa8520773ca441acfa3e8ec77133ecd1c3451a70421dc0e3052b6777d582e",
+    "sheet": "overview-3.jpg"
+  },
+  {
+    "state": "agent-attachment-journey-image-viewer-return",
+    "source": "05-agent/agent-attachment-journey-image-viewer-return/viewport.png",
+    "sha256": "467e8af63d6f17a0472024323e13f25d58a7f273635ab325647f69228e0e7fc7",
+    "sheet": "overview-3.jpg"
+  },
+  {
+    "state": "agent-attachment-journey-image-zoomed",
+    "source": "05-agent/agent-attachment-journey-image-zoomed/viewport.png",
+    "sha256": "91f548e878e258f695346eba744e1e77cc38b6b5f00482d983f776e9f9650aa6",
+    "sheet": "overview-3.jpg"
+  },
+  {
+    "state": "agent-attachment-journey-mixed-completed",
+    "source": "05-agent/agent-attachment-journey-mixed-completed/viewport.png",
+    "sha256": "467e8af63d6f17a0472024323e13f25d58a7f273635ab325647f69228e0e7fc7",
+    "sheet": "overview-3.jpg"
+  },
+  {
+    "state": "agent-attachment-journey-mixed-ready-file",
+    "source": "05-agent/agent-attachment-journey-mixed-ready-file/viewport.png",
+    "sha256": "be045ad1133c49a4b45d50dbfd7a9e666fb10dd32dd5d96d3b41038e5e80337e",
+    "sheet": "overview-3.jpg"
+  },
+  {
+    "state": "agent-attachment-journey-mixed-ready-image",
+    "source": "05-agent/agent-attachment-journey-mixed-ready-image/viewport.png",
+    "sha256": "adfd16edeb8edc51ecc9b1e21da26344985e26bbc37d91a9451b3602c4fcd487",
+    "sheet": "overview-3.jpg"
+  },
+  {
+    "state": "agent-attachment-journey-mixed-sent",
+    "source": "05-agent/agent-attachment-journey-mixed-sent/viewport.png",
+    "sha256": "66e5dd5ecd27454f041035d1c130b4364158d8d012002e45bbbe4434f7512ba4",
+    "sheet": "overview-3.jpg"
+  },
+  {
+    "state": "agent-attachment-journey-new-cleanup-completed",
+    "source": "05-agent/agent-attachment-journey-new-cleanup-completed/viewport.png",
+    "sha256": "c6ea52c42a7d3b8cc151cb5ae038b22ff3b23712f2d9793bb8239756d72c5bb3",
+    "sheet": "overview-3.jpg"
+  },
+  {
+    "state": "agent-attachment-journey-new-cleanup-failed",
+    "source": "05-agent/agent-attachment-journey-new-cleanup-failed/viewport.png",
+    "sha256": "59fdf1cc28907027ae5037925a9bd407e4d3f8e52c11498baca9ae3f9e066ce5",
+    "sheet": "overview-3.jpg"
+  },
+  {
+    "state": "agent-attachment-journey-new-cleanup-notice-dismissed",
+    "source": "05-agent/agent-attachment-journey-new-cleanup-notice-dismissed/viewport.png",
+    "sha256": "55a437476ccc9e4b855ef0b491be650ee9017da1991944af54b583548b976c49",
+    "sheet": "overview-3.jpg"
+  },
+  {
+    "state": "agent-attachment-journey-new-cleanup-pending",
+    "source": "05-agent/agent-attachment-journey-new-cleanup-pending/viewport.png",
+    "sha256": "502206fd96ecf6caa3e56bcebb0cd6e833bedc5487d73e048a8fe35d2f9e0d21",
+    "sheet": "overview-3.jpg"
+  },
+  {
+    "state": "agent-attachment-journey-pdf-empty",
+    "source": "05-agent/agent-attachment-journey-pdf-empty/viewport.png",
+    "sha256": "c6ea52c42a7d3b8cc151cb5ae038b22ff3b23712f2d9793bb8239756d72c5bb3",
+    "sheet": "overview-3.jpg"
+  },
+  {
+    "state": "agent-attachment-journey-pdf-metadata-tapped",
+    "source": "05-agent/agent-attachment-journey-pdf-metadata-tapped/viewport.png",
+    "sha256": "467e8af63d6f17a0472024323e13f25d58a7f273635ab325647f69228e0e7fc7",
+    "sheet": "overview-4.jpg"
+  },
+  {
+    "state": "agent-attachment-journey-pdf-only-completed",
+    "source": "05-agent/agent-attachment-journey-pdf-only-completed/viewport.png",
+    "sha256": "28177de47504cadcbb042d6f125a87140232ffacac001996af64687d7665b450",
+    "sheet": "overview-4.jpg"
+  },
+  {
+    "state": "agent-attachment-journey-pdf-oversized",
+    "source": "05-agent/agent-attachment-journey-pdf-oversized/viewport.png",
+    "sha256": "607fdbc48c1013f2d06dab4545bec4491fec1f42e728185933c80629872972da",
+    "sheet": "overview-4.jpg"
+  },
+  {
+    "state": "agent-attachment-journey-pdf-oversized-notice-dismissed",
+    "source": "05-agent/agent-attachment-journey-pdf-oversized-notice-dismissed/viewport.png",
+    "sha256": "c6ea52c42a7d3b8cc151cb5ae038b22ff3b23712f2d9793bb8239756d72c5bb3",
+    "sheet": "overview-4.jpg"
+  },
+  {
+    "state": "agent-attachment-journey-pdf-unsupported",
+    "source": "05-agent/agent-attachment-journey-pdf-unsupported/viewport.png",
+    "sha256": "10f96f46aca379e0b3a19238b58cf1a80971cae0bc13aa322f8e2c38965d6716",
+    "sheet": "overview-4.jpg"
+  },
+  {
+    "state": "agent-attachment-journey-pdf-unsupported-notice-dismissed",
+    "source": "05-agent/agent-attachment-journey-pdf-unsupported-notice-dismissed/viewport.png",
+    "sha256": "c6ea52c42a7d3b8cc151cb5ae038b22ff3b23712f2d9793bb8239756d72c5bb3",
+    "sheet": "overview-4.jpg"
+  },
+  {
+    "state": "agent-attachment-journey-pdf-upload-failed",
+    "source": "05-agent/agent-attachment-journey-pdf-upload-failed/viewport.png",
+    "sha256": "246b2aef975ebe0fdbe5fb9a17075388297fe55a44245eb74d1f0709f29c323e",
+    "sheet": "overview-4.jpg"
+  },
+  {
+    "state": "agent-attachment-journey-pdf-upload-failure-dismissed",
+    "source": "05-agent/agent-attachment-journey-pdf-upload-failure-dismissed/viewport.png",
+    "sha256": "c6ea52c42a7d3b8cc151cb5ae038b22ff3b23712f2d9793bb8239756d72c5bb3",
+    "sheet": "overview-4.jpg"
+  },
+  {
+    "state": "agent-attachment-journey-pdf-upload-recovered",
+    "source": "05-agent/agent-attachment-journey-pdf-upload-recovered/viewport.png",
+    "sha256": "31f683e0f0d49944ba554c7f72354ee5d3e470fceec15246fae0490d5e9d431c",
+    "sheet": "overview-4.jpg"
+  },
+  {
+    "state": "agent-attachment-journey-photo-pick-cancelled",
+    "source": "05-agent/agent-attachment-journey-photo-pick-cancelled/viewport.png",
+    "sha256": "da01da1039a3a509281e4e51c1643eef957eb40f3a7d1cfadd519410c331fbd1",
+    "sheet": "overview-4.jpg"
+  },
+  {
+    "state": "agent-attachment-journey-photo-pick-pending",
+    "source": "05-agent/agent-attachment-journey-photo-pick-pending/viewport.png",
+    "sha256": "c530e396e788aa6a9c5a04c3436cda552fa0474edd77b6c928b5e634be13fb7e",
+    "sheet": "overview-4.jpg"
+  }
+]

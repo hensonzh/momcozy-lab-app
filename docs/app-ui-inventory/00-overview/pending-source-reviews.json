@@ -1,0 +1,19 @@
+{
+  "note": "Named source changes tracked during inventory have matching capture/reuse proof in SOURCE-VERSION-ACCEPTANCE.md. This does not relabel all historical screenshots as current; originals and their recorded versions remain intact.",
+  "files": [],
+  "closed_reviews": {
+    "lib/modules/services/presentation/consultation_summary_page.dart": "CONSULTATION-SUMMARY-CURRENT.md",
+    "lib/features/auth/presentation/auth_page.dart": "AUTH-CURRENT.md + AUTH-SUBMIT-FEEDBACK-CURRENT.md",
+    "lib/features/auth/presentation/auth_login_chrome.dart": "AUTH-CURRENT.md + AUTH-SUBMIT-FEEDBACK-CURRENT.md",
+    "lib/features/agent_hub/agent_hub_page.dart": "SOURCE-VERSION-ACCEPTANCE.md: AGENT-CURRENT-REUSE.md",
+    "lib/features/auth/presentation/invite_auth_page.dart": "SOURCE-VERSION-ACCEPTANCE.md: CONFIGURED-PAGES-CURRENT.md, CONFIGURED-SUBMISSION-CURRENT.md, CONFIGURED-ERRORS-CURRENT.md",
+    "lib/features/onboarding/presentation/onboarding_page.dart": "SOURCE-VERSION-ACCEPTANCE.md: CONFIGURED-PAGES-CURRENT.md, CONFIGURED-SUBMISSION-CURRENT.md, CONFIGURED-ERRORS-CURRENT.md",
+    "lib/modules/consultation/presentation/room_page.dart": "SOURCE-VERSION-ACCEPTANCE.md: CONSULTATION-PREFLIGHT-FEEDBACK-CURRENT.md, CONSULTATION-LIVE-CURRENT.md, CONSULTATION-OUTCOME-CURRENT.md",
+    "lib/modules/mom/presentation/lactation_panel.dart": "SOURCE-VERSION-ACCEPTANCE.md: LACTATION-VERSION-CURRENT.md",
+    "lib/modules/schedule/presentation/personal_schedule_editor.dart": "SOURCE-VERSION-ACCEPTANCE.md: SCHEDULE-CURRENT.md, SCHEDULE-FEEDBACK-CURRENT.md",
+    "lib/modules/schedule/presentation/schedule_page.dart": "SOURCE-VERSION-ACCEPTANCE.md: SCHEDULE-CURRENT.md, SCHEDULE-FEEDBACK-CURRENT.md",
+    "lib/modules/services/presentation/service_renew_page.dart": "SOURCE-VERSION-ACCEPTANCE.md: RENEW-CURRENT.md, RENEW-PENDING-CURRENT.md",
+    "lib/shared/widgets/product_feedback.dart": "SOURCE-VERSION-ACCEPTANCE.md: AUTH-SUBMIT-FEEDBACK-CURRENT.md, SCHEDULE-CURRENT.md, INTAKE-FEEDBACK-CURRENT.md, STATE-MAP-FINAL.md, LACTATION-VERSION-CURRENT.md"
+  },
+  "partial_reviews": {}
+}

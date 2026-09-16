@@ -1,0 +1,37 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/modules/services/service_purchase_test.dart
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/modules/services/service_package_redesign_test.dart: (setUpAll)
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_redesign_test.dart: (setUpAll)
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/modules/services/service_package_redesign_test.dart: package loading failure retry and missing state 393-1x
+00:00 +1: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_redesign_test.dart: catalog initial failure empty and pull refresh recovery 393-1x
+00:00 +2: /Users/lute/project/momcozy-lab/app/test/modules/services/service_purchase_test.dart: purchase states and booking result at 320.0 / 1.0
+00:00 +3: /Users/lute/project/momcozy-lab/app/test/modules/services/service_purchase_test.dart: purchase states and booking result at 320.0 / 1.0
+00:00 +4: /Users/lute/project/momcozy-lab/app/test/modules/services/service_purchase_test.dart: purchase states and booking result at 320.0 / 1.0
+00:00 +5: /Users/lute/project/momcozy-lab/app/test/modules/services/service_purchase_test.dart: purchase states and booking result at 320.0 / 1.0
+00:00 +6: /Users/lute/project/momcozy-lab/app/test/modules/services/service_purchase_test.dart: purchase states and booking result at 320.0 / 1.0
+00:00 +7: /Users/lute/project/momcozy-lab/app/test/modules/services/service_purchase_test.dart: purchase states and booking result at 320.0 / 1.0
+00:00 +8: /Users/lute/project/momcozy-lab/app/test/modules/services/service_catalog_redesign_test.dart: catalog initial failure empty and pull refresh recovery 320-2x
+00:00 +9: /Users/lute/project/momcozy-lab/app/test/modules/services/service_purchase_test.dart: purchase states and booking result at 320.0 / 2.0
+00:01 +10: /Users/lute/project/momcozy-lab/app/test/modules/services/service_purchase_test.dart: purchase states and booking result at 320.0 / 2.0
+00:01 +11: /Users/lute/project/momcozy-lab/app/test/modules/services/service_purchase_test.dart: purchase states and booking result at 320.0 / 2.0
+00:01 +12: /Users/lute/project/momcozy-lab/app/test/modules/services/service_purchase_test.dart: purchase states and booking result at 390.0 / 1.0
+00:01 +13: /Users/lute/project/momcozy-lab/app/test/modules/services/service_purchase_test.dart: purchase states and booking result at 390.0 / 2.0
+00:01 +14: /Users/lute/project/momcozy-lab/app/test/modules/services/service_purchase_test.dart: purchase states and booking result at 430.0 / 1.0
+00:01 +15: /Users/lute/project/momcozy-lab/app/test/modules/services/service_purchase_test.dart: purchase states and booking result at 430.0 / 2.0
+00:02 +16: /Users/lute/project/momcozy-lab/app/test/modules/services/service_purchase_test.dart: Stripe uses order mode, reports launch failure and queries returned benefits
+00:02 +17: /Users/lute/project/momcozy-lab/app/test/modules/services/service_purchase_test.dart: pending payment blocks back and uncertain retry keeps original card and outcome
+00:02 +18: /Users/lute/project/momcozy-lab/app/test/modules/services/service_purchase_test.dart: cancelled PaymentMode.sandbox purchase has no payment entry
+00:02 +19: /Users/lute/project/momcozy-lab/app/test/modules/services/service_purchase_test.dart: cancelled PaymentMode.stripe purchase has no payment entry
+00:02 +20: /Users/lute/project/momcozy-lab/app/test/modules/services/service_purchase_test.dart: existing backend stripe catalog and order modes decode
+00:02 +21: /Users/lute/project/momcozy-lab/app/test/modules/services/service_purchase_test.dart: failed checkout refresh clears the previous destination
+00:02 +22: /Users/lute/project/momcozy-lab/app/test/modules/services/service_purchase_test.dart: paid order without returned benefits only offers result lookup
+00:02 +23: /Users/lute/project/momcozy-lab/app/test/modules/services/service_purchase_test.dart: repository posts no price, owner or card data and carries mutation identity
+00:02 +24: /Users/lute/project/momcozy-lab/app/test/modules/services/service_purchase_test.dart: eligibility needs acknowledgement, failed order creation retains its key, and duplicate taps create once
+00:02 +25: /Users/lute/project/momcozy-lab/app/test/modules/services/service_purchase_test.dart: unconfirmed payment retries original outcome and restores the authoritative purchase
+00:02 +26: /Users/lute/project/momcozy-lab/app/test/modules/services/service_purchase_test.dart: purchase confirms region, handles test verification, then exposes a saved service
+00:02 +27: /Users/lute/project/momcozy-lab/app/test/modules/services/service_purchase_test.dart: sandbox checkout renders at 320.0 / 1.0
+00:02 +28: /Users/lute/project/momcozy-lab/app/test/modules/services/service_purchase_test.dart: sandbox checkout renders at 320.0 / 2.0
+00:02 +29: /Users/lute/project/momcozy-lab/app/test/modules/services/service_purchase_test.dart: sandbox checkout renders at 390.0 / 1.0
+00:02 +30: /Users/lute/project/momcozy-lab/app/test/modules/services/service_purchase_test.dart: sandbox checkout renders at 390.0 / 2.0
+00:02 +31: /Users/lute/project/momcozy-lab/app/test/modules/services/service_purchase_test.dart: sandbox checkout renders at 430.0 / 1.0
+00:02 +32: /Users/lute/project/momcozy-lab/app/test/modules/services/service_purchase_test.dart: sandbox checkout renders at 430.0 / 2.0
+00:02 +33: All tests passed!

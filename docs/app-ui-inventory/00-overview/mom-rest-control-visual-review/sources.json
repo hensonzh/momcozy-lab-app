@@ -1,0 +1,2933 @@
+{
+  "method": "all original viewport and long PNGs split into continuous full-width 650px strips; exactly identical decoded pixel strips reviewed once with coverage references for every original",
+  "sources": [
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-day-rest-none-393-1x.long.png",
+      "sha256": "9ecb55b17aa41123109122d9e8fb60447d7e7f71bd7e12cf14d12746968c6822",
+      "width": 393,
+      "height": 1359,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 0,
+          "pixel_sha256": "ef6e3fa547d145e3691c57c09c9bc8974e83a87780693afc1e25c5f00305bf74"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "segment_id": 1,
+          "pixel_sha256": "0266c1790752ef0ec79e7df74d1ed2b9ee33300579ddca8c232e0c3adbc3ae4b"
+        },
+        {
+          "y0": 1300,
+          "y1": 1359,
+          "segment_id": 2,
+          "pixel_sha256": "52eea7f801e70fd2c6d7e787b5fb25352ba0e30e14097d55e7487c8279ada35d"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-day-rest-none-393-1x.png",
+      "sha256": "99934fc0da7914d358112a2e679eb92677f752c2b1e0307a92de196044f8fd58",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 3,
+          "pixel_sha256": "48f2a950673eab0f3f154581cd64e12ae93acb78ea2b3e80cba77c8e1952f1ab"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "segment_id": 4,
+          "pixel_sha256": "8a9614724fa9eee7f2e6e2c7cb12c2d79de8242accd53c836a3f67bb9b31787a"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-day-rest-sixtyMinutesPlus-320-2x.long.png",
+      "sha256": "27609bea30f2256e7c687105e48f2c4e83bc01c3561c356124920ff7995b3422",
+      "width": 320,
+      "height": 3213,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 5,
+          "pixel_sha256": "fb1b41e8e65a12b28b30890cfc802f1e04185ab7d5dc8522e001bdb532d73672"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "segment_id": 6,
+          "pixel_sha256": "acc0b3e3cfff6555dfa9788c74f712cf39cc8d8f46dcbbc6509d68447e3fbfce"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "segment_id": 7,
+          "pixel_sha256": "2293dba257853ceb8cc0f2f685bd5f3299c64b786882ad2446fe9c0a2fea30ba"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "segment_id": 8,
+          "pixel_sha256": "8aea84d0de2a8207b42f18c67464cd240c38c8cd8fca88a34ba3da0cd29b008a"
+        },
+        {
+          "y0": 2600,
+          "y1": 3213,
+          "segment_id": 9,
+          "pixel_sha256": "51faaf01e7f2f7b83a75ee53e99528d5ea2be483178070049f9958fcfd03c161"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-day-rest-sixtyMinutesPlus-320-2x.png",
+      "sha256": "765b78c17e17d47fd2c7ae62280683f2deed434996d1db55ce06f570b1598bce",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 10,
+          "pixel_sha256": "e2b3f60eb851220fa7004f4ae5bd04262025f0ec2b2cd3ea93166f25b024ebb0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "segment_id": 11,
+          "pixel_sha256": "2709d7e4afd8ee505863b063c2e0976bea6cc3b0f37d041b5e983a337ae03443"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-day-rest-sixtyMinutesPlus-393-1x.long.png",
+      "sha256": "12d323018fb84aa3041ca48af4c58c4e4583c8c14f40f578cbd8464e228345f8",
+      "width": 393,
+      "height": 1359,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 0,
+          "pixel_sha256": "ef6e3fa547d145e3691c57c09c9bc8974e83a87780693afc1e25c5f00305bf74"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "segment_id": 12,
+          "pixel_sha256": "350f87b69401db8d1e1e24f808ed5053b3b905351aa8b457ce9c0529c2583fa8"
+        },
+        {
+          "y0": 1300,
+          "y1": 1359,
+          "segment_id": 2,
+          "pixel_sha256": "52eea7f801e70fd2c6d7e787b5fb25352ba0e30e14097d55e7487c8279ada35d"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-day-rest-sixtyMinutesPlus-393-1x.png",
+      "sha256": "84e8a35ab26c199bc0f8132aa349a642953bdc731c59e98dab75723c2bc46471",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 13,
+          "pixel_sha256": "6780399701302b6a9d7127ea4920cf9970121cb7a3741d5a3b7bc592785971db"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "segment_id": 4,
+          "pixel_sha256": "8a9614724fa9eee7f2e6e2c7cb12c2d79de8242accd53c836a3f67bb9b31787a"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-day-rest-thirtyToSixtyMinutes-393-1x.long.png",
+      "sha256": "cfa8fbc0a8c1ade366e291ca5c3cd7de221b733b58731b06b1639fdf046354f4",
+      "width": 393,
+      "height": 1359,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 0,
+          "pixel_sha256": "ef6e3fa547d145e3691c57c09c9bc8974e83a87780693afc1e25c5f00305bf74"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "segment_id": 14,
+          "pixel_sha256": "b124deaa169b35db1f0afe0cb5012d169bb49c51cb50e88ce28824e31dea6f98"
+        },
+        {
+          "y0": 1300,
+          "y1": 1359,
+          "segment_id": 2,
+          "pixel_sha256": "52eea7f801e70fd2c6d7e787b5fb25352ba0e30e14097d55e7487c8279ada35d"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-day-rest-thirtyToSixtyMinutes-393-1x.png",
+      "sha256": "4b8e24227b011610a208297aeb441a8c80a761e6e83983e4ca6ee81fd27702ce",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 15,
+          "pixel_sha256": "30c3422179f1eaeb518b8e749f20645625ff36a3cb7e261409f4de39772c4e01"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "segment_id": 4,
+          "pixel_sha256": "8a9614724fa9eee7f2e6e2c7cb12c2d79de8242accd53c836a3f67bb9b31787a"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-day-rest-underThirtyMinutes-393-1x.long.png",
+      "sha256": "a9c2e2e5ffa58b432664ebfc549ff7463bed23f5fa43a5d1ca7bb96af88041e9",
+      "width": 393,
+      "height": 1359,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 0,
+          "pixel_sha256": "ef6e3fa547d145e3691c57c09c9bc8974e83a87780693afc1e25c5f00305bf74"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "segment_id": 16,
+          "pixel_sha256": "c53c437dce8cebdf75bae542ebe495e67528a27aa19fbbe016c8ab044994e931"
+        },
+        {
+          "y0": 1300,
+          "y1": 1359,
+          "segment_id": 2,
+          "pixel_sha256": "52eea7f801e70fd2c6d7e787b5fb25352ba0e30e14097d55e7487c8279ada35d"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-day-rest-underThirtyMinutes-393-1x.png",
+      "sha256": "2718f7f492c041d91784bc2b849d3347444f504326149a1cc92888c27860c4fe",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 17,
+          "pixel_sha256": "dc2644251e9df7167196ed6e5c999c5e804f419fa79b6a02089d7164708c7d41"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "segment_id": 4,
+          "pixel_sha256": "8a9614724fa9eee7f2e6e2c7cb12c2d79de8242accd53c836a3f67bb9b31787a"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-disruption-baby-393-1x.long.png",
+      "sha256": "069e4eadaa357030e50f6f72305e65037b38b0bb799660baf11a4cb65c60ed66",
+      "width": 393,
+      "height": 1359,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 0,
+          "pixel_sha256": "ef6e3fa547d145e3691c57c09c9bc8974e83a87780693afc1e25c5f00305bf74"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "segment_id": 18,
+          "pixel_sha256": "6250b6a57ee00bbd807dffc95f97468e2ea6111de5ba37e8d3d47ce56f8aedbb"
+        },
+        {
+          "y0": 1300,
+          "y1": 1359,
+          "segment_id": 2,
+          "pixel_sha256": "52eea7f801e70fd2c6d7e787b5fb25352ba0e30e14097d55e7487c8279ada35d"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-disruption-baby-393-1x.png",
+      "sha256": "036ffc5bf6445da5e3aa84dc019cfd24202a14ef85991f9273fd4463e5086de5",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 19,
+          "pixel_sha256": "aa0803e59c618524e2fc460cd77332c63597cc4ebd276e7bf848f21014c940ab"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "segment_id": 20,
+          "pixel_sha256": "03ad6c2963302fd8719468504d9b22baf7f22951fa1191be835f9a2a4bdbcc45"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-disruption-cannotSleep-393-1x.long.png",
+      "sha256": "5fb71cc37a0d6603c9c2eba30aafd73dd7cb842a8214a7be10ca34be9a8c755b",
+      "width": 393,
+      "height": 1359,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 0,
+          "pixel_sha256": "ef6e3fa547d145e3691c57c09c9bc8974e83a87780693afc1e25c5f00305bf74"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "segment_id": 21,
+          "pixel_sha256": "af7fb28063ba79dd95f55798fea6476431cae54ce33e97c954e726df4ec246ec"
+        },
+        {
+          "y0": 1300,
+          "y1": 1359,
+          "segment_id": 2,
+          "pixel_sha256": "52eea7f801e70fd2c6d7e787b5fb25352ba0e30e14097d55e7487c8279ada35d"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-disruption-cannotSleep-393-1x.png",
+      "sha256": "29c1124d37fff9ed74fbab7b63ef7c47209cdd2a5dbbacff96c1c9bc2c977bd9",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 22,
+          "pixel_sha256": "a4c71358109b69ca7ddb0c72bf0ad6e48e20c3101c8236bb62203b7b570f876f"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "segment_id": 23,
+          "pixel_sha256": "b2a16b62a92d2728ab9ec86ff983efa89020c04d0c3781e7aaf4db4334832cf9"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-disruption-clear-baby-393-1x.long.png",
+      "sha256": "7fe47ec0bbf4e0d0e8584a29773f9da41a2ce2c691e6a817d146a7736f122eb5",
+      "width": 393,
+      "height": 1359,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 0,
+          "pixel_sha256": "ef6e3fa547d145e3691c57c09c9bc8974e83a87780693afc1e25c5f00305bf74"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "segment_id": 24,
+          "pixel_sha256": "f7a49437374923e51049ba86198182515f4d3795958f2f4d9a1b805e1b68f177"
+        },
+        {
+          "y0": 1300,
+          "y1": 1359,
+          "segment_id": 2,
+          "pixel_sha256": "52eea7f801e70fd2c6d7e787b5fb25352ba0e30e14097d55e7487c8279ada35d"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-disruption-clear-baby-393-1x.png",
+      "sha256": "47dfc751112532ef9312282328c882e906ad06f6f88cb87384cdb3e335f0f66d",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 25,
+          "pixel_sha256": "783ff6628b218adbbd9f2248051d623dac11933bb77f52e2af04a661d775133c"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "segment_id": 26,
+          "pixel_sha256": "f6a77092817bb1007af5e8d3f77dac847a77d267539c15080925c2c44e6ae6ee"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-disruption-clear-cannotSleep-393-1x.long.png",
+      "sha256": "a284a0abb973663f051c99658987eccae52e283ada9c0133e427b1c7806de3d6",
+      "width": 393,
+      "height": 1359,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 0,
+          "pixel_sha256": "ef6e3fa547d145e3691c57c09c9bc8974e83a87780693afc1e25c5f00305bf74"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "segment_id": 27,
+          "pixel_sha256": "d3ab3e7bb8a78585f18bd1ece5f4fce8c189bfc3c9780fa814e6c59ee5854051"
+        },
+        {
+          "y0": 1300,
+          "y1": 1359,
+          "segment_id": 2,
+          "pixel_sha256": "52eea7f801e70fd2c6d7e787b5fb25352ba0e30e14097d55e7487c8279ada35d"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-disruption-clear-cannotSleep-393-1x.png",
+      "sha256": "9ddd4a13f7d43bc6fc35a8d3b14d17facf493d2b7676f35f43a1cf49c1db04a2",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 28,
+          "pixel_sha256": "383adc226eb5e8c3179b26e587c785242daeb80f0545cdbb472378ab254a9506"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "segment_id": 29,
+          "pixel_sha256": "e6e109da6de7c9508ce1587613cb307df9e6bb9cf829d119c1cedb9efa519903"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-disruption-clear-discomfort-393-1x.long.png",
+      "sha256": "253a2eb9a89352b9963e738d0bf8f4ac50f9abb896e198728b10872e7ea8ed28",
+      "width": 393,
+      "height": 1359,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 0,
+          "pixel_sha256": "ef6e3fa547d145e3691c57c09c9bc8974e83a87780693afc1e25c5f00305bf74"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "segment_id": 30,
+          "pixel_sha256": "98a5a6fa02936c6c008151ba9dfa24b5f2f1f08eab5d82ce472fcacc7e954d82"
+        },
+        {
+          "y0": 1300,
+          "y1": 1359,
+          "segment_id": 2,
+          "pixel_sha256": "52eea7f801e70fd2c6d7e787b5fb25352ba0e30e14097d55e7487c8279ada35d"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-disruption-clear-discomfort-393-1x.png",
+      "sha256": "8496210ad3cfa60260062468e7ed22f833a95ab8cf550599e19f2e8166741f84",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 28,
+          "pixel_sha256": "383adc226eb5e8c3179b26e587c785242daeb80f0545cdbb472378ab254a9506"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "segment_id": 31,
+          "pixel_sha256": "c4e363214c8beffb870d431dfff3e47ec0bada44655cbcc4dd135d04a6dfad99"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-disruption-clear-environment-393-1x.long.png",
+      "sha256": "1d70a3a9013fe40c5e127ffec15a94e8143c0851dfed00384b97e664b103e3c5",
+      "width": 393,
+      "height": 1359,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 0,
+          "pixel_sha256": "ef6e3fa547d145e3691c57c09c9bc8974e83a87780693afc1e25c5f00305bf74"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "segment_id": 32,
+          "pixel_sha256": "bbcc3c62cc49eb4b4d3b66007226875083da13981003a9cb7f1c7ea205bdb158"
+        },
+        {
+          "y0": 1300,
+          "y1": 1359,
+          "segment_id": 2,
+          "pixel_sha256": "52eea7f801e70fd2c6d7e787b5fb25352ba0e30e14097d55e7487c8279ada35d"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-disruption-clear-environment-393-1x.png",
+      "sha256": "1d626e51ff6787e1128a9b8ce835dca1ff7dd58e6d00c620d86cdab854410b05",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 28,
+          "pixel_sha256": "383adc226eb5e8c3179b26e587c785242daeb80f0545cdbb472378ab254a9506"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "segment_id": 33,
+          "pixel_sha256": "39b66360534f1d5b68e173c6fb356fd10054b4c9ef51824138f01dd3db50fcaf"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-disruption-clear-feeding-393-1x.long.png",
+      "sha256": "62df57840a21c5c654a638038667ba3ae3148b72766bb288955d967a599da1f5",
+      "width": 393,
+      "height": 1359,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 0,
+          "pixel_sha256": "ef6e3fa547d145e3691c57c09c9bc8974e83a87780693afc1e25c5f00305bf74"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "segment_id": 34,
+          "pixel_sha256": "b659c76290ca0b7f3c0a894ed3fc32ab9c74aefa4538717e3721b99b4f4813e2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1359,
+          "segment_id": 2,
+          "pixel_sha256": "52eea7f801e70fd2c6d7e787b5fb25352ba0e30e14097d55e7487c8279ada35d"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-disruption-clear-feeding-393-1x.png",
+      "sha256": "0c4f04c6004234e78d2165ee67012b4415a8a4536580e11da24b2df7267c077e",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 35,
+          "pixel_sha256": "27764ad4d43f8915683a29925e9bd30ec6320cfd799b89df2a1658853f25e479"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "segment_id": 36,
+          "pixel_sha256": "6167df7b86bdd52802b64f07d03ea447faa17f5b15120c680580fd3d8894f847"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-disruption-clear-other-320-2x.long.png",
+      "sha256": "20318c979a88b3a6bfd7ae01802b5a34958d0dcdaf84c96ccbee7be5e64bc0ba",
+      "width": 320,
+      "height": 3213,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 5,
+          "pixel_sha256": "fb1b41e8e65a12b28b30890cfc802f1e04185ab7d5dc8522e001bdb532d73672"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "segment_id": 6,
+          "pixel_sha256": "acc0b3e3cfff6555dfa9788c74f712cf39cc8d8f46dcbbc6509d68447e3fbfce"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "segment_id": 7,
+          "pixel_sha256": "2293dba257853ceb8cc0f2f685bd5f3299c64b786882ad2446fe9c0a2fea30ba"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "segment_id": 37,
+          "pixel_sha256": "945bf2ab8072dc7519dba1d548652dd07a2655fcc6dc89d8f4a593c0f69d68ff"
+        },
+        {
+          "y0": 2600,
+          "y1": 3213,
+          "segment_id": 38,
+          "pixel_sha256": "49b1646c2f0085cc10497eddaeea826fa1eb2f38a879eb81ea2228dcb929b964"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-disruption-clear-other-320-2x.png",
+      "sha256": "a5a034f8904d8a1294c57cbb4436950402abe501b87343c31acde57a7c8e9e15",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 39,
+          "pixel_sha256": "dba98ba9c175464faafb1e82581581c19b63aaa9201a8b91a14dc1c9edb9ee55"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "segment_id": 40,
+          "pixel_sha256": "4521372c0eec2498393acc5d5bb17776bdf1cf10485e20411d7fc2f24b6f075b"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-disruption-clear-other-393-1x.long.png",
+      "sha256": "46e3da1d685893a9beac582bb719e3a70cd36f9e1e436dadb2ddc25299ac15de",
+      "width": 393,
+      "height": 1359,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 0,
+          "pixel_sha256": "ef6e3fa547d145e3691c57c09c9bc8974e83a87780693afc1e25c5f00305bf74"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "segment_id": 41,
+          "pixel_sha256": "bfd3bd122aa2abe8f8027bfa83e1a9cd0eb428f5aed179ce4208ff8322a67bf7"
+        },
+        {
+          "y0": 1300,
+          "y1": 1359,
+          "segment_id": 2,
+          "pixel_sha256": "52eea7f801e70fd2c6d7e787b5fb25352ba0e30e14097d55e7487c8279ada35d"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-disruption-clear-other-393-1x.png",
+      "sha256": "a4033e80bb7c1c6a36a459450e73dd85ca8966894db579c3c7f2f35b4fbf19d3",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 28,
+          "pixel_sha256": "383adc226eb5e8c3179b26e587c785242daeb80f0545cdbb472378ab254a9506"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "segment_id": 4,
+          "pixel_sha256": "8a9614724fa9eee7f2e6e2c7cb12c2d79de8242accd53c836a3f67bb9b31787a"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-disruption-discomfort-393-1x.long.png",
+      "sha256": "b7b5fc46ae3db5810f0508d42d147d0f31bdc37fe43a5188e9d553a07c15cddd",
+      "width": 393,
+      "height": 1359,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 0,
+          "pixel_sha256": "ef6e3fa547d145e3691c57c09c9bc8974e83a87780693afc1e25c5f00305bf74"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "segment_id": 42,
+          "pixel_sha256": "c90225edb6c07ca328d103025a6030d968c668e1577dee4d676f299021122990"
+        },
+        {
+          "y0": 1300,
+          "y1": 1359,
+          "segment_id": 2,
+          "pixel_sha256": "52eea7f801e70fd2c6d7e787b5fb25352ba0e30e14097d55e7487c8279ada35d"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-disruption-discomfort-393-1x.png",
+      "sha256": "3d3b07a7ba7834c65d248536727f4f3f6827f43ba1495dc577a36a26f0df10ab",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 22,
+          "pixel_sha256": "a4c71358109b69ca7ddb0c72bf0ad6e48e20c3101c8236bb62203b7b570f876f"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "segment_id": 43,
+          "pixel_sha256": "8d1f8f0f720e3c4f4b6efeb3188f831d2ad0d9fcc9c651f5e201af5ecdd52a6d"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-disruption-environment-393-1x.long.png",
+      "sha256": "1c09340473e48a88a060d593f94ec1ef54e478fa223647f0e32cbab3205efd3d",
+      "width": 393,
+      "height": 1359,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 0,
+          "pixel_sha256": "ef6e3fa547d145e3691c57c09c9bc8974e83a87780693afc1e25c5f00305bf74"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "segment_id": 44,
+          "pixel_sha256": "0fa04e69d649431c71447b79da9a5869d7c7056a002cf9d9c407d01dc1695a7a"
+        },
+        {
+          "y0": 1300,
+          "y1": 1359,
+          "segment_id": 2,
+          "pixel_sha256": "52eea7f801e70fd2c6d7e787b5fb25352ba0e30e14097d55e7487c8279ada35d"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-disruption-environment-393-1x.png",
+      "sha256": "7b26460e8beba82a42b09d5ddbb7bae8bc4199d8572b3c154e50bc5defd729db",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 22,
+          "pixel_sha256": "a4c71358109b69ca7ddb0c72bf0ad6e48e20c3101c8236bb62203b7b570f876f"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "segment_id": 45,
+          "pixel_sha256": "c0cccb78c16e80a0f5642c91121045907360c72383b2cf893233fbe49c2e847c"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-disruption-feeding-393-1x.long.png",
+      "sha256": "1d2d94dbb41815673f99941c73414dc258a7407a1d5521e877cf26c006f332dd",
+      "width": 393,
+      "height": 1359,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 0,
+          "pixel_sha256": "ef6e3fa547d145e3691c57c09c9bc8974e83a87780693afc1e25c5f00305bf74"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "segment_id": 46,
+          "pixel_sha256": "6e8cd55355f968884c60342311bc6702fa35ec1ccd0be83ce10948add6b8fa18"
+        },
+        {
+          "y0": 1300,
+          "y1": 1359,
+          "segment_id": 2,
+          "pixel_sha256": "52eea7f801e70fd2c6d7e787b5fb25352ba0e30e14097d55e7487c8279ada35d"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-disruption-feeding-393-1x.png",
+      "sha256": "c9e0d1ba5c226ef4ccb30ea5b7518ee7762a8a342b2f31d4cf902e2fc57424cb",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 47,
+          "pixel_sha256": "d56363daf9dc5a40cbf1ae36b5af754f53cccc233b5ae4b8406483d7a7abc6ae"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "segment_id": 48,
+          "pixel_sha256": "baab91d19a3c688e2f6caecb157b950a948d3d1d40f998237694e1b849750d72"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-disruption-other-320-2x.long.png",
+      "sha256": "f259b2457bdf628e18eb83038eaafcea7d70367a3617edbfd270d967505760f3",
+      "width": 320,
+      "height": 3213,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 5,
+          "pixel_sha256": "fb1b41e8e65a12b28b30890cfc802f1e04185ab7d5dc8522e001bdb532d73672"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "segment_id": 6,
+          "pixel_sha256": "acc0b3e3cfff6555dfa9788c74f712cf39cc8d8f46dcbbc6509d68447e3fbfce"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "segment_id": 7,
+          "pixel_sha256": "2293dba257853ceb8cc0f2f685bd5f3299c64b786882ad2446fe9c0a2fea30ba"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "segment_id": 37,
+          "pixel_sha256": "945bf2ab8072dc7519dba1d548652dd07a2655fcc6dc89d8f4a593c0f69d68ff"
+        },
+        {
+          "y0": 2600,
+          "y1": 3213,
+          "segment_id": 49,
+          "pixel_sha256": "586f1824e7d7e57a498912f4a1097c15825b7c4d2265c1a777409aeba4fe6996"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-disruption-other-320-2x.png",
+      "sha256": "72f5c0a833da2cd1b672bc39f16c3d039b436a8819cd3d7dba86108c2f2a8542",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 39,
+          "pixel_sha256": "dba98ba9c175464faafb1e82581581c19b63aaa9201a8b91a14dc1c9edb9ee55"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "segment_id": 50,
+          "pixel_sha256": "59686ec420a46dae2d5d5b5ebdf8edf6f90c54c4671fca7652cf286e328b8076"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-disruption-other-393-1x.long.png",
+      "sha256": "52a1232f2265b55935b98ab363098b4ff8c0577a6177d9e6f69b42e44e3af4be",
+      "width": 393,
+      "height": 1359,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 0,
+          "pixel_sha256": "ef6e3fa547d145e3691c57c09c9bc8974e83a87780693afc1e25c5f00305bf74"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "segment_id": 51,
+          "pixel_sha256": "63957af16019e0bcda77aa98f0b2613838c3369618423dcc59e1b32c019bd800"
+        },
+        {
+          "y0": 1300,
+          "y1": 1359,
+          "segment_id": 2,
+          "pixel_sha256": "52eea7f801e70fd2c6d7e787b5fb25352ba0e30e14097d55e7487c8279ada35d"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-disruption-other-393-1x.png",
+      "sha256": "97d6b8884ef77c7fe322dd122702316f52ba0c963bcb26fc864603cdd87614ab",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 22,
+          "pixel_sha256": "a4c71358109b69ca7ddb0c72bf0ad6e48e20c3101c8236bb62203b7b570f876f"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "segment_id": 52,
+          "pixel_sha256": "5f56e33d514c853af839e5c1519dca01f94140255a4d59067f8f08c84660c244"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-disruption-restored-320-2x.long.png",
+      "sha256": "5dcab203cbe80938f1351fb761e26f2a3cb0bc62cbf36b2e9e01b19498fd6aab",
+      "width": 320,
+      "height": 3213,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 5,
+          "pixel_sha256": "fb1b41e8e65a12b28b30890cfc802f1e04185ab7d5dc8522e001bdb532d73672"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "segment_id": 6,
+          "pixel_sha256": "acc0b3e3cfff6555dfa9788c74f712cf39cc8d8f46dcbbc6509d68447e3fbfce"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "segment_id": 7,
+          "pixel_sha256": "2293dba257853ceb8cc0f2f685bd5f3299c64b786882ad2446fe9c0a2fea30ba"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "segment_id": 37,
+          "pixel_sha256": "945bf2ab8072dc7519dba1d548652dd07a2655fcc6dc89d8f4a593c0f69d68ff"
+        },
+        {
+          "y0": 2600,
+          "y1": 3213,
+          "segment_id": 53,
+          "pixel_sha256": "c52d7f09f0bd215742e04a0aac01c8a6111359eebcd7dde2989da8d16ee7e00d"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-disruption-restored-320-2x.png",
+      "sha256": "691d8f607ac40659a47a5800b763f6e930bbc5627a69e9e898084ce1a0cc6bfe",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 54,
+          "pixel_sha256": "c00ca1a6a6b4cfc3e9683606ddf0db12e940b9dce05d364178879d37493f42e4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "segment_id": 55,
+          "pixel_sha256": "f1de9137dc75dd06c6a088d7ec441197728035c07f3f9e64b51927fd12ac9dcb"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-disruption-restored-393-1x.long.png",
+      "sha256": "1d2d94dbb41815673f99941c73414dc258a7407a1d5521e877cf26c006f332dd",
+      "width": 393,
+      "height": 1359,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 0,
+          "pixel_sha256": "ef6e3fa547d145e3691c57c09c9bc8974e83a87780693afc1e25c5f00305bf74"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "segment_id": 46,
+          "pixel_sha256": "6e8cd55355f968884c60342311bc6702fa35ec1ccd0be83ce10948add6b8fa18"
+        },
+        {
+          "y0": 1300,
+          "y1": 1359,
+          "segment_id": 2,
+          "pixel_sha256": "52eea7f801e70fd2c6d7e787b5fb25352ba0e30e14097d55e7487c8279ada35d"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-disruption-restored-393-1x.png",
+      "sha256": "c9e0d1ba5c226ef4ccb30ea5b7518ee7762a8a342b2f31d4cf902e2fc57424cb",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 47,
+          "pixel_sha256": "d56363daf9dc5a40cbf1ae36b5af754f53cccc233b5ae4b8406483d7a7abc6ae"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "segment_id": 48,
+          "pixel_sha256": "baab91d19a3c688e2f6caecb157b950a948d3d1d40f998237694e1b849750d72"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-duration-cleared-320-2x.long.png",
+      "sha256": "d02df17241259ae3a8c06b96cd34508e890de086d69434c76562d580afd46d7f",
+      "width": 320,
+      "height": 3213,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 5,
+          "pixel_sha256": "fb1b41e8e65a12b28b30890cfc802f1e04185ab7d5dc8522e001bdb532d73672"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "segment_id": 56,
+          "pixel_sha256": "21c3a859c6a2b441ebc9ec746d62f389638ce57c679a11d7b0e76ba6a5ec2861"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "segment_id": 7,
+          "pixel_sha256": "2293dba257853ceb8cc0f2f685bd5f3299c64b786882ad2446fe9c0a2fea30ba"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "segment_id": 37,
+          "pixel_sha256": "945bf2ab8072dc7519dba1d548652dd07a2655fcc6dc89d8f4a593c0f69d68ff"
+        },
+        {
+          "y0": 2600,
+          "y1": 3213,
+          "segment_id": 53,
+          "pixel_sha256": "c52d7f09f0bd215742e04a0aac01c8a6111359eebcd7dde2989da8d16ee7e00d"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-duration-cleared-320-2x.png",
+      "sha256": "b5694016adf55339e20a80245fcb36b05323cde4e63981da5bf1383bf2af8f8c",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 57,
+          "pixel_sha256": "5c585e0721ef9c46e04aab36d7598b12892bb20ed9c4ad17d84617cada898499"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "segment_id": 58,
+          "pixel_sha256": "a620a94c172bbc138016a0490905d9537b9bb4a31bb07949e3c4950dccb95943"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-duration-cleared-393-1x.long.png",
+      "sha256": "893a1209ea51a80761c404bb9fdc53bc141a4f38183f27af6f67a438f7b6b017",
+      "width": 393,
+      "height": 1359,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 59,
+          "pixel_sha256": "87fad60d3c482ffa1879f679bad83bd1ee2e1b50e62ac7acbc2fbe13f2ef734f"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "segment_id": 46,
+          "pixel_sha256": "6e8cd55355f968884c60342311bc6702fa35ec1ccd0be83ce10948add6b8fa18"
+        },
+        {
+          "y0": 1300,
+          "y1": 1359,
+          "segment_id": 2,
+          "pixel_sha256": "52eea7f801e70fd2c6d7e787b5fb25352ba0e30e14097d55e7487c8279ada35d"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-duration-cleared-393-1x.png",
+      "sha256": "ef76f9ac80ff5a6de24cc414a5323179654c9bd906f3b50746ea3ef3fc6d36af",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 60,
+          "pixel_sha256": "e2b8e5f4b33a5e033abd60489d6e98f2e823da60e5e7f4a07ba75e8db6b2cee2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "segment_id": 61,
+          "pixel_sha256": "a313b4efb0170eab0b0e0260c4621235fe5d960b5d2bb23e4d7e60033cc0492b"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-duration-fiveToSixHours-393-1x.png",
+      "sha256": "57bf59e86a4e6c031e0d401d57d55e6ae65f4ddbf56a42a06e890467e3c17a47",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 62,
+          "pixel_sha256": "255dccd7265b3db8cce9e4b8e4674d3e1e99c52eb1f24d41f6ede96cf0ce722d"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "segment_id": 63,
+          "pixel_sha256": "b3078baffb4caf64f435a605f706d31dd82760434b55fb784c3b4a408b75f815"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-duration-fourToFiveHours-393-1x.png",
+      "sha256": "78429aab529fa9af1df6afe3c090dfc2d59defaa5c90b228e830102df543a9ca",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 64,
+          "pixel_sha256": "43d81a41694ed0bba665b31df4123d681d83125dcd5d40dcdfae5f2703d04e85"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "segment_id": 63,
+          "pixel_sha256": "b3078baffb4caf64f435a605f706d31dd82760434b55fb784c3b4a408b75f815"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-duration-restored-320-2x.long.png",
+      "sha256": "2ba384745dd2c4bda0292c49a494c85def9d89fcbb6a12d6258e1f43af23ea8b",
+      "width": 320,
+      "height": 3213,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 65,
+          "pixel_sha256": "4984c117157ce983697292d6d1e551e2d6115948191251ff0e3f79f86b51ac0b"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "segment_id": 66,
+          "pixel_sha256": "3362d43a568f02aa2fed81abdc537f5b0eccbd61eada8f5cfd7349944dba6305"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "segment_id": 7,
+          "pixel_sha256": "2293dba257853ceb8cc0f2f685bd5f3299c64b786882ad2446fe9c0a2fea30ba"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "segment_id": 37,
+          "pixel_sha256": "945bf2ab8072dc7519dba1d548652dd07a2655fcc6dc89d8f4a593c0f69d68ff"
+        },
+        {
+          "y0": 2600,
+          "y1": 3213,
+          "segment_id": 53,
+          "pixel_sha256": "c52d7f09f0bd215742e04a0aac01c8a6111359eebcd7dde2989da8d16ee7e00d"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-duration-restored-320-2x.png",
+      "sha256": "d730592b73392564b1b20a49d9e3da5a8e6c595a9101940a828138e58327963b",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 67,
+          "pixel_sha256": "4da3a616481cbfe3949c5eb5bb753ea7fd0fe821ec3586ec860969c105e613b2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "segment_id": 68,
+          "pixel_sha256": "3e66045f7903437df704389adff01567152168acc02661085871088dbf5781ed"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-duration-restored-393-1x.long.png",
+      "sha256": "08e6265dee4bdbbb09aec06c3f3e776c88ad3b6aa392baad9757634ac9449b5a",
+      "width": 393,
+      "height": 1359,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 69,
+          "pixel_sha256": "65fb613b8ebc20282e686a65b297954787a1ef8c8feb39b376edb953d40590cd"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "segment_id": 46,
+          "pixel_sha256": "6e8cd55355f968884c60342311bc6702fa35ec1ccd0be83ce10948add6b8fa18"
+        },
+        {
+          "y0": 1300,
+          "y1": 1359,
+          "segment_id": 2,
+          "pixel_sha256": "52eea7f801e70fd2c6d7e787b5fb25352ba0e30e14097d55e7487c8279ada35d"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-duration-restored-393-1x.png",
+      "sha256": "1ab13f5ddf21cba5f230d163da63ef70c69a7e72f8f7ad917e5b4ff03c2ce6a6",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 70,
+          "pixel_sha256": "7593e1c8cc5799aec42a0496d8dc5fb543c00d1214894cd29448934e38a70d05"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "segment_id": 71,
+          "pixel_sha256": "6a5176078527a79b0fa0d9c638d5c2f5d31ae9abe52a379153fdbf87135c0fda"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-duration-sixHoursPlus-393-1x.png",
+      "sha256": "4ad5dd30f4cc4bb7662546fdbe4b63815a9d2326ce9ba89ed9a02d3f16332e88",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 72,
+          "pixel_sha256": "f77302a919802aaaf553459a8ed2c36123a251b00c3feaba67ee8218164ef37b"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "segment_id": 63,
+          "pixel_sha256": "b3078baffb4caf64f435a605f706d31dd82760434b55fb784c3b4a408b75f815"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-duration-threeToFourHours-393-1x.png",
+      "sha256": "4f9b991b554997b2e0a8a79c6a049833c196fe5b0bfe0a676a5e81cd2e11a8de",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 73,
+          "pixel_sha256": "29e68798d4433f0b9a0f2e7b8a8f1380afa94a1a99fa6b365e381fdb61aa5f6e"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "segment_id": 63,
+          "pixel_sha256": "b3078baffb4caf64f435a605f706d31dd82760434b55fb784c3b4a408b75f815"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-duration-underThreeHours-393-1x.png",
+      "sha256": "ef7f1190737ff3fbf0a9e85bf0f7bfeb1e35964bff1074ad42b5a7b5acd4caef",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 74,
+          "pixel_sha256": "172e3816fb2f1fecf93e9257a5dee10e65c2c89ed67d3f9ffc849c7fa97aaedc"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "segment_id": 63,
+          "pixel_sha256": "b3078baffb4caf64f435a605f706d31dd82760434b55fb784c3b4a408b75f815"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-duration-unknown-320-2x.long.png",
+      "sha256": "9030847e503e3bf7d5b732cf4e30093bd18334e8b7d874bfda48aa9fcb96615c",
+      "width": 320,
+      "height": 1717,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 5,
+          "pixel_sha256": "fb1b41e8e65a12b28b30890cfc802f1e04185ab7d5dc8522e001bdb532d73672"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "segment_id": 75,
+          "pixel_sha256": "2dbdccb74e30ddf1d7d98192af2de1b4c672ebcb3981f0edd1db0d5cb4f7f5c1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1717,
+          "segment_id": 76,
+          "pixel_sha256": "5d9b5a7826f8d4658c68d344460103fcf5b7d4df7fcc603de7e6792a2e903a03"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-duration-unknown-320-2x.png",
+      "sha256": "3adc61e6a97bee09e3c995b391b868a36876a464b68cdf6dbc6987dafdd8efcc",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 77,
+          "pixel_sha256": "6e011113d25a1b5dc94f9a3a2964beaf2f06cf9ef1373e64ea95f7b1b333a0c0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "segment_id": 58,
+          "pixel_sha256": "a620a94c172bbc138016a0490905d9537b9bb4a31bb07949e3c4950dccb95943"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-duration-unknown-393-1x.png",
+      "sha256": "996f949f0451ecd2c18f03e105a8b6ff9c67641a891d8b61497233fcfe9f7027",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 78,
+          "pixel_sha256": "9f122ae6618acab2770690a12cb2560d827ee07811b1a2375e202332d8288c71"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "segment_id": 63,
+          "pixel_sha256": "b3078baffb4caf64f435a605f706d31dd82760434b55fb784c3b4a408b75f815"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-empty-320-2x.long.png",
+      "sha256": "9952801716994aab3bd453933032f3e98c25c191abb0b812a280fee6f140177e",
+      "width": 320,
+      "height": 1717,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 79,
+          "pixel_sha256": "57c73db957cd90f08499a33ed87e11f0cc3fff6014d470bca98cea27f817abfa"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "segment_id": 80,
+          "pixel_sha256": "09e2a71beddd533e11eebacb23c9e02319927bd22ddc01760fe1ec0122664172"
+        },
+        {
+          "y0": 1300,
+          "y1": 1717,
+          "segment_id": 76,
+          "pixel_sha256": "5d9b5a7826f8d4658c68d344460103fcf5b7d4df7fcc603de7e6792a2e903a03"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-empty-320-2x.png",
+      "sha256": "ae31def44cfc5e50bd11cdd299faf24a0507d9874237764354264547f97f6a7c",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 79,
+          "pixel_sha256": "57c73db957cd90f08499a33ed87e11f0cc3fff6014d470bca98cea27f817abfa"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "segment_id": 81,
+          "pixel_sha256": "ce9d8c26e930d9fbdeb4bffbb6087b12ad19ba461051d54c9ed4609e3b8566e5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-empty-393-1x.png",
+      "sha256": "0318e3028fbf45200c349560810b95e0b693aca46095fa682ffb4bc5ff94664c",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 82,
+          "pixel_sha256": "5e7dc64490ecbb020f2f00bb60666d245eb95a922996cff4db6421bf473b75cf"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "segment_id": 63,
+          "pixel_sha256": "b3078baffb4caf64f435a605f706d31dd82760434b55fb784c3b4a408b75f815"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-home-entry-320-2x.long.png",
+      "sha256": "b29f1f9dc909ca023dcd2865b0d4424a7485a4fb1dd4d05f54d8ee61e6cf46ef",
+      "width": 320,
+      "height": 1939,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 83,
+          "pixel_sha256": "a6aa9ef781460e5016527f099324419f84c6e4f14cdb26c410651cd7359b41ef"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "segment_id": 84,
+          "pixel_sha256": "0edf1d289b2e804b112ca91367c51524ae8a6a6a4684a4fdcad651b0ae8de7ad"
+        },
+        {
+          "y0": 1300,
+          "y1": 1939,
+          "segment_id": 85,
+          "pixel_sha256": "8824f3d60a1ba788460adc4d5731a39ee81dafb5cb1f7d7112dd43123bbe2812"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-home-entry-320-2x.png",
+      "sha256": "6b61a480f7a3fd5ddb29685624aed748a99b94ad55016153855b11225ef09868",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 83,
+          "pixel_sha256": "a6aa9ef781460e5016527f099324419f84c6e4f14cdb26c410651cd7359b41ef"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "segment_id": 86,
+          "pixel_sha256": "1462d46c4861c29041d879736402097e4fd061fcb6e577142cd6e832cb70fae0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-home-entry-393-1x.long.png",
+      "sha256": "0a4e3294f0ff67f0d7ed84ee3eacb393b50571fb4db300a7d15899ba9359a330",
+      "width": 393,
+      "height": 917,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 87,
+          "pixel_sha256": "baa661999d6307948942c23dc2e7dad221367a614b3ae09dd12dec24bc67fec6"
+        },
+        {
+          "y0": 650,
+          "y1": 917,
+          "segment_id": 88,
+          "pixel_sha256": "134109b5afc9a0d972ecc00b197fb963d8131bfc37dbfad2a4c51a0a091a86ad"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-home-entry-393-1x.png",
+      "sha256": "be291808401e7f353b8f14552b0df4a698f3edd191e5e2d770c66c2e129fc145",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 87,
+          "pixel_sha256": "baa661999d6307948942c23dc2e7dad221367a614b3ae09dd12dec24bc67fec6"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "segment_id": 89,
+          "pixel_sha256": "3208ac8b3b1d4a7464bc46ef7618c8e19bd85dee870d86c1847457571b6198a6"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-home-refreshed-320-2x.long.png",
+      "sha256": "c3ede2de854e2b7f6986c58678e16a4fa27bff72b6c6133e2f1fdaf21a135d71",
+      "width": 320,
+      "height": 2062,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 90,
+          "pixel_sha256": "b1f7a808bfb15121c031df895f5bfbb79ca22d2e2ae5c3402c20aa884c7e9db9"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "segment_id": 91,
+          "pixel_sha256": "9963aa27646ba8d36e43e9e763e2d06960a8921b4593d6cec714342113cbf09f"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "segment_id": 92,
+          "pixel_sha256": "634747ea5d1d427ab3ba143d562bd89e271b9c7daca23840c87fef7f46107109"
+        },
+        {
+          "y0": 1950,
+          "y1": 2062,
+          "segment_id": 93,
+          "pixel_sha256": "873efc1ad07d70326d429bef832fe740960d9621eb065f9273fa719013a4966b"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-home-refreshed-320-2x.png",
+      "sha256": "04f1d601d49ad4d1a49690cc626c9d87382c3318c0d76605a3e33bb1b1eb2409",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 94,
+          "pixel_sha256": "b42c478b0109873a1ed25a2431e396be50b19117e0a3ce1f6064ef96643c2a43"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "segment_id": 95,
+          "pixel_sha256": "80cf53940f2e611cb2082fe0fcd8780317605a2640d87dbed97e983c7f61be2a"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-home-refreshed-393-1x.long.png",
+      "sha256": "ba68c0e1969cf8e07d60f2fe0a13f5077c10b69fb472762150aeb935222684d1",
+      "width": 393,
+      "height": 920,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 96,
+          "pixel_sha256": "e5df12fa02ae89c131136e13a194a467c3597ab7089cbe6ca0c685e2791158dd"
+        },
+        {
+          "y0": 650,
+          "y1": 920,
+          "segment_id": 97,
+          "pixel_sha256": "5114e61c90da9079afee7e92bb8d1e1588f7d4ff461871c84ba4a415660ed95d"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-home-refreshed-393-1x.png",
+      "sha256": "90588fe4755151b759b8f18cbb5037eec0daf3ab0507f6b9941580b4dc41fccc",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 98,
+          "pixel_sha256": "5ada8b1259f65ff7ef10594af871b74516ce831137568a8674b02170f5a58b18"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "segment_id": 99,
+          "pixel_sha256": "01ad37a83090b22440e753afe9b5efb12045ec1509aa7b52fb6caa7377abd650"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-home-return-320-2x.long.png",
+      "sha256": "c3ede2de854e2b7f6986c58678e16a4fa27bff72b6c6133e2f1fdaf21a135d71",
+      "width": 320,
+      "height": 2062,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 90,
+          "pixel_sha256": "b1f7a808bfb15121c031df895f5bfbb79ca22d2e2ae5c3402c20aa884c7e9db9"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "segment_id": 91,
+          "pixel_sha256": "9963aa27646ba8d36e43e9e763e2d06960a8921b4593d6cec714342113cbf09f"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "segment_id": 92,
+          "pixel_sha256": "634747ea5d1d427ab3ba143d562bd89e271b9c7daca23840c87fef7f46107109"
+        },
+        {
+          "y0": 1950,
+          "y1": 2062,
+          "segment_id": 93,
+          "pixel_sha256": "873efc1ad07d70326d429bef832fe740960d9621eb065f9273fa719013a4966b"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-home-return-320-2x.png",
+      "sha256": "f9aa7dd0cf5844b1110c9207edfd7fdcdca3ee8423b69de890f208222f04a225",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 100,
+          "pixel_sha256": "11f59a33e64856f96c84805872811e42d471e070d9627fb104a6e62f2f234f81"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "segment_id": 101,
+          "pixel_sha256": "fdbace980e5231a9faf13c74ac03be293bd11965eadd63ded12cd64a6612aaea"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-home-return-393-1x.long.png",
+      "sha256": "ba68c0e1969cf8e07d60f2fe0a13f5077c10b69fb472762150aeb935222684d1",
+      "width": 393,
+      "height": 920,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 96,
+          "pixel_sha256": "e5df12fa02ae89c131136e13a194a467c3597ab7089cbe6ca0c685e2791158dd"
+        },
+        {
+          "y0": 650,
+          "y1": 920,
+          "segment_id": 97,
+          "pixel_sha256": "5114e61c90da9079afee7e92bb8d1e1588f7d4ff461871c84ba4a415660ed95d"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-home-return-393-1x.png",
+      "sha256": "c44ec65ef3b0c701f183dd7a8ef507d69ad5dfdaee98fb430fa58f68255c72ef",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 102,
+          "pixel_sha256": "f50f2b7aa4ae03ab49a00220a4804a66e40bd388fda14cb091eb0855dce57554"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "segment_id": 103,
+          "pixel_sha256": "efc9e43c0d337ad0fa1ec8e551ca550e3e316e56440b8cb080e2948ce5988291"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-interruptions-fivePlus-393-1x.png",
+      "sha256": "ef6441d4c78985de302c960f0c5b45f7d87fca998cefc843aefc23a47de0ee39",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 104,
+          "pixel_sha256": "dff365303ca9740b6dba7830d16be255d6fc9ce220ae612805476add7bdf7b14"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "segment_id": 63,
+          "pixel_sha256": "b3078baffb4caf64f435a605f706d31dd82760434b55fb784c3b4a408b75f815"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-interruptions-none-393-1x.png",
+      "sha256": "7954d832898a4eb62045cb8c6b61f2797e7868af3cecd0c65b39eb09c8fc6b2b",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 105,
+          "pixel_sha256": "5618b997644739a7ce4eae0d073410cfbdc6366fffe27493de209bbcffa74874"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "segment_id": 63,
+          "pixel_sha256": "b3078baffb4caf64f435a605f706d31dd82760434b55fb784c3b4a408b75f815"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-interruptions-oneToTwo-393-1x.png",
+      "sha256": "6608835a05ee29d7b917de2b58788ea248ee900ebd1bf98ed54c5a3267e158bf",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 106,
+          "pixel_sha256": "f87ecdb9a9f68ccbb66f0d90ac25fb590633e4a02ff544992463c7755d053bb0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "segment_id": 63,
+          "pixel_sha256": "b3078baffb4caf64f435a605f706d31dd82760434b55fb784c3b4a408b75f815"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-interruptions-threeToFour-393-1x.png",
+      "sha256": "7cf1adbf021169f7bfbcdce44ca68dfbdf1fa525920f267e1c1128c2b9c05be3",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 107,
+          "pixel_sha256": "1ac1378c72b291af9e59c479b77bd7dcc848b5f10b63ef0d7e279750c92015e9"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "segment_id": 63,
+          "pixel_sha256": "b3078baffb4caf64f435a605f706d31dd82760434b55fb784c3b4a408b75f815"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-interruptions-unknown-320-2x.long.png",
+      "sha256": "55999cf426ac53c2365f80fd80857f221588e458205e5aafd05371fac05da6bc",
+      "width": 320,
+      "height": 1717,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 5,
+          "pixel_sha256": "fb1b41e8e65a12b28b30890cfc802f1e04185ab7d5dc8522e001bdb532d73672"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "segment_id": 6,
+          "pixel_sha256": "acc0b3e3cfff6555dfa9788c74f712cf39cc8d8f46dcbbc6509d68447e3fbfce"
+        },
+        {
+          "y0": 1300,
+          "y1": 1717,
+          "segment_id": 76,
+          "pixel_sha256": "5d9b5a7826f8d4658c68d344460103fcf5b7d4df7fcc603de7e6792a2e903a03"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-interruptions-unknown-320-2x.png",
+      "sha256": "60dd6af36748a428c7c4aa36d95cc56c0a9760556e452a98c9fe8047b47ec212",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 108,
+          "pixel_sha256": "3c645e2c253b53ecfbdb6c92522cbf214ac1b7ffdb3eb3df64e97ff40dbf9edd"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "segment_id": 109,
+          "pixel_sha256": "935eb9cb9b4e0844ce96592a9daa4d43cfffb2f3f79aa9285cfe9e70b6a63111"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-interruptions-unknown-393-1x.png",
+      "sha256": "3a50460d3688dade26a70721e503ce748d416a9102f4d3ded50686cf7145fe1e",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 110,
+          "pixel_sha256": "f475dd8ed3d490422ed90d3829117a695a576b4b1ed2b6ee9834a1a3d360a17b"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "segment_id": 63,
+          "pixel_sha256": "b3078baffb4caf64f435a605f706d31dd82760434b55fb784c3b4a408b75f815"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-more-return-320-2x.png",
+      "sha256": "feee4d506ac1bef973428daf2906121e24ef6412509098c203c180d745777dd0",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 111,
+          "pixel_sha256": "9898cc0e7a927b935b24203d50b69997722111759f8dae9af1e9464c52ed64a7"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "segment_id": 112,
+          "pixel_sha256": "f95aac7cc67095efb73a4ae0b9ee5dc9518b86f20195158e860fce9621ec483a"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-more-return-393-1x.png",
+      "sha256": "6ac33e6dd952b54bfe0bbfa4209df0bf816602f324b0120ff7730cb4d19cfda7",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 113,
+          "pixel_sha256": "f3c49068f287b436aca5535634e7bf245847c3c294038c70cc0fc5537f4560a7"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "segment_id": 114,
+          "pixel_sha256": "ae62a60cadfc8bfb09e3e94acb0dc8f7d481c4c260eae5960e33ebdc5f0799db"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-optional-collapsed-320-2x.long.png",
+      "sha256": "c856e3569694ead9717624380e7b8483cd4be932bf26a7c4d11c56e149467563",
+      "width": 320,
+      "height": 1717,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 65,
+          "pixel_sha256": "4984c117157ce983697292d6d1e551e2d6115948191251ff0e3f79f86b51ac0b"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "segment_id": 66,
+          "pixel_sha256": "3362d43a568f02aa2fed81abdc537f5b0eccbd61eada8f5cfd7349944dba6305"
+        },
+        {
+          "y0": 1300,
+          "y1": 1717,
+          "segment_id": 115,
+          "pixel_sha256": "a13fb30c1f7cfb94f862f865b88826e9336e0884b77d19ca060b7969993e4efa"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-optional-collapsed-320-2x.png",
+      "sha256": "ebe11df490c000c8e63a0e65617dee638d1abba8281f5365af9efe3f81b821f0",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 116,
+          "pixel_sha256": "e178a1da9324caa6ff6848df805db34eb513a0284efb9f3a74b51e09e34fa259"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "segment_id": 117,
+          "pixel_sha256": "0af081001f4d1d6531fbfd5a7ff8a574333ce9eaafc225bf04c35f7a4f54c073"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-optional-collapsed-393-1x.png",
+      "sha256": "0f1f7c1080304d488e5a0ccf086fb062067626cff4db6bffe264dae7fdf5f13c",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 118,
+          "pixel_sha256": "0730f24eb98aa44ed508a6fb36b8b555b053aeda41df6cbdb402c10fd9b1ba5c"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "segment_id": 119,
+          "pixel_sha256": "51e8201c3dedf28e4c1ae0cf32f05697a3b7e94f8379e7aec02159869ea378fe"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-optional-open-320-2x.long.png",
+      "sha256": "dce7596fa2ad87ffa1312a3eef18b7fee3e05e1aae81460e63356a4b48743765",
+      "width": 320,
+      "height": 3213,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 5,
+          "pixel_sha256": "fb1b41e8e65a12b28b30890cfc802f1e04185ab7d5dc8522e001bdb532d73672"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "segment_id": 6,
+          "pixel_sha256": "acc0b3e3cfff6555dfa9788c74f712cf39cc8d8f46dcbbc6509d68447e3fbfce"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "segment_id": 120,
+          "pixel_sha256": "c3b18b40adb3649d59fa121e52e18bc49cf20bb4f0d62ea7aa631a19a0a4174d"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "segment_id": 121,
+          "pixel_sha256": "6797edea6ef2092ae912543f5ce0115298873ba591ca3ec5f27d059de760b536"
+        },
+        {
+          "y0": 2600,
+          "y1": 3213,
+          "segment_id": 9,
+          "pixel_sha256": "51faaf01e7f2f7b83a75ee53e99528d5ea2be483178070049f9958fcfd03c161"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-optional-open-320-2x.png",
+      "sha256": "92e0127f51d53e8f9a576d58e026cd30a951e63d2706798387b47c7ca1c9efdb",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 116,
+          "pixel_sha256": "e178a1da9324caa6ff6848df805db34eb513a0284efb9f3a74b51e09e34fa259"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "segment_id": 122,
+          "pixel_sha256": "ac7da44dde3625fd8c34918e989f518bda9d02ebee6e7ffc3f298150f42f1f29"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-optional-open-393-1x.long.png",
+      "sha256": "ca090c13c7bfafc347c8a46b9359d13c39d0fd0cb34a6f1893a503c6faf1eae7",
+      "width": 393,
+      "height": 1359,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 0,
+          "pixel_sha256": "ef6e3fa547d145e3691c57c09c9bc8974e83a87780693afc1e25c5f00305bf74"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "segment_id": 123,
+          "pixel_sha256": "f27963e6a4ffc5e0a1b03909249b2f7b0ceff5659b0f0e7801fb77faf7093590"
+        },
+        {
+          "y0": 1300,
+          "y1": 1359,
+          "segment_id": 2,
+          "pixel_sha256": "52eea7f801e70fd2c6d7e787b5fb25352ba0e30e14097d55e7487c8279ada35d"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-optional-open-393-1x.png",
+      "sha256": "0b6cad79373b9ff2ef78d70c9d01faaf177186e5e65b87ed613f15b37da112d4",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 0,
+          "pixel_sha256": "ef6e3fa547d145e3691c57c09c9bc8974e83a87780693afc1e25c5f00305bf74"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "segment_id": 124,
+          "pixel_sha256": "1813908dd4d4fd6b314ca1481c3c5e0758827b524eb59b790f1c0bd48f257dea"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-recovery-exhausted-320-2x.long.png",
+      "sha256": "02121186048270e0be6c3cc6a99f8191f4cb4895d4f46c81f01dee0988ef15e3",
+      "width": 320,
+      "height": 1717,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 5,
+          "pixel_sha256": "fb1b41e8e65a12b28b30890cfc802f1e04185ab7d5dc8522e001bdb532d73672"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "segment_id": 6,
+          "pixel_sha256": "acc0b3e3cfff6555dfa9788c74f712cf39cc8d8f46dcbbc6509d68447e3fbfce"
+        },
+        {
+          "y0": 1300,
+          "y1": 1717,
+          "segment_id": 125,
+          "pixel_sha256": "10b5d397d9c64663af5b2e47848df1d2d4d9fb3de9b16b3919b7e28ed4560463"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-recovery-exhausted-320-2x.png",
+      "sha256": "adec2ebb2db6f543bdb0de0c513de8841c9f39bed8436e729c580d11d53dbb55",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 116,
+          "pixel_sha256": "e178a1da9324caa6ff6848df805db34eb513a0284efb9f3a74b51e09e34fa259"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "segment_id": 126,
+          "pixel_sha256": "787377910d5a882c9496f0f7e72ad8420c28abda5c00d961874c28f52c5d9adf"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-recovery-exhausted-393-1x.png",
+      "sha256": "e184612e079b0352e22e066b8b6dd04d2059b96f15f0f455707479b6787428a7",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 127,
+          "pixel_sha256": "210eda0eba641975ce932111653692f895b3b4df1a9e7e44886026fef3b6e298"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "segment_id": 63,
+          "pixel_sha256": "b3078baffb4caf64f435a605f706d31dd82760434b55fb784c3b4a408b75f815"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-recovery-managing-393-1x.png",
+      "sha256": "250b1a77dc8c5a7435f0a4249ef914e5230bbaca9b5dc9f501d9218f8647372d",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 128,
+          "pixel_sha256": "4dad10b13babb60d48f265750fd91afbf010a2f1e31bf0090c2c5f356ab3fd20"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "segment_id": 63,
+          "pixel_sha256": "b3078baffb4caf64f435a605f706d31dd82760434b55fb784c3b4a408b75f815"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-recovery-restored-393-1x.png",
+      "sha256": "1ca237eef9722ff8e7ca06756e8947b2cb2a0918b91d4be8d85c533ccab8036f",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 129,
+          "pixel_sha256": "f69397187a9b7e5231d2adae1ed566e579a236d4ed476a26b17633a70cf11369"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "segment_id": 63,
+          "pixel_sha256": "b3078baffb4caf64f435a605f706d31dd82760434b55fb784c3b4a408b75f815"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-reopened-320-2x.long.png",
+      "sha256": "28503edf308f4fb14660f6f16e20cb00d3c52ca07d054e686be44c8bc3dc36c6",
+      "width": 320,
+      "height": 1717,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 130,
+          "pixel_sha256": "5912f5f1ac10dac90a9a1c3f89775e176d0d14fc1327ddd8e63ad831c34ce294"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "segment_id": 66,
+          "pixel_sha256": "3362d43a568f02aa2fed81abdc537f5b0eccbd61eada8f5cfd7349944dba6305"
+        },
+        {
+          "y0": 1300,
+          "y1": 1717,
+          "segment_id": 131,
+          "pixel_sha256": "cdf8c28532b809f3cae26e6fd4a745618a85f7e43c53789b8b3bb7b26a581aec"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-reopened-320-2x.png",
+      "sha256": "b7fdd5e5585a97529436b8ca8496fcddd6a3196896ada0785eb8e0d2fa64a7c9",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 130,
+          "pixel_sha256": "5912f5f1ac10dac90a9a1c3f89775e176d0d14fc1327ddd8e63ad831c34ce294"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "segment_id": 132,
+          "pixel_sha256": "dedc3bdad4f79ed83a0bc75ec9dfc3d9fb1145e6018f93bfc5f93b19326e18c3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-reopened-393-1x.png",
+      "sha256": "07b106ac486449895edd03f97ad77a31e048a9c3280c5d7e584c3a9c184c4245",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 133,
+          "pixel_sha256": "258239d63d9564bec9758a413c4f771dcf76fe07187dbea95c4c913b25a2d40b"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "segment_id": 134,
+          "pixel_sha256": "c423614181b49c34055a50d813b8ff0002736dad582075c9718c6b8208078cd4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-reopened-optional-320-2x.long.png",
+      "sha256": "0b85a2dddf42c3039a410a59da6dbfc37a008189fa4e92c05846a249fb20765a",
+      "width": 320,
+      "height": 3213,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 130,
+          "pixel_sha256": "5912f5f1ac10dac90a9a1c3f89775e176d0d14fc1327ddd8e63ad831c34ce294"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "segment_id": 66,
+          "pixel_sha256": "3362d43a568f02aa2fed81abdc537f5b0eccbd61eada8f5cfd7349944dba6305"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "segment_id": 7,
+          "pixel_sha256": "2293dba257853ceb8cc0f2f685bd5f3299c64b786882ad2446fe9c0a2fea30ba"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "segment_id": 37,
+          "pixel_sha256": "945bf2ab8072dc7519dba1d548652dd07a2655fcc6dc89d8f4a593c0f69d68ff"
+        },
+        {
+          "y0": 2600,
+          "y1": 3213,
+          "segment_id": 135,
+          "pixel_sha256": "9bc40539598b136bb1837e3a951239efd355fdf1a2dde6bf5c5f3827ebe7c560"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-reopened-optional-320-2x.png",
+      "sha256": "421d81f0439c525b27f64d4121176efa93eebeda9b07734480e2b908609853b7",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 136,
+          "pixel_sha256": "563008a0db85603153d28c6e0c98359e9fc4474331f4393df08e73c99ac0ac0f"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "segment_id": 137,
+          "pixel_sha256": "8ea081ee6659630c5e289ef6009dbc55b9bac36cab56f1a2c5f592dcd930b0fb"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-reopened-optional-393-1x.long.png",
+      "sha256": "5fa08f77fcba7f3ea6cd356d94792489bbd5fcd48816c80a3093fc0602745f8f",
+      "width": 393,
+      "height": 1359,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 138,
+          "pixel_sha256": "6b254269684b8ca5df195a9e7d673c9063605982cb70e893158f6d9e9553905a"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "segment_id": 139,
+          "pixel_sha256": "fc67c45626eb244749b20fcc88d26c788018b91840aa1c762ee17cfa1861147c"
+        },
+        {
+          "y0": 1300,
+          "y1": 1359,
+          "segment_id": 140,
+          "pixel_sha256": "a7406ac0580d86a84b70c77235092cdf3b94a81ab0578b328c959751bf09bbec"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-reopened-optional-393-1x.png",
+      "sha256": "95f5b8ffdea0ff58a31a9c996be940a2bc3094ff0cee0f92fe3043c2c5e58b65",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 138,
+          "pixel_sha256": "6b254269684b8ca5df195a9e7d673c9063605982cb70e893158f6d9e9553905a"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "segment_id": 141,
+          "pixel_sha256": "e23f14c574088b2b06fd019cf2e096d9752ae22d14fb3cfd6b8effa338e613ba"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-resleep-easy-393-1x.long.png",
+      "sha256": "2c88a8afe4a243be1599558a84bc1be6c3ef6bb1c5ceed4b10bea1792a018e38",
+      "width": 393,
+      "height": 1359,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 0,
+          "pixel_sha256": "ef6e3fa547d145e3691c57c09c9bc8974e83a87780693afc1e25c5f00305bf74"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "segment_id": 142,
+          "pixel_sha256": "989bfadf5b0c72b563f72142b63c8fa8f3635686bdbb5c019df55c72aba4fdc2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1359,
+          "segment_id": 2,
+          "pixel_sha256": "52eea7f801e70fd2c6d7e787b5fb25352ba0e30e14097d55e7487c8279ada35d"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-resleep-easy-393-1x.png",
+      "sha256": "255755b02bfe4e1d905be3e2f5e465ab5232ca06c09eb95633042ea313f1b5ad",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 143,
+          "pixel_sha256": "5872f262bce2c3cac94e3dbd99d113707f155d730824a8fc1c98c9e7dadb4442"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "segment_id": 4,
+          "pixel_sha256": "8a9614724fa9eee7f2e6e2c7cb12c2d79de8242accd53c836a3f67bb9b31787a"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-resleep-hard-320-2x.long.png",
+      "sha256": "20318c979a88b3a6bfd7ae01802b5a34958d0dcdaf84c96ccbee7be5e64bc0ba",
+      "width": 320,
+      "height": 3213,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 5,
+          "pixel_sha256": "fb1b41e8e65a12b28b30890cfc802f1e04185ab7d5dc8522e001bdb532d73672"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "segment_id": 6,
+          "pixel_sha256": "acc0b3e3cfff6555dfa9788c74f712cf39cc8d8f46dcbbc6509d68447e3fbfce"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "segment_id": 7,
+          "pixel_sha256": "2293dba257853ceb8cc0f2f685bd5f3299c64b786882ad2446fe9c0a2fea30ba"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "segment_id": 37,
+          "pixel_sha256": "945bf2ab8072dc7519dba1d548652dd07a2655fcc6dc89d8f4a593c0f69d68ff"
+        },
+        {
+          "y0": 2600,
+          "y1": 3213,
+          "segment_id": 38,
+          "pixel_sha256": "49b1646c2f0085cc10497eddaeea826fa1eb2f38a879eb81ea2228dcb929b964"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-resleep-hard-320-2x.png",
+      "sha256": "4a8c1083423dbe2048f726e11bcb746239149f1ee8910673d9d72c7928846591",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 144,
+          "pixel_sha256": "f03b503610f5e686b343d89d4fb87b882ae1e08ebaa1803cbf016cbffe1273a3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "segment_id": 145,
+          "pixel_sha256": "7e253ea76b0dc011160df0b458675b7ef034256fd52bc62f616d80561b1bc73c"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-resleep-hard-393-1x.long.png",
+      "sha256": "46e3da1d685893a9beac582bb719e3a70cd36f9e1e436dadb2ddc25299ac15de",
+      "width": 393,
+      "height": 1359,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 0,
+          "pixel_sha256": "ef6e3fa547d145e3691c57c09c9bc8974e83a87780693afc1e25c5f00305bf74"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "segment_id": 41,
+          "pixel_sha256": "bfd3bd122aa2abe8f8027bfa83e1a9cd0eb428f5aed179ce4208ff8322a67bf7"
+        },
+        {
+          "y0": 1300,
+          "y1": 1359,
+          "segment_id": 2,
+          "pixel_sha256": "52eea7f801e70fd2c6d7e787b5fb25352ba0e30e14097d55e7487c8279ada35d"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-resleep-hard-393-1x.png",
+      "sha256": "a4033e80bb7c1c6a36a459450e73dd85ca8966894db579c3c7f2f35b4fbf19d3",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 28,
+          "pixel_sha256": "383adc226eb5e8c3179b26e587c785242daeb80f0545cdbb472378ab254a9506"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "segment_id": 4,
+          "pixel_sha256": "8a9614724fa9eee7f2e6e2c7cb12c2d79de8242accd53c836a3f67bb9b31787a"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-resleep-somewhatHard-393-1x.long.png",
+      "sha256": "c99b98daf97c525c542f93cfd2070d7f3c6bea1a49fdff353819d3d9e6616a00",
+      "width": 393,
+      "height": 1359,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 0,
+          "pixel_sha256": "ef6e3fa547d145e3691c57c09c9bc8974e83a87780693afc1e25c5f00305bf74"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "segment_id": 146,
+          "pixel_sha256": "97b74b4f843512b3c801d0efc36e832841a79fd3245d43871be95fc66cb102ba"
+        },
+        {
+          "y0": 1300,
+          "y1": 1359,
+          "segment_id": 2,
+          "pixel_sha256": "52eea7f801e70fd2c6d7e787b5fb25352ba0e30e14097d55e7487c8279ada35d"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-resleep-somewhatHard-393-1x.png",
+      "sha256": "39cc91024e6573a415a289b7e5ca763eb2aca4a34feb3307c54406e223da6201",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 147,
+          "pixel_sha256": "3f7a9455b811d09f12190d8c779118ded6d1f1fd60008a5f4c177294a5172830"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "segment_id": 4,
+          "pixel_sha256": "8a9614724fa9eee7f2e6e2c7cb12c2d79de8242accd53c836a3f67bb9b31787a"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-saved-320-2x.long.png",
+      "sha256": "25b3406bd167da2b1167a287a7a07fd1c63406da3463ca251d9d5a528c2675fa",
+      "width": 320,
+      "height": 1759,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 148,
+          "pixel_sha256": "4c906e8b0714ada8dfd73dc0641dafd161fd1d07f455cf4090c6640c1db13756"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "segment_id": 66,
+          "pixel_sha256": "3362d43a568f02aa2fed81abdc537f5b0eccbd61eada8f5cfd7349944dba6305"
+        },
+        {
+          "y0": 1300,
+          "y1": 1759,
+          "segment_id": 149,
+          "pixel_sha256": "dff2dda1a0ef0f09bf99d9e81557de705b5e50e5c625a124beb00e9c4f72203b"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-saved-320-2x.png",
+      "sha256": "74c49262ae92ccb3d82259c9bc4935d06b8c62e0feac6d7464d09faa1a353880",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 150,
+          "pixel_sha256": "442af3e8bab798bdc3c1a2fd027a4f04b89e139b0b450d8f3f6b65926c6879d1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "segment_id": 151,
+          "pixel_sha256": "173957139e7e20028dfe6e3a1b0edfc2336b0c0f731d8edbaafc562659d67f18"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-saved-393-1x.long.png",
+      "sha256": "a53f239ab87075e5e1e14b4a9cb51ff2a21958bf7a9e96a4cab66aff1d1cd2cb",
+      "width": 393,
+      "height": 853,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 69,
+          "pixel_sha256": "65fb613b8ebc20282e686a65b297954787a1ef8c8feb39b376edb953d40590cd"
+        },
+        {
+          "y0": 650,
+          "y1": 853,
+          "segment_id": 152,
+          "pixel_sha256": "4176cf0481995ef057358ae0620ae5ebee4ba50c9248ef80c379821f4864e94d"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-saved-393-1x.png",
+      "sha256": "379f7864789e2aad2e44e2167dc594611a6402a465cf3845e77aba3c5b27a07e",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 69,
+          "pixel_sha256": "65fb613b8ebc20282e686a65b297954787a1ef8c8feb39b376edb953d40590cd"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "segment_id": 153,
+          "pixel_sha256": "a19b61e740cc3af72c5af6886d6352aa41b5aa9062bd18e4be082100b6ed967a"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-stretch-oneToTwoHours-393-1x.long.png",
+      "sha256": "6aa996defebb60e150746b7b5d1f9b84fb9ef1355f7ccdf2f156137e85520bd9",
+      "width": 393,
+      "height": 1359,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 0,
+          "pixel_sha256": "ef6e3fa547d145e3691c57c09c9bc8974e83a87780693afc1e25c5f00305bf74"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "segment_id": 154,
+          "pixel_sha256": "cabe5c448ad907cf69caf84760847dc37c390cd75266bbebdd9f472d55694d1c"
+        },
+        {
+          "y0": 1300,
+          "y1": 1359,
+          "segment_id": 2,
+          "pixel_sha256": "52eea7f801e70fd2c6d7e787b5fb25352ba0e30e14097d55e7487c8279ada35d"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-stretch-oneToTwoHours-393-1x.png",
+      "sha256": "5545798ae00cef8ff45c0ef1e6579ca7292c7633e6f38d8b39a49d6a746e8445",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 155,
+          "pixel_sha256": "4d9c93cd354edc93c09c91e198bfef8122ab00cda5ee7c1469dca9870e983f33"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "segment_id": 4,
+          "pixel_sha256": "8a9614724fa9eee7f2e6e2c7cb12c2d79de8242accd53c836a3f67bb9b31787a"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-stretch-threeHoursPlus-393-1x.long.png",
+      "sha256": "2a69031cc23a3c060d765a34dd7184a16aeb4971d914eb7405ee223dfd0005ce",
+      "width": 393,
+      "height": 1359,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 0,
+          "pixel_sha256": "ef6e3fa547d145e3691c57c09c9bc8974e83a87780693afc1e25c5f00305bf74"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "segment_id": 156,
+          "pixel_sha256": "b786d322503ecd19fd150e8c45fafc0c3d46fe5238aa6881b73130a7442ee6b4"
+        },
+        {
+          "y0": 1300,
+          "y1": 1359,
+          "segment_id": 2,
+          "pixel_sha256": "52eea7f801e70fd2c6d7e787b5fb25352ba0e30e14097d55e7487c8279ada35d"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-stretch-threeHoursPlus-393-1x.png",
+      "sha256": "41866cee59caff1cb37044dc4af8380a10eb2fd283bdd51f443b7825494243cb",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 157,
+          "pixel_sha256": "087970812c7a4092c1eae6dc6bec592d24cb1e78f960e7ddc81338002293cc60"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "segment_id": 4,
+          "pixel_sha256": "8a9614724fa9eee7f2e6e2c7cb12c2d79de8242accd53c836a3f67bb9b31787a"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-stretch-twoToThreeHours-393-1x.long.png",
+      "sha256": "e660853c8b53fea69760f99f1d04d0384ac2ce6049cd0553b6c9623bb1a5ca54",
+      "width": 393,
+      "height": 1359,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 0,
+          "pixel_sha256": "ef6e3fa547d145e3691c57c09c9bc8974e83a87780693afc1e25c5f00305bf74"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "segment_id": 158,
+          "pixel_sha256": "375c971157b74420d9d579e3c0c9294b32a8c57b6256db205c662957be2a4fac"
+        },
+        {
+          "y0": 1300,
+          "y1": 1359,
+          "segment_id": 2,
+          "pixel_sha256": "52eea7f801e70fd2c6d7e787b5fb25352ba0e30e14097d55e7487c8279ada35d"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-stretch-twoToThreeHours-393-1x.png",
+      "sha256": "528e1d80a69350882ceb1e545f4db5b679bdc97c628dffbc25a14c15551f7050",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 159,
+          "pixel_sha256": "8921fd4ee393e2f623b1b0dbe5ede133f9bc7f90806f489653bef46f744a1959"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "segment_id": 4,
+          "pixel_sha256": "8a9614724fa9eee7f2e6e2c7cb12c2d79de8242accd53c836a3f67bb9b31787a"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-stretch-underOneHour-393-1x.long.png",
+      "sha256": "a96ab706a864c60c6e6be5b49fe6b985325c77e526a8584696ecd099e4727592",
+      "width": 393,
+      "height": 1359,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 0,
+          "pixel_sha256": "ef6e3fa547d145e3691c57c09c9bc8974e83a87780693afc1e25c5f00305bf74"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "segment_id": 160,
+          "pixel_sha256": "0e793c74db756094567f1bfb5a2b6f15bab645e79d8bc73d9b945f5fbbdbaaad"
+        },
+        {
+          "y0": 1300,
+          "y1": 1359,
+          "segment_id": 2,
+          "pixel_sha256": "52eea7f801e70fd2c6d7e787b5fb25352ba0e30e14097d55e7487c8279ada35d"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-stretch-underOneHour-393-1x.png",
+      "sha256": "ec5ef909ec613293041726c3936de7c4caf831eb62813aafa8470fce77e62ef3",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 161,
+          "pixel_sha256": "647ab4d429a95b1c952c572bf22bef997fd28cac6a0ae265beea2cabf3f01da2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "segment_id": 4,
+          "pixel_sha256": "8a9614724fa9eee7f2e6e2c7cb12c2d79de8242accd53c836a3f67bb9b31787a"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-stretch-unknown-320-2x.long.png",
+      "sha256": "2d8e0c0436f300e0091d6f38211f7cc83ca1cff7a1f0e3c7b12bd6a35c7769b4",
+      "width": 320,
+      "height": 3213,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 5,
+          "pixel_sha256": "fb1b41e8e65a12b28b30890cfc802f1e04185ab7d5dc8522e001bdb532d73672"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "segment_id": 6,
+          "pixel_sha256": "acc0b3e3cfff6555dfa9788c74f712cf39cc8d8f46dcbbc6509d68447e3fbfce"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "segment_id": 7,
+          "pixel_sha256": "2293dba257853ceb8cc0f2f685bd5f3299c64b786882ad2446fe9c0a2fea30ba"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "segment_id": 162,
+          "pixel_sha256": "6e2a87bce447d68058ddd2731f45ff50e1ca510444cd2082cf6a8c6f83f34114"
+        },
+        {
+          "y0": 2600,
+          "y1": 3213,
+          "segment_id": 9,
+          "pixel_sha256": "51faaf01e7f2f7b83a75ee53e99528d5ea2be483178070049f9958fcfd03c161"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-stretch-unknown-320-2x.png",
+      "sha256": "c16e35bc0d416d96013bf142844243532d9667756def662eb905fcac200070ac",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 163,
+          "pixel_sha256": "bc6fb0e26f71537e21fb623ba90350fea3821df198912322d23e403de11da817"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "segment_id": 164,
+          "pixel_sha256": "d29477e914637466b452704fdb053f6778423f3c4f23c2a405cdcc35579f7d76"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-stretch-unknown-393-1x.long.png",
+      "sha256": "75bc6d162629fd524dc9a3540e7828563f1ff319e07c23179bb8447eb8e435e5",
+      "width": 393,
+      "height": 1359,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 0,
+          "pixel_sha256": "ef6e3fa547d145e3691c57c09c9bc8974e83a87780693afc1e25c5f00305bf74"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "segment_id": 165,
+          "pixel_sha256": "b596769108cd7828ee5b696ba81a8cae8fb1e98ec1b25454145823d1d503117f"
+        },
+        {
+          "y0": 1300,
+          "y1": 1359,
+          "segment_id": 2,
+          "pixel_sha256": "52eea7f801e70fd2c6d7e787b5fb25352ba0e30e14097d55e7487c8279ada35d"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/mom-rest-control-stretch-unknown-393-1x.png",
+      "sha256": "b6efff8aecf0b163f1ca894807493a68173feb43a0a75f9bfeff351fa43d539f",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "segment_id": 166,
+          "pixel_sha256": "c1f803667feae6a2d8f633e0116b3ca7df4d38c0072358b30f05d36db50c337c"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "segment_id": 4,
+          "pixel_sha256": "8a9614724fa9eee7f2e6e2c7cb12c2d79de8242accd53c836a3f67bb9b31787a"
+        }
+      ]
+    }
+  ],
+  "unique_segments": 167,
+  "sheets": 28
+}

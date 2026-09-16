@@ -1,0 +1,10 @@
+{
+  "status": "PASS",
+  "report_links_checked": 87,
+  "reviewed_images": 62,
+  "journey_observations": 48,
+  "default_routes": 24,
+  "source_hashes_verified": true,
+  "errors": [],
+  "goal_completion": "NOT_PROVEN"
+}

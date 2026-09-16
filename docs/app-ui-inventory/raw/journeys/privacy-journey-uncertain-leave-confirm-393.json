@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/privacy-journey-uncertain-leave-confirm-393.png",
+  "previous_source": "test/goldens/ui_inventory/privacy-journey-partial-uncertain-393.png",
+  "route": "/privacy",
+  "trigger": "Back while result uncertain → explanation to re-read on return",
+  "root_entry": "Authenticated More page",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production privacy page/controllers and Care/Intake API repositories; isolated HTTP with versioned per-service consent storage; actual More/privacy/notification routes and notification coordinator, no real user permissions mutated",
+  "test": "test/modules/profile/privacy_inventory_journey_test.dart"
+}

@@ -45,11 +45,25 @@ class IntakeController extends ChangeNotifier {
   bool get profileReady =>
       babyId != null &&
       babyName.trim().isNotEmpty &&
+      babyName.trim().length <= 120 &&
       babyBirthDate != null &&
+      babyBirthDate!.compareTo(today) <= 0 &&
       babySex != BabySex.unspecified &&
       feedingMode != FeedingMode.unknown &&
       (int.tryParse(postpartumDays) ?? -1) >= 0 &&
-      region != null;
+      (int.tryParse(postpartumDays) ?? -1) <=
+          today.daysSince(LocalDate(1900, 1, 1)) &&
+      region != null &&
+      RegExp(r'^[A-Z]{2}$').hasMatch(region!);
+  bool get canSubmit =>
+      !busy &&
+      (uncertainSave ||
+          (profileReady &&
+              symptoms.isNotEmpty &&
+              goal.trim().isNotEmpty &&
+              goal.trim().length <= 1000 &&
+              support.trim().length <= 3000 &&
+              consent));
   LocalDate get today =>
       dateInTimezone(now(), data?.appointment.timezone ?? 'UTC');
 

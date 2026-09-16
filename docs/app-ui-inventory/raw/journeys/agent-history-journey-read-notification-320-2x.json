@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/agent-history-journey-read-notification-320-2x.png",
+  "previous_source": "test/goldens/ui_inventory/agent-history-journey-default-recovered-320-2x.png",
+  "route": "/notifications?from=/more",
+  "trigger": "Return to inbox → conversation notification marked read despite target initialization error",
+  "root_entry": "Authenticated More page",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, notification coordinator and default Agent builder; isolated notification HTTP and push/permission boundaries. Target route crashes before history repository invocation; no page/feature flag override.",
+  "test": "test/features/agent_hub/agent_history_inventory_journey_test.dart"
+}

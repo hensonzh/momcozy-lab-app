@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/mom-note-boundary-body-note-scroll-end-320-2x.png",
+  "previous_source": "test/goldens/ui_inventory/mom-note-boundary-body-note-scroll-start-320-2x.png",
+  "route": "/me",
+  "trigger": "Drag body note to end → 完成",
+  "root_entry": "Authenticated More → tap Me bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/mom/mom_note_boundary_inventory_test.dart"
+}

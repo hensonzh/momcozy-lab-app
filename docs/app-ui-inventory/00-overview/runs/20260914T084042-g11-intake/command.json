@@ -1,0 +1,11 @@
+[
+  "/Users/lute/.local/share/momcozy-toolchains/flutter/bin/flutter",
+  "--suppress-analytics",
+  "test",
+  "--no-pub",
+  "test/modules/services/intake_test.dart",
+  "--name",
+  "intake uncertain save locks|intake load failure can recover|intake consent withdrawal and discard preserve edits at 1\\.0|intake profile menus and birth date preserve draft at 1\\.0",
+  "--reporter",
+  "expanded"
+]

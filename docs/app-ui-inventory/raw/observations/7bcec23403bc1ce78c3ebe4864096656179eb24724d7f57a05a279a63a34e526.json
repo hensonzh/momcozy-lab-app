@@ -1,0 +1,375 @@
+{
+  "source": "test/goldens/design_system/agent-history-switching-430-1x.png",
+  "evidence": "current-widget-test-render; golden comparison passed",
+  "test_description": "history states 430.0/1.0",
+  "sequence": 5,
+  "sha256": "ee446b6094cf99c3c88b539de7d360d2c0e8277ceadfb966a54a8fda2179c325",
+  "width": 430,
+  "height": 568,
+  "captured_at": "2026-09-13T13:37:28.712104Z",
+  "widget_types": [
+    "AbsorbPointer",
+    "Actions",
+    "Align",
+    "AnimatedBuilder",
+    "AnimatedDefaultTextStyle",
+    "AnimatedModalBarrier",
+    "AnimatedPhysicalModel",
+    "AnimatedTheme",
+    "AnnotatedRegion<SystemUiOverlayStyle>",
+    "AppBar",
+    "AutomaticKeepAlive",
+    "BlockSemantics",
+    "Builder",
+    "Center",
+    "CircularProgressIndicator",
+    "ClipRect",
+    "ColoredBox",
+    "Column",
+    "ConstrainedBox",
+    "Container",
+    "CupertinoTheme",
+    "CustomMultiChildLayout",
+    "CustomPaint",
+    "CustomSingleChildLayout",
+    "DecoratedBox",
+    "DefaultSelectionStyle",
+    "DefaultTextEditingShortcuts",
+    "DefaultTextStyle",
+    "Directionality",
+    "DisplayFeatureSubScreen",
+    "Divider",
+    "DualTransitionBuilder",
+    "ExcludeSemantics",
+    "Expanded",
+    "FadeTransition",
+    "FittedBox",
+    "FlexibleSpaceBarSettings",
+    "Focus",
+    "FocusScope",
+    "FocusTraversalGroup",
+    "FractionalTranslation",
+    "GestureDetector",
+    "HeroControllerScope",
+    "Icon",
+    "IconButton",
+    "IconTheme",
+    "IgnorePointer",
+    "IndexedSemantics",
+    "InheritedCupertinoTheme",
+    "InkWell",
+    "KeepAlive",
+    "KeyedSubtree",
+    "LayoutId",
+    "LimitedBox",
+    "ListView",
+    "ListenableBuilder",
+    "Listener",
+    "Localizations",
+    "Material",
+    "MaterialApp",
+    "MediaQuery",
+    "ModalBarrier",
+    "MomCozyLineIcon",
+    "MouseRegion",
+    "NavigationToolbar",
+    "Navigator",
+    "NotificationListener<KeepAliveNotification>",
+    "NotificationListener<LayoutChangedNotification>",
+    "NotificationListener<NavigationNotification>",
+    "NotificationListener<ScrollMetricsNotification>",
+    "NotificationListener<ScrollNotification>",
+    "Offstage",
+    "Opacity",
+    "Overlay",
+    "OverlayPortal",
+    "Padding",
+    "PageStorage",
+    "PhysicalModel",
+    "PhysicalShape",
+    "PopScope<Object>",
+    "PrimaryScrollController",
+    "RawGestureDetector",
+    "RawTooltip",
+    "RawView",
+    "RepaintBoundary",
+    "RestorationScope",
+    "RichText",
+    "RootRestorationScope",
+    "RotationTransition",
+    "Row",
+    "SafeArea",
+    "Scaffold",
+    "ScaffoldMessenger",
+    "ScaleTransition",
+    "ScrollConfiguration",
+    "ScrollNotificationObserver",
+    "Scrollable",
+    "Semantics",
+    "SharedAppData",
+    "ShortcutRegistrar",
+    "Shortcuts",
+    "SizedBox",
+    "SlideTransition",
+    "SliverList",
+    "SliverPadding",
+    "Stack",
+    "StretchEffect",
+    "StretchingOverscrollIndicator",
+    "SvgPicture",
+    "TapRegionSurface",
+    "Text",
+    "TextButton",
+    "Theme",
+    "TickerMode",
+    "Title",
+    "Tooltip",
+    "Transform",
+    "UnmanagedRestorationScope",
+    "ValueListenableBuilder<bool>",
+    "VectorGraphic",
+    "View",
+    "Viewport",
+    "WidgetsApp",
+    "_ActionsScope",
+    "_AgentConversationPanel",
+    "_AppBarTitleBox",
+    "_BodyBuilder",
+    "_EffectiveTickerMode",
+    "_ExclusiveMouseRegion",
+    "_FadeForwardsPageTransition",
+    "_FloatingActionButtonTransition",
+    "_FocusInheritedScope",
+    "_FocusScopeWithExternalFocusNode",
+    "_GestureSemantics",
+    "_IconButtonM3",
+    "_InheritedTheme",
+    "_InkFeatures",
+    "_InkResponseStateWidget",
+    "_InputPadding",
+    "_LocalizationsScope",
+    "_MaterialInterior",
+    "_MediaQueryFromView",
+    "_ModalBarrierGestureDetector",
+    "_ModalScope<dynamic>",
+    "_ModalScope<void>",
+    "_ModalScopeStatus",
+    "_OverlayEntryWidget",
+    "_OverlayPortal",
+    "_PageTransitionsThemeTransitions<dynamic>",
+    "_ParentInkResponseProvider",
+    "_PipelineOwnerScope",
+    "_PredictiveBackGestureDetector",
+    "_RawPictureVectorGraphicWidget",
+    "_RawViewInternal",
+    "_RenderTheaterMarker",
+    "_ScaffoldMessengerScope",
+    "_ScaffoldScope",
+    "_ScrollNotificationObserverScope",
+    "_ScrollSemantics",
+    "_ScrollableScope",
+    "_SelectableIconButton",
+    "_SelectionKeepAlive",
+    "_ShapeBorderPaint",
+    "_SharedAppModel",
+    "_ShortcutRegistrarScope",
+    "_Theater",
+    "_ViewScope"
+  ],
+  "texts": [
+    "Open history",
+    "Cozymate",
+    "会话历史",
+    "Reviewing today’s feeding notes together",
+    "9/12 09:30",
+    "Recovery and a little support",
+    "9/12 09:30",
+    "Earlier conversation 1",
+    "9/12 09:30",
+    "Earlier conversation 2",
+    "9/12 09:30",
+    "Earlier conversation 3",
+    "9/12 09:30",
+    "Earlier conversation 4",
+    "9/12 09:30",
+    "Earlier conversation 5",
+    "9/12 09:30",
+    "Earlier conversation 6",
+    "9/12 09:30"
+  ],
+  "scrolls": [
+    {
+      "foreground": true,
+      "axis": "vertical",
+      "direction": "down",
+      "pixels": 12.0,
+      "min": 0.0,
+      "max": 1010.2173913043478,
+      "viewport": 499.0
+    }
+  ],
+  "controls": [
+    {
+      "widget": "IconButton",
+      "key": "[<'agent-conversation-close-button'>]",
+      "labels": [
+        "关闭会话历史"
+      ],
+      "enabled": true,
+      "bounds": [
+        298.59999999999997,
+        14.0,
+        44.0,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "_IconButtonM3",
+      "key": null,
+      "labels": [
+        "关闭会话历史"
+      ],
+      "enabled": true,
+      "bounds": [
+        298.59999999999997,
+        14.0,
+        44.0,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    },
+    {
+      "widget": "InkWell",
+      "key": null,
+      "labels": [],
+      "enabled": true,
+      "bounds": [
+        298.59999999999997,
+        14.0,
+        44.0,
+        44.0
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    }
+  ],
+  "needs_long_capture": true,
+  "interactions_since_previous_capture": [
+    {
+      "action": "drag",
+      "labels_at_start": [
+        "Open history",
+        "Earlier conversation 17"
+      ],
+      "from": [
+        176.29999999999998,
+        318.5
+      ],
+      "to": [
+        176.29999999999998,
+        538.5
+      ]
+    },
+    {
+      "action": "drag",
+      "labels_at_start": [
+        "Open history",
+        "Earlier conversation 14"
+      ],
+      "from": [
+        176.29999999999998,
+        318.5
+      ],
+      "to": [
+        176.29999999999998,
+        538.5
+      ]
+    },
+    {
+      "action": "drag",
+      "labels_at_start": [
+        "Open history",
+        "Earlier conversation 11"
+      ],
+      "from": [
+        176.29999999999998,
+        318.5
+      ],
+      "to": [
+        176.29999999999998,
+        538.5
+      ]
+    },
+    {
+      "action": "drag",
+      "labels_at_start": [
+        "Open history",
+        "Earlier conversation 8"
+      ],
+      "from": [
+        176.29999999999998,
+        318.5
+      ],
+      "to": [
+        176.29999999999998,
+        538.5
+      ]
+    },
+    {
+      "action": "drag",
+      "labels_at_start": [
+        "Open history",
+        "Earlier conversation 5"
+      ],
+      "from": [
+        176.29999999999998,
+        318.5
+      ],
+      "to": [
+        176.29999999999998,
+        538.5
+      ]
+    },
+    {
+      "action": "tap",
+      "labels_at_start": [
+        "Recovery and a little support"
+      ],
+      "from": [
+        176.29999999999998,
+        166.0
+      ],
+      "to": [
+        176.29999999999998,
+        166.0
+      ]
+    }
+  ],
+  "call_stack": "#0      _InventoryComparator._record (file:///Users/lute/project/momcozy-lab/app/test/support/ui_inventory_capture.dart:169:32)\n<asynchronous suspension>\n#1      _InventoryComparator.compare (file:///Users/lute/project/momcozy-lab/app/test/support/ui_inventory_capture.dart:96:17)\n<asynchronous suspension>\n#2      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)\n<asynchronous suspension>\n#3      _AsyncCompleter.complete (dart:async/future_impl.dart:96:3)\n<asynchronous suspension>\n#4      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)\n<asynchronous suspension>\n#5      StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)\n<asynchronous suspension>\n#6      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)\n<asynchronous suspension>\n#7      main.<anonymous closure>.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_history_design_test.dart:19:13)\n<asynchronous suspension>\n#8      verifyAgentHistory (file:///Users/lute/project/momcozy-lab/app/test/support/agent_history_scenarios.dart:105:3)\n<asynchronous suspension>\n#9      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_history_design_test.dart:15:9)\n<asynchronous suspension>\n#10     testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)\n<asynchronous suspension>\n#11     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)\n<asynchronous suspension>\n#12     StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)\n<asynchronous suspension>\n",
+  "long_capture": {
+    "status": "complete-measured-scroll-stitch",
+    "file": "/Users/lute/project/momcozy-lab/app/docs/app-ui-inventory/raw/test/goldens/design_system/agent-history-switching-430-1x.long.png",
+    "offsets": [
+      0.0,
+      217.0,
+      434.0,
+      651.0,
+      868.0,
+      985.0
+    ],
+    "scroll_bounds": [
+      0.0,
+      69.0,
+      352.59999999999997,
+      499.0
+    ],
+    "content_height": 1484.0,
+    "interior_strip_edge_guard": 64.0,
+    "fixed_bottom_overlay_bounds": [],
+    "original_scroll_offset": 12.0,
+    "tooltip_preserved_from_matched_viewport": false
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/mom-rest-clear-resleep-cleared-393-1x.png",
+  "previous_source": "test/goldens/ui_inventory/mom-rest-clear-resleep-selected-393-1x.png",
+  "route": "/me",
+  "trigger": "Tap selected 醒来后容易再睡着吗 again → no selection",
+  "root_entry": "Authenticated More → tap Me bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/mom/mom_rest_clear_inventory_test.dart"
+}

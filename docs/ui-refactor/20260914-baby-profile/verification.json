@@ -1,0 +1,50 @@
+{
+  "visual_review": {
+    "source_sheets": [
+      "source-review-1.jpg",
+      "source-review-2.jpg",
+      "source-review-3.jpg",
+      "source-review-4.jpg",
+      "source-review-5.jpg",
+      "source-review-6.jpg",
+      "source-review-7.jpg"
+    ],
+    "figma_sheets": [
+      "figma-review-1.jpg",
+      "figma-review-2.jpg",
+      "figma-review-3.jpg"
+    ],
+    "app_sheets": [
+      "app-review-1.jpg",
+      "app-review-2.jpg",
+      "app-review-3.jpg",
+      "app-review-4.jpg",
+      "app-review-5.jpg",
+      "app-review-6.jpg",
+      "app-review-7.jpg",
+      "app-review-8.jpg",
+      "app-review-9.jpg"
+    ],
+    "final_pending_overrides": "settled-review.jpg",
+    "note": "The 12 pending/reload-pending images in settled-review supersede pre-animation images in the original app contact sheets. verified/ and verified-images.json contain only final images."
+  },
+  "tests": {
+    "joint_command": "joint-command.json",
+    "joint_result": "joint-final-tests.log",
+    "final_command": [
+      "flutter",
+      "test",
+      "--no-pub",
+      "--concurrency=1",
+      "--reporter=expanded",
+      "test/modules/baby/baby_profile_redesign_test.dart"
+    ],
+    "final_result": "settled-final-tests.log",
+    "analyze_result": "analyze-final.log",
+    "final_runs_update_goldens": false,
+    "inventory_tests_run": false,
+    "MOMCOZY_UI_INVENTORY_DIR": "unset"
+  },
+  "source_hashes": "source-image-hashes.json",
+  "behavior_proof": "behavior-preservation.json"
+}

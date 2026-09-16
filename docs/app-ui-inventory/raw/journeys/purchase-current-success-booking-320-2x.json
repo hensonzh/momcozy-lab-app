@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/purchase-current-success-booking-320-2x.png",
+  "previous_source": "test/goldens/ui_inventory/purchase-current-verified-success-320-2x.png",
+  "route": "/services/episodes/service-episode/booking",
+  "trigger": "Success CTA → booking precheck",
+  "root_entry": "Authenticated More → tap Me bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/services/purchase_current_inventory_test.dart"
+}

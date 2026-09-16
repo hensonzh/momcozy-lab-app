@@ -1,0 +1,6 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_diaper_control_inventory_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: inventory Baby diaper controls 393/1x
+00:03 +1: inventory Baby diaper controls 320/2x
+00:06 +2: (tearDownAll)
+00:06 +2: All tests passed!

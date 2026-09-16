@@ -1,0 +1,11 @@
+{
+  "outcome": "technical",
+  "source": "test/goldens/ui_inventory/consultation-journey-current-technical-outcome-393.png",
+  "destinations": [
+    {
+      "button": "重新预约",
+      "route": "/services/episodes/service-episode/booking"
+    }
+  ],
+  "evidence": "Actual visible CTA taps and production router assertions; isolated HTTP/device boundaries"
+}

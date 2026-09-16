@@ -16,6 +16,14 @@ Future<void> loadMomCozyTestFonts() async {
     ..addFont(rootBundle.load('fonts/MaterialIcons-Regular.otf'));
 
   await Future.wait([
+    (FontLoader('NotoSansSCHome')
+          ..addFont(rootBundle.load('assets/fonts/NotoSansCJKsc-Regular.otf'))
+          ..addFont(rootBundle.load('assets/fonts/NotoSansCJKsc-Bold.otf')))
+        .load(),
+    (FontLoader('LibreCaslonDisplay')..addFont(
+          rootBundle.load('assets/fonts/LibreCaslonDisplay-Regular.ttf'),
+        ))
+        .load(),
     (FontLoader(
       'Manrope',
     )..addFont(rootBundle.load('assets/fonts/Manrope.ttf'))).load(),

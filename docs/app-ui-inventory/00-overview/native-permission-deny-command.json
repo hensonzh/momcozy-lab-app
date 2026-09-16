@@ -1,0 +1,13 @@
+[
+  "/Users/lute/.local/share/momcozy-toolchains/flutter/bin/flutter",
+  "test",
+  "--no-pub",
+  "--no-uninstall",
+  "--flavor",
+  "local",
+  "-d",
+  "emulator-5554",
+  "integration_test/notification_native_permission_test.dart",
+  "--reporter",
+  "expanded"
+]

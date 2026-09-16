@@ -1,0 +1,10 @@
+{
+  "lib/app/momcozy_app.dart": "4e28954f3c930728bd0efd196e2a59a374ab3962675bf9305ca7ad8b77e57627",
+  "lib/features/agent_hub/agent_hub_page.dart": "3e1605e59fb749e486f367fd9b3b124647b11ed679a806d0d8da62a55f9b236c",
+  "lib/features/agent_hub/presentation/agent_attachment_tile.dart": "73885fac981b003a4e568b85432e4c031d516211303237a2ca56988764ea1fe4",
+  "lib/features/agent_hub/presentation/agent_file_previews.dart": "353a7c882ad2fd28a317feca7a7c44b7cd87c3209ab658af30d602ebc17fecc4",
+  "lib/features/agent_hub/presentation/agent_image_previews.dart": "1454b56253e9955ac9a694a8a790c09f1f84b2047a18157ab5bd07f23a43e258",
+  "lib/features/agent_hub/presentation/agent_message_menu.dart": "f4dd0cc284faa10ee6f17028bb847f71ad72a09f9ee1725ef41ea099e85bfeae",
+  "test/app/notification_conversation_route_test.dart": "799cab7b59c829ca635d23e716f271224a6b1ed7ea606240e94d35a05acdeb61",
+  "test/features/agent_hub/agent_message_menu_design_test.dart": "fa24afb3b2e28749f2aaa8317d97008c2e5af96bfdf5b1c3af9179fff20c5697"
+}

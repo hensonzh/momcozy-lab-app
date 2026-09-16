@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/mom-milk-dial-hour-eleven-320-1x.png",
+  "previous_source": "test/goldens/ui_inventory/mom-milk-dial-hour-header-320-1x.png",
+  "route": "/me",
+  "trigger": "Tap hour 11 → minute dial with 45 retained",
+  "root_entry": "Authenticated More → tap Me bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/mom/mom_milk_dial_inventory_test.dart"
+}

@@ -1,0 +1,29 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_controller_test.dart
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profiles_test.dart: canonical profile uses actual date and rejects retired profile facts
+00:00 +1: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profiles_test.dart: create and edit use the canonical endpoint, idempotency and current version
+00:00 +2: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart: (setUpAll)
+00:00 +2: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart: profile dialog scrolls and saves at 320.0 / 1.0 / long=false
+00:00 +3: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart: profile dialog scrolls and saves at 320.0 / 1.0 / long=false
+00:00 +4: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart: profile dialog scrolls and saves at 320.0 / 1.0 / long=false
+00:00 +5: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby feeding save edit delete restore and history filters
+00:00 +6: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby feeding save edit delete restore and history filters
+00:00 +7: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby feeding save edit delete restore and history filters
+00:00 +8: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby feeding save edit delete restore and history filters
+00:01 +9: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby feeding save edit delete restore and history filters
+00:01 +10: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby feeding save edit delete restore and history filters
+00:01 +11: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby feeding save edit delete restore and history filters
+00:01 +12: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby feeding save edit delete restore and history filters
+00:01 +13: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby feeding save edit delete restore and history filters
+00:01 +14: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby feeding save edit delete restore and history filters
+00:01 +15: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby feeding save edit delete restore and history filters
+00:01 +16: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby feeding save edit delete restore and history filters
+00:02 +17: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby profile switch editing and discard
+00:02 +18: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby sleep stool knowledge and growth interactions
+00:03 +19: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby no profile creation and missing demographic data
+00:03 +20: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby local record failure and pull refresh recovery
+00:04 +21: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby loading and pending save states
+00:04 +22: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby growth batch date validation and undo recovery
+00:04 +23: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby history mutation failures privacy and return
+00:05 +24: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby history pagination loading failure recovery
+00:05 +25: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: (tearDownAll)
+00:05 +25: All tests passed!

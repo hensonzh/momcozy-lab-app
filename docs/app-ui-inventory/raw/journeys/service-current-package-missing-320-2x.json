@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/service-current-package-missing-320-2x.png",
+  "previous_source": "test/goldens/ui_inventory/service-current-package-error-320-2x.png",
+  "route": "/services/feeding-confidence",
+  "trigger": "Retry returns removed package → unavailable page",
+  "root_entry": "Authenticated More → tap Me bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/services/service_current_inventory_test.dart"
+}

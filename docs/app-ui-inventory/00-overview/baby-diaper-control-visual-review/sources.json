@@ -1,0 +1,3254 @@
+{
+  "method": "full-width continuous 650px strips; identical pixels reference prior reviewed Mom or Baby controls; remaining segments reviewed at native width",
+  "sources": [
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-both-history-320-2x.long.png",
+      "sha256": "4fc9ca232007608cba7a64aab58aa6fbef2d1ba9ec8ed646106618ebaee120a7",
+      "width": 320,
+      "height": 926,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "1e221406eaa0a3db8224fbb3f7c75abbc016ba85b73d42529d84724ef02bbfde",
+          "review": "sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 926,
+          "pixel_sha256": "7a81feac53c875d0bd9d9b71a506635a12aa08fc354966892180e19e7173e13a",
+          "review": "sheet-01.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-both-history-320-2x.png",
+      "sha256": "645f9e5795f4d240f41f75f4d4522ad004b19c38c47b8bbd4a3e0426206f29ce",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "1e221406eaa0a3db8224fbb3f7c75abbc016ba85b73d42529d84724ef02bbfde",
+          "review": "sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "9ce68a5f591a4c6c37109af8baafc45aa5fdfc94b77da4055147a28f7fc3909c",
+          "review": "sheet-01.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-both-history-393-1x.png",
+      "sha256": "92373dc2af546302e961428007150bd7b9821f0f6c3955d4c60bc7317a7d4778",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "1b9ec9e74837470b24981c38418a1652ec9949b30532be110a33671d53cf3383",
+          "review": "sheet-01.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "8bdeffc41d4a3f4c9ce4bf04d242795fab314a5a6f5ce005f84e01795430343f",
+          "review": "../baby-feeding-control-visual-review/sheet-16.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-both-reopened-320-2x.long.png",
+      "sha256": "83007fb52f2a3a503129fc838b7abfa553c9e8c4a0032d8e4061e7b497ed5c0f",
+      "width": 320,
+      "height": 2526,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "eab55e3dc7dafaf5c96a036b6d96c4c94e0e8b6a1fba2bf8514a131debfcdee4",
+          "review": "sheet-01.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "7115fe34429cd06c1c832070579a71c126925840f45c33cd1976cec55bcb530d",
+          "review": "sheet-01.png#tile-5"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "953fc19bff27852a29b1e514b6df44f9ac5fa25b2e1fe4f9cb35938f39b22191",
+          "review": "sheet-02.png#tile-0"
+        },
+        {
+          "y0": 1950,
+          "y1": 2526,
+          "pixel_sha256": "0815a08786c5354819c2972e1cee31c48403cdc026fc06e40744ec944f4b859a",
+          "review": "sheet-02.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-both-reopened-320-2x.png",
+      "sha256": "3f87d8274b72ac568cb94b305cb5077471415d43cb38ded595d79ad6fa4dd149",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "eab55e3dc7dafaf5c96a036b6d96c4c94e0e8b6a1fba2bf8514a131debfcdee4",
+          "review": "sheet-01.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "f736712137f4bf505f41a892775c638707d966d67f670785f8a94e16473c26f4",
+          "review": "sheet-02.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-both-reopened-393-1x.long.png",
+      "sha256": "9f266e076e904e8725eae0ba137d6999b5434fff89b63ba6ccca2be06e456712",
+      "width": 393,
+      "height": 1225,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b4fbb534e6c34041a1ca3d98e61a30199b4a2755a613cab30b700f6b5bcaa9e4",
+          "review": "sheet-02.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1225,
+          "pixel_sha256": "76e3e6b37524105620b182e5aa3dd95d2cbe06e8fe9964cbd3c72200178dc13c",
+          "review": "sheet-02.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-both-reopened-393-1x.png",
+      "sha256": "829ee837ab82e2a4b1f7850f8d262e6d96fee6f39dc143b0a11a6ebbce53e8fb",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b4fbb534e6c34041a1ca3d98e61a30199b4a2755a613cab30b700f6b5bcaa9e4",
+          "review": "sheet-02.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1c88dd433a0e8e120d0c20ca5b1d585f52c5b71ee00f12a0fb5ae7615c94b675",
+          "review": "sheet-02.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-both-restores-stool-320-2x.long.png",
+      "sha256": "e3e06fc0ec89574dc9575157632af38c0b613150b3dc8d1b0d192042341c0a00",
+      "width": 320,
+      "height": 2481,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "3069755fb09c815638feaa8aada99d8def5e6611c0ab7fe602f950fff9e5afef",
+          "review": "sheet-03.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "dd7464183581b472025651f80e3ecbade27e56f6d5cc1f1853e2171a74581ebd",
+          "review": "sheet-03.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "7dbdc21fc5d4101f52caf59aea01f5f48fa17b11139ffe18154058b921511450",
+          "review": "sheet-03.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2481,
+          "pixel_sha256": "320e019fdf57d29897ca940a7da2e703bf7d9cd6aa4c5b3d966f0e208cce4d2b",
+          "review": "sheet-03.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-both-restores-stool-320-2x.png",
+      "sha256": "63a6f16b753900a481b5081b2eb4434266617a7514de131808a26d3f611af542",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "735b482456b20eac2474679957b07c013944a8932c1bd98440808f97e73441e1",
+          "review": "sheet-03.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "537ee961fba1ce83128f9fc225c54c295ef518d0c0994c4752a548aa9caffdf4",
+          "review": "sheet-03.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-both-restores-stool-393-1x.long.png",
+      "sha256": "27df6793e2d0861a41826fdf90cfd073ae90e5df4e00c84b5ea35286cdbb63be",
+      "width": 393,
+      "height": 1169,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "4a28496e479bf6e1bb1223cab92b0c1a9ea1b3d24d9487842c3750ba571f3182",
+          "review": "sheet-04.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1169,
+          "pixel_sha256": "0822baee17dd4f2183636e0996c5b8b360fa9bfb52472f960c1fa38403b9acd8",
+          "review": "sheet-04.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-both-restores-stool-393-1x.png",
+      "sha256": "4149c9987e3fb830fc95058f1f9812d23d9844007b32f7db8fd8135ee775ce75",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "3a79a968b320a684d4880019bdfe18709b82f0a70a14ea73e0d48eb5f863ebc0",
+          "review": "sheet-04.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "18c251ef1094ce8a4ae6f926329f17b3b8401c8431399216d291651758f8e36c",
+          "review": "sheet-04.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-both-saved-320-2x.long.png",
+      "sha256": "d9b04614ba2d189dad289801627c46fd316906a7bd44520da7fea9cd62fef6a5",
+      "width": 320,
+      "height": 3608,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "58578630282c08ed070b330c5092b2346554d47e291ecce03bfa1790d2ebdd62",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "a6b5cab3bd49de92dd1ff4d08330d148cf198843b84caa7c32723f43097ee3e1",
+          "review": "sheet-04.png#tile-4"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "9cfc89124855f8047a9600393680f1c152a63248fa348518e966af5872046f00",
+          "review": "sheet-04.png#tile-5"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "d7c01674fb9335ebc970948aedd246fdbf38db9cb6e481ef270cd17ec21c92fc",
+          "review": "sheet-05.png#tile-0"
+        },
+        {
+          "y0": 2600,
+          "y1": 3250,
+          "pixel_sha256": "d2e4ddf048c38720c03e236d62d1c9f7fa1ca69eee20b30fddd65ed5e2ae459a",
+          "review": "sheet-05.png#tile-1"
+        },
+        {
+          "y0": 3250,
+          "y1": 3608,
+          "pixel_sha256": "a3c4174cc597062488e970be3942a23d66e337f31fc8924c2e12bc70acc078e2",
+          "review": "sheet-05.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-both-saved-320-2x.png",
+      "sha256": "9b6acb48dceeb1059bb07e6f0cdeab1b60974946b3419b11b51e00ac6091c905",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "10cfbe0917adf1a8df1fd252a4520ab979034bd440cc9ace2a710e12d63bace4",
+          "review": "sheet-05.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "563dd0eb6127eff7c02d4cf0854f116747677cf072bd11574cc7adf5267526f7",
+          "review": "../baby-feeding-control-visual-review/sheet-18.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-both-saved-393-1x.long.png",
+      "sha256": "c7d71a7cfb392dc242044cb342714caa8338ff8e354bb1328485895aa3769377",
+      "width": 393,
+      "height": 1841,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "4c4be2d72226f372ad7b5993857b4b1a52abe756459366e81c86aed3a0eebe4d",
+          "review": "sheet-05.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "462243825730002d5a7b26fe7e1bbdb2f381ea57afabfc7a0cad762ed9541c1e",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1841,
+          "pixel_sha256": "83ee4a70424d4c547f58598e3cc0a9c11bd6216550da03771f673f8540508b37",
+          "review": "sheet-05.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-both-saved-393-1x.png",
+      "sha256": "2fec917bdd1e68614fac6cfa9ae52f57ebfe2af1c2dc04856f4b90bdcb2243b5",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "e84d0a5da1633d354e0566f044cfd268d052190af923ab514597f1df4f7a8856",
+          "review": "sheet-06.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "fa89fc35c134e2b3ed02a70a1f9d3864370f0c315bb200f409eb54a07652e2d5",
+          "review": "../baby-feeding-control-visual-review/sheet-18.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-color-black-320-2x.long.png",
+      "sha256": "54dd4d00817b92c8fc43f124f22c38e0ef04000257fe405fb9837ad4c7b79675",
+      "width": 320,
+      "height": 2514,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "93492ab9ddd1962d865965e5e907e287649cf1d99ee7f31c6098cd6dca09b51c",
+          "review": "sheet-06.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "9dc5a02fde41d9fad99f36b16b1d87d4a74a709f9e0ce3bae92cddee709d6445",
+          "review": "sheet-06.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "1081c753b2a72646de01d404e785044927749f6c5b0bfd6ed6c6bf479b15cf46",
+          "review": "sheet-06.png#tile-3"
+        },
+        {
+          "y0": 1950,
+          "y1": 2514,
+          "pixel_sha256": "e1427e80337b8a2c0ce0e76e91964ade35bf1528075e48d2e25550aef011ba37",
+          "review": "sheet-06.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-color-black-320-2x.png",
+      "sha256": "5b3a6da56b563bd99a4a466af6cdc3de19007db78c4167cdbad59b91198bab73",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9a572da1206ac3303641ac423d9dba368c27073468947f55d27a1f09b9878070",
+          "review": "sheet-06.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "b85a032df862bfe746081b4f3b2adcc4eb424e861c9f643b20f3961faee27262",
+          "review": "sheet-07.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-color-black-393-1x.long.png",
+      "sha256": "dac8d07cfdaa7deafd386101d529ca59aa5fad1da4c8d5f5295550fab40717aa",
+      "width": 393,
+      "height": 1169,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "4c05ea2a6df2397027c64d4fac8f1e6d5aa3ef730921835ecf1956e3d6950134",
+          "review": "sheet-07.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1169,
+          "pixel_sha256": "2631d15fb797058a207c727229726e6d1b507f7fe5949bacadfc65f50010240f",
+          "review": "sheet-07.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-color-black-393-1x.png",
+      "sha256": "fd34c95975817ae0ece7acd0df524dd5714de87b154e4b20c56c23400e452b27",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "76f09398b28d3f724e88b44fa963a3c9ce6c4ebd8252b11681478b09e63b225c",
+          "review": "sheet-07.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "8fd030ce412db84fbd6a00a05578767cc5dbab71cb6a2f50e3bd29849785d942",
+          "review": "sheet-07.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-color-brown-320-2x.long.png",
+      "sha256": "13a0ea62b8043cac202f925688a29a6d0a78d07660d92c454aa24cb594686734",
+      "width": 320,
+      "height": 2514,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "93492ab9ddd1962d865965e5e907e287649cf1d99ee7f31c6098cd6dca09b51c",
+          "review": "sheet-06.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "b7bd8468cc307e4924212fe1a434e45159f09b150050a2dbf0e22f7f73915cd6",
+          "review": "sheet-07.png#tile-5"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "121f769361dfe271ecf34895de331956c16670aa2eb8631a9d0bee7c2995317e",
+          "review": "sheet-08.png#tile-0"
+        },
+        {
+          "y0": 1950,
+          "y1": 2514,
+          "pixel_sha256": "e1427e80337b8a2c0ce0e76e91964ade35bf1528075e48d2e25550aef011ba37",
+          "review": "sheet-06.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-color-brown-320-2x.png",
+      "sha256": "20d47e57d527faff5360115dc2d585af033cfee32185f2631c056565f597b6f1",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "669ed3101fae6abdcb91b837cfc9b4d829a2fd6ecb479a760fcf166ab23b559d",
+          "review": "sheet-08.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "fb6f7b806b5f1c5ac61a58b95aae817f8de60e64cab1d68185800ae3c7b1944d",
+          "review": "sheet-08.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-color-brown-393-1x.long.png",
+      "sha256": "8cf8ad1d3747a247c49953ba8ec7e6446987d62d0e83e7871265014b2b5e4237",
+      "width": 393,
+      "height": 1169,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c30b3e8966ae6c48a1579773dafdd4b2aeb3063b4e30cdab17da9b9f8035930a",
+          "review": "sheet-08.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1169,
+          "pixel_sha256": "2631d15fb797058a207c727229726e6d1b507f7fe5949bacadfc65f50010240f",
+          "review": "sheet-07.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-color-brown-393-1x.png",
+      "sha256": "3497b754351b80626c46bdd3058ac043450e44d40efd3e29c82fc1d0f79024fb",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "662b8ca015176064ccb59ea357f077f358178bf5c8a6b53cf343e2dd87ba2215",
+          "review": "sheet-08.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "8fd030ce412db84fbd6a00a05578767cc5dbab71cb6a2f50e3bd29849785d942",
+          "review": "sheet-07.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-color-cleared-320-2x.long.png",
+      "sha256": "2fe696a5fc8771afb725867f400dd9c7ce4bda31246e9c741a7bd426edb83fd2",
+      "width": 320,
+      "height": 2514,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "93492ab9ddd1962d865965e5e907e287649cf1d99ee7f31c6098cd6dca09b51c",
+          "review": "sheet-06.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "296f5ed3fcf9e1b37018a47597ee921fee0a7afe2d2a51db95014d1bbd717e1b",
+          "review": "sheet-08.png#tile-5"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "121f769361dfe271ecf34895de331956c16670aa2eb8631a9d0bee7c2995317e",
+          "review": "sheet-08.png#tile-0"
+        },
+        {
+          "y0": 1950,
+          "y1": 2514,
+          "pixel_sha256": "e1427e80337b8a2c0ce0e76e91964ade35bf1528075e48d2e25550aef011ba37",
+          "review": "sheet-06.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-color-cleared-320-2x.png",
+      "sha256": "9c7fefb06267591f927f7499ee28cfe1515742d04f380d77cda4139be8ee2d6f",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "60fcf882c178a162346b57f242a18ca1a6a042d861781bd1d6c02bde87748de5",
+          "review": "sheet-09.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3c0d65a5c0b55a0eab9f706bb8e63a08da78a265dd83a9c594ab9d9eeb961f71",
+          "review": "sheet-09.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-color-cleared-393-1x.long.png",
+      "sha256": "736fe134f7bb2cd9d1ad7b35542d493c8eba298d43fca49f8936df7c157b622f",
+      "width": 393,
+      "height": 1169,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "5b86cd591240f3c3d4251c5572153583e811e669711853723b1160c446a6c44d",
+          "review": "sheet-09.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1169,
+          "pixel_sha256": "2631d15fb797058a207c727229726e6d1b507f7fe5949bacadfc65f50010240f",
+          "review": "sheet-07.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-color-cleared-393-1x.png",
+      "sha256": "ebe8f375b3a7a5771bfc0cf3adfbf65fd89fc5f59af12b66aa003ef9d824f6c3",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a92f3fdd3b0df1a3dd96059e6e1800592d86a8fdab062a307c8a114276a66490",
+          "review": "sheet-09.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "8fd030ce412db84fbd6a00a05578767cc5dbab71cb6a2f50e3bd29849785d942",
+          "review": "sheet-07.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-color-green-320-2x.long.png",
+      "sha256": "92e0078df1e88c75a27099c8960ff0832bbaec5f1be256a57e96553f711576ff",
+      "width": 320,
+      "height": 2514,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "93492ab9ddd1962d865965e5e907e287649cf1d99ee7f31c6098cd6dca09b51c",
+          "review": "sheet-06.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "76b9d446a4443af42faefcb123853545049db9ea5fe5f2fd80286746208bc90c",
+          "review": "sheet-09.png#tile-4"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "121f769361dfe271ecf34895de331956c16670aa2eb8631a9d0bee7c2995317e",
+          "review": "sheet-08.png#tile-0"
+        },
+        {
+          "y0": 1950,
+          "y1": 2514,
+          "pixel_sha256": "e1427e80337b8a2c0ce0e76e91964ade35bf1528075e48d2e25550aef011ba37",
+          "review": "sheet-06.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-color-green-320-2x.png",
+      "sha256": "ac5729054bcbb8f36544676d664f0d6f0a213b056d7d05c33cc6cc845bd032fd",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "08b03002fc5806e1d054817d5b43cd8269eab11d5b6d1c3bf154c9bf02aa1b6e",
+          "review": "sheet-09.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "9d8e7a0075617d97ee1b992320b0b209fb6223c9741e50949572f1a7b177a372",
+          "review": "sheet-10.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-color-green-393-1x.long.png",
+      "sha256": "1e776ffe5cf31015048f4121dadca7a18d3568b1962160173c740fdc3d76e141",
+      "width": 393,
+      "height": 1169,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "e477c92490170abbd52c90b2332917247cd6bbb5a681591a79cd76b0c71ec1e1",
+          "review": "sheet-10.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1169,
+          "pixel_sha256": "2631d15fb797058a207c727229726e6d1b507f7fe5949bacadfc65f50010240f",
+          "review": "sheet-07.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-color-green-393-1x.png",
+      "sha256": "02480076541a7d6b1059f2e6fd2bad4ada567bf01c0c72980930aad4155484f8",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "aa8a55cade8f7e813fe4634b9ea5a6bb9eb1d3ec974aa8c1ca33cb9ae895889d",
+          "review": "sheet-10.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "8fd030ce412db84fbd6a00a05578767cc5dbab71cb6a2f50e3bd29849785d942",
+          "review": "sheet-07.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-color-pale-320-2x.long.png",
+      "sha256": "c04f401fe03166bc21198244cc0dc9508bdb526b8c08be0154bd77a1920bae39",
+      "width": 320,
+      "height": 2514,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "93492ab9ddd1962d865965e5e907e287649cf1d99ee7f31c6098cd6dca09b51c",
+          "review": "sheet-06.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "296f5ed3fcf9e1b37018a47597ee921fee0a7afe2d2a51db95014d1bbd717e1b",
+          "review": "sheet-08.png#tile-5"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "4133d7345c7dff6902189f207c63d5f18e0c55d05bbea2c9eec5e0f65c9b2aab",
+          "review": "sheet-10.png#tile-3"
+        },
+        {
+          "y0": 1950,
+          "y1": 2514,
+          "pixel_sha256": "e1427e80337b8a2c0ce0e76e91964ade35bf1528075e48d2e25550aef011ba37",
+          "review": "sheet-06.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-color-pale-320-2x.png",
+      "sha256": "2287d859cf86720c39dc7de9a7a72dfb31aee20d813afe30a4f363a8e6426067",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "3db3b6f34edad5e97a0d8728341b8d139466c9f5307a9bc1d3b3931a077dfa1c",
+          "review": "sheet-10.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1c387926dda63680f3ad0aa32d522427f2687be5f48e05d4b991d772e0fcb714",
+          "review": "sheet-10.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-color-pale-393-1x.long.png",
+      "sha256": "0cf2f09c413947203e1f759181433d5b0b3e075776232f6a29c579433be4b77b",
+      "width": 393,
+      "height": 1169,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6cf5b0f739ef28c4dc623daa51487a3abdb4e757d832ad4fccb568e19f18cce8",
+          "review": "sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1169,
+          "pixel_sha256": "2631d15fb797058a207c727229726e6d1b507f7fe5949bacadfc65f50010240f",
+          "review": "sheet-07.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-color-pale-393-1x.png",
+      "sha256": "5cebae2e9d47a4ce8c3909d9f73e1407f442596908c9055cc574547f1fbf2a20",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2ee0f119da9e313c853147811977fbb8d8dc32ad029624d9a5be5f492ca7c675",
+          "review": "sheet-11.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "8fd030ce412db84fbd6a00a05578767cc5dbab71cb6a2f50e3bd29849785d942",
+          "review": "sheet-07.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-color-red-320-2x.long.png",
+      "sha256": "fb5aae6d5c6cc69ba1484a92fe2b46584725dd30d3b91a94fd41eee5f23886d0",
+      "width": 320,
+      "height": 2514,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "93492ab9ddd1962d865965e5e907e287649cf1d99ee7f31c6098cd6dca09b51c",
+          "review": "sheet-06.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "296f5ed3fcf9e1b37018a47597ee921fee0a7afe2d2a51db95014d1bbd717e1b",
+          "review": "sheet-08.png#tile-5"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "41b5587c1fe8faf8963992ff6c18e711f19df5f4d28a862ba1bc944bb95c27d7",
+          "review": "sheet-11.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2514,
+          "pixel_sha256": "e1427e80337b8a2c0ce0e76e91964ade35bf1528075e48d2e25550aef011ba37",
+          "review": "sheet-06.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-color-red-320-2x.png",
+      "sha256": "174b7032defbbc398eea9d6dae50708c5c2538b6eaee34f1d91d56f2cd3fe064",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "f6269695ce4d00dd8e99e6dcb6b9a70fafc447795342c33e4a4fed4aa9e1bdf3",
+          "review": "sheet-11.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "e7e2079ca52d37a0b7bc53b48abcfe633282688c9e813c60e5e87db9cb4f9da0",
+          "review": "sheet-11.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-color-red-393-1x.long.png",
+      "sha256": "8bd7843f22d3e32702482cf75c68b9ac9374baefa27155871017b1019f5cef32",
+      "width": 393,
+      "height": 1169,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "996244cacec9cdf6c0aaa5b272019029e931ad692a98f5d3e0dcd29278fd7a6b",
+          "review": "sheet-11.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1169,
+          "pixel_sha256": "2631d15fb797058a207c727229726e6d1b507f7fe5949bacadfc65f50010240f",
+          "review": "sheet-07.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-color-red-393-1x.png",
+      "sha256": "edff5e1a5fecfa74e7f420e28382e78ad4f2cbea868d50805795a3b9f0caa8ed",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "7e5e5bc16d33841d7987be8c696fb24292f5ab034021a95979f718511237343e",
+          "review": "sheet-12.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "8fd030ce412db84fbd6a00a05578767cc5dbab71cb6a2f50e3bd29849785d942",
+          "review": "sheet-07.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-color-unsure-320-2x.long.png",
+      "sha256": "b1c79e39a3f7026306149850e9396472e6f5d6d458859f24e5c4aaef843ba4f3",
+      "width": 320,
+      "height": 2514,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "93492ab9ddd1962d865965e5e907e287649cf1d99ee7f31c6098cd6dca09b51c",
+          "review": "sheet-06.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "296f5ed3fcf9e1b37018a47597ee921fee0a7afe2d2a51db95014d1bbd717e1b",
+          "review": "sheet-08.png#tile-5"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "c498590d59b150b668f848984daa9a02110dfdb8596b31e56b230dcc418bf2cf",
+          "review": "sheet-12.png#tile-1"
+        },
+        {
+          "y0": 1950,
+          "y1": 2514,
+          "pixel_sha256": "e1427e80337b8a2c0ce0e76e91964ade35bf1528075e48d2e25550aef011ba37",
+          "review": "sheet-06.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-color-unsure-320-2x.png",
+      "sha256": "a06ad9647faff30ba3277d7c227839c4eea5545fa5b0fa45b724391584bcd3bb",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ded39e7a3d41487d7e07194f3cf9945f9b949b07c92853087c76ea3d9629eae0",
+          "review": "sheet-12.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3c0d65a5c0b55a0eab9f706bb8e63a08da78a265dd83a9c594ab9d9eeb961f71",
+          "review": "sheet-09.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-color-unsure-393-1x.long.png",
+      "sha256": "8c9cbf5125742b58089c7b7559664568c4e55b07eb9e029f4e742e8eb27409b6",
+      "width": 393,
+      "height": 1169,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6432a67b927cd3d6677fdbff2a9a21386ee740db67dfea43bf1cf8234c93699f",
+          "review": "sheet-12.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1169,
+          "pixel_sha256": "2631d15fb797058a207c727229726e6d1b507f7fe5949bacadfc65f50010240f",
+          "review": "sheet-07.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-color-unsure-393-1x.png",
+      "sha256": "d82fd9920fbc260c788404d7a0daf4f9fbde5c6ae9b05d710e1a02717ad41fdb",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a6592b868c660edb489fc04d4669ae5c0595adf8047a2bf4f413ff7b5c4615f4",
+          "review": "sheet-12.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "8fd030ce412db84fbd6a00a05578767cc5dbab71cb6a2f50e3bd29849785d942",
+          "review": "sheet-07.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-color-yellow-320-2x.long.png",
+      "sha256": "b9c0738d57f5cf2d184e818271b90d6ca51301b05fb6175415a96e89ca6a0eef",
+      "width": 320,
+      "height": 2514,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "93492ab9ddd1962d865965e5e907e287649cf1d99ee7f31c6098cd6dca09b51c",
+          "review": "sheet-06.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "f858e0fe11c57b93d56167d6f5deac5f23e0fa94b47193d71e7e71be669eff48",
+          "review": "sheet-12.png#tile-5"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "121f769361dfe271ecf34895de331956c16670aa2eb8631a9d0bee7c2995317e",
+          "review": "sheet-08.png#tile-0"
+        },
+        {
+          "y0": 1950,
+          "y1": 2514,
+          "pixel_sha256": "e1427e80337b8a2c0ce0e76e91964ade35bf1528075e48d2e25550aef011ba37",
+          "review": "sheet-06.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-color-yellow-320-2x.png",
+      "sha256": "920573dadd93f2891a548e3954b827cf302c9491bba8539d9b319829685cb970",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "49f17c6cb960e02569c0cc8ed682f14e1edd5d6ff4b81e5f3157425a7f938de8",
+          "review": "sheet-13.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "0f2b6a3475c39e5e4144286411d48455b8a34ac94792e751072fc14e05a0af02",
+          "review": "sheet-13.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-color-yellow-393-1x.long.png",
+      "sha256": "00f8a763e5a8508329e13ed82b7d76290a8c766097a9e522069935e36dce276a",
+      "width": 393,
+      "height": 1169,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "59b014ca5e1fa0f69437698611da6b518f8e4c73e4c95ef1d6edb1702a40dcd0",
+          "review": "sheet-13.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1169,
+          "pixel_sha256": "2631d15fb797058a207c727229726e6d1b507f7fe5949bacadfc65f50010240f",
+          "review": "sheet-07.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-color-yellow-393-1x.png",
+      "sha256": "a8523469f07c99c47914a61fb9b6701858b1cfb1ba2548d409bc005a53f4eed9",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "0f2b5b15cdbc9418b76204d7b2157b423e1173c89981ab9e4c706252ead7df66",
+          "review": "sheet-13.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "8fd030ce412db84fbd6a00a05578767cc5dbab71cb6a2f50e3bd29849785d942",
+          "review": "sheet-07.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-color-yellowBrown-320-2x.long.png",
+      "sha256": "617325a2c1960dd83a9a0cf9550640252e020f058940fd3af766ed45b4f8835b",
+      "width": 320,
+      "height": 2514,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "93492ab9ddd1962d865965e5e907e287649cf1d99ee7f31c6098cd6dca09b51c",
+          "review": "sheet-06.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "fca723b1232c63dd748fa64e5297b6ab58180f9ee2f95f5905cab9bc7af4d2fb",
+          "review": "sheet-13.png#tile-4"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "121f769361dfe271ecf34895de331956c16670aa2eb8631a9d0bee7c2995317e",
+          "review": "sheet-08.png#tile-0"
+        },
+        {
+          "y0": 1950,
+          "y1": 2514,
+          "pixel_sha256": "e1427e80337b8a2c0ce0e76e91964ade35bf1528075e48d2e25550aef011ba37",
+          "review": "sheet-06.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-color-yellowBrown-320-2x.png",
+      "sha256": "afdf089dab564cedafd4a2af53fb5e3f287e2349f15d2c0ed498d8cd45e87c51",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6c75435ec9644180f70dd7f3be0ca48e3266066bd013b72a1a686dccf72ded7a",
+          "review": "sheet-13.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "b404d97480c7f573c5ca51459fa575ca0c7d61934890fde10671b41ddc20d883",
+          "review": "sheet-14.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-color-yellowBrown-393-1x.long.png",
+      "sha256": "f954e3e36fec048f71a7c1f417fc03e0b8e95aae88152c649ff51cbbef6c34c3",
+      "width": 393,
+      "height": 1169,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "70f2dee5eb2a3de1bdc828ace048842cb3904f14aca20a9353c60e5ddd2bb3af",
+          "review": "sheet-14.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1169,
+          "pixel_sha256": "2631d15fb797058a207c727229726e6d1b507f7fe5949bacadfc65f50010240f",
+          "review": "sheet-07.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-color-yellowBrown-393-1x.png",
+      "sha256": "7677bd0045f70fbedd2646ac8684d834cec8b8a9debf8af899d27e7e48407ee3",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2d788cfe3a4bf4d8bb46e5eb4ab3c808d1263fe98fefef776e7d369f8ebb86cd",
+          "review": "sheet-14.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "8fd030ce412db84fbd6a00a05578767cc5dbab71cb6a2f50e3bd29849785d942",
+          "review": "sheet-07.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-consistency-cleared-320-2x.long.png",
+      "sha256": "b9c0738d57f5cf2d184e818271b90d6ca51301b05fb6175415a96e89ca6a0eef",
+      "width": 320,
+      "height": 2514,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "93492ab9ddd1962d865965e5e907e287649cf1d99ee7f31c6098cd6dca09b51c",
+          "review": "sheet-06.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "f858e0fe11c57b93d56167d6f5deac5f23e0fa94b47193d71e7e71be669eff48",
+          "review": "sheet-12.png#tile-5"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "121f769361dfe271ecf34895de331956c16670aa2eb8631a9d0bee7c2995317e",
+          "review": "sheet-08.png#tile-0"
+        },
+        {
+          "y0": 1950,
+          "y1": 2514,
+          "pixel_sha256": "e1427e80337b8a2c0ce0e76e91964ade35bf1528075e48d2e25550aef011ba37",
+          "review": "sheet-06.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-consistency-cleared-320-2x.png",
+      "sha256": "65ef9143d2addd94054c778cc005be9391e34490fd13db8382d08688dfd6faf5",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "d517a5638eab25ca63886dfd7c80834b1f3a85d9592ad4a8dc5b590513cd50c7",
+          "review": "sheet-14.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "e43bf9cebcdb4a2f1f96ef2e81a4a574ffbcefb24ccbf00183849d6c34704c03",
+          "review": "sheet-14.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-consistency-cleared-393-1x.long.png",
+      "sha256": "00f8a763e5a8508329e13ed82b7d76290a8c766097a9e522069935e36dce276a",
+      "width": 393,
+      "height": 1169,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "59b014ca5e1fa0f69437698611da6b518f8e4c73e4c95ef1d6edb1702a40dcd0",
+          "review": "sheet-13.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1169,
+          "pixel_sha256": "2631d15fb797058a207c727229726e6d1b507f7fe5949bacadfc65f50010240f",
+          "review": "sheet-07.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-consistency-cleared-393-1x.png",
+      "sha256": "a8523469f07c99c47914a61fb9b6701858b1cfb1ba2548d409bc005a53f4eed9",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "0f2b5b15cdbc9418b76204d7b2157b423e1173c89981ab9e4c706252ead7df66",
+          "review": "sheet-13.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "8fd030ce412db84fbd6a00a05578767cc5dbab71cb6a2f50e3bd29849785d942",
+          "review": "sheet-07.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-consistency-formed-320-2x.long.png",
+      "sha256": "4e8b0eff7a969171bc170e9df1105f498e8351a7c2c56bece5a9477f1f88779b",
+      "width": 320,
+      "height": 2514,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "93492ab9ddd1962d865965e5e907e287649cf1d99ee7f31c6098cd6dca09b51c",
+          "review": "sheet-06.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "f858e0fe11c57b93d56167d6f5deac5f23e0fa94b47193d71e7e71be669eff48",
+          "review": "sheet-12.png#tile-5"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "6447a169fd18ea317a9e426fe08e2f0eb2a969cc7e33995f00bd4cd4e1110f79",
+          "review": "sheet-14.png#tile-5"
+        },
+        {
+          "y0": 1950,
+          "y1": 2514,
+          "pixel_sha256": "e1427e80337b8a2c0ce0e76e91964ade35bf1528075e48d2e25550aef011ba37",
+          "review": "sheet-06.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-consistency-formed-320-2x.png",
+      "sha256": "dd746ac8cb21703e97eafa912d4dd8c88edb4ce44bb566050695e49e7bde2cd3",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c09e7352c6c10d782c94576abc77df1b190a5e574643c3faacec6acf34556852",
+          "review": "sheet-15.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "f368b59422e3a38cf1dc64480ec4edd84f9f25369dc4e41175ebcfe3a5392af7",
+          "review": "sheet-15.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-consistency-formed-393-1x.long.png",
+      "sha256": "1d8a3f34da86455db712799818ae5cb5c2da240bdf03c38419f67a2dad9158fb",
+      "width": 393,
+      "height": 1169,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "59b014ca5e1fa0f69437698611da6b518f8e4c73e4c95ef1d6edb1702a40dcd0",
+          "review": "sheet-13.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1169,
+          "pixel_sha256": "12236321eef9dfe819b8c42f1fab8ed8e8a94e945d03bba22aa786057b7dbd79",
+          "review": "sheet-15.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-consistency-formed-393-1x.png",
+      "sha256": "d44d571de4a0332b77097a041acc50e1108b7268b0a8b55f79040c3f959dc9d6",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "bf6eb2223dc9a45f802b41561e9c048a1294b95203e906ee37f487a53d2bf353",
+          "review": "sheet-15.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "8fd030ce412db84fbd6a00a05578767cc5dbab71cb6a2f50e3bd29849785d942",
+          "review": "sheet-07.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-consistency-hard-320-2x.long.png",
+      "sha256": "45597b9dda052a33147cb79af1db22d61479c70aa5af395ff64b411962975a38",
+      "width": 320,
+      "height": 2514,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "93492ab9ddd1962d865965e5e907e287649cf1d99ee7f31c6098cd6dca09b51c",
+          "review": "sheet-06.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "f858e0fe11c57b93d56167d6f5deac5f23e0fa94b47193d71e7e71be669eff48",
+          "review": "sheet-12.png#tile-5"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "031b1022c5079d6759ca6e9e9f55e5348b3f43e4ab654986dfd578f49d31bc2e",
+          "review": "sheet-15.png#tile-4"
+        },
+        {
+          "y0": 1950,
+          "y1": 2514,
+          "pixel_sha256": "e1427e80337b8a2c0ce0e76e91964ade35bf1528075e48d2e25550aef011ba37",
+          "review": "sheet-06.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-consistency-hard-320-2x.png",
+      "sha256": "5e13d911b404f9068b0e2718af96ee9e6995bfc2c92d9b12d305c7024f89ebe5",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "38c2a14109a3dcaf2ae1a73c21195f2a3527ed0dc49007bafb6614e7c9f580bd",
+          "review": "sheet-15.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "056c451163cb4929b2d3bd3fb058a3c98394037e61a17fa63674f920a0f72899",
+          "review": "sheet-16.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-consistency-hard-393-1x.long.png",
+      "sha256": "82ea533008e8f82e27ba51673d5cc8b7d92a5516a90b6a58ad057acd852df88e",
+      "width": 393,
+      "height": 1169,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "59b014ca5e1fa0f69437698611da6b518f8e4c73e4c95ef1d6edb1702a40dcd0",
+          "review": "sheet-13.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1169,
+          "pixel_sha256": "d224b00ce65b8bfe24670724aa0850c0c99f4dbf6e4fd5363ea6fae416436455",
+          "review": "sheet-16.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-consistency-hard-393-1x.png",
+      "sha256": "cfa0bfbc29fc2bab7e4319d354ea63b6ea00a95d5c0da378968c8e95de243012",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "d0924a9082530ec4deec626c33486f91633d44d553d36977f41f95ca39755aaa",
+          "review": "sheet-16.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "8fd030ce412db84fbd6a00a05578767cc5dbab71cb6a2f50e3bd29849785d942",
+          "review": "sheet-07.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-consistency-loose-320-2x.long.png",
+      "sha256": "2d7efee9de220a7b4ae31364326ebeb9b735188f0fab75de471d9f993e7c73f8",
+      "width": 320,
+      "height": 2514,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "93492ab9ddd1962d865965e5e907e287649cf1d99ee7f31c6098cd6dca09b51c",
+          "review": "sheet-06.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "f858e0fe11c57b93d56167d6f5deac5f23e0fa94b47193d71e7e71be669eff48",
+          "review": "sheet-12.png#tile-5"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "7dbdc21fc5d4101f52caf59aea01f5f48fa17b11139ffe18154058b921511450",
+          "review": "sheet-03.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2514,
+          "pixel_sha256": "e1427e80337b8a2c0ce0e76e91964ade35bf1528075e48d2e25550aef011ba37",
+          "review": "sheet-06.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-consistency-loose-320-2x.png",
+      "sha256": "50fa1b8e44a7541d95403e45409aba6c7d6c7c537961a8bd7c53967c03e2016d",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6064fefe44a75dffcae476da7f78ebe9a61c84c8be296d2ef7560627453fdd09",
+          "review": "sheet-16.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1578b25e40709d15a0d1f1c5f1c4fbbb4bd268a432912cd4da6fe35a37211322",
+          "review": "sheet-16.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-consistency-loose-393-1x.long.png",
+      "sha256": "e3e8c948df73b3771e0ca7c650e6e85be028edebac66b461461e6bf10e895a5b",
+      "width": 393,
+      "height": 1169,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "59b014ca5e1fa0f69437698611da6b518f8e4c73e4c95ef1d6edb1702a40dcd0",
+          "review": "sheet-13.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1169,
+          "pixel_sha256": "026709c8f97d434cdabeccdbb0cd155ded68299890df642ffb641f9c8ec49062",
+          "review": "sheet-16.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-consistency-loose-393-1x.png",
+      "sha256": "2f8a537f59e199df72f8492313dc11ef917d52a0dafb1e800737a008c9d65297",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "db4afbf977ebb67086bc29f55007c562bdf697527b9f4ca3295a616926c8a95a",
+          "review": "sheet-17.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "8fd030ce412db84fbd6a00a05578767cc5dbab71cb6a2f50e3bd29849785d942",
+          "review": "sheet-07.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-consistency-pasty-320-2x.long.png",
+      "sha256": "0a0486e66067562dfdcec2508bd7a9c4a2e5022753d95167ffe0e6ce07588253",
+      "width": 320,
+      "height": 2514,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "93492ab9ddd1962d865965e5e907e287649cf1d99ee7f31c6098cd6dca09b51c",
+          "review": "sheet-06.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "f858e0fe11c57b93d56167d6f5deac5f23e0fa94b47193d71e7e71be669eff48",
+          "review": "sheet-12.png#tile-5"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "a86fad0d23de0ffaf3b8ad06757ace70290eabab5ad3cd5185767024573120fd",
+          "review": "sheet-17.png#tile-1"
+        },
+        {
+          "y0": 1950,
+          "y1": 2514,
+          "pixel_sha256": "e1427e80337b8a2c0ce0e76e91964ade35bf1528075e48d2e25550aef011ba37",
+          "review": "sheet-06.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-consistency-pasty-320-2x.png",
+      "sha256": "28690fab68dd7c0c5ab3499b4f734da1af76acc9ecf0fe4d645a045073d76076",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "0c15388d0e44edbdd415ca7c440681994c0a2848ede0672ea17de05f28e878d6",
+          "review": "sheet-17.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "739d6500a0f4c2ecbe00ee1af4b00a48b89bc6525a7b91acd50ba99f46d86f8b",
+          "review": "sheet-17.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-consistency-pasty-393-1x.long.png",
+      "sha256": "9dba2f8cc6fa603264bfd67372bf4ca7a4a5c6b1ad598080e2cf5da7c2b1de6b",
+      "width": 393,
+      "height": 1169,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "59b014ca5e1fa0f69437698611da6b518f8e4c73e4c95ef1d6edb1702a40dcd0",
+          "review": "sheet-13.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1169,
+          "pixel_sha256": "4bd9409974cf37f3aef5462c2960d9ac58447db21c473a634af01fc0875c6aa5",
+          "review": "sheet-17.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-consistency-pasty-393-1x.png",
+      "sha256": "8a4788b0cbd73db5f59cb4309d3fe779204a442591bb64c410c04bab70eda42c",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a34a106d63781cb6ae106748bf9cd06550778f96572d095cb4b98a8258494e17",
+          "review": "sheet-17.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "8fd030ce412db84fbd6a00a05578767cc5dbab71cb6a2f50e3bd29849785d942",
+          "review": "sheet-07.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-consistency-unsure-320-2x.long.png",
+      "sha256": "10fb552e0d085306489afbbecb7316151fdefcd85d79abcd3ab74af3cc9767e0",
+      "width": 320,
+      "height": 2514,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "93492ab9ddd1962d865965e5e907e287649cf1d99ee7f31c6098cd6dca09b51c",
+          "review": "sheet-06.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "f858e0fe11c57b93d56167d6f5deac5f23e0fa94b47193d71e7e71be669eff48",
+          "review": "sheet-12.png#tile-5"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "2f4ff22ffc349802e2018eb8588fa321e791b5ef1201a4d975ed0ea89137885d",
+          "review": "sheet-18.png#tile-0"
+        },
+        {
+          "y0": 1950,
+          "y1": 2514,
+          "pixel_sha256": "d53a9ed184b2789c2fb7a4ccb5775fe150679e3de3399096f6ae2110c95c7a97",
+          "review": "sheet-18.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-consistency-unsure-320-2x.png",
+      "sha256": "db3260f410eb8f4a53f29e49567f3ca3f3355b36a04a842421d8f14ee4687da5",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "d0c0acaf592834db7722515e89c86ad272c21a9ccdef24f960acdd7fb15919ee",
+          "review": "sheet-18.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "e43bf9cebcdb4a2f1f96ef2e81a4a574ffbcefb24ccbf00183849d6c34704c03",
+          "review": "sheet-14.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-consistency-unsure-393-1x.long.png",
+      "sha256": "b65c75439492ebe03b497e17cdfefcac6e07a751dd69279fe7afd332ff659935",
+      "width": 393,
+      "height": 1169,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "59b014ca5e1fa0f69437698611da6b518f8e4c73e4c95ef1d6edb1702a40dcd0",
+          "review": "sheet-13.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1169,
+          "pixel_sha256": "7c3a752102e11ad59ae6a4a8505a378248a7f0f94fa0c32602cf273696fff934",
+          "review": "sheet-18.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-consistency-unsure-393-1x.png",
+      "sha256": "70ea3e68b397df9c8ef1f219e41d6867590a37dfb2a1ec103b51d0ab59b19aff",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "145a75dadd4f0f3b8c5d0a47c7d2c0cbc970d785d244b7e8a2d9eff9b788bd38",
+          "review": "sheet-18.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "8fd030ce412db84fbd6a00a05578767cc5dbab71cb6a2f50e3bd29849785d942",
+          "review": "sheet-07.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-consistency-watery-320-2x.long.png",
+      "sha256": "ccb9ebd0ab6401c0453bde08af3a53778e663b4c163f8ffc789bb5290f756abc",
+      "width": 320,
+      "height": 2514,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "93492ab9ddd1962d865965e5e907e287649cf1d99ee7f31c6098cd6dca09b51c",
+          "review": "sheet-06.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "f858e0fe11c57b93d56167d6f5deac5f23e0fa94b47193d71e7e71be669eff48",
+          "review": "sheet-12.png#tile-5"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "3d0cc0a04622b2cd056f0ceb275b3440774a733e4547221b491c4a19defa341f",
+          "review": "sheet-18.png#tile-5"
+        },
+        {
+          "y0": 1950,
+          "y1": 2514,
+          "pixel_sha256": "e1427e80337b8a2c0ce0e76e91964ade35bf1528075e48d2e25550aef011ba37",
+          "review": "sheet-06.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-consistency-watery-320-2x.png",
+      "sha256": "61699c2793333d10684e1fe3d184c9d22b0fd96552dc039ee474cf7c65e8931e",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "d89d061582c060706e1f337fb4aff9dcbe3ecd8420240231ce31bf43951c2ec0",
+          "review": "sheet-19.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2f12465c023d0a0088b5eac60b285a716e5c3096261e382d6a21b7af81e8bf87",
+          "review": "sheet-19.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-consistency-watery-393-1x.long.png",
+      "sha256": "66abb0e1d56f1e74119647b4fa2f593220ae3d8b76b144d5f5b776fd4dba2861",
+      "width": 393,
+      "height": 1169,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "59b014ca5e1fa0f69437698611da6b518f8e4c73e4c95ef1d6edb1702a40dcd0",
+          "review": "sheet-13.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1169,
+          "pixel_sha256": "55834d8e7939b6d47a0e8f98345e6eda3745a6ae81cd0ecc1042fb4af6905d73",
+          "review": "sheet-19.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-consistency-watery-393-1x.png",
+      "sha256": "687dc832441979a7daf8c38669c73b9fac2e8ccca51a14dc0d912c930f94d491",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "8e6091b1facb920f16f13434de853accc9cd563fd53f40a7e786884ec127f3f3",
+          "review": "sheet-19.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "8fd030ce412db84fbd6a00a05578767cc5dbab71cb6a2f50e3bd29849785d942",
+          "review": "sheet-07.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-dirty-optional-empty-320-2x.long.png",
+      "sha256": "f698e66cd103be93f16bf759f44bbae8b5d2a22e9f4beb61cd1b2e1f1afb58cb",
+      "width": 320,
+      "height": 2526,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "19418eca0d2bd3706d2cf98a3a0d1b3ebb061686784161f2dd72ad3b8fa5c002",
+          "review": "sheet-19.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "76a85ad31d0ccd7189aaeb830643af8359940652f071a1d0685f1a845d2b47f0",
+          "review": "sheet-19.png#tile-5"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "63634ca21defbb3cec3b7d73c2c8a18df919276892acdf80d62cb8bf04a29d72",
+          "review": "sheet-20.png#tile-0"
+        },
+        {
+          "y0": 1950,
+          "y1": 2526,
+          "pixel_sha256": "f4797f3a0cbe339e2dfa1477c0349b0e244a7ad107b8f107a96b14cfa32ce890",
+          "review": "sheet-20.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-dirty-optional-empty-320-2x.png",
+      "sha256": "a2a151554a2f44bd2fba5957c0d531b6908377c0e58b8b9411b935f7fd784c31",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "d78236787bf3f4b9970cb2265b2117241b6df07a37c23d2f58f7adad0a419670",
+          "review": "sheet-20.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "944c25b6acbd383f818da9f445b5b2c970f89d2aefa0098ced03c68342a82c79",
+          "review": "sheet-20.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-dirty-optional-empty-393-1x.long.png",
+      "sha256": "96a70d4ba4cb0433df285e78eced37a645025e8d50a891e380c62f67b28f35bf",
+      "width": 393,
+      "height": 1225,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c099c346aafb6326c3328d8348ba46e6acf005075aa818b80d9ad184d7a7c507",
+          "review": "sheet-20.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1225,
+          "pixel_sha256": "ad03079c97e84c851356e77d0df8bacd40d8ef57d36a96a785197fa87849a078",
+          "review": "sheet-20.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-dirty-optional-empty-393-1x.png",
+      "sha256": "d24304033e569a70607ae0e5b4b77706d5faa849729ad5ea63fdc48c931706cd",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c099c346aafb6326c3328d8348ba46e6acf005075aa818b80d9ad184d7a7c507",
+          "review": "sheet-20.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1c88dd433a0e8e120d0c20ca5b1d585f52c5b71ee00f12a0fb5ae7615c94b675",
+          "review": "sheet-02.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-dirty-optional-reopened-320-2x.long.png",
+      "sha256": "f698e66cd103be93f16bf759f44bbae8b5d2a22e9f4beb61cd1b2e1f1afb58cb",
+      "width": 320,
+      "height": 2526,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "19418eca0d2bd3706d2cf98a3a0d1b3ebb061686784161f2dd72ad3b8fa5c002",
+          "review": "sheet-19.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "76a85ad31d0ccd7189aaeb830643af8359940652f071a1d0685f1a845d2b47f0",
+          "review": "sheet-19.png#tile-5"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "63634ca21defbb3cec3b7d73c2c8a18df919276892acdf80d62cb8bf04a29d72",
+          "review": "sheet-20.png#tile-0"
+        },
+        {
+          "y0": 1950,
+          "y1": 2526,
+          "pixel_sha256": "f4797f3a0cbe339e2dfa1477c0349b0e244a7ad107b8f107a96b14cfa32ce890",
+          "review": "sheet-20.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-dirty-optional-reopened-320-2x.png",
+      "sha256": "5f8b8c394207b7b9a4d76e0b1ba59f35a963d6e8a78ddda98a89b8b31f71cb2d",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "19418eca0d2bd3706d2cf98a3a0d1b3ebb061686784161f2dd72ad3b8fa5c002",
+          "review": "sheet-19.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "50e40ff13924438981d26c2604ce3cbf415c0ccf091c89fef7b8ddabc4ef8d13",
+          "review": "sheet-21.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-dirty-optional-reopened-393-1x.long.png",
+      "sha256": "96a70d4ba4cb0433df285e78eced37a645025e8d50a891e380c62f67b28f35bf",
+      "width": 393,
+      "height": 1225,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c099c346aafb6326c3328d8348ba46e6acf005075aa818b80d9ad184d7a7c507",
+          "review": "sheet-20.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1225,
+          "pixel_sha256": "ad03079c97e84c851356e77d0df8bacd40d8ef57d36a96a785197fa87849a078",
+          "review": "sheet-20.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-dirty-optional-reopened-393-1x.png",
+      "sha256": "d24304033e569a70607ae0e5b4b77706d5faa849729ad5ea63fdc48c931706cd",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c099c346aafb6326c3328d8348ba46e6acf005075aa818b80d9ad184d7a7c507",
+          "review": "sheet-20.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1c88dd433a0e8e120d0c20ca5b1d585f52c5b71ee00f12a0fb5ae7615c94b675",
+          "review": "sheet-02.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-dirty-optional-saved-320-2x.png",
+      "sha256": "aae3b8631a043233ed43c663c2b51258ac68f9d26f9f0297d51f6f907cbe286b",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2e44860a017f965e7c1c56ff21221b386e3880d79588584619b54bc83d77e67a",
+          "review": "sheet-21.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "50b472f56511423c0bda6ec3cbfda30b48203d2ace3b579f099f7282ff77fa65",
+          "review": "sheet-21.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-dirty-optional-saved-393-1x.png",
+      "sha256": "edae982ba1a42e950a6f6b1b577c76f78c515a0cf1bc0a8e83cb1b19c9fa8954",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "be0d8aeab6a4ea22515d4513a9bed3a8bae4a76c10115403da3ca40cd0c81fc3",
+          "review": "sheet-21.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "6a5a78b0156f5d4fa1018d72fc617139ab47cbd88d0c51728ccdb569d098ce8f",
+          "review": "../baby-feeding-control-visual-review/sheet-09.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-dirty-selected-320-2x.long.png",
+      "sha256": "2fe696a5fc8771afb725867f400dd9c7ce4bda31246e9c741a7bd426edb83fd2",
+      "width": 320,
+      "height": 2514,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "93492ab9ddd1962d865965e5e907e287649cf1d99ee7f31c6098cd6dca09b51c",
+          "review": "sheet-06.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "296f5ed3fcf9e1b37018a47597ee921fee0a7afe2d2a51db95014d1bbd717e1b",
+          "review": "sheet-08.png#tile-5"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "121f769361dfe271ecf34895de331956c16670aa2eb8631a9d0bee7c2995317e",
+          "review": "sheet-08.png#tile-0"
+        },
+        {
+          "y0": 1950,
+          "y1": 2514,
+          "pixel_sha256": "e1427e80337b8a2c0ce0e76e91964ade35bf1528075e48d2e25550aef011ba37",
+          "review": "sheet-06.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-dirty-selected-320-2x.png",
+      "sha256": "6c7c4a1c5a8e0c70343f55a9ed1ec7fbad2aa53eba47ea00a22550f88c109959",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6345dda2cc7a1a55c227099afe832027f89e7ae223120a0fa185cb8f5842d3ab",
+          "review": "sheet-21.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "58056a672a8fe6fa229adad8b9a265c304167595508e9fe367000dc0eeebb597",
+          "review": "sheet-21.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-dirty-selected-393-1x.long.png",
+      "sha256": "736fe134f7bb2cd9d1ad7b35542d493c8eba298d43fca49f8936df7c157b622f",
+      "width": 393,
+      "height": 1169,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "5b86cd591240f3c3d4251c5572153583e811e669711853723b1160c446a6c44d",
+          "review": "sheet-09.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1169,
+          "pixel_sha256": "2631d15fb797058a207c727229726e6d1b507f7fe5949bacadfc65f50010240f",
+          "review": "sheet-07.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-dirty-selected-393-1x.png",
+      "sha256": "d27f81e8fad830f6533d94ac8b7501a97b537246894d199a86f666b99798d068",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a6cba097c68d49e12a5644263141c032d4fd2fcdf9177b5e46037c5fbece5237",
+          "review": "sheet-22.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "310e97596d6e8b6f5c395408d4951d248eaab0b44600ed6aa32e4b03f1713185",
+          "review": "sheet-22.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-edit-wet-320-2x.long.png",
+      "sha256": "6a122a0359aa692d21e093d1d3aec8f81749372da0c8426cc455b99709967279",
+      "width": 320,
+      "height": 1144,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "7a654156a9efd5feb97f0467118584921b2f45ad8f32a202e4a8eadad7c3d786",
+          "review": "sheet-22.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1144,
+          "pixel_sha256": "7e59d85624f2ad505e4be05d64fb1ca1d4a2822d684e5dbd32e19a13e1595550",
+          "review": "sheet-22.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-edit-wet-320-2x.png",
+      "sha256": "984cfd78127cf78e54765c87c5d9ed660ce0dab93a98392ba75e7500c58f32d5",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "66893fd9cd0cb81a2c050c03e4c08b8f483837925d98a8cda16711bff20f3fa8",
+          "review": "sheet-22.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "e3761e362155f0965e87458172e4041492b54b6f6f96a4c2cac3ae8b22167d97",
+          "review": "sheet-22.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-edit-wet-393-1x.png",
+      "sha256": "2a8712afc674516a7feb29e54a49e87fac4db09ff568e405fbaf6f0e2fb766ff",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "007834c96e934bb981909377511a057cd2aa94ad2dc37bd6cc5349e264d6f877",
+          "review": "sheet-23.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "abf3f6e4299d42b21c6d3658c51c9c1dce452c992dc0d69a8d8c88efa4c644f6",
+          "review": "sheet-23.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-home-dirty-only-320-2x.long.png",
+      "sha256": "280bcf4bd469120320972c4853f75e1d503cd0b1280e06f97b0debbeeb57fdb9",
+      "width": 320,
+      "height": 3463,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "58578630282c08ed070b330c5092b2346554d47e291ecce03bfa1790d2ebdd62",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "c14fee627df6b862aee402bbe112aa49df7ed898db149adfd7237f77c0639ddf",
+          "review": "sheet-23.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "b8db817ad23b57373febedd8d3a5f9b96b323fd329a7d3bb484c1b945d1db4a0",
+          "review": "sheet-23.png#tile-3"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "a95ccfd0d663c0dbc218ae424facf45d0a80a495ca27fe442834babdaab4a92e",
+          "review": "sheet-23.png#tile-4"
+        },
+        {
+          "y0": 2600,
+          "y1": 3250,
+          "pixel_sha256": "257a3d7dafa303dd5b45bcb340da80b5734d28226833459741eddc06119ac46d",
+          "review": "sheet-23.png#tile-5"
+        },
+        {
+          "y0": 3250,
+          "y1": 3463,
+          "pixel_sha256": "8142439fcf0de45cbd802ff691a334d968a27a996937ab94155c133133fab12e",
+          "review": "sheet-24.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-home-dirty-only-320-2x.png",
+      "sha256": "32e02297eb960cf9da693d3ed9a4e380131ba98e63d64680e1c452112635af75",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "58578630282c08ed070b330c5092b2346554d47e291ecce03bfa1790d2ebdd62",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "98ef9a2ad09f8a3c8229ac286c7eb3cb28273ffd01708531c25ae3c0ce531fd2",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-home-dirty-only-393-1x.long.png",
+      "sha256": "08197a9ac21a355fb85f4871ba056de63a2d2b31417a4163f599b4e2a5e239d0",
+      "width": 393,
+      "height": 1752,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ab39f8f7084afa051593771bb5f1eea5ddce920bd423ffc64682b003ff64b5ba",
+          "review": "sheet-24.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "462243825730002d5a7b26fe7e1bbdb2f381ea57afabfc7a0cad762ed9541c1e",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1752,
+          "pixel_sha256": "5d1142fe86ef6e5a8664871afce9928bf15cf58f7b773ac5f1080f1b7fead23c",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-home-dirty-only-393-1x.png",
+      "sha256": "ba1c5db1d8834d3862a03ed7ebc5b74accb7bbc058f85fac5c3ec0abeb491b43",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ab39f8f7084afa051593771bb5f1eea5ddce920bd423ffc64682b003ff64b5ba",
+          "review": "sheet-24.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a1f9a5a5f828e0a335129ce0d0a8a7cf54c1ab1e6b87423f882a64c1946d8f9e",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-home-entry-320-2x.long.png",
+      "sha256": "2a7eed3eaa881740523730a74f99487a3935cee5f5e500fdea7e513a60082fc7",
+      "width": 320,
+      "height": 3460,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "58578630282c08ed070b330c5092b2346554d47e291ecce03bfa1790d2ebdd62",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "034c398b12fe2df5aaef1e8fd2e151d4092f4bc550a8179f7524acfdf8572a5d",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "fa27bf1b8f7135cf78bb1380036cbe25b805799678f9c6338d1b09862168215b",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "cf7b9827ee12ea5f4ce473b5b04736e9eca7e63163a06350e8ad0569b0e9a58a",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-3"
+        },
+        {
+          "y0": 2600,
+          "y1": 3250,
+          "pixel_sha256": "830120be56be43c6e4e4a7527c94577138b4175b12f8b7b606a89d5ff059987b",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-4"
+        },
+        {
+          "y0": 3250,
+          "y1": 3460,
+          "pixel_sha256": "347ac7ec17d5bdaf8c362c53e6be84275398444203824d119dff6d55c72c68e4",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-home-entry-320-2x.png",
+      "sha256": "32e02297eb960cf9da693d3ed9a4e380131ba98e63d64680e1c452112635af75",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "58578630282c08ed070b330c5092b2346554d47e291ecce03bfa1790d2ebdd62",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "98ef9a2ad09f8a3c8229ac286c7eb3cb28273ffd01708531c25ae3c0ce531fd2",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-home-entry-393-1x.long.png",
+      "sha256": "f0cba396e8a9efa775fb9fbb71adccd863e4ce8dace888759be74db253f099a6",
+      "width": 393,
+      "height": 1752,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2541e10f43029eb71329290bf405fa83fabe418cf9eb6676ed4e3eb8498f6856",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "462243825730002d5a7b26fe7e1bbdb2f381ea57afabfc7a0cad762ed9541c1e",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1752,
+          "pixel_sha256": "5d1142fe86ef6e5a8664871afce9928bf15cf58f7b773ac5f1080f1b7fead23c",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-home-entry-393-1x.png",
+      "sha256": "f7c02c89b1acb7e0cd4ab4adc0593819b05f05ed599398d49ea569c924ea6a82",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2541e10f43029eb71329290bf405fa83fabe418cf9eb6676ed4e3eb8498f6856",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a1f9a5a5f828e0a335129ce0d0a8a7cf54c1ab1e6b87423f882a64c1946d8f9e",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-kind-required-320-2x.long.png",
+      "sha256": "1326b4c6b06c46803e4e24e8808a2ec683e23993e582c75d90f7cee65e330fdf",
+      "width": 320,
+      "height": 1226,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "d9a5d5f66c4c38b52b0d2c4fb0f3f85e5dd2d9b99a10a7417692914b473a96bc",
+          "review": "sheet-24.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1226,
+          "pixel_sha256": "9c984de66c6841b9476aff1904f61ea8d0c53d072056f2a000ce8c90b8cdc919",
+          "review": "sheet-24.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-kind-required-320-2x.png",
+      "sha256": "c67172038114af0c23d3a9351cf2465e85688af8a451a06cda33de4092d2b4b0",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "315ff07c2715ce3481383f58ab26de138fa507f555caeb6c51c96195f8ab3be7",
+          "review": "sheet-24.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "20826ec8934a77feaa48d05583ed2e2b5fef0b3a9e0edebe12e36703a67b3d67",
+          "review": "sheet-24.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-kind-required-393-1x.png",
+      "sha256": "87715bba3da896380402d8a683ac014979a92bae700c26c585302965f6cd3755",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "90a3dd9b3a6020fa5d1c24a2726877a7ad8fb15a52cfca858c264b7f983fd569",
+          "review": "sheet-25.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3c1c8542bbbc726d7891bf21a5f971d5796704a615152d2a1f0d76ce76e0ae81",
+          "review": "sheet-25.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-more-return-320-2x.png",
+      "sha256": "90ff3249f64fc7750a5da2a6bac0e2e90a64014893d9e85c3df4c76dbe8dea38",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "7925ed8e5939f589376b72745969839e14c7fb166cfb48866eed469fa66c4d02",
+          "review": "../baby-profile-control-visual-review/sheet-19.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "f95aac7cc67095efb73a4ae0b9ee5dc9518b86f20195158e860fce9621ec483a",
+          "review": "../mom-rest-control-visual-review/sheet-19.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-more-return-393-1x.png",
+      "sha256": "1905827f337ce2fe60b46266600cce9aa8dea3b9aac6828fb6a1d3f67f020b35",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c8e12900bddbe318fd8d03ad9b384466fc1af1f6c371f72f999f20bc96cac1d6",
+          "review": "../baby-profile-control-visual-review/sheet-19.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "ae62a60cadfc8bfb09e3e94acb0dc8f7d481c4c260eae5960e33ebdc5f0799db",
+          "review": "../mom-rest-control-visual-review/sheet-20.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-note-expanded-320-2x.long.png",
+      "sha256": "efd9d7f33974d366061e5c0cbab772cef013bee5c3495279d93d4e0292b2ae05",
+      "width": 320,
+      "height": 2708,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "93492ab9ddd1962d865965e5e907e287649cf1d99ee7f31c6098cd6dca09b51c",
+          "review": "sheet-06.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "f858e0fe11c57b93d56167d6f5deac5f23e0fa94b47193d71e7e71be669eff48",
+          "review": "sheet-12.png#tile-5"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "7dbdc21fc5d4101f52caf59aea01f5f48fa17b11139ffe18154058b921511450",
+          "review": "sheet-03.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "0161f9bc361cc1bf81329f490d76c795caec68aab968258cfd150c17b2299c2b",
+          "review": "sheet-25.png#tile-2"
+        },
+        {
+          "y0": 2600,
+          "y1": 2708,
+          "pixel_sha256": "e62e3b3f8cee6396076a4927c809850fef6eba7680b43960dbc8d69d4c797188",
+          "review": "sheet-25.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-note-expanded-320-2x.png",
+      "sha256": "d7c4c654d9c76c8101dfc76de223a9734b91e3971090ef9ba7d166c9c5d63ba8",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "1446e6613163ac6214f7e5764e3d18e6697478f50aadc3ef470ba8a8eb2accf3",
+          "review": "sheet-25.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a6dd98baa08016333ac4f260a9591de8bc0a52fd3d29502ddb03b46b615ec436",
+          "review": "sheet-25.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-note-expanded-393-1x.long.png",
+      "sha256": "9c37dba8b9a09fd46695d7e08a95f4efa5e9a08160fe56d643c6e720f346c14c",
+      "width": 393,
+      "height": 1297,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "59b014ca5e1fa0f69437698611da6b518f8e4c73e4c95ef1d6edb1702a40dcd0",
+          "review": "sheet-13.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1297,
+          "pixel_sha256": "3e85482663db8188e031002f35c841381c33fa5d059eb7115311a263aebcf9da",
+          "review": "sheet-26.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-note-expanded-393-1x.png",
+      "sha256": "543b22b8d0216cea35fbdec2c8fc6f7058304e8e857009a23d277343dac36b51",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "28797c893a1b60d1be43d37350f0229167ae3f7d4335f207203357ea96628a8a",
+          "review": "sheet-26.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "7f0004e12f9e31be385565905187ddbaae89e217f2c088315a4c8ded992d8c60",
+          "review": "sheet-26.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-note-filled-320-2x.long.png",
+      "sha256": "e004949a1efa75b450997ece5e0605e34f1b8170352b2c417c7358044094fb70",
+      "width": 320,
+      "height": 2777,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "93492ab9ddd1962d865965e5e907e287649cf1d99ee7f31c6098cd6dca09b51c",
+          "review": "sheet-06.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "f858e0fe11c57b93d56167d6f5deac5f23e0fa94b47193d71e7e71be669eff48",
+          "review": "sheet-12.png#tile-5"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "7dbdc21fc5d4101f52caf59aea01f5f48fa17b11139ffe18154058b921511450",
+          "review": "sheet-03.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "e9da37d06058f72eae89db3b5353646ed7abb64ce6ecbedbe64c87ed802d98a9",
+          "review": "sheet-26.png#tile-3"
+        },
+        {
+          "y0": 2600,
+          "y1": 2777,
+          "pixel_sha256": "0baf740dbdf7a4df1ca9c7629eabc4a57d0364cc75cb79157e47a5bcc7425db0",
+          "review": "sheet-26.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-note-filled-320-2x.png",
+      "sha256": "956477b10c927fea5503afd77bf118a73440c75ff5aaef8c4c272ff7de920eb9",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "607e140b9e3a168c02db8840766be54d81303edbc6e337deb2b6a674d4515f20",
+          "review": "sheet-26.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "f2101545a1870b4d800034946146de8ea8f85a263af8f5a6c15e21dacd8a94b5",
+          "review": "sheet-27.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-note-filled-393-1x.long.png",
+      "sha256": "c5b11e20ff5c2d5b078162e403f161cefc2c37a43c36cb7d2eb053051e51058b",
+      "width": 393,
+      "height": 1297,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "59b014ca5e1fa0f69437698611da6b518f8e4c73e4c95ef1d6edb1702a40dcd0",
+          "review": "sheet-13.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1297,
+          "pixel_sha256": "75687a626380ea8cb59ebba1a646606349abec5cdb131f18754525c3bc6f5eba",
+          "review": "sheet-27.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-note-filled-393-1x.png",
+      "sha256": "9ca1024054908c32177f6454766af5248dbd7e87ce8f55f1974d05d896504d26",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ec2ee85de9013e63889de7f3bb4a2c079dce97f084d8a13ee90abdd0538b096d",
+          "review": "sheet-27.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "479ab5f5bc2e83b33f809cb6aa9c68d73040181b3e2d3a72667276515ed405a6",
+          "review": "sheet-27.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-sign-blood-320-2x.long.png",
+      "sha256": "6b32606df9ddb126a098e2b688ac778ef6d6e3b56f2c5bb03fc8be8cce663448",
+      "width": 320,
+      "height": 2514,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "93492ab9ddd1962d865965e5e907e287649cf1d99ee7f31c6098cd6dca09b51c",
+          "review": "sheet-06.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "f858e0fe11c57b93d56167d6f5deac5f23e0fa94b47193d71e7e71be669eff48",
+          "review": "sheet-12.png#tile-5"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "7dbdc21fc5d4101f52caf59aea01f5f48fa17b11139ffe18154058b921511450",
+          "review": "sheet-03.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2514,
+          "pixel_sha256": "945024670ad0c424618aac11008cf7e5d12710f1f7ac56d407f70b1843a9fcfb",
+          "review": "sheet-27.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-sign-blood-320-2x.png",
+      "sha256": "d6df0a7b89d1a7bfe47ff343ee7b988f785b1bde38479e7af981faead55b4e1b",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b7323465f1ad4ddcba89a0938678ff0ba116a5ba23fd2cd891da004c7f2962b4",
+          "review": "sheet-27.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "e43bf9cebcdb4a2f1f96ef2e81a4a574ffbcefb24ccbf00183849d6c34704c03",
+          "review": "sheet-14.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-sign-blood-393-1x.long.png",
+      "sha256": "10894c637cf93e415d157424cbb4884734312234e79796b51d3c25db849bdc2a",
+      "width": 393,
+      "height": 1169,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "59b014ca5e1fa0f69437698611da6b518f8e4c73e4c95ef1d6edb1702a40dcd0",
+          "review": "sheet-13.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1169,
+          "pixel_sha256": "a27d72293bc396c31b2be32f2440a74cfa52963d2ce89b8d5c10cf7c3cfd63e0",
+          "review": "sheet-28.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-sign-blood-393-1x.png",
+      "sha256": "507213dd034c693dd2122ec947d3dae91490f1c98de305f07afaf63acc4b73cd",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9d222c72e9dad049ce0eae70b29466476d1280beeb6d6bf0c0dd339410dd632e",
+          "review": "sheet-28.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "8fd030ce412db84fbd6a00a05578767cc5dbab71cb6a2f50e3bd29849785d942",
+          "review": "sheet-07.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-sign-both-320-2x.long.png",
+      "sha256": "48985960a73101d5c20248349f5974c0c9ad9f37db3f352b056134a3961bdf97",
+      "width": 320,
+      "height": 2514,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "93492ab9ddd1962d865965e5e907e287649cf1d99ee7f31c6098cd6dca09b51c",
+          "review": "sheet-06.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "f858e0fe11c57b93d56167d6f5deac5f23e0fa94b47193d71e7e71be669eff48",
+          "review": "sheet-12.png#tile-5"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "7dbdc21fc5d4101f52caf59aea01f5f48fa17b11139ffe18154058b921511450",
+          "review": "sheet-03.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2514,
+          "pixel_sha256": "b1ac21572f5191a53290ce3829e0a7a2c445ad441fd81b377557247316113be4",
+          "review": "sheet-28.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-sign-both-320-2x.png",
+      "sha256": "a5532dcb3d45fef229e4dfdf2d9151de43116f63e47f6a2612802d9e51fd3b86",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "674e687955a056fa62def7f983d352d1f7c2fe5600ffc1511ab72c8c9b2b4821",
+          "review": "sheet-28.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "e43bf9cebcdb4a2f1f96ef2e81a4a574ffbcefb24ccbf00183849d6c34704c03",
+          "review": "sheet-14.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-sign-both-393-1x.long.png",
+      "sha256": "1dabe70087f36fe0bfeab0ec1fc43c419fc345ae808fdcccd8c8984b9879aaa5",
+      "width": 393,
+      "height": 1169,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "59b014ca5e1fa0f69437698611da6b518f8e4c73e4c95ef1d6edb1702a40dcd0",
+          "review": "sheet-13.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1169,
+          "pixel_sha256": "04deae4e59dde54a036a9f2cf52019cae246470e73de27c3c5922dc5984ba740",
+          "review": "sheet-28.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-sign-both-393-1x.png",
+      "sha256": "e79e7778d829f04446c84b4d24e98cdef30d9b85e3def90a6ea309cd50e25bb3",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "de0c14509234146c605cfd2889d42308033f6c45e1c879eea30daefa2e1e29b5",
+          "review": "sheet-28.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "8fd030ce412db84fbd6a00a05578767cc5dbab71cb6a2f50e3bd29849785d942",
+          "review": "sheet-07.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-sign-cleared-320-2x.long.png",
+      "sha256": "2d7efee9de220a7b4ae31364326ebeb9b735188f0fab75de471d9f993e7c73f8",
+      "width": 320,
+      "height": 2514,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "93492ab9ddd1962d865965e5e907e287649cf1d99ee7f31c6098cd6dca09b51c",
+          "review": "sheet-06.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "f858e0fe11c57b93d56167d6f5deac5f23e0fa94b47193d71e7e71be669eff48",
+          "review": "sheet-12.png#tile-5"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "7dbdc21fc5d4101f52caf59aea01f5f48fa17b11139ffe18154058b921511450",
+          "review": "sheet-03.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2514,
+          "pixel_sha256": "e1427e80337b8a2c0ce0e76e91964ade35bf1528075e48d2e25550aef011ba37",
+          "review": "sheet-06.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-sign-cleared-320-2x.png",
+      "sha256": "65ef9143d2addd94054c778cc005be9391e34490fd13db8382d08688dfd6faf5",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "d517a5638eab25ca63886dfd7c80834b1f3a85d9592ad4a8dc5b590513cd50c7",
+          "review": "sheet-14.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "e43bf9cebcdb4a2f1f96ef2e81a4a574ffbcefb24ccbf00183849d6c34704c03",
+          "review": "sheet-14.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-sign-cleared-393-1x.long.png",
+      "sha256": "e3e8c948df73b3771e0ca7c650e6e85be028edebac66b461461e6bf10e895a5b",
+      "width": 393,
+      "height": 1169,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "59b014ca5e1fa0f69437698611da6b518f8e4c73e4c95ef1d6edb1702a40dcd0",
+          "review": "sheet-13.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1169,
+          "pixel_sha256": "026709c8f97d434cdabeccdbb0cd155ded68299890df642ffb641f9c8ec49062",
+          "review": "sheet-16.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-sign-cleared-393-1x.png",
+      "sha256": "2f8a537f59e199df72f8492313dc11ef917d52a0dafb1e800737a008c9d65297",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "db4afbf977ebb67086bc29f55007c562bdf697527b9f4ca3295a616926c8a95a",
+          "review": "sheet-17.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "8fd030ce412db84fbd6a00a05578767cc5dbab71cb6a2f50e3bd29849785d942",
+          "review": "sheet-07.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-sign-mucus-320-2x.long.png",
+      "sha256": "fca921db113d4da8ee9c98e6f5d77143c621a2d6033fde6d158fc7f856ef53ef",
+      "width": 320,
+      "height": 2514,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "93492ab9ddd1962d865965e5e907e287649cf1d99ee7f31c6098cd6dca09b51c",
+          "review": "sheet-06.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "f858e0fe11c57b93d56167d6f5deac5f23e0fa94b47193d71e7e71be669eff48",
+          "review": "sheet-12.png#tile-5"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "7dbdc21fc5d4101f52caf59aea01f5f48fa17b11139ffe18154058b921511450",
+          "review": "sheet-03.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2514,
+          "pixel_sha256": "b34373662c630a6cb698e23c58fffa589c2f0b48da76606b2107ff0034c094d9",
+          "review": "sheet-29.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-sign-mucus-320-2x.png",
+      "sha256": "479b49526c30c14bbe49e3a3e7be4e2b9a2e650506f3943fa6981412b1834f95",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "e855b6383f2c4cefbce93400d7b3da9e7486a0cda3c33d64e49f5c5c25d489da",
+          "review": "sheet-29.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "e43bf9cebcdb4a2f1f96ef2e81a4a574ffbcefb24ccbf00183849d6c34704c03",
+          "review": "sheet-14.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-sign-mucus-393-1x.long.png",
+      "sha256": "995b13038b4d10539a2689a29ffc26dc6a4634da806e9565305d5a0f2e69564b",
+      "width": 393,
+      "height": 1169,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "59b014ca5e1fa0f69437698611da6b518f8e4c73e4c95ef1d6edb1702a40dcd0",
+          "review": "sheet-13.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1169,
+          "pixel_sha256": "77f07ed00cd07e05e735bce7af17206974d8b0029f577c69913d2a33b1e8776a",
+          "review": "sheet-29.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-sign-mucus-393-1x.png",
+      "sha256": "08c4eea868942de66117f8e15725f3a6ea7c1c7bdb6613ac103dfce4d9e98d2e",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "f3436baaf19539da7e09e7424c7b05a9f5b2f99a18e3acb4e5c8ee8236d9da20",
+          "review": "sheet-29.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "8fd030ce412db84fbd6a00a05578767cc5dbab71cb6a2f50e3bd29849785d942",
+          "review": "sheet-07.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-wet-hides-stool-320-2x.long.png",
+      "sha256": "5b19a8d98b1617feadb215ddafb0f41a6b7d8de7581e935a61d39c7cb2bc7de7",
+      "width": 320,
+      "height": 1099,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "56012da80a6d24f90f23ebbd94215ac964f178bf9a8351c56fe8bbed4c6587bc",
+          "review": "sheet-29.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1099,
+          "pixel_sha256": "26832468afb3a707fa13e692d7c8558339a0443e0bfe4809f7c158537771f862",
+          "review": "sheet-29.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-wet-hides-stool-320-2x.png",
+      "sha256": "11d6e530db77096245aa27e66748e0055fadd6a7f5706ff58587ba1d6aa86679",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "4bf629fe36f6b11182651baca72e636c2094f95b5d12334112f9970b6fe3947b",
+          "review": "sheet-30.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "af4147dfef0c48d82f27f7a56da61b12b6d5290dbbec1423e2b61decaa373336",
+          "review": "sheet-30.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-wet-hides-stool-393-1x.png",
+      "sha256": "13549361ca526875322fdc80972d79b133518182a9b7a5ab20ed864a294c61f7",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "266731952e93292f8f9191ae7d6f8d86418a760500a23a91bc625714db63bb72",
+          "review": "sheet-30.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3c1c8542bbbc726d7891bf21a5f971d5796704a615152d2a1f0d76ce76e0ae81",
+          "review": "sheet-25.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-wet-history-saved-320-2x.png",
+      "sha256": "75e303844ea1bc83538b49aa9da00e68ccb3feb67b32c2adf0c77deaaeb37216",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "4c9c36eaf278d1e97afed7c3919b93edef267ae73a1ec1a76bed2ea1c980dce1",
+          "review": "sheet-30.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "50b472f56511423c0bda6ec3cbfda30b48203d2ace3b579f099f7282ff77fa65",
+          "review": "sheet-21.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-wet-history-saved-393-1x.png",
+      "sha256": "899b80e5a670f55b01aaedb789c7f92fc5f741c7f133f9ec55a9fa9faa21a5f0",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "296d33036a8abac2ca72c7feb1942a6f9fa977f5e248a20f0c909fc5499194a6",
+          "review": "sheet-30.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "6a5a78b0156f5d4fa1018d72fc617139ab47cbd88d0c51728ccdb569d098ce8f",
+          "review": "../baby-feeding-control-visual-review/sheet-09.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-wet-open-320-2x.long.png",
+      "sha256": "abda81ef48ca25fdcf1dc7cf8771aa2202e04fcc9e9efa22aa2112e83b08a232",
+      "width": 320,
+      "height": 1132,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "56012da80a6d24f90f23ebbd94215ac964f178bf9a8351c56fe8bbed4c6587bc",
+          "review": "sheet-29.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1132,
+          "pixel_sha256": "280abcdb0c7efae5e7974eec4a2fad31fc96d0a7467a5362ce954f5340316c4d",
+          "review": "sheet-30.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-wet-open-320-2x.png",
+      "sha256": "0d65b43b7aeefbc2d5d5041437261790e8c436d3c45b39cbd79cbc445c67e464",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "56012da80a6d24f90f23ebbd94215ac964f178bf9a8351c56fe8bbed4c6587bc",
+          "review": "sheet-29.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "fa3112100c3fe54aea3ebffd437f716efa194cae1a9296c3105c2b6ab7f1167e",
+          "review": "sheet-31.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-diaper-controls-wet-open-393-1x.png",
+      "sha256": "f8015ef5debed12f88321d79aa49d9a65285549673e04a7663cee8b9856ae533",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "8be5fc98f2febca8def3dbc0d292272651e1b1693fdef280a4fed8e5bf3c1029",
+          "review": "sheet-31.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3c1c8542bbbc726d7891bf21a5f971d5796704a615152d2a1f0d76ce76e0ae81",
+          "review": "sheet-25.png#tile-1"
+        }
+      ]
+    }
+  ],
+  "unique_segments": 201,
+  "new_segments": 182,
+  "new_sheets": 31
+}

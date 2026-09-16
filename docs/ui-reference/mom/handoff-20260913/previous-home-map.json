@@ -1,0 +1,60 @@
+{
+  "id": "mom/home",
+  "title": "Me 首页",
+  "kind": "page",
+  "design": {
+    "file": "source/src/pages/UserApp.tsx",
+    "symbol": "HomePage",
+    "line": 587,
+    "end_line": 1309
+  },
+  "implementation": "lib/modules/mom/presentation/mother_home_page.dart",
+  "route": "/me",
+  "trigger": "",
+  "status": "Completed",
+  "implementation_status": "present",
+  "reference_images": [
+    {
+      "file": "mom/reference/home.png",
+      "original": "me-agent-style-sync/diary-followup/01-me-home.png",
+      "sha256": "99882d23679446923fc2557c30c54e758b14e0956e8c0775fa4dbb2698ee5e8f",
+      "extent": "viewport; consult source and trigger for scroll content"
+    },
+    {
+      "file": "mom/home-full.png",
+      "original": "Local design render; see capture-manifest.json",
+      "sha256": "a39e40ed4db9beeddb6afe7dbfc72b751015ea2b4ca9d22289c5966839b03a9b",
+      "extent": "expanded scroll frame"
+    },
+    {
+      "file": "mom/home-viewport.png",
+      "original": "Local design render; see capture-manifest.json",
+      "sha256": "8ce961056aff6f40223bbf838b50b27fdbcd2e8e4fae31233e715821e3e4a08f",
+      "extent": "original viewport"
+    }
+  ],
+  "notes": "",
+  "functional_evidence": [
+    "evidence/mom/verification.txt",
+    "evidence/mom/primary-regression.txt",
+    "evidence/mom/primary-analyze.txt",
+    "evidence/mom/primary-build.json",
+    "evidence/accessibility/green.txt",
+    "evidence/home-service-states/verification.md",
+    "evidence/home-preparation/verification.md"
+  ],
+  "visual_evidence": [
+    "evidence/mom/home-cold-start.png",
+    "evidence/mom/home-lower-native.png",
+    "evidence/mom/mom-home-current.png",
+    "evidence/mom/mom-expert-current.png",
+    "../../test/goldens/design_system/expert-appointment-390.png"
+  ],
+  "reviewed_source_sha256": "b16dac3ff072c780a2ffdae1d635bd201ba9f80cbcc9254c10948e78905abdac",
+  "review_notes": "Me 主页面已按最新参考对齐问候、知识、状态卡、专家卡及其它功能。专家概览读取现有预约接口，区分加载/失败/无预约/已预约；已预约显示本地日期时间、倒计时和查看预约入口，复用原详情路由。102 项相关回归通过，包含三宽及 2x 字号、预约按钮回调与失败保护；本地 APK 已冷启动核对无服务账号的首页，已预约状态以实际 Flutter widget 金图验证。专家头像接口缺失时显示团队图标，不虚构照片。购买、预约详情、咨询等后续流程仍在各自条目验收。 后续首页待填表直达入口、预约时区和独立倒计时已按专项修正，见 home-service-states。 Home preparation overlay and shared preparation style verified; see home-preparation evidence.",
+  "reference_kind": "original",
+  "related_implementation": [
+    "lib/modules/services/presentation/expert_support_section.dart",
+    "lib/modules/mom/presentation/mother_status_card.dart"
+  ]
+}

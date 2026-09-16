@@ -1,0 +1,99 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/modules/services/service_current_inventory_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: current service catalog all package and team entries false
+00:04 +1: current catalog loading empty errors and refresh false
+00:04 +2: current package loading missing recovery disabled payment false
+00:05 +3: current owned service progress and booking entries false
+00:06 +4: current pending service order open failure and resume false
+00:07 +5: current service catalog all package and team entries true
+00:09 +6: current catalog loading empty errors and refresh true
+00:10 +7: current package loading missing recovery disabled payment true
+00:10 +8: current owned service progress and booking entries true
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: TestFailure:<Expected: [
+                      251,
+                      248,
+                      244,
+                      255,
+                      251,
+                      248,
+                      244,
+                      255,
+                      251,
+                      248,
+                      244,
+                      255,
+                      251,
+                      248,
+                      244,
+                      255,
+                      251,
+                      248,
+                      244,
+                      255,
+                      251,
+                      248,
+                      244,
+                      255,
+                      ...
+                    ]
+            Actual: [
+                      251,
+                      248,
+                      244,
+                      255,
+                      251,
+                      248,
+                      244,
+                      255,
+                      251,
+                      248,
+                      244,
+                      255,
+                      251,
+                      248,
+                      244,
+                      255,
+                      251,
+                      248,
+                      244,
+                      255,
+                      251,
+                      248,
+                      244,
+                      255,
+                      ...
+                    ]
+             Which: at location [2420] is <232> instead of <233>
+          A changing footer must not be stitched into the event
+          >
+
+When the exception was thrown, this was the stack:
+#4      main.tap (file:///Users/lute/project/momcozy-lab/app/test/modules/services/service_current_inventory_test.dart:147:5)
+<asynchronous suspension>
+#5      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/services/service_current_inventory_test.dart:564:7)
+<asynchronous suspension>
+#6      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#7      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/modules/services/service_current_inventory_test.dart line 147
+The test description was:
+  current owned service progress and booking entries true
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:11 +8 -1: current owned service progress and booking entries true [E]
+  Test failed. See exception logs above.
+  The test description was: current owned service progress and booking entries true
+  
+00:11 +8 -1: current pending service order open failure and resume true
+00:12 +9 -1: (tearDownAll)
+00:12 +9 -1: Some tests failed.
+
+Failing tests:
+  /Users/lute/project/momcozy-lab/app/test/modules/services/service_current_inventory_test.dart: current owned service progress and booking entries true

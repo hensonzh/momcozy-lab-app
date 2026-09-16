@@ -1,0 +1,17 @@
+{
+  "command": [
+    "/Users/lute/.local/share/momcozy-toolchains/flutter/bin/flutter",
+    "test",
+    "--no-pub",
+    "--no-uninstall",
+    "--flavor",
+    "local",
+    "-d",
+    "emulator-5554",
+    "integration_test/notification_native_permission_test.dart",
+    "--reporter",
+    "expanded",
+    "--dart-define=NATIVE_PERMISSION_ALLOW=true"
+  ],
+  "aapt2_override": "/Users/lute/.local/share/momcozy-toolchains/android-sdk/build-tools/36.0.0/aapt2"
+}

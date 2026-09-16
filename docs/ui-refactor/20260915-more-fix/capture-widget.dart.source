@@ -1,0 +1,149 @@
+import 'dart:convert';
+import 'dart:io';
+import 'package:momcozy_flutter_app/shared/design_system/momcozy_design_system.dart';
+import 'dart:async';
+
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
+import 'package:momcozy_flutter_app/app/mom_bottom_navigation.dart';
+import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
+import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
+import 'package:momcozy_flutter_app/features/notifications/domain/momcozy_notification.dart';
+import 'package:momcozy_flutter_app/features/notifications/presentation/notification_coordinator.dart';
+import 'package:momcozy_flutter_app/features/notifications/presentation/notification_permission_controller.dart';
+import 'package:momcozy_flutter_app/features/notifications/presentation/notification_scope.dart';
+import 'package:momcozy_flutter_app/features/notifications/presentation/notifications_controller.dart';
+import 'package:momcozy_flutter_app/modules/profile/presentation/more_page.dart';
+import 'package:momcozy_flutter_app/shared/design_system/momcozy_theme.dart';
+
+import '../support/fixture_api_transport.dart';
+import '../support/momcozy_test_fonts.dart';
+import '../support/notification_fakes.dart';
+
+
+int auditUnread = 0;
+void main() {
+  setUpAll(loadMomCozyTestFonts);
+  for (final state in ['default','loading','unavailable','name-only','email-only','unread-3','unread-99plus','long-identity']) {
+    testWidgets('More review $state', (tester) async {
+      auditUnread = state == 'unread-99plus' ? 120 : state == 'unread-3' ? 3 : 0;
+      final pending = _PendingIdentity();
+      final data = <String,Object?>{'display_name':'Mia Chen','email':'mia@example.test'};
+      if (state == 'name-only') data.remove('email');
+      if (state == 'email-only') data.remove('display_name');
+      if (state == 'long-identity') {data['display_name']='Mia Catherine Chen With A Long Display Name';data['email']='mia.catherine.chen.with.a.long.email@example.test';}
+      await _host(tester, ['loading','unavailable'].contains(state) ? pending : FixtureApiJsonTransport(data),393,1,onLogout: () async {});
+      if (state=='unavailable') {pending.reply.completeError(StateError('offline'));await tester.pumpAndSettle();}
+      await tester.runAsync(() async {
+        for (final asset in [MomCozyAssets.agentAvatar,'assets/images/mom_home/expert_group.png','assets/images/more/cozymate.png']) {
+          await precacheImage(AssetImage(asset),tester.element(find.byType(MorePage)));
+        }
+      });
+      await tester.pumpAndSettle();
+      final measurements=<Map<String,Object?>>[];
+      for(final element in find.byWidgetPredicate((w)=>w is Text || ['MomHomeSurface','MomExpertPlanEntry','MomSettingsRow'].contains(w.runtimeType.toString()) || w.key == const ValueKey('bottom-nav-chrome') || w.key == const ValueKey('more-logout')).evaluate()) {
+        final finder=find.byElementPredicate((e)=>identical(e,element));
+        final rect=tester.getRect(finder); final w=element.widget;
+        measurements.add({'type':w.runtimeType.toString(),'text':w is Text?w.data:null,'key':w.key?.toString(),'x':rect.left,'y':rect.top,'w':rect.width,'h':rect.height,'font':w is Text?w.style?.fontSize:null});
+      }
+      await tester.runAsync(() async {await File('docs/ui-refactor/20260915-more-fix/flutter-$state.json').writeAsString(const JsonEncoder.withIndent('  ').convert(measurements));});
+      await expectLater(find.byType(MaterialApp),matchesGoldenFile('../../docs/ui-refactor/20260915-more-fix/flutter-$state.png'));
+      expect(tester.takeException(),isNull);
+      if(state=='loading')pending.reply.complete({});
+      await tester.pumpWidget(const SizedBox());
+    });
+  }
+}
+Future<GoRouter> _host(
+  WidgetTester tester,
+  FixtureApiJsonTransport transport,
+  double width,
+  double scale, {
+  Future<void> Function()? onLogout,
+}) async {
+  tester.view.physicalSize = Size(width, 844);
+  tester.view.devicePixelRatio = 1;
+  addTearDown(tester.view.resetPhysicalSize);
+  addTearDown(tester.view.resetDevicePixelRatio);
+  final runtime = MomCozyApiRuntime.fromSession(
+    const MomCozySession(
+      status: MomCozySessionStatus.authenticated,
+      userId: 'synthetic-more-design',
+      babyId: 'baby',
+      locale: 'en',
+    ),
+    jsonTransport: transport,
+  );
+  final inbox = NotificationsController(repository: _UnreadRepository());
+  await inbox.load();
+  final coordinator = NotificationCoordinator(
+    permission: NotificationPermissionController(FakePlatform()),
+    gateway: FakeGateway(),
+    store: FakeStore(),
+    platformName: 'android',
+    onNavigate: (_) {},
+    onMessage: (_) {},
+    onForeground: (_) {},
+  )..inbox = inbox;
+  addTearDown(coordinator.dispose);
+  final router = GoRouter(
+    initialLocation: '/more',
+    routes: [
+      GoRoute(
+        path: '/more',
+        builder: (_, _) => MomCozyRuntimeScope(
+          apiRuntime: runtime,
+          child: NotificationScope(
+            coordinator: coordinator,
+            child: Scaffold(
+              body: SafeArea(child: MorePage(onLogout: onLogout)),
+              bottomNavigationBar: const MomCozyBottomNavigation(
+                location: '/more',
+              ),
+            ),
+          ),
+        ),
+      ),
+      for (final path in ['/services', '/login'])
+        GoRoute(
+          path: path,
+          builder: (_, _) => Scaffold(body: Text(path)),
+        ),
+    ],
+  );
+  addTearDown(router.dispose);
+  await tester.pumpWidget(
+    MaterialApp.router(
+      debugShowCheckedModeBanner: false,
+      theme: momCozyTheme(),
+      routerConfig: router,
+      builder: (context, child) => MediaQuery(
+        data: MediaQuery.of(
+          context,
+        ).copyWith(textScaler: TextScaler.linear(scale)),
+        child: child!,
+      ),
+    ),
+  );
+  await tester.pumpAndSettle();
+  return router;
+}
+
+class _PendingIdentity extends FixtureApiJsonTransport {
+  _PendingIdentity() : super({});
+  final reply = Completer<Map<String, Object?>>();
+  @override
+  Future<Map<String, Object?>> getJson(
+    String path, {
+    Map<String, Object?> query = const {},
+  }) => reply.future;
+}
+
+class _UnreadRepository extends FakeRepository {
+  @override
+  Future<NotificationPageData> fetchPage({
+    String? cursor,
+    int limit = 30,
+  }) async => NotificationPageData(items: [], unreadCount: auditUnread);
+}

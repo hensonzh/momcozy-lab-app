@@ -1,0 +1,6 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_milk_dial_inventory_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: inventory milk clock dial 393/1x
+00:01 +1: inventory milk clock dial 320/1x
+00:03 +2: (tearDownAll)
+00:03 +2: All tests passed!

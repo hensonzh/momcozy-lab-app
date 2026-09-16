@@ -1,0 +1,4 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/app/typography_runtime_probe_test.dart
+00:00 +0: inspect current inherited typography
+{"bodyMedium":{"font":"DMSans","size":14.0,"height":null,"spacing":null,"weight":"null"},"bodyLarge":{"font":"DMSans","size":17.0,"height":null,"spacing":null,"weight":"null"},"bodySmall":{"font":"DMSans","size":12.0,"height":null,"spacing":null,"weight":"null"},"labelLarge":{"font":"DMSans","size":null,"height":null,"spacing":null,"weight":"null"},"titleMedium":{"font":"DMSans","size":16.0,"height":1.43,"spacing":0.25,"weight":"FontWeight.w600"}}
+00:00 +1: All tests passed!

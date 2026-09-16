@@ -1,0 +1,69 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/integration_test/agent_resource_inventory_test.dart
+Running Gradle task 'assembleLocalDebug'...                     
+WARNING: Your Android app project: app located at: /Users/lute/project/momcozy-lab/app/android/app/build.gradle.kts
+applies the Kotlin Gradle Plugin, which will cause build failures in future versions of Flutter. 
+Please migrate your app to Built-in Kotlin using this guide: https://docs.flutter.dev/release/breaking-changes/migrate-to-built-in-kotlin/for-app-developers
+
+WARNING: Your app uses the following plugins that apply Kotlin Gradle Plugin (KGP): firebase_core, flutter_timezone, flutter_webrtc, livekit_client
+Future versions of Flutter will fail to build if your app uses plugins that apply KGP.
+
+Please check the changelogs of these plugins and upgrade to a version that supports Built-in Kotlin.
+If no such version exists, report the issue to the plugin. If necessary, here is a guide on filing 
+an issue against a plugin: https://docs.flutter.dev/release/breaking-changes/migrate-to-built-in-kotlin/for-app-developers#report-incompatible-kotlin-gradle-plugin-usage-to-plugin-authors
+
+If you are a plugin author, please migrate your plugin to Built-in Kotlin using this guide: https://docs.flutter.dev/release/breaking-changes/migrate-to-built-in-kotlin/for-plugin-authors
+Warning: SDK processing. This version only understands SDK XML versions up to 3 but an SDK XML file of version 4 was encountered. This can happen if you use versions of Android Studio and the command-line tools that were released at different times.
+AAPT2 aapt2-9.0.1-14304508-osx Daemon #1: Unexpected error output: [mutex.cc : 452] RAW: Lock blocking 0x6000021881f8   @
+AAPT2 aapt2-9.0.1-14304508-osx Daemon #0: Unexpected error output: [mutex.cc : 452] RAW: Lock blocking 0x6000039e4018   @
+AAPT2 aapt2-9.0.1-14304508-osx Daemon #2: Unexpected error output: [mutex.cc : 452] RAW: Lock blocking 0x600001710498   @
+AAPT2 aapt2-9.0.1-14304508-osx Daemon #3: Unexpected error output: [mutex.cc : 452] RAW: Lock blocking 0x60000323c438   @
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':app:processLocalDebugResources'.
+> Could not resolve all files for configuration ':app:localDebugRuntimeClasspath'.
+   > Failed to transform biometric-1.1.0.aar (androidx.biometric:biometric:1.1.0) to match attributes {artifactType=android-compiled-dependencies-resources, org.gradle.category=library, org.gradle.dependency.bundling=external, org.gradle.libraryelements=aar, org.gradle.status=release, org.gradle.usage=java-runtime}.
+      > Execution failed for AarResourcesCompilerTransform: /Users/lute/.gradle/caches/9.1.0/transforms/b297e578398a78ee56d98de223b443de/transformed/biometric-1.1.0.
+         > AAPT2 aapt2-9.0.1-14304508-osx Daemon #0: Daemon startup failed
+           This should not happen under normal circumstances, please file an issue if it does.
+   > Failed to transform play-services-base-18.9.0.aar (com.google.android.gms:play-services-base:18.9.0) to match attributes {artifactType=android-compiled-dependencies-resources, org.gradle.status=release}.
+      > Execution failed for AarResourcesCompilerTransform: /Users/lute/.gradle/caches/9.1.0/transforms/b7d6a9fe1fe949b1b54618b9ecce8667/transformed/play-services-base-18.9.0.
+         > AAPT2 aapt2-9.0.1-14304508-osx Daemon #1: Daemon startup failed
+           This should not happen under normal circumstances, please file an issue if it does.
+   > Failed to transform appcompat-1.2.0.aar (androidx.appcompat:appcompat:1.2.0) to match attributes {artifactType=android-compiled-dependencies-resources, org.gradle.category=library, org.gradle.dependency.bundling=external, org.gradle.libraryelements=aar, org.gradle.status=release, org.gradle.usage=java-runtime}.
+      > Execution failed for AarResourcesCompilerTransform: /Users/lute/.gradle/caches/9.1.0/transforms/7309dea8730bca09998fdb3c9f1791b8/transformed/appcompat-1.2.0.
+         > AAPT2 aapt2-9.0.1-14304508-osx Daemon #3: Daemon startup failed
+           This should not happen under normal circumstances, please file an issue if it does.
+   > Failed to transform core-1.18.0.aar (androidx.core:core:1.18.0) to match attributes {artifactType=android-compiled-dependencies-resources, org.gradle.category=library, org.gradle.dependency.bundling=external, org.gradle.libraryelements=aar, org.gradle.status=release, org.gradle.usage=java-runtime}.
+      > Execution failed for AarResourcesCompilerTransform: /Users/lute/.gradle/caches/9.1.0/transforms/abc019f4f0e8456d65a00253ddaff0db/transformed/core-1.18.0.
+         > AAPT2 aapt2-9.0.1-14304508-osx Daemon #2: Daemon startup failed
+           This should not happen under normal circumstances, please file an issue if it does.
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to generate a Build Scan (Powered by Develocity).
+> Get more help at https://help.gradle.org.
+
+BUILD FAILED in 1m 22s
+Running Gradle task 'assembleLocalDebug'...                        83.6s
+00:00 +0 -1: loading /Users/lute/project/momcozy-lab/app/integration_test/agent_resource_inventory_test.dart [E]
+  Failed to load "/Users/lute/project/momcozy-lab/app/integration_test/agent_resource_inventory_test.dart": Gradle task assembleLocalDebug failed with exit code 1
+  package:flutter_tools/src/base/common.dart 34:3                    throwToolExit
+  package:flutter_tools/src/android/gradle.dart 595:7                AndroidGradleBuilder.buildGradleApp
+  ===== asynchronous gap ===========================
+  package:flutter_tools/src/android/gradle.dart 236:5                AndroidGradleBuilder.buildApk
+  ===== asynchronous gap ===========================
+  package:flutter_tools/src/android/android_device.dart 570:7        AndroidDevice.startApp
+  ===== asynchronous gap ===========================
+  package:flutter_tools/src/test/integration_test_device.dart 57:39  IntegrationTestTestDevice.start
+  ===== asynchronous gap ===========================
+  package:flutter_tools/src/test/flutter_platform.dart 680:51        FlutterPlatform._startTest.<fn>
+  ===== asynchronous gap ===========================
+  package:flutter_tools/src/base/async_guard.dart 108:24             asyncGuard.<fn>
+  
+00:00 +0 -1: Some tests failed.
+
+Failing tests:
+  /Users/lute/project/momcozy-lab/app/integration_test/agent_resource_inventory_test.dart: loading /Users/lute/project/momcozy-lab/app/integration_test/agent_resource_inventory_test.dart

@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/baby-feeding-time-future-minute-input-393-1x.png",
+  "previous_source": "test/goldens/ui_inventory/baby-feeding-time-invalid-clock-393-1x.png",
+  "route": "/baby",
+  "trigger": "Correct to 16:01 on today; one minute after current time",
+  "root_entry": "Authenticated More → tap Baby bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/baby/baby_feeding_time_inventory_test.dart"
+}

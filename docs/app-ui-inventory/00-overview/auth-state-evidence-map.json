@@ -1,0 +1,379 @@
+[
+  {
+    "page_id": "auth-login",
+    "states": [
+      {
+        "state": "初始",
+        "evidence": [
+          {
+            "id": "01-auth/auth-journey-login",
+            "image": "01-auth/auth-journey-login/default.png",
+            "observed_route": "/login",
+            "trigger": "Anonymous open /more; guard redirects to login with return location",
+            "extent": "viewport"
+          }
+        ],
+        "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source limits retained in reports"
+      },
+      {
+        "state": "密码可见",
+        "evidence": [
+          {
+            "id": "01-auth/auth-followup-login-password-visible",
+            "image": "01-auth/auth-followup-login-password-visible/default.png",
+            "observed_route": "/login",
+            "trigger": "Login password eye → visible synthetic password; shared field behavior",
+            "extent": "viewport"
+          }
+        ],
+        "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source limits retained in reports"
+      },
+      {
+        "state": "提交中",
+        "evidence": [
+          {
+            "id": "01-auth/auth-journey-login-busy",
+            "image": "01-auth/auth-journey-login-busy/default.png",
+            "observed_route": "/login",
+            "trigger": "Sign in; HTTP response is still pending",
+            "extent": "viewport"
+          }
+        ],
+        "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source limits retained in reports"
+      },
+      {
+        "state": "认证错误",
+        "evidence": [
+          {
+            "id": "01-auth/auth-journey-invalid-credentials",
+            "image": "01-auth/auth-journey-invalid-credentials/default.png",
+            "observed_route": "/login",
+            "trigger": "Sign in; backend returns authentication_required",
+            "extent": "full-measured-scroll-stitch"
+          }
+        ],
+        "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source limits retained in reports"
+      },
+      {
+        "state": "成功跳转",
+        "evidence": [
+          {
+            "id": "01-auth/auth-followup-reset-login-more",
+            "image": "01-auth/auth-followup-reset-login-more/default.png",
+            "observed_route": "/more",
+            "trigger": "Sign in with new password → real session transition restores More",
+            "extent": "viewport"
+          }
+        ],
+        "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source limits retained in reports"
+      },
+      {
+        "state": "Google 不可用",
+        "evidence": [
+          {
+            "id": "01-auth/auth-journey-google-unavailable",
+            "image": "01-auth/auth-journey-google-unavailable/default.png",
+            "observed_route": "/login",
+            "trigger": "Continue with Google; current build has no client ID",
+            "extent": "full-measured-scroll-stitch"
+          }
+        ],
+        "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source limits retained in reports"
+      }
+    ]
+  },
+  {
+    "page_id": "auth-register",
+    "states": [
+      {
+        "state": "空表单",
+        "evidence": [
+          {
+            "id": "01-auth/auth-register",
+            "image": "01-auth/auth-register/default.png",
+            "observed_route": null,
+            "trigger": "email entry and registration at 390.0 / 1.0",
+            "extent": "viewport"
+          }
+        ],
+        "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source limits retained in reports"
+      },
+      {
+        "state": "校验错误",
+        "evidence": [
+          {
+            "id": "01-auth/auth-register-validation",
+            "image": "01-auth/auth-register-validation/default.png",
+            "observed_route": null,
+            "trigger": "email entry and registration at 390.0 / 1.0",
+            "extent": "viewport"
+          }
+        ],
+        "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source limits retained in reports"
+      },
+      {
+        "state": "提交中",
+        "evidence": [
+          {
+            "id": "01-auth/auth-followup-register-pending",
+            "image": "01-auth/auth-followup-register-pending/default.png",
+            "observed_route": "/login",
+            "trigger": "Submit → /v1/auth/register request pending, form disabled",
+            "extent": "viewport"
+          }
+        ],
+        "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source limits retained in reports"
+      },
+      {
+        "state": "发送验证码",
+        "evidence": [
+          {
+            "id": "01-auth/auth-journey-verify",
+            "image": "01-auth/auth-journey-verify/default.png",
+            "observed_route": "/login",
+            "trigger": "Submit registration → backend verification_required → verify form",
+            "extent": "viewport"
+          }
+        ],
+        "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source limits retained in reports"
+      },
+      {
+        "state": "服务错误",
+        "evidence": [
+          {
+            "id": "01-auth/auth-followup-register-email-unavailable",
+            "image": "01-auth/auth-followup-register-email-unavailable/default.png",
+            "observed_route": "/login",
+            "trigger": "Registration email service fails → form and draft retained → retry enabled",
+            "extent": "viewport"
+          }
+        ],
+        "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source limits retained in reports"
+      }
+    ]
+  },
+  {
+    "page_id": "auth-verify",
+    "states": [
+      {
+        "state": "待输入",
+        "evidence": [
+          {
+            "id": "01-auth/auth-verify",
+            "image": "01-auth/auth-verify/default.png",
+            "observed_route": null,
+            "trigger": "email entry and registration at 390.0 / 1.0",
+            "extent": "viewport"
+          }
+        ],
+        "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source limits retained in reports"
+      },
+      {
+        "state": "验证码错误",
+        "evidence": [
+          {
+            "id": "01-auth/auth-journey-code-validation",
+            "image": "01-auth/auth-journey-code-validation/default.png",
+            "observed_route": "/login",
+            "trigger": "Submit without eight-digit code → field validation",
+            "extent": "viewport"
+          }
+        ],
+        "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source limits retained in reports"
+      },
+      {
+        "state": "重发等待与反馈",
+        "evidence": [
+          {
+            "id": "01-auth/auth-followup-verify-resend-pending",
+            "image": "01-auth/auth-followup-verify-resend-pending/default.png",
+            "observed_route": "/login",
+            "trigger": "Resend code → request pending and form disabled",
+            "extent": "viewport"
+          },
+          {
+            "id": "01-auth/auth-followup-verify-resend-success",
+            "image": "01-auth/auth-followup-verify-resend-success/default.png",
+            "observed_route": "/login",
+            "trigger": "Resend accepted → success message",
+            "extent": "viewport"
+          }
+        ],
+        "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source limits retained in reports"
+      },
+      {
+        "state": "提交中",
+        "evidence": [
+          {
+            "id": "01-auth/auth-followup-verify-submit-pending",
+            "image": "01-auth/auth-followup-verify-submit-pending/default.png",
+            "observed_route": "/login",
+            "trigger": "Submit → /v1/auth/verify-email request pending, form disabled",
+            "extent": "viewport"
+          }
+        ],
+        "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source limits retained in reports"
+      },
+      {
+        "state": "验证成功",
+        "evidence": [
+          {
+            "id": "01-auth/auth-followup-verify-more",
+            "image": "01-auth/auth-followup-verify-more/default.png",
+            "observed_route": "/more",
+            "trigger": "Verify email → authenticated intended More route",
+            "extent": "viewport"
+          }
+        ],
+        "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source limits retained in reports"
+      }
+    ]
+  },
+  {
+    "page_id": "auth-forgot",
+    "states": [
+      {
+        "state": "初始",
+        "evidence": [
+          {
+            "id": "01-auth/auth-forgot",
+            "image": "01-auth/auth-forgot/default.png",
+            "observed_route": null,
+            "trigger": "reset form with keyboard at 390.0 / 1.0",
+            "extent": "viewport"
+          }
+        ],
+        "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source limits retained in reports"
+      },
+      {
+        "state": "校验错误",
+        "evidence": [
+          {
+            "id": "01-auth/auth-followup-forgot-validation",
+            "image": "01-auth/auth-followup-forgot-validation/default.png",
+            "observed_route": "/login",
+            "trigger": "Submit empty recovery email → validation",
+            "extent": "viewport"
+          }
+        ],
+        "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source limits retained in reports"
+      },
+      {
+        "state": "提交中",
+        "evidence": [
+          {
+            "id": "01-auth/auth-followup-forgot-pending",
+            "image": "01-auth/auth-followup-forgot-pending/default.png",
+            "observed_route": "/login",
+            "trigger": "Submit → /v1/auth/forgot-password request pending, form disabled",
+            "extent": "viewport"
+          }
+        ],
+        "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source limits retained in reports"
+      },
+      {
+        "state": "发送失败",
+        "evidence": [
+          {
+            "id": "01-auth/auth-followup-forgot-email-unavailable",
+            "image": "01-auth/auth-followup-forgot-email-unavailable/default.png",
+            "observed_route": "/login",
+            "trigger": "Retry recovery → email service unavailable",
+            "extent": "viewport"
+          }
+        ],
+        "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source limits retained in reports"
+      },
+      {
+        "state": "进入重置",
+        "evidence": [
+          {
+            "id": "01-auth/auth-followup-reset-code-form",
+            "image": "01-auth/auth-followup-reset-code-form/default.png",
+            "observed_route": "/login",
+            "trigger": "Recovery accepted → reset code and new password form",
+            "extent": "viewport"
+          }
+        ],
+        "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source limits retained in reports"
+      }
+    ]
+  },
+  {
+    "page_id": "auth-reset",
+    "states": [
+      {
+        "state": "初始",
+        "evidence": [
+          {
+            "id": "01-auth/auth-reset",
+            "image": "01-auth/auth-reset/default.png",
+            "observed_route": null,
+            "trigger": "reset form with keyboard at 390.0 / 1.0",
+            "extent": "viewport"
+          }
+        ],
+        "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source limits retained in reports"
+      },
+      {
+        "state": "密码和验证码校验",
+        "evidence": [
+          {
+            "id": "01-auth/auth-followup-reset-empty-validation",
+            "image": "01-auth/auth-followup-reset-empty-validation/default.png",
+            "observed_route": "/login",
+            "trigger": "Submit empty code and new password → field errors",
+            "extent": "viewport"
+          },
+          {
+            "id": "01-auth/auth-followup-reset-password-validation",
+            "image": "01-auth/auth-followup-reset-password-validation/default.png",
+            "observed_route": "/login",
+            "trigger": "Eight digit code and weak new password → password rule error",
+            "extent": "viewport"
+          }
+        ],
+        "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source limits retained in reports"
+      },
+      {
+        "state": "提交中",
+        "evidence": [
+          {
+            "id": "01-auth/auth-followup-reset-pending",
+            "image": "01-auth/auth-followup-reset-pending/default.png",
+            "observed_route": "/login",
+            "trigger": "Submit → /v1/auth/reset-password request pending, form disabled",
+            "extent": "viewport"
+          }
+        ],
+        "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source limits retained in reports"
+      },
+      {
+        "state": "失败",
+        "evidence": [
+          {
+            "id": "01-auth/auth-followup-reset-expired-code",
+            "image": "01-auth/auth-followup-reset-expired-code/default.png",
+            "observed_route": "/login",
+            "trigger": "Reset submission → expired code and values retained",
+            "extent": "viewport"
+          }
+        ],
+        "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source limits retained in reports"
+      },
+      {
+        "state": "成功返回登录",
+        "evidence": [
+          {
+            "id": "01-auth/auth-followup-reset-complete",
+            "image": "01-auth/auth-followup-reset-complete/default.png",
+            "observed_route": "/login",
+            "trigger": "Reset accepted → login with success message, password cleared, still signed out",
+            "extent": "viewport"
+          }
+        ],
+        "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source limits retained in reports"
+      }
+    ]
+  }
+]

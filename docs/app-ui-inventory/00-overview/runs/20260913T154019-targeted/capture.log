@@ -1,0 +1,13 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_resource_inventory_journey_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: inventory agent generic renewal entry and return 393.0
+00:01 +1: inventory agent image entry loading retry gestures and return 393.0
+00:02 +2: inventory agent PDF entry failure retry and pending return 393.0
+00:02 +3: inventory agent video entry retry controls and return 393.0
+00:02 +4: inventory agent generic renewal entry and return 320.0
+00:03 +5: inventory agent image entry loading retry gestures and return 320.0
+00:04 +6: inventory agent PDF entry failure retry and pending return 320.0
+00:04 +7: inventory agent video entry retry controls and return 320.0
+00:05 +8: inventory malformed media artifact cannot open viewer
+00:05 +9: (tearDownAll)
+00:05 +9: All tests passed!

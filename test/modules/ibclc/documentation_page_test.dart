@@ -38,7 +38,7 @@ void main() {
         await tester.pumpWidget(
           MaterialApp(
             debugShowCheckedModeBanner: false,
-            theme: momCozyTheme(),
+            theme: momCozyTheme(isWorkbench: true),
             home: DocumentationPage(
               createController: () => DocumentationController(
                 repository: repository,
@@ -119,7 +119,7 @@ void main() {
       };
       await tester.pumpWidget(
         MaterialApp(
-          theme: momCozyTheme(),
+          theme: momCozyTheme(isWorkbench: true),
           home: DocumentationPage(
             createController: () => DocumentationController(
               repository: repository,

@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/renew-journey-order-error-393.png",
+  "previous_source": "test/goldens/ui_inventory/renew-journey-order-loading-393.png",
+  "route": "/services/episodes/completed-episode/renew",
+  "trigger": "Order read fails → scroll to top → inline open error and selectable packages",
+  "root_entry": "Authenticated More → tap Me bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production home/timeline/renew/purchase pages and repositories; isolated HTTP with completed original service preserved independently; fixed clock and timezone, no remote order/payment",
+  "test": "test/modules/services/renew_inventory_journey_test.dart"
+}

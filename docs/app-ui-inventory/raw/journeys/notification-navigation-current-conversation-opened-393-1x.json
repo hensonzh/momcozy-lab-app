@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/notification-navigation-current-conversation-opened-393-1x.png",
+  "previous_source": "test/goldens/ui_inventory/notification-navigation-current-conversation-inbox-393-1x.png",
+  "route": "/?conversationId=22222222-2222-4222-8222-222222222222",
+  "trigger": "Tap notification → conversation route throws Expando string-key ArgumentError and renders ErrorWidget; item is read",
+  "root_entry": "Authenticated More page",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production notification coordinator/repository/controller; isolated HTTP, push gateway and permission platform; real router.go and ScaffoldMessenger callbacks, no native OS dialog or remote push",
+  "test": "test/features/notifications/notification_navigation_current_inventory_test.dart"
+}

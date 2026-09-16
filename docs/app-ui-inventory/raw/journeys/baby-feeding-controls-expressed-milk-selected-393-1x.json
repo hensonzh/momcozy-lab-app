@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/baby-feeding-controls-expressed-milk-selected-393-1x.png",
+  "previous_source": "test/goldens/ui_inventory/baby-feeding-controls-note-collapsed-393-1x.png",
+  "route": "/baby",
+  "trigger": "Switch to expressed milk → volume replaces nursing controls; nursing draft retained",
+  "root_entry": "Authenticated More → tap Baby bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/baby/baby_feeding_control_inventory_test.dart"
+}

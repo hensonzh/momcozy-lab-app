@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/auth-followup-reset-login-more-320-2x.png",
+  "previous_source": "test/goldens/ui_inventory/auth-followup-reset-complete-320-2x.png",
+  "route": "/more",
+  "trigger": "Sign in with new password → real session transition restores More",
+  "root_entry": "Open More while signed out → real auth redirect",
+  "evidence": "Actual MomCozyFlutterApp and createMomCozyRouter; only HTTP/session/native-intent dependencies replaced with isolated fixtures",
+  "test": "test/features/auth/auth_followup_inventory_test.dart"
+}

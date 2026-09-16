@@ -1,0 +1,308 @@
+[
+  {
+    "id": "276:1086",
+    "name": "Agent form / English / top",
+    "state": "top",
+    "scale": 1,
+    "lang": "en",
+    "ticket": false
+  },
+  {
+    "id": "276:1136",
+    "name": "Agent form / English / choices",
+    "state": "choices",
+    "scale": 1,
+    "lang": "en",
+    "ticket": false
+  },
+  {
+    "id": "276:1188",
+    "name": "Agent form / English / validation",
+    "state": "validation",
+    "scale": 1,
+    "lang": "en",
+    "ticket": false
+  },
+  {
+    "id": "276:1241",
+    "name": "Agent form / English / failed",
+    "state": "failed",
+    "scale": 1,
+    "lang": "en",
+    "ticket": false
+  },
+  {
+    "id": "276:1296",
+    "name": "Agent form / English / pending",
+    "state": "pending",
+    "scale": 1,
+    "lang": "en",
+    "ticket": false
+  },
+  {
+    "id": "276:1348",
+    "name": "Agent form / English / readonly",
+    "state": "readonly",
+    "scale": 1,
+    "lang": "en",
+    "ticket": false
+  },
+  {
+    "id": "276:1398",
+    "name": "Agent form / Large / top",
+    "state": "top",
+    "scale": 2,
+    "lang": "en",
+    "ticket": false
+  },
+  {
+    "id": "276:1448",
+    "name": "Agent form / Large / choices",
+    "state": "choices",
+    "scale": 2,
+    "lang": "en",
+    "ticket": false
+  },
+  {
+    "id": "276:1500",
+    "name": "Agent form / Large / validation",
+    "state": "validation",
+    "scale": 2,
+    "lang": "en",
+    "ticket": false
+  },
+  {
+    "id": "276:1553",
+    "name": "Agent form / Large / failed",
+    "state": "failed",
+    "scale": 2,
+    "lang": "en",
+    "ticket": false
+  },
+  {
+    "id": "276:1608",
+    "name": "Agent form / Large / pending",
+    "state": "pending",
+    "scale": 2,
+    "lang": "en",
+    "ticket": false
+  },
+  {
+    "id": "276:1660",
+    "name": "Agent form / Large / readonly",
+    "state": "readonly",
+    "scale": 2,
+    "lang": "en",
+    "ticket": false
+  },
+  {
+    "id": "276:1710",
+    "name": "Agent form / Short keyboard",
+    "state": "top",
+    "scale": 2,
+    "lang": "en",
+    "ticket": false
+  },
+  {
+    "id": "276:1760",
+    "name": "Agent form / 恢复支持 / top",
+    "state": "top",
+    "scale": 1,
+    "lang": "zh",
+    "ticket": false
+  },
+  {
+    "id": "276:1807",
+    "name": "Agent form / 恢复支持 / choices",
+    "state": "choices",
+    "scale": 1,
+    "lang": "zh",
+    "ticket": false
+  },
+  {
+    "id": "276:1856",
+    "name": "Agent form / 恢复支持 / validation",
+    "state": "validation",
+    "scale": 1,
+    "lang": "zh",
+    "ticket": false
+  },
+  {
+    "id": "276:1906",
+    "name": "Agent form / 恢复支持 / pending",
+    "state": "pending",
+    "scale": 1,
+    "lang": "zh",
+    "ticket": false
+  },
+  {
+    "id": "276:1955",
+    "name": "Agent form / 恢复支持 / readonly",
+    "state": "readonly",
+    "scale": 1,
+    "lang": "zh",
+    "ticket": false
+  },
+  {
+    "id": "276:2002",
+    "name": "Agent form / 售后支持 / top",
+    "state": "top",
+    "scale": 1,
+    "lang": "en",
+    "ticket": true
+  },
+  {
+    "id": "276:2030",
+    "name": "Agent form / 售后支持 / failed",
+    "state": "failed",
+    "scale": 1,
+    "lang": "en",
+    "ticket": true
+  },
+  {
+    "id": "276:2061",
+    "name": "Agent form / 售后支持 / pending",
+    "state": "pending",
+    "scale": 1,
+    "lang": "en",
+    "ticket": true
+  },
+  {
+    "id": "276:2089",
+    "name": "Agent form / 售后支持 / readonly",
+    "state": "readonly",
+    "scale": 1,
+    "lang": "en",
+    "ticket": true
+  },
+  {
+    "id": "276:2115",
+    "name": "Agent form / 恢复支持 / large / top",
+    "state": "top",
+    "scale": 2,
+    "lang": "zh",
+    "ticket": false
+  },
+  {
+    "id": "276:2162",
+    "name": "Agent form / 恢复支持 / large / choices",
+    "state": "choices",
+    "scale": 2,
+    "lang": "zh",
+    "ticket": false
+  },
+  {
+    "id": "276:2211",
+    "name": "Agent form / 恢复支持 / large / validation",
+    "state": "validation",
+    "scale": 2,
+    "lang": "zh",
+    "ticket": false
+  },
+  {
+    "id": "276:2261",
+    "name": "Agent form / 恢复支持 / large / pending",
+    "state": "pending",
+    "scale": 2,
+    "lang": "zh",
+    "ticket": false
+  },
+  {
+    "id": "276:2310",
+    "name": "Agent form / 恢复支持 / large / readonly",
+    "state": "readonly",
+    "scale": 2,
+    "lang": "zh",
+    "ticket": false
+  },
+  {
+    "id": "276:2357",
+    "name": "MomCozy/AgentFormSection"
+  },
+  {
+    "id": "277:1086",
+    "name": "Agent form / 恢复支持 / dropdown",
+    "state": "dropdown",
+    "scale": 1,
+    "lang": "zh"
+  },
+  {
+    "id": "277:1138",
+    "name": "Agent form / 恢复支持 / date-picker",
+    "state": "date-picker",
+    "scale": 1,
+    "lang": "zh"
+  },
+  {
+    "id": "277:1199",
+    "name": "Agent form / 恢复支持 / date-selected",
+    "state": "date-selected",
+    "scale": 1,
+    "lang": "zh"
+  },
+  {
+    "id": "277:1260",
+    "name": "Agent form / 恢复支持 / large date input",
+    "state": "date-input",
+    "scale": 2,
+    "lang": "zh"
+  },
+  {
+    "id": "280:1086",
+    "name": "Agent form / 售后支持 / large / top",
+    "state": "top",
+    "scale": 2,
+    "lang": "en",
+    "ticket": true
+  },
+  {
+    "id": "280:1114",
+    "name": "Agent form / 售后支持 / large / failed",
+    "state": "failed",
+    "scale": 2,
+    "lang": "en",
+    "ticket": true
+  },
+  {
+    "id": "280:1145",
+    "name": "Agent form / 售后支持 / large / pending",
+    "state": "pending",
+    "scale": 2,
+    "lang": "en",
+    "ticket": true
+  },
+  {
+    "id": "280:1173",
+    "name": "Agent form / 售后支持 / large / readonly",
+    "state": "readonly",
+    "scale": 2,
+    "lang": "en",
+    "ticket": true
+  },
+  {
+    "id": "282:1086",
+    "name": "Agent form / 喂养记录与支持偏好 / 1x",
+    "state": "feeding",
+    "scale": 1
+  },
+  {
+    "id": "282:1125",
+    "name": "Agent form / 喂养记录与支持偏好 / 2x",
+    "state": "feeding",
+    "scale": 2
+  },
+  {
+    "id": "283:1086",
+    "name": "Agent form / 恢复支持 / draft return 1x",
+    "state": "draft-return",
+    "scale": 1,
+    "lang": "zh"
+  },
+  {
+    "id": "283:1135",
+    "name": "Agent form / 恢复支持 / draft return 2x",
+    "state": "draft-return",
+    "scale": 2,
+    "lang": "zh"
+  }
+]

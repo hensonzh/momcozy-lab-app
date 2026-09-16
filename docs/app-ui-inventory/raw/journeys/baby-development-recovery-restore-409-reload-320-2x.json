@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/baby-development-recovery-restore-409-reload-320-2x.png",
+  "previous_source": "test/goldens/ui_inventory/baby-development-recovery-restore-409-320-2x.png",
+  "route": "/babies/inventory-baby/records",
+  "trigger": "Retry confirmed restore failure → reload empty history; undo remains",
+  "root_entry": "Authenticated More → tap Baby bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/baby/baby_development_recovery_inventory_test.dart"
+}

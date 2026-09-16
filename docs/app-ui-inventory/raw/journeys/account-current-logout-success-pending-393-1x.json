@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/account-current-logout-success-pending-393-1x.png",
+  "previous_source": "test/goldens/ui_inventory/account-current-logout-success-ready-393-1x.png",
+  "route": "/login",
+  "trigger": "Sign out → login while remote revoke pending",
+  "root_entry": "Authenticated Me → tap More bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production More/account/privacy/service pages and notification coordinator/repositories; isolated HTTP, push gateway and permission platform; real router.go and ScaffoldMessenger callbacks, no native OS dialog or remote push",
+  "test": "test/modules/profile/account_current_inventory_test.dart"
+}

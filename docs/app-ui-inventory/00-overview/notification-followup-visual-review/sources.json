@@ -1,0 +1,230 @@
+[
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/notification-followup-booking-catalog-393.long.png",
+    "sha256": "e2f5e2118f1783e2fe4dc137f4482b68b66f77b28deabd47926bb5cee877b009",
+    "width": 393,
+    "height": 1041
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/notification-followup-booking-catalog-393.png",
+    "sha256": "b3900a2ca7f4a5be043aaeb13ef7915bb582c868b0543e41aee4673632527339",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/notification-followup-booking-mom-393.long.png",
+    "sha256": "735e3d8bd8cccba80929b78bc51545c0f5d17dc28b78aa833ebae9d4ecd2ecd1",
+    "width": 393,
+    "height": 1265
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/notification-followup-booking-mom-393.png",
+    "sha256": "be291808401e7f353b8f14552b0df4a698f3edd191e5e2d770c66c2e129fc145",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/notification-followup-booking-more-393.png",
+    "sha256": "6ac33e6dd952b54bfe0bbfa4209df0bf816602f324b0120ff7730cb4d19cfda7",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/notification-followup-booking-package-393.png",
+    "sha256": "611aaaa1921f81f062993c33b21a940bc7e0a320da9da6fc5e3badfcc6bee27d",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/notification-followup-registration-disabled-393.png",
+    "sha256": "6854c90cd2ccd9c6585e8ebda99420848538dc4c719595d49465c4eedaa9d0a6",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/notification-followup-registration-http-error-393.png",
+    "sha256": "9a1be9e9fa6bc69fadb76fa0b4479fdffb6a573cd39d8ab86096ce1446f66307",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/notification-followup-registration-pending-393.png",
+    "sha256": "93e302ef0d232589546a5816e92e5d3207952cdbc7f4b1d05bb12c41d9bafeaa",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/notification-followup-registration-retry-enabled-393.png",
+    "sha256": "43d94333231965e40c744eb30b10ac23fc86b5430137698b7e1293668000f88a",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/notification-followup-registration-token-error-393.png",
+    "sha256": "bd97e4453587feae05464f93922e360a28b6a9b428f17fef5af12fd933f5a237",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/notification-followup-registration-waiting-393.png",
+    "sha256": "ae98d60149da5aaf566e39f1fe0636796145c852d37a23d02bb6d4f6edfd9e81",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/notification-followup-reminder-ready-393.png",
+    "sha256": "6854c90cd2ccd9c6585e8ebda99420848538dc4c719595d49465c4eedaa9d0a6",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/notification-followup-settings-inbox-393.png",
+    "sha256": "b4e99901520cbf7929982c7516915a0c95eef2e95fee8c35adb7f80257537c9a",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/notification-followup-settings-inbox-return-393.png",
+    "sha256": "b4e99901520cbf7929982c7516915a0c95eef2e95fee8c35adb7f80257537c9a",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/notification-followup-settings-more-393.png",
+    "sha256": "6ac33e6dd952b54bfe0bbfa4209df0bf816602f324b0120ff7730cb4d19cfda7",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/notification-followup-settings-more-return-393.png",
+    "sha256": "6ac33e6dd952b54bfe0bbfa4209df0bf816602f324b0120ff7730cb4d19cfda7",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/notification-followup-settings-ready-393.png",
+    "sha256": "a7047e10e9a368fa098d452958a1d9064eb35bc68e6b0ae9bace4b66a74e41ed",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/notification-followup-settings-recovered-393.png",
+    "sha256": "a7047e10e9a368fa098d452958a1d9064eb35bc68e6b0ae9bace4b66a74e41ed",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/notification-followup-settings-refresh-waiting-393.png",
+    "sha256": "a4bab4d93bf8dfda36172fefe68dd0b834c2c2830f92dfa45ac29495b0a2d2ea",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/notification-followup-settings-registration-error-393.long.png",
+    "sha256": "b372bb0b92d26d8746f2631fc955f3c5ae55f59fba678947b22ffdcfb2c18c11",
+    "width": 393,
+    "height": 883
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/notification-followup-settings-registration-error-393.png",
+    "sha256": "d205896cd54e6a90e25e16d9b5fc6530f7f5cbd4b738f01a4df770ccfb3c312a",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/notification-followup-settings-registration-pending-393.long.png",
+    "sha256": "5b35b212563fa0fb9786653275e68276471f5eb040ec0d82009190a4bc78fd21",
+    "width": 393,
+    "height": 883
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/notification-followup-settings-registration-pending-393.png",
+    "sha256": "cdb980d5cc05b66ad08ae29910494b6a9fbdac9b308750b4fd7ff8c72d300566",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/notification-followup-settings-token-error-393.long.png",
+    "sha256": "8758ea5e6f7e8ea41da461dc012425d01a97c3c36c8292a61a9287820b57c968",
+    "width": 393,
+    "height": 903
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/notification-followup-settings-token-error-393.png",
+    "sha256": "85c42fb2e1d108dee2aec5141f30aa9bed09865ace645774b204150f79c7a016",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/notification-followup-tooltip-archive-clicked-393.png",
+    "sha256": "b4e99901520cbf7929982c7516915a0c95eef2e95fee8c35adb7f80257537c9a",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/notification-followup-tooltip-archive-notification-393.png",
+    "sha256": "bad1301ecf7aad5e25596ead42a13ab1ba60574236976173ee7117012563e6d2",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/notification-followup-tooltip-archive-notification-dismissed-393.png",
+    "sha256": "f978142b3648644fa31b25cea01d76a15e09574f95d0fb12c0f3da33fb7485c9",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/notification-followup-tooltip-back-393.png",
+    "sha256": "4e78967744f6932beac4e1791fc41c03f419026fbe452bb821ee3a068bd79926",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/notification-followup-tooltip-back-dismissed-393.png",
+    "sha256": "f978142b3648644fa31b25cea01d76a15e09574f95d0fb12c0f3da33fb7485c9",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/notification-followup-tooltip-inbox-393.png",
+    "sha256": "f978142b3648644fa31b25cea01d76a15e09574f95d0fb12c0f3da33fb7485c9",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/notification-followup-tooltip-more-393.png",
+    "sha256": "09a3a06a83f8ec2450701c68bd8f36b092ef205b1f85045571bc63fa9ca8b217",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/notification-followup-tooltip-more-return-393.png",
+    "sha256": "6ac33e6dd952b54bfe0bbfa4209df0bf816602f324b0120ff7730cb4d19cfda7",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/notification-followup-tooltip-notification-settings-393.png",
+    "sha256": "13a8d1cf9d7390808c51abb87cf5d86c1f2c6df157e9dace2922b05e8f637104",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/notification-followup-tooltip-notification-settings-dismissed-393.png",
+    "sha256": "f978142b3648644fa31b25cea01d76a15e09574f95d0fb12c0f3da33fb7485c9",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/notification-followup-tooltip-refresh-notifications-393.png",
+    "sha256": "a4cb9f317462693112ba56475877cf9d155d3e298ef0227f12c9a308a7398530",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "file": "docs/app-ui-inventory/raw/test/goldens/ui_inventory/notification-followup-tooltip-refresh-notifications-dismissed-393.png",
+    "sha256": "f978142b3648644fa31b25cea01d76a15e09574f95d0fb12c0f3da33fb7485c9",
+    "width": 393,
+    "height": 844
+  }
+]

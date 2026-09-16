@@ -1,0 +1,32 @@
+[
+  [
+    "new-auth-baselines",
+    [
+      "/Users/lute/.local/share/momcozy-toolchains/flutter/bin/flutter",
+      "--suppress-analytics",
+      "test",
+      "--no-pub",
+      "--reporter",
+      "expanded",
+      "test/features/auth/auth_followup_inventory_test.dart",
+      "--name",
+      "auth registration and verification visible submit states",
+      "--update-goldens"
+    ]
+  ],
+  [
+    "strict-capture",
+    [
+      "/Users/lute/.local/share/momcozy-toolchains/flutter/bin/flutter",
+      "--suppress-analytics",
+      "test",
+      "--no-pub",
+      "--reporter",
+      "expanded",
+      "test/features/auth/auth_followup_inventory_test.dart",
+      "test/shared/product_feedback_test.dart",
+      "--name",
+      "auth registration and verification visible submit states|feedback layout and retry callbacks 390\\.0/1\\.0"
+    ]
+  ]
+]

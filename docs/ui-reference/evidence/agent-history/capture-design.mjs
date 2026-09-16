@@ -1,0 +1,20 @@
+import {chromium} from '/Users/lute/project/momcozy-lab产品设计/node_modules/playwright-core/index.mjs';
+import {mkdirSync,writeFileSync} from 'node:fs';
+const out='/Users/lute/project/momcozy-lab/app/docs/ui-reference/evidence/agent-history';mkdirSync(out,{recursive:true});
+const browser=await chromium.launch({executablePath:'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',headless:true});
+const context=await browser.newContext({viewport:{width:390,height:844},reducedMotion:'reduce'});
+await context.route('**/*',r=>{const u=new URL(r.request().url());return u.origin==='http://127.0.0.1:4181'&&!u.pathname.startsWith('/api/')?r.continue():r.abort();});
+const page=await context.newPage();await page.goto('http://127.0.0.1:4181/app/agent');await page.evaluate(()=>document.fonts.ready);
+console.log(await page.locator('button').evaluateAll(xs=>xs.map(x=>[x.getAttribute('aria-label'),x.textContent])));
+await page.locator('[aria-label="打开会话历史"]').click();await page.locator('.agent-history-panel').waitFor();await page.waitForTimeout(300);
+await page.screenshot({path:out+'/design-history.png'});
+const metrics=await page.locator('.agent-history-panel,.agent-history-header,.agent-history-header h2,.agent-history-item,.agent-history-item strong,.agent-history-item time,.agent-history-empty').evaluateAll(xs=>xs.map(e=>{const s=getComputedStyle(e);return {selector:e.className||e.tagName,text:e.textContent,rect:e.getBoundingClientRect().toJSON(),style:Object.fromEntries(['backgroundColor','color','fontFamily','fontSize','fontWeight','lineHeight','padding','borderRadius','minHeight','gap'].map(k=>[k,s[k]]))}}));writeFileSync(out+'/design-metrics.json',JSON.stringify(metrics,null,2));await page.evaluate(() => {
+ const key='momcozy-care-demo-state-v1'; const state=JSON.parse(localStorage.getItem(key));
+ state.agentConversationId='history-current';
+ state.agentMessages=[{id:'history-current-user',role:'user',text:'Reviewing today’s feeding notes together'}];
+ state.agentHistory=[{id:'history-earlier',title:'Recovery and a little support',updatedAt:'2026-09-12T09:30:00+08:00',messages:[{id:'earlier-user',role:'user',text:'Recovery and a little support'}],draft:''}];
+ localStorage.setItem(key,JSON.stringify(state));
+});
+await page.reload();await page.locator('[aria-label="打开会话历史"]').click();await page.waitForTimeout(300);await page.screenshot({path:out+'/design-history-list.png'});
+writeFileSync(out+'/design-list-metrics.json',JSON.stringify(await page.locator('.agent-history-item,.agent-history-item strong,.agent-history-item time').evaluateAll(xs=>xs.map(e=>{const s=getComputedStyle(e);return {tag:e.tagName,class:e.className,text:e.textContent,rect:e.getBoundingClientRect().toJSON(),style:Object.fromEntries(['backgroundColor','color','fontFamily','fontSize','fontWeight','lineHeight','padding','borderRadius','minHeight','gap'].map(k=>[k,s[k]]))}})),null,2));
+await browser.close();

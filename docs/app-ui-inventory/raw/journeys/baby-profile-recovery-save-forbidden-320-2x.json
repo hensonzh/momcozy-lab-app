@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/baby-profile-recovery-save-forbidden-320-2x.png",
+  "previous_source": "test/goldens/ui_inventory/baby-profile-recovery-reload-current-320-2x.png",
+  "route": "/baby",
+  "trigger": "Save returns 403 → access error, editable draft and no server update",
+  "root_entry": "Authenticated More → tap Baby bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/baby/baby_profile_recovery_inventory_test.dart"
+}

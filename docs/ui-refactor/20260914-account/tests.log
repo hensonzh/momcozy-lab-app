@@ -1,0 +1,83 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: (setUpAll)
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: email entry and registration at 320.0 / 1.0
+00:00 +1: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: reset form with keyboard at 320.0 / 1.0
+00:00 +2: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: invite entry with short keyboard viewport at 320.0 / 1.0
+00:01 +3: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: account and confirmations at 320.0 / 1.0
+00:01 +4: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: email entry and registration at 320.0 / 2.0
+00:01 +5: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: reset form with keyboard at 320.0 / 2.0
+00:01 +6: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: invite entry with short keyboard viewport at 320.0 / 2.0
+00:01 +7: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: account and confirmations at 320.0 / 2.0
+00:01 +8: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: email entry and registration at 390.0 / 1.0
+00:01 +9: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: reset form with keyboard at 390.0 / 1.0
+00:01 +10: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: invite entry with short keyboard viewport at 390.0 / 1.0
+00:01 +11: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: account and confirmations at 390.0 / 1.0
+00:01 +12: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: email entry and registration at 390.0 / 2.0
+00:02 +13: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: reset form with keyboard at 390.0 / 2.0
+00:02 +14: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: invite entry with short keyboard viewport at 390.0 / 2.0
+00:02 +15: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: account and confirmations at 390.0 / 2.0
+00:02 +16: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: email entry and registration at 430.0 / 1.0
+00:02 +17: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: reset form with keyboard at 430.0 / 1.0
+00:02 +18: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: invite entry with short keyboard viewport at 430.0 / 1.0
+00:02 +19: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: account and confirmations at 430.0 / 1.0
+00:02 +20: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: email entry and registration at 430.0 / 2.0
+00:03 +21: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: reset form with keyboard at 430.0 / 2.0
+00:03 +22: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: invite entry with short keyboard viewport at 430.0 / 2.0
+00:03 +23: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: account and confirmations at 430.0 / 2.0
+00:03 +24: /Users/lute/project/momcozy-lab/app/test/features/auth/account_redesign_states_test.dart: (setUpAll)
+00:03 +24: /Users/lute/project/momcozy-lab/app/test/features/notifications/notification_widgets_test.dart: first reminder uses education and denial leaves it off
+00:03 +25: /Users/lute/project/momcozy-lab/app/test/features/auth/account_redesign_states_test.dart: account loading, retry and long identity 393-1x
+00:03 +26: /Users/lute/project/momcozy-lab/app/test/features/auth/account_redesign_states_test.dart: account loading, retry and long identity 393-1x
+00:03 +27: /Users/lute/project/momcozy-lab/app/test/features/auth/account_page_test.dart: account route requires login and returns to the intended page
+00:03 +28: /Users/lute/project/momcozy-lab/app/test/app/more_redesign_states_test.dart: More pending and failed identity 393.0/1.0
+00:03 +29: /Users/lute/project/momcozy-lab/app/test/app/more_redesign_states_test.dart: More pending and failed identity 393.0/1.0
+00:04 +30: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: quick mood starts a draft; save preserves other groups and refreshes home
+00:04 +31: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: quick mood starts a draft; save preserves other groups and refreshes home
+00:04 +32: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: quick mood starts a draft; save preserves other groups and refreshes home
+00:04 +33: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: quick mood starts a draft; save preserves other groups and refreshes home
+00:04 +34: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: quick mood starts a draft; save preserves other groups and refreshes home
+00:04 +35: /Users/lute/project/momcozy-lab/app/test/features/auth/account_redesign_states_test.dart: account link pending, success and delete error 393-1x
+00:04 +36: /Users/lute/project/momcozy-lab/app/test/features/auth/account_redesign_states_test.dart: account link pending, success and delete error 393-1x
+00:04 +37: /Users/lute/project/momcozy-lab/app/test/features/auth/account_redesign_states_test.dart: account link pending, success and delete error 393-1x
+00:04 +38: /Users/lute/project/momcozy-lab/app/test/app/more_design_test.dart: More navigation and privacy at 320.0 / 2.0
+00:04 +39: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: lactation create uses the existing editor and refreshes total and analysis
+00:04 +40: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: lactation create uses the existing editor and refreshes total and analysis
+00:04 +41: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: lactation create uses the existing editor and refreshes total and analysis
+00:04 +42: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: lactation create uses the existing editor and refreshes total and analysis
+00:04 +43: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: lactation create uses the existing editor and refreshes total and analysis
+00:04 +44: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: lactation create uses the existing editor and refreshes total and analysis
+00:04 +45: /Users/lute/project/momcozy-lab/app/test/app/more_design_test.dart: More navigation and privacy at 390.0 / 2.0
+00:04 +46: /Users/lute/project/momcozy-lab/app/test/features/auth/account_redesign_states_test.dart: account link pending, success and delete error 320-2x
+00:04 +47: /Users/lute/project/momcozy-lab/app/test/features/auth/account_redesign_states_test.dart: account link pending, success and delete error 320-2x
+00:04 +48: /Users/lute/project/momcozy-lab/app/test/features/auth/account_redesign_states_test.dart: account link pending, success and delete error 320-2x
+00:04 +49: /Users/lute/project/momcozy-lab/app/test/features/auth/account_redesign_states_test.dart: account link pending, success and delete error 320-2x
+00:04 +50: /Users/lute/project/momcozy-lab/app/test/features/auth/account_redesign_states_test.dart: account link pending, success and delete error 320-2x
+00:04 +51: /Users/lute/project/momcozy-lab/app/test/app/more_design_test.dart: More navigation and privacy at 430.0 / 2.0
+00:04 +52: /Users/lute/project/momcozy-lab/app/test/app/more_design_test.dart: More navigation and privacy at 430.0 / 2.0
+00:04 +53: /Users/lute/project/momcozy-lab/app/test/app/more_design_test.dart: More navigation and privacy at 430.0 / 2.0
+00:04 +54: /Users/lute/project/momcozy-lab/app/test/features/auth/account_redesign_states_test.dart: account Google unavailable feedback 320-2x
+00:04 +55: /Users/lute/project/momcozy-lab/app/test/features/auth/account_redesign_states_test.dart: account Google unavailable feedback 320-2x
+00:04 +56: /Users/lute/project/momcozy-lab/app/test/features/auth/account_redesign_states_test.dart: account Google unavailable feedback 320-2x
+00:04 +57: /Users/lute/project/momcozy-lab/app/test/features/auth/account_redesign_states_test.dart: account Google unavailable feedback 320-2x
+00:04 +58: /Users/lute/project/momcozy-lab/app/test/features/auth/account_redesign_states_test.dart: account Google unavailable feedback 320-2x
+00:04 +59: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: handoff initial 320.0/1.0
+00:04 +60: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: handoff initial 320.0/1.0
+00:04 +61: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: handoff recorded 320.0/1.0
+00:05 +62: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: handoff purchased 320.0/1.0
+00:05 +63: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: handoff initial 320.0/2.0
+00:05 +64: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: handoff recorded 320.0/2.0
+00:05 +65: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: handoff purchased 320.0/2.0
+00:05 +66: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: handoff initial 360.0/1.0
+00:05 +67: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: handoff recorded 360.0/1.0
+00:05 +68: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: handoff purchased 360.0/1.0
+00:05 +69: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: handoff initial 360.0/2.0
+00:05 +70: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: handoff recorded 360.0/2.0
+00:06 +71: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: handoff purchased 360.0/2.0
+00:06 +72: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: handoff initial 393.0/1.0
+00:06 +73: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: handoff recorded 393.0/1.0
+00:06 +74: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: handoff purchased 393.0/1.0
+00:06 +75: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: handoff initial 393.0/2.0
+00:06 +76: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: handoff recorded 393.0/2.0
+00:06 +77: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: handoff purchased 393.0/2.0
+00:06 +78: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: (tearDownAll)
+00:06 +78: All tests passed!

@@ -1,0 +1,10 @@
+{
+  "auth_navigation": true,
+  "auth_requests_resend_cooldown_google_session_persistence": true,
+  "error_code_mapping": true,
+  "invite_submission_restore_device_session_and_error_handling": true,
+  "legal_external_links_and_failure_message": true,
+  "email_validator": true,
+  "code_validator": true,
+  "password_validator": true
+}

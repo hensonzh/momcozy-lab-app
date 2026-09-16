@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/agent-attachment-journey-mixed-ready-image-320-2x.png",
+  "previous_source": null,
+  "route": "/",
+  "trigger": "Camera result and PDF selected → both uploaded in composer",
+  "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage via public agentHubBuilder; production SSE parser, runner with default retries, cancel client and profile repository; isolated SSE/control/multipart/content HTTP, native picker and voice dependencies; production media repositories and PDF picker validation. History disabled as in default local build; no remote model request.",
+  "test": "test/features/agent_hub/agent_attachment_inventory_journey_test.dart"
+}

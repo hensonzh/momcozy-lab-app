@@ -1,0 +1,872 @@
+[
+  {
+    "stage": "20260914-baby-home",
+    "path": "test/goldens/design_system/baby-feeding-saved-320.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": false
+  },
+  {
+    "stage": "20260914-baby-home",
+    "path": "test/goldens/design_system/baby-feeding-saved-390.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": false
+  },
+  {
+    "stage": "20260914-baby-home",
+    "path": "test/goldens/design_system/baby-feeding-saved-430.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": false
+  },
+  {
+    "stage": "20260914-baby-home",
+    "path": "test/goldens/design_system/baby-feeding-validation-320.png",
+    "matches_original_archive": false,
+    "matches_later_record_editor_archive": true
+  },
+  {
+    "stage": "20260914-baby-home",
+    "path": "test/goldens/design_system/baby-feeding-validation-390.png",
+    "matches_original_archive": false,
+    "matches_later_record_editor_archive": true
+  },
+  {
+    "stage": "20260914-baby-home",
+    "path": "test/goldens/design_system/baby-feeding-validation-430.png",
+    "matches_original_archive": false,
+    "matches_later_record_editor_archive": true
+  },
+  {
+    "stage": "20260914-baby-home",
+    "path": "test/goldens/design_system/baby-growth-missing-birth-320.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": false
+  },
+  {
+    "stage": "20260914-baby-home",
+    "path": "test/goldens/design_system/baby-growth-missing-birth-390.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": false
+  },
+  {
+    "stage": "20260914-baby-home",
+    "path": "test/goldens/design_system/baby-growth-missing-birth-430.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": false
+  },
+  {
+    "stage": "20260914-baby-home",
+    "path": "test/goldens/design_system/baby-growth-missing-both-320.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": false
+  },
+  {
+    "stage": "20260914-baby-home",
+    "path": "test/goldens/design_system/baby-growth-missing-both-390.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": false
+  },
+  {
+    "stage": "20260914-baby-home",
+    "path": "test/goldens/design_system/baby-growth-missing-both-430.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": false
+  },
+  {
+    "stage": "20260914-baby-home",
+    "path": "test/goldens/design_system/baby-growth-missing-sex-320.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": false
+  },
+  {
+    "stage": "20260914-baby-home",
+    "path": "test/goldens/design_system/baby-growth-missing-sex-390.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": false
+  },
+  {
+    "stage": "20260914-baby-home",
+    "path": "test/goldens/design_system/baby-growth-missing-sex-430.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": false
+  },
+  {
+    "stage": "20260914-baby-home",
+    "path": "test/goldens/design_system/baby-home-current-curve-headCircumference-320-2x.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": false
+  },
+  {
+    "stage": "20260914-baby-home",
+    "path": "test/goldens/design_system/baby-home-current-curve-headCircumference-390-1x.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": false
+  },
+  {
+    "stage": "20260914-baby-home",
+    "path": "test/goldens/design_system/baby-home-current-curve-length-320-2x.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": false
+  },
+  {
+    "stage": "20260914-baby-home",
+    "path": "test/goldens/design_system/baby-home-current-curve-length-390-1x.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": false
+  },
+  {
+    "stage": "20260914-baby-home",
+    "path": "test/goldens/design_system/baby-home-current-curve-weight-320-2x.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": false
+  },
+  {
+    "stage": "20260914-baby-home",
+    "path": "test/goldens/design_system/baby-home-current-curve-weight-390-1x.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": false
+  },
+  {
+    "stage": "20260914-baby-home",
+    "path": "test/goldens/design_system/baby-home-current-empty-top-320-2x.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": false
+  },
+  {
+    "stage": "20260914-baby-home",
+    "path": "test/goldens/design_system/baby-home-current-empty-top-390-1x.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": false
+  },
+  {
+    "stage": "20260914-baby-home",
+    "path": "test/goldens/design_system/baby-home-current-error-320-2x.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": false
+  },
+  {
+    "stage": "20260914-baby-home",
+    "path": "test/goldens/design_system/baby-home-current-error-390-1x.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": false
+  },
+  {
+    "stage": "20260914-baby-home",
+    "path": "test/goldens/design_system/baby-home-current-knowledge-end-320-2x.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": false
+  },
+  {
+    "stage": "20260914-baby-home",
+    "path": "test/goldens/design_system/baby-home-current-knowledge-end-390-1x.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": false
+  },
+  {
+    "stage": "20260914-baby-home",
+    "path": "test/goldens/design_system/baby-home-current-knowledge-top-320-2x.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": false
+  },
+  {
+    "stage": "20260914-baby-home",
+    "path": "test/goldens/design_system/baby-home-current-knowledge-top-390-1x.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": false
+  },
+  {
+    "stage": "20260914-baby-home",
+    "path": "test/goldens/design_system/baby-home-current-loading-320-2x.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": false
+  },
+  {
+    "stage": "20260914-baby-home",
+    "path": "test/goldens/design_system/baby-home-current-loading-390-1x.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": false
+  },
+  {
+    "stage": "20260914-baby-home",
+    "path": "test/goldens/design_system/baby-home-current-missing-reference-320-2x.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": false
+  },
+  {
+    "stage": "20260914-baby-home",
+    "path": "test/goldens/design_system/baby-home-current-missing-reference-390-1x.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": false
+  },
+  {
+    "stage": "20260914-baby-home",
+    "path": "test/goldens/design_system/baby-home-current-no-profile-320-2x.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": false
+  },
+  {
+    "stage": "20260914-baby-home",
+    "path": "test/goldens/design_system/baby-home-current-no-profile-390-1x.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": false
+  },
+  {
+    "stage": "20260914-baby-home",
+    "path": "test/goldens/design_system/baby-home-current-recorded-top-320-2x.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": false
+  },
+  {
+    "stage": "20260914-baby-home",
+    "path": "test/goldens/design_system/baby-home-current-recorded-top-390-1x.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": false
+  },
+  {
+    "stage": "20260914-baby-home",
+    "path": "test/goldens/design_system/baby-home-current-saved-320-2x.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": false
+  },
+  {
+    "stage": "20260914-baby-home",
+    "path": "test/goldens/design_system/baby-home-current-saved-390-1x.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": false
+  },
+  {
+    "stage": "20260914-baby-home",
+    "path": "test/goldens/design_system/baby-home-current-section-今日吃奶-320-2x.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": false
+  },
+  {
+    "stage": "20260914-baby-home",
+    "path": "test/goldens/design_system/baby-home-current-section-今日吃奶-390-1x.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": false
+  },
+  {
+    "stage": "20260914-baby-home",
+    "path": "test/goldens/design_system/baby-home-current-section-今日状态-320-2x.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": false
+  },
+  {
+    "stage": "20260914-baby-home",
+    "path": "test/goldens/design_system/baby-home-current-section-今日状态-390-1x.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": false
+  },
+  {
+    "stage": "20260914-baby-home",
+    "path": "test/goldens/design_system/baby-home-current-section-生长发育记录-320-2x.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": false
+  },
+  {
+    "stage": "20260914-baby-home",
+    "path": "test/goldens/design_system/baby-home-current-section-生长发育记录-390-1x.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": false
+  },
+  {
+    "stage": "20260914-baby-home",
+    "path": "test/goldens/design_system/baby-home-current-switcher-320-2x.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": false
+  },
+  {
+    "stage": "20260914-baby-home",
+    "path": "test/goldens/design_system/baby-home-current-switcher-390-1x.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": false
+  },
+  {
+    "stage": "20260914-baby-home",
+    "path": "test/goldens/design_system/baby-home-current-undo-error-320-2x.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": false
+  },
+  {
+    "stage": "20260914-baby-home",
+    "path": "test/goldens/design_system/baby-home-current-undo-error-390-1x.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": false
+  },
+  {
+    "stage": "20260914-baby-home",
+    "path": "test/goldens/design_system/baby-home-current-undone-320-2x.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": false
+  },
+  {
+    "stage": "20260914-baby-home",
+    "path": "test/goldens/design_system/baby-home-current-undone-390-1x.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": false
+  },
+  {
+    "stage": "20260914-baby-home",
+    "path": "test/goldens/design_system/baby-switcher-320.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": false
+  },
+  {
+    "stage": "20260914-baby-home",
+    "path": "test/goldens/design_system/baby-switcher-390.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": false
+  },
+  {
+    "stage": "20260914-baby-home",
+    "path": "test/goldens/design_system/baby-switcher-430.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": false
+  },
+  {
+    "stage": "20260914-baby-home",
+    "path": "test/modules/baby/goldens/baby-growth-320.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": false
+  },
+  {
+    "stage": "20260914-baby-home",
+    "path": "test/modules/baby/goldens/baby-growth-390.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": false
+  },
+  {
+    "stage": "20260914-baby-home",
+    "path": "test/modules/baby/goldens/baby-growth-430.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": false
+  },
+  {
+    "stage": "20260914-baby-home",
+    "path": "test/modules/baby/goldens/baby-home-320.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": false
+  },
+  {
+    "stage": "20260914-baby-home",
+    "path": "test/modules/baby/goldens/baby-home-390.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": false
+  },
+  {
+    "stage": "20260914-baby-home",
+    "path": "test/modules/baby/goldens/baby-home-430.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": false
+  },
+  {
+    "stage": "20260914-baby-records",
+    "path": "test/goldens/design_system/baby-development-editor-320.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": true
+  },
+  {
+    "stage": "20260914-baby-records",
+    "path": "test/goldens/design_system/baby-development-editor-390.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": true
+  },
+  {
+    "stage": "20260914-baby-records",
+    "path": "test/goldens/design_system/baby-development-editor-430.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": true
+  },
+  {
+    "stage": "20260914-baby-records",
+    "path": "test/goldens/design_system/baby-diaper-editor-320.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": true
+  },
+  {
+    "stage": "20260914-baby-records",
+    "path": "test/goldens/design_system/baby-diaper-editor-390.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": true
+  },
+  {
+    "stage": "20260914-baby-records",
+    "path": "test/goldens/design_system/baby-diaper-editor-430.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": true
+  },
+  {
+    "stage": "20260914-baby-records",
+    "path": "test/goldens/design_system/baby-feeding-editor-320.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": true
+  },
+  {
+    "stage": "20260914-baby-records",
+    "path": "test/goldens/design_system/baby-feeding-editor-390.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": true
+  },
+  {
+    "stage": "20260914-baby-records",
+    "path": "test/goldens/design_system/baby-feeding-editor-430.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": true
+  },
+  {
+    "stage": "20260914-baby-records",
+    "path": "test/goldens/design_system/baby-feeding-validation-320.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": true
+  },
+  {
+    "stage": "20260914-baby-records",
+    "path": "test/goldens/design_system/baby-feeding-validation-390.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": true
+  },
+  {
+    "stage": "20260914-baby-records",
+    "path": "test/goldens/design_system/baby-feeding-validation-430.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": true
+  },
+  {
+    "stage": "20260914-baby-records",
+    "path": "test/goldens/design_system/baby-growth-editor-320.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": true
+  },
+  {
+    "stage": "20260914-baby-records",
+    "path": "test/goldens/design_system/baby-growth-editor-390.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": true
+  },
+  {
+    "stage": "20260914-baby-records",
+    "path": "test/goldens/design_system/baby-growth-editor-430.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": true
+  },
+  {
+    "stage": "20260914-baby-records",
+    "path": "test/goldens/design_system/baby-history-320.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": true
+  },
+  {
+    "stage": "20260914-baby-records",
+    "path": "test/goldens/design_system/baby-history-390.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": true
+  },
+  {
+    "stage": "20260914-baby-records",
+    "path": "test/goldens/design_system/baby-history-430.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": true
+  },
+  {
+    "stage": "20260914-baby-records",
+    "path": "test/goldens/design_system/baby-history-source-390.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": true
+  },
+  {
+    "stage": "20260914-baby-records",
+    "path": "test/goldens/design_system/baby-nursing-320.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": true
+  },
+  {
+    "stage": "20260914-baby-records",
+    "path": "test/goldens/design_system/baby-nursing-390.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": true
+  },
+  {
+    "stage": "20260914-baby-records",
+    "path": "test/goldens/design_system/baby-nursing-430.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": true
+  },
+  {
+    "stage": "20260914-baby-records",
+    "path": "test/goldens/design_system/baby-save-uncertain-320.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": true
+  },
+  {
+    "stage": "20260914-baby-records",
+    "path": "test/goldens/design_system/baby-sleep-active-320.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": true
+  },
+  {
+    "stage": "20260914-baby-records",
+    "path": "test/goldens/design_system/baby-sleep-active-390.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": true
+  },
+  {
+    "stage": "20260914-baby-records",
+    "path": "test/goldens/design_system/baby-sleep-active-430.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": true
+  },
+  {
+    "stage": "20260914-baby-records",
+    "path": "test/goldens/design_system/baby-sleep-editor-320.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": true
+  },
+  {
+    "stage": "20260914-baby-records",
+    "path": "test/goldens/design_system/baby-sleep-editor-390.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": true
+  },
+  {
+    "stage": "20260914-baby-records",
+    "path": "test/goldens/design_system/baby-sleep-editor-430.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": true
+  },
+  {
+    "stage": "20260914-baby-records",
+    "path": "test/goldens/design_system/baby-sleep-start-320.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": true
+  },
+  {
+    "stage": "20260914-baby-records",
+    "path": "test/goldens/design_system/baby-sleep-start-390.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": true
+  },
+  {
+    "stage": "20260914-baby-records",
+    "path": "test/goldens/design_system/baby-sleep-start-430.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": true
+  },
+  {
+    "stage": "20260914-baby-records",
+    "path": "test/goldens/design_system/baby-wet-320.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": true
+  },
+  {
+    "stage": "20260914-baby-records",
+    "path": "test/goldens/design_system/baby-wet-390.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": true
+  },
+  {
+    "stage": "20260914-baby-records",
+    "path": "test/goldens/design_system/baby-wet-430.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": true
+  },
+  {
+    "stage": "20260914-baby-records",
+    "path": "test/goldens/design_system/baby-editor-current-development-end-320-2x.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": true
+  },
+  {
+    "stage": "20260914-baby-records",
+    "path": "test/goldens/design_system/baby-editor-current-development-end-390-1x.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": true
+  },
+  {
+    "stage": "20260914-baby-records",
+    "path": "test/goldens/design_system/baby-editor-current-development-middle-320-2x.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": true
+  },
+  {
+    "stage": "20260914-baby-records",
+    "path": "test/goldens/design_system/baby-editor-current-development-middle-390-1x.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": true
+  },
+  {
+    "stage": "20260914-baby-records",
+    "path": "test/goldens/design_system/baby-editor-current-development-top-320-2x.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": true
+  },
+  {
+    "stage": "20260914-baby-records",
+    "path": "test/goldens/design_system/baby-editor-current-diaper-end-320-2x.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": true
+  },
+  {
+    "stage": "20260914-baby-records",
+    "path": "test/goldens/design_system/baby-editor-current-diaper-end-390-1x.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": true
+  },
+  {
+    "stage": "20260914-baby-records",
+    "path": "test/goldens/design_system/baby-editor-current-diaper-middle-320-2x.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": true
+  },
+  {
+    "stage": "20260914-baby-records",
+    "path": "test/goldens/design_system/baby-editor-current-diaper-middle-390-1x.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": true
+  },
+  {
+    "stage": "20260914-baby-records",
+    "path": "test/goldens/design_system/baby-editor-current-diaper-top-320-2x.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": true
+  },
+  {
+    "stage": "20260914-baby-records",
+    "path": "test/goldens/design_system/baby-editor-current-feeding-end-320-2x.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": true
+  },
+  {
+    "stage": "20260914-baby-records",
+    "path": "test/goldens/design_system/baby-editor-current-feeding-end-390-1x.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": true
+  },
+  {
+    "stage": "20260914-baby-records",
+    "path": "test/goldens/design_system/baby-editor-current-feeding-top-320-2x.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": true
+  },
+  {
+    "stage": "20260914-baby-records",
+    "path": "test/goldens/design_system/baby-editor-current-growth-end-320-2x.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": true
+  },
+  {
+    "stage": "20260914-baby-records",
+    "path": "test/goldens/design_system/baby-editor-current-growth-end-390-1x.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": true
+  },
+  {
+    "stage": "20260914-baby-records",
+    "path": "test/goldens/design_system/baby-editor-current-growth-top-320-2x.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": true
+  },
+  {
+    "stage": "20260914-baby-records",
+    "path": "test/goldens/design_system/baby-editor-current-sleep-end-320-2x.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": true
+  },
+  {
+    "stage": "20260914-baby-records",
+    "path": "test/goldens/design_system/baby-editor-current-sleep-end-390-1x.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": true
+  },
+  {
+    "stage": "20260914-baby-records",
+    "path": "test/goldens/design_system/baby-editor-current-sleep-top-320-2x.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": true
+  },
+  {
+    "stage": "20260914-baby-records",
+    "path": "test/goldens/design_system/baby-records-current-empty-320-2x.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": true
+  },
+  {
+    "stage": "20260914-baby-records",
+    "path": "test/goldens/design_system/baby-records-current-empty-390-1x.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": true
+  },
+  {
+    "stage": "20260914-baby-records",
+    "path": "test/goldens/design_system/baby-records-current-list-320-2x.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": true
+  },
+  {
+    "stage": "20260914-baby-records",
+    "path": "test/goldens/design_system/baby-records-current-list-390-1x.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": true
+  },
+  {
+    "stage": "20260914-baby-records",
+    "path": "test/goldens/design_system/baby-records-current-month-320-2x.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": true
+  },
+  {
+    "stage": "20260914-baby-records",
+    "path": "test/goldens/design_system/baby-records-current-month-390-1x.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": true
+  },
+  {
+    "stage": "20260914-baby-records",
+    "path": "test/goldens/design_system/baby-records-current-page-error-320-2x.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": true
+  },
+  {
+    "stage": "20260914-baby-records",
+    "path": "test/goldens/design_system/baby-records-current-page-error-390-1x.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": true
+  },
+  {
+    "stage": "20260914-baby-records",
+    "path": "test/goldens/design_system/baby-records-current-page-loading-320-2x.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": true
+  },
+  {
+    "stage": "20260914-baby-records",
+    "path": "test/goldens/design_system/baby-records-current-page-loading-390-1x.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": true
+  },
+  {
+    "stage": "20260914-baby-records",
+    "path": "test/goldens/design_system/baby-records-current-page-recovered-320-2x.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": true
+  },
+  {
+    "stage": "20260914-baby-records",
+    "path": "test/goldens/design_system/baby-records-current-page-recovered-390-1x.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": true
+  },
+  {
+    "stage": "20260914-baby-records",
+    "path": "test/goldens/design_system/baby-editor-current-growth-saving-390-1x.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": true
+  },
+  {
+    "stage": "20260914-baby-records",
+    "path": "test/goldens/design_system/baby-editor-current-growth-validation-390-1x.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": true
+  },
+  {
+    "stage": "20260914-special-pages",
+    "path": "test/goldens/design_system/not-found-320-2x.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": false
+  },
+  {
+    "stage": "20260914-special-pages",
+    "path": "test/goldens/design_system/not-found-320.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": false
+  },
+  {
+    "stage": "20260914-special-pages",
+    "path": "test/goldens/design_system/not-found-390.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": false
+  },
+  {
+    "stage": "20260914-special-pages",
+    "path": "test/goldens/design_system/not-found-430.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": false
+  },
+  {
+    "stage": "20260914-special-pages",
+    "path": "test/goldens/design_system/motion-guide-320-2x.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": false
+  },
+  {
+    "stage": "20260914-special-pages",
+    "path": "test/goldens/design_system/motion-guide-320.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": false
+  },
+  {
+    "stage": "20260914-special-pages",
+    "path": "test/goldens/design_system/motion-guide-390-2x.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": false
+  },
+  {
+    "stage": "20260914-special-pages",
+    "path": "test/goldens/design_system/motion-guide-390.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": false
+  },
+  {
+    "stage": "20260914-special-pages",
+    "path": "test/goldens/design_system/motion-guide-430-2x.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": false
+  },
+  {
+    "stage": "20260914-special-pages",
+    "path": "test/goldens/design_system/motion-guide-430.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": false
+  },
+  {
+    "stage": "20260914-special-pages",
+    "path": "test/goldens/design_system/motion-failure-320-2x.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": false
+  },
+  {
+    "stage": "20260914-special-pages",
+    "path": "test/goldens/design_system/motion-failure-320.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": false
+  },
+  {
+    "stage": "20260914-special-pages",
+    "path": "test/goldens/design_system/motion-failure-390-2x.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": false
+  },
+  {
+    "stage": "20260914-special-pages",
+    "path": "test/goldens/design_system/motion-failure-390.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": false
+  },
+  {
+    "stage": "20260914-special-pages",
+    "path": "test/goldens/design_system/motion-failure-430-2x.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": false
+  },
+  {
+    "stage": "20260914-special-pages",
+    "path": "test/goldens/design_system/motion-failure-430.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": false
+  },
+  {
+    "stage": "20260914-special-pages",
+    "path": "test/goldens/design_system/motion-failure-actions-320-2x.png",
+    "matches_original_archive": true,
+    "matches_later_record_editor_archive": false
+  }
+]

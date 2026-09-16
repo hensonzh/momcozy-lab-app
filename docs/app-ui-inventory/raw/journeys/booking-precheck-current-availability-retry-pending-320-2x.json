@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/booking-precheck-current-availability-retry-pending-320-2x.png",
+  "previous_source": "test/goldens/ui_inventory/booking-precheck-current-availability-error-320-2x.png",
+  "route": "/services/episodes/service-episode/booking",
+  "trigger": "Retry availability → picker loading spinner",
+  "root_entry": "Authenticated More → tap Me bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/services/booking_precheck_current_inventory_test.dart"
+}

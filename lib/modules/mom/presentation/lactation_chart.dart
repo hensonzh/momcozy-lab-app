@@ -1,4 +1,5 @@
-import '../../../shared/design_system/momcozy_design_system.dart';
+import '../../../shared/design_system/mom_home_tokens.dart';
+import '../../../shared/widgets/mom_settings_widgets.dart';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../../../domain/shared/local_date.dart';
@@ -24,116 +25,88 @@ class _LactationTrendChartState extends State<LactationTrendChart> {
         .map((day) => controller.summary(day).measuredVolumeMl)
         .toList();
     final measured = values.whereType<double>().length;
-    return Container(
-      color: MomCozyColors.milkChartBackground,
-      padding: const EdgeInsets.fromLTRB(20, 18, 20, 16),
-      child: DefaultTextStyle(
-        style: DefaultTextStyle.of(
-          context,
-        ).style.copyWith(color: MomCozyColors.milkChartInk),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Row(
-              children: [
-                const Icon(
-                  Icons.water_drop_outlined,
-                  color: MomCozyColors.milkChartInk,
-                  size: 23,
+    final periods = Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        for (final period in [7, 30]) ...[
+          if (period == 30) const SizedBox(width: 8),
+          Semantics(
+            selected: _days == period,
+            child: OutlinedButton(
+              onPressed: () => setState(() => _days = period),
+              style: OutlinedButton.styleFrom(
+                minimumSize: const Size(48, 44),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 6,
+                  vertical: 12,
                 ),
-                const SizedBox(width: 7),
-                const Expanded(
-                  child: Text(
-                    '奶量趋势',
-                    style: TextStyle(
-                      fontSize: MomCozyTypography.bodyLargeSize,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                textStyle: MomHomeTokens.text(12, weight: FontWeight.w700),
+                foregroundColor: _days == period
+                    ? MomHomeTokens.teal
+                    : MomHomeTokens.secondary,
+                backgroundColor: _days == period
+                    ? MomHomeTokens.mint
+                    : MomHomeTokens.surface,
+                side: BorderSide(
+                  color: _days == period
+                      ? MomHomeTokens.teal
+                      : MomHomeTokens.border,
                 ),
-                ToggleButtons(
-                  isSelected: [_days == 7, _days == 30],
-                  onPressed: (index) =>
-                      setState(() => _days = index == 0 ? 7 : 30),
-                  constraints: const BoxConstraints(
-                    minWidth: 44,
-                    minHeight: 36,
-                  ),
-                  borderRadius: BorderRadius.circular(MomCozyRadii.badge),
-                  color: MomCozyColors.milkChartMuted,
-                  selectedColor: MomCozyColors.milkChartInk,
-                  fillColor: MomCozyColors.milkChartSelection,
-                  borderColor: MomCozyColors.milkChartBorder,
-                  selectedBorderColor: MomCozyColors.milkChartBorder,
-                  children: const [
-                    Text(
-                      '7天',
-                      style: TextStyle(fontSize: MomCozyTypography.captionSize),
-                    ),
-                    Text(
-                      '30天',
-                      style: TextStyle(fontSize: MomCozyTypography.captionSize),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            const SizedBox(height: 18),
-            Text.rich(
-              TextSpan(
-                children: [
-                  TextSpan(
-                    text: values.last == null ? '—' : _number(values.last!),
-                    style: const TextStyle(
-                      fontSize: MomCozyTypography.heroMetricSize,
-                      height: 1.1,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                  const TextSpan(
-                    text: ' ml',
-                    style: TextStyle(
-                      color: MomCozyColors.milkChartMuted,
-                      fontSize: MomCozyTypography.bodyLargeSize,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 6),
-            const Text(
-              '今日泵奶量',
-              style: TextStyle(
-                color: MomCozyColors.milkChartMuted,
-                fontSize: MomCozyTypography.secondarySize,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Semantics(
-              label:
-                  '$_days天泵奶量趋势。${List.generate(days.length, (index) => '${days[index].month}月${days[index].day}日：${values[index] == null ? '未记录' : '${_number(values[index]!)}毫升'}').join('；')}',
-              child: ExcludeSemantics(
-                child: AspectRatio(
-                  aspectRatio: 320 / 192,
-                  child: CustomPaint(painter: _TrendPainter(days, values)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
                 ),
               ),
+              child: Text('$period天'),
             ),
-            Text(
-              measured == 0
-                  ? '暂无泵奶量记录，添加后即可查看趋势'
-                  : measured == 1
-                  ? '目前仅有一天数据，连续记录后可查看曲线'
-                  : '仅展示已记录的泵奶量，未记录日期留空',
-              style: const TextStyle(
-                fontSize: MomCozyTypography.microSize,
-                color: MomCozyColors.milkChartMuted,
-                height: 1.7,
-              ),
-            ),
-          ],
+          ),
+        ],
+      ],
+    );
+    final title = Text(
+      '奶量趋势',
+      style: MomHomeTokens.text(16, weight: FontWeight.w700),
+    );
+    return MomSettingsCard(
+      children: [
+        if (MediaQuery.textScalerOf(context).scale(1) > 1.4) ...[
+          title,
+          periods,
+        ] else
+          Row(
+            children: [
+              Expanded(child: title),
+              const SizedBox(width: 12),
+              periods,
+            ],
+          ),
+        Text(
+          '${values.last == null ? '—' : _number(values.last!)} ml',
+          style: MomHomeTokens.text(36, weight: FontWeight.w700),
         ),
-      ),
+        Text(
+          '今日泵奶量',
+          style: MomHomeTokens.text(13, color: MomHomeTokens.secondary),
+        ),
+        Semantics(
+          label:
+              '$_days天泵奶量趋势。${List.generate(days.length, (index) => '${days[index].month}月${days[index].day}日：${values[index] == null ? '未记录' : '${_number(values[index]!)}毫升'}').join('；')}',
+          child: ExcludeSemantics(
+            child: AspectRatio(
+              aspectRatio: 320 / 192,
+              child: CustomPaint(painter: _TrendPainter(days, values)),
+            ),
+          ),
+        ),
+        Text(
+          measured == 0
+              ? '暂无泵奶量记录，添加后即可查看趋势'
+              : measured == 1
+              ? '目前仅有一天数据，连续记录后可查看曲线'
+              : '仅展示已记录的泵奶量，未记录日期留空',
+          style: MomHomeTokens.text(12, color: MomHomeTokens.secondary),
+        ),
+      ],
     );
   }
 }
@@ -156,13 +129,13 @@ class _TrendPainter extends CustomPainter {
     double x(int index) => 20 + index * 280 / (days.length - 1);
     double y(double value) => 150 - value / maximum * 108;
     final baseline = Paint()
-      ..color = MomCozyColors.milkChartGrid
+      ..color = MomHomeTokens.border
       ..strokeWidth = 1;
     for (double left = 20; left < 300; left += 7) {
       canvas.drawLine(Offset(left, 150), Offset(left + 3, 150), baseline);
     }
     final line = Paint()
-      ..color = MomCozyColors.milkChartInk
+      ..color = MomHomeTokens.teal
       ..strokeWidth = 1.8
       ..style = PaintingStyle.stroke;
     for (var index = 0; index < days.length; index++) {
@@ -187,17 +160,14 @@ class _TrendPainter extends CustomPainter {
             30,
             Paint()
               ..shader = const RadialGradient(
-                colors: [
-                  MomCozyColors.milkChartGlow,
-                  MomCozyColors.milkChartGlowFade,
-                ],
+                colors: [MomHomeTokens.mint, MomHomeTokens.surface],
               ).createShader(Rect.fromCircle(center: point, radius: 30)),
           );
           canvas.drawCircle(
             point,
             7,
             Paint()
-              ..color = MomCozyColors.milkChartPoint
+              ..color = MomHomeTokens.teal
               ..style = PaintingStyle.stroke
               ..strokeWidth = 2,
           );
@@ -205,7 +175,7 @@ class _TrendPainter extends CustomPainter {
             canvas.drawLine(
               Offset(pointX, top),
               Offset(pointX, math.min(top + 3, 150)),
-              Paint()..color = MomCozyColors.milkChartGuide,
+              Paint()..color = MomHomeTokens.border,
             );
           }
           _label(
@@ -213,14 +183,14 @@ class _TrendPainter extends CustomPainter {
             '今日 ${_number(value)} ml',
             pointX,
             pointY - 24,
-            MomCozyColors.milkChartLabel,
+            MomHomeTokens.secondary,
             alignEnd: true,
           );
         }
         canvas.drawCircle(
           Offset(pointX, pointY),
           index == days.length - 1 ? 3.8 : 2.8,
-          Paint()..color = MomCozyColors.milkChartInk,
+          Paint()..color = MomHomeTokens.teal,
         );
       }
       if (days.length == 7 ||
@@ -234,7 +204,7 @@ class _TrendPainter extends CustomPainter {
               : '${days[index].month}/${days[index].day}',
           pointX,
           166,
-          MomCozyColors.milkChartMuted,
+          MomHomeTokens.secondary,
         );
       }
     }
@@ -254,8 +224,8 @@ class _TrendPainter extends CustomPainter {
         text: value,
         style: TextStyle(
           color: color,
-          fontSize: MomCozyTypography.microSize,
-          fontFamily: MomCozyTypography.fontFamily,
+          fontSize: 10,
+          fontFamily: 'NotoSansSCHome',
           fontFamilyFallback: const ['NotoSansSC'],
         ),
       ),

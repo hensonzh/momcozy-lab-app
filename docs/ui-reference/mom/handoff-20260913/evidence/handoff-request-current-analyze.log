@@ -1,0 +1,6 @@
+Analyzing app...                                                
+
+   info • The import of 'dart:async' is unnecessary because all of the used elements are also provided by the import of 'package:flutter_test/flutter_test.dart'. Try removing the import directive • test/features/notifications/notification_navigation_current_inventory_test.dart:1:8 • unnecessary_import
+warning • Unused import: 'package:momcozy_flutter_app/features/notifications/domain/notification_permission.dart'. Try removing the import directive • test/features/notifications/notification_navigation_current_inventory_test.dart:19:8 • unused_import
+
+2 issues found. (ran in 4.0s)

@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/mom-journey-trend-return-home-393.png",
+  "previous_source": "test/goldens/ui_inventory/mom-journey-trend-seven-days-return-393.png",
+  "route": "/me",
+  "trigger": "Close trend → today total independent of historical measurements",
+  "root_entry": "Authenticated More → tap Me bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/mom/mom_inventory_journey_test.dart"
+}

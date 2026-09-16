@@ -1,0 +1,6 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/features/auth/auth_followup_inventory_test.dart
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/shared/product_feedback_test.dart: (setUpAll)
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/shared/product_feedback_test.dart: feedback layout and retry callbacks 390.0/1.0
+00:00 +1: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_followup_inventory_test.dart: auth registration and verification visible submit states
+00:01 +2: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_followup_inventory_test.dart: (tearDownAll)
+00:01 +2: All tests passed!

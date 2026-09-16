@@ -1,0 +1,10 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/modules/services/purchase_branches_current_inventory_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: current purchase idle dismissal and reopened verification false
+00:02 +1: current purchase order and payment business errors false
+00:03 +2: current Stripe checkout failure launch pending and query false
+00:04 +3: current purchase idle dismissal and reopened verification true
+00:05 +4: current purchase order and payment business errors true
+00:07 +5: current Stripe checkout failure launch pending and query true
+00:08 +6: (tearDownAll)
+00:08 +6: All tests passed!

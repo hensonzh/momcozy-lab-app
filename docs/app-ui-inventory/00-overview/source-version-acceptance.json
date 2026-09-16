@@ -1,0 +1,96 @@
+[
+  {
+    "file": "lib/features/agent_hub/agent_hub_page.dart",
+    "current_sha256": "f8873ef56dec4899557067eefbc0b838c2523ab0a16a3b3fc65176cc06a557ff",
+    "matching_capture_or_reuse_proof": "runs/20260914T091638-g11-agent-markdown/reuse-audit.json",
+    "reports": [
+      "AGENT-CURRENT-REUSE.md"
+    ],
+    "acceptance": "Named source change resolved by captured or reused visual evidence; historical aliases remain version-scoped"
+  },
+  {
+    "file": "lib/features/auth/presentation/invite_auth_page.dart",
+    "current_sha256": "51b02cb9d3c973aa931abbeb7e9ec3352476b889db496b7cd583ef757732c51b",
+    "matching_capture_or_reuse_proof": "runs/20260914T092346-g11-configured-final/source-snapshot.json",
+    "reports": [
+      "CONFIGURED-PAGES-CURRENT.md",
+      "CONFIGURED-SUBMISSION-CURRENT.md",
+      "CONFIGURED-ERRORS-CURRENT.md"
+    ],
+    "acceptance": "Named source change resolved by captured or reused visual evidence; historical aliases remain version-scoped"
+  },
+  {
+    "file": "lib/features/onboarding/presentation/onboarding_page.dart",
+    "current_sha256": "2d5ec507c926086540c9bbdc770e3aa68c319dbe3357a7b57d7a0ff1a28487dc",
+    "matching_capture_or_reuse_proof": "runs/20260914T092346-g11-configured-final/source-snapshot.json",
+    "reports": [
+      "CONFIGURED-PAGES-CURRENT.md",
+      "CONFIGURED-SUBMISSION-CURRENT.md",
+      "CONFIGURED-ERRORS-CURRENT.md"
+    ],
+    "acceptance": "Named source change resolved by captured or reused visual evidence; historical aliases remain version-scoped"
+  },
+  {
+    "file": "lib/modules/consultation/presentation/room_page.dart",
+    "current_sha256": "2431630b028d90bf090d9b7f726fa420d2b1908da23175e4c37a2a6f4a553f35",
+    "matching_capture_or_reuse_proof": "runs/20260914T083932-g11-consultation-feedback/source-snapshot.json",
+    "reports": [
+      "CONSULTATION-PREFLIGHT-FEEDBACK-CURRENT.md",
+      "CONSULTATION-LIVE-CURRENT.md",
+      "CONSULTATION-OUTCOME-CURRENT.md"
+    ],
+    "acceptance": "Named source change resolved by captured or reused visual evidence; historical aliases remain version-scoped"
+  },
+  {
+    "file": "lib/modules/mom/presentation/lactation_panel.dart",
+    "current_sha256": "cca15bc2bcd010080f45facd13833ddc0e9fd0ccc72c0f3ab72f9f58ba242d00",
+    "matching_capture_or_reuse_proof": "runs/20260914-lactation-version-final/source-hashes.json",
+    "reports": [
+      "LACTATION-VERSION-CURRENT.md"
+    ],
+    "acceptance": "Named source change resolved by captured or reused visual evidence; historical aliases remain version-scoped"
+  },
+  {
+    "file": "lib/modules/schedule/presentation/personal_schedule_editor.dart",
+    "current_sha256": "bd11ff86a30046974ba188131c6f4ca46d2c59c2977c06386d662f71d6200c7f",
+    "matching_capture_or_reuse_proof": "runs/20260914T085237-g11-schedule/source-snapshot.json",
+    "reports": [
+      "SCHEDULE-CURRENT.md",
+      "SCHEDULE-FEEDBACK-CURRENT.md"
+    ],
+    "acceptance": "Named source change resolved by captured or reused visual evidence; historical aliases remain version-scoped"
+  },
+  {
+    "file": "lib/modules/schedule/presentation/schedule_page.dart",
+    "current_sha256": "87f06c1ea10cfb6ee6b503f7f709015a761f58965d7715bdb93423df33db20ba",
+    "matching_capture_or_reuse_proof": "runs/20260914T085237-g11-schedule/source-snapshot.json",
+    "reports": [
+      "SCHEDULE-CURRENT.md",
+      "SCHEDULE-FEEDBACK-CURRENT.md"
+    ],
+    "acceptance": "Named source change resolved by captured or reused visual evidence; historical aliases remain version-scoped"
+  },
+  {
+    "file": "lib/modules/services/presentation/service_renew_page.dart",
+    "current_sha256": "f01adf5d24ec28ef69b9c37fc4020acfac26aece466f4395ae0cd829e1fcea47",
+    "matching_capture_or_reuse_proof": "runs/20260914T084835-g11-renew/source-snapshot.json",
+    "reports": [
+      "RENEW-CURRENT.md",
+      "RENEW-PENDING-CURRENT.md"
+    ],
+    "acceptance": "Named source change resolved by captured or reused visual evidence; historical aliases remain version-scoped"
+  },
+  {
+    "file": "lib/shared/widgets/product_feedback.dart",
+    "current_sha256": "f0e9384b049cfc0e3c0db31f4f751723d3b7faa587a136caee1d0db75b004af1",
+    "matching_capture_or_reuse_proof": "runs/20260914T083633-g11-auth-feedback/source-snapshot.json",
+    "reports": [
+      "AUTH-SUBMIT-FEEDBACK-CURRENT.md",
+      "SCHEDULE-CURRENT.md",
+      "INTAKE-FEEDBACK-CURRENT.md",
+      "STATE-MAP-FINAL.md",
+      "LACTATION-VERSION-CURRENT.md"
+    ],
+    "acceptance": "Named source change resolved by captured or reused visual evidence; historical aliases remain version-scoped"
+  }
+]

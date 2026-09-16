@@ -1,0 +1,2288 @@
+{
+  "method": "full-width continuous 650px strips; identical pixels reference prior reviewed Mom or Baby controls; remaining segments reviewed at native width",
+  "sources": [
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-date-before-birth-320-2x.png",
+      "sha256": "17de75520ba252dd64beb27ed8a5051c1677db62b18e66423628fa8196ea2081",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "5f7c267fb7ebc3511dae6763b5d57509e5e687f1c2340729977ac26be9521a80",
+          "review": "sheet-01.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "b007575ea37b582dd83c4a3f00b4711655a9e732e0b510300f4395c0cfbcaf9b",
+          "review": "sheet-01.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-date-before-birth-393-1x.png",
+      "sha256": "09f7d4d01aab44a84913891b0e7f8210eeca729b014cb3b932e8fdfe0ff95549",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "e313f09fb0d34eb028cb4582184aed9cfe7b99ebddbdcc10dfd1a576c284dcc7",
+          "review": "sheet-01.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "6624dc8b914436d6cac0b4f2af00311d0afe41a27d7c07ff48888c2cbaa40856",
+          "review": "sheet-01.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-date-birth-320-2x.long.png",
+      "sha256": "e4a367ce2c8b579211b90dfa58b0b25a46e9fae6701dbc788b819ba48cad6dab",
+      "width": 320,
+      "height": 1178,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "4a83b3fc836ebeba6f40c9614640276e43289320350c825f5e2e77aca7dd2a55",
+          "review": "sheet-01.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1178,
+          "pixel_sha256": "e564bf78e6cf987016717af6b66a3e0951667a06092170ac8f087b68224a2283",
+          "review": "sheet-01.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-date-birth-320-2x.png",
+      "sha256": "24ee73f4c01c53c2c4944ee387fb1569e85fc6f099ff758a0f32e6ea4cda96cf",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "cac8c392ef9f802fdf765f8597022ce2886b9e49a255530756a65b520042cb0d",
+          "review": "sheet-02.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "7cfce5a4c60b4fd2b1f5f3131a3d61e17a4d3dbb511dd1dbf6763c097aea0886",
+          "review": "sheet-02.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-date-birth-393-1x.png",
+      "sha256": "e7d6a8b7d17eb468e2225e93f673633eb93a41a6fe413b42efdb936b4b1914e5",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "8578e2831ce72531874314b7707e1e3ba442a04c44da63a065e8bb32593f6b98",
+          "review": "sheet-02.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "4dd783ef39321bc53190eb0645b37e37c08f44f33fb9945f930cf29a16b3c1ad",
+          "review": "sheet-02.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-date-cancelled-320-2x.long.png",
+      "sha256": "ace8e69c10ec750c47d33982e8a1a12344d4fafbbfb4703ef91c02ea7af8fcfb",
+      "width": 320,
+      "height": 1178,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "4a83b3fc836ebeba6f40c9614640276e43289320350c825f5e2e77aca7dd2a55",
+          "review": "sheet-01.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1178,
+          "pixel_sha256": "52cd799cd15427a109f7fa61edd75db583bd0468b21c4ef36a6e9364dd151afd",
+          "review": "sheet-02.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-date-cancelled-320-2x.png",
+      "sha256": "5f037287a534130bcbe0b3a75e62b38fe490fa4ffbb05e2f3cdfae9868ca3bf1",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9e5a5f3c7e984acaa258bc215f961d78ebc5f35d2a1875029db1dae51d0a1f21",
+          "review": "sheet-02.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "7cfce5a4c60b4fd2b1f5f3131a3d61e17a4d3dbb511dd1dbf6763c097aea0886",
+          "review": "sheet-02.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-date-cancelled-393-1x.png",
+      "sha256": "918db8e4fb0459b3a08cb47c3651794e767e98318505de3572ca084e9437bc68",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6c77cf52b93f3f645c2aee389837c94bb8aa7dbe33e1c3c059fc191e5e924da9",
+          "review": "sheet-03.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "4dd783ef39321bc53190eb0645b37e37c08f44f33fb9945f930cf29a16b3c1ad",
+          "review": "sheet-02.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-date-future-320-2x.png",
+      "sha256": "66b8ac22599595b3eca4d2247e4c54082d1b32691b7b8aeea73357fcbb4e46ad",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "d7ebd76b2910971e68780df891ac1da4b0fb6a07c2b2e898a8972748f522d03b",
+          "review": "sheet-03.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "b007575ea37b582dd83c4a3f00b4711655a9e732e0b510300f4395c0cfbcaf9b",
+          "review": "sheet-01.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-date-future-393-1x.png",
+      "sha256": "39e2d6823da3d3a5dc9d9f8687c92a56f2a654ee7f6acbb8c26ae5228bc150de",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "66361e3bc801948e695ef9bda96f4e0e2e14cb7eb787b475e76ae329926e5edc",
+          "review": "sheet-03.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "6624dc8b914436d6cac0b4f2af00311d0afe41a27d7c07ff48888c2cbaa40856",
+          "review": "sheet-01.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-date-open-320-2x.png",
+      "sha256": "3cdcf1e40de78449883422bc4c2bdbd12256154bdcd212e55d920f5b8416ab11",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ef6da1c25e8824e982bbdf5f8a4dbcd13dfc47dddea7750dca3bd7b7cfdb2ad3",
+          "review": "sheet-03.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "b007575ea37b582dd83c4a3f00b4711655a9e732e0b510300f4395c0cfbcaf9b",
+          "review": "sheet-01.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-date-open-393-1x.png",
+      "sha256": "3706bdac0c882c88ecd31048daac539ec30d1ffbf7e94d3898a21730d6647fa5",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "0610ca7a45f1cd2b8d82179c5d0168b48cf00c7deea7bb1af8763ffe3bbdea63",
+          "review": "sheet-03.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "90f8069d9f3545dbc13e67057025b77183293da717323c9254b6807a85984b87",
+          "review": "sheet-03.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-date-previous-day-320-2x.long.png",
+      "sha256": "a8caf2e20d08e21685dc151d479d680a2fb712accc7d60da581a1bcfcbcc1dfb",
+      "width": 320,
+      "height": 1178,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "4a83b3fc836ebeba6f40c9614640276e43289320350c825f5e2e77aca7dd2a55",
+          "review": "sheet-01.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1178,
+          "pixel_sha256": "5a70a62e3735d0ec6140603017981db7ba6138366e7654f3425d852f9d83a473",
+          "review": "sheet-04.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-date-previous-day-320-2x.png",
+      "sha256": "d8ff21182bfb2530fff73df4dddff7deb549f33c843474a8120529f7418a84ab",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "4ad76ef07799c17042e84170fa41912588a5f15cf6d63c6c4795a74abbbdfa6d",
+          "review": "sheet-04.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "7cfce5a4c60b4fd2b1f5f3131a3d61e17a4d3dbb511dd1dbf6763c097aea0886",
+          "review": "sheet-02.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-date-previous-day-393-1x.png",
+      "sha256": "06fd63149840377c62f9cb7f6d7e70dad2770f047245139ef27ba3e656df9b64",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "fd0e1e1e5418d49ebe11924126be30dc0ae7136d56ce7aaf250fe79711fcc1f3",
+          "review": "sheet-04.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "4dd783ef39321bc53190eb0645b37e37c08f44f33fb9945f930cf29a16b3c1ad",
+          "review": "sheet-02.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-empty-rejected-320-2x.long.png",
+      "sha256": "78623a9d505bd923f64b4759a29dd7e93583c20bc97557382bb4aa9a3acbf8ea",
+      "width": 320,
+      "height": 1270,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "761aaec8d820513d05eb9d45ec9f082e92d9c0f5c018992c4c46f684bdcd19b9",
+          "review": "sheet-04.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1270,
+          "pixel_sha256": "0d7e7682d846278ce275190225ac67304ef839d7584255d4d146a989f28a2f1d",
+          "review": "sheet-04.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-empty-rejected-320-2x.png",
+      "sha256": "e1d46505d68cdce2ade854b0d9daa8a684907bcd9f8517300bcff93fe642b762",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "1749c0642b4abe81b6058574459e458d9bb64237a4bc066b496ce821c27b7466",
+          "review": "sheet-04.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "852a55493164bdf38ee45a84dc3ef64fd6e070683d706be9582a9376f553b589",
+          "review": "sheet-05.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-empty-rejected-393-1x.png",
+      "sha256": "01931eb9001614a3e54bcf20ad8df64953cefa47b37665d95022217b8d47dee0",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "4681c9449c96e14f8f9d3bdb510b871509f599cabfea36b6c47e80708cfaf646",
+          "review": "sheet-05.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "18bc69e327e8684cfceac070d17bd3c1040b63db50a06f659625b788300597d2",
+          "review": "sheet-05.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-head-closed-320-2x.long.png",
+      "sha256": "2a7eed3eaa881740523730a74f99487a3935cee5f5e500fdea7e513a60082fc7",
+      "width": 320,
+      "height": 3460,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "58578630282c08ed070b330c5092b2346554d47e291ecce03bfa1790d2ebdd62",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "034c398b12fe2df5aaef1e8fd2e151d4092f4bc550a8179f7524acfdf8572a5d",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "fa27bf1b8f7135cf78bb1380036cbe25b805799678f9c6338d1b09862168215b",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "cf7b9827ee12ea5f4ce473b5b04736e9eca7e63163a06350e8ad0569b0e9a58a",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-3"
+        },
+        {
+          "y0": 2600,
+          "y1": 3250,
+          "pixel_sha256": "830120be56be43c6e4e4a7527c94577138b4175b12f8b7b606a89d5ff059987b",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-4"
+        },
+        {
+          "y0": 3250,
+          "y1": 3460,
+          "pixel_sha256": "347ac7ec17d5bdaf8c362c53e6be84275398444203824d119dff6d55c72c68e4",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-head-closed-320-2x.png",
+      "sha256": "ae22728100c76a305c14206dcd004471b1a8f9c51a91bc1ae3a626da08ad1a48",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "dce34a16044077207dcc5bb11f7412453ff7fe21e2c62c38da18ac2477b19a01",
+          "review": "sheet-05.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "77f8d00897806f10b57fd7fe2c079a08ce8e8f52ee5803a3728dc5269fd5ea00",
+          "review": "sheet-05.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-head-closed-393-1x.long.png",
+      "sha256": "f0cba396e8a9efa775fb9fbb71adccd863e4ce8dace888759be74db253f099a6",
+      "width": 393,
+      "height": 1752,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2541e10f43029eb71329290bf405fa83fabe418cf9eb6676ed4e3eb8498f6856",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "462243825730002d5a7b26fe7e1bbdb2f381ea57afabfc7a0cad762ed9541c1e",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1752,
+          "pixel_sha256": "5d1142fe86ef6e5a8664871afce9928bf15cf58f7b773ac5f1080f1b7fead23c",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-head-closed-393-1x.png",
+      "sha256": "4c9ee8231a9891dba51ca7c8f86c48db1ee34e40d87e22db8f13fbb169ab644b",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "d492894bd112055cb79ce689c5730ecea685ea8e467b930f238a25dc1a40a8c1",
+          "review": "sheet-05.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "c5986c14efa3dc55eaf7823ac2fea6a01e82672b30df15e49630d2cfb5a066bd",
+          "review": "sheet-06.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-head-empty-320-2x.long.png",
+      "sha256": "d31b39b5c476367bf589e4f799c7c4bf8f9b488f2b209a04cd647d5b34aea4c5",
+      "width": 320,
+      "height": 1178,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6ee5512fb8590b60347c78333b6e10bc1f65dc4e980e5481159c5832bdec1d64",
+          "review": "sheet-06.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1178,
+          "pixel_sha256": "52cd799cd15427a109f7fa61edd75db583bd0468b21c4ef36a6e9364dd151afd",
+          "review": "sheet-02.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-head-empty-320-2x.png",
+      "sha256": "df7ea548e8d8e0b48038f3079c338a44e72f8ed82cce7dfa4a439f78b57c33b2",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "4177c6c4cf61d84afe0440bb0f9b2d70c91a9431b4f697b6d3387395571bf1c7",
+          "review": "sheet-06.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "bfd7405cbb362822677783648a93ec7d33190b0e593e0f842782d5e34ceabfd6",
+          "review": "sheet-06.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-head-empty-393-1x.png",
+      "sha256": "59b3408c5f0cf9e7a6efc1762c62036d6c942b412cccdc40a83f77a9f666bc8b",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ca9205c74c9479a0cb1b0c406348987536b6c3adff41da78e17808cafc74ad5c",
+          "review": "sheet-06.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "4dd783ef39321bc53190eb0645b37e37c08f44f33fb9945f930cf29a16b3c1ad",
+          "review": "sheet-02.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-head-entry-320-2x.long.png",
+      "sha256": "4bbc5a2dcc5d1cf9cf6011e1e0bad60bec80462c84ebbc3165cc3461eb4a68dd",
+      "width": 320,
+      "height": 1176,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "31dceb2204c659e7b9855e294faedf8bd89f0a00d0f07bba30f46a1a2e5dbca4",
+          "review": "sheet-06.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1176,
+          "pixel_sha256": "3f93a478572d552f9205cebe27c9f6403b6f097a545040f347086012e5486032",
+          "review": "sheet-07.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-head-entry-320-2x.png",
+      "sha256": "73af014f3aeb5f55a26de637b0415d8862884c71052bd378cac4192469155b54",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "31dceb2204c659e7b9855e294faedf8bd89f0a00d0f07bba30f46a1a2e5dbca4",
+          "review": "sheet-06.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "8cbd8a8b55f8707227f4bd79ec91dac9ad4f628d4656692173ec67a6c1c4d70d",
+          "review": "sheet-07.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-head-entry-393-1x.png",
+      "sha256": "66bc6dcda6fd9abdcf1035b617447a41d87402f53b2fdfda9ced50b17b949888",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "28041b7e9f1e155b73839c9b573eb0876c756f583188eb679f8ec9f1941c81f7",
+          "review": "sheet-07.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "4dd783ef39321bc53190eb0645b37e37c08f44f33fb9945f930cf29a16b3c1ad",
+          "review": "sheet-02.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-head-over-320-2x.long.png",
+      "sha256": "0259ece6b041a6755940ac70f9aa1d786a195330fd7cc43e6de730fd49de37b8",
+      "width": 320,
+      "height": 1178,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "095f6a7be8ef0ab1b747ef48dbf91e3f7841dae541ede6bfd7eaae94b6381844",
+          "review": "sheet-07.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1178,
+          "pixel_sha256": "52cd799cd15427a109f7fa61edd75db583bd0468b21c4ef36a6e9364dd151afd",
+          "review": "sheet-02.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-head-over-320-2x.png",
+      "sha256": "cae021a42d0af64c85f21ad660bcd29d999b01aa2b3a9eb222e2c4405d868da4",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "767a2d0cec590962fd14bd74f32d3038651a0c4d7e517629a8a022e81ee818bd",
+          "review": "sheet-07.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "ac28476e332f617efb3c241f09c5e316c2c75e79a10ac866bc593f41dea08ede",
+          "review": "sheet-07.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-head-over-393-1x.png",
+      "sha256": "893fd0ca8b1875c7ff9bc81972be28079995e44f8a812bc5afc7fe33ac805c88",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "545da9e7aa307e307749cead9fd7ec8d9b9721e716a8ca8abd1d0702ff8a2d9d",
+          "review": "sheet-08.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "4dd783ef39321bc53190eb0645b37e37c08f44f33fb9945f930cf29a16b3c1ad",
+          "review": "sheet-02.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-head-over-rejected-320-2x.long.png",
+      "sha256": "8ebf396955f26f9fd42f820e6768550d9fe05472efb656363c35010314adc58e",
+      "width": 320,
+      "height": 1308,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "095f6a7be8ef0ab1b747ef48dbf91e3f7841dae541ede6bfd7eaae94b6381844",
+          "review": "sheet-07.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "8928a3d1cc8ecd4f323d20e809a9208a13750c51aaf6219863e973ec58c9a0b6",
+          "review": "sheet-08.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1308,
+          "pixel_sha256": "6e70e2adf07e686eb71aa00c3c4b90741dac136cd6a4e266a0b6e19232703f5a",
+          "review": "sheet-08.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-head-over-rejected-320-2x.png",
+      "sha256": "8409830ee7dd703809e218e4a358b427b17264435422c70d60e576ee862ede34",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "5843af526b0466342536090e16ecc3d6848716e8948663aa99c6f87b28259588",
+          "review": "sheet-08.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "0652c9a9e38c522077926ed68c5518e2afd4d2af6257e570a0534aa9cc343268",
+          "review": "sheet-08.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-head-over-rejected-393-1x.png",
+      "sha256": "98025cb20d4ce5759344d75ff3cfdb0171a28c50ae0128269de16f897bed9500",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "88096fb4c6d887c01c22f94129cc997b2f251942ed5e91e4756c38e7bd21a4a0",
+          "review": "sheet-08.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "d3a7b7a4366b6fe9b05870da743340356f56a32195920c9f4a385d6dc470ab1a",
+          "review": "sheet-09.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-hidden-length-rejected-320-2x.long.png",
+      "sha256": "b24346ada2f379ba077088807c8b3ed968fc29ffe6122e18574778e0b6909ae6",
+      "width": 320,
+      "height": 1307,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ba35f789169e7e7ae0355c955854aba981c57043bddc8d294736861fc85199ba",
+          "review": "sheet-09.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "b02c53daa90850284b0f91ccb8afbbc1d932a12a3acdfc49fe0cf1b9b9209cf9",
+          "review": "sheet-09.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1307,
+          "pixel_sha256": "1a8a13e33a419912eb6feead55d49327b5130e2ed060d0e27a56c4ffc79aafc7",
+          "review": "sheet-09.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-hidden-length-rejected-320-2x.png",
+      "sha256": "8409830ee7dd703809e218e4a358b427b17264435422c70d60e576ee862ede34",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "5843af526b0466342536090e16ecc3d6848716e8948663aa99c6f87b28259588",
+          "review": "sheet-08.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "0652c9a9e38c522077926ed68c5518e2afd4d2af6257e570a0534aa9cc343268",
+          "review": "sheet-08.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-hidden-length-rejected-393-1x.png",
+      "sha256": "db13389825a0a41743bce34c3f60f2861bad72e1f465ceb66780dcd8adba812c",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a31ff0034d0bff9d1a99875d7b9b31bb943cd416cdf6a01ad5748f9ca06fce23",
+          "review": "sheet-09.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "d3a7b7a4366b6fe9b05870da743340356f56a32195920c9f4a385d6dc470ab1a",
+          "review": "sheet-09.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-history-320-2x.long.png",
+      "sha256": "98c4f3fec10b7cc990a4bd3a9b52bcd3acbab15ed8ec0e319b0737adf78ec184",
+      "width": 320,
+      "height": 1131,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "76742766c1b8662b873142949e23c2cb58abd448e575ee43b154009fe10c83e2",
+          "review": "sheet-09.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1131,
+          "pixel_sha256": "faa4262ae9cf31fe574339727c2dec8911c40787f552dd5e572df72b2dcc1bcc",
+          "review": "sheet-10.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-history-320-2x.png",
+      "sha256": "fc980b7024f2915749b70cc1733963e14653a2c7b74edb4a2b421a5513d2307c",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "76742766c1b8662b873142949e23c2cb58abd448e575ee43b154009fe10c83e2",
+          "review": "sheet-09.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "efd6b33c7d9f59c954b758895344c3c20c79ebe449e75a0b5f541ae995a4a478",
+          "review": "sheet-10.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-history-393-1x.long.png",
+      "sha256": "bf1c9e4476f2c5af968bf07e5a4a2894a3c199beaf2585c38b3692e61c3319f5",
+      "width": 393,
+      "height": 859,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "620f0b39fbdd91d5d057edc38f3899484f4301524632508628e39a4c5278edfa",
+          "review": "sheet-10.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 859,
+          "pixel_sha256": "a5263701ce467602513f90b4ea6afb5c11f1fbfb469887bf3d087fccb4505d63",
+          "review": "sheet-10.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-history-393-1x.png",
+      "sha256": "bef051c9544b1327bb93d51b05774626d5fb5b42566ef484118742ef073c7249",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "620f0b39fbdd91d5d057edc38f3899484f4301524632508628e39a4c5278edfa",
+          "review": "sheet-10.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "5ed1de1e6d9afb6b784a15aa9ed0f5c8f8b1e56c6c1c506a5f8eedc27b52b9ec",
+          "review": "sheet-10.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-history-decimal-320-2x.long.png",
+      "sha256": "0990291f2e5f0892dc5bb675beff4f3a6ebd188bf54771bb8262e56bf9793067",
+      "width": 320,
+      "height": 894,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "d206f63fdef684f314dea7c6511e206451f96ea9b88f7f76f92a64de85bb1421",
+          "review": "sheet-10.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 894,
+          "pixel_sha256": "a9348657322a1849171d5cf5fb3092d9e9774f6ca5ddbaf3607bc0aadd2cd752",
+          "review": "sheet-11.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-history-decimal-320-2x.png",
+      "sha256": "f568cc86bf11de1ce6987768f497f60dc76607eed34d7ed09e7e5cca8dc9f5dd",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "529bb32155c3d37593c9f053971d2bf12f12434a4c4888be721900710e310f73",
+          "review": "sheet-11.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a2e14acb7ef739b8641fe57a1a589326b351abb3ab38030e5f3ab31423f3cd37",
+          "review": "sheet-11.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-history-decimal-393-1x.png",
+      "sha256": "3e6befbf4d82444a2c6a643cb2e8fbe68bf4a93cf861a2a7b6798b8290ac0340",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "d681c72f27c0a62fe4fd91bb7b846aacaf8fedc5d20761f1c47ff987be37535b",
+          "review": "sheet-11.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "0183909cc716444c6133a0fbcf634a053d94a1f358872553abd1228bbbf9584a",
+          "review": "sheet-11.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-history-editor-320-2x.long.png",
+      "sha256": "a3375b74293f4f29d7f88a063018c4edf6136aa32c993e51278187212c98bda8",
+      "width": 320,
+      "height": 894,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "f8425f5f6de0e2f6e53d09a4d64adac962d90ea8242ff5c08b1e0ecd4a478f09",
+          "review": "sheet-11.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 894,
+          "pixel_sha256": "a9348657322a1849171d5cf5fb3092d9e9774f6ca5ddbaf3607bc0aadd2cd752",
+          "review": "sheet-11.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-history-editor-320-2x.png",
+      "sha256": "4a92e352251432ec177d1278211c0861c3dc7d5a94b17a1a340ac7126501a536",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "f8425f5f6de0e2f6e53d09a4d64adac962d90ea8242ff5c08b1e0ecd4a478f09",
+          "review": "sheet-11.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "31bc7d96f88f6438f257c580268540ef65a73c1bcfa4333667ab9373c8582f20",
+          "review": "sheet-12.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-history-editor-393-1x.png",
+      "sha256": "10fc475269361984cbee5a6cf13b5e3afeea30252768b83ab26370c8037ae9e8",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "53d3647891650681af90aba6ea54368f255187651384776a6754bf97851b6891",
+          "review": "sheet-12.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "0183909cc716444c6133a0fbcf634a053d94a1f358872553abd1228bbbf9584a",
+          "review": "sheet-11.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-history-empty-rejected-320-2x.long.png",
+      "sha256": "46b7bbe50373e0bca76f40d969c4cf68314ba432f03265f440bc15839cd58c48",
+      "width": 320,
+      "height": 988,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "38af6715cf50075cf794954876e072ff5f47ee285ac46474f71b0210351784ef",
+          "review": "sheet-12.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 988,
+          "pixel_sha256": "aaac560603a7912cf77917e5cfb5fac196fc53977914ee91be879ecdba30bc05",
+          "review": "sheet-12.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-history-empty-rejected-320-2x.png",
+      "sha256": "6061d0ae1aa4414e0288c0e0e43fd1b4ce68e23d99e5042ee6580c76219e5b39",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "be563ea834299cc7cae12519e3764ae17010daa45a57a507d776149087612ff0",
+          "review": "sheet-12.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1d89f5880dbba5f43edde6d8dda44ab386434fa413fcc06795051e447f48e852",
+          "review": "sheet-12.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-history-empty-rejected-393-1x.png",
+      "sha256": "6c6cbb5d9de1335247da13ac71e407a7f5fa275e3b7077f97758f66d0e425693",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "305383124959c1736f54126bf68ed180fb22a1ebe1ad9575d00f191081656323",
+          "review": "sheet-13.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "2f54dcb3bf73e62d4b9a470d3d0a8eefcb4a1de735b1cd4a95bad192854ef15c",
+          "review": "sheet-13.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-history-reopened-320-2x.long.png",
+      "sha256": "f2252a43eeed068933744b8cd5fbee90dbe25972f6e413190d9db986b2b9e104",
+      "width": 320,
+      "height": 894,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "21461a888287421c0fca2c73c227a5c00a346a141e1e6843615f3cf915f04f42",
+          "review": "sheet-13.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 894,
+          "pixel_sha256": "a9348657322a1849171d5cf5fb3092d9e9774f6ca5ddbaf3607bc0aadd2cd752",
+          "review": "sheet-11.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-history-reopened-320-2x.png",
+      "sha256": "ebbad14d3a5c882d58b35353f6d0009fb02bc1421823db5e036db761093c2f74",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "21461a888287421c0fca2c73c227a5c00a346a141e1e6843615f3cf915f04f42",
+          "review": "sheet-13.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "31bc7d96f88f6438f257c580268540ef65a73c1bcfa4333667ab9373c8582f20",
+          "review": "sheet-12.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-history-reopened-393-1x.png",
+      "sha256": "b59f5bb50d47f014f8b687b9d3ee601790563c44d5104d2aeb0587018a887a81",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "d4edd0d836893a8513a75bab944466eca31ed1754d3cc8a2d33df00506888e5c",
+          "review": "sheet-13.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "0183909cc716444c6133a0fbcf634a053d94a1f358872553abd1228bbbf9584a",
+          "review": "sheet-11.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-history-saved-320-2x.long.png",
+      "sha256": "fddc99ba5864bd05467df474d14ab598ff778fe21b02f0708cbef36aea3c8b07",
+      "width": 320,
+      "height": 1173,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9a55f2f1bca7d468d269d64937f68944672653c78d806b4e0184e8aabbfcc7ef",
+          "review": "sheet-13.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1173,
+          "pixel_sha256": "be8ed5800ec492e684fcdedebf1c9e5712006b93951c0fd2a05b2eb342861cb7",
+          "review": "sheet-13.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-history-saved-320-2x.png",
+      "sha256": "236c3991eba5de44acd60d6ae7443665731888f8f0c21a376b6ad93b12a6eb4f",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "82566fe89ccaa832e07605161c3a6cd838307238b9b41e6cfb3b2c3d8fba2902",
+          "review": "sheet-14.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "62dbf829aa315863f48e2f7bc0096812cd310fbccb24a8823980598d6bacc4e7",
+          "review": "sheet-14.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-history-saved-393-1x.long.png",
+      "sha256": "997f0e970911211375c62fbcfa8696c6b3ab1b7023b0bff67690573a7c38a825",
+      "width": 393,
+      "height": 859,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "00f4f84e59f9409a4888cf1ac74bd6e27d83f32fa750799fb8f9c79af62bc33b",
+          "review": "sheet-14.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 859,
+          "pixel_sha256": "e60d625b2b8f4276bc8bbebbc029aca52f636333be15e03f13b57867ff8b39e0",
+          "review": "sheet-14.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-history-saved-393-1x.png",
+      "sha256": "bb510f7add93786e475da0e9c6b41778e3b3cf01a325cafd84da149bbf623532",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a2dec00288f1792a7746ea8e04a11517d71c4fb26b48a09527b23a09493fe3e3",
+          "review": "sheet-14.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "34b7015bda1ed3c022d3b373ebd789b4305e91ca87fb6f72d3d5e042a721ccff",
+          "review": "sheet-14.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-home-entry-320-2x.long.png",
+      "sha256": "2a7eed3eaa881740523730a74f99487a3935cee5f5e500fdea7e513a60082fc7",
+      "width": 320,
+      "height": 3460,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "58578630282c08ed070b330c5092b2346554d47e291ecce03bfa1790d2ebdd62",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "034c398b12fe2df5aaef1e8fd2e151d4092f4bc550a8179f7524acfdf8572a5d",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "fa27bf1b8f7135cf78bb1380036cbe25b805799678f9c6338d1b09862168215b",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "cf7b9827ee12ea5f4ce473b5b04736e9eca7e63163a06350e8ad0569b0e9a58a",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-3"
+        },
+        {
+          "y0": 2600,
+          "y1": 3250,
+          "pixel_sha256": "830120be56be43c6e4e4a7527c94577138b4175b12f8b7b606a89d5ff059987b",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-4"
+        },
+        {
+          "y0": 3250,
+          "y1": 3460,
+          "pixel_sha256": "347ac7ec17d5bdaf8c362c53e6be84275398444203824d119dff6d55c72c68e4",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-home-entry-320-2x.png",
+      "sha256": "32e02297eb960cf9da693d3ed9a4e380131ba98e63d64680e1c452112635af75",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "58578630282c08ed070b330c5092b2346554d47e291ecce03bfa1790d2ebdd62",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "98ef9a2ad09f8a3c8229ac286c7eb3cb28273ffd01708531c25ae3c0ce531fd2",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-home-entry-393-1x.long.png",
+      "sha256": "f0cba396e8a9efa775fb9fbb71adccd863e4ce8dace888759be74db253f099a6",
+      "width": 393,
+      "height": 1752,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2541e10f43029eb71329290bf405fa83fabe418cf9eb6676ed4e3eb8498f6856",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "462243825730002d5a7b26fe7e1bbdb2f381ea57afabfc7a0cad762ed9541c1e",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1752,
+          "pixel_sha256": "5d1142fe86ef6e5a8664871afce9928bf15cf58f7b773ac5f1080f1b7fead23c",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-home-entry-393-1x.png",
+      "sha256": "f7c02c89b1acb7e0cd4ab4adc0593819b05f05ed599398d49ea569c924ea6a82",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2541e10f43029eb71329290bf405fa83fabe418cf9eb6676ed4e3eb8498f6856",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a1f9a5a5f828e0a335129ce0d0a8a7cf54c1ab1e6b87423f882a64c1946d8f9e",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-home-return-320-2x.long.png",
+      "sha256": "8244ceb9ac45d555c4df4ae3da3f9a067fd1000e5b96592b00240c2c4a3e1065",
+      "width": 320,
+      "height": 3468,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "20d18e665fb4955d5c1bf9bfc8f29676974c3f9bf6588a8e7a3a7dc0da7d3854",
+          "review": "../baby-knowledge-source-visual-review/sheet-12.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "2dde507d4de1bd0857a192b58b5f129d5cf5e35806bf8b81a5617f7fca0bdf6c",
+          "review": "../baby-knowledge-source-visual-review/sheet-12.png#tile-5"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "37d448e237b7c37777fa360726379771fb8648360bd413f0bf06994234bcaefe",
+          "review": "sheet-15.png#tile-0"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "e8aef7b4e827d088ca50ad5b482d1c1da06f3514e027c621d2c78b8a10e31a65",
+          "review": "sheet-15.png#tile-1"
+        },
+        {
+          "y0": 2600,
+          "y1": 3250,
+          "pixel_sha256": "11190ad421a28f987228e80f931b45cdb09f9423e35c97279c82f70eb0e16cb0",
+          "review": "sheet-15.png#tile-2"
+        },
+        {
+          "y0": 3250,
+          "y1": 3468,
+          "pixel_sha256": "ad5791a3d769b0a8b050cdf876ceda4e428fb9c024d5833193ed2d37b53d17ce",
+          "review": "sheet-15.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-home-return-320-2x.png",
+      "sha256": "b4cbec114658f87d440e2ddf15fdbebbbf1caa3a6161e938b61e687f2c4cb4bc",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "20d18e665fb4955d5c1bf9bfc8f29676974c3f9bf6588a8e7a3a7dc0da7d3854",
+          "review": "../baby-knowledge-source-visual-review/sheet-12.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1a1dfe240e5aa63c9af610bb1538499bed372b0aeebf8e539086bbac024d5097",
+          "review": "../baby-knowledge-source-visual-review/sheet-13.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-home-return-393-1x.long.png",
+      "sha256": "f254db5f0d40a3f33ed280513d70a6414858cd267319f8c711f19af366346515",
+      "width": 393,
+      "height": 1729,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2b5fac860471e09b97a302b7a9745405e7d7582c6a128706d76096932e376260",
+          "review": "../baby-knowledge-source-visual-review/sheet-13.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "6e642f2340d6b9e7b16887ff1a23b03c2a0ce853538f23def743ed2571059847",
+          "review": "sheet-15.png#tile-4"
+        },
+        {
+          "y0": 1300,
+          "y1": 1729,
+          "pixel_sha256": "756044226ab8f986f81de40e54cd4cec35c8c9cb39cb3313069fa16bd6583540",
+          "review": "../baby-knowledge-source-visual-review/sheet-14.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-home-return-393-1x.png",
+      "sha256": "ac32275c2c5b1f88a8a847e4d0849c8a4a1d61025e21b657c52255f82c31f019",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2b5fac860471e09b97a302b7a9745405e7d7582c6a128706d76096932e376260",
+          "review": "../baby-knowledge-source-visual-review/sheet-13.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a1f9a5a5f828e0a335129ce0d0a8a7cf54c1ab1e6b87423f882a64c1946d8f9e",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-length-closed-320-2x.long.png",
+      "sha256": "2a7eed3eaa881740523730a74f99487a3935cee5f5e500fdea7e513a60082fc7",
+      "width": 320,
+      "height": 3460,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "58578630282c08ed070b330c5092b2346554d47e291ecce03bfa1790d2ebdd62",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "034c398b12fe2df5aaef1e8fd2e151d4092f4bc550a8179f7524acfdf8572a5d",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "fa27bf1b8f7135cf78bb1380036cbe25b805799678f9c6338d1b09862168215b",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "cf7b9827ee12ea5f4ce473b5b04736e9eca7e63163a06350e8ad0569b0e9a58a",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-3"
+        },
+        {
+          "y0": 2600,
+          "y1": 3250,
+          "pixel_sha256": "830120be56be43c6e4e4a7527c94577138b4175b12f8b7b606a89d5ff059987b",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-4"
+        },
+        {
+          "y0": 3250,
+          "y1": 3460,
+          "pixel_sha256": "347ac7ec17d5bdaf8c362c53e6be84275398444203824d119dff6d55c72c68e4",
+          "review": "../baby-profile-control-visual-review/sheet-11.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-length-closed-320-2x.png",
+      "sha256": "a706e4253e12b11ed3019a47b2c0672521f4755403621110fd07296d21efaf18",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2795d08f1d057dff5795bb59191b27b51800930f0d41ed647193af44d935d75c",
+          "review": "sheet-15.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "eef7afec3640310bb8e7b7008cc62650754d19d25a3f05d0839497fdff5d2cf7",
+          "review": "sheet-16.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-length-closed-393-1x.long.png",
+      "sha256": "f0cba396e8a9efa775fb9fbb71adccd863e4ce8dace888759be74db253f099a6",
+      "width": 393,
+      "height": 1752,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2541e10f43029eb71329290bf405fa83fabe418cf9eb6676ed4e3eb8498f6856",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "462243825730002d5a7b26fe7e1bbdb2f381ea57afabfc7a0cad762ed9541c1e",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1752,
+          "pixel_sha256": "5d1142fe86ef6e5a8664871afce9928bf15cf58f7b773ac5f1080f1b7fead23c",
+          "review": "../baby-profile-control-visual-review/sheet-12.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-length-closed-393-1x.png",
+      "sha256": "4c9ee8231a9891dba51ca7c8f86c48db1ee34e40d87e22db8f13fbb169ab644b",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "d492894bd112055cb79ce689c5730ecea685ea8e467b930f238a25dc1a40a8c1",
+          "review": "sheet-05.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "c5986c14efa3dc55eaf7823ac2fea6a01e82672b30df15e49630d2cfb5a066bd",
+          "review": "sheet-06.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-length-empty-320-2x.long.png",
+      "sha256": "dd758898cdfe21e6845b338cac310aaf18ab41b139e9edaf616b0fb5b6ca02c2",
+      "width": 320,
+      "height": 1177,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "dffcf20880dc3f5eb6631a0e70d4c8e6a4248a08c81fe739dac0c629eb8f5439",
+          "review": "sheet-16.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1177,
+          "pixel_sha256": "2d37408022a13e70e686bc93f6cd7dc98657a51bae1c48c252a81b6fe0b26610",
+          "review": "sheet-16.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-length-empty-320-2x.png",
+      "sha256": "775a7fdb0943feef3348a1c186261161378b2bbfb4308121d895b79b9adead6f",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "8ef998ec1470e117a22b2ba608f8d92c692c0e83693748ec8389fb0dab957e9a",
+          "review": "sheet-16.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "b6e2da177aba46560154da2a2bcb3de29e83192fdc33d1660fc444ae5d958dd6",
+          "review": "sheet-16.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-length-empty-393-1x.png",
+      "sha256": "a1c9615f9fdf049f8e9dd0536b3f9f546f09bff3dba2628b80250199db2daff0",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "037f35e0135cdc3e82a03931f1d4f4c683b21be10126eab8cfd235807b6d9b1d",
+          "review": "sheet-16.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "4dd783ef39321bc53190eb0645b37e37c08f44f33fb9945f930cf29a16b3c1ad",
+          "review": "sheet-02.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-length-entry-320-2x.long.png",
+      "sha256": "220f6d34a2b319e28e8ea9b1f82ee8e99082912d92d3208aa37bc3b2710d5f25",
+      "width": 320,
+      "height": 1176,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "abc218efbbf115747bb16c31b63d8b83f704a2eb4910b889af95a2cc0e2a1908",
+          "review": "sheet-17.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1176,
+          "pixel_sha256": "3f93a478572d552f9205cebe27c9f6403b6f097a545040f347086012e5486032",
+          "review": "sheet-07.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-length-entry-320-2x.png",
+      "sha256": "27523a8edd9d7449a14ac87db58bda97e286fe54749a0904f61df4c25021e8dd",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "abc218efbbf115747bb16c31b63d8b83f704a2eb4910b889af95a2cc0e2a1908",
+          "review": "sheet-17.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "8cbd8a8b55f8707227f4bd79ec91dac9ad4f628d4656692173ec67a6c1c4d70d",
+          "review": "sheet-07.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-length-entry-393-1x.png",
+      "sha256": "5543b9525c62fe76b4667d2bdbdbf9fbdfe9e39d772d6136e77712a0d0359576",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "103c26b51a82f4ee6c2eb75ab6321812ac399693b1854b4b1e8da358ecd46433",
+          "review": "sheet-17.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "4dd783ef39321bc53190eb0645b37e37c08f44f33fb9945f930cf29a16b3c1ad",
+          "review": "sheet-02.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-maxima-saved-320-2x.long.png",
+      "sha256": "753511616912ad752edade210fb27c5c6b82b07d6b67a53a154105418a58e774",
+      "width": 320,
+      "height": 3610,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "20d18e665fb4955d5c1bf9bfc8f29676974c3f9bf6588a8e7a3a7dc0da7d3854",
+          "review": "../baby-knowledge-source-visual-review/sheet-12.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "2dde507d4de1bd0857a192b58b5f129d5cf5e35806bf8b81a5617f7fca0bdf6c",
+          "review": "../baby-knowledge-source-visual-review/sheet-12.png#tile-5"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "19093bdf45fac2bd416f1c29a5e022b9f28e680cadc66ee62904373bb6a95afe",
+          "review": "sheet-17.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2600,
+          "pixel_sha256": "e46b577a5ecd7a401fd4f6b04e9648926b94e8c3ace273a0222859980af415d5",
+          "review": "sheet-17.png#tile-3"
+        },
+        {
+          "y0": 2600,
+          "y1": 3250,
+          "pixel_sha256": "7f8aa70e8e97dc6a91d188c6518f445c927f3248c678f71ad0f75fe4cdef87f5",
+          "review": "sheet-17.png#tile-4"
+        },
+        {
+          "y0": 3250,
+          "y1": 3610,
+          "pixel_sha256": "dbf04ae898e3588f4d8d3358b755595d5500a274806196dc57a77ea0750edc14",
+          "review": "sheet-17.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-maxima-saved-320-2x.png",
+      "sha256": "1221b78a619de2275d63f2d0d95e2d0d75785bf18a6901e0a8c9d2a7e420930f",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "d1b0bf7624672e58c1104663e9c1d61fcc9ddbd147269e959e3db1fcd165ed2a",
+          "review": "sheet-18.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "563dd0eb6127eff7c02d4cf0854f116747677cf072bd11574cc7adf5267526f7",
+          "review": "../baby-feeding-control-visual-review/sheet-18.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-maxima-saved-393-1x.long.png",
+      "sha256": "e58958f7016650f0d2a89f60913eba9fc2b17fcec4eb6feedc73866a661d22f6",
+      "width": 393,
+      "height": 1818,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "2b5fac860471e09b97a302b7a9745405e7d7582c6a128706d76096932e376260",
+          "review": "../baby-knowledge-source-visual-review/sheet-13.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "7009561006c5431f4afdd3bd0233a0403524d55ec650520622130215fde5bc9a",
+          "review": "sheet-18.png#tile-1"
+        },
+        {
+          "y0": 1300,
+          "y1": 1818,
+          "pixel_sha256": "c90816e90aaccab082bca1df622612947ce0c7906f3513f65d63f7883f87a2a4",
+          "review": "sheet-18.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-maxima-saved-393-1x.png",
+      "sha256": "49ea57a330dc2907f7d4fb1799cbbc7154f7a9eefc6034ab60494048147473ca",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "81a04ce7f2373c3e0030744529222d38e9042e0b1937573f0a9160f0a68b6c4d",
+          "review": "sheet-18.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "fa89fc35c134e2b3ed02a70a1f9d3864370f0c315bb200f409eb54a07652e2d5",
+          "review": "../baby-feeding-control-visual-review/sheet-18.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-more-return-320-2x.png",
+      "sha256": "90ff3249f64fc7750a5da2a6bac0e2e90a64014893d9e85c3df4c76dbe8dea38",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "7925ed8e5939f589376b72745969839e14c7fb166cfb48866eed469fa66c4d02",
+          "review": "../baby-profile-control-visual-review/sheet-19.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "f95aac7cc67095efb73a4ae0b9ee5dc9518b86f20195158e860fce9621ec483a",
+          "review": "../mom-rest-control-visual-review/sheet-19.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-more-return-393-1x.png",
+      "sha256": "1905827f337ce2fe60b46266600cce9aa8dea3b9aac6828fb6a1d3f67f020b35",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c8e12900bddbe318fd8d03ad9b384466fc1af1f6c371f72f999f20bc96cac1d6",
+          "review": "../baby-profile-control-visual-review/sheet-19.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "ae62a60cadfc8bfb09e3e94acb0dc8f7d481c4c260eae5960e33ebdc5f0799db",
+          "review": "../mom-rest-control-visual-review/sheet-20.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-three-maxima-320-2x.long.png",
+      "sha256": "ace8e69c10ec750c47d33982e8a1a12344d4fafbbfb4703ef91c02ea7af8fcfb",
+      "width": 320,
+      "height": 1178,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "4a83b3fc836ebeba6f40c9614640276e43289320350c825f5e2e77aca7dd2a55",
+          "review": "sheet-01.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1178,
+          "pixel_sha256": "52cd799cd15427a109f7fa61edd75db583bd0468b21c4ef36a6e9364dd151afd",
+          "review": "sheet-02.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-three-maxima-320-2x.png",
+      "sha256": "2ccf8c8080bbe9b6c9ebe595a830e6e52fc8abfa9848c0cc433fc0a52efba8b5",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "4fdf561b49b45f28477edc8bbc3f1a228c50b3bd8a10ba49e0cbba2bc869ab74",
+          "review": "sheet-18.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "ac28476e332f617efb3c241f09c5e316c2c75e79a10ac866bc593f41dea08ede",
+          "review": "sheet-07.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-three-maxima-393-1x.png",
+      "sha256": "918db8e4fb0459b3a08cb47c3651794e767e98318505de3572ca084e9437bc68",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6c77cf52b93f3f645c2aee389837c94bb8aa7dbe33e1c3c059fc191e5e924da9",
+          "review": "sheet-03.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "4dd783ef39321bc53190eb0645b37e37c08f44f33fb9945f930cf29a16b3c1ad",
+          "review": "sheet-02.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-weight-entry-320-2x.long.png",
+      "sha256": "51e1121b3906358523c9f4ec9cf2f39e606c859a7d3e6ea20d32060c3548c569",
+      "width": 320,
+      "height": 1176,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "761aaec8d820513d05eb9d45ec9f082e92d9c0f5c018992c4c46f684bdcd19b9",
+          "review": "sheet-04.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1176,
+          "pixel_sha256": "3f93a478572d552f9205cebe27c9f6403b6f097a545040f347086012e5486032",
+          "review": "sheet-07.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-weight-entry-320-2x.png",
+      "sha256": "3cd07b01dd454a8f9aac8279d9e612ec31352c42cb98db62c3cc153e512d4049",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "761aaec8d820513d05eb9d45ec9f082e92d9c0f5c018992c4c46f684bdcd19b9",
+          "review": "sheet-04.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "8cbd8a8b55f8707227f4bd79ec91dac9ad4f628d4656692173ec67a6c1c4d70d",
+          "review": "sheet-07.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-weight-entry-393-1x.png",
+      "sha256": "a2adb7f3bdf8acf5afcb8e71112fbbfff6cca7aa74b089f06b4b5c4ac3c85c78",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "610b93c5d9cd9b5e59b0b8f9c1cb06f69c252d4df71baff9fee1f5e74e256d12",
+          "review": "sheet-18.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "4dd783ef39321bc53190eb0645b37e37c08f44f33fb9945f930cf29a16b3c1ad",
+          "review": "sheet-02.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-weight-malformed-320-2x.long.png",
+      "sha256": "469fdd1a75050a464791b37bb8843f0ad754be79f00c8b211348bab3f1683748",
+      "width": 320,
+      "height": 1176,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "af6404504d5b78e7334a791501696eb24dc9f67a0c4aad952b8a1e0f5bada8da",
+          "review": "sheet-19.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1176,
+          "pixel_sha256": "3f93a478572d552f9205cebe27c9f6403b6f097a545040f347086012e5486032",
+          "review": "sheet-07.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-weight-malformed-320-2x.png",
+      "sha256": "b45b226bf7215069abdfd31d4ffa674edee545e5159a57cd270fb10521a62300",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a902f532a340fa2a514fe97d30453adcdd4e6527a3749202b60e9dd9cef54e2e",
+          "review": "sheet-19.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "ac28476e332f617efb3c241f09c5e316c2c75e79a10ac866bc593f41dea08ede",
+          "review": "sheet-07.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-weight-malformed-393-1x.png",
+      "sha256": "dca9d46c33eabe86d20d44bff55f2121004e6ba8c099eb7326e4a7d5e0db3348",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "600f3a53761dd475f1d4a2a1c37f8ade31dc164d3ff227ca1abbca1339564c69",
+          "review": "sheet-19.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "4dd783ef39321bc53190eb0645b37e37c08f44f33fb9945f930cf29a16b3c1ad",
+          "review": "sheet-02.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-weight-malformed-rejected-320-2x.long.png",
+      "sha256": "e93308c4ed56e41eec0a65ab63f6f2bdfc8f8aa3767ad46858c1a07177207617",
+      "width": 320,
+      "height": 1306,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "af6404504d5b78e7334a791501696eb24dc9f67a0c4aad952b8a1e0f5bada8da",
+          "review": "sheet-19.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "575cd992731cc784370ed94e2eaba71ec76ba418664c6c669581fde8b14aaf93",
+          "review": "sheet-19.png#tile-3"
+        },
+        {
+          "y0": 1300,
+          "y1": 1306,
+          "pixel_sha256": "78b1cfd2df840cb548df2044a9d9f87415ac139c1673bfd1d820d7c730472873",
+          "review": "sheet-19.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-weight-malformed-rejected-320-2x.png",
+      "sha256": "8409830ee7dd703809e218e4a358b427b17264435422c70d60e576ee862ede34",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "5843af526b0466342536090e16ecc3d6848716e8948663aa99c6f87b28259588",
+          "review": "sheet-08.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "0652c9a9e38c522077926ed68c5518e2afd4d2af6257e570a0534aa9cc343268",
+          "review": "sheet-08.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-weight-malformed-rejected-393-1x.png",
+      "sha256": "7c64980703fab7fa7efd9dfd25b9e1a03320f62100fd1cca75673fd4dcfe0fb3",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b2e7053239939cf09317b89ab6ac7fd7d845437712cc06cee33b134e83cd859e",
+          "review": "sheet-19.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "d3a7b7a4366b6fe9b05870da743340356f56a32195920c9f4a385d6dc470ab1a",
+          "review": "sheet-09.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-weight-over-320-2x.long.png",
+      "sha256": "a101bcecd1080a84d61c6df5295c9f5db0edb7fb596d7fad62f33bce86bfd905",
+      "width": 320,
+      "height": 1176,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "dbd48b951b177cb620ead85288c054c1eb15114c5795468b8132a4a87b6a34a0",
+          "review": "sheet-20.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1176,
+          "pixel_sha256": "3f93a478572d552f9205cebe27c9f6403b6f097a545040f347086012e5486032",
+          "review": "sheet-07.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-weight-over-320-2x.png",
+      "sha256": "12bc5b8b2ec01538cc135b4f50b146ddd1c275f4285b3a294fb1dc3694bfad43",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "280ab3f1358adc0b9c27c03e1b8b90f8ab121ef5a7dfd8776d245c63cca11051",
+          "review": "sheet-20.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "ac28476e332f617efb3c241f09c5e316c2c75e79a10ac866bc593f41dea08ede",
+          "review": "sheet-07.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-weight-over-393-1x.png",
+      "sha256": "ebd4a7ad3f0f2eac5fc6e0b8f403ded1400df6dbd4b00b36b1cf705a99dce7d3",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "bb99cd51a24cc195711acdd44ff4929091e476718fdcfb01277e40819355dfa9",
+          "review": "sheet-20.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "4dd783ef39321bc53190eb0645b37e37c08f44f33fb9945f930cf29a16b3c1ad",
+          "review": "sheet-02.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-weight-over-rejected-320-2x.long.png",
+      "sha256": "f40504d60c15cb5d69051e822e15d0a2cddbb2a5d42e3c47c3b5b545aa338b83",
+      "width": 320,
+      "height": 1306,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "dbd48b951b177cb620ead85288c054c1eb15114c5795468b8132a4a87b6a34a0",
+          "review": "sheet-20.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "575cd992731cc784370ed94e2eaba71ec76ba418664c6c669581fde8b14aaf93",
+          "review": "sheet-19.png#tile-3"
+        },
+        {
+          "y0": 1300,
+          "y1": 1306,
+          "pixel_sha256": "78b1cfd2df840cb548df2044a9d9f87415ac139c1673bfd1d820d7c730472873",
+          "review": "sheet-19.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-weight-over-rejected-320-2x.png",
+      "sha256": "8409830ee7dd703809e218e4a358b427b17264435422c70d60e576ee862ede34",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "5843af526b0466342536090e16ecc3d6848716e8948663aa99c6f87b28259588",
+          "review": "sheet-08.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "0652c9a9e38c522077926ed68c5518e2afd4d2af6257e570a0534aa9cc343268",
+          "review": "sheet-08.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-weight-over-rejected-393-1x.png",
+      "sha256": "836f41a78de9c011d47e02b40a6ee2ce60a20cba9c83e1515a5287640b240fb7",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b4e557bc100568306a2a82dc51e1c41acb16b8842d050ca524452ccfa15c4101",
+          "review": "sheet-20.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "d3a7b7a4366b6fe9b05870da743340356f56a32195920c9f4a385d6dc470ab1a",
+          "review": "sheet-09.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-weight-zero-320-2x.long.png",
+      "sha256": "6ccc05cc18e62b861609fcf33f6e48fae02c6cc79497eadafb9847af23914820",
+      "width": 320,
+      "height": 1176,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9c17a98720740f5be0b515d45f07f6078b73530eaa6b56ec8b938414ddbf6e9c",
+          "review": "sheet-20.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1176,
+          "pixel_sha256": "3f93a478572d552f9205cebe27c9f6403b6f097a545040f347086012e5486032",
+          "review": "sheet-07.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-weight-zero-320-2x.png",
+      "sha256": "603562c1d2c795dca4ca9742f7c1665f67cedcc04200f8ddebd988a2215cad44",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "38ae3cfaeedf5076e09e2e0c3fc8458cda65346c30095a83c055576ad1f7de2c",
+          "review": "sheet-20.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "ac28476e332f617efb3c241f09c5e316c2c75e79a10ac866bc593f41dea08ede",
+          "review": "sheet-07.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-weight-zero-393-1x.png",
+      "sha256": "9253a15635c8e762d4f79fe30fb994754d37582190604527aef821eb9e385352",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "113c4d4d3c14f9946e8444b8497722824b82a2dea7c31031462834cf72daa82b",
+          "review": "sheet-21.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "4dd783ef39321bc53190eb0645b37e37c08f44f33fb9945f930cf29a16b3c1ad",
+          "review": "sheet-02.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-weight-zero-rejected-320-2x.long.png",
+      "sha256": "c9bc8da0814bb52cbd60dfa07e0d25b5733c5481756fa4747cc486503805d702",
+      "width": 320,
+      "height": 1306,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9c17a98720740f5be0b515d45f07f6078b73530eaa6b56ec8b938414ddbf6e9c",
+          "review": "sheet-20.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "575cd992731cc784370ed94e2eaba71ec76ba418664c6c669581fde8b14aaf93",
+          "review": "sheet-19.png#tile-3"
+        },
+        {
+          "y0": 1300,
+          "y1": 1306,
+          "pixel_sha256": "78b1cfd2df840cb548df2044a9d9f87415ac139c1673bfd1d820d7c730472873",
+          "review": "sheet-19.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-weight-zero-rejected-320-2x.png",
+      "sha256": "8409830ee7dd703809e218e4a358b427b17264435422c70d60e576ee862ede34",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "5843af526b0466342536090e16ecc3d6848716e8948663aa99c6f87b28259588",
+          "review": "sheet-08.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "0652c9a9e38c522077926ed68c5518e2afd4d2af6257e570a0534aa9cc343268",
+          "review": "sheet-08.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/baby-growth-controls-weight-zero-rejected-393-1x.png",
+      "sha256": "65a3b8b20de1f6040b84fd76694fde697d0a0196a700dd5dae97a8d861782d63",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "d4fb3e6fdad1b390d73a0bb200c637d92ff3d1f7e584fd0ef9166529b8c6ec9d",
+          "review": "sheet-21.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "d3a7b7a4366b6fe9b05870da743340356f56a32195920c9f4a385d6dc470ab1a",
+          "review": "sheet-09.png#tile-0"
+        }
+      ]
+    }
+  ],
+  "unique_segments": 144,
+  "new_segments": 122,
+  "new_sheets": 21
+}

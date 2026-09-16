@@ -1,0 +1,48 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/features/motion_assessment/presentation/motion_assessment_controller_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: keeps a posture screen in voice selection until a versioned plan is confirmed
+00:00 +1: completes one grouped frontal step for shoulder and trunk screening
+00:00 +2: uses a project-specific guide for each frontal assessment
+00:00 +3: announces every transition across two side views and one front view
+00:00 +4: starts local camera before session creation completes and never starts voice after close
+00:00 +5: closes the camera when cloud session creation fails because voice is required
+00:00 +6: stops a native camera start that completes after the page was closed
+00:00 +7: retries then closes the camera when required realtime voice fails
+00:00 +8: drains normal agent audio before opening realtime voice
+00:00 +9: does not sample pose frames until first Realtime guidance completes
+00:00 +10: starts sampling only after the spoken capture countdown completes
+00:00 +11: starts forward-head capture after a brief final countdown dropout
+00:00 +12: starts shoulder capture after a brief final countdown dropout
+00:00 +13: retries capture guidance without failing a healthy Realtime session
+00:00 +14: converts live pose changes into Realtime-owned guidance turns
+00:00 +15: reports a persistently missing side ear instead of silently restarting capture
+00:00 +16: keeps shoulder-height capture active across a brief landmark dropout
+00:00 +17: surfaces a native pose model startup failure with a useful cause
+00:00 +18: stops the local camera when native pose inference fails
+Motion pose stream failed: PlatformException(pose_inference_failed, MediaPipe execution failed, null, null)
+00:00 +19: requires two segments and a fresh voice confirmation before durable completion
+00:00 +20: safety voice command bypasses finish confirmation and cancels
+00:00 +21: the explicit end action safely cancels an in-progress assessment
+00:00 +22: does not replace an ambiguously staged completion with a failed finalization
+00:00 +23: gives a standing person a full-height guide on a portrait phone
+00:00 +24: keeps Realtime guidance hands-free with only one explicit end control
+00:00 +25: enables sparse visual assistance by default when it is supported
+00:00 +26: local-only consent choice keeps key-frame upload disabled
+00:00 +27: shows retry and exit controls only after terminal failure
+00:00 +28: permission denial stops before camera or session creation
+00:00 +29: keeps live guidance focused without technical keypoint labels
+00:00 +30: replaces and disposes the controller when runtime identity changes
+00:00 +31: motion responsive failure retry and exit 320.0 / 1.0
+Motion pose stream failed: PlatformException(pose_model_initialization_failed, null, null, null)
+00:00 +32: motion responsive failure retry and exit 320.0 / 2.0
+Motion pose stream failed: PlatformException(pose_model_initialization_failed, null, null, null)
+00:00 +33: motion responsive failure retry and exit 390.0 / 1.0
+Motion pose stream failed: PlatformException(pose_model_initialization_failed, null, null, null)
+00:00 +34: motion responsive failure retry and exit 390.0 / 2.0
+Motion pose stream failed: PlatformException(pose_model_initialization_failed, null, null, null)
+00:00 +35: motion responsive failure retry and exit 430.0 / 1.0
+Motion pose stream failed: PlatformException(pose_model_initialization_failed, null, null, null)
+00:00 +36: motion responsive failure retry and exit 430.0 / 2.0
+Motion pose stream failed: PlatformException(pose_model_initialization_failed, null, null, null)
+00:00 +37: (tearDownAll)
+00:00 +37: All tests passed!

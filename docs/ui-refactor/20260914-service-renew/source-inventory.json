@@ -1,0 +1,1669 @@
+[
+  {
+    "id": "05-agent/agent-resource-journey-renew-closed",
+    "module": "Cozymate",
+    "label": "继续支持",
+    "state": "agent-resource-journey-renew-closed",
+    "image": "05-agent/agent-resource-journey-renew-closed/default.png",
+    "viewport": "05-agent/agent-resource-journey-renew-closed/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/renew"
+    ],
+    "mapped_design_candidates": [
+      "services/renew",
+      "common/not-found"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/modules/services/presentation/service_renew_page.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/agent_hub/agent_resource_inventory_journey_test.dart",
+    "test_case": "inventory agent generic renewal entry and return 393.0",
+    "metadata": "raw/test/goldens/ui_inventory/agent-resource-journey-renew-closed-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/agent-resource-journey-renew-closed-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-resource-journey-renew-closed-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/agent-resource-journey-renew-closed-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-resource-journey-renew-closed-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/renew",
+    "entry": "Authenticated More → tap Cozymate bottom navigation",
+    "trigger": "Close eligibility → selected package retained",
+    "journey": {
+      "source": "test/goldens/ui_inventory/agent-resource-journey-renew-closed-393.png",
+      "previous_source": "test/goldens/ui_inventory/agent-resource-journey-renew-eligibility-393.png",
+      "route": "/services/renew",
+      "trigger": "Close eligibility → selected package retained",
+      "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage through public builder; real SSE parser, runner, artifact mapper and dispatcher, media and Care repositories; only SSE/HTTP bytes, voice, session and video platform isolated. Real image bytes decoded; video texture/native decoder is a platform stub. Default local history flag; no remote requests.",
+      "test": "test/features/agent_hub/agent_resource_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "05-agent/agent-resource-journey-renew-eligibility",
+    "module": "Cozymate",
+    "label": "继续支持",
+    "state": "agent-resource-journey-renew-eligibility",
+    "image": "05-agent/agent-resource-journey-renew-eligibility/default.png",
+    "viewport": "05-agent/agent-resource-journey-renew-eligibility/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/renew"
+    ],
+    "mapped_design_candidates": [
+      "services/purchase",
+      "services/renew",
+      "common/not-found",
+      "services/state-25",
+      "services/state-26",
+      "services/state-27",
+      "services/state-28",
+      "services/state-29",
+      "services/state-30"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/modules/services/presentation/service_purchase_dialog.dart",
+      "lib/modules/services/presentation/service_renew_page.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/agent_hub/agent_resource_inventory_journey_test.dart",
+    "test_case": "inventory agent generic renewal entry and return 393.0",
+    "metadata": "raw/test/goldens/ui_inventory/agent-resource-journey-renew-eligibility-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/agent-resource-journey-renew-eligibility-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-resource-journey-renew-eligibility-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/agent-resource-journey-renew-eligibility-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-resource-journey-renew-eligibility-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/renew",
+    "entry": "Authenticated More → tap Cozymate bottom navigation",
+    "trigger": "Choose first package → real purchase eligibility",
+    "journey": {
+      "source": "test/goldens/ui_inventory/agent-resource-journey-renew-eligibility-393.png",
+      "previous_source": "test/goldens/ui_inventory/agent-resource-journey-renew-list-393.png",
+      "route": "/services/renew",
+      "trigger": "Choose first package → real purchase eligibility",
+      "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage through public builder; real SSE parser, runner, artifact mapper and dispatcher, media and Care repositories; only SSE/HTTP bytes, voice, session and video platform isolated. Real image bytes decoded; video texture/native decoder is a platform stub. Default local history flag; no remote requests.",
+      "test": "test/features/agent_hub/agent_resource_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "05-agent/agent-resource-journey-renew-list",
+    "module": "Cozymate",
+    "label": "继续支持",
+    "state": "agent-resource-journey-renew-list",
+    "image": "05-agent/agent-resource-journey-renew-list/default.png",
+    "viewport": "05-agent/agent-resource-journey-renew-list/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/renew"
+    ],
+    "mapped_design_candidates": [
+      "services/renew",
+      "common/not-found"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/modules/services/presentation/service_renew_page.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/agent_hub/agent_resource_inventory_journey_test.dart",
+    "test_case": "inventory agent generic renewal entry and return 393.0",
+    "metadata": "raw/test/goldens/ui_inventory/agent-resource-journey-renew-list-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/agent-resource-journey-renew-list-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-resource-journey-renew-list-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/agent-resource-journey-renew-list-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-resource-journey-renew-list-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/renew",
+    "entry": "Authenticated More → tap Cozymate bottom navigation",
+    "trigger": "Tap supported internal artifact link → real renewal route without episode parameter",
+    "journey": {
+      "source": "test/goldens/ui_inventory/agent-resource-journey-renew-list-393.png",
+      "previous_source": "test/goldens/ui_inventory/agent-resource-journey-renew-card-393.png",
+      "route": "/services/renew",
+      "trigger": "Tap supported internal artifact link → real renewal route without episode parameter",
+      "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage through public builder; real SSE parser, runner, artifact mapper and dispatcher, media and Care repositories; only SSE/HTTP bytes, voice, session and video platform isolated. Real image bytes decoded; video texture/native decoder is a platform stub. Default local history flag; no remote requests.",
+      "test": "test/features/agent_hub/agent_resource_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/progress-current-renew-options",
+    "module": "专家服务与咨询",
+    "label": "继续支持",
+    "state": "progress-current-renew-options",
+    "image": "08-expert-service/progress-current-renew-options/default.png",
+    "viewport": "08-expert-service/progress-current-renew-options/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode/renew"
+    ],
+    "mapped_design_candidates": [
+      "services/renew",
+      "common/not-found"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/modules/services/presentation/service_renew_page.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/progress_current_inventory_test.dart",
+    "test_case": "current timeline service states and renewal entry false",
+    "metadata": "raw/test/goldens/ui_inventory/progress-current-renew-options-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/progress-current-renew-options-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-renew-options-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/progress-current-renew-options-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-renew-options-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode/renew",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Ended service Continue support → renewal options",
+    "journey": {
+      "source": "test/goldens/ui_inventory/progress-current-renew-options-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/progress-current-state-cancelled-393-1x.png",
+      "route": "/services/episodes/service-episode/renew",
+      "trigger": "Ended service Continue support → renewal options",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/progress_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/progress-current-renew-purchase",
+    "module": "专家服务与咨询",
+    "label": "继续支持",
+    "state": "progress-current-renew-purchase",
+    "image": "08-expert-service/progress-current-renew-purchase/default.png",
+    "viewport": "08-expert-service/progress-current-renew-purchase/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode/renew"
+    ],
+    "mapped_design_candidates": [
+      "services/purchase",
+      "services/renew",
+      "common/not-found",
+      "services/state-25",
+      "services/state-26",
+      "services/state-27",
+      "services/state-28",
+      "services/state-29",
+      "services/state-30"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/modules/services/presentation/service_purchase_dialog.dart",
+      "lib/modules/services/presentation/service_renew_page.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/progress_current_inventory_test.dart",
+    "test_case": "current timeline service states and renewal entry false",
+    "metadata": "raw/test/goldens/ui_inventory/progress-current-renew-purchase-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/progress-current-renew-purchase-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-renew-purchase-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/progress-current-renew-purchase-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-renew-purchase-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode/renew",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Select renewal plan → real eligibility dialog",
+    "journey": {
+      "source": "test/goldens/ui_inventory/progress-current-renew-purchase-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/progress-current-renew-options-393-1x.png",
+      "route": "/services/episodes/service-episode/renew",
+      "trigger": "Select renewal plan → real eligibility dialog",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/progress_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/progress-current-renew-purchase-closed",
+    "module": "专家服务与咨询",
+    "label": "继续支持",
+    "state": "progress-current-renew-purchase-closed",
+    "image": "08-expert-service/progress-current-renew-purchase-closed/default.png",
+    "viewport": "08-expert-service/progress-current-renew-purchase-closed/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode/renew"
+    ],
+    "mapped_design_candidates": [
+      "services/renew",
+      "common/not-found"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/modules/services/presentation/service_renew_page.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/progress_current_inventory_test.dart",
+    "test_case": "current timeline service states and renewal entry false",
+    "metadata": "raw/test/goldens/ui_inventory/progress-current-renew-purchase-closed-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/progress-current-renew-purchase-closed-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-renew-purchase-closed-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/progress-current-renew-purchase-closed-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-renew-purchase-closed-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode/renew",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Close eligibility → renewal options",
+    "journey": {
+      "source": "test/goldens/ui_inventory/progress-current-renew-purchase-closed-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/progress-current-renew-purchase-393-1x.png",
+      "route": "/services/episodes/service-episode/renew",
+      "trigger": "Close eligibility → renewal options",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/progress_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/renew-disabled",
+    "module": "专家服务与咨询",
+    "label": "继续支持",
+    "state": "renew-disabled",
+    "image": "08-expert-service/renew-disabled/default.png",
+    "viewport": "08-expert-service/renew-disabled/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/renew /services/episodes/:episodeId/renew"
+    ],
+    "mapped_design_candidates": [
+      "services/renew"
+    ],
+    "production_widget_files": [
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/modules/services/presentation/service_renew_page.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/services/service_renew_test.dart",
+    "test_case": "disabled purchase, empty catalog, offline retry are explicit",
+    "metadata": "raw/test/goldens/design_system/renew-disabled-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/renew-disabled-390.png",
+        "metadata": "raw/test/goldens/design_system/renew-disabled-390.png.json",
+        "width": 390,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "08-expert-service/renew-eligibility",
+    "module": "专家服务与咨询",
+    "label": "继续支持",
+    "state": "renew-eligibility",
+    "image": "08-expert-service/renew-eligibility/default.png",
+    "viewport": "08-expert-service/renew-eligibility/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/:packageId",
+      "/services/renew /services/episodes/:episodeId/renew"
+    ],
+    "mapped_design_candidates": [
+      "services/purchase",
+      "services/renew",
+      "services/state-25",
+      "services/state-26",
+      "services/state-27",
+      "services/state-28",
+      "services/state-29",
+      "services/state-30"
+    ],
+    "production_widget_files": [
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/modules/services/presentation/service_purchase_dialog.dart",
+      "lib/modules/services/presentation/service_renew_page.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/services/service_renew_test.dart",
+    "test_case": "renew selection opens existing eligibility flow 390.0/1.0",
+    "metadata": "raw/test/goldens/design_system/renew-eligibility-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/renew-eligibility-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/renew-eligibility-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/renew-eligibility-320.png",
+        "metadata": "raw/test/goldens/design_system/renew-eligibility-320.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/renew-eligibility-390-2x.png",
+        "metadata": "raw/test/goldens/design_system/renew-eligibility-390-2x.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/renew-eligibility-390.png",
+        "metadata": "raw/test/goldens/design_system/renew-eligibility-390.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/renew-eligibility-430-2x.png",
+        "metadata": "raw/test/goldens/design_system/renew-eligibility-430-2x.png.json",
+        "width": 430,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/renew-eligibility-430.png",
+        "metadata": "raw/test/goldens/design_system/renew-eligibility-430.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "08-expert-service/renew-empty",
+    "module": "专家服务与咨询",
+    "label": "继续支持",
+    "state": "renew-empty",
+    "image": "08-expert-service/renew-empty/default.png",
+    "viewport": "08-expert-service/renew-empty/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/renew /services/episodes/:episodeId/renew"
+    ],
+    "mapped_design_candidates": [
+      "services/renew",
+      "common/loading",
+      "common/empty",
+      "common/error"
+    ],
+    "production_widget_files": [
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/modules/services/presentation/service_renew_page.dart",
+      "lib/shared/widgets/product_feedback.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/services/service_renew_test.dart",
+    "test_case": "disabled purchase, empty catalog, offline retry are explicit",
+    "metadata": "raw/test/goldens/design_system/renew-empty-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/renew-empty-390.png",
+        "metadata": "raw/test/goldens/design_system/renew-empty-390.png.json",
+        "width": 390,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "08-expert-service/renew-journey-active-return",
+    "module": "专家服务与咨询",
+    "label": "继续支持",
+    "state": "renew-journey-active-return",
+    "image": "08-expert-service/renew-journey-active-return/default.png",
+    "viewport": "08-expert-service/renew-journey-active-return/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/completed-episode/renew"
+    ],
+    "mapped_design_candidates": [
+      "services/renew",
+      "common/not-found"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/modules/services/presentation/service_renew_page.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/renew_inventory_journey_test.dart",
+    "test_case": "inventory completed service renewal purchase and return 393.0",
+    "metadata": "raw/test/goldens/ui_inventory/renew-journey-active-return-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/renew-journey-active-return-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/renew-journey-active-return-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/renew-journey-active-return-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/renew-journey-active-return-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/completed-episode/renew",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "New service progress back → renewal list",
+    "journey": {
+      "source": "test/goldens/ui_inventory/renew-journey-active-return-393.png",
+      "previous_source": "test/goldens/ui_inventory/renew-journey-active-progress-393.png",
+      "route": "/services/episodes/completed-episode/renew",
+      "trigger": "New service progress back → renewal list",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production home/timeline/renew/purchase pages and repositories; isolated HTTP with completed original service preserved independently; fixed clock and timezone, no remote order/payment",
+      "test": "test/modules/services/renew_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/renew-journey-eligibility",
+    "module": "专家服务与咨询",
+    "label": "继续支持",
+    "state": "renew-journey-eligibility",
+    "image": "08-expert-service/renew-journey-eligibility/default.png",
+    "viewport": "08-expert-service/renew-journey-eligibility/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/completed-episode/renew"
+    ],
+    "mapped_design_candidates": [
+      "services/purchase",
+      "services/renew",
+      "common/not-found",
+      "services/state-25",
+      "services/state-26",
+      "services/state-27",
+      "services/state-28",
+      "services/state-29",
+      "services/state-30"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/modules/services/presentation/service_purchase_dialog.dart",
+      "lib/modules/services/presentation/service_renew_page.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/renew_inventory_journey_test.dart",
+    "test_case": "inventory completed service renewal purchase and return 393.0",
+    "metadata": "raw/test/goldens/ui_inventory/renew-journey-eligibility-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/renew-journey-eligibility-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/renew-journey-eligibility-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/renew-journey-eligibility-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/renew-journey-eligibility-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/completed-episode/renew",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Choose highlighted package → existing purchase eligibility dialog",
+    "journey": {
+      "source": "test/goldens/ui_inventory/renew-journey-eligibility-393.png",
+      "previous_source": "test/goldens/ui_inventory/renew-journey-list-393.png",
+      "route": "/services/episodes/completed-episode/renew",
+      "trigger": "Choose highlighted package → existing purchase eligibility dialog",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production home/timeline/renew/purchase pages and repositories; isolated HTTP with completed original service preserved independently; fixed clock and timezone, no remote order/payment",
+      "test": "test/modules/services/renew_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/renew-journey-empty",
+    "module": "专家服务与咨询",
+    "label": "继续支持",
+    "state": "renew-journey-empty",
+    "image": "08-expert-service/renew-journey-empty/default.png",
+    "viewport": "08-expert-service/renew-journey-empty/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/completed-episode/renew"
+    ],
+    "mapped_design_candidates": [
+      "services/renew",
+      "common/not-found",
+      "common/loading",
+      "common/empty",
+      "common/error"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/modules/services/presentation/service_renew_page.dart",
+      "lib/shared/widgets/product_feedback.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/renew_inventory_journey_test.dart",
+    "test_case": "inventory renewal loading retry empty and refresh",
+    "metadata": "raw/test/goldens/ui_inventory/renew-journey-empty-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/renew-journey-empty-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/renew-journey-empty-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/completed-episode/renew",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Retry returns no packages → empty support list",
+    "journey": {
+      "source": "test/goldens/ui_inventory/renew-journey-empty-393.png",
+      "previous_source": "test/goldens/ui_inventory/renew-journey-load-error-393.png",
+      "route": "/services/episodes/completed-episode/renew",
+      "trigger": "Retry returns no packages → empty support list",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production home/timeline/renew/purchase pages and repositories; isolated HTTP with completed original service preserved independently; fixed clock and timezone, no remote order/payment",
+      "test": "test/modules/services/renew_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/renew-journey-empty-refreshed",
+    "module": "专家服务与咨询",
+    "label": "继续支持",
+    "state": "renew-journey-empty-refreshed",
+    "image": "08-expert-service/renew-journey-empty-refreshed/default.png",
+    "viewport": "08-expert-service/renew-journey-empty-refreshed/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/completed-episode/renew"
+    ],
+    "mapped_design_candidates": [
+      "services/renew",
+      "common/not-found"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/modules/services/presentation/service_renew_page.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/renew_inventory_journey_test.dart",
+    "test_case": "inventory renewal loading retry empty and refresh",
+    "metadata": "raw/test/goldens/ui_inventory/renew-journey-empty-refreshed-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/renew-journey-empty-refreshed-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/renew-journey-empty-refreshed-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/completed-episode/renew",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Refresh plans → catalog restored",
+    "journey": {
+      "source": "test/goldens/ui_inventory/renew-journey-empty-refreshed-393.png",
+      "previous_source": "test/goldens/ui_inventory/renew-journey-empty-393.png",
+      "route": "/services/episodes/completed-episode/renew",
+      "trigger": "Refresh plans → catalog restored",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production home/timeline/renew/purchase pages and repositories; isolated HTTP with completed original service preserved independently; fixed clock and timezone, no remote order/payment",
+      "test": "test/modules/services/renew_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/renew-journey-list",
+    "module": "专家服务与咨询",
+    "label": "继续支持",
+    "state": "renew-journey-list",
+    "image": "08-expert-service/renew-journey-list/default.png",
+    "viewport": "08-expert-service/renew-journey-list/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/completed-episode/renew"
+    ],
+    "mapped_design_candidates": [
+      "services/renew",
+      "common/not-found"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/modules/services/presentation/service_renew_page.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/renew_inventory_journey_test.dart",
+    "test_case": "inventory completed service renewal purchase and return 393.0",
+    "metadata": "raw/test/goldens/ui_inventory/renew-journey-list-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/renew-journey-list-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/renew-journey-list-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/renew-journey-list-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/renew-journey-list-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/completed-episode/renew",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Completed timeline continue support → original package highlighted in actual renewal route",
+    "journey": {
+      "source": "test/goldens/ui_inventory/renew-journey-list-393.png",
+      "previous_source": "test/goldens/ui_inventory/renew-journey-completed-progress-393.png",
+      "route": "/services/episodes/completed-episode/renew",
+      "trigger": "Completed timeline continue support → original package highlighted in actual renewal route",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production home/timeline/renew/purchase pages and repositories; isolated HTTP with completed original service preserved independently; fixed clock and timezone, no remote order/payment",
+      "test": "test/modules/services/renew_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/renew-journey-load-error",
+    "module": "专家服务与咨询",
+    "label": "继续支持",
+    "state": "renew-journey-load-error",
+    "image": "08-expert-service/renew-journey-load-error/default.png",
+    "viewport": "08-expert-service/renew-journey-load-error/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/completed-episode/renew"
+    ],
+    "mapped_design_candidates": [
+      "services/renew",
+      "common/not-found",
+      "common/loading",
+      "common/empty",
+      "common/error"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/modules/services/presentation/service_renew_page.dart",
+      "lib/shared/widgets/product_feedback.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/renew_inventory_journey_test.dart",
+    "test_case": "inventory renewal loading retry empty and refresh",
+    "metadata": "raw/test/goldens/ui_inventory/renew-journey-load-error-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/renew-journey-load-error-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/renew-journey-load-error-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/completed-episode/renew",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Catalog error → retry",
+    "journey": {
+      "source": "test/goldens/ui_inventory/renew-journey-load-error-393.png",
+      "previous_source": "test/goldens/ui_inventory/renew-journey-loading-393.png",
+      "route": "/services/episodes/completed-episode/renew",
+      "trigger": "Catalog error → retry",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production home/timeline/renew/purchase pages and repositories; isolated HTTP with completed original service preserved independently; fixed clock and timezone, no remote order/payment",
+      "test": "test/modules/services/renew_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/renew-journey-loading",
+    "module": "专家服务与咨询",
+    "label": "继续支持",
+    "state": "renew-journey-loading",
+    "image": "08-expert-service/renew-journey-loading/default.png",
+    "viewport": "08-expert-service/renew-journey-loading/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/completed-episode/renew"
+    ],
+    "mapped_design_candidates": [
+      "services/renew",
+      "common/not-found",
+      "common/loading",
+      "common/empty",
+      "common/error"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/modules/services/presentation/service_renew_page.dart",
+      "lib/shared/widgets/product_feedback.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/renew_inventory_journey_test.dart",
+    "test_case": "inventory renewal loading retry empty and refresh",
+    "metadata": "raw/test/goldens/ui_inventory/renew-journey-loading-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/renew-journey-loading-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/renew-journey-loading-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/completed-episode/renew",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Continue support → catalog HTTP pending",
+    "journey": {
+      "source": "test/goldens/ui_inventory/renew-journey-loading-393.png",
+      "previous_source": "test/goldens/ui_inventory/renew-journey-completed-progress-393.png",
+      "route": "/services/episodes/completed-episode/renew",
+      "trigger": "Continue support → catalog HTTP pending",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production home/timeline/renew/purchase pages and repositories; isolated HTTP with completed original service preserved independently; fixed clock and timezone, no remote order/payment",
+      "test": "test/modules/services/renew_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/renew-journey-order-error",
+    "module": "专家服务与咨询",
+    "label": "继续支持",
+    "state": "renew-journey-order-error",
+    "image": "08-expert-service/renew-journey-order-error/default.png",
+    "viewport": "08-expert-service/renew-journey-order-error/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/completed-episode/renew"
+    ],
+    "mapped_design_candidates": [
+      "services/renew",
+      "common/not-found"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/modules/services/presentation/service_renew_page.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/renew_inventory_journey_test.dart",
+    "test_case": "inventory completed service pending order read and cancel 393.0",
+    "metadata": "raw/test/goldens/ui_inventory/renew-journey-order-error-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/renew-journey-order-error-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/renew-journey-order-error-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/renew-journey-order-error-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/renew-journey-order-error-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/completed-episode/renew",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Order read fails → scroll to top → inline open error and selectable packages",
+    "journey": {
+      "source": "test/goldens/ui_inventory/renew-journey-order-error-393.png",
+      "previous_source": "test/goldens/ui_inventory/renew-journey-order-loading-393.png",
+      "route": "/services/episodes/completed-episode/renew",
+      "trigger": "Order read fails → scroll to top → inline open error and selectable packages",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production home/timeline/renew/purchase pages and repositories; isolated HTTP with completed original service preserved independently; fixed clock and timezone, no remote order/payment",
+      "test": "test/modules/services/renew_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/renew-journey-order-loading",
+    "module": "专家服务与咨询",
+    "label": "继续支持",
+    "state": "renew-journey-order-loading",
+    "image": "08-expert-service/renew-journey-order-loading/default.png",
+    "viewport": "08-expert-service/renew-journey-order-loading/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/completed-episode/renew"
+    ],
+    "mapped_design_candidates": [
+      "services/renew",
+      "common/not-found"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/modules/services/presentation/service_renew_page.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/renew_inventory_journey_test.dart",
+    "test_case": "inventory completed service pending order read and cancel 393.0",
+    "metadata": "raw/test/goldens/ui_inventory/renew-journey-order-loading-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/renew-journey-order-loading-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/renew-journey-order-loading-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/renew-journey-order-loading-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/renew-journey-order-loading-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/completed-episode/renew",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Continue payment → order read pending, package buttons disabled",
+    "journey": {
+      "source": "test/goldens/ui_inventory/renew-journey-order-loading-393.png",
+      "previous_source": "test/goldens/ui_inventory/renew-journey-pending-listed-393.png",
+      "route": "/services/episodes/completed-episode/renew",
+      "trigger": "Continue payment → order read pending, package buttons disabled",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production home/timeline/renew/purchase pages and repositories; isolated HTTP with completed original service preserved independently; fixed clock and timezone, no remote order/payment",
+      "test": "test/modules/services/renew_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/renew-journey-order-resumed",
+    "module": "专家服务与咨询",
+    "label": "继续支持",
+    "state": "renew-journey-order-resumed",
+    "image": "08-expert-service/renew-journey-order-resumed/default.png",
+    "viewport": "08-expert-service/renew-journey-order-resumed/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/completed-episode/renew"
+    ],
+    "mapped_design_candidates": [
+      "services/purchase",
+      "services/renew",
+      "common/not-found",
+      "services/state-25",
+      "services/state-26",
+      "services/state-27",
+      "services/state-28",
+      "services/state-29",
+      "services/state-30"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/modules/services/presentation/service_purchase_dialog.dart",
+      "lib/modules/services/presentation/service_renew_page.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/renew_inventory_journey_test.dart",
+    "test_case": "inventory completed service pending order read and cancel 393.0",
+    "metadata": "raw/test/goldens/ui_inventory/renew-journey-order-resumed-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/renew-journey-order-resumed-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/renew-journey-order-resumed-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/renew-journey-order-resumed-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/renew-journey-order-resumed-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/completed-episode/renew",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Retry package → existing payment dialog without creating duplicate order",
+    "journey": {
+      "source": "test/goldens/ui_inventory/renew-journey-order-resumed-393.png",
+      "previous_source": "test/goldens/ui_inventory/renew-journey-order-error-393.png",
+      "route": "/services/episodes/completed-episode/renew",
+      "trigger": "Retry package → existing payment dialog without creating duplicate order",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production home/timeline/renew/purchase pages and repositories; isolated HTTP with completed original service preserved independently; fixed clock and timezone, no remote order/payment",
+      "test": "test/modules/services/renew_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/renew-journey-paid",
+    "module": "专家服务与咨询",
+    "label": "继续支持",
+    "state": "renew-journey-paid",
+    "image": "08-expert-service/renew-journey-paid/default.png",
+    "viewport": "08-expert-service/renew-journey-paid/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/completed-episode/renew"
+    ],
+    "mapped_design_candidates": [
+      "services/purchase",
+      "services/renew",
+      "common/not-found",
+      "services/state-25",
+      "services/state-26",
+      "services/state-27",
+      "services/state-28",
+      "services/state-29",
+      "services/state-30"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/modules/services/presentation/service_purchase_dialog.dart",
+      "lib/modules/services/presentation/service_renew_page.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/renew_inventory_journey_test.dart",
+    "test_case": "inventory completed service renewal purchase and return 393.0",
+    "metadata": "raw/test/goldens/ui_inventory/renew-journey-paid-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/renew-journey-paid-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/renew-journey-paid-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/renew-journey-paid-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/renew-journey-paid-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/completed-episode/renew",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Sandbox payment succeeds → new service; original remains completed",
+    "journey": {
+      "source": "test/goldens/ui_inventory/renew-journey-paid-393.png",
+      "previous_source": "test/goldens/ui_inventory/renew-journey-payment-393.png",
+      "route": "/services/episodes/completed-episode/renew",
+      "trigger": "Sandbox payment succeeds → new service; original remains completed",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production home/timeline/renew/purchase pages and repositories; isolated HTTP with completed original service preserved independently; fixed clock and timezone, no remote order/payment",
+      "test": "test/modules/services/renew_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/renew-journey-payment",
+    "module": "专家服务与咨询",
+    "label": "继续支持",
+    "state": "renew-journey-payment",
+    "image": "08-expert-service/renew-journey-payment/default.png",
+    "viewport": "08-expert-service/renew-journey-payment/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/completed-episode/renew"
+    ],
+    "mapped_design_candidates": [
+      "services/purchase",
+      "services/renew",
+      "common/not-found",
+      "services/state-25",
+      "services/state-26",
+      "services/state-27",
+      "services/state-28",
+      "services/state-29",
+      "services/state-30"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/modules/services/presentation/service_purchase_dialog.dart",
+      "lib/modules/services/presentation/service_renew_page.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/renew_inventory_journey_test.dart",
+    "test_case": "inventory completed service renewal purchase and return 393.0",
+    "metadata": "raw/test/goldens/ui_inventory/renew-journey-payment-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/renew-journey-payment-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/renew-journey-payment-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/renew-journey-payment-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/renew-journey-payment-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/completed-episode/renew",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Choose state and confirm → new sandbox order and card form",
+    "journey": {
+      "source": "test/goldens/ui_inventory/renew-journey-payment-393.png",
+      "previous_source": "test/goldens/ui_inventory/renew-journey-selection-cancelled-393.png",
+      "route": "/services/episodes/completed-episode/renew",
+      "trigger": "Choose state and confirm → new sandbox order and card form",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production home/timeline/renew/purchase pages and repositories; isolated HTTP with completed original service preserved independently; fixed clock and timezone, no remote order/payment",
+      "test": "test/modules/services/renew_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/renew-journey-pending-closed",
+    "module": "专家服务与咨询",
+    "label": "继续支持",
+    "state": "renew-journey-pending-closed",
+    "image": "08-expert-service/renew-journey-pending-closed/default.png",
+    "viewport": "08-expert-service/renew-journey-pending-closed/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/completed-episode/renew"
+    ],
+    "mapped_design_candidates": [
+      "services/renew",
+      "common/not-found"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/modules/services/presentation/service_renew_page.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/renew_inventory_journey_test.dart",
+    "test_case": "inventory completed service pending order read and cancel 393.0",
+    "metadata": "raw/test/goldens/ui_inventory/renew-journey-pending-closed-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/renew-journey-pending-closed-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/renew-journey-pending-closed-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/renew-journey-pending-closed-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/renew-journey-pending-closed-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/completed-episode/renew",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Close payment → pending order stays resumable",
+    "journey": {
+      "source": "test/goldens/ui_inventory/renew-journey-pending-closed-393.png",
+      "previous_source": "test/goldens/ui_inventory/renew-journey-order-resumed-393.png",
+      "route": "/services/episodes/completed-episode/renew",
+      "trigger": "Close payment → pending order stays resumable",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production home/timeline/renew/purchase pages and repositories; isolated HTTP with completed original service preserved independently; fixed clock and timezone, no remote order/payment",
+      "test": "test/modules/services/renew_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/renew-journey-pending-listed",
+    "module": "专家服务与咨询",
+    "label": "继续支持",
+    "state": "renew-journey-pending-listed",
+    "image": "08-expert-service/renew-journey-pending-listed/default.png",
+    "viewport": "08-expert-service/renew-journey-pending-listed/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/completed-episode/renew"
+    ],
+    "mapped_design_candidates": [
+      "services/renew",
+      "common/not-found"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/modules/services/presentation/service_renew_page.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/renew_inventory_journey_test.dart",
+    "test_case": "inventory completed service pending order read and cancel 393.0",
+    "metadata": "raw/test/goldens/ui_inventory/renew-journey-pending-listed-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/renew-journey-pending-listed-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/renew-journey-pending-listed-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/renew-journey-pending-listed-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/renew-journey-pending-listed-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/completed-episode/renew",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Completed service renew → pending matching order exposes continue payment",
+    "journey": {
+      "source": "test/goldens/ui_inventory/renew-journey-pending-listed-393.png",
+      "previous_source": "test/goldens/ui_inventory/renew-journey-completed-progress-393.png",
+      "route": "/services/episodes/completed-episode/renew",
+      "trigger": "Completed service renew → pending matching order exposes continue payment",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production home/timeline/renew/purchase pages and repositories; isolated HTTP with completed original service preserved independently; fixed clock and timezone, no remote order/payment",
+      "test": "test/modules/services/renew_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/renew-journey-purchase-disabled",
+    "module": "专家服务与咨询",
+    "label": "继续支持",
+    "state": "renew-journey-purchase-disabled",
+    "image": "08-expert-service/renew-journey-purchase-disabled/default.png",
+    "viewport": "08-expert-service/renew-journey-purchase-disabled/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/completed-episode/renew"
+    ],
+    "mapped_design_candidates": [
+      "services/renew",
+      "common/not-found"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/modules/services/presentation/service_renew_page.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/renew_inventory_journey_test.dart",
+    "test_case": "inventory renewal loading retry empty and refresh",
+    "metadata": "raw/test/goldens/ui_inventory/renew-journey-purchase-disabled-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/renew-journey-purchase-disabled-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/renew-journey-purchase-disabled-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/completed-episode/renew",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Pull to refresh receives disabled payment mode → buttons disabled",
+    "journey": {
+      "source": "test/goldens/ui_inventory/renew-journey-purchase-disabled-393.png",
+      "previous_source": "test/goldens/ui_inventory/renew-journey-empty-refreshed-393.png",
+      "route": "/services/episodes/completed-episode/renew",
+      "trigger": "Pull to refresh receives disabled payment mode → buttons disabled",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production home/timeline/renew/purchase pages and repositories; isolated HTTP with completed original service preserved independently; fixed clock and timezone, no remote order/payment",
+      "test": "test/modules/services/renew_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/renew-journey-purchase-return",
+    "module": "专家服务与咨询",
+    "label": "继续支持",
+    "state": "renew-journey-purchase-return",
+    "image": "08-expert-service/renew-journey-purchase-return/default.png",
+    "viewport": "08-expert-service/renew-journey-purchase-return/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/completed-episode/renew"
+    ],
+    "mapped_design_candidates": [
+      "services/renew",
+      "common/not-found"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/modules/services/presentation/service_renew_page.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/renew_inventory_journey_test.dart",
+    "test_case": "inventory completed service renewal purchase and return 393.0",
+    "metadata": "raw/test/goldens/ui_inventory/renew-journey-purchase-return-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/renew-journey-purchase-return-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/renew-journey-purchase-return-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/renew-journey-purchase-return-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/renew-journey-purchase-return-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/completed-episode/renew",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Booking back → renewal list now offers view current service",
+    "journey": {
+      "source": "test/goldens/ui_inventory/renew-journey-purchase-return-393.png",
+      "previous_source": "test/goldens/ui_inventory/renew-journey-booking-393.png",
+      "route": "/services/episodes/completed-episode/renew",
+      "trigger": "Booking back → renewal list now offers view current service",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production home/timeline/renew/purchase pages and repositories; isolated HTTP with completed original service preserved independently; fixed clock and timezone, no remote order/payment",
+      "test": "test/modules/services/renew_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/renew-journey-selection-cancelled",
+    "module": "专家服务与咨询",
+    "label": "继续支持",
+    "state": "renew-journey-selection-cancelled",
+    "image": "08-expert-service/renew-journey-selection-cancelled/default.png",
+    "viewport": "08-expert-service/renew-journey-selection-cancelled/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/completed-episode/renew"
+    ],
+    "mapped_design_candidates": [
+      "services/renew",
+      "common/not-found"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/modules/services/presentation/service_renew_page.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/renew_inventory_journey_test.dart",
+    "test_case": "inventory completed service renewal purchase and return 393.0",
+    "metadata": "raw/test/goldens/ui_inventory/renew-journey-selection-cancelled-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/renew-journey-selection-cancelled-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/renew-journey-selection-cancelled-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/renew-journey-selection-cancelled-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/renew-journey-selection-cancelled-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/completed-episode/renew",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Close eligibility → selected card retained without creating an order",
+    "journey": {
+      "source": "test/goldens/ui_inventory/renew-journey-selection-cancelled-393.png",
+      "previous_source": "test/goldens/ui_inventory/renew-journey-eligibility-393.png",
+      "route": "/services/episodes/completed-episode/renew",
+      "trigger": "Close eligibility → selected card retained without creating an order",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production home/timeline/renew/purchase pages and repositories; isolated HTTP with completed original service preserved independently; fixed clock and timezone, no remote order/payment",
+      "test": "test/modules/services/renew_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/renew-list",
+    "module": "专家服务与咨询",
+    "label": "继续支持",
+    "state": "renew-list",
+    "image": "08-expert-service/renew-list/default.png",
+    "viewport": "08-expert-service/renew-list/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/renew /services/episodes/:episodeId/renew"
+    ],
+    "mapped_design_candidates": [
+      "services/renew"
+    ],
+    "production_widget_files": [
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/modules/services/presentation/service_renew_page.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/services/service_renew_test.dart",
+    "test_case": "renew selection opens existing eligibility flow 390.0/1.0",
+    "metadata": "raw/test/goldens/design_system/renew-list-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/renew-list-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/renew-list-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/renew-list-320.png",
+        "metadata": "raw/test/goldens/design_system/renew-list-320.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/renew-list-390-2x.png",
+        "metadata": "raw/test/goldens/design_system/renew-list-390-2x.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/renew-list-390.png",
+        "metadata": "raw/test/goldens/design_system/renew-list-390.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/renew-list-430-2x.png",
+        "metadata": "raw/test/goldens/design_system/renew-list-430-2x.png.json",
+        "width": 430,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/renew-list-430.png",
+        "metadata": "raw/test/goldens/design_system/renew-list-430.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "08-expert-service/renew-offline",
+    "module": "专家服务与咨询",
+    "label": "继续支持",
+    "state": "renew-offline",
+    "image": "08-expert-service/renew-offline/default.png",
+    "viewport": "08-expert-service/renew-offline/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/renew /services/episodes/:episodeId/renew"
+    ],
+    "mapped_design_candidates": [
+      "services/renew",
+      "common/loading",
+      "common/empty",
+      "common/error"
+    ],
+    "production_widget_files": [
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/modules/services/presentation/service_renew_page.dart",
+      "lib/shared/widgets/product_feedback.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/services/service_renew_test.dart",
+    "test_case": "disabled purchase, empty catalog, offline retry are explicit",
+    "metadata": "raw/test/goldens/design_system/renew-offline-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/renew-offline-390.png",
+        "metadata": "raw/test/goldens/design_system/renew-offline-390.png.json",
+        "width": 390,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "08-expert-service/renew-ongoing",
+    "module": "专家服务与咨询",
+    "label": "继续支持",
+    "state": "renew-ongoing",
+    "image": "08-expert-service/renew-ongoing/default.png",
+    "viewport": "08-expert-service/renew-ongoing/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/renew /services/episodes/:episodeId/renew"
+    ],
+    "mapped_design_candidates": [
+      "services/renew"
+    ],
+    "production_widget_files": [
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/modules/services/presentation/service_renew_page.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/services/service_renew_test.dart",
+    "test_case": "ongoing service navigates without making a new order",
+    "metadata": "raw/test/goldens/design_system/renew-ongoing-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/renew-ongoing-390.png",
+        "metadata": "raw/test/goldens/design_system/renew-ongoing-390.png.json",
+        "width": 390,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "08-expert-service/renew-order-error",
+    "module": "专家服务与咨询",
+    "label": "继续支持",
+    "state": "renew-order-error",
+    "image": "08-expert-service/renew-order-error/default.png",
+    "viewport": "08-expert-service/renew-order-error/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/renew /services/episodes/:episodeId/renew"
+    ],
+    "mapped_design_candidates": [
+      "services/renew"
+    ],
+    "production_widget_files": [
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/modules/services/presentation/service_renew_page.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/services/service_renew_test.dart",
+    "test_case": "pending order reopens without new purchase; retry locks duplicate taps",
+    "metadata": "raw/test/goldens/design_system/renew-order-error-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/renew-order-error-390.png",
+        "metadata": "raw/test/goldens/design_system/renew-order-error-390.png.json",
+        "width": 390,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "08-expert-service/renew-selected",
+    "module": "专家服务与咨询",
+    "label": "继续支持",
+    "state": "renew-selected",
+    "image": "08-expert-service/renew-selected/default.png",
+    "viewport": "08-expert-service/renew-selected/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/renew /services/episodes/:episodeId/renew"
+    ],
+    "mapped_design_candidates": [
+      "services/renew"
+    ],
+    "production_widget_files": [
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/modules/services/presentation/service_renew_page.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/services/service_renew_test.dart",
+    "test_case": "renew selection opens existing eligibility flow 390.0/1.0",
+    "metadata": "raw/test/goldens/design_system/renew-selected-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/renew-selected-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/renew-selected-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/renew-selected-320.png",
+        "metadata": "raw/test/goldens/design_system/renew-selected-320.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/renew-selected-390-2x.png",
+        "metadata": "raw/test/goldens/design_system/renew-selected-390-2x.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/renew-selected-390.png",
+        "metadata": "raw/test/goldens/design_system/renew-selected-390.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/renew-selected-430-2x.png",
+        "metadata": "raw/test/goldens/design_system/renew-selected-430-2x.png.json",
+        "width": 430,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/renew-selected-430.png",
+        "metadata": "raw/test/goldens/design_system/renew-selected-430.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "08-expert-service/native-resource-renew",
+    "module": "专家服务与咨询",
+    "label": "原生资料卡进入续购",
+    "state": "原生资料卡进入续购",
+    "image": "08-expert-service/native-resource-renew/default.png",
+    "viewport": "native/resource-journey/native-resource-renew.png",
+    "extent": "native-viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/renew"
+    ],
+    "mapped_design_candidates": [],
+    "production_widget_files": [
+      "lib/modules/services/presentation/service_renew_page.dart"
+    ],
+    "evidence_kind": "Android-native-normal-route-with-isolated-data",
+    "normal_entry_verified": true,
+    "test": "integration_test/agent_resource_inventory_test.dart",
+    "test_case": "Native artifact internal link → generic renewal route",
+    "metadata": "native/resource-manifest.json",
+    "variants": [],
+    "journey": {
+      "from": "05-agent/native-resource-image-return",
+      "to": "08-expert-service/native-resource-renew",
+      "source": "native/resource-journey/native-resource-renew.png",
+      "root_entry": "More → Cozymate → send question → SSE artifact card → actual action button",
+      "route": "/services/renew",
+      "trigger": "Native artifact internal link → generic renewal route",
+      "evidence": "实际 Android App 路由；从 More 点击 Cozymate，发送问题并消费隔离 SSE；卡片按钮执行正式 dispatcher。业务/会话为测试依赖，媒体通过本地 HTTP 与实际 PDFium、Android 视频插件、图片解码器。",
+      "test": "integration_test/agent_resource_inventory_test.dart",
+      "metadata": "native/resource-manifest.json"
+    },
+    "verified_route": "/services/renew",
+    "entry": "More → Cozymate → send question → SSE artifact card → actual action button",
+    "trigger": "Native artifact internal link → generic renewal route"
+  }
+]

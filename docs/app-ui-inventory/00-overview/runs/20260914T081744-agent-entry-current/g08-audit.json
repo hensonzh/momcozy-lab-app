@@ -1,0 +1,486 @@
+{
+  "gap": "G08",
+  "completion": "CLOSED_FOR_RECORDED_SOURCE",
+  "images": [
+    {
+      "id": "05-agent/agent-history-empty",
+      "image": "../raw/test/goldens/design_system/agent-history-empty-390-1x.png",
+      "sha256": "5c10b8c2e3659ef622963552bfef3189405be917bd9e29f41dbfd027102260e2",
+      "metadata": "raw/test/goldens/design_system/agent-history-empty-390-1x.png.json",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "normal_route": false
+    },
+    {
+      "id": "05-agent/agent-history-list",
+      "image": "../raw/test/goldens/design_system/agent-history-list-390-1x.long.png",
+      "sha256": "5ddf2c91830b1d749394efbe02df69c9693e51775f1a51ca6a14ac632c1c200b",
+      "metadata": "raw/test/goldens/design_system/agent-history-list-390-1x.png.json",
+      "long_capture": {
+        "status": "complete-measured-scroll-stitch",
+        "file": "/Users/lute/project/momcozy-lab/app/docs/app-ui-inventory/raw/test/goldens/design_system/agent-history-list-390-1x.long.png",
+        "offsets": [
+          0.0,
+          214.0,
+          428.0,
+          642.0,
+          856.0,
+          1070.0,
+          1284.0,
+          1471.0
+        ],
+        "scroll_bounds": [
+          0.0,
+          76.0,
+          360.0,
+          492.0
+        ],
+        "frame_scroll_bounds": [
+          [
+            0.0,
+            76.0,
+            360.0,
+            492.0
+          ],
+          [
+            0.0,
+            76.0,
+            360.0,
+            492.0
+          ],
+          [
+            0.0,
+            76.0,
+            360.0,
+            492.0
+          ],
+          [
+            0.0,
+            76.0,
+            360.0,
+            492.0
+          ],
+          [
+            0.0,
+            76.0,
+            360.0,
+            492.0
+          ],
+          [
+            0.0,
+            76.0,
+            360.0,
+            492.0
+          ],
+          [
+            0.0,
+            76.0,
+            360.0,
+            492.0
+          ],
+          [
+            0.0,
+            76.0,
+            360.0,
+            492.0
+          ]
+        ],
+        "content_height": 1963.0,
+        "interior_strip_edge_guard": 64.0,
+        "fixed_bottom_overlay_bounds": [],
+        "original_scroll_offset": 0.0,
+        "tooltip_preserved_from_matched_viewport": false
+      },
+      "normal_route": false
+    },
+    {
+      "id": "05-agent/agent-history-list-end",
+      "image": "../raw/test/goldens/design_system/agent-history-list-end-390-1x.long.png",
+      "sha256": "5ddf2c91830b1d749394efbe02df69c9693e51775f1a51ca6a14ac632c1c200b",
+      "metadata": "raw/test/goldens/design_system/agent-history-list-end-390-1x.png.json",
+      "long_capture": {
+        "status": "complete-measured-scroll-stitch",
+        "file": "/Users/lute/project/momcozy-lab/app/docs/app-ui-inventory/raw/test/goldens/design_system/agent-history-list-end-390-1x.long.png",
+        "offsets": [
+          0.0,
+          214.0,
+          428.0,
+          642.0,
+          856.0,
+          1070.0,
+          1284.0,
+          1471.0
+        ],
+        "scroll_bounds": [
+          0.0,
+          76.0,
+          360.0,
+          492.0
+        ],
+        "frame_scroll_bounds": [
+          [
+            0.0,
+            76.0,
+            360.0,
+            492.0
+          ],
+          [
+            0.0,
+            76.0,
+            360.0,
+            492.0
+          ],
+          [
+            0.0,
+            76.0,
+            360.0,
+            492.0
+          ],
+          [
+            0.0,
+            76.0,
+            360.0,
+            492.0
+          ],
+          [
+            0.0,
+            76.0,
+            360.0,
+            492.0
+          ],
+          [
+            0.0,
+            76.0,
+            360.0,
+            492.0
+          ],
+          [
+            0.0,
+            76.0,
+            360.0,
+            492.0
+          ],
+          [
+            0.0,
+            76.0,
+            360.0,
+            492.0
+          ]
+        ],
+        "content_height": 1963.0,
+        "interior_strip_edge_guard": 64.0,
+        "fixed_bottom_overlay_bounds": [],
+        "original_scroll_offset": 1471.0,
+        "tooltip_preserved_from_matched_viewport": false
+      },
+      "normal_route": false
+    },
+    {
+      "id": "05-agent/agent-history-load-error",
+      "image": "../raw/test/goldens/design_system/agent-history-load-error-390-1x.png",
+      "sha256": "7a0cd6d24f04b6ddb58a8543a51a0bd594087d4c679d20f9345ce19e9a7dea02",
+      "metadata": "raw/test/goldens/design_system/agent-history-load-error-390-1x.png.json",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "normal_route": false
+    },
+    {
+      "id": "05-agent/agent-history-loading",
+      "image": "../raw/test/goldens/design_system/agent-history-loading-390-1x.png",
+      "sha256": "0891a064ca1c17d69a43fbc64c997c16af54285bfebedd2c33d22c57ef6d6f94",
+      "metadata": "raw/test/goldens/design_system/agent-history-loading-390-1x.png.json",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "normal_route": false
+    },
+    {
+      "id": "05-agent/agent-history-locked",
+      "image": "../raw/test/goldens/design_system/agent-history-locked-390-1x.long.png",
+      "sha256": "98e4431d94aa9eb8311ad1c4cb8dbf7b35441ba8fb2c7ed765bb2f0f4c057cd4",
+      "metadata": "raw/test/goldens/design_system/agent-history-locked-390-1x.png.json",
+      "long_capture": {
+        "status": "complete-measured-scroll-stitch",
+        "file": "/Users/lute/project/momcozy-lab/app/docs/app-ui-inventory/raw/test/goldens/design_system/agent-history-locked-390-1x.long.png",
+        "offsets": [
+          0.0,
+          214.0,
+          428.0,
+          642.0,
+          856.0,
+          1070.0,
+          1284.0,
+          1498.0,
+          1529.0
+        ],
+        "scroll_bounds": [
+          0.0,
+          76.0,
+          360.0,
+          492.0
+        ],
+        "frame_scroll_bounds": [
+          [
+            0.0,
+            76.0,
+            360.0,
+            492.0
+          ],
+          [
+            0.0,
+            76.0,
+            360.0,
+            492.0
+          ],
+          [
+            0.0,
+            76.0,
+            360.0,
+            492.0
+          ],
+          [
+            0.0,
+            76.0,
+            360.0,
+            492.0
+          ],
+          [
+            0.0,
+            76.0,
+            360.0,
+            492.0
+          ],
+          [
+            0.0,
+            76.0,
+            360.0,
+            492.0
+          ],
+          [
+            0.0,
+            76.0,
+            360.0,
+            492.0
+          ],
+          [
+            0.0,
+            76.0,
+            360.0,
+            492.0
+          ],
+          [
+            0.0,
+            76.0,
+            360.0,
+            492.0
+          ]
+        ],
+        "content_height": 2021.0,
+        "interior_strip_edge_guard": 64.0,
+        "fixed_bottom_overlay_bounds": [],
+        "original_scroll_offset": 0.0,
+        "tooltip_preserved_from_matched_viewport": false
+      },
+      "normal_route": false
+    },
+    {
+      "id": "05-agent/agent-history-switch-error",
+      "image": "../raw/test/goldens/design_system/agent-history-switch-error-390-1x.long.png",
+      "sha256": "452220cb28d29bc7c4e058280f1eea14a0ee5712a2768d7b6c7c795d07c4dc09",
+      "metadata": "raw/test/goldens/design_system/agent-history-switch-error-390-1x.png.json",
+      "long_capture": {
+        "status": "complete-measured-scroll-stitch",
+        "file": "/Users/lute/project/momcozy-lab/app/docs/app-ui-inventory/raw/test/goldens/design_system/agent-history-switch-error-390-1x.long.png",
+        "offsets": [
+          0.0,
+          214.0,
+          428.0,
+          642.0,
+          856.0,
+          1070.0,
+          1284.0,
+          1498.0,
+          1529.0
+        ],
+        "scroll_bounds": [
+          0.0,
+          76.0,
+          360.0,
+          492.0
+        ],
+        "frame_scroll_bounds": [
+          [
+            0.0,
+            76.0,
+            360.0,
+            492.0
+          ],
+          [
+            0.0,
+            76.0,
+            360.0,
+            492.0
+          ],
+          [
+            0.0,
+            76.0,
+            360.0,
+            492.0
+          ],
+          [
+            0.0,
+            76.0,
+            360.0,
+            492.0
+          ],
+          [
+            0.0,
+            76.0,
+            360.0,
+            492.0
+          ],
+          [
+            0.0,
+            76.0,
+            360.0,
+            492.0
+          ],
+          [
+            0.0,
+            76.0,
+            360.0,
+            492.0
+          ],
+          [
+            0.0,
+            76.0,
+            360.0,
+            492.0
+          ],
+          [
+            0.0,
+            76.0,
+            360.0,
+            492.0
+          ]
+        ],
+        "content_height": 2021.0,
+        "interior_strip_edge_guard": 64.0,
+        "fixed_bottom_overlay_bounds": [],
+        "original_scroll_offset": 16.0,
+        "tooltip_preserved_from_matched_viewport": false
+      },
+      "normal_route": false
+    },
+    {
+      "id": "05-agent/agent-history-switching",
+      "image": "../raw/test/goldens/design_system/agent-history-switching-390-1x.long.png",
+      "sha256": "6950ee8204b0caa6645cabebc13732e27b84d32eba039b91daf3bd2d937984fd",
+      "metadata": "raw/test/goldens/design_system/agent-history-switching-390-1x.png.json",
+      "long_capture": {
+        "status": "complete-measured-scroll-stitch",
+        "file": "/Users/lute/project/momcozy-lab/app/docs/app-ui-inventory/raw/test/goldens/design_system/agent-history-switching-390-1x.long.png",
+        "offsets": [
+          0.0,
+          214.0,
+          428.0,
+          642.0,
+          856.0,
+          1070.0,
+          1284.0,
+          1494.0
+        ],
+        "scroll_bounds": [
+          0.0,
+          76.0,
+          360.0,
+          492.0
+        ],
+        "frame_scroll_bounds": [
+          [
+            0.0,
+            76.0,
+            360.0,
+            492.0
+          ],
+          [
+            0.0,
+            76.0,
+            360.0,
+            492.0
+          ],
+          [
+            0.0,
+            76.0,
+            360.0,
+            492.0
+          ],
+          [
+            0.0,
+            76.0,
+            360.0,
+            492.0
+          ],
+          [
+            0.0,
+            76.0,
+            360.0,
+            492.0
+          ],
+          [
+            0.0,
+            76.0,
+            360.0,
+            492.0
+          ],
+          [
+            0.0,
+            76.0,
+            360.0,
+            492.0
+          ],
+          [
+            0.0,
+            76.0,
+            360.0,
+            492.0
+          ]
+        ],
+        "content_height": 1986.0,
+        "interior_strip_edge_guard": 64.0,
+        "fixed_bottom_overlay_bounds": [],
+        "original_scroll_offset": 16.0,
+        "tooltip_preserved_from_matched_viewport": false
+      },
+      "normal_route": false
+    },
+    {
+      "id": "10-global-modals/notification-conversation",
+      "image": "../raw/test/goldens/design_system/notification-conversation-393-1x.png",
+      "sha256": "8291e61d8e5cada0769d25edda780ef54e8a3099657696cf4e003744a953dbea",
+      "metadata": "raw/test/goldens/design_system/notification-conversation-393-1x.png.json",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "normal_route": true
+    }
+  ],
+  "source_hashes": {
+    "lib/shared/widgets/mom_companion_widgets.dart": "93c5cc4e022ac56ee5ca31dc5208f6c3a8df03d08e39ace0d761b101e04571ab",
+    "lib/features/agent_hub/presentation/agent_message_menu.dart": "f4dd0cc284faa10ee6f17028bb847f71ad72a09f9ee1725ef41ea099e85bfeae",
+    "lib/features/agent_hub/presentation/agent_conversation_panel.dart": "8432026a75a605272424cde00358dd3fd4060799620eabf222e58a6965c49ef3",
+    "test/features/agent_hub/agent_history_design_test.dart": "f5b8c88db1ebfb032bbe2d90a26d7690df5901331473bff2d77f7c2481379d34",
+    "lib/app/mom_bottom_navigation.dart": "b762f1e2b67b9febb2e5662d1d29125556dd8d08a6b485f64e42b08a63759dff",
+    "lib/shared/widgets/momcozy_components.dart": "5477eff325acaa95e4ac6036fe3aedda03d15104b49b6ba772e586fe8ffb1157",
+    "lib/shared/widgets/mom_settings_widgets.dart": "271b022cb619641d956e92a5600e5f5585d2a5b469446132d53d402987403025",
+    "lib/core/observability/momcozy_observability.dart": "f9e8e964dbab041804babc1038c5be0c2e04b4175ec0f2c12ad8c77625385f4f",
+    "lib/features/agent_hub/agent_hub_page.dart": "3e1605e59fb749e486f367fd9b3b124647b11ed679a806d0d8da62a55f9b236c",
+    "lib/app/momcozy_app.dart": "4e28954f3c930728bd0efd196e2a59a374ab3962675bf9305ca7ad8b77e57627",
+    "test/app/notification_conversation_route_test.dart": "dc1a10e2541b93182165c77e74979f6970385d596e20a3fbd0d406f8099abfdd"
+  },
+  "relevant_source_drift": [],
+  "visual_review": "All complete images reviewed. Shared existing permission dialogs reused; history list and list-end complete images preserved and exact duplicates grouped.",
+  "boundary": "Real App router and production components, isolated HTTP/native interfaces. Platform settings invocation and simulated permission refresh do not prove an OS window."
+}

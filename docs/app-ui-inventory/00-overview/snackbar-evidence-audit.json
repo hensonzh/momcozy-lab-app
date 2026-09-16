@@ -1,0 +1,21 @@
+{
+  "result": "PASS",
+  "scope": "six historical Snackbar states visual review; 249 affected-test image hashes unchanged; no claim of full App completion",
+  "reviewed_pngs": 12,
+  "continuous_segments": 26,
+  "unique_reviewed_segments": 17,
+  "reviewed_sheets": 3,
+  "unchanged_pngs": 249,
+  "source_hashes": {
+    "test/support/ui_inventory_capture.dart": "586611269411ccf5c9b98ae5ff53a70285832d8da2ee15c8e59bbfb873f1086a",
+    "test/features/agent_hub/agent_attachment_inventory_journey_test.dart": "639ecb68aab6ac15c35f7940db945491f6dc6c19ade55cb903904d2deb6a0af7",
+    "test/features/agent_hub/agent_entry_inventory_journey_test.dart": "82100573f3bcf28d51b205634fc21c7e3ce103672bba34f67aa83aab76bc361b",
+    "test/modules/schedule/schedule_inventory_journey_test.dart": "cef4a54fb6a2a04d79a8876fa150844b05351e9327f955a0bbe6c41888bdb111"
+  },
+  "qa_manifest_sha256": "b0ff6c5db9ebf138ea9c0a636655bf689bad4c09d140e282495df3d3c6e4fb68",
+  "review_sheet_sha256": {
+    "snackbar-visual-review/sheet-01.png": "13c9ac3fea722a3fb3407dcc5a7ed902525f8fb72819ce09b8e7e4990a0724d1",
+    "snackbar-visual-review/sheet-02.png": "d552259dac40ac3cb5643d7b3f02b40bb51a5bc6e7398bc810cec569e8d7eaaf",
+    "snackbar-visual-review/sheet-03.png": "77bb9f912d12cc11e364e0a90a8b989c6eef4db6201613f117ede3f90d2a5b2d"
+  }
+}

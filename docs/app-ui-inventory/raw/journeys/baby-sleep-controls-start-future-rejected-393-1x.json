@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/baby-sleep-controls-start-future-rejected-393-1x.png",
+  "previous_source": "test/goldens/ui_inventory/baby-sleep-controls-start-future-393-1x.png",
+  "route": "/baby",
+  "trigger": "Tap save → 发生时间不能晚于现在。; no write request",
+  "root_entry": "Authenticated More → tap Baby bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/baby/baby_sleep_control_inventory_test.dart"
+}

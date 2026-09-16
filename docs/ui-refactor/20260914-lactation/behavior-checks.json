@@ -1,0 +1,46 @@
+[
+  {
+    "check": "_load unchanged after whitespace normalization",
+    "passed": true
+  },
+  {
+    "check": "_begin unchanged after whitespace normalization",
+    "passed": true
+  },
+  {
+    "check": "_save unchanged after whitespace normalization",
+    "passed": true
+  },
+  {
+    "check": "_undo unchanged after whitespace normalization",
+    "passed": true
+  },
+  {
+    "check": "_reveal unchanged after whitespace normalization",
+    "passed": true
+  },
+  {
+    "check": "_close changes only the local confirmation theme",
+    "passed": true
+  },
+  {
+    "check": "_cancel changes only the local confirmation theme",
+    "passed": true
+  },
+  {
+    "check": "Delete still calls the same controller.delete(record), clears saved message and notifies onChanged only on success; now reveals list feedback on both success and failure",
+    "passed": true
+  },
+  {
+    "check": "Form method selection, measurement, feeling toggle, note binding and 2000-character limit retained",
+    "passed": true
+  },
+  {
+    "check": "Trend date range, summary values and missing-value count unchanged",
+    "passed": true
+  },
+  {
+    "check": "Chart coordinates, interpolation and gaps between missing dates retained",
+    "passed": true
+  }
+]

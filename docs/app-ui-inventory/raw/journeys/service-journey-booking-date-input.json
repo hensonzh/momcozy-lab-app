@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/service-journey-booking-date-input-393.png",
+  "previous_source": "test/goldens/ui_inventory/service-journey-booking-date-calendar-393.png",
+  "route": "/services/episodes/service-episode/booking",
+  "trigger": "Switch appointment date picker to typed input",
+  "root_entry": "Authenticated More → tap Me bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/services/service_inventory_journey_test.dart"
+}

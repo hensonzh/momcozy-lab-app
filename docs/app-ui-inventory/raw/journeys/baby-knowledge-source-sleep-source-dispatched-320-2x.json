@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/baby-knowledge-source-sleep-source-dispatched-320-2x.png",
+  "previous_source": "test/goldens/ui_inventory/baby-knowledge-source-sleep-detail-320-2x.png",
+  "route": "/baby",
+  "trigger": "Tap CDC · 婴儿安全睡眠 → platform accepts external URL; host does not render browser",
+  "root_entry": "Authenticated More → tap Baby bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/baby/baby_knowledge_source_inventory_test.dart"
+}

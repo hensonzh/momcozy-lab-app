@@ -1,0 +1,7 @@
+{
+  "reproduced": "DELETE optimistic-lock query encoded into path; backend HTTP 422",
+  "fix": "IoApiJsonTransport preserves relative URL query parameters; endpoint and backend contract unchanged",
+  "tests": 62,
+  "native_result": "Deleted UI-check after reinstall; entry absent and empty state visible",
+  "apk_sha256": "ca8d8e4233edb154509b21afee9cff144b397c578dfb1ea701cae03200a19dfb"
+}

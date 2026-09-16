@@ -1,0 +1,29 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/modules/services/intake_test.dart
+00:00 +0: inventory intake server consent validation
+00:00 +1: intake age labels use calendar months and retain remaining days
+00:00 +2: intake design disclosures consent and save at 320.0 / 1.0
+00:01 +3: intake design disclosures consent and save at 320.0 / 2.0
+00:01 +4: intake design disclosures consent and save at 390.0 / 1.0
+00:01 +5: intake design disclosures consent and save at 390.0 / 2.0
+00:02 +6: intake design disclosures consent and save at 430.0 / 1.0
+00:02 +7: intake design disclosures consent and save at 430.0 / 2.0
+00:02 +8: intake uncertain save locks fields and retries identical snapshot
+00:03 +9: intake blocks unconfirmed appointment held
+00:03 +10: intake blocks unconfirmed appointment expired
+00:03 +11: intake load failure can recover without stale form actions
+00:03 +12: intake consent withdrawal and discard preserve edits at 1.0
+00:03 +13: intake profile menus and birth date preserve draft at 1.0
+00:03 +14: intake consent withdrawal and discard preserve edits at 2.0
+00:03 +15: intake profile menus and birth date preserve draft at 2.0
+00:04 +16: editing a saved intake returns without repeating first-use preconsult
+00:04 +17: intake validates required consent and retains the submitted revision on retry
+00:04 +18: rebooking prefills content without reusing authorization
+00:04 +19: intake API carries real baby identity, calendar dates and consent version without risk or age aliases
+00:04 +20: intake form with missing feeding mode at 320.0 / 1.0
+00:04 +21: intake form with missing feeding mode at 320.0 / 2.0
+00:04 +22: intake form with missing feeding mode at 390.0 / 1.0
+00:04 +23: intake form with missing feeding mode at 390.0 / 2.0
+00:04 +24: intake form with missing feeding mode at 430.0 / 1.0
+00:04 +25: intake form with missing feeding mode at 430.0 / 2.0
+00:04 +26: intake saves only after fields and explicit sharing are complete
+00:05 +27: All tests passed!

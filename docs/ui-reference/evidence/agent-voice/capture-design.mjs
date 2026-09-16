@@ -1,0 +1,10 @@
+import {chromium} from '/Users/lute/project/momcozy-lab产品设计/node_modules/playwright-core/index.mjs';
+import {mkdirSync,writeFileSync} from 'node:fs';
+const out='/Users/lute/project/momcozy-lab/app/docs/ui-reference/evidence/agent-voice';mkdirSync(out,{recursive:true});
+const browser=await chromium.launch({executablePath:'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',headless:true});
+const context=await browser.newContext({viewport:{width:390,height:844},reducedMotion:'reduce'});
+await context.route('**/*',r=>{const u=new URL(r.request().url());return u.origin==='http://127.0.0.1:4181'&&!u.pathname.startsWith('/api/')?r.continue():r.abort();});
+const page=await context.newPage();await page.goto('http://127.0.0.1:4181/app/agent');await page.evaluate(()=>document.fonts.ready);
+await page.screenshot({path:out+'/design-voice-on.png'});
+await page.locator('.agent-voice-toggle').click();await page.screenshot({path:out+'/design-voice-off.png'});
+const metrics=await page.locator('.agent-voice-toggle,.agent-voice-toggle-track,.agent-voice-toggle-thumb').evaluateAll(xs=>xs.map(e=>{const s=getComputedStyle(e);return {class:e.className,rect:e.getBoundingClientRect().toJSON(),style:Object.fromEntries(['backgroundColor','color','padding','borderRadius','borderColor'].map(k=>[k,s[k]]))}}));writeFileSync(out+'/design-metrics.json',JSON.stringify(metrics,null,2));await browser.close();

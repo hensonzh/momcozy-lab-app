@@ -1,0 +1,6 @@
+{
+  "All production code before AgentActionPanel unchanged except result-card import": true,
+  "Action model status labels eligibility and all subsequent production code unchanged": true,
+  "Original action canConfirm guard retained": true,
+  "Original pending and missing-callback guards retained": true
+}

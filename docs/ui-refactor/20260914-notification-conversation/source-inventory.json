@@ -1,0 +1,56 @@
+[
+  {
+    "id": "07-me/notification-navigation-current-conversation-opened",
+    "module": "账号与隐私",
+    "label": "notification-navigation-current-conversation-opened",
+    "state": "notification-navigation-current-conversation-opened",
+    "image": "07-me/notification-navigation-current-conversation-opened/default.png",
+    "viewport": "07-me/notification-navigation-current-conversation-opened/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/?conversationId=22222222-2222-4222-8222-222222222222"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "common/not-found"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/notifications/notification_navigation_current_inventory_test.dart",
+    "test_case": "notification safe target conversation false",
+    "metadata": "raw/test/goldens/ui_inventory/notification-navigation-current-conversation-opened-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/notification-navigation-current-conversation-opened-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/notification-navigation-current-conversation-opened-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/notification-navigation-current-conversation-opened-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/notification-navigation-current-conversation-opened-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/?conversationId=22222222-2222-4222-8222-222222222222",
+    "entry": "Authenticated More page",
+    "trigger": "Tap notification → conversation route throws Expando string-key ArgumentError and renders ErrorWidget; item is read",
+    "journey": {
+      "source": "test/goldens/ui_inventory/notification-navigation-current-conversation-opened-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/notification-navigation-current-conversation-inbox-393-1x.png",
+      "route": "/?conversationId=22222222-2222-4222-8222-222222222222",
+      "trigger": "Tap notification → conversation route throws Expando string-key ArgumentError and renders ErrorWidget; item is read",
+      "root_entry": "Authenticated More page",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production notification coordinator/repository/controller; isolated HTTP, push gateway and permission platform; real router.go and ScaffoldMessenger callbacks, no native OS dialog or remote push",
+      "test": "test/features/notifications/notification_navigation_current_inventory_test.dart"
+    }
+  }
+]

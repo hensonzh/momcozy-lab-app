@@ -1,0 +1,13 @@
+{
+  "reason": "Older long images predate fixed-tooltip preservation fix; candidate only. Do not mass-recapture or infer every candidate is faulty.",
+  "candidates": [],
+  "reviewed": [
+    {
+      "id": "01-auth/auth-journey-password-tooltip",
+      "image": "01-auth/auth-journey-password-tooltip/default.png",
+      "status": "REUSE_EXISTING_LONG_IMAGE",
+      "review": "Full image visually inspected: one correctly positioned tooltip; header through bottom privacy links visible; 393x897 matches measured scroll content. No recapture needed.",
+      "image_sha256": "1c99ff576d8245fb774a0949fdf2024cf3d4b7cf188b2fbf852eaf97988bb7c9"
+    }
+  ]
+}

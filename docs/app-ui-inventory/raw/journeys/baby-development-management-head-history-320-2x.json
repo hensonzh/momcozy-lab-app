@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/baby-development-management-head-history-320-2x.png",
+  "previous_source": "test/goldens/ui_inventory/baby-development-management-head-saved-320-2x.png",
+  "route": "/babies/inventory-baby/records",
+  "trigger": "History development tab → head records with each saved status",
+  "root_entry": "Authenticated More → tap Baby bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/baby/baby_development_management_inventory_test.dart"
+}

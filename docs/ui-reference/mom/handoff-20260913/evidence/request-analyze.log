@@ -1,0 +1,6 @@
+Analyzing app...                                                
+
+  error • Local variable 'frame' can't be referenced before it is declared. Try moving the declaration to before the first use, or renaming the local variable so that it doesn't hide a name from an enclosing scope • test/features/agent_hub/agent_inventory_journey_test.dart:173:11 • referenced_before_declaration
+  error • Local variable 'frame' can't be referenced before it is declared. Try moving the declaration to before the first use, or renaming the local variable so that it doesn't hide a name from an enclosing scope • test/features/agent_hub/agent_inventory_journey_test.dart:175:11 • referenced_before_declaration
+
+2 issues found. (ran in 3.9s)

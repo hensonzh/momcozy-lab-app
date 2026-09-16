@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/baby-feeding-time-previous-day-input-393-1x.png",
+  "previous_source": "test/goldens/ui_inventory/baby-feeding-time-date-cancelled-393-1x.png",
+  "route": "/baby",
+  "trigger": "Enter previous date before confirmation",
+  "root_entry": "Authenticated More → tap Baby bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/baby/baby_feeding_time_inventory_test.dart"
+}

@@ -1,0 +1,1226 @@
+[
+  {
+    "id": "05-agent/agent-markdown-top",
+    "module": "Cozymate",
+    "label": "今天的记录",
+    "state": "agent-markdown-top",
+    "image": "05-agent/agent-markdown-top/default.png",
+    "viewport": "05-agent/agent-markdown-top/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/",
+      "/me /baby / /schedule /more"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "agent/home",
+      "agent/attachments",
+      "agent/message-menu",
+      "agent/voice",
+      "agent/state-03",
+      "agent/12-agent-error",
+      "agent/12b-agent-conversation"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/features/agent_hub/agent_hub_page.dart",
+      "lib/features/agent_hub/presentation/agent_message_menu.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/features/agent_hub/agent_markdown_design_test.dart",
+    "test_case": "markdown reading 390.0/1.0",
+    "metadata": "raw/test/goldens/design_system/agent-markdown-top-390-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/agent-markdown-top-320-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-markdown-top-320-1x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/agent-markdown-top-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-markdown-top-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/agent-markdown-top-390-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-markdown-top-390-1x.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/agent-markdown-top-390-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-markdown-top-390-2x.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/agent-markdown-top-430-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-markdown-top-430-1x.png.json",
+        "width": 430,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/agent-markdown-top-430-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-markdown-top-430-2x.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "05-agent/agent-markdown-link",
+    "module": "Cozymate",
+    "label": "今天的记录",
+    "state": "agent-markdown-link",
+    "image": "05-agent/agent-markdown-link/default.png",
+    "viewport": "05-agent/agent-markdown-link/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/",
+      "/me /baby / /schedule /more"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "agent/home",
+      "agent/attachments",
+      "agent/message-menu",
+      "agent/voice",
+      "agent/state-03",
+      "agent/12-agent-error",
+      "agent/12b-agent-conversation"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/features/agent_hub/agent_hub_page.dart",
+      "lib/features/agent_hub/presentation/agent_message_menu.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/features/agent_hub/agent_markdown_design_test.dart",
+    "test_case": "markdown reading 390.0/1.0",
+    "metadata": "raw/test/goldens/design_system/agent-markdown-link-390-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/agent-markdown-link-320-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-markdown-link-320-1x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/agent-markdown-link-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-markdown-link-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/agent-markdown-link-390-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-markdown-link-390-1x.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/agent-markdown-link-390-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-markdown-link-390-2x.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/agent-markdown-link-430-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-markdown-link-430-1x.png.json",
+        "width": 430,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/agent-markdown-link-430-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-markdown-link-430-2x.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "05-agent/agent-cards",
+    "module": "Cozymate",
+    "label": "专业泌乳支持",
+    "state": "agent-cards",
+    "image": "05-agent/agent-cards/default.png",
+    "viewport": "05-agent/agent-cards/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [
+      "agent/form"
+    ],
+    "production_widget_files": [
+      "lib/features/agent_hub/artifacts/cards/agent_artifact_card_registry.dart",
+      "lib/features/agent_hub/artifacts/cards/agent_result_card.dart",
+      "lib/features/agent_hub/artifacts/forms/agent_artifact_form_dialog.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/features/agent_hub/agent_me_design_test.dart",
+    "test_case": "Agent cards and dialog at 390.0 / 1.0",
+    "metadata": "raw/test/goldens/design_system/agent-cards-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/agent-cards-320.png",
+        "metadata": "raw/test/goldens/design_system/agent-cards-320.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/agent-cards-390.png",
+        "metadata": "raw/test/goldens/design_system/agent-cards-390.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/agent-cards-430.png",
+        "metadata": "raw/test/goldens/design_system/agent-cards-430.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "05-agent/agent-entry-journey-external-card",
+    "module": "Cozymate",
+    "label": "嗨 Mia，  /  / 今天想聊点什么呢？  /  / 把你现在最关心的事情告诉我就好，我会陪你一起梳理。",
+    "state": "agent-entry-journey-external-card",
+    "image": "05-agent/agent-entry-journey-external-card/default.png",
+    "viewport": "05-agent/agent-entry-journey-external-card/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "agent/home",
+      "agent/attachments",
+      "agent/message-menu",
+      "agent/structured-card",
+      "agent/voice",
+      "common/not-found",
+      "agent/state-03",
+      "agent/12-agent-error",
+      "agent/12b-agent-conversation"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/features/agent_hub/agent_hub_page.dart",
+      "lib/features/agent_hub/artifacts/agent_artifact_panel.dart",
+      "lib/features/agent_hub/artifacts/cards/agent_result_card.dart",
+      "lib/features/agent_hub/presentation/agent_message_menu.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/agent_hub/agent_entry_inventory_journey_test.dart",
+    "test_case": "inventory artifact external link failure and retry 393/1",
+    "metadata": "raw/test/goldens/ui_inventory/agent-entry-journey-external-card-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/agent-entry-journey-external-card-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-entry-journey-external-card-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/agent-entry-journey-external-card-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-entry-journey-external-card-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/",
+    "entry": "Authenticated More → tap Cozymate bottom navigation",
+    "trigger": "External artifact link appears in the completed reply",
+    "journey": {
+      "source": "test/goldens/ui_inventory/agent-entry-journey-external-card-393.png",
+      "previous_source": null,
+      "route": "/",
+      "trigger": "External artifact link appears in the completed reply",
+      "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage via public agentHubBuilder; production SSE parser, runner with default retries, cancel client and profile repository; isolated SSE/control/ticket HTTP and voice dependencies; production artifact mapper and route dispatch; external launcher controlled at public interface. Motion page is not force mounted and no missing route is added. History disabled as in default local build; no remote model request.",
+      "test": "test/features/agent_hub/agent_entry_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "05-agent/agent-entry-journey-forward_head-card",
+    "module": "Cozymate",
+    "label": "嗨 Mia，  /  / 今天想聊点什么呢？  /  / 把你现在最关心的事情告诉我就好，我会陪你一起梳理。",
+    "state": "agent-entry-journey-forward_head-card",
+    "image": "05-agent/agent-entry-journey-forward_head-card/default.png",
+    "viewport": "05-agent/agent-entry-journey-forward_head-card/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "agent/home",
+      "agent/attachments",
+      "agent/message-menu",
+      "agent/structured-card",
+      "agent/voice",
+      "common/not-found",
+      "agent/state-03",
+      "agent/12-agent-error",
+      "agent/12b-agent-conversation"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/features/agent_hub/agent_hub_page.dart",
+      "lib/features/agent_hub/artifacts/agent_artifact_panel.dart",
+      "lib/features/agent_hub/artifacts/cards/agent_artifact_card_registry.dart",
+      "lib/features/agent_hub/artifacts/cards/agent_result_card.dart",
+      "lib/features/agent_hub/presentation/agent_message_menu.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/agent_hub/agent_entry_inventory_journey_test.dart",
+    "test_case": "inventory artifact motion dead end forward_head 393/1",
+    "metadata": "raw/test/goldens/ui_inventory/agent-entry-journey-forward_head-card-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/agent-entry-journey-forward_head-card-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-entry-journey-forward_head-card-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/agent-entry-journey-forward_head-card-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-entry-journey-forward_head-card-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/",
+    "entry": "Authenticated More → tap Cozymate bottom navigation",
+    "trigger": "Supported motion artifact arrives → normal card with start CTA",
+    "journey": {
+      "source": "test/goldens/ui_inventory/agent-entry-journey-forward_head-card-393.png",
+      "previous_source": null,
+      "route": "/",
+      "trigger": "Supported motion artifact arrives → normal card with start CTA",
+      "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage via public agentHubBuilder; production SSE parser, runner with default retries, cancel client and profile repository; isolated SSE/control/ticket HTTP and voice dependencies; production artifact mapper and route dispatch; external launcher controlled at public interface. Motion page is not force mounted and no missing route is added. History disabled as in default local build; no remote model request.",
+      "test": "test/features/agent_hub/agent_entry_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "05-agent/agent-entry-journey-posture_screen-card",
+    "module": "Cozymate",
+    "label": "嗨 Mia，  /  / 今天想聊点什么呢？  /  / 把你现在最关心的事情告诉我就好，我会陪你一起梳理。",
+    "state": "agent-entry-journey-posture_screen-card",
+    "image": "05-agent/agent-entry-journey-posture_screen-card/default.png",
+    "viewport": "05-agent/agent-entry-journey-posture_screen-card/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "agent/home",
+      "agent/attachments",
+      "agent/message-menu",
+      "agent/structured-card",
+      "agent/voice",
+      "common/not-found",
+      "agent/state-03",
+      "agent/12-agent-error",
+      "agent/12b-agent-conversation"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/features/agent_hub/agent_hub_page.dart",
+      "lib/features/agent_hub/artifacts/agent_artifact_panel.dart",
+      "lib/features/agent_hub/artifacts/cards/agent_artifact_card_registry.dart",
+      "lib/features/agent_hub/artifacts/cards/agent_result_card.dart",
+      "lib/features/agent_hub/presentation/agent_message_menu.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/agent_hub/agent_entry_inventory_journey_test.dart",
+    "test_case": "inventory artifact motion dead end posture_screen 393/1",
+    "metadata": "raw/test/goldens/ui_inventory/agent-entry-journey-posture_screen-card-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/agent-entry-journey-posture_screen-card-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-entry-journey-posture_screen-card-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/agent-entry-journey-posture_screen-card-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-entry-journey-posture_screen-card-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/",
+    "entry": "Authenticated More → tap Cozymate bottom navigation",
+    "trigger": "Supported motion artifact arrives → normal card with start CTA",
+    "journey": {
+      "source": "test/goldens/ui_inventory/agent-entry-journey-posture_screen-card-393.png",
+      "previous_source": null,
+      "route": "/",
+      "trigger": "Supported motion artifact arrives → normal card with start CTA",
+      "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage via public agentHubBuilder; production SSE parser, runner with default retries, cancel client and profile repository; isolated SSE/control/ticket HTTP and voice dependencies; production artifact mapper and route dispatch; external launcher controlled at public interface. Motion page is not force mounted and no missing route is added. History disabled as in default local build; no remote model request.",
+      "test": "test/features/agent_hub/agent_entry_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "05-agent/agent-resource-journey-image-card",
+    "module": "Cozymate",
+    "label": "嗨 Mia，  /  / 今天想聊点什么呢？  /  / 把你现在最关心的事情告诉我就好，我会陪你一起梳理。",
+    "state": "agent-resource-journey-image-card",
+    "image": "05-agent/agent-resource-journey-image-card/default.png",
+    "viewport": "05-agent/agent-resource-journey-image-card/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "agent/home",
+      "agent/attachments",
+      "agent/message-menu",
+      "agent/structured-card",
+      "agent/voice",
+      "common/not-found",
+      "agent/state-03",
+      "agent/12-agent-error",
+      "agent/12b-agent-conversation"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/features/agent_hub/agent_hub_page.dart",
+      "lib/features/agent_hub/artifacts/agent_artifact_panel.dart",
+      "lib/features/agent_hub/artifacts/cards/agent_result_card.dart",
+      "lib/features/agent_hub/presentation/agent_message_menu.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/agent_hub/agent_resource_inventory_journey_test.dart",
+    "test_case": "inventory agent image entry loading retry gestures and return 393.0",
+    "metadata": "raw/test/goldens/ui_inventory/agent-resource-journey-image-card-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/agent-resource-journey-image-card-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-resource-journey-image-card-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/agent-resource-journey-image-card-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-resource-journey-image-card-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/",
+    "entry": "Authenticated More → tap Cozymate bottom navigation",
+    "trigger": "More → Cozymate → send request → real SSE artifact presents 查看示意图片",
+    "journey": {
+      "source": "test/goldens/ui_inventory/agent-resource-journey-image-card-393.png",
+      "previous_source": null,
+      "route": "/",
+      "trigger": "More → Cozymate → send request → real SSE artifact presents 查看示意图片",
+      "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage through public builder; real SSE parser, runner, artifact mapper and dispatcher, media and Care repositories; only SSE/HTTP bytes, voice, session and video platform isolated. Real image bytes decoded; video texture/native decoder is a platform stub. Default local history flag; no remote requests.",
+      "test": "test/features/agent_hub/agent_resource_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "05-agent/agent-resource-journey-image-return",
+    "module": "Cozymate",
+    "label": "嗨 Mia，  /  / 今天想聊点什么呢？  /  / 把你现在最关心的事情告诉我就好，我会陪你一起梳理。",
+    "state": "agent-resource-journey-image-return",
+    "image": "05-agent/agent-resource-journey-image-return/default.png",
+    "viewport": "05-agent/agent-resource-journey-image-return/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "agent/home",
+      "agent/attachments",
+      "agent/message-menu",
+      "agent/structured-card",
+      "agent/voice",
+      "common/not-found",
+      "agent/state-03",
+      "agent/12-agent-error",
+      "agent/12b-agent-conversation"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/features/agent_hub/agent_hub_page.dart",
+      "lib/features/agent_hub/artifacts/agent_artifact_panel.dart",
+      "lib/features/agent_hub/artifacts/cards/agent_result_card.dart",
+      "lib/features/agent_hub/presentation/agent_message_menu.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/agent_hub/agent_resource_inventory_journey_test.dart",
+    "test_case": "inventory agent image entry loading retry gestures and return 393.0",
+    "metadata": "raw/test/goldens/ui_inventory/agent-resource-journey-image-return-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/agent-resource-journey-image-return-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-resource-journey-image-return-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/agent-resource-journey-image-return-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-resource-journey-image-return-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/",
+    "entry": "Authenticated More → tap Cozymate bottom navigation",
+    "trigger": "Viewer back without pop stack → Cozymate with original image card",
+    "journey": {
+      "source": "test/goldens/ui_inventory/agent-resource-journey-image-return-393.png",
+      "previous_source": "test/goldens/ui_inventory/agent-resource-journey-image-reset-393.png",
+      "route": "/",
+      "trigger": "Viewer back without pop stack → Cozymate with original image card",
+      "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage through public builder; real SSE parser, runner, artifact mapper and dispatcher, media and Care repositories; only SSE/HTTP bytes, voice, session and video platform isolated. Real image bytes decoded; video texture/native decoder is a platform stub. Default local history flag; no remote requests.",
+      "test": "test/features/agent_hub/agent_resource_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "05-agent/agent-resource-journey-pdf-card",
+    "module": "Cozymate",
+    "label": "嗨 Mia，  /  / 今天想聊点什么呢？  /  / 把你现在最关心的事情告诉我就好，我会陪你一起梳理。",
+    "state": "agent-resource-journey-pdf-card",
+    "image": "05-agent/agent-resource-journey-pdf-card/default.png",
+    "viewport": "05-agent/agent-resource-journey-pdf-card/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "agent/home",
+      "agent/attachments",
+      "agent/message-menu",
+      "agent/structured-card",
+      "agent/voice",
+      "common/not-found",
+      "agent/state-03",
+      "agent/12-agent-error",
+      "agent/12b-agent-conversation"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/features/agent_hub/agent_hub_page.dart",
+      "lib/features/agent_hub/artifacts/agent_artifact_panel.dart",
+      "lib/features/agent_hub/artifacts/cards/agent_result_card.dart",
+      "lib/features/agent_hub/presentation/agent_message_menu.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/agent_hub/agent_resource_inventory_journey_test.dart",
+    "test_case": "inventory agent PDF entry failure retry and pending return 393.0",
+    "metadata": "raw/test/goldens/ui_inventory/agent-resource-journey-pdf-card-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/agent-resource-journey-pdf-card-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-resource-journey-pdf-card-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/agent-resource-journey-pdf-card-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-resource-journey-pdf-card-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/",
+    "entry": "Authenticated More → tap Cozymate bottom navigation",
+    "trigger": "More → Cozymate → send request → real SSE artifact presents 阅读资料 PDF",
+    "journey": {
+      "source": "test/goldens/ui_inventory/agent-resource-journey-pdf-card-393.png",
+      "previous_source": null,
+      "route": "/",
+      "trigger": "More → Cozymate → send request → real SSE artifact presents 阅读资料 PDF",
+      "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage through public builder; real SSE parser, runner, artifact mapper and dispatcher, media and Care repositories; only SSE/HTTP bytes, voice, session and video platform isolated. Real image bytes decoded; video texture/native decoder is a platform stub. Default local history flag; no remote requests.",
+      "test": "test/features/agent_hub/agent_resource_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "05-agent/agent-resource-journey-pdf-pending-return",
+    "module": "Cozymate",
+    "label": "嗨 Mia，  /  / 今天想聊点什么呢？  /  / 把你现在最关心的事情告诉我就好，我会陪你一起梳理。",
+    "state": "agent-resource-journey-pdf-pending-return",
+    "image": "05-agent/agent-resource-journey-pdf-pending-return/default.png",
+    "viewport": "05-agent/agent-resource-journey-pdf-pending-return/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "agent/home",
+      "agent/attachments",
+      "agent/message-menu",
+      "agent/structured-card",
+      "agent/voice",
+      "common/not-found",
+      "agent/state-03",
+      "agent/12-agent-error",
+      "agent/12b-agent-conversation"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/features/agent_hub/agent_hub_page.dart",
+      "lib/features/agent_hub/artifacts/agent_artifact_panel.dart",
+      "lib/features/agent_hub/artifacts/cards/agent_result_card.dart",
+      "lib/features/agent_hub/presentation/agent_message_menu.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/agent_hub/agent_resource_inventory_journey_test.dart",
+    "test_case": "inventory agent PDF entry failure retry and pending return 393.0",
+    "metadata": "raw/test/goldens/ui_inventory/agent-resource-journey-pdf-pending-return-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/agent-resource-journey-pdf-pending-return-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-resource-journey-pdf-pending-return-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/agent-resource-journey-pdf-pending-return-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-resource-journey-pdf-pending-return-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/",
+    "entry": "Authenticated More → tap Cozymate bottom navigation",
+    "trigger": "Back while PDF read pending → original Cozymate reply",
+    "journey": {
+      "source": "test/goldens/ui_inventory/agent-resource-journey-pdf-pending-return-393.png",
+      "previous_source": "test/goldens/ui_inventory/agent-resource-journey-pdf-retrying-393.png",
+      "route": "/",
+      "trigger": "Back while PDF read pending → original Cozymate reply",
+      "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage through public builder; real SSE parser, runner, artifact mapper and dispatcher, media and Care repositories; only SSE/HTTP bytes, voice, session and video platform isolated. Real image bytes decoded; video texture/native decoder is a platform stub. Default local history flag; no remote requests.",
+      "test": "test/features/agent_hub/agent_resource_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "05-agent/agent-resource-journey-invalid-card",
+    "module": "Cozymate",
+    "label": "嗨 Mia，  /  / 今天想聊点什么呢？  /  / 把你现在最关心的事情告诉我就好，我会陪你一起梳理。",
+    "state": "agent-resource-journey-invalid-card",
+    "image": "05-agent/agent-resource-journey-invalid-card/default.png",
+    "viewport": "05-agent/agent-resource-journey-invalid-card/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "agent/home",
+      "agent/attachments",
+      "agent/message-menu",
+      "agent/structured-card",
+      "agent/voice",
+      "common/not-found",
+      "agent/state-03",
+      "agent/12-agent-error",
+      "agent/12b-agent-conversation"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/features/agent_hub/agent_hub_page.dart",
+      "lib/features/agent_hub/artifacts/agent_artifact_panel.dart",
+      "lib/features/agent_hub/artifacts/cards/agent_result_card.dart",
+      "lib/features/agent_hub/presentation/agent_message_menu.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/agent_hub/agent_resource_inventory_journey_test.dart",
+    "test_case": "inventory malformed media artifact cannot open viewer",
+    "metadata": "raw/test/goldens/ui_inventory/agent-resource-journey-invalid-card-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/agent-resource-journey-invalid-card-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-resource-journey-invalid-card-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/",
+    "entry": "Authenticated More → tap Cozymate bottom navigation",
+    "trigger": "More → Cozymate → send request → real SSE artifact presents 查看失效资料",
+    "journey": {
+      "source": "test/goldens/ui_inventory/agent-resource-journey-invalid-card-393.png",
+      "previous_source": null,
+      "route": "/",
+      "trigger": "More → Cozymate → send request → real SSE artifact presents 查看失效资料",
+      "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage through public builder; real SSE parser, runner, artifact mapper and dispatcher, media and Care repositories; only SSE/HTTP bytes, voice, session and video platform isolated. Real image bytes decoded; video texture/native decoder is a platform stub. Default local history flag; no remote requests.",
+      "test": "test/features/agent_hub/agent_resource_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "05-agent/agent-resource-journey-invalid-no-navigation",
+    "module": "Cozymate",
+    "label": "嗨 Mia，  /  / 今天想聊点什么呢？  /  / 把你现在最关心的事情告诉我就好，我会陪你一起梳理。",
+    "state": "agent-resource-journey-invalid-no-navigation",
+    "image": "05-agent/agent-resource-journey-invalid-no-navigation/default.png",
+    "viewport": "05-agent/agent-resource-journey-invalid-no-navigation/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "agent/home",
+      "agent/attachments",
+      "agent/message-menu",
+      "agent/structured-card",
+      "agent/voice",
+      "common/not-found",
+      "agent/state-03",
+      "agent/12-agent-error",
+      "agent/12b-agent-conversation"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/features/agent_hub/agent_hub_page.dart",
+      "lib/features/agent_hub/artifacts/agent_artifact_panel.dart",
+      "lib/features/agent_hub/artifacts/cards/agent_result_card.dart",
+      "lib/features/agent_hub/presentation/agent_message_menu.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/agent_hub/agent_resource_inventory_journey_test.dart",
+    "test_case": "inventory malformed media artifact cannot open viewer",
+    "metadata": "raw/test/goldens/ui_inventory/agent-resource-journey-invalid-no-navigation-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/agent-resource-journey-invalid-no-navigation-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-resource-journey-invalid-no-navigation-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/",
+    "entry": "Authenticated More → tap Cozymate bottom navigation",
+    "trigger": "Tap malformed asset action → stable asset guard ignores it, no missing-resource page forced",
+    "journey": {
+      "source": "test/goldens/ui_inventory/agent-resource-journey-invalid-no-navigation-393.png",
+      "previous_source": "test/goldens/ui_inventory/agent-resource-journey-invalid-card-393.png",
+      "route": "/",
+      "trigger": "Tap malformed asset action → stable asset guard ignores it, no missing-resource page forced",
+      "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage through public builder; real SSE parser, runner, artifact mapper and dispatcher, media and Care repositories; only SSE/HTTP bytes, voice, session and video platform isolated. Real image bytes decoded; video texture/native decoder is a platform stub. Default local history flag; no remote requests.",
+      "test": "test/features/agent_hub/agent_resource_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "05-agent/agent-resource-journey-renew-card",
+    "module": "Cozymate",
+    "label": "嗨 Mia，  /  / 今天想聊点什么呢？  /  / 把你现在最关心的事情告诉我就好，我会陪你一起梳理。",
+    "state": "agent-resource-journey-renew-card",
+    "image": "05-agent/agent-resource-journey-renew-card/default.png",
+    "viewport": "05-agent/agent-resource-journey-renew-card/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "agent/home",
+      "agent/attachments",
+      "agent/message-menu",
+      "agent/structured-card",
+      "agent/voice",
+      "common/not-found",
+      "agent/state-03",
+      "agent/12-agent-error",
+      "agent/12b-agent-conversation"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/features/agent_hub/agent_hub_page.dart",
+      "lib/features/agent_hub/artifacts/agent_artifact_panel.dart",
+      "lib/features/agent_hub/artifacts/cards/agent_result_card.dart",
+      "lib/features/agent_hub/presentation/agent_message_menu.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/agent_hub/agent_resource_inventory_journey_test.dart",
+    "test_case": "inventory agent generic renewal entry and return 393.0",
+    "metadata": "raw/test/goldens/ui_inventory/agent-resource-journey-renew-card-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/agent-resource-journey-renew-card-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-resource-journey-renew-card-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/agent-resource-journey-renew-card-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-resource-journey-renew-card-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/",
+    "entry": "Authenticated More → tap Cozymate bottom navigation",
+    "trigger": "More → Cozymate → send request → real SSE artifact presents 继续查看支持方案",
+    "journey": {
+      "source": "test/goldens/ui_inventory/agent-resource-journey-renew-card-393.png",
+      "previous_source": null,
+      "route": "/",
+      "trigger": "More → Cozymate → send request → real SSE artifact presents 继续查看支持方案",
+      "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage through public builder; real SSE parser, runner, artifact mapper and dispatcher, media and Care repositories; only SSE/HTTP bytes, voice, session and video platform isolated. Real image bytes decoded; video texture/native decoder is a platform stub. Default local history flag; no remote requests.",
+      "test": "test/features/agent_hub/agent_resource_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "05-agent/agent-resource-journey-renew-card-return",
+    "module": "Cozymate",
+    "label": "嗨 Mia，  /  / 今天想聊点什么呢？  /  / 把你现在最关心的事情告诉我就好，我会陪你一起梳理。",
+    "state": "agent-resource-journey-renew-card-return",
+    "image": "05-agent/agent-resource-journey-renew-card-return/default.png",
+    "viewport": "05-agent/agent-resource-journey-renew-card-return/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "agent/home",
+      "agent/attachments",
+      "agent/message-menu",
+      "agent/structured-card",
+      "agent/voice",
+      "common/not-found",
+      "agent/state-03",
+      "agent/12-agent-error",
+      "agent/12b-agent-conversation"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/features/agent_hub/agent_hub_page.dart",
+      "lib/features/agent_hub/artifacts/agent_artifact_panel.dart",
+      "lib/features/agent_hub/artifacts/cards/agent_result_card.dart",
+      "lib/features/agent_hub/presentation/agent_message_menu.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/agent_hub/agent_resource_inventory_journey_test.dart",
+    "test_case": "inventory agent generic renewal entry and return 393.0",
+    "metadata": "raw/test/goldens/ui_inventory/agent-resource-journey-renew-card-return-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/agent-resource-journey-renew-card-return-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-resource-journey-renew-card-return-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/agent-resource-journey-renew-card-return-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-resource-journey-renew-card-return-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/",
+    "entry": "Authenticated More → tap Cozymate bottom navigation",
+    "trigger": "Tap Cozymate → original reply and resource card restored",
+    "journey": {
+      "source": "test/goldens/ui_inventory/agent-resource-journey-renew-card-return-393.png",
+      "previous_source": "test/goldens/ui_inventory/agent-resource-journey-renew-back-mom-393.png",
+      "route": "/",
+      "trigger": "Tap Cozymate → original reply and resource card restored",
+      "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage through public builder; real SSE parser, runner, artifact mapper and dispatcher, media and Care repositories; only SSE/HTTP bytes, voice, session and video platform isolated. Real image bytes decoded; video texture/native decoder is a platform stub. Default local history flag; no remote requests.",
+      "test": "test/features/agent_hub/agent_resource_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "05-agent/agent-resource-journey-video-card",
+    "module": "Cozymate",
+    "label": "嗨 Mia，  /  / 今天想聊点什么呢？  /  / 把你现在最关心的事情告诉我就好，我会陪你一起梳理。",
+    "state": "agent-resource-journey-video-card",
+    "image": "05-agent/agent-resource-journey-video-card/default.png",
+    "viewport": "05-agent/agent-resource-journey-video-card/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "agent/home",
+      "agent/attachments",
+      "agent/message-menu",
+      "agent/structured-card",
+      "agent/voice",
+      "common/not-found",
+      "agent/state-03",
+      "agent/12-agent-error",
+      "agent/12b-agent-conversation"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/features/agent_hub/agent_hub_page.dart",
+      "lib/features/agent_hub/artifacts/agent_artifact_panel.dart",
+      "lib/features/agent_hub/artifacts/cards/agent_result_card.dart",
+      "lib/features/agent_hub/presentation/agent_message_menu.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/agent_hub/agent_resource_inventory_journey_test.dart",
+    "test_case": "inventory agent video entry retry controls and return 393.0",
+    "metadata": "raw/test/goldens/ui_inventory/agent-resource-journey-video-card-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/agent-resource-journey-video-card-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-resource-journey-video-card-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/agent-resource-journey-video-card-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-resource-journey-video-card-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/",
+    "entry": "Authenticated More → tap Cozymate bottom navigation",
+    "trigger": "More → Cozymate → send request → real SSE artifact presents 播放指导视频",
+    "journey": {
+      "source": "test/goldens/ui_inventory/agent-resource-journey-video-card-393.png",
+      "previous_source": null,
+      "route": "/",
+      "trigger": "More → Cozymate → send request → real SSE artifact presents 播放指导视频",
+      "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage through public builder; real SSE parser, runner, artifact mapper and dispatcher, media and Care repositories; only SSE/HTTP bytes, voice, session and video platform isolated. Real image bytes decoded; video texture/native decoder is a platform stub. Default local history flag; no remote requests.",
+      "test": "test/features/agent_hub/agent_resource_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "05-agent/agent-resource-journey-video-return",
+    "module": "Cozymate",
+    "label": "嗨 Mia，  /  / 今天想聊点什么呢？  /  / 把你现在最关心的事情告诉我就好，我会陪你一起梳理。",
+    "state": "agent-resource-journey-video-return",
+    "image": "05-agent/agent-resource-journey-video-return/default.png",
+    "viewport": "05-agent/agent-resource-journey-video-return/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "agent/home",
+      "agent/attachments",
+      "agent/message-menu",
+      "agent/structured-card",
+      "agent/voice",
+      "common/not-found",
+      "agent/state-03",
+      "agent/12-agent-error",
+      "agent/12b-agent-conversation"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/features/agent_hub/agent_hub_page.dart",
+      "lib/features/agent_hub/artifacts/agent_artifact_panel.dart",
+      "lib/features/agent_hub/artifacts/cards/agent_result_card.dart",
+      "lib/features/agent_hub/presentation/agent_message_menu.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/agent_hub/agent_resource_inventory_journey_test.dart",
+    "test_case": "inventory agent video entry retry controls and return 393.0",
+    "metadata": "raw/test/goldens/ui_inventory/agent-resource-journey-video-return-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/agent-resource-journey-video-return-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-resource-journey-video-return-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/agent-resource-journey-video-return-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-resource-journey-video-return-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/",
+    "entry": "Authenticated More → tap Cozymate bottom navigation",
+    "trigger": "Media back → original card; video controller disposed",
+    "journey": {
+      "source": "test/goldens/ui_inventory/agent-resource-journey-video-return-393.png",
+      "previous_source": "test/goldens/ui_inventory/agent-resource-journey-video-recovered-393.png",
+      "route": "/",
+      "trigger": "Media back → original card; video controller disposed",
+      "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage through public builder; real SSE parser, runner, artifact mapper and dispatcher, media and Care repositories; only SSE/HTTP bytes, voice, session and video platform isolated. Real image bytes decoded; video texture/native decoder is a platform stub. Default local history flag; no remote requests.",
+      "test": "test/features/agent_hub/agent_resource_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "05-agent/native-resource-card",
+    "module": "Cozymate",
+    "label": "原生资料卡与中文按钮",
+    "state": "原生资料卡与中文按钮",
+    "image": "05-agent/native-resource-card/default.png",
+    "viewport": "native/resource-journey/native-resource-card.png",
+    "extent": "full-native-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [],
+    "production_widget_files": [
+      "lib/features/agent_hub/agent_hub_page.dart"
+    ],
+    "evidence_kind": "Android-native-normal-route-with-isolated-data",
+    "normal_entry_verified": true,
+    "test": "integration_test/agent_resource_inventory_test.dart",
+    "test_case": "Actual native Agent reply with four Chinese action labels",
+    "metadata": "native/resource-manifest.json",
+    "variants": [],
+    "journey": {
+      "from": null,
+      "to": "05-agent/native-resource-card",
+      "source": "native/resource-journey/native-resource-card.png",
+      "root_entry": "More → Cozymate → send question → SSE artifact card → actual action button",
+      "route": "/",
+      "trigger": "Actual native Agent reply with four Chinese action labels",
+      "evidence": "实际 Android App 路由；从 More 点击 Cozymate，发送问题并消费隔离 SSE；卡片按钮执行正式 dispatcher。业务/会话为测试依赖，媒体通过本地 HTTP 与实际 PDFium、Android 视频插件、图片解码器。",
+      "test": "integration_test/agent_resource_inventory_test.dart",
+      "metadata": "native/resource-manifest.json"
+    },
+    "verified_route": "/",
+    "entry": "More → Cozymate → send question → SSE artifact card → actual action button",
+    "trigger": "Actual native Agent reply with four Chinese action labels"
+  },
+  {
+    "id": "05-agent/native-resource-image-return",
+    "module": "Cozymate",
+    "label": "图片返回原资料卡",
+    "state": "图片返回原资料卡",
+    "image": "05-agent/native-resource-image-return/default.png",
+    "viewport": "native/resource-journey/native-resource-image-return.png",
+    "extent": "full-native-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [],
+    "production_widget_files": [
+      "lib/features/agent_hub/agent_hub_page.dart"
+    ],
+    "evidence_kind": "Android-native-normal-route-with-isolated-data",
+    "normal_entry_verified": true,
+    "test": "integration_test/agent_resource_inventory_test.dart",
+    "test_case": "Image back → original native card",
+    "metadata": "native/resource-manifest.json",
+    "variants": [],
+    "journey": {
+      "from": "11-media/native-resource-image-zoom",
+      "to": "05-agent/native-resource-image-return",
+      "source": "native/resource-journey/native-resource-image-return.png",
+      "root_entry": "More → Cozymate → send question → SSE artifact card → actual action button",
+      "route": "/",
+      "trigger": "Image back → original native card",
+      "evidence": "实际 Android App 路由；从 More 点击 Cozymate，发送问题并消费隔离 SSE；卡片按钮执行正式 dispatcher。业务/会话为测试依赖，媒体通过本地 HTTP 与实际 PDFium、Android 视频插件、图片解码器。",
+      "test": "integration_test/agent_resource_inventory_test.dart",
+      "metadata": "native/resource-manifest.json"
+    },
+    "verified_route": "/",
+    "entry": "More → Cozymate → send question → SSE artifact card → actual action button",
+    "trigger": "Image back → original native card"
+  },
+  {
+    "id": "05-agent/native-resource-pdf-return",
+    "module": "Cozymate",
+    "label": "PDF 返回原资料卡",
+    "state": "PDF 返回原资料卡",
+    "image": "05-agent/native-resource-pdf-return/default.png",
+    "viewport": "native/resource-journey/native-resource-pdf-return.png",
+    "extent": "full-native-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [],
+    "production_widget_files": [
+      "lib/features/agent_hub/agent_hub_page.dart"
+    ],
+    "evidence_kind": "Android-native-normal-route-with-isolated-data",
+    "normal_entry_verified": true,
+    "test": "integration_test/agent_resource_inventory_test.dart",
+    "test_case": "Native PDF back → original Agent card",
+    "metadata": "native/resource-manifest.json",
+    "variants": [],
+    "journey": {
+      "from": "11-media/native-resource-pdf-reset",
+      "to": "05-agent/native-resource-pdf-return",
+      "source": "native/resource-journey/native-resource-pdf-return.png",
+      "root_entry": "More → Cozymate → send question → SSE artifact card → actual action button",
+      "route": "/",
+      "trigger": "Native PDF back → original Agent card",
+      "evidence": "实际 Android App 路由；从 More 点击 Cozymate，发送问题并消费隔离 SSE；卡片按钮执行正式 dispatcher。业务/会话为测试依赖，媒体通过本地 HTTP 与实际 PDFium、Android 视频插件、图片解码器。",
+      "test": "integration_test/agent_resource_inventory_test.dart",
+      "metadata": "native/resource-manifest.json"
+    },
+    "verified_route": "/",
+    "entry": "More → Cozymate → send question → SSE artifact card → actual action button",
+    "trigger": "Native PDF back → original Agent card"
+  },
+  {
+    "id": "05-agent/native-resource-renew-return",
+    "module": "Cozymate",
+    "label": "续购返回并恢复原资料卡",
+    "state": "续购返回并恢复原资料卡",
+    "image": "05-agent/native-resource-renew-return/default.png",
+    "viewport": "native/resource-journey/native-resource-renew-return.png",
+    "extent": "full-native-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [],
+    "production_widget_files": [
+      "lib/features/agent_hub/agent_hub_page.dart"
+    ],
+    "evidence_kind": "Android-native-normal-route-with-isolated-data",
+    "normal_entry_verified": true,
+    "test": "integration_test/agent_resource_inventory_test.dart",
+    "test_case": "Renewal back → Me; Cozymate tab restores the original reply",
+    "metadata": "native/resource-manifest.json",
+    "variants": [],
+    "journey": {
+      "from": "08-expert-service/native-resource-renew",
+      "to": "05-agent/native-resource-renew-return",
+      "source": "native/resource-journey/native-resource-renew-return.png",
+      "root_entry": "More → Cozymate → send question → SSE artifact card → actual action button",
+      "route": "/",
+      "trigger": "Renewal back → Me; Cozymate tab restores the original reply",
+      "evidence": "实际 Android App 路由；从 More 点击 Cozymate，发送问题并消费隔离 SSE；卡片按钮执行正式 dispatcher。业务/会话为测试依赖，媒体通过本地 HTTP 与实际 PDFium、Android 视频插件、图片解码器。",
+      "test": "integration_test/agent_resource_inventory_test.dart",
+      "metadata": "native/resource-manifest.json"
+    },
+    "verified_route": "/",
+    "entry": "More → Cozymate → send question → SSE artifact card → actual action button",
+    "trigger": "Renewal back → Me; Cozymate tab restores the original reply"
+  },
+  {
+    "id": "05-agent/native-resource-video-return",
+    "module": "Cozymate",
+    "label": "视频返回原资料卡",
+    "state": "视频返回原资料卡",
+    "image": "05-agent/native-resource-video-return/default.png",
+    "viewport": "native/resource-journey/native-resource-video-return.png",
+    "extent": "full-native-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [],
+    "production_widget_files": [
+      "lib/features/agent_hub/agent_hub_page.dart"
+    ],
+    "evidence_kind": "Android-native-normal-route-with-isolated-data",
+    "normal_entry_verified": true,
+    "test": "integration_test/agent_resource_inventory_test.dart",
+    "test_case": "Video back disposes player and restores original card",
+    "metadata": "native/resource-manifest.json",
+    "variants": [],
+    "journey": {
+      "from": "11-media/native-resource-video-inline",
+      "to": "05-agent/native-resource-video-return",
+      "source": "native/resource-journey/native-resource-video-return.png",
+      "root_entry": "More → Cozymate → send question → SSE artifact card → actual action button",
+      "route": "/",
+      "trigger": "Video back disposes player and restores original card",
+      "evidence": "实际 Android App 路由；从 More 点击 Cozymate，发送问题并消费隔离 SSE；卡片按钮执行正式 dispatcher。业务/会话为测试依赖，媒体通过本地 HTTP 与实际 PDFium、Android 视频插件、图片解码器。",
+      "test": "integration_test/agent_resource_inventory_test.dart",
+      "metadata": "native/resource-manifest.json"
+    },
+    "verified_route": "/",
+    "entry": "More → Cozymate → send question → SSE artifact card → actual action button",
+    "trigger": "Video back disposes player and restores original card"
+  }
+]

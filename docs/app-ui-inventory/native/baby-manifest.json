@@ -1,0 +1,37 @@
+{
+  "native/baby-ready.png": {
+    "route": "/baby",
+    "entry": "Bottom navigation → Baby",
+    "condition": "existing baby, records empty"
+  },
+  "native/baby-switcher.png": {
+    "route": "/baby",
+    "entry": "Baby → current baby name",
+    "condition": "one owned profile"
+  },
+  "native/baby-profile.png": {
+    "route": "/baby",
+    "entry": "Baby → name → edit current baby",
+    "condition": "existing profile; no save performed"
+  },
+  "native/baby-profile-software-keyboard.png": {
+    "route": "/baby",
+    "entry": "Baby → name → edit current baby → nickname → input toolbar menu → Show on-screen keyboard",
+    "condition": "Actual floating Android software keyboard; show_ime_with_hard_keyboard remained 0 in this capture; no text edited or saved"
+  },
+  "native/baby-profile-hardware-input-toolbar.png": {
+    "route": "/baby",
+    "entry": "edit current baby → tap nickname field",
+    "condition": "existing emulator hardware keyboard mode; floating input toolbar"
+  },
+  "native/baby-profile-input-toolbar-mode1.png": {
+    "route": "/baby",
+    "entry": "edit current baby → nickname",
+    "condition": "Only floating input toolbar, despite setting 1; NOT an expanded software keyboard; setting restored to 0"
+  },
+  "native/baby-profile-input-menu.png": {
+    "route": "/baby",
+    "entry": "edit current baby → nickname → input toolbar menu",
+    "condition": "OS keyboard menu shown; clipboard not opened"
+  }
+}

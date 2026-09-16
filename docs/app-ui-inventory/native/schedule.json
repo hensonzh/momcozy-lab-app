@@ -1,0 +1,276 @@
+{
+  "entry": "Bottom navigation",
+  "trigger": "Schedule",
+  "controls": [
+    {
+      "text": "返回今天\n2026年9月\n查看每天的日程安排",
+      "class": "android.widget.Button",
+      "bounds": "[24,237][1256,381]",
+      "scrollable": "false"
+    },
+    {
+      "text": "上个月",
+      "class": "android.widget.Button",
+      "bounds": "[24,237][168,381]",
+      "scrollable": "false"
+    },
+    {
+      "text": "下个月",
+      "class": "android.widget.Button",
+      "bounds": "[1112,237][1256,381]",
+      "scrollable": "false"
+    },
+    {
+      "text": "8月31日",
+      "class": "android.widget.Button",
+      "bounds": "[50,500][211,635]",
+      "scrollable": "false"
+    },
+    {
+      "text": "9月1日",
+      "class": "android.widget.Button",
+      "bounds": "[220,500][381,635]",
+      "scrollable": "false"
+    },
+    {
+      "text": "9月2日",
+      "class": "android.widget.Button",
+      "bounds": "[390,500][551,635]",
+      "scrollable": "false"
+    },
+    {
+      "text": "9月3日",
+      "class": "android.widget.Button",
+      "bounds": "[560,500][721,635]",
+      "scrollable": "false"
+    },
+    {
+      "text": "9月4日",
+      "class": "android.widget.Button",
+      "bounds": "[730,500][891,635]",
+      "scrollable": "false"
+    },
+    {
+      "text": "9月5日",
+      "class": "android.widget.Button",
+      "bounds": "[900,500][1061,635]",
+      "scrollable": "false"
+    },
+    {
+      "text": "9月6日",
+      "class": "android.widget.Button",
+      "bounds": "[1070,500][1231,635]",
+      "scrollable": "false"
+    },
+    {
+      "text": "9月7日",
+      "class": "android.widget.Button",
+      "bounds": "[50,644][211,779]",
+      "scrollable": "false"
+    },
+    {
+      "text": "9月8日",
+      "class": "android.widget.Button",
+      "bounds": "[220,644][381,779]",
+      "scrollable": "false"
+    },
+    {
+      "text": "9月9日",
+      "class": "android.widget.Button",
+      "bounds": "[390,644][551,779]",
+      "scrollable": "false"
+    },
+    {
+      "text": "9月10日",
+      "class": "android.widget.Button",
+      "bounds": "[560,644][721,779]",
+      "scrollable": "false"
+    },
+    {
+      "text": "9月11日",
+      "class": "android.widget.Button",
+      "bounds": "[730,644][891,779]",
+      "scrollable": "false"
+    },
+    {
+      "text": "9月12日",
+      "class": "android.widget.Button",
+      "bounds": "[900,644][1061,779]",
+      "scrollable": "false"
+    },
+    {
+      "text": "9月13日，有安排",
+      "class": "android.widget.Button",
+      "bounds": "[1070,644][1231,779]",
+      "scrollable": "false"
+    },
+    {
+      "text": "9月14日",
+      "class": "android.widget.Button",
+      "bounds": "[50,788][211,923]",
+      "scrollable": "false"
+    },
+    {
+      "text": "9月15日",
+      "class": "android.widget.Button",
+      "bounds": "[220,788][381,923]",
+      "scrollable": "false"
+    },
+    {
+      "text": "9月16日",
+      "class": "android.widget.Button",
+      "bounds": "[390,788][551,923]",
+      "scrollable": "false"
+    },
+    {
+      "text": "9月17日",
+      "class": "android.widget.Button",
+      "bounds": "[560,788][721,923]",
+      "scrollable": "false"
+    },
+    {
+      "text": "9月18日",
+      "class": "android.widget.Button",
+      "bounds": "[730,788][891,923]",
+      "scrollable": "false"
+    },
+    {
+      "text": "9月19日",
+      "class": "android.widget.Button",
+      "bounds": "[900,788][1061,923]",
+      "scrollable": "false"
+    },
+    {
+      "text": "9月20日",
+      "class": "android.widget.Button",
+      "bounds": "[1070,788][1231,923]",
+      "scrollable": "false"
+    },
+    {
+      "text": "9月21日",
+      "class": "android.widget.Button",
+      "bounds": "[50,932][211,1067]",
+      "scrollable": "false"
+    },
+    {
+      "text": "9月22日",
+      "class": "android.widget.Button",
+      "bounds": "[220,932][381,1067]",
+      "scrollable": "false"
+    },
+    {
+      "text": "9月23日",
+      "class": "android.widget.Button",
+      "bounds": "[390,932][551,1067]",
+      "scrollable": "false"
+    },
+    {
+      "text": "9月24日",
+      "class": "android.widget.Button",
+      "bounds": "[560,932][721,1067]",
+      "scrollable": "false"
+    },
+    {
+      "text": "9月25日",
+      "class": "android.widget.Button",
+      "bounds": "[730,932][891,1067]",
+      "scrollable": "false"
+    },
+    {
+      "text": "9月26日",
+      "class": "android.widget.Button",
+      "bounds": "[900,932][1061,1067]",
+      "scrollable": "false"
+    },
+    {
+      "text": "9月27日",
+      "class": "android.widget.Button",
+      "bounds": "[1070,932][1231,1067]",
+      "scrollable": "false"
+    },
+    {
+      "text": "9月28日",
+      "class": "android.widget.Button",
+      "bounds": "[50,1076][211,1211]",
+      "scrollable": "false"
+    },
+    {
+      "text": "9月29日",
+      "class": "android.widget.Button",
+      "bounds": "[220,1076][381,1211]",
+      "scrollable": "false"
+    },
+    {
+      "text": "9月30日",
+      "class": "android.widget.Button",
+      "bounds": "[390,1076][551,1211]",
+      "scrollable": "false"
+    },
+    {
+      "text": "10月1日",
+      "class": "android.widget.Button",
+      "bounds": "[560,1076][721,1211]",
+      "scrollable": "false"
+    },
+    {
+      "text": "10月2日",
+      "class": "android.widget.Button",
+      "bounds": "[730,1076][891,1211]",
+      "scrollable": "false"
+    },
+    {
+      "text": "10月3日",
+      "class": "android.widget.Button",
+      "bounds": "[900,1076][1061,1211]",
+      "scrollable": "false"
+    },
+    {
+      "text": "10月4日",
+      "class": "android.widget.Button",
+      "bounds": "[1070,1076][1231,1211]",
+      "scrollable": "false"
+    },
+    {
+      "text": "更多test选项",
+      "class": "android.widget.Button",
+      "bounds": "[1088,1299][1232,1443]",
+      "scrollable": "false"
+    },
+    {
+      "text": "添加日程",
+      "class": "android.widget.Button",
+      "bounds": "[1106,2340][1250,2484]",
+      "scrollable": "false"
+    },
+    {
+      "text": "Me",
+      "class": "android.widget.Button",
+      "bounds": "[24,2571][270,2766]",
+      "scrollable": "false"
+    },
+    {
+      "text": "Baby",
+      "class": "android.widget.Button",
+      "bounds": "[270,2571][517,2766]",
+      "scrollable": "false"
+    },
+    {
+      "text": "Cozymate",
+      "class": "android.widget.Button",
+      "bounds": "[517,2571][763,2766]",
+      "scrollable": "false"
+    },
+    {
+      "text": "Schedule",
+      "class": "android.widget.Button",
+      "bounds": "[763,2571][1010,2766]",
+      "scrollable": "false"
+    },
+    {
+      "text": "More",
+      "class": "android.widget.Button",
+      "bounds": "[1010,2571][1256,2766]",
+      "scrollable": "false"
+    }
+  ]
+}

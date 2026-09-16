@@ -1,0 +1,102 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_api_repository_test.dart: requests an idempotent cloud reset for the current release
+00:00 +1: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_api_repository_test.dart: maps required onboarding state
+00:00 +2: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_api_repository_test.dart: preserves the avatar worker phase for truthful progress UI
+00:00 +3: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_api_repository_test.dart: serializes one shared postpartum delivery and infant set
+00:00 +4: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_api_repository_test.dart: uploads portrait to dedicated endpoint before generation
+00:00 +5: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_api_repository_test.dart: maps four avatar candidates and completes with one candidate
+00:00 +6: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_api_repository_test.dart: completes with the explicit MomCozy default selection
+00:00 +7: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_api_repository_test.dart: dismisses a pending replacement without changing the active avatar
+00:00 +8: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_controller_test.dart: authenticated new user is held at the onboarding gate
+00:00 +9: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_controller_test.dart: grandfathered or completed user passes the onboarding gate
+00:00 +10: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_controller_test.dart: avatar review allows app entry before one of four candidates is confirmed
+00:00 +11: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_controller_test.dart: silent avatar refresh failure does not send the user back to onboarding
+00:00 +12: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_reading_test.dart: (setUpAll)
+00:00 +12: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: (setUpAll)
+00:00 +12: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_reading_test.dart: onboarding reading 320.0/1.0
+00:00 +13: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding profile forms at 320.0 / 1.0
+00:00 +14: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding profile forms at 320.0 / 1.0
+00:01 +15: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding profile forms at 320.0 / 1.0
+00:01 +16: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding profile forms at 320.0 / 1.0
+00:01 +17: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_reading_test.dart: onboarding reading 430.0/1.0
+00:01 +18: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_reading_test.dart: onboarding reading 430.0/1.0
+00:01 +19: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: avatar task banners at 320.0 / 1.0
+00:01 +20: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_reading_test.dart: onboarding reading 430.0/2.0
+00:01 +21: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: avatar photo failure and default confirmation at 320.0 / 1.0
+00:01 +22: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding avatar required at 320.0 / 1.0
+00:01 +23: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding avatar generating at 320.0 / 1.0
+00:01 +24: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding avatar review at 320.0 / 1.0
+00:01 +25: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding avatar failed at 320.0 / 1.0
+00:01 +26: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding profile forms at 320.0 / 2.0
+00:02 +27: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: profile short viewport keeps save pending and recovers draft
+00:02 +28: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: avatar short screen retries thumbnail and locks confirmation
+00:02 +29: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding load failure retries at 320.0 / 2.0
+00:02 +30: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: avatar task banners at 320.0 / 2.0
+00:02 +31: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: avatar photo failure and default confirmation at 320.0 / 2.0
+00:03 +32: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding avatar required at 320.0 / 2.0
+00:03 +33: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding avatar required at 320.0 / 2.0
+00:03 +34: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding avatar required at 320.0 / 2.0
+00:03 +35: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding avatar required at 320.0 / 2.0
+00:03 +36: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding avatar required at 320.0 / 2.0
+00:03 +37: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding avatar required at 320.0 / 2.0
+00:03 +38: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding avatar generating at 320.0 / 2.0
+00:03 +39: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding avatar generating at 320.0 / 2.0
+00:03 +40: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_handoff_test.dart: accepted avatar task explains the wait before entering the app
+00:03 +41: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_handoff_test.dart: accepted avatar task explains the wait before entering the app
+00:03 +42: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_handoff_test.dart: accepted avatar task explains the wait before entering the app
+00:03 +43: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_handoff_test.dart: accepted avatar task explains the wait before entering the app
+00:03 +44: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_handoff_test.dart: accepted avatar task explains the wait before entering the app
+00:03 +45: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_handoff_test.dart: accepted avatar task explains the wait before entering the app
+00:03 +46: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_handoff_test.dart: accepted avatar task explains the wait before entering the app
+00:03 +47: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_capability_gate_test.dart: default app startup bypasses the unsupported onboarding gate
+00:03 +48: /Users/lute/project/momcozy-lab/app/test/shared/date_time_picker_test.dart: large 12-hour picker preserves midnight and noon
+00:03 +49: /Users/lute/project/momcozy-lab/app/test/shared/date_time_picker_test.dart: large 12-hour picker preserves midnight and noon
+00:03 +50: /Users/lute/project/momcozy-lab/app/test/shared/date_time_picker_test.dart: large 12-hour picker preserves midnight and noon
+00:03 +51: /Users/lute/project/momcozy-lab/app/test/shared/date_time_picker_test.dart: large 12-hour picker preserves midnight and noon
+00:03 +52: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_route_test.dart: postpartum path collects delivery and one shared infant set
+00:03 +53: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_route_test.dart: postpartum path collects delivery and one shared infant set
+00:04 +54: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_route_test.dart: postpartum path collects delivery and one shared infant set
+00:04 +55: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_route_test.dart: postpartum path collects delivery and one shared infant set
+00:04 +56: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_route_test.dart: postpartum path collects delivery and one shared infant set
+00:04 +57: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_route_test.dart: postpartum path collects delivery and one shared infant set
+00:04 +58: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_route_test.dart: postpartum path collects delivery and one shared infant set
+00:04 +59: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_route_test.dart: postpartum path collects delivery and one shared infant set
+00:04 +60: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_capability_gate_test.dart: disabled onboarding sends /avatar/review safely home after login
+00:04 +61: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_capability_gate_test.dart: disabled onboarding sends /avatar/review safely home after login
+00:04 +62: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_capability_gate_test.dart: disabled onboarding sends /avatar/review safely home after login
+00:04 +63: /Users/lute/project/momcozy-lab/app/test/shared/date_time_picker_test.dart: large picker bounds, locale and time validation zh_CN
+00:04 +64: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_route_test.dart: avatar review offers four generated choices and MomCozy original
+00:04 +65: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_route_test.dart: avatar review offers four generated choices and MomCozy original
+00:04 +66: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_capability_gate_test.dart: disabled onboarding sends /avatar/create?from=/me safely home after login
+00:04 +67: /Users/lute/project/momcozy-lab/app/test/shared/date_time_picker_test.dart: date and time dialogs settle without elapsed motion
+00:04 +68: /Users/lute/project/momcozy-lab/app/test/shared/date_time_picker_test.dart: date and time dialogs settle without elapsed motion
+00:04 +69: /Users/lute/project/momcozy-lab/app/test/shared/date_time_picker_test.dart: date and time dialogs settle without elapsed motion
+00:04 +70: /Users/lute/project/momcozy-lab/app/test/shared/date_time_picker_test.dart: date and time dialogs settle without elapsed motion
+00:04 +71: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding profile forms at 390.0 / 2.0
+00:04 +72: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding profile forms at 390.0 / 2.0
+00:04 +73: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding profile forms at 390.0 / 2.0
+00:04 +74: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding load failure retries at 390.0 / 2.0
+00:04 +75: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: avatar task banners at 390.0 / 2.0
+00:04 +76: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: avatar photo failure and default confirmation at 390.0 / 2.0
+00:04 +77: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding avatar required at 390.0 / 2.0
+00:05 +78: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding avatar generating at 390.0 / 2.0
+00:05 +79: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding avatar review at 390.0 / 2.0
+00:05 +80: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding avatar failed at 390.0 / 2.0
+00:05 +81: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding profile forms at 430.0 / 1.0
+00:05 +82: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding load failure retries at 430.0 / 1.0
+00:05 +83: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: avatar task banners at 430.0 / 1.0
+00:05 +84: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: avatar photo failure and default confirmation at 430.0 / 1.0
+00:05 +85: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding avatar required at 430.0 / 1.0
+00:05 +86: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding avatar generating at 430.0 / 1.0
+00:05 +87: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding avatar review at 430.0 / 1.0
+00:05 +88: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding avatar failed at 430.0 / 1.0
+00:05 +89: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding profile forms at 430.0 / 2.0
+00:06 +90: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding load failure retries at 430.0 / 2.0
+00:06 +91: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: avatar task banners at 430.0 / 2.0
+00:06 +92: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: avatar photo failure and default confirmation at 430.0 / 2.0
+00:06 +93: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding avatar required at 430.0 / 2.0
+00:06 +94: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding avatar generating at 430.0 / 2.0
+00:06 +95: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding avatar review at 430.0 / 2.0
+00:06 +96: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding avatar failed at 430.0 / 2.0
+00:06 +97: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: (tearDownAll)
+00:06 +97: All tests passed!

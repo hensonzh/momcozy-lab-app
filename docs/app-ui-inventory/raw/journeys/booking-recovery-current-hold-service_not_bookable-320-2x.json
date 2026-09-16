@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/booking-recovery-current-hold-service_not_bookable-320-2x.png",
+  "previous_source": "test/goldens/ui_inventory/booking-recovery-current-hold-region_unavailable-320-2x.png",
+  "route": "/services/episodes/service-episode/booking",
+  "trigger": "Select time → HTTP 409 business rejection: service_not_bookable",
+  "root_entry": "Authenticated More → tap Me bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/services/booking_recovery_current_inventory_test.dart"
+}

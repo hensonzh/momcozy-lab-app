@@ -1,0 +1,10 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: message menu 320.0/1.0
+00:00 +1: message menu 320.0/2.0
+00:00 +2: message menu 390.0/1.0
+00:00 +3: message menu 390.0/2.0
+00:00 +4: message menu 430.0/1.0
+00:00 +5: message menu 430.0/2.0
+00:00 +6: (tearDownAll)
+00:00 +6: All tests passed!

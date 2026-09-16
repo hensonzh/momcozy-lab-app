@@ -1,0 +1,9 @@
+{
+  "status": "PASS",
+  "report_links_checked": 102,
+  "native_states": 23,
+  "followup_images": 38,
+  "restore_records": 2,
+  "errors": [],
+  "scope": "new report links, native PNG/XML hashes, recorded restore assertions and reviewed followup image hashes; not full goal completion"
+}

@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/booking-selection-current-provider-menu-320-2x.png",
+  "previous_source": "test/goldens/ui_inventory/booking-selection-current-selection-slots-320-2x.png",
+  "route": "/services/episodes/service-episode/booking",
+  "trigger": "Provider dropdown → two available experts",
+  "root_entry": "Authenticated More → tap Me bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/services/booking_selection_current_inventory_test.dart"
+}

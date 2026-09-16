@@ -1,0 +1,656 @@
+[
+  {
+    "id": "11-media/media-fullscreen",
+    "module": "媒体",
+    "label": "6:17:28 / 12:34:56",
+    "state": "media-fullscreen",
+    "image": "11-media/media-fullscreen/default.png",
+    "viewport": "11-media/media-fullscreen/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [],
+    "mapped_design_candidates": [],
+    "production_widget_files": [
+      "lib/features/media/presentation/product_asset_video_player.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/features/media/product_asset_video_player_test.dart",
+    "test_case": "video long duration, controls and fullscreen 390.0 / 1.0",
+    "metadata": "raw/test/goldens/design_system/media-fullscreen-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/media-fullscreen-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/media-fullscreen-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/media-fullscreen-320.png",
+        "metadata": "raw/test/goldens/design_system/media-fullscreen-320.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/media-fullscreen-390-2x.png",
+        "metadata": "raw/test/goldens/design_system/media-fullscreen-390-2x.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/media-fullscreen-390.png",
+        "metadata": "raw/test/goldens/design_system/media-fullscreen-390.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/media-fullscreen-430-2x.png",
+        "metadata": "raw/test/goldens/design_system/media-fullscreen-430-2x.png.json",
+        "width": 430,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/media-fullscreen-430.png",
+        "metadata": "raw/test/goldens/design_system/media-fullscreen-430.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "11-media/media-video",
+    "module": "媒体",
+    "label": "0:00 / 12:34:56",
+    "state": "media-video",
+    "image": "11-media/media-video/default.png",
+    "viewport": "11-media/media-video/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [],
+    "mapped_design_candidates": [],
+    "production_widget_files": [
+      "lib/features/media/presentation/product_asset_video_player.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/features/media/product_asset_video_player_test.dart",
+    "test_case": "video long duration, controls and fullscreen 390.0 / 1.0",
+    "metadata": "raw/test/goldens/design_system/media-video-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/media-video-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/media-video-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/media-video-320.png",
+        "metadata": "raw/test/goldens/design_system/media-video-320.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/media-video-390-2x.png",
+        "metadata": "raw/test/goldens/design_system/media-video-390-2x.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/media-video-390.png",
+        "metadata": "raw/test/goldens/design_system/media-video-390.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/media-video-430-2x.png",
+        "metadata": "raw/test/goldens/design_system/media-video-430-2x.png.json",
+        "width": 430,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/media-video-430.png",
+        "metadata": "raw/test/goldens/design_system/media-video-430.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "11-media/native-media-pdf-page-1",
+    "module": "媒体",
+    "label": "PDF 已载入第一页",
+    "state": "PDF 已载入第一页",
+    "image": "11-media/native-media-pdf-page-1/default.png",
+    "viewport": "native/native-media-pdf-page-1.png",
+    "extent": "full-native-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/media-viewer"
+    ],
+    "mapped_design_candidates": [],
+    "production_widget_files": [
+      "lib/features/media/presentation/media_viewer_page.dart",
+      "lib/features/media/presentation/pdf_document_toolbar.dart"
+    ],
+    "evidence_kind": "Android-native-integration-fixture",
+    "normal_entry_verified": false,
+    "test": "integration_test/media_viewer_pdf_test.dart",
+    "test_case": "实际 /media-viewer 路由，注入两页 PDF 资产",
+    "metadata": "native/media-manifest.json",
+    "variants": []
+  },
+  {
+    "id": "11-media/native-media-pdf-page-2",
+    "module": "媒体",
+    "label": "PDF 第二页",
+    "state": "PDF 第二页",
+    "image": "11-media/native-media-pdf-page-2/default.png",
+    "viewport": "native/native-media-pdf-page-2.png",
+    "extent": "full-native-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/media-viewer"
+    ],
+    "mapped_design_candidates": [],
+    "production_widget_files": [
+      "lib/features/media/presentation/media_viewer_page.dart",
+      "lib/features/media/presentation/pdf_document_toolbar.dart"
+    ],
+    "evidence_kind": "Android-native-integration-fixture",
+    "normal_entry_verified": false,
+    "test": "integration_test/media_viewer_pdf_test.dart",
+    "test_case": "点击下一页",
+    "metadata": "native/media-manifest.json",
+    "variants": []
+  },
+  {
+    "id": "11-media/native-media-pdf-zoomed",
+    "module": "媒体",
+    "label": "PDF 放大",
+    "state": "PDF 放大",
+    "image": "11-media/native-media-pdf-zoomed/default.png",
+    "viewport": "native/native-media-pdf-zoomed.png",
+    "extent": "full-native-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/media-viewer"
+    ],
+    "mapped_design_candidates": [],
+    "production_widget_files": [
+      "lib/features/media/presentation/media_viewer_page.dart",
+      "lib/features/media/presentation/pdf_document_toolbar.dart"
+    ],
+    "evidence_kind": "Android-native-integration-fixture",
+    "normal_entry_verified": false,
+    "test": "integration_test/media_viewer_pdf_test.dart",
+    "test_case": "点击放大文档",
+    "metadata": "native/media-manifest.json",
+    "variants": []
+  },
+  {
+    "id": "11-media/native-media-video-ready",
+    "module": "媒体",
+    "label": "视频已载入",
+    "state": "视频已载入",
+    "image": "11-media/native-media-video-ready/default.png",
+    "viewport": "native/native-media-video-ready.png",
+    "extent": "native-viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/media-viewer"
+    ],
+    "mapped_design_candidates": [],
+    "production_widget_files": [
+      "lib/features/media/presentation/media_viewer_page.dart"
+    ],
+    "evidence_kind": "Android-native-integration-fixture",
+    "normal_entry_verified": false,
+    "test": "integration_test/media_viewer_video_test.dart",
+    "test_case": "实际 /media-viewer 路由，注入视频资产",
+    "metadata": "native/media-manifest.json",
+    "variants": []
+  },
+  {
+    "id": "11-media/native-media-video-playing",
+    "module": "媒体",
+    "label": "视频播放中",
+    "state": "视频播放中",
+    "image": "11-media/native-media-video-playing/default.png",
+    "viewport": "native/native-media-video-playing.png",
+    "extent": "native-viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/media-viewer"
+    ],
+    "mapped_design_candidates": [],
+    "production_widget_files": [
+      "lib/features/media/presentation/media_viewer_page.dart"
+    ],
+    "evidence_kind": "Android-native-integration-fixture",
+    "normal_entry_verified": false,
+    "test": "integration_test/media_viewer_video_test.dart",
+    "test_case": "点击播放",
+    "metadata": "native/media-manifest.json",
+    "variants": []
+  },
+  {
+    "id": "11-media/native-media-video",
+    "module": "媒体",
+    "label": "视频已暂停",
+    "state": "视频已暂停",
+    "image": "11-media/native-media-video/default.png",
+    "viewport": "native/native-media-video.png",
+    "extent": "native-viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/media-viewer"
+    ],
+    "mapped_design_candidates": [],
+    "production_widget_files": [
+      "lib/features/media/presentation/media_viewer_page.dart"
+    ],
+    "evidence_kind": "Android-native-integration-fixture",
+    "normal_entry_verified": false,
+    "test": "integration_test/media_viewer_video_test.dart",
+    "test_case": "点击暂停",
+    "metadata": "native/media-manifest.json",
+    "variants": []
+  },
+  {
+    "id": "11-media/native-media-video-fullscreen",
+    "module": "媒体",
+    "label": "视频全屏",
+    "state": "视频全屏",
+    "image": "11-media/native-media-video-fullscreen/default.png",
+    "viewport": "native/native-media-video-fullscreen.png",
+    "extent": "native-viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/media-viewer"
+    ],
+    "mapped_design_candidates": [],
+    "production_widget_files": [
+      "lib/features/media/presentation/media_viewer_page.dart"
+    ],
+    "evidence_kind": "Android-native-integration-fixture",
+    "normal_entry_verified": false,
+    "test": "integration_test/media_viewer_video_test.dart",
+    "test_case": "点击全屏",
+    "metadata": "native/media-manifest.json",
+    "variants": []
+  },
+  {
+    "id": "11-media/native-resource-pdf-first",
+    "module": "媒体",
+    "label": "原生 PDF 第一页",
+    "state": "原生 PDF 第一页",
+    "image": "11-media/native-resource-pdf-first/default.png",
+    "viewport": "native/resource-journey/native-resource-pdf-first.png",
+    "extent": "full-native-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/media-viewer"
+    ],
+    "mapped_design_candidates": [],
+    "production_widget_files": [
+      "lib/features/media/presentation/media_viewer_page.dart",
+      "lib/features/media/presentation/pdf_document_toolbar.dart"
+    ],
+    "evidence_kind": "Android-native-normal-route-with-isolated-data",
+    "normal_entry_verified": true,
+    "test": "integration_test/agent_resource_inventory_test.dart",
+    "test_case": "Tap PDF action → native PDFium displays first of two pages",
+    "metadata": "native/resource-manifest.json",
+    "variants": [],
+    "journey": {
+      "from": "05-agent/native-resource-card",
+      "to": "11-media/native-resource-pdf-first",
+      "source": "native/resource-journey/native-resource-pdf-first.png",
+      "root_entry": "More → Cozymate → send question → SSE artifact card → actual action button",
+      "route": "/media-viewer",
+      "trigger": "Tap PDF action → native PDFium displays first of two pages",
+      "evidence": "实际 Android App 路由；从 More 点击 Cozymate，发送问题并消费隔离 SSE；卡片按钮执行正式 dispatcher。业务/会话为测试依赖，媒体通过本地 HTTP 与实际 PDFium、Android 视频插件、图片解码器。",
+      "test": "integration_test/agent_resource_inventory_test.dart",
+      "metadata": "native/resource-manifest.json"
+    },
+    "verified_route": "/media-viewer",
+    "entry": "More → Cozymate → send question → SSE artifact card → actual action button",
+    "trigger": "Tap PDF action → native PDFium displays first of two pages"
+  },
+  {
+    "id": "11-media/native-resource-pdf-next",
+    "module": "媒体",
+    "label": "原生 PDF 第二页",
+    "state": "原生 PDF 第二页",
+    "image": "11-media/native-resource-pdf-next/default.png",
+    "viewport": "native/resource-journey/native-resource-pdf-next.png",
+    "extent": "full-native-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/media-viewer"
+    ],
+    "mapped_design_candidates": [],
+    "production_widget_files": [
+      "lib/features/media/presentation/media_viewer_page.dart",
+      "lib/features/media/presentation/pdf_document_toolbar.dart"
+    ],
+    "evidence_kind": "Android-native-normal-route-with-isolated-data",
+    "normal_entry_verified": true,
+    "test": "integration_test/agent_resource_inventory_test.dart",
+    "test_case": "Tap next page → page two",
+    "metadata": "native/resource-manifest.json",
+    "variants": [],
+    "journey": {
+      "from": "11-media/native-resource-pdf-first",
+      "to": "11-media/native-resource-pdf-next",
+      "source": "native/resource-journey/native-resource-pdf-next.png",
+      "root_entry": "More → Cozymate → send question → SSE artifact card → actual action button",
+      "route": "/media-viewer",
+      "trigger": "Tap next page → page two",
+      "evidence": "实际 Android App 路由；从 More 点击 Cozymate，发送问题并消费隔离 SSE；卡片按钮执行正式 dispatcher。业务/会话为测试依赖，媒体通过本地 HTTP 与实际 PDFium、Android 视频插件、图片解码器。",
+      "test": "integration_test/agent_resource_inventory_test.dart",
+      "metadata": "native/resource-manifest.json"
+    },
+    "verified_route": "/media-viewer",
+    "entry": "More → Cozymate → send question → SSE artifact card → actual action button",
+    "trigger": "Tap next page → page two"
+  },
+  {
+    "id": "11-media/native-resource-pdf-zoom",
+    "module": "媒体",
+    "label": "原生 PDF 放大",
+    "state": "原生 PDF 放大",
+    "image": "11-media/native-resource-pdf-zoom/default.png",
+    "viewport": "native/resource-journey/native-resource-pdf-zoom.png",
+    "extent": "full-native-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/media-viewer"
+    ],
+    "mapped_design_candidates": [],
+    "production_widget_files": [
+      "lib/features/media/presentation/media_viewer_page.dart",
+      "lib/features/media/presentation/pdf_document_toolbar.dart"
+    ],
+    "evidence_kind": "Android-native-normal-route-with-isolated-data",
+    "normal_entry_verified": true,
+    "test": "integration_test/agent_resource_inventory_test.dart",
+    "test_case": "Zoom PDF → actual rendered zoom and complete document",
+    "metadata": "native/resource-manifest.json",
+    "variants": [],
+    "journey": {
+      "from": "11-media/native-resource-pdf-next",
+      "to": "11-media/native-resource-pdf-zoom",
+      "source": "native/resource-journey/native-resource-pdf-zoom.png",
+      "root_entry": "More → Cozymate → send question → SSE artifact card → actual action button",
+      "route": "/media-viewer",
+      "trigger": "Zoom PDF → actual rendered zoom and complete document",
+      "evidence": "实际 Android App 路由；从 More 点击 Cozymate，发送问题并消费隔离 SSE；卡片按钮执行正式 dispatcher。业务/会话为测试依赖，媒体通过本地 HTTP 与实际 PDFium、Android 视频插件、图片解码器。",
+      "test": "integration_test/agent_resource_inventory_test.dart",
+      "metadata": "native/resource-manifest.json"
+    },
+    "verified_route": "/media-viewer",
+    "entry": "More → Cozymate → send question → SSE artifact card → actual action button",
+    "trigger": "Zoom PDF → actual rendered zoom and complete document"
+  },
+  {
+    "id": "11-media/native-resource-pdf-reset",
+    "module": "媒体",
+    "label": "原生 PDF 缩小复位",
+    "state": "原生 PDF 缩小复位",
+    "image": "11-media/native-resource-pdf-reset/default.png",
+    "viewport": "native/resource-journey/native-resource-pdf-reset.png",
+    "extent": "full-native-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/media-viewer"
+    ],
+    "mapped_design_candidates": [],
+    "production_widget_files": [
+      "lib/features/media/presentation/media_viewer_page.dart",
+      "lib/features/media/presentation/pdf_document_toolbar.dart"
+    ],
+    "evidence_kind": "Android-native-normal-route-with-isolated-data",
+    "normal_entry_verified": true,
+    "test": "integration_test/agent_resource_inventory_test.dart",
+    "test_case": "Zoom out then previous page → original document view",
+    "metadata": "native/resource-manifest.json",
+    "variants": [],
+    "journey": {
+      "from": "11-media/native-resource-pdf-zoom",
+      "to": "11-media/native-resource-pdf-reset",
+      "source": "native/resource-journey/native-resource-pdf-reset.png",
+      "root_entry": "More → Cozymate → send question → SSE artifact card → actual action button",
+      "route": "/media-viewer",
+      "trigger": "Zoom out then previous page → original document view",
+      "evidence": "实际 Android App 路由；从 More 点击 Cozymate，发送问题并消费隔离 SSE；卡片按钮执行正式 dispatcher。业务/会话为测试依赖，媒体通过本地 HTTP 与实际 PDFium、Android 视频插件、图片解码器。",
+      "test": "integration_test/agent_resource_inventory_test.dart",
+      "metadata": "native/resource-manifest.json"
+    },
+    "verified_route": "/media-viewer",
+    "entry": "More → Cozymate → send question → SSE artifact card → actual action button",
+    "trigger": "Zoom out then previous page → original document view"
+  },
+  {
+    "id": "11-media/native-resource-video-ready",
+    "module": "媒体",
+    "label": "原生视频就绪",
+    "state": "原生视频就绪",
+    "image": "11-media/native-resource-video-ready/default.png",
+    "viewport": "native/resource-journey/native-resource-video-ready.png",
+    "extent": "native-viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/media-viewer"
+    ],
+    "mapped_design_candidates": [],
+    "production_widget_files": [
+      "lib/features/media/presentation/media_viewer_page.dart"
+    ],
+    "evidence_kind": "Android-native-normal-route-with-isolated-data",
+    "normal_entry_verified": true,
+    "test": "integration_test/agent_resource_inventory_test.dart",
+    "test_case": "Tap video action → real Android decoder renders asset",
+    "metadata": "native/resource-manifest.json",
+    "variants": [],
+    "journey": {
+      "from": "05-agent/native-resource-pdf-return",
+      "to": "11-media/native-resource-video-ready",
+      "source": "native/resource-journey/native-resource-video-ready.png",
+      "root_entry": "More → Cozymate → send question → SSE artifact card → actual action button",
+      "route": "/media-viewer",
+      "trigger": "Tap video action → real Android decoder renders asset",
+      "evidence": "实际 Android App 路由；从 More 点击 Cozymate，发送问题并消费隔离 SSE；卡片按钮执行正式 dispatcher。业务/会话为测试依赖，媒体通过本地 HTTP 与实际 PDFium、Android 视频插件、图片解码器。",
+      "test": "integration_test/agent_resource_inventory_test.dart",
+      "metadata": "native/resource-manifest.json"
+    },
+    "verified_route": "/media-viewer",
+    "entry": "More → Cozymate → send question → SSE artifact card → actual action button",
+    "trigger": "Tap video action → real Android decoder renders asset"
+  },
+  {
+    "id": "11-media/native-resource-video-playing",
+    "module": "媒体",
+    "label": "原生视频播放",
+    "state": "原生视频播放",
+    "image": "11-media/native-resource-video-playing/default.png",
+    "viewport": "native/resource-journey/native-resource-video-playing.png",
+    "extent": "native-viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/media-viewer"
+    ],
+    "mapped_design_candidates": [],
+    "production_widget_files": [
+      "lib/features/media/presentation/media_viewer_page.dart"
+    ],
+    "evidence_kind": "Android-native-normal-route-with-isolated-data",
+    "normal_entry_verified": true,
+    "test": "integration_test/agent_resource_inventory_test.dart",
+    "test_case": "Play → native video position advances",
+    "metadata": "native/resource-manifest.json",
+    "variants": [],
+    "journey": {
+      "from": "11-media/native-resource-video-ready",
+      "to": "11-media/native-resource-video-playing",
+      "source": "native/resource-journey/native-resource-video-playing.png",
+      "root_entry": "More → Cozymate → send question → SSE artifact card → actual action button",
+      "route": "/media-viewer",
+      "trigger": "Play → native video position advances",
+      "evidence": "实际 Android App 路由；从 More 点击 Cozymate，发送问题并消费隔离 SSE；卡片按钮执行正式 dispatcher。业务/会话为测试依赖，媒体通过本地 HTTP 与实际 PDFium、Android 视频插件、图片解码器。",
+      "test": "integration_test/agent_resource_inventory_test.dart",
+      "metadata": "native/resource-manifest.json"
+    },
+    "verified_route": "/media-viewer",
+    "entry": "More → Cozymate → send question → SSE artifact card → actual action button",
+    "trigger": "Play → native video position advances"
+  },
+  {
+    "id": "11-media/native-resource-video-paused",
+    "module": "媒体",
+    "label": "原生视频暂停",
+    "state": "原生视频暂停",
+    "image": "11-media/native-resource-video-paused/default.png",
+    "viewport": "native/resource-journey/native-resource-video-paused.png",
+    "extent": "native-viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/media-viewer"
+    ],
+    "mapped_design_candidates": [],
+    "production_widget_files": [
+      "lib/features/media/presentation/media_viewer_page.dart"
+    ],
+    "evidence_kind": "Android-native-normal-route-with-isolated-data",
+    "normal_entry_verified": true,
+    "test": "integration_test/agent_resource_inventory_test.dart",
+    "test_case": "Pause native playback",
+    "metadata": "native/resource-manifest.json",
+    "variants": [],
+    "journey": {
+      "from": "11-media/native-resource-video-playing",
+      "to": "11-media/native-resource-video-paused",
+      "source": "native/resource-journey/native-resource-video-paused.png",
+      "root_entry": "More → Cozymate → send question → SSE artifact card → actual action button",
+      "route": "/media-viewer",
+      "trigger": "Pause native playback",
+      "evidence": "实际 Android App 路由；从 More 点击 Cozymate，发送问题并消费隔离 SSE；卡片按钮执行正式 dispatcher。业务/会话为测试依赖，媒体通过本地 HTTP 与实际 PDFium、Android 视频插件、图片解码器。",
+      "test": "integration_test/agent_resource_inventory_test.dart",
+      "metadata": "native/resource-manifest.json"
+    },
+    "verified_route": "/media-viewer",
+    "entry": "More → Cozymate → send question → SSE artifact card → actual action button",
+    "trigger": "Pause native playback"
+  },
+  {
+    "id": "11-media/native-resource-video-seek-mute",
+    "module": "媒体",
+    "label": "原生视频定位并静音",
+    "state": "原生视频定位并静音",
+    "image": "11-media/native-resource-video-seek-mute/default.png",
+    "viewport": "native/resource-journey/native-resource-video-seek-mute.png",
+    "extent": "native-viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/media-viewer"
+    ],
+    "mapped_design_candidates": [],
+    "production_widget_files": [
+      "lib/features/media/presentation/media_viewer_page.dart"
+    ],
+    "evidence_kind": "Android-native-normal-route-with-isolated-data",
+    "normal_entry_verified": true,
+    "test": "integration_test/agent_resource_inventory_test.dart",
+    "test_case": "Seek and mute → actual controller controls",
+    "metadata": "native/resource-manifest.json",
+    "variants": [],
+    "journey": {
+      "from": "11-media/native-resource-video-paused",
+      "to": "11-media/native-resource-video-seek-mute",
+      "source": "native/resource-journey/native-resource-video-seek-mute.png",
+      "root_entry": "More → Cozymate → send question → SSE artifact card → actual action button",
+      "route": "/media-viewer",
+      "trigger": "Seek and mute → actual controller controls",
+      "evidence": "实际 Android App 路由；从 More 点击 Cozymate，发送问题并消费隔离 SSE；卡片按钮执行正式 dispatcher。业务/会话为测试依赖，媒体通过本地 HTTP 与实际 PDFium、Android 视频插件、图片解码器。",
+      "test": "integration_test/agent_resource_inventory_test.dart",
+      "metadata": "native/resource-manifest.json"
+    },
+    "verified_route": "/media-viewer",
+    "entry": "More → Cozymate → send question → SSE artifact card → actual action button",
+    "trigger": "Seek and mute → actual controller controls"
+  },
+  {
+    "id": "11-media/native-resource-video-fullscreen",
+    "module": "媒体",
+    "label": "原生视频全屏",
+    "state": "原生视频全屏",
+    "image": "11-media/native-resource-video-fullscreen/default.png",
+    "viewport": "native/resource-journey/native-resource-video-fullscreen.png",
+    "extent": "native-viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/media-viewer"
+    ],
+    "mapped_design_candidates": [],
+    "production_widget_files": [
+      "lib/features/media/presentation/media_viewer_page.dart"
+    ],
+    "evidence_kind": "Android-native-normal-route-with-isolated-data",
+    "normal_entry_verified": true,
+    "test": "integration_test/agent_resource_inventory_test.dart",
+    "test_case": "Open native immersive player",
+    "metadata": "native/resource-manifest.json",
+    "variants": [],
+    "journey": {
+      "from": "11-media/native-resource-video-seek-mute",
+      "to": "11-media/native-resource-video-fullscreen",
+      "source": "native/resource-journey/native-resource-video-fullscreen.png",
+      "root_entry": "More → Cozymate → send question → SSE artifact card → actual action button",
+      "route": "/media-viewer",
+      "trigger": "Open native immersive player",
+      "evidence": "实际 Android App 路由；从 More 点击 Cozymate，发送问题并消费隔离 SSE；卡片按钮执行正式 dispatcher。业务/会话为测试依赖，媒体通过本地 HTTP 与实际 PDFium、Android 视频插件、图片解码器。",
+      "test": "integration_test/agent_resource_inventory_test.dart",
+      "metadata": "native/resource-manifest.json"
+    },
+    "verified_route": "/media-viewer",
+    "entry": "More → Cozymate → send question → SSE artifact card → actual action button",
+    "trigger": "Open native immersive player"
+  },
+  {
+    "id": "11-media/native-resource-video-inline",
+    "module": "媒体",
+    "label": "退出全屏恢复内嵌视频",
+    "state": "退出全屏恢复内嵌视频",
+    "image": "11-media/native-resource-video-inline/default.png",
+    "viewport": "native/resource-journey/native-resource-video-inline.png",
+    "extent": "native-viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/media-viewer"
+    ],
+    "mapped_design_candidates": [],
+    "production_widget_files": [
+      "lib/features/media/presentation/media_viewer_page.dart"
+    ],
+    "evidence_kind": "Android-native-normal-route-with-isolated-data",
+    "normal_entry_verified": true,
+    "test": "integration_test/agent_resource_inventory_test.dart",
+    "test_case": "Exit immersive player retains paused position",
+    "metadata": "native/resource-manifest.json",
+    "variants": [],
+    "journey": {
+      "from": "11-media/native-resource-video-fullscreen",
+      "to": "11-media/native-resource-video-inline",
+      "source": "native/resource-journey/native-resource-video-inline.png",
+      "root_entry": "More → Cozymate → send question → SSE artifact card → actual action button",
+      "route": "/media-viewer",
+      "trigger": "Exit immersive player retains paused position",
+      "evidence": "实际 Android App 路由；从 More 点击 Cozymate，发送问题并消费隔离 SSE；卡片按钮执行正式 dispatcher。业务/会话为测试依赖，媒体通过本地 HTTP 与实际 PDFium、Android 视频插件、图片解码器。",
+      "test": "integration_test/agent_resource_inventory_test.dart",
+      "metadata": "native/resource-manifest.json"
+    },
+    "verified_route": "/media-viewer",
+    "entry": "More → Cozymate → send question → SSE artifact card → actual action button",
+    "trigger": "Exit immersive player retains paused position"
+  }
+]

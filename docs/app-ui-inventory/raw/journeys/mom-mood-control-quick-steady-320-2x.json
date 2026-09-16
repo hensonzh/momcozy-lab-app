@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/mom-mood-control-quick-steady-320-2x.png",
+  "previous_source": "test/goldens/ui_inventory/mom-mood-control-home-entry-320-2x.png",
+  "route": "/me",
+  "trigger": "Home quick mood 不错 → prefilled draft without save",
+  "root_entry": "Authenticated More → tap Me bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/mom/mom_mood_control_inventory_test.dart"
+}

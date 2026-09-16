@@ -1,0 +1,95 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/features/auth/auth_inventory_journey_test.dart
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: (setUpAll)
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby feeding save edit delete restore and history filters
+00:01 +0: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: inventory schedule calendar create edit delete
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: FlutterError:<Golden "../../goldens/ui_inventory/schedule-journey-date-picker-393.png":
+Pixel test failed, 0.18%, 595px diff detected.
+          Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/modules/schedule/failures>
+
+When the exception was thrown, this was the stack:
+#4      main.tap (file:///Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart:135:5)
+<asynchronous suspension>
+#5      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart:224:5)
+<asynchronous suspension>
+#6      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#7      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart line 135
+The test description was:
+  inventory schedule calendar create edit delete
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +0 -1: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby feeding save edit delete restore and history filters
+00:01 +0 -1: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: inventory schedule calendar create edit delete [E]
+  Test failed. See exception logs above.
+  The test description was: inventory schedule calendar create edit delete
+  
+00:02 +1 -1: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby feeding save edit delete restore and history filters
+00:02 +2 -1: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby feeding save edit delete restore and history filters
+00:02 +3 -1: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby feeding save edit delete restore and history filters
+00:02 +4 -1: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: inventory schedule read and delete failure recovery
+00:03 +5 -1: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby profile switch editing and discard
+00:03 +6 -1: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby profile switch editing and discard
+00:03 +7 -1: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: inventory schedule care task statuses and plan
+00:04 +8 -1: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby sleep stool knowledge and growth interactions
+00:04 +9 -1: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby sleep stool knowledge and growth interactions
+00:05 +10 -1: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby sleep stool knowledge and growth interactions
+00:05 +11 -1: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: inventory schedule picker validation and changed time 1.0
+00:05 +12 -1: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby no profile creation and missing demographic data
+00:06 +13 -1: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: inventory schedule picker validation and changed time 2.0
+00:06 +14 -1: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby local record failure and pull refresh recovery
+00:06 +15 -1: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: inventory schedule calendar year and tooltips
+00:06 +16 -1: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby loading and pending save states
+00:06 +17 -1: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: inventory schedule task pending and personal conflict reconciliation
+00:06 +18 -1: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby growth batch date validation and undo recovery
+00:07 +19 -1: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby growth batch date validation and undo recovery
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: FlutterError:<Golden
+"../../goldens/ui_inventory/baby-journey-growth-date-calendar-393.png": Pixel test failed, 0.18%,
+588px diff detected.
+          Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/modules/baby/failures>
+
+When the exception was thrown, this was the stack:
+#4      main.tap (file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart:135:5)
+<asynchronous suspension>
+#5      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart:687:5)
+<asynchronous suspension>
+#6      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#7      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart line 135
+The test description was:
+  inventory Baby growth batch date validation and undo recovery
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:07 +19 -2: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: inventory schedule first page limit has no continuation control
+00:07 +19 -2: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby growth batch date validation and undo recovery [E]
+  Test failed. See exception logs above.
+  The test description was: inventory Baby growth batch date validation and undo recovery
+  
+00:07 +20 -2: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby history mutation failures privacy and return
+00:07 +21 -2: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: inventory schedule appointment held entry
+00:08 +22 -2: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby history pagination loading failure recovery
+00:08 +23 -2: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby history pagination loading failure recovery
+00:08 +24 -2: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby history pagination loading failure recovery
+00:09 +25 -2: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: (tearDownAll)
+00:09 +25 -2: Some tests failed.
+
+Failing tests:
+  /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby growth batch date validation and undo recovery
+  /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: inventory schedule calendar create edit delete

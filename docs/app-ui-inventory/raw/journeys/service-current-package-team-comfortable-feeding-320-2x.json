@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/service-current-package-team-comfortable-feeding-320-2x.png",
+  "previous_source": "test/goldens/ui_inventory/service-current-package-comfortable-feeding-320-2x.png",
+  "route": "/services/comfortable-feeding",
+  "trigger": "Package learn team → provider dialog",
+  "root_entry": "Authenticated More → tap Me bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/services/service_current_inventory_test.dart"
+}

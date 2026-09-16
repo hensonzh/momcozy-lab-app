@@ -1,0 +1,56 @@
+[
+  {
+    "state": "notification-journey-inbox-archived",
+    "source": "07-me/notification-journey-inbox-archived/default.png",
+    "sha256": "dc7ae2710242814d72b631bef88c93b1e59b8191c8ca3d31b66b86ea8af6a2cc",
+    "sheet": "long-1.jpg"
+  },
+  {
+    "state": "notification-journey-inbox-last-page",
+    "source": "07-me/notification-journey-inbox-last-page/default.png",
+    "sha256": "220a6a044eef9535e4ccf1d3fa795dc71bd1375777a77b3242c25943c5ba39bd",
+    "sheet": "long-1.jpg"
+  },
+  {
+    "state": "notification-journey-inbox-second-page",
+    "source": "07-me/notification-journey-inbox-second-page/default.png",
+    "sha256": "9da574f96aab31402407b248c36182505e5d953a74684f369cd219f1a2b336cb",
+    "sheet": "long-1.jpg"
+  },
+  {
+    "state": "notification-journey-mark-all-error",
+    "source": "07-me/notification-journey-mark-all-error/default.png",
+    "sha256": "699d1aaa788ec2ff71a6c25a5a0647292af7d8bb96982b24c62979865550ddbe",
+    "sheet": "long-1.jpg"
+  },
+  {
+    "state": "notification-journey-mark-all-pending",
+    "source": "07-me/notification-journey-mark-all-pending/default.png",
+    "sha256": "7568ea8f44a980c629b48a8100b3599428f1e7bdfff84d765d8e53f297fff344",
+    "sheet": "long-1.jpg"
+  },
+  {
+    "state": "notification-journey-pagination-retry",
+    "source": "07-me/notification-journey-pagination-retry/default.png",
+    "sha256": "9da574f96aab31402407b248c36182505e5d953a74684f369cd219f1a2b336cb",
+    "sheet": "long-1.jpg"
+  },
+  {
+    "state": "notification-journey-permission-platform-unavailable",
+    "source": "07-me/notification-journey-permission-platform-unavailable/default.png",
+    "sha256": "1071eb84ffb3d8abb3481788eefff23f109f4fef6ae16f0ddceae337f36f2fa3",
+    "sheet": "long-2.jpg"
+  },
+  {
+    "state": "notification-journey-preferences-read-error",
+    "source": "07-me/notification-journey-preferences-read-error/default.png",
+    "sha256": "6d82fdbbdecba60c5ec3ddf5ddceeadee9de1fb664af75de412efa092d04df0f",
+    "sheet": "long-2.jpg"
+  },
+  {
+    "state": "notification-journey-settings-push-unavailable",
+    "source": "07-me/notification-journey-settings-push-unavailable/default.png",
+    "sha256": "03f1f4dd16b5ae536ccc91447e2e10fe5aef9b5bccb45cdbf1c526f51ec22ab4",
+    "sheet": "long-2.jpg"
+  }
+]

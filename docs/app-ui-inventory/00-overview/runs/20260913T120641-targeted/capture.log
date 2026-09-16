@@ -1,0 +1,12 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/modules/consultation/consultation_inventory_journey_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: inventory consultation preparation gates and intake route
+00:01 +1: inventory consultation device failure retry consent and room entry
+00:02 +2: inventory consultation ended summary publication task updates and routes
+00:03 +3: inventory consultation preflight rejection and retry boundaries
+00:03 +4: inventory consultation loading failed read and closed preflight
+00:04 +5: inventory consultation technical outcome onward routes
+00:04 +6: inventory consultation no-show outcome onward routes
+00:05 +7: inventory consultation safety outcome onward routes
+00:05 +8: (tearDownAll)
+00:05 +8: All tests passed!

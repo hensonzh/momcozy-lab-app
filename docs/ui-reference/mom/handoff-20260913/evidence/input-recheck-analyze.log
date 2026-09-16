@@ -1,0 +1,8 @@
+Analyzing app...                                                
+
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • test/modules/baby/baby_knowledge_source_inventory_test.dart:205:15 • curly_braces_in_flow_control_structures
+warning • The '!' will have no effect because the receiver can't be null. Try removing the '!' operator • test/modules/baby/baby_knowledge_source_inventory_test.dart:206:54 • unnecessary_non_null_assertion
+   info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • test/modules/baby/baby_knowledge_source_inventory_test.dart:264:11 • curly_braces_in_flow_control_structures
+warning • The '!' will have no effect because the receiver can't be null. Try removing the '!' operator • test/modules/baby/baby_knowledge_source_inventory_test.dart:337:15 • unnecessary_non_null_assertion
+
+4 issues found. (ran in 4.2s)

@@ -1,0 +1,15 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_inventory_journey_test.dart: (setUpAll)
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_inventory_journey_test.dart: inventory real login → More → account → deletion → login
+00:01 +1: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby feeding save edit delete restore and history filters
+00:02 +2: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby feeding save edit delete restore and history filters
+00:02 +3: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby profile switch editing and discard
+00:03 +4: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby sleep stool knowledge and growth interactions
+00:04 +5: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby no profile creation and missing demographic data
+00:05 +6: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby local record failure and pull refresh recovery
+00:05 +7: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby loading and pending save states
+00:05 +8: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby growth batch date validation and undo recovery
+00:06 +9: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby history mutation failures privacy and return
+00:06 +10: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: inventory Baby history pagination loading failure recovery
+00:07 +11: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_inventory_journey_test.dart: (tearDownAll)
+00:07 +11: All tests passed!

@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/baby-journey-record-saving-393.png",
+  "previous_source": "test/goldens/ui_inventory/baby-journey-feeding-nursing-left-393.png",
+  "route": "/baby",
+  "trigger": "Submit feeding while response pending → disabled save controls",
+  "root_entry": "Authenticated More → tap Baby bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/baby/baby_inventory_journey_test.dart"
+}

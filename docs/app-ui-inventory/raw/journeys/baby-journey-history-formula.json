@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/baby-journey-history-formula-393.png",
+  "previous_source": null,
+  "route": "/babies/inventory-baby/records",
+  "trigger": "Baby → all records with existing formula record",
+  "root_entry": "Authenticated More → tap Baby bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/baby/baby_inventory_journey_test.dart"
+}

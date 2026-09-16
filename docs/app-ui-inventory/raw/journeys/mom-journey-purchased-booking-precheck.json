@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/mom-journey-purchased-booking-precheck-393.png",
+  "previous_source": "test/goldens/ui_inventory/mom-journey-purchased-progress-return-393.png",
+  "route": "/services/episodes/inventory-episode/booking",
+  "trigger": "Book from home → actual booking route and suitability dialog",
+  "root_entry": "Authenticated More → tap Me bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/mom/mom_inventory_journey_test.dart"
+}

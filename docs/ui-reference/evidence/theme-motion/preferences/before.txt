@@ -1,0 +1,548 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/shared/momcozy_motion_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: reduced motion flows 320.0 / 1.0
+══╡ EXCEPTION CAUGHT BY ANIMATION LIBRARY ╞═════════════════════════════════════════════════════════
+The following assertion was thrown while notifying listeners for AnimationController:
+A RenderAnimatedSize was mutated in its own performLayout implementation.
+A RenderObject must not re-dirty itself while still being laid out.
+The RenderObject being mutated was:
+  RenderAnimatedSize#a1523 DISPOSED
+Consider using the LayoutBuilder widget to dynamically change a subtree during layout.
+
+When the exception was thrown, this was the stack:
+#0      RenderObject._debugCanPerformMutations.<anonymous closure> (package:flutter/src/rendering/object.dart:2383:9)
+#1      RenderObject._debugCanPerformMutations (package:flutter/src/rendering/object.dart:2428:6)
+#2      RenderObject.markNeedsLayout (package:flutter/src/rendering/object.dart:2661:12)
+#3      RenderBox.markNeedsLayout (package:flutter/src/rendering/box.dart:2860:11)
+#4      new RenderAnimatedSize.<anonymous closure> (package:flutter/src/rendering/animated_size.dart:92:15)
+#5      AnimationLocalListenersMixin.notifyListeners (package:flutter/src/animation/listener_helpers.dart:160:19)
+#6      AnimationController._animateToInternal (package:flutter/src/animation/animation_controller.dart:677:9)
+#7      AnimationController.forward (package:flutter/src/animation/animation_controller.dart:484:12)
+#8      RenderAnimatedSize._layoutStable (package:flutter/src/rendering/animated_size.dart:338:19)
+#9      RenderAnimatedSize.performLayout (package:flutter/src/rendering/animated_size.dart:264:9)
+#10     RenderObject.layout (package:flutter/src/rendering/object.dart:2907:7)
+#11     RenderProxyBoxMixin.performLayout (package:flutter/src/rendering/proxy_box.dart:118:18)
+#12     RenderObject.layout (package:flutter/src/rendering/object.dart:2907:7)
+#13     RenderProxyBoxMixin.performLayout (package:flutter/src/rendering/proxy_box.dart:118:18)
+#14     RenderObject.layout (package:flutter/src/rendering/object.dart:2907:7)
+#15     RenderPadding.performLayout (package:flutter/src/rendering/shifted_box.dart:262:12)
+#16     RenderObject.layout (package:flutter/src/rendering/object.dart:2907:7)
+#17     MultiChildLayoutDelegate.layoutChild (package:flutter/src/rendering/custom_layout.dart:180:12)
+#18     _ScaffoldLayout.performLayout (package:flutter/src/material/scaffold.dart:1113:7)
+#19     MultiChildLayoutDelegate._callPerformLayout (package:flutter/src/rendering/custom_layout.dart:246:7)
+#20     RenderCustomMultiChildLayoutBox.performLayout (package:flutter/src/rendering/custom_layout.dart:417:14)
+#21     RenderObject._layoutWithoutResize (package:flutter/src/rendering/object.dart:2755:7)
+#22     PipelineOwner.flushLayout (package:flutter/src/rendering/object.dart:1174:18)
+#23     PipelineOwner.flushLayout (package:flutter/src/rendering/object.dart:1187:15)
+#24     AutomatedTestWidgetsFlutterBinding.drawFrame (package:flutter_test/src/binding.dart:2433:27)
+#25     RendererBinding._handlePersistentFrameCallback (package:flutter/src/rendering/binding.dart:509:5)
+#26     SchedulerBinding._invokeFrameCallback (package:flutter/src/scheduler/binding.dart:1430:15)
+#27     SchedulerBinding.handleDrawFrame (package:flutter/src/scheduler/binding.dart:1345:9)
+#28     AutomatedTestWidgetsFlutterBinding.pump.<anonymous closure> (package:flutter_test/src/binding.dart:2260:9)
+#31     TestAsyncUtils.guard (package:flutter_test/src/test_async_utils.dart:74:41)
+#32     AutomatedTestWidgetsFlutterBinding.pump (package:flutter_test/src/binding.dart:2249:27)
+#33     WidgetTester.pump.<anonymous closure> (package:flutter_test/src/widget_tester.dart:652:53)
+#36     TestAsyncUtils.guard (package:flutter_test/src/test_async_utils.dart:74:41)
+#37     WidgetTester.pump (package:flutter_test/src/widget_tester.dart:652:27)
+#38     verifyMotionPreference (file:///Users/lute/project/momcozy-lab/app/test/support/motion_preference_scenarios.dart:71:16)
+<asynchronous suspension>
+#39     main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/shared/momcozy_motion_test.dart:16:9)
+<asynchronous suspension>
+#40     testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#41     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 5 frames from dart:async and package:stack_trace)
+
+The AnimationController notifying listeners was:
+  AnimationController#e84c1(⏭ 1.000; paused; DISPOSED)
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: <456.0>
+  Actual: <1604.0>
+
+When the exception was thrown, this was the stack:
+#4      verifyMotionPreference (file:///Users/lute/project/momcozy-lab/app/test/support/motion_preference_scenarios.dart:143:3)
+<asynchronous suspension>
+#5      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/shared/momcozy_motion_test.dart:16:9)
+<asynchronous suspension>
+#6      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#7      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/support/motion_preference_scenarios.dart line 143
+The test description was:
+  reduced motion flows 320.0 / 1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following message was thrown:
+Multiple exceptions (2) were detected during the running of the current test, and at least one was
+unexpected.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +0 -1: reduced motion flows 320.0 / 1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: reduced motion flows 320.0 / 1.0
+  
+00:00 +0 -1: reduced motion flows 320.0 / 2.0
+══╡ EXCEPTION CAUGHT BY ANIMATION LIBRARY ╞═════════════════════════════════════════════════════════
+The following assertion was thrown while notifying listeners for AnimationController:
+A RenderAnimatedSize was mutated in its own performLayout implementation.
+A RenderObject must not re-dirty itself while still being laid out.
+The RenderObject being mutated was:
+  RenderAnimatedSize#cb533 DISPOSED
+Consider using the LayoutBuilder widget to dynamically change a subtree during layout.
+
+When the exception was thrown, this was the stack:
+#0      RenderObject._debugCanPerformMutations.<anonymous closure> (package:flutter/src/rendering/object.dart:2383:9)
+#1      RenderObject._debugCanPerformMutations (package:flutter/src/rendering/object.dart:2428:6)
+#2      RenderObject.markNeedsLayout (package:flutter/src/rendering/object.dart:2661:12)
+#3      RenderBox.markNeedsLayout (package:flutter/src/rendering/box.dart:2860:11)
+#4      new RenderAnimatedSize.<anonymous closure> (package:flutter/src/rendering/animated_size.dart:92:15)
+#5      AnimationLocalListenersMixin.notifyListeners (package:flutter/src/animation/listener_helpers.dart:160:19)
+#6      AnimationController._animateToInternal (package:flutter/src/animation/animation_controller.dart:677:9)
+#7      AnimationController.forward (package:flutter/src/animation/animation_controller.dart:484:12)
+#8      RenderAnimatedSize._restartAnimation (package:flutter/src/rendering/animated_size.dart:311:17)
+#9      RenderAnimatedSize._layoutStable (package:flutter/src/rendering/animated_size.dart:332:7)
+#10     RenderAnimatedSize.performLayout (package:flutter/src/rendering/animated_size.dart:264:9)
+#11     RenderObject.layout (package:flutter/src/rendering/object.dart:2907:7)
+#12     RenderProxyBoxMixin.performLayout (package:flutter/src/rendering/proxy_box.dart:118:18)
+#13     RenderObject.layout (package:flutter/src/rendering/object.dart:2907:7)
+#14     RenderProxyBoxMixin.performLayout (package:flutter/src/rendering/proxy_box.dart:118:18)
+#15     RenderObject.layout (package:flutter/src/rendering/object.dart:2907:7)
+#16     RenderPadding.performLayout (package:flutter/src/rendering/shifted_box.dart:262:12)
+#17     RenderObject.layout (package:flutter/src/rendering/object.dart:2907:7)
+#18     MultiChildLayoutDelegate.layoutChild (package:flutter/src/rendering/custom_layout.dart:180:12)
+#19     _ScaffoldLayout.performLayout (package:flutter/src/material/scaffold.dart:1113:7)
+#20     MultiChildLayoutDelegate._callPerformLayout (package:flutter/src/rendering/custom_layout.dart:246:7)
+#21     RenderCustomMultiChildLayoutBox.performLayout (package:flutter/src/rendering/custom_layout.dart:417:14)
+#22     RenderObject._layoutWithoutResize (package:flutter/src/rendering/object.dart:2755:7)
+#23     PipelineOwner.flushLayout (package:flutter/src/rendering/object.dart:1174:18)
+#24     PipelineOwner.flushLayout (package:flutter/src/rendering/object.dart:1187:15)
+#25     AutomatedTestWidgetsFlutterBinding.drawFrame (package:flutter_test/src/binding.dart:2433:27)
+#26     RendererBinding._handlePersistentFrameCallback (package:flutter/src/rendering/binding.dart:509:5)
+#27     SchedulerBinding._invokeFrameCallback (package:flutter/src/scheduler/binding.dart:1430:15)
+#28     SchedulerBinding.handleDrawFrame (package:flutter/src/scheduler/binding.dart:1345:9)
+#29     AutomatedTestWidgetsFlutterBinding.pump.<anonymous closure> (package:flutter_test/src/binding.dart:2260:9)
+#32     TestAsyncUtils.guard (package:flutter_test/src/test_async_utils.dart:74:41)
+#33     AutomatedTestWidgetsFlutterBinding.pump (package:flutter_test/src/binding.dart:2249:27)
+#34     WidgetTester.pump.<anonymous closure> (package:flutter_test/src/widget_tester.dart:652:53)
+#37     TestAsyncUtils.guard (package:flutter_test/src/test_async_utils.dart:74:41)
+#38     WidgetTester.pump (package:flutter_test/src/widget_tester.dart:652:27)
+#39     verifyMotionPreference (file:///Users/lute/project/momcozy-lab/app/test/support/motion_preference_scenarios.dart:71:16)
+<asynchronous suspension>
+#40     main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/shared/momcozy_motion_test.dart:16:9)
+<asynchronous suspension>
+#41     testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#42     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 5 frames from dart:async and package:stack_trace)
+
+The AnimationController notifying listeners was:
+  AnimationController#6dc43(⏭ 1.000; paused; DISPOSED)
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: <516.0>
+  Actual: <1604.0>
+
+When the exception was thrown, this was the stack:
+#4      verifyMotionPreference (file:///Users/lute/project/momcozy-lab/app/test/support/motion_preference_scenarios.dart:143:3)
+<asynchronous suspension>
+#5      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/shared/momcozy_motion_test.dart:16:9)
+<asynchronous suspension>
+#6      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#7      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/support/motion_preference_scenarios.dart line 143
+The test description was:
+  reduced motion flows 320.0 / 2.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following message was thrown:
+Multiple exceptions (2) were detected during the running of the current test, and at least one was
+unexpected.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +0 -2: reduced motion flows 320.0 / 2.0 [E]
+  Test failed. See exception logs above.
+  The test description was: reduced motion flows 320.0 / 2.0
+  
+00:00 +0 -2: reduced motion flows 390.0 / 1.0
+══╡ EXCEPTION CAUGHT BY ANIMATION LIBRARY ╞═════════════════════════════════════════════════════════
+The following assertion was thrown while notifying listeners for AnimationController:
+A RenderAnimatedSize was mutated in its own performLayout implementation.
+A RenderObject must not re-dirty itself while still being laid out.
+The RenderObject being mutated was:
+  RenderAnimatedSize#ca243 DISPOSED
+Consider using the LayoutBuilder widget to dynamically change a subtree during layout.
+
+When the exception was thrown, this was the stack:
+#0      RenderObject._debugCanPerformMutations.<anonymous closure> (package:flutter/src/rendering/object.dart:2383:9)
+#1      RenderObject._debugCanPerformMutations (package:flutter/src/rendering/object.dart:2428:6)
+#2      RenderObject.markNeedsLayout (package:flutter/src/rendering/object.dart:2661:12)
+#3      RenderBox.markNeedsLayout (package:flutter/src/rendering/box.dart:2860:11)
+#4      new RenderAnimatedSize.<anonymous closure> (package:flutter/src/rendering/animated_size.dart:92:15)
+#5      AnimationLocalListenersMixin.notifyListeners (package:flutter/src/animation/listener_helpers.dart:160:19)
+#6      AnimationController._animateToInternal (package:flutter/src/animation/animation_controller.dart:677:9)
+#7      AnimationController.forward (package:flutter/src/animation/animation_controller.dart:484:12)
+#8      RenderAnimatedSize._layoutStable (package:flutter/src/rendering/animated_size.dart:338:19)
+#9      RenderAnimatedSize.performLayout (package:flutter/src/rendering/animated_size.dart:264:9)
+#10     RenderObject.layout (package:flutter/src/rendering/object.dart:2907:7)
+#11     RenderProxyBoxMixin.performLayout (package:flutter/src/rendering/proxy_box.dart:118:18)
+#12     RenderObject.layout (package:flutter/src/rendering/object.dart:2907:7)
+#13     RenderProxyBoxMixin.performLayout (package:flutter/src/rendering/proxy_box.dart:118:18)
+#14     RenderObject.layout (package:flutter/src/rendering/object.dart:2907:7)
+#15     RenderPadding.performLayout (package:flutter/src/rendering/shifted_box.dart:262:12)
+#16     RenderObject.layout (package:flutter/src/rendering/object.dart:2907:7)
+#17     MultiChildLayoutDelegate.layoutChild (package:flutter/src/rendering/custom_layout.dart:180:12)
+#18     _ScaffoldLayout.performLayout (package:flutter/src/material/scaffold.dart:1113:7)
+#19     MultiChildLayoutDelegate._callPerformLayout (package:flutter/src/rendering/custom_layout.dart:246:7)
+#20     RenderCustomMultiChildLayoutBox.performLayout (package:flutter/src/rendering/custom_layout.dart:417:14)
+#21     RenderObject._layoutWithoutResize (package:flutter/src/rendering/object.dart:2755:7)
+#22     PipelineOwner.flushLayout (package:flutter/src/rendering/object.dart:1174:18)
+#23     PipelineOwner.flushLayout (package:flutter/src/rendering/object.dart:1187:15)
+#24     AutomatedTestWidgetsFlutterBinding.drawFrame (package:flutter_test/src/binding.dart:2433:27)
+#25     RendererBinding._handlePersistentFrameCallback (package:flutter/src/rendering/binding.dart:509:5)
+#26     SchedulerBinding._invokeFrameCallback (package:flutter/src/scheduler/binding.dart:1430:15)
+#27     SchedulerBinding.handleDrawFrame (package:flutter/src/scheduler/binding.dart:1345:9)
+#28     AutomatedTestWidgetsFlutterBinding.pump.<anonymous closure> (package:flutter_test/src/binding.dart:2260:9)
+#31     TestAsyncUtils.guard (package:flutter_test/src/test_async_utils.dart:74:41)
+#32     AutomatedTestWidgetsFlutterBinding.pump (package:flutter_test/src/binding.dart:2249:27)
+#33     WidgetTester.pump.<anonymous closure> (package:flutter_test/src/widget_tester.dart:652:53)
+#36     TestAsyncUtils.guard (package:flutter_test/src/test_async_utils.dart:74:41)
+#37     WidgetTester.pump (package:flutter_test/src/widget_tester.dart:652:27)
+#38     verifyMotionPreference (file:///Users/lute/project/momcozy-lab/app/test/support/motion_preference_scenarios.dart:71:16)
+<asynchronous suspension>
+#39     main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/shared/momcozy_motion_test.dart:16:9)
+<asynchronous suspension>
+#40     testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#41     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 5 frames from dart:async and package:stack_trace)
+
+The AnimationController notifying listeners was:
+  AnimationController#19163(⏭ 1.000; paused; DISPOSED)
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: <456.0>
+  Actual: <1604.0>
+
+When the exception was thrown, this was the stack:
+#4      verifyMotionPreference (file:///Users/lute/project/momcozy-lab/app/test/support/motion_preference_scenarios.dart:143:3)
+<asynchronous suspension>
+#5      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/shared/momcozy_motion_test.dart:16:9)
+<asynchronous suspension>
+#6      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#7      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/support/motion_preference_scenarios.dart line 143
+The test description was:
+  reduced motion flows 390.0 / 1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following message was thrown:
+Multiple exceptions (2) were detected during the running of the current test, and at least one was
+unexpected.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +0 -3: reduced motion flows 390.0 / 1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: reduced motion flows 390.0 / 1.0
+  
+00:00 +0 -3: reduced motion flows 390.0 / 2.0
+══╡ EXCEPTION CAUGHT BY ANIMATION LIBRARY ╞═════════════════════════════════════════════════════════
+The following assertion was thrown while notifying listeners for AnimationController:
+A RenderAnimatedSize was mutated in its own performLayout implementation.
+A RenderObject must not re-dirty itself while still being laid out.
+The RenderObject being mutated was:
+  RenderAnimatedSize#2360e DISPOSED
+Consider using the LayoutBuilder widget to dynamically change a subtree during layout.
+
+When the exception was thrown, this was the stack:
+#0      RenderObject._debugCanPerformMutations.<anonymous closure> (package:flutter/src/rendering/object.dart:2383:9)
+#1      RenderObject._debugCanPerformMutations (package:flutter/src/rendering/object.dart:2428:6)
+#2      RenderObject.markNeedsLayout (package:flutter/src/rendering/object.dart:2661:12)
+#3      RenderBox.markNeedsLayout (package:flutter/src/rendering/box.dart:2860:11)
+#4      new RenderAnimatedSize.<anonymous closure> (package:flutter/src/rendering/animated_size.dart:92:15)
+#5      AnimationLocalListenersMixin.notifyListeners (package:flutter/src/animation/listener_helpers.dart:160:19)
+#6      AnimationController._animateToInternal (package:flutter/src/animation/animation_controller.dart:677:9)
+#7      AnimationController.forward (package:flutter/src/animation/animation_controller.dart:484:12)
+#8      RenderAnimatedSize._layoutStable (package:flutter/src/rendering/animated_size.dart:338:19)
+#9      RenderAnimatedSize.performLayout (package:flutter/src/rendering/animated_size.dart:264:9)
+#10     RenderObject.layout (package:flutter/src/rendering/object.dart:2907:7)
+#11     RenderProxyBoxMixin.performLayout (package:flutter/src/rendering/proxy_box.dart:118:18)
+#12     RenderObject.layout (package:flutter/src/rendering/object.dart:2907:7)
+#13     RenderProxyBoxMixin.performLayout (package:flutter/src/rendering/proxy_box.dart:118:18)
+#14     RenderObject.layout (package:flutter/src/rendering/object.dart:2907:7)
+#15     RenderPadding.performLayout (package:flutter/src/rendering/shifted_box.dart:262:12)
+#16     RenderObject.layout (package:flutter/src/rendering/object.dart:2907:7)
+#17     MultiChildLayoutDelegate.layoutChild (package:flutter/src/rendering/custom_layout.dart:180:12)
+#18     _ScaffoldLayout.performLayout (package:flutter/src/material/scaffold.dart:1113:7)
+#19     MultiChildLayoutDelegate._callPerformLayout (package:flutter/src/rendering/custom_layout.dart:246:7)
+#20     RenderCustomMultiChildLayoutBox.performLayout (package:flutter/src/rendering/custom_layout.dart:417:14)
+#21     RenderObject._layoutWithoutResize (package:flutter/src/rendering/object.dart:2755:7)
+#22     PipelineOwner.flushLayout (package:flutter/src/rendering/object.dart:1174:18)
+#23     PipelineOwner.flushLayout (package:flutter/src/rendering/object.dart:1187:15)
+#24     AutomatedTestWidgetsFlutterBinding.drawFrame (package:flutter_test/src/binding.dart:2433:27)
+#25     RendererBinding._handlePersistentFrameCallback (package:flutter/src/rendering/binding.dart:509:5)
+#26     SchedulerBinding._invokeFrameCallback (package:flutter/src/scheduler/binding.dart:1430:15)
+#27     SchedulerBinding.handleDrawFrame (package:flutter/src/scheduler/binding.dart:1345:9)
+#28     AutomatedTestWidgetsFlutterBinding.pump.<anonymous closure> (package:flutter_test/src/binding.dart:2260:9)
+#31     TestAsyncUtils.guard (package:flutter_test/src/test_async_utils.dart:74:41)
+#32     AutomatedTestWidgetsFlutterBinding.pump (package:flutter_test/src/binding.dart:2249:27)
+#33     WidgetTester.pump.<anonymous closure> (package:flutter_test/src/widget_tester.dart:652:53)
+#36     TestAsyncUtils.guard (package:flutter_test/src/test_async_utils.dart:74:41)
+#37     WidgetTester.pump (package:flutter_test/src/widget_tester.dart:652:27)
+#38     verifyMotionPreference (file:///Users/lute/project/momcozy-lab/app/test/support/motion_preference_scenarios.dart:71:16)
+<asynchronous suspension>
+#39     main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/shared/momcozy_motion_test.dart:16:9)
+<asynchronous suspension>
+#40     testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#41     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 5 frames from dart:async and package:stack_trace)
+
+The AnimationController notifying listeners was:
+  AnimationController#17cf1(⏭ 1.000; paused; DISPOSED)
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: <476.0>
+  Actual: <1604.0>
+
+When the exception was thrown, this was the stack:
+#4      verifyMotionPreference (file:///Users/lute/project/momcozy-lab/app/test/support/motion_preference_scenarios.dart:143:3)
+<asynchronous suspension>
+#5      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/shared/momcozy_motion_test.dart:16:9)
+<asynchronous suspension>
+#6      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#7      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/support/motion_preference_scenarios.dart line 143
+The test description was:
+  reduced motion flows 390.0 / 2.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following message was thrown:
+Multiple exceptions (2) were detected during the running of the current test, and at least one was
+unexpected.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +0 -4: reduced motion flows 390.0 / 2.0 [E]
+  Test failed. See exception logs above.
+  The test description was: reduced motion flows 390.0 / 2.0
+  
+00:00 +0 -4: reduced motion flows 430.0 / 1.0
+══╡ EXCEPTION CAUGHT BY ANIMATION LIBRARY ╞═════════════════════════════════════════════════════════
+The following assertion was thrown while notifying listeners for AnimationController:
+A RenderAnimatedSize was mutated in its own performLayout implementation.
+A RenderObject must not re-dirty itself while still being laid out.
+The RenderObject being mutated was:
+  RenderAnimatedSize#ac880 DISPOSED
+Consider using the LayoutBuilder widget to dynamically change a subtree during layout.
+
+When the exception was thrown, this was the stack:
+#0      RenderObject._debugCanPerformMutations.<anonymous closure> (package:flutter/src/rendering/object.dart:2383:9)
+#1      RenderObject._debugCanPerformMutations (package:flutter/src/rendering/object.dart:2428:6)
+#2      RenderObject.markNeedsLayout (package:flutter/src/rendering/object.dart:2661:12)
+#3      RenderBox.markNeedsLayout (package:flutter/src/rendering/box.dart:2860:11)
+#4      new RenderAnimatedSize.<anonymous closure> (package:flutter/src/rendering/animated_size.dart:92:15)
+#5      AnimationLocalListenersMixin.notifyListeners (package:flutter/src/animation/listener_helpers.dart:160:19)
+#6      AnimationController._animateToInternal (package:flutter/src/animation/animation_controller.dart:677:9)
+#7      AnimationController.forward (package:flutter/src/animation/animation_controller.dart:484:12)
+#8      RenderAnimatedSize._layoutStable (package:flutter/src/rendering/animated_size.dart:338:19)
+#9      RenderAnimatedSize.performLayout (package:flutter/src/rendering/animated_size.dart:264:9)
+#10     RenderObject.layout (package:flutter/src/rendering/object.dart:2907:7)
+#11     RenderProxyBoxMixin.performLayout (package:flutter/src/rendering/proxy_box.dart:118:18)
+#12     RenderObject.layout (package:flutter/src/rendering/object.dart:2907:7)
+#13     RenderProxyBoxMixin.performLayout (package:flutter/src/rendering/proxy_box.dart:118:18)
+#14     RenderObject.layout (package:flutter/src/rendering/object.dart:2907:7)
+#15     RenderPadding.performLayout (package:flutter/src/rendering/shifted_box.dart:262:12)
+#16     RenderObject.layout (package:flutter/src/rendering/object.dart:2907:7)
+#17     MultiChildLayoutDelegate.layoutChild (package:flutter/src/rendering/custom_layout.dart:180:12)
+#18     _ScaffoldLayout.performLayout (package:flutter/src/material/scaffold.dart:1113:7)
+#19     MultiChildLayoutDelegate._callPerformLayout (package:flutter/src/rendering/custom_layout.dart:246:7)
+#20     RenderCustomMultiChildLayoutBox.performLayout (package:flutter/src/rendering/custom_layout.dart:417:14)
+#21     RenderObject._layoutWithoutResize (package:flutter/src/rendering/object.dart:2755:7)
+#22     PipelineOwner.flushLayout (package:flutter/src/rendering/object.dart:1174:18)
+#23     PipelineOwner.flushLayout (package:flutter/src/rendering/object.dart:1187:15)
+#24     AutomatedTestWidgetsFlutterBinding.drawFrame (package:flutter_test/src/binding.dart:2433:27)
+#25     RendererBinding._handlePersistentFrameCallback (package:flutter/src/rendering/binding.dart:509:5)
+#26     SchedulerBinding._invokeFrameCallback (package:flutter/src/scheduler/binding.dart:1430:15)
+#27     SchedulerBinding.handleDrawFrame (package:flutter/src/scheduler/binding.dart:1345:9)
+#28     AutomatedTestWidgetsFlutterBinding.pump.<anonymous closure> (package:flutter_test/src/binding.dart:2260:9)
+#31     TestAsyncUtils.guard (package:flutter_test/src/test_async_utils.dart:74:41)
+#32     AutomatedTestWidgetsFlutterBinding.pump (package:flutter_test/src/binding.dart:2249:27)
+#33     WidgetTester.pump.<anonymous closure> (package:flutter_test/src/widget_tester.dart:652:53)
+#36     TestAsyncUtils.guard (package:flutter_test/src/test_async_utils.dart:74:41)
+#37     WidgetTester.pump (package:flutter_test/src/widget_tester.dart:652:27)
+#38     verifyMotionPreference (file:///Users/lute/project/momcozy-lab/app/test/support/motion_preference_scenarios.dart:71:16)
+<asynchronous suspension>
+#39     main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/shared/momcozy_motion_test.dart:16:9)
+<asynchronous suspension>
+#40     testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#41     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 5 frames from dart:async and package:stack_trace)
+
+The AnimationController notifying listeners was:
+  AnimationController#cd3ec(⏭ 1.000; paused; DISPOSED)
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: <456.0>
+  Actual: <1604.0>
+
+When the exception was thrown, this was the stack:
+#4      verifyMotionPreference (file:///Users/lute/project/momcozy-lab/app/test/support/motion_preference_scenarios.dart:143:3)
+<asynchronous suspension>
+#5      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/shared/momcozy_motion_test.dart:16:9)
+<asynchronous suspension>
+#6      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#7      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/support/motion_preference_scenarios.dart line 143
+The test description was:
+  reduced motion flows 430.0 / 1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following message was thrown:
+Multiple exceptions (2) were detected during the running of the current test, and at least one was
+unexpected.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +0 -5: reduced motion flows 430.0 / 1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: reduced motion flows 430.0 / 1.0
+  
+00:00 +0 -5: reduced motion flows 430.0 / 2.0
+══╡ EXCEPTION CAUGHT BY ANIMATION LIBRARY ╞═════════════════════════════════════════════════════════
+The following assertion was thrown while notifying listeners for AnimationController:
+A RenderAnimatedSize was mutated in its own performLayout implementation.
+A RenderObject must not re-dirty itself while still being laid out.
+The RenderObject being mutated was:
+  RenderAnimatedSize#36727 DISPOSED
+Consider using the LayoutBuilder widget to dynamically change a subtree during layout.
+
+When the exception was thrown, this was the stack:
+#0      RenderObject._debugCanPerformMutations.<anonymous closure> (package:flutter/src/rendering/object.dart:2383:9)
+#1      RenderObject._debugCanPerformMutations (package:flutter/src/rendering/object.dart:2428:6)
+#2      RenderObject.markNeedsLayout (package:flutter/src/rendering/object.dart:2661:12)
+#3      RenderBox.markNeedsLayout (package:flutter/src/rendering/box.dart:2860:11)
+#4      new RenderAnimatedSize.<anonymous closure> (package:flutter/src/rendering/animated_size.dart:92:15)
+#5      AnimationLocalListenersMixin.notifyListeners (package:flutter/src/animation/listener_helpers.dart:160:19)
+#6      AnimationController._animateToInternal (package:flutter/src/animation/animation_controller.dart:677:9)
+#7      AnimationController.forward (package:flutter/src/animation/animation_controller.dart:484:12)
+#8      RenderAnimatedSize._restartAnimation (package:flutter/src/rendering/animated_size.dart:311:17)
+#9      RenderAnimatedSize._layoutStable (package:flutter/src/rendering/animated_size.dart:332:7)
+#10     RenderAnimatedSize.performLayout (package:flutter/src/rendering/animated_size.dart:264:9)
+#11     RenderObject.layout (package:flutter/src/rendering/object.dart:2907:7)
+#12     RenderProxyBoxMixin.performLayout (package:flutter/src/rendering/proxy_box.dart:118:18)
+#13     RenderObject.layout (package:flutter/src/rendering/object.dart:2907:7)
+#14     RenderProxyBoxMixin.performLayout (package:flutter/src/rendering/proxy_box.dart:118:18)
+#15     RenderObject.layout (package:flutter/src/rendering/object.dart:2907:7)
+#16     RenderPadding.performLayout (package:flutter/src/rendering/shifted_box.dart:262:12)
+#17     RenderObject.layout (package:flutter/src/rendering/object.dart:2907:7)
+#18     MultiChildLayoutDelegate.layoutChild (package:flutter/src/rendering/custom_layout.dart:180:12)
+#19     _ScaffoldLayout.performLayout (package:flutter/src/material/scaffold.dart:1113:7)
+#20     MultiChildLayoutDelegate._callPerformLayout (package:flutter/src/rendering/custom_layout.dart:246:7)
+#21     RenderCustomMultiChildLayoutBox.performLayout (package:flutter/src/rendering/custom_layout.dart:417:14)
+#22     RenderObject._layoutWithoutResize (package:flutter/src/rendering/object.dart:2755:7)
+#23     PipelineOwner.flushLayout (package:flutter/src/rendering/object.dart:1174:18)
+#24     PipelineOwner.flushLayout (package:flutter/src/rendering/object.dart:1187:15)
+#25     AutomatedTestWidgetsFlutterBinding.drawFrame (package:flutter_test/src/binding.dart:2433:27)
+#26     RendererBinding._handlePersistentFrameCallback (package:flutter/src/rendering/binding.dart:509:5)
+#27     SchedulerBinding._invokeFrameCallback (package:flutter/src/scheduler/binding.dart:1430:15)
+#28     SchedulerBinding.handleDrawFrame (package:flutter/src/scheduler/binding.dart:1345:9)
+#29     AutomatedTestWidgetsFlutterBinding.pump.<anonymous closure> (package:flutter_test/src/binding.dart:2260:9)
+#32     TestAsyncUtils.guard (package:flutter_test/src/test_async_utils.dart:74:41)
+#33     AutomatedTestWidgetsFlutterBinding.pump (package:flutter_test/src/binding.dart:2249:27)
+#34     WidgetTester.pump.<anonymous closure> (package:flutter_test/src/widget_tester.dart:652:53)
+#37     TestAsyncUtils.guard (package:flutter_test/src/test_async_utils.dart:74:41)
+#38     WidgetTester.pump (package:flutter_test/src/widget_tester.dart:652:27)
+#39     verifyMotionPreference (file:///Users/lute/project/momcozy-lab/app/test/support/motion_preference_scenarios.dart:71:16)
+<asynchronous suspension>
+#40     main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/shared/momcozy_motion_test.dart:16:9)
+<asynchronous suspension>
+#41     testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#42     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 5 frames from dart:async and package:stack_trace)
+
+The AnimationController notifying listeners was:
+  AnimationController#6458f(⏭ 1.000; paused; DISPOSED)
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: <476.0>
+  Actual: <1604.0>
+
+When the exception was thrown, this was the stack:
+#4      verifyMotionPreference (file:///Users/lute/project/momcozy-lab/app/test/support/motion_preference_scenarios.dart:143:3)
+<asynchronous suspension>
+#5      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/shared/momcozy_motion_test.dart:16:9)
+<asynchronous suspension>
+#6      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#7      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/support/motion_preference_scenarios.dart line 143
+The test description was:
+  reduced motion flows 430.0 / 2.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following message was thrown:
+Multiple exceptions (2) were detected during the running of the current test, and at least one was
+unexpected.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +0 -6: reduced motion flows 430.0 / 2.0 [E]
+  Test failed. See exception logs above.
+  The test description was: reduced motion flows 430.0 / 2.0
+  
+00:00 +0 -6: ordinary scrolling retains its movement and destination
+00:00 +1 -6: (tearDownAll)
+00:00 +1 -6: Some tests failed.
+
+Failing tests:
+  /Users/lute/project/momcozy-lab/app/test/shared/momcozy_motion_test.dart: reduced motion flows 320.0 / 1.0
+  /Users/lute/project/momcozy-lab/app/test/shared/momcozy_motion_test.dart: reduced motion flows 320.0 / 2.0
+  /Users/lute/project/momcozy-lab/app/test/shared/momcozy_motion_test.dart: reduced motion flows 390.0 / 1.0
+  /Users/lute/project/momcozy-lab/app/test/shared/momcozy_motion_test.dart: reduced motion flows 390.0 / 2.0
+  ... and 2 more

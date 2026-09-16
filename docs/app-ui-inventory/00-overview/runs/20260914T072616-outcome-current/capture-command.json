@@ -1,0 +1,14 @@
+{
+  "command": [
+    "/Users/lute/.local/share/momcozy-toolchains/flutter/bin/flutter",
+    "--suppress-analytics",
+    "test",
+    "--no-pub",
+    "test/modules/consultation/consultation_inventory_journey_test.dart",
+    "--plain-name",
+    "inventory consultation current",
+    "--reporter",
+    "expanded"
+  ],
+  "scope": "G01 six distinct outcome layouts; 11 actual visible CTAs, one viewport; 10 images including shared entry/destinations"
+}

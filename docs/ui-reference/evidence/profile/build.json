@@ -1,0 +1,17 @@
+{
+  "apk_sha256": "2b30b0776856bc44ef1095f9f402f58e0fb31864da09fb496f32f82270b685b5",
+  "flavor": "local",
+  "mode": "debug",
+  "version": "1.0.0+57",
+  "device": "emulator-5554",
+  "installed": "2026-09-12 11:31 Asia/Shanghai",
+  "test_results": {
+    "agent": 170,
+    "more": 6,
+    "schedule": 9
+  },
+  "analyze": "4 changed implementation files: no issues",
+  "notes": [
+    "Only local simulator validation; no cloud release or source push."
+  ]
+}

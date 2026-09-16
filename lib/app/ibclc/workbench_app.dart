@@ -381,7 +381,7 @@ class _MomCozyWorkbenchAppState extends State<MomCozyWorkbenchApp> {
   Widget build(BuildContext context) => MaterialApp.router(
     title: 'Momcozy · IBCLC 工作台',
     debugShowCheckedModeBanner: false,
-    theme: momCozyTheme(),
+    theme: momCozyTheme(isWorkbench: true),
     locale: const Locale('zh', 'CN'),
     supportedLocales: const [Locale('zh', 'CN'), Locale('en')],
     localizationsDelegates: const [

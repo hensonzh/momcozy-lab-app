@@ -1,0 +1,7 @@
+{
+  "lib/app/momcozy_app.dart": "00881d1d0901b24af222b6e08fd61b0a1ffd6ac309e02277cd1f400b6f1a59a0",
+  "test/app/notification_conversation_route_test.dart": "928256e7c92a1e748008ee9dfc17cfecd4effcf5471f89de6588b0ba1241984c",
+  "test/modules/consultation/home_consultation_dialog_test.dart": "e0a8c8b7f94e44ffe0a9d413e6f41eede78b6a5dc2f26d1baa78ef85cd6ebc61",
+  "test/goldens/design_system/home-preparation-loading-short-320-2x.png": "feedb5d12d8f7eddae0ac3629eb3911831198f2f2c0d757ab5ea447eae0830b8",
+  "test/goldens/design_system/home-preparation-error-short-320-2x.png": "50f5b9c652a54ce2757bf354af451b74094ced8371428bb210ef831f2c5aa5ad"
+}

@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/baby-feeding-time-minimum-duration-saved-320-2x.png",
+  "previous_source": "test/goldens/ui_inventory/baby-feeding-time-optional-duration-reopened-320-2x.png",
+  "route": "/babies/inventory-baby/records",
+  "trigger": "Save minimum one-minute duration in history",
+  "root_entry": "Authenticated More → tap Baby bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/baby/baby_feeding_time_inventory_test.dart"
+}

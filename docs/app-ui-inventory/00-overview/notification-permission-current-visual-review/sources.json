@@ -1,0 +1,3536 @@
+{
+  "method": "full-width continuous 650px strips; identical pixels reference prior reviewed Mom or Baby controls; remaining segments reviewed at native width",
+  "sources": [
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-direct-settings-error-320-2x.long.png",
+      "sha256": "a88c55687e4b8cb078dbb378f7efd563bc170864170225c48d4d2d49c4ccffda",
+      "width": 320,
+      "height": 1856,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b2528664ad664d6a9d0a6a579d5a182d81aab0d0ced241027d477a7ae21fd991",
+          "review": "../notification-current-visual-review/sheet-03.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "7beaafc8b6f7b52959d7dd5c1e1dd0b3d5e17fa4e4e355964fee96f8a89a59c9",
+          "review": "sheet-01.png#tile-0"
+        },
+        {
+          "y0": 1300,
+          "y1": 1856,
+          "pixel_sha256": "88c24385fbffb2d23b8095c2740d9bfcf93c623d3aaa07f04b4b23ebaaf70780",
+          "review": "sheet-01.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-direct-settings-error-320-2x.png",
+      "sha256": "c30e3d10f70c7323a6e52f749845768b1c066fb55f070e7c4b7435291f5c0c7d",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a836781541c2102ebeb919d1a227473ac245eea2385bf12d531d237ba82dd70d",
+          "review": "sheet-01.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "62990322a57cc8997f5a01f97dc20b10b702504e835a102137fcd8b85a3b6f67",
+          "review": "sheet-01.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-direct-settings-error-393-1x.long.png",
+      "sha256": "b08cd08a13ab66e6d86f1dabaf529809b2dbad5fa456538a83311e70765a38a8",
+      "width": 393,
+      "height": 877,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "e40f59618a29d6b7e44991550df0ccd9a21a9fa7e77f87af923d7ad6cb132947",
+          "review": "../notification-current-visual-review/sheet-04.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 877,
+          "pixel_sha256": "79de06ffff42bcdafa8a1ad64fa87f65b9407408a792077007fa1882bd6d5175",
+          "review": "sheet-01.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-direct-settings-error-393-1x.png",
+      "sha256": "824069a5be0e6a1cf5532bb60143675398dbb12f9c934a8afff60fef61cf967d",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "7391e2081f8ec6e135717e84cc9c92860d3ea5f7230ba0f398746c171b3ca0b8",
+          "review": "../notification-current-visual-review/sheet-04.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "7bb5cef7d2167f13f7d50825a148cdf0244d1b71c787cdc96e7e69d8e0b33cad",
+          "review": "sheet-01.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-direct-settings-error-dismissed-320-2x.long.png",
+      "sha256": "2b450898306855bcf0074d29c1ae5f3270f68cb241b8dc76ae79d34e225ad0fb",
+      "width": 320,
+      "height": 1856,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b2528664ad664d6a9d0a6a579d5a182d81aab0d0ced241027d477a7ae21fd991",
+          "review": "../notification-current-visual-review/sheet-03.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "150cf14a6dc1c4f510c4dacdbab34a8454513e7c763bad33f1dab9852135a7ba",
+          "review": "../notification-current-visual-review/sheet-02.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1856,
+          "pixel_sha256": "c5a2b9a192188b2954202ac20905b5bae466c0fbc863439441a9aefc05ec7756",
+          "review": "../notification-current-visual-review/sheet-02.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-direct-settings-error-dismissed-320-2x.png",
+      "sha256": "f6b490327c468150d3915529b315939cabfa952c29635375919477243ea90070",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a836781541c2102ebeb919d1a227473ac245eea2385bf12d531d237ba82dd70d",
+          "review": "sheet-01.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "dde25f1f6124600433232715aa7548aba6bf53322f084fd4678516e3110cd896",
+          "review": "sheet-02.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-direct-settings-error-dismissed-393-1x.long.png",
+      "sha256": "d87293e710a46fc2902973359d0190d7bfe2e428e33a174c9b8daeebafc70f1b",
+      "width": 393,
+      "height": 877,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "e40f59618a29d6b7e44991550df0ccd9a21a9fa7e77f87af923d7ad6cb132947",
+          "review": "../notification-current-visual-review/sheet-04.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 877,
+          "pixel_sha256": "5c798c3a4cdf5d8b3e2d9ed0b91d7d571ca109ab6885bfd425770f7ab32a2f2e",
+          "review": "../notification-current-visual-review/sheet-03.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-direct-settings-error-dismissed-393-1x.png",
+      "sha256": "3cee73e1484ed656aa518937448b8991510c7d4ce75c880faf19cba36f7c9fcd",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "7391e2081f8ec6e135717e84cc9c92860d3ea5f7230ba0f398746c171b3ca0b8",
+          "review": "../notification-current-visual-review/sheet-04.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "9c9563fffab33ddae6117574131fc438ba92f98554f59fdf804602434a656b11",
+          "review": "../notification-current-visual-review/sheet-03.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-direct-settings-retry-320-2x.long.png",
+      "sha256": "2b450898306855bcf0074d29c1ae5f3270f68cb241b8dc76ae79d34e225ad0fb",
+      "width": 320,
+      "height": 1856,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b2528664ad664d6a9d0a6a579d5a182d81aab0d0ced241027d477a7ae21fd991",
+          "review": "../notification-current-visual-review/sheet-03.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "150cf14a6dc1c4f510c4dacdbab34a8454513e7c763bad33f1dab9852135a7ba",
+          "review": "../notification-current-visual-review/sheet-02.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1856,
+          "pixel_sha256": "c5a2b9a192188b2954202ac20905b5bae466c0fbc863439441a9aefc05ec7756",
+          "review": "../notification-current-visual-review/sheet-02.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-direct-settings-retry-320-2x.png",
+      "sha256": "f6b490327c468150d3915529b315939cabfa952c29635375919477243ea90070",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a836781541c2102ebeb919d1a227473ac245eea2385bf12d531d237ba82dd70d",
+          "review": "sheet-01.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "dde25f1f6124600433232715aa7548aba6bf53322f084fd4678516e3110cd896",
+          "review": "sheet-02.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-direct-settings-retry-393-1x.long.png",
+      "sha256": "d87293e710a46fc2902973359d0190d7bfe2e428e33a174c9b8daeebafc70f1b",
+      "width": 393,
+      "height": 877,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "e40f59618a29d6b7e44991550df0ccd9a21a9fa7e77f87af923d7ad6cb132947",
+          "review": "../notification-current-visual-review/sheet-04.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 877,
+          "pixel_sha256": "5c798c3a4cdf5d8b3e2d9ed0b91d7d571ca109ab6885bfd425770f7ab32a2f2e",
+          "review": "../notification-current-visual-review/sheet-03.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-direct-settings-retry-393-1x.png",
+      "sha256": "3cee73e1484ed656aa518937448b8991510c7d4ce75c880faf19cba36f7c9fcd",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "7391e2081f8ec6e135717e84cc9c92860d3ea5f7230ba0f398746c171b3ca0b8",
+          "review": "../notification-current-visual-review/sheet-04.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "9c9563fffab33ddae6117574131fc438ba92f98554f59fdf804602434a656b11",
+          "review": "../notification-current-visual-review/sheet-03.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-education-back-dismissed-320-2x.long.png",
+      "sha256": "7d72fefa4a03fda6c6f2534b103239c0ec1abbee27261c615e8eeb8b3ee423d6",
+      "width": 320,
+      "height": 2048,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "000e62e311dbf4b69458fb2564026fd6e836014cd95cf5d95626ce5264a8e90c",
+          "review": "sheet-02.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "2c61388e3be82c5b5897d2e07deb4c947de4a17e40727fbff2686ab1c53a8ab1",
+          "review": "sheet-02.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "0f5732dc4756d72b2b429676954862b09eeb2a0962bccd6dfa52cd9ba4b6962d",
+          "review": "sheet-02.png#tile-3"
+        },
+        {
+          "y0": 1950,
+          "y1": 2048,
+          "pixel_sha256": "1773c259ca5fc04dfbeae04e0755f5d5bc71a667d062b9bd63633e386e5775e0",
+          "review": "sheet-02.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-education-back-dismissed-320-2x.png",
+      "sha256": "f49c589e25d978fe4857dd48fe04e907d4c003437a290489eb58ecc1ddf1f320",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "01e07eb7d312ae5c4b643af1c87ef88291a8e4ddaf2cec9c31ffee5654cb5c07",
+          "review": "sheet-02.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "79ad7a883de6ddc9321c2fb8a297bac32fcf2dfab8271f5dc104edf43560ec4e",
+          "review": "sheet-03.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-education-back-dismissed-393-1x.long.png",
+      "sha256": "42092d1cf621a45a83a9db78bc928bfe03b662e9ca55affccd466870423b0286",
+      "width": 393,
+      "height": 877,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ce6c8552a98ed105937c1126bb6b4d8c1ccc849ac333ea9b690fb5c2bfa14371",
+          "review": "sheet-03.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 877,
+          "pixel_sha256": "d061572051e4191fd0b1783a64772a93c587a80f53b5ec3174d8133b1710387f",
+          "review": "sheet-03.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-education-back-dismissed-393-1x.png",
+      "sha256": "57faf6805cc56fba68c75c0be045f6323498ba1f16018f2186a551c6bb9dc40c",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "d81d1913c2187ed6cf2ed403f4651e9babf683a23d5cc2da2f09d28afad6d81c",
+          "review": "sheet-03.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "452b31bf451e1081960d4b30eb563cb92216193fa8194d56ed79ec6ed1f36105",
+          "review": "sheet-03.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-education-barrier-dismissed-320-2x.long.png",
+      "sha256": "7d72fefa4a03fda6c6f2534b103239c0ec1abbee27261c615e8eeb8b3ee423d6",
+      "width": 320,
+      "height": 2048,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "000e62e311dbf4b69458fb2564026fd6e836014cd95cf5d95626ce5264a8e90c",
+          "review": "sheet-02.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "2c61388e3be82c5b5897d2e07deb4c947de4a17e40727fbff2686ab1c53a8ab1",
+          "review": "sheet-02.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "0f5732dc4756d72b2b429676954862b09eeb2a0962bccd6dfa52cd9ba4b6962d",
+          "review": "sheet-02.png#tile-3"
+        },
+        {
+          "y0": 1950,
+          "y1": 2048,
+          "pixel_sha256": "1773c259ca5fc04dfbeae04e0755f5d5bc71a667d062b9bd63633e386e5775e0",
+          "review": "sheet-02.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-education-barrier-dismissed-320-2x.png",
+      "sha256": "f49c589e25d978fe4857dd48fe04e907d4c003437a290489eb58ecc1ddf1f320",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "01e07eb7d312ae5c4b643af1c87ef88291a8e4ddaf2cec9c31ffee5654cb5c07",
+          "review": "sheet-02.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "79ad7a883de6ddc9321c2fb8a297bac32fcf2dfab8271f5dc104edf43560ec4e",
+          "review": "sheet-03.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-education-barrier-dismissed-393-1x.long.png",
+      "sha256": "42092d1cf621a45a83a9db78bc928bfe03b662e9ca55affccd466870423b0286",
+      "width": 393,
+      "height": 877,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ce6c8552a98ed105937c1126bb6b4d8c1ccc849ac333ea9b690fb5c2bfa14371",
+          "review": "sheet-03.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 877,
+          "pixel_sha256": "d061572051e4191fd0b1783a64772a93c587a80f53b5ec3174d8133b1710387f",
+          "review": "sheet-03.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-education-barrier-dismissed-393-1x.png",
+      "sha256": "57faf6805cc56fba68c75c0be045f6323498ba1f16018f2186a551c6bb9dc40c",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "d81d1913c2187ed6cf2ed403f4651e9babf683a23d5cc2da2f09d28afad6d81c",
+          "review": "sheet-03.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "452b31bf451e1081960d4b30eb563cb92216193fa8194d56ed79ec6ed1f36105",
+          "review": "sheet-03.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-education-before-back-320-2x.png",
+      "sha256": "f3cae7a74c4bda2e771face23ebe704f0f12543205da4cf0d95998c30d2a7de5",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "0c978e904d7c962027fcb14fa5eddef5c0b61654f31229aa340d25a30c02936a",
+          "review": "sheet-03.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "992969bd223cc35bd461d04566bf26756b3565e350162589fd17a3732436876f",
+          "review": "sheet-04.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-education-before-back-393-1x.png",
+      "sha256": "b0d97b40553213a7fd4fcea6ed83e04f59fed92ab9998de5fc9142e4ba22cf47",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "cd9bfe776c82d3451c80abde7d3dbc481498b13edb815913d509e32913ef6543",
+          "review": "sheet-04.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "fe7792c33c792f76e3c655dd5836ec86629c5e170de35c7c66af0af8972a2a09",
+          "review": "sheet-04.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-education-before-denial-320-2x.png",
+      "sha256": "f3cae7a74c4bda2e771face23ebe704f0f12543205da4cf0d95998c30d2a7de5",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "0c978e904d7c962027fcb14fa5eddef5c0b61654f31229aa340d25a30c02936a",
+          "review": "sheet-03.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "992969bd223cc35bd461d04566bf26756b3565e350162589fd17a3732436876f",
+          "review": "sheet-04.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-education-before-denial-393-1x.png",
+      "sha256": "b0d97b40553213a7fd4fcea6ed83e04f59fed92ab9998de5fc9142e4ba22cf47",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "cd9bfe776c82d3451c80abde7d3dbc481498b13edb815913d509e32913ef6543",
+          "review": "sheet-04.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "fe7792c33c792f76e3c655dd5836ec86629c5e170de35c7c66af0af8972a2a09",
+          "review": "sheet-04.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-education-denied-320-2x.long.png",
+      "sha256": "ce909cae88865de1087257e76cd0064b66faced95c935576b11e9d9fff1f3148",
+      "width": 320,
+      "height": 2048,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "7244b5cf2ca4c3bab646c8a7d20793a2ea616c70160b4a7d17011949207b3619",
+          "review": "sheet-04.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "2c61388e3be82c5b5897d2e07deb4c947de4a17e40727fbff2686ab1c53a8ab1",
+          "review": "sheet-02.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "0f5732dc4756d72b2b429676954862b09eeb2a0962bccd6dfa52cd9ba4b6962d",
+          "review": "sheet-02.png#tile-3"
+        },
+        {
+          "y0": 1950,
+          "y1": 2048,
+          "pixel_sha256": "1773c259ca5fc04dfbeae04e0755f5d5bc71a667d062b9bd63633e386e5775e0",
+          "review": "sheet-02.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-education-denied-320-2x.png",
+      "sha256": "f49c589e25d978fe4857dd48fe04e907d4c003437a290489eb58ecc1ddf1f320",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "01e07eb7d312ae5c4b643af1c87ef88291a8e4ddaf2cec9c31ffee5654cb5c07",
+          "review": "sheet-02.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "79ad7a883de6ddc9321c2fb8a297bac32fcf2dfab8271f5dc104edf43560ec4e",
+          "review": "sheet-03.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-education-denied-393-1x.long.png",
+      "sha256": "c1725efeff912a617f9b55b1ed7c6b64c9960a7402aa84914fb9d40a6a305366",
+      "width": 393,
+      "height": 877,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "5283525c09b3bb1d78ab4662e61ac1f58cacb915ae6e3fa4f48d4d2b12c51980",
+          "review": "sheet-04.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 877,
+          "pixel_sha256": "d061572051e4191fd0b1783a64772a93c587a80f53b5ec3174d8133b1710387f",
+          "review": "sheet-03.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-education-denied-393-1x.png",
+      "sha256": "1cf362fbbfe2c5da6fa80d61d2bab2c4e8397efc10f919ed87bc2afa3c65f3dc",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "f94914bb46fb85294f9c66cc31344fb4894c863b8801a4081ae582aa8f8eaab8",
+          "review": "sheet-04.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "452b31bf451e1081960d4b30eb563cb92216193fa8194d56ed79ec6ed1f36105",
+          "review": "sheet-03.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-education-dialog-320-2x.png",
+      "sha256": "f3cae7a74c4bda2e771face23ebe704f0f12543205da4cf0d95998c30d2a7de5",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "0c978e904d7c962027fcb14fa5eddef5c0b61654f31229aa340d25a30c02936a",
+          "review": "sheet-03.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "992969bd223cc35bd461d04566bf26756b3565e350162589fd17a3732436876f",
+          "review": "sheet-04.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-education-dialog-393-1x.png",
+      "sha256": "b0d97b40553213a7fd4fcea6ed83e04f59fed92ab9998de5fc9142e4ba22cf47",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "cd9bfe776c82d3451c80abde7d3dbc481498b13edb815913d509e32913ef6543",
+          "review": "sheet-04.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "fe7792c33c792f76e3c655dd5836ec86629c5e170de35c7c66af0af8972a2a09",
+          "review": "sheet-04.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-education-feedback-dismissed-320-2x.long.png",
+      "sha256": "b9db6e157e111b3294b30cc0738e9148c1e8baa05e372e1160e59b8c563050c1",
+      "width": 320,
+      "height": 2048,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "000e62e311dbf4b69458fb2564026fd6e836014cd95cf5d95626ce5264a8e90c",
+          "review": "sheet-02.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "2c61388e3be82c5b5897d2e07deb4c947de4a17e40727fbff2686ab1c53a8ab1",
+          "review": "sheet-02.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "a99120a849b2e384839969af7ae7cfed7f267cb38e1b20a41bc04b4208daa94e",
+          "review": "../notification-current-visual-review/sheet-20.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2048,
+          "pixel_sha256": "ff6c68e2a27458d7efe4c9bf1fa771fc30042d85020172192789f08641dda643",
+          "review": "../notification-current-visual-review/sheet-20.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-education-feedback-dismissed-320-2x.png",
+      "sha256": "f1193c08552a978d0e5a5c12a7b54fc716b385e9ded12615058017485ceb3c6a",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "cef4dc1f82c032f8851de409327a81cba36840d6dcdee8cd9e6b6073b2374c51",
+          "review": "sheet-05.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "90cdec09e14fdad50bd757470733822b5046045dc9a22f288d2d2385e84b6b38",
+          "review": "sheet-05.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-education-feedback-dismissed-393-1x.long.png",
+      "sha256": "dc4aa1067816f85cf184abb9795b0e4ff157aa981f04ba806edd906b090201e9",
+      "width": 393,
+      "height": 877,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ce6c8552a98ed105937c1126bb6b4d8c1ccc849ac333ea9b690fb5c2bfa14371",
+          "review": "sheet-03.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 877,
+          "pixel_sha256": "5c798c3a4cdf5d8b3e2d9ed0b91d7d571ca109ab6885bfd425770f7ab32a2f2e",
+          "review": "../notification-current-visual-review/sheet-03.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-education-feedback-dismissed-393-1x.png",
+      "sha256": "e8fec6879a7fa63062f8d7511ab6d26ec3ebc08e3cc8515e16846a79f69061b6",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "d81d1913c2187ed6cf2ed403f4651e9babf683a23d5cc2da2f09d28afad6d81c",
+          "review": "sheet-03.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "9c9563fffab33ddae6117574131fc438ba92f98554f59fdf804602434a656b11",
+          "review": "../notification-current-visual-review/sheet-03.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-education-inbox-320-2x.png",
+      "sha256": "d87ff0fff73b3f1cfff2f928e2c3a11de2bd19fcbb0bcf36a68f8d7cbefadb05",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "519ff9428b67f0330d367132652262e3bf3f9bc242f052e2694185e023769db7",
+          "review": "../notification-current-visual-review/sheet-06.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "94269320474d661f9d8142ede1ff2919f042a15c63033d5911fad41d5ea40b09",
+          "review": "../notification-current-visual-review/sheet-06.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-education-inbox-393-1x.png",
+      "sha256": "e55b634cfb38e5aee2d434badba0379c70705d382cff8ad2a51280473c32ec40",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "d130be8c6c7f469ad640ae2b6539198c08b414096f26091eabc878588d89b626",
+          "review": "../notification-current-visual-review/sheet-06.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "5e269ca9e36daffe984531405b8fd9a7fd95687843288196663912cae234267b",
+          "review": "../account-current-visual-review/sheet-05.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-education-inbox-return-320-2x.png",
+      "sha256": "d87ff0fff73b3f1cfff2f928e2c3a11de2bd19fcbb0bcf36a68f8d7cbefadb05",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "519ff9428b67f0330d367132652262e3bf3f9bc242f052e2694185e023769db7",
+          "review": "../notification-current-visual-review/sheet-06.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "94269320474d661f9d8142ede1ff2919f042a15c63033d5911fad41d5ea40b09",
+          "review": "../notification-current-visual-review/sheet-06.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-education-inbox-return-393-1x.png",
+      "sha256": "e55b634cfb38e5aee2d434badba0379c70705d382cff8ad2a51280473c32ec40",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "d130be8c6c7f469ad640ae2b6539198c08b414096f26091eabc878588d89b626",
+          "review": "../notification-current-visual-review/sheet-06.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "5e269ca9e36daffe984531405b8fd9a7fd95687843288196663912cae234267b",
+          "review": "../account-current-visual-review/sheet-05.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-education-more-320-2x.long.png",
+      "sha256": "edf60b2ff688bc915d2bb5b78dcd590592f80dc819f88b78e894a18c3c8b4a1d",
+      "width": 320,
+      "height": 1177,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "45deeca5fc0f885b8c8217e880d15e7853492fa7d920cd2c7845ecde312a0519",
+          "review": "../notification-current-visual-review/sheet-06.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1177,
+          "pixel_sha256": "b2990c1b14961c2b593f140c54b5269bcd336d812e3623b8a61d0e6713c21131",
+          "review": "../more-current-visual-review/sheet-05.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-education-more-320-2x.png",
+      "sha256": "328ca0e756ae7287b083fef2202b55d073beb0f20e6e8f19047a08f0b2292e1c",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "45deeca5fc0f885b8c8217e880d15e7853492fa7d920cd2c7845ecde312a0519",
+          "review": "../notification-current-visual-review/sheet-06.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "6a6ad6eda43220222ae31b7f385fb43f1901e21c5fad76b65c9e7b65b56c9ddf",
+          "review": "../notification-current-visual-review/sheet-06.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-education-more-393-1x.png",
+      "sha256": "9a5ed794dbe75feb34e0fa9d9716ed6f090b4543d2adf74442af56ab29b870c1",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "54c8e86e75b74c4fc90af4628975ba93a1179d33bb7c77659fb1dbefc1dc6416",
+          "review": "../notification-current-visual-review/sheet-06.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "ae4f630d503ab6fd4f559f429de09469456c11d171c0c3898413ee795bf5b433",
+          "review": "../baby-development-date-visual-review/sheet-05.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-education-more-return-320-2x.long.png",
+      "sha256": "edf60b2ff688bc915d2bb5b78dcd590592f80dc819f88b78e894a18c3c8b4a1d",
+      "width": 320,
+      "height": 1177,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "45deeca5fc0f885b8c8217e880d15e7853492fa7d920cd2c7845ecde312a0519",
+          "review": "../notification-current-visual-review/sheet-06.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1177,
+          "pixel_sha256": "b2990c1b14961c2b593f140c54b5269bcd336d812e3623b8a61d0e6713c21131",
+          "review": "../more-current-visual-review/sheet-05.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-education-more-return-320-2x.png",
+      "sha256": "328ca0e756ae7287b083fef2202b55d073beb0f20e6e8f19047a08f0b2292e1c",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "45deeca5fc0f885b8c8217e880d15e7853492fa7d920cd2c7845ecde312a0519",
+          "review": "../notification-current-visual-review/sheet-06.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "6a6ad6eda43220222ae31b7f385fb43f1901e21c5fad76b65c9e7b65b56c9ddf",
+          "review": "../notification-current-visual-review/sheet-06.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-education-more-return-393-1x.png",
+      "sha256": "9a5ed794dbe75feb34e0fa9d9716ed6f090b4543d2adf74442af56ab29b870c1",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "54c8e86e75b74c4fc90af4628975ba93a1179d33bb7c77659fb1dbefc1dc6416",
+          "review": "../notification-current-visual-review/sheet-06.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "ae4f630d503ab6fd4f559f429de09469456c11d171c0c3898413ee795bf5b433",
+          "review": "../baby-development-date-visual-review/sheet-05.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-education-not-now-320-2x.long.png",
+      "sha256": "7d72fefa4a03fda6c6f2534b103239c0ec1abbee27261c615e8eeb8b3ee423d6",
+      "width": 320,
+      "height": 2048,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "000e62e311dbf4b69458fb2564026fd6e836014cd95cf5d95626ce5264a8e90c",
+          "review": "sheet-02.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "2c61388e3be82c5b5897d2e07deb4c947de4a17e40727fbff2686ab1c53a8ab1",
+          "review": "sheet-02.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "0f5732dc4756d72b2b429676954862b09eeb2a0962bccd6dfa52cd9ba4b6962d",
+          "review": "sheet-02.png#tile-3"
+        },
+        {
+          "y0": 1950,
+          "y1": 2048,
+          "pixel_sha256": "1773c259ca5fc04dfbeae04e0755f5d5bc71a667d062b9bd63633e386e5775e0",
+          "review": "sheet-02.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-education-not-now-320-2x.png",
+      "sha256": "f49c589e25d978fe4857dd48fe04e907d4c003437a290489eb58ecc1ddf1f320",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "01e07eb7d312ae5c4b643af1c87ef88291a8e4ddaf2cec9c31ffee5654cb5c07",
+          "review": "sheet-02.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "79ad7a883de6ddc9321c2fb8a297bac32fcf2dfab8271f5dc104edf43560ec4e",
+          "review": "sheet-03.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-education-not-now-393-1x.long.png",
+      "sha256": "42092d1cf621a45a83a9db78bc928bfe03b662e9ca55affccd466870423b0286",
+      "width": 393,
+      "height": 877,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ce6c8552a98ed105937c1126bb6b4d8c1ccc849ac333ea9b690fb5c2bfa14371",
+          "review": "sheet-03.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 877,
+          "pixel_sha256": "d061572051e4191fd0b1783a64772a93c587a80f53b5ec3174d8133b1710387f",
+          "review": "sheet-03.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-education-not-now-393-1x.png",
+      "sha256": "57faf6805cc56fba68c75c0be045f6323498ba1f16018f2186a551c6bb9dc40c",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "d81d1913c2187ed6cf2ed403f4651e9babf683a23d5cc2da2f09d28afad6d81c",
+          "review": "sheet-03.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "452b31bf451e1081960d4b30eb563cb92216193fa8194d56ed79ec6ed1f36105",
+          "review": "sheet-03.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-education-ready-320-2x.long.png",
+      "sha256": "3acbfd81c25ebfeced1d4cb54214f93e950c63e62b02c14f1947cfb7d3946e96",
+      "width": 320,
+      "height": 2048,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "000e62e311dbf4b69458fb2564026fd6e836014cd95cf5d95626ce5264a8e90c",
+          "review": "sheet-02.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "cf4b13ea88c67096fa2317f2f230921678365dc6a6a638d709fc0572e3438c9e",
+          "review": "sheet-05.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "47dcce463019705d924b6eb8f4eab8b4d2f631bf7b41d7602a29c842564905aa",
+          "review": "sheet-05.png#tile-3"
+        },
+        {
+          "y0": 1950,
+          "y1": 2048,
+          "pixel_sha256": "ff6c68e2a27458d7efe4c9bf1fa771fc30042d85020172192789f08641dda643",
+          "review": "../notification-current-visual-review/sheet-20.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-education-ready-320-2x.png",
+      "sha256": "0645e84cb12f51bca137a308a35c5d173ea4db874200450974c8b82a7c91602d",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "000e62e311dbf4b69458fb2564026fd6e836014cd95cf5d95626ce5264a8e90c",
+          "review": "sheet-02.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "8161bdfd22f0d3bbb7fb9447d75bd354d9cee733ac38bb9d1b23c75b9eb26c25",
+          "review": "sheet-05.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-education-ready-393-1x.long.png",
+      "sha256": "92982e238e15f1f94f031b011ec25d89ca28bf8d73fbf20ce3f0e4b6039b6b70",
+      "width": 393,
+      "height": 877,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "79224d917bca527c1fed7f4c5045ed0f9ced0941b141d22d71e5076f72dddba7",
+          "review": "sheet-05.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 877,
+          "pixel_sha256": "5c798c3a4cdf5d8b3e2d9ed0b91d7d571ca109ab6885bfd425770f7ab32a2f2e",
+          "review": "../notification-current-visual-review/sheet-03.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-education-ready-393-1x.png",
+      "sha256": "815e3bbf69691d17d09933a41d9f702c384d43225769683f4dac6f09b7b1adcc",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "79224d917bca527c1fed7f4c5045ed0f9ced0941b141d22d71e5076f72dddba7",
+          "review": "sheet-05.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "0dbde4b36dd63a86c98cdc2991c40b16266ab8b274e9f5dd1121c78731eeb026",
+          "review": "../notification-current-visual-review/sheet-21.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-education-reopened-320-2x.png",
+      "sha256": "f3cae7a74c4bda2e771face23ebe704f0f12543205da4cf0d95998c30d2a7de5",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "0c978e904d7c962027fcb14fa5eddef5c0b61654f31229aa340d25a30c02936a",
+          "review": "sheet-03.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "992969bd223cc35bd461d04566bf26756b3565e350162589fd17a3732436876f",
+          "review": "sheet-04.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-education-reopened-393-1x.png",
+      "sha256": "b0d97b40553213a7fd4fcea6ed83e04f59fed92ab9998de5fc9142e4ba22cf47",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "cd9bfe776c82d3451c80abde7d3dbc481498b13edb815913d509e32913ef6543",
+          "review": "sheet-04.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "fe7792c33c792f76e3c655dd5836ec86629c5e170de35c7c66af0af8972a2a09",
+          "review": "sheet-04.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-offer-settings-dialog-320-2x.png",
+      "sha256": "7944aaf054a64146d574a98a26e3da369a73c98235eadc644a0a609488db2a3e",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "080c804dd4086be54a352d4c31a6edd6c7076fc686cbfb1bea2011804b2b407c",
+          "review": "sheet-06.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a90dd4b3843fd21a78f494a9ab976709deab533340aa834a456828880f52718f",
+          "review": "sheet-06.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-offer-settings-dialog-393-1x.png",
+      "sha256": "5cfecd66e8004b2f1d29599bd22beedbb342f2c5e6f622a744b2ef5c3a47f649",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "d53bf11dcbedab206d977519b14dc6e350508651154296154824eed60b6704a2",
+          "review": "sheet-06.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "fe7792c33c792f76e3c655dd5836ec86629c5e170de35c7c66af0af8972a2a09",
+          "review": "sheet-04.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-offer-settings-not-now-320-2x.long.png",
+      "sha256": "ce909cae88865de1087257e76cd0064b66faced95c935576b11e9d9fff1f3148",
+      "width": 320,
+      "height": 2048,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "7244b5cf2ca4c3bab646c8a7d20793a2ea616c70160b4a7d17011949207b3619",
+          "review": "sheet-04.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "2c61388e3be82c5b5897d2e07deb4c947de4a17e40727fbff2686ab1c53a8ab1",
+          "review": "sheet-02.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "0f5732dc4756d72b2b429676954862b09eeb2a0962bccd6dfa52cd9ba4b6962d",
+          "review": "sheet-02.png#tile-3"
+        },
+        {
+          "y0": 1950,
+          "y1": 2048,
+          "pixel_sha256": "1773c259ca5fc04dfbeae04e0755f5d5bc71a667d062b9bd63633e386e5775e0",
+          "review": "sheet-02.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-offer-settings-not-now-320-2x.png",
+      "sha256": "f49c589e25d978fe4857dd48fe04e907d4c003437a290489eb58ecc1ddf1f320",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "01e07eb7d312ae5c4b643af1c87ef88291a8e4ddaf2cec9c31ffee5654cb5c07",
+          "review": "sheet-02.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "79ad7a883de6ddc9321c2fb8a297bac32fcf2dfab8271f5dc104edf43560ec4e",
+          "review": "sheet-03.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-offer-settings-not-now-393-1x.long.png",
+      "sha256": "c1725efeff912a617f9b55b1ed7c6b64c9960a7402aa84914fb9d40a6a305366",
+      "width": 393,
+      "height": 877,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "5283525c09b3bb1d78ab4662e61ac1f58cacb915ae6e3fa4f48d4d2b12c51980",
+          "review": "sheet-04.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 877,
+          "pixel_sha256": "d061572051e4191fd0b1783a64772a93c587a80f53b5ec3174d8133b1710387f",
+          "review": "sheet-03.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-offer-settings-not-now-393-1x.png",
+      "sha256": "1cf362fbbfe2c5da6fa80d61d2bab2c4e8397efc10f919ed87bc2afa3c65f3dc",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "f94914bb46fb85294f9c66cc31344fb4894c863b8801a4081ae582aa8f8eaab8",
+          "review": "sheet-04.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "452b31bf451e1081960d4b30eb563cb92216193fa8194d56ed79ec6ed1f36105",
+          "review": "sheet-03.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-offer-settings-opened-320-2x.long.png",
+      "sha256": "ce909cae88865de1087257e76cd0064b66faced95c935576b11e9d9fff1f3148",
+      "width": 320,
+      "height": 2048,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "7244b5cf2ca4c3bab646c8a7d20793a2ea616c70160b4a7d17011949207b3619",
+          "review": "sheet-04.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "2c61388e3be82c5b5897d2e07deb4c947de4a17e40727fbff2686ab1c53a8ab1",
+          "review": "sheet-02.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "0f5732dc4756d72b2b429676954862b09eeb2a0962bccd6dfa52cd9ba4b6962d",
+          "review": "sheet-02.png#tile-3"
+        },
+        {
+          "y0": 1950,
+          "y1": 2048,
+          "pixel_sha256": "1773c259ca5fc04dfbeae04e0755f5d5bc71a667d062b9bd63633e386e5775e0",
+          "review": "sheet-02.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-offer-settings-opened-320-2x.png",
+      "sha256": "f49c589e25d978fe4857dd48fe04e907d4c003437a290489eb58ecc1ddf1f320",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "01e07eb7d312ae5c4b643af1c87ef88291a8e4ddaf2cec9c31ffee5654cb5c07",
+          "review": "sheet-02.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "79ad7a883de6ddc9321c2fb8a297bac32fcf2dfab8271f5dc104edf43560ec4e",
+          "review": "sheet-03.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-offer-settings-opened-393-1x.long.png",
+      "sha256": "c1725efeff912a617f9b55b1ed7c6b64c9960a7402aa84914fb9d40a6a305366",
+      "width": 393,
+      "height": 877,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "5283525c09b3bb1d78ab4662e61ac1f58cacb915ae6e3fa4f48d4d2b12c51980",
+          "review": "sheet-04.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 877,
+          "pixel_sha256": "d061572051e4191fd0b1783a64772a93c587a80f53b5ec3174d8133b1710387f",
+          "review": "sheet-03.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-offer-settings-opened-393-1x.png",
+      "sha256": "1cf362fbbfe2c5da6fa80d61d2bab2c4e8397efc10f919ed87bc2afa3c65f3dc",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "f94914bb46fb85294f9c66cc31344fb4894c863b8801a4081ae582aa8f8eaab8",
+          "review": "sheet-04.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "452b31bf451e1081960d4b30eb563cb92216193fa8194d56ed79ec6ed1f36105",
+          "review": "sheet-03.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-offer-settings-reopened-320-2x.png",
+      "sha256": "7944aaf054a64146d574a98a26e3da369a73c98235eadc644a0a609488db2a3e",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "080c804dd4086be54a352d4c31a6edd6c7076fc686cbfb1bea2011804b2b407c",
+          "review": "sheet-06.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "a90dd4b3843fd21a78f494a9ab976709deab533340aa834a456828880f52718f",
+          "review": "sheet-06.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-offer-settings-reopened-393-1x.png",
+      "sha256": "5cfecd66e8004b2f1d29599bd22beedbb342f2c5e6f622a744b2ef5c3a47f649",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "d53bf11dcbedab206d977519b14dc6e350508651154296154824eed60b6704a2",
+          "review": "sheet-06.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "fe7792c33c792f76e3c655dd5836ec86629c5e170de35c7c66af0af8972a2a09",
+          "review": "sheet-04.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-permission-restored-320-2x.long.png",
+      "sha256": "ce2017dfe306b842776eeb7dbc2c6ba532f1e4fba7cbf3bceeb6244e57e7dcca",
+      "width": 320,
+      "height": 1856,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "65a6b795d3c0650966d8dfd156127012a71575483780fe4889fdc8bcc80d095f",
+          "review": "../notification-current-visual-review/sheet-02.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "150cf14a6dc1c4f510c4dacdbab34a8454513e7c763bad33f1dab9852135a7ba",
+          "review": "../notification-current-visual-review/sheet-02.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1856,
+          "pixel_sha256": "c5a2b9a192188b2954202ac20905b5bae466c0fbc863439441a9aefc05ec7756",
+          "review": "../notification-current-visual-review/sheet-02.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-permission-restored-320-2x.png",
+      "sha256": "fa131315f6649e0871c672c07dae40f80cb1a80d2fc1528b7f6e4564119e1fe9",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "81d21b9ecd05cc665a756c5d21209af77290aad5c03b86a6c7b4c33d686ab743",
+          "review": "../notification-current-visual-review/sheet-36.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "207b85dcb54b4d0574ed4b0d73030f9f5dcb2d74e7c196ace1f08677a211b46c",
+          "review": "../notification-current-visual-review/sheet-36.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-permission-restored-393-1x.long.png",
+      "sha256": "034d8cec6e8073fd3b800303b81b3d84fd1e8f0cbcfa25a4ad042eef29e95594",
+      "width": 393,
+      "height": 877,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "1453223fe6113607a2367a781f1a64b81668253276b48bb3ef5c8c23c82d011d",
+          "review": "../notification-current-visual-review/sheet-03.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 877,
+          "pixel_sha256": "5c798c3a4cdf5d8b3e2d9ed0b91d7d571ca109ab6885bfd425770f7ab32a2f2e",
+          "review": "../notification-current-visual-review/sheet-03.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-permission-restored-393-1x.png",
+      "sha256": "6ef72f14f2acf1cc9a3776f40cd9171504d6f901363ba21f83786a052b06c96f",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "20c05a546be875c2a8c14b2f417860e9da5dc51a93c59c13b0c474e3f66b9572",
+          "review": "../notification-current-visual-review/sheet-03.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "9c9563fffab33ddae6117574131fc438ba92f98554f59fdf804602434a656b11",
+          "review": "../notification-current-visual-review/sheet-03.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-permission-restored-disabled-320-2x.long.png",
+      "sha256": "ce2017dfe306b842776eeb7dbc2c6ba532f1e4fba7cbf3bceeb6244e57e7dcca",
+      "width": 320,
+      "height": 1856,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "65a6b795d3c0650966d8dfd156127012a71575483780fe4889fdc8bcc80d095f",
+          "review": "../notification-current-visual-review/sheet-02.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "150cf14a6dc1c4f510c4dacdbab34a8454513e7c763bad33f1dab9852135a7ba",
+          "review": "../notification-current-visual-review/sheet-02.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1856,
+          "pixel_sha256": "c5a2b9a192188b2954202ac20905b5bae466c0fbc863439441a9aefc05ec7756",
+          "review": "../notification-current-visual-review/sheet-02.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-permission-restored-disabled-320-2x.png",
+      "sha256": "86f2c27c10bd9698d1f90f00b5504b2c4e0979c63d85afb03e576a61b92e579e",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "3ddd2c54a1e8ac90b2c03d0fdb9b2cf24c0ed1ff516c6f511bb6d3ee3fceb2e5",
+          "review": "../notification-current-visual-review/sheet-02.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "229b619b19213fa5eb7cf168932b3edae1e5f3ef64f3861cae6d59922b20e0a5",
+          "review": "../notification-current-visual-review/sheet-02.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-permission-restored-disabled-393-1x.long.png",
+      "sha256": "034d8cec6e8073fd3b800303b81b3d84fd1e8f0cbcfa25a4ad042eef29e95594",
+      "width": 393,
+      "height": 877,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "1453223fe6113607a2367a781f1a64b81668253276b48bb3ef5c8c23c82d011d",
+          "review": "../notification-current-visual-review/sheet-03.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 877,
+          "pixel_sha256": "5c798c3a4cdf5d8b3e2d9ed0b91d7d571ca109ab6885bfd425770f7ab32a2f2e",
+          "review": "../notification-current-visual-review/sheet-03.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-permission-restored-disabled-393-1x.png",
+      "sha256": "6ef72f14f2acf1cc9a3776f40cd9171504d6f901363ba21f83786a052b06c96f",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "20c05a546be875c2a8c14b2f417860e9da5dc51a93c59c13b0c474e3f66b9572",
+          "review": "../notification-current-visual-review/sheet-03.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "9c9563fffab33ddae6117574131fc438ba92f98554f59fdf804602434a656b11",
+          "review": "../notification-current-visual-review/sheet-03.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-permission-restored-enabled-320-2x.long.png",
+      "sha256": "2b450898306855bcf0074d29c1ae5f3270f68cb241b8dc76ae79d34e225ad0fb",
+      "width": 320,
+      "height": 1856,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b2528664ad664d6a9d0a6a579d5a182d81aab0d0ced241027d477a7ae21fd991",
+          "review": "../notification-current-visual-review/sheet-03.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "150cf14a6dc1c4f510c4dacdbab34a8454513e7c763bad33f1dab9852135a7ba",
+          "review": "../notification-current-visual-review/sheet-02.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1856,
+          "pixel_sha256": "c5a2b9a192188b2954202ac20905b5bae466c0fbc863439441a9aefc05ec7756",
+          "review": "../notification-current-visual-review/sheet-02.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-permission-restored-enabled-320-2x.png",
+      "sha256": "cfa29c5eb0b19ebc8bf402308bc792c6fa70e72c1df2f519de72e4ed9c13ce9d",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9ab5965cf60ad73b6754dec9bce9448437a132528d043436ce931f23d072e4eb",
+          "review": "../notification-current-visual-review/sheet-03.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "229b619b19213fa5eb7cf168932b3edae1e5f3ef64f3861cae6d59922b20e0a5",
+          "review": "../notification-current-visual-review/sheet-02.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-permission-restored-enabled-393-1x.long.png",
+      "sha256": "d87293e710a46fc2902973359d0190d7bfe2e428e33a174c9b8daeebafc70f1b",
+      "width": 393,
+      "height": 877,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "e40f59618a29d6b7e44991550df0ccd9a21a9fa7e77f87af923d7ad6cb132947",
+          "review": "../notification-current-visual-review/sheet-04.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 877,
+          "pixel_sha256": "5c798c3a4cdf5d8b3e2d9ed0b91d7d571ca109ab6885bfd425770f7ab32a2f2e",
+          "review": "../notification-current-visual-review/sheet-03.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-permission-restored-enabled-393-1x.png",
+      "sha256": "3cee73e1484ed656aa518937448b8991510c7d4ce75c880faf19cba36f7c9fcd",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "7391e2081f8ec6e135717e84cc9c92860d3ea5f7230ba0f398746c171b3ca0b8",
+          "review": "../notification-current-visual-review/sheet-04.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "9c9563fffab33ddae6117574131fc438ba92f98554f59fdf804602434a656b11",
+          "review": "../notification-current-visual-review/sheet-03.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-registration-http-error-320-2x.long.png",
+      "sha256": "e50d8a46ac4617e6bb0e0b2fcf7b83a189eee86c7dcdd48425f839d2456a1cd8",
+      "width": 320,
+      "height": 2160,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "8f6af99be17714a5c530a6ddd6920c4d26af4545b1f611e74f1a7978531d9a97",
+          "review": "sheet-06.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "d18e8880562bbbd1fb842f980917b207d9be4c81fb98367b2804b04d0cdc7ea8",
+          "review": "sheet-06.png#tile-4"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "f28a3474641fecc91c03c5d81138a671eda6ceb2f3da8568f898a66dd600a24e",
+          "review": "sheet-06.png#tile-5"
+        },
+        {
+          "y0": 1950,
+          "y1": 2160,
+          "pixel_sha256": "3cc0ffc5f8c1f03b186e035810ad35f9791f85eba2b3cbfbb595a902ae63def3",
+          "review": "sheet-07.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-registration-http-error-320-2x.png",
+      "sha256": "274c9cb2470423069d188e952be5847bcee3f595d431398aa5ba1cd51a297509",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c9ac1698d1d282226b1edb638a572399958d7c8bb328deb7aa79a644266486d5",
+          "review": "sheet-07.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "db5682f5dd1f7dfc96c5f8f88e670974069e0b4543d53c18b893c1be4d75bc48",
+          "review": "sheet-07.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-registration-http-error-393-1x.long.png",
+      "sha256": "e7c3623cc809991693d0154835f56b66e184d7275ac6fb2cd3293efe5624cf01",
+      "width": 393,
+      "height": 945,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "eb134344a0d3891ca42cbb7c8114a69d09957d847031669ed0d33779bc73b4ce",
+          "review": "sheet-07.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 945,
+          "pixel_sha256": "49a61186ef020205ef3b4ffffb76ba9e2c0d7f3bcc6220542137705f2ffe1f9f",
+          "review": "sheet-07.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-registration-http-error-393-1x.png",
+      "sha256": "5f99c3d3445c678151127985f7320a072ef831a05b2bb44a5d57278f84f3ccb9",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "42eabe61d9d3c8cdde092be318947386b343aa11f2b43ed35a8ccef05a243f65",
+          "review": "sheet-07.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "0d9366d2959b2426513b399c6d2d69b83f540f007f5490b1ac2e7e5583f34e60",
+          "review": "sheet-08.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-registration-inbox-320-2x.png",
+      "sha256": "d87ff0fff73b3f1cfff2f928e2c3a11de2bd19fcbb0bcf36a68f8d7cbefadb05",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "519ff9428b67f0330d367132652262e3bf3f9bc242f052e2694185e023769db7",
+          "review": "../notification-current-visual-review/sheet-06.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "94269320474d661f9d8142ede1ff2919f042a15c63033d5911fad41d5ea40b09",
+          "review": "../notification-current-visual-review/sheet-06.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-registration-inbox-393-1x.png",
+      "sha256": "e55b634cfb38e5aee2d434badba0379c70705d382cff8ad2a51280473c32ec40",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "d130be8c6c7f469ad640ae2b6539198c08b414096f26091eabc878588d89b626",
+          "review": "../notification-current-visual-review/sheet-06.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "5e269ca9e36daffe984531405b8fd9a7fd95687843288196663912cae234267b",
+          "review": "../account-current-visual-review/sheet-05.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-registration-inbox-return-320-2x.png",
+      "sha256": "d87ff0fff73b3f1cfff2f928e2c3a11de2bd19fcbb0bcf36a68f8d7cbefadb05",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "519ff9428b67f0330d367132652262e3bf3f9bc242f052e2694185e023769db7",
+          "review": "../notification-current-visual-review/sheet-06.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "94269320474d661f9d8142ede1ff2919f042a15c63033d5911fad41d5ea40b09",
+          "review": "../notification-current-visual-review/sheet-06.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-registration-inbox-return-393-1x.png",
+      "sha256": "e55b634cfb38e5aee2d434badba0379c70705d382cff8ad2a51280473c32ec40",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "d130be8c6c7f469ad640ae2b6539198c08b414096f26091eabc878588d89b626",
+          "review": "../notification-current-visual-review/sheet-06.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "5e269ca9e36daffe984531405b8fd9a7fd95687843288196663912cae234267b",
+          "review": "../account-current-visual-review/sheet-05.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-registration-more-320-2x.long.png",
+      "sha256": "edf60b2ff688bc915d2bb5b78dcd590592f80dc819f88b78e894a18c3c8b4a1d",
+      "width": 320,
+      "height": 1177,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "45deeca5fc0f885b8c8217e880d15e7853492fa7d920cd2c7845ecde312a0519",
+          "review": "../notification-current-visual-review/sheet-06.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1177,
+          "pixel_sha256": "b2990c1b14961c2b593f140c54b5269bcd336d812e3623b8a61d0e6713c21131",
+          "review": "../more-current-visual-review/sheet-05.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-registration-more-320-2x.png",
+      "sha256": "328ca0e756ae7287b083fef2202b55d073beb0f20e6e8f19047a08f0b2292e1c",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "45deeca5fc0f885b8c8217e880d15e7853492fa7d920cd2c7845ecde312a0519",
+          "review": "../notification-current-visual-review/sheet-06.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "6a6ad6eda43220222ae31b7f385fb43f1901e21c5fad76b65c9e7b65b56c9ddf",
+          "review": "../notification-current-visual-review/sheet-06.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-registration-more-393-1x.png",
+      "sha256": "9a5ed794dbe75feb34e0fa9d9716ed6f090b4543d2adf74442af56ab29b870c1",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "54c8e86e75b74c4fc90af4628975ba93a1179d33bb7c77659fb1dbefc1dc6416",
+          "review": "../notification-current-visual-review/sheet-06.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "ae4f630d503ab6fd4f559f429de09469456c11d171c0c3898413ee795bf5b433",
+          "review": "../baby-development-date-visual-review/sheet-05.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-registration-more-return-320-2x.long.png",
+      "sha256": "edf60b2ff688bc915d2bb5b78dcd590592f80dc819f88b78e894a18c3c8b4a1d",
+      "width": 320,
+      "height": 1177,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "45deeca5fc0f885b8c8217e880d15e7853492fa7d920cd2c7845ecde312a0519",
+          "review": "../notification-current-visual-review/sheet-06.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1177,
+          "pixel_sha256": "b2990c1b14961c2b593f140c54b5269bcd336d812e3623b8a61d0e6713c21131",
+          "review": "../more-current-visual-review/sheet-05.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-registration-more-return-320-2x.png",
+      "sha256": "328ca0e756ae7287b083fef2202b55d073beb0f20e6e8f19047a08f0b2292e1c",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "45deeca5fc0f885b8c8217e880d15e7853492fa7d920cd2c7845ecde312a0519",
+          "review": "../notification-current-visual-review/sheet-06.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "6a6ad6eda43220222ae31b7f385fb43f1901e21c5fad76b65c9e7b65b56c9ddf",
+          "review": "../notification-current-visual-review/sheet-06.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-registration-more-return-393-1x.png",
+      "sha256": "9a5ed794dbe75feb34e0fa9d9716ed6f090b4543d2adf74442af56ab29b870c1",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "54c8e86e75b74c4fc90af4628975ba93a1179d33bb7c77659fb1dbefc1dc6416",
+          "review": "../notification-current-visual-review/sheet-06.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "ae4f630d503ab6fd4f559f429de09469456c11d171c0c3898413ee795bf5b433",
+          "review": "../baby-development-date-visual-review/sheet-05.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-registration-null-token-320-2x.long.png",
+      "sha256": "2eea01e287ca2e1ca9586c7065b6f8cdf893df6c11fe1f863d4ae6c94985f4da",
+      "width": 320,
+      "height": 2160,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "e84401fa0c0ddf990e5d7d3cda77e1f7debb7ac2157dc19e8d5d5587a01eb8cd",
+          "review": "sheet-08.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "d18e8880562bbbd1fb842f980917b207d9be4c81fb98367b2804b04d0cdc7ea8",
+          "review": "sheet-06.png#tile-4"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "f28a3474641fecc91c03c5d81138a671eda6ceb2f3da8568f898a66dd600a24e",
+          "review": "sheet-06.png#tile-5"
+        },
+        {
+          "y0": 1950,
+          "y1": 2160,
+          "pixel_sha256": "3cc0ffc5f8c1f03b186e035810ad35f9791f85eba2b3cbfbb595a902ae63def3",
+          "review": "sheet-07.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-registration-null-token-320-2x.png",
+      "sha256": "ddb73a78536fe25f54985efc9c052cc72de4e4972d035930fd23c29fb28966b4",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b2b43cac909c42c6f09eee421e06c5303b9aa79722910ff322e13b089c69cec5",
+          "review": "sheet-08.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "207b85dcb54b4d0574ed4b0d73030f9f5dcb2d74e7c196ace1f08677a211b46c",
+          "review": "../notification-current-visual-review/sheet-36.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-registration-null-token-393-1x.long.png",
+      "sha256": "9252ce92859e7b6192d430670ea3772fe7b054e6371a24c7d4075fb25bb34d53",
+      "width": 393,
+      "height": 945,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "8ebd17c81507dfedd1daacaff72df90c5e9db258aba3e2f8b570e66ea8768e95",
+          "review": "sheet-08.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 945,
+          "pixel_sha256": "49a61186ef020205ef3b4ffffb76ba9e2c0d7f3bcc6220542137705f2ffe1f9f",
+          "review": "sheet-07.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-registration-null-token-393-1x.png",
+      "sha256": "9780564da7ab5a5f661320deccd8ae198b23d5bbd8076c5f24c51bdc62941a2e",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "58d9e5677050e95e92eb630eba88e71aac3422ccb5e2e650c217698e2e13f515",
+          "review": "sheet-08.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "9c9563fffab33ddae6117574131fc438ba92f98554f59fdf804602434a656b11",
+          "review": "../notification-current-visual-review/sheet-03.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-registration-pending-320-2x.long.png",
+      "sha256": "2eea01e287ca2e1ca9586c7065b6f8cdf893df6c11fe1f863d4ae6c94985f4da",
+      "width": 320,
+      "height": 2160,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "e84401fa0c0ddf990e5d7d3cda77e1f7debb7ac2157dc19e8d5d5587a01eb8cd",
+          "review": "sheet-08.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "d18e8880562bbbd1fb842f980917b207d9be4c81fb98367b2804b04d0cdc7ea8",
+          "review": "sheet-06.png#tile-4"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "f28a3474641fecc91c03c5d81138a671eda6ceb2f3da8568f898a66dd600a24e",
+          "review": "sheet-06.png#tile-5"
+        },
+        {
+          "y0": 1950,
+          "y1": 2160,
+          "pixel_sha256": "3cc0ffc5f8c1f03b186e035810ad35f9791f85eba2b3cbfbb595a902ae63def3",
+          "review": "sheet-07.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-registration-pending-320-2x.png",
+      "sha256": "ddb73a78536fe25f54985efc9c052cc72de4e4972d035930fd23c29fb28966b4",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b2b43cac909c42c6f09eee421e06c5303b9aa79722910ff322e13b089c69cec5",
+          "review": "sheet-08.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "207b85dcb54b4d0574ed4b0d73030f9f5dcb2d74e7c196ace1f08677a211b46c",
+          "review": "../notification-current-visual-review/sheet-36.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-registration-pending-393-1x.long.png",
+      "sha256": "9252ce92859e7b6192d430670ea3772fe7b054e6371a24c7d4075fb25bb34d53",
+      "width": 393,
+      "height": 945,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "8ebd17c81507dfedd1daacaff72df90c5e9db258aba3e2f8b570e66ea8768e95",
+          "review": "sheet-08.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 945,
+          "pixel_sha256": "49a61186ef020205ef3b4ffffb76ba9e2c0d7f3bcc6220542137705f2ffe1f9f",
+          "review": "sheet-07.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-registration-pending-393-1x.png",
+      "sha256": "9780564da7ab5a5f661320deccd8ae198b23d5bbd8076c5f24c51bdc62941a2e",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "58d9e5677050e95e92eb630eba88e71aac3422ccb5e2e650c217698e2e13f515",
+          "review": "sheet-08.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "9c9563fffab33ddae6117574131fc438ba92f98554f59fdf804602434a656b11",
+          "review": "../notification-current-visual-review/sheet-03.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-registration-pending-enable-320-2x.long.png",
+      "sha256": "dff9a6d02a408397fa4a22ccfe687144effe528cebe9837a29795c35e04b3911",
+      "width": 320,
+      "height": 2160,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "e84401fa0c0ddf990e5d7d3cda77e1f7debb7ac2157dc19e8d5d5587a01eb8cd",
+          "review": "sheet-08.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "d18e8880562bbbd1fb842f980917b207d9be4c81fb98367b2804b04d0cdc7ea8",
+          "review": "sheet-06.png#tile-4"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "2fb9b991d638f39ebbc6b3ac543152e3c33c74073762ab75e820057a3f5c4262",
+          "review": "sheet-08.png#tile-5"
+        },
+        {
+          "y0": 1950,
+          "y1": 2160,
+          "pixel_sha256": "1fee200614bbc677b419b719494093f5e85037dbb51e858b9f406dddd222c1ed",
+          "review": "sheet-09.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-registration-pending-enable-320-2x.png",
+      "sha256": "dea05c564924323423aa9066097f36bbf0a0b2c3be5401c00e3277120f63478a",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "cef4dc1f82c032f8851de409327a81cba36840d6dcdee8cd9e6b6073b2374c51",
+          "review": "sheet-05.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "7d0b1286c3e58ebda14d4436fe276d424db931cb5752617d5fe13815569f4035",
+          "review": "sheet-09.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-registration-pending-enable-393-1x.long.png",
+      "sha256": "abb3bdb13f82baf8ff0d500400e52faee9c778005cb31815bfa1b7ac5f6ed9cd",
+      "width": 393,
+      "height": 945,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "8ebd17c81507dfedd1daacaff72df90c5e9db258aba3e2f8b570e66ea8768e95",
+          "review": "sheet-08.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 945,
+          "pixel_sha256": "e8c091f432e9bab8e43cf90d2de5d3dd26ea31e1f91bd1f6a18ecdcd412c9ebf",
+          "review": "sheet-09.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-registration-pending-enable-393-1x.png",
+      "sha256": "48524582f38ee055777f97e37905767078b4f08b721589650c3f0baa4a987947",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "58d9e5677050e95e92eb630eba88e71aac3422ccb5e2e650c217698e2e13f515",
+          "review": "sheet-08.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "1389d22e07cd1d388842dad4e89ecbf70ed8ef1ef22e332ef012e7a8268fe7d4",
+          "review": "sheet-09.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-registration-ready-320-2x.long.png",
+      "sha256": "a568e77c8903cf5f37efe097b62e272ed5a65fc4a2ebc06c9077532f185f1030",
+      "width": 320,
+      "height": 1856,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "65a6b795d3c0650966d8dfd156127012a71575483780fe4889fdc8bcc80d095f",
+          "review": "../notification-current-visual-review/sheet-02.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "330e1d4b7e02453340dba231b1ca2c2b02a8fc71efb6d4f766f08840eb492286",
+          "review": "sheet-09.png#tile-4"
+        },
+        {
+          "y0": 1300,
+          "y1": 1856,
+          "pixel_sha256": "c5a2b9a192188b2954202ac20905b5bae466c0fbc863439441a9aefc05ec7756",
+          "review": "../notification-current-visual-review/sheet-02.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-registration-ready-320-2x.png",
+      "sha256": "539f8c370773884f9213763660adb08ffbdcdc6c62d9ca91f46bfbd8b89373bc",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "65a6b795d3c0650966d8dfd156127012a71575483780fe4889fdc8bcc80d095f",
+          "review": "../notification-current-visual-review/sheet-02.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "20354fcb33129a7a7d863ed743e31081681a712a8572a0ad48932646cd6937e0",
+          "review": "sheet-09.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-registration-ready-393-1x.long.png",
+      "sha256": "e094b5b44804220858e09f9d86e0a7e11b96b36b8efaa78e64cf4ee19ab3aa95",
+      "width": 393,
+      "height": 877,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a6680ad506462672263de3e71f72980fda3fda40c0b94aa5768fd413f25ebb3d",
+          "review": "sheet-10.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 877,
+          "pixel_sha256": "5c798c3a4cdf5d8b3e2d9ed0b91d7d571ca109ab6885bfd425770f7ab32a2f2e",
+          "review": "../notification-current-visual-review/sheet-03.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-registration-ready-393-1x.png",
+      "sha256": "0e88299e1125e09c8acbc8b9d2ccad06b07d398e253325ee087c5c295f82ab5d",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "a6680ad506462672263de3e71f72980fda3fda40c0b94aa5768fd413f25ebb3d",
+          "review": "sheet-10.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "0dbde4b36dd63a86c98cdc2991c40b16266ab8b274e9f5dd1121c78731eeb026",
+          "review": "../notification-current-visual-review/sheet-21.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-registration-recovered-320-2x.long.png",
+      "sha256": "ce2017dfe306b842776eeb7dbc2c6ba532f1e4fba7cbf3bceeb6244e57e7dcca",
+      "width": 320,
+      "height": 1856,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "65a6b795d3c0650966d8dfd156127012a71575483780fe4889fdc8bcc80d095f",
+          "review": "../notification-current-visual-review/sheet-02.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "150cf14a6dc1c4f510c4dacdbab34a8454513e7c763bad33f1dab9852135a7ba",
+          "review": "../notification-current-visual-review/sheet-02.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1856,
+          "pixel_sha256": "c5a2b9a192188b2954202ac20905b5bae466c0fbc863439441a9aefc05ec7756",
+          "review": "../notification-current-visual-review/sheet-02.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-registration-recovered-320-2x.png",
+      "sha256": "fa131315f6649e0871c672c07dae40f80cb1a80d2fc1528b7f6e4564119e1fe9",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "81d21b9ecd05cc665a756c5d21209af77290aad5c03b86a6c7b4c33d686ab743",
+          "review": "../notification-current-visual-review/sheet-36.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "207b85dcb54b4d0574ed4b0d73030f9f5dcb2d74e7c196ace1f08677a211b46c",
+          "review": "../notification-current-visual-review/sheet-36.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-registration-recovered-393-1x.long.png",
+      "sha256": "034d8cec6e8073fd3b800303b81b3d84fd1e8f0cbcfa25a4ad042eef29e95594",
+      "width": 393,
+      "height": 877,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "1453223fe6113607a2367a781f1a64b81668253276b48bb3ef5c8c23c82d011d",
+          "review": "../notification-current-visual-review/sheet-03.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 877,
+          "pixel_sha256": "5c798c3a4cdf5d8b3e2d9ed0b91d7d571ca109ab6885bfd425770f7ab32a2f2e",
+          "review": "../notification-current-visual-review/sheet-03.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-registration-recovered-393-1x.png",
+      "sha256": "6ef72f14f2acf1cc9a3776f40cd9171504d6f901363ba21f83786a052b06c96f",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "20c05a546be875c2a8c14b2f417860e9da5dc51a93c59c13b0c474e3f66b9572",
+          "review": "../notification-current-visual-review/sheet-03.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "9c9563fffab33ddae6117574131fc438ba92f98554f59fdf804602434a656b11",
+          "review": "../notification-current-visual-review/sheet-03.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-registration-recovered-enabled-320-2x.long.png",
+      "sha256": "2b450898306855bcf0074d29c1ae5f3270f68cb241b8dc76ae79d34e225ad0fb",
+      "width": 320,
+      "height": 1856,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b2528664ad664d6a9d0a6a579d5a182d81aab0d0ced241027d477a7ae21fd991",
+          "review": "../notification-current-visual-review/sheet-03.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "150cf14a6dc1c4f510c4dacdbab34a8454513e7c763bad33f1dab9852135a7ba",
+          "review": "../notification-current-visual-review/sheet-02.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1856,
+          "pixel_sha256": "c5a2b9a192188b2954202ac20905b5bae466c0fbc863439441a9aefc05ec7756",
+          "review": "../notification-current-visual-review/sheet-02.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-registration-recovered-enabled-320-2x.png",
+      "sha256": "cfa29c5eb0b19ebc8bf402308bc792c6fa70e72c1df2f519de72e4ed9c13ce9d",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9ab5965cf60ad73b6754dec9bce9448437a132528d043436ce931f23d072e4eb",
+          "review": "../notification-current-visual-review/sheet-03.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "229b619b19213fa5eb7cf168932b3edae1e5f3ef64f3861cae6d59922b20e0a5",
+          "review": "../notification-current-visual-review/sheet-02.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-registration-recovered-enabled-393-1x.long.png",
+      "sha256": "d87293e710a46fc2902973359d0190d7bfe2e428e33a174c9b8daeebafc70f1b",
+      "width": 393,
+      "height": 877,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "e40f59618a29d6b7e44991550df0ccd9a21a9fa7e77f87af923d7ad6cb132947",
+          "review": "../notification-current-visual-review/sheet-04.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 877,
+          "pixel_sha256": "5c798c3a4cdf5d8b3e2d9ed0b91d7d571ca109ab6885bfd425770f7ab32a2f2e",
+          "review": "../notification-current-visual-review/sheet-03.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-registration-recovered-enabled-393-1x.png",
+      "sha256": "3cee73e1484ed656aa518937448b8991510c7d4ce75c880faf19cba36f7c9fcd",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "7391e2081f8ec6e135717e84cc9c92860d3ea5f7230ba0f398746c171b3ca0b8",
+          "review": "../notification-current-visual-review/sheet-04.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "9c9563fffab33ddae6117574131fc438ba92f98554f59fdf804602434a656b11",
+          "review": "../notification-current-visual-review/sheet-03.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-registration-sdk-unavailable-320-2x.long.png",
+      "sha256": "442d99ed7083bda2f5b091f1e78f66447c8664ec6677bf0841f06873c5c90008",
+      "width": 320,
+      "height": 2280,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9bc30c746ff9f77841bd6fc3e77f0552c72b78e4b48aa30336213e6aa98f96ed",
+          "review": "sheet-10.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "fca9a17547847e55c0dab4b5e4525b1afacdee11f7a8c6dd7904a227e670644c",
+          "review": "sheet-10.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "afcdacd64eca6e131328bd23c48220f9e195c4fa5a7aee0b24a3d6d976128ca1",
+          "review": "sheet-10.png#tile-3"
+        },
+        {
+          "y0": 1950,
+          "y1": 2280,
+          "pixel_sha256": "95c98bd7409cd622df56f1781f8ba2379fd57e6c406e06142ad445715974a19d",
+          "review": "sheet-10.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-registration-sdk-unavailable-320-2x.png",
+      "sha256": "ddb73a78536fe25f54985efc9c052cc72de4e4972d035930fd23c29fb28966b4",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b2b43cac909c42c6f09eee421e06c5303b9aa79722910ff322e13b089c69cec5",
+          "review": "sheet-08.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "207b85dcb54b4d0574ed4b0d73030f9f5dcb2d74e7c196ace1f08677a211b46c",
+          "review": "../notification-current-visual-review/sheet-36.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-registration-sdk-unavailable-393-1x.long.png",
+      "sha256": "2cff9dcf8024d65e8c1f40ccb5a78b932af3954e3201c2392b24c09ab2c76df4",
+      "width": 393,
+      "height": 965,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "0a50dab74f830d1e318b65f058f421bc2410089a61a8112eaebd5e271070da73",
+          "review": "sheet-10.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 965,
+          "pixel_sha256": "107e377ff74bd5ea2a48b7a2bf7cf30003b2dfc5ef93bb738ace6735b52023b3",
+          "review": "../notification-current-visual-review/sheet-40.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-registration-sdk-unavailable-393-1x.png",
+      "sha256": "db1b355880ccf54d534767670154cc997d4ac6c007bd9ddcbb88d63dd4cefa10",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "d65241197f05be86778c661ba4a8520360bef16e09ebba0e1c7f56875be72525",
+          "review": "sheet-11.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "9c9563fffab33ddae6117574131fc438ba92f98554f59fdf804602434a656b11",
+          "review": "../notification-current-visual-review/sheet-03.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-registration-server-unavailable-320-2x.long.png",
+      "sha256": "442d99ed7083bda2f5b091f1e78f66447c8664ec6677bf0841f06873c5c90008",
+      "width": 320,
+      "height": 2280,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "9bc30c746ff9f77841bd6fc3e77f0552c72b78e4b48aa30336213e6aa98f96ed",
+          "review": "sheet-10.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "fca9a17547847e55c0dab4b5e4525b1afacdee11f7a8c6dd7904a227e670644c",
+          "review": "sheet-10.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "afcdacd64eca6e131328bd23c48220f9e195c4fa5a7aee0b24a3d6d976128ca1",
+          "review": "sheet-10.png#tile-3"
+        },
+        {
+          "y0": 1950,
+          "y1": 2280,
+          "pixel_sha256": "95c98bd7409cd622df56f1781f8ba2379fd57e6c406e06142ad445715974a19d",
+          "review": "sheet-10.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-registration-server-unavailable-320-2x.png",
+      "sha256": "d795c028fe2e5d8f08efe7eb05a98ef6db2ce51ae6a94a7a7728ef91f6bb8027",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "6d146e7a5a48b1dcf711ddbbdf8f654fba75c5c8ccf7f3fc1ebb337fae6ed670",
+          "review": "sheet-11.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "3dbc57675b892e400ac6a509d668fecbb782dc21fde9f14813aee627d8f2bda7",
+          "review": "sheet-11.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-registration-server-unavailable-393-1x.long.png",
+      "sha256": "2cff9dcf8024d65e8c1f40ccb5a78b932af3954e3201c2392b24c09ab2c76df4",
+      "width": 393,
+      "height": 965,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "0a50dab74f830d1e318b65f058f421bc2410089a61a8112eaebd5e271070da73",
+          "review": "sheet-10.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 965,
+          "pixel_sha256": "107e377ff74bd5ea2a48b7a2bf7cf30003b2dfc5ef93bb738ace6735b52023b3",
+          "review": "../notification-current-visual-review/sheet-40.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-registration-server-unavailable-393-1x.png",
+      "sha256": "76e1bd93665970263a145e72402daa991b7235db4273af65dd93868b333788ad",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "11f60df2590e6d0fdaa1041bbcdc9adb6eba336429d981e1671d3ccd80ca10c6",
+          "review": "sheet-11.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "b4b99a0d04c2be294ac08d55dbe363a6b31d01e3b27363fab4077bc3a886fc1c",
+          "review": "sheet-11.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-registration-token-error-320-2x.long.png",
+      "sha256": "69c30551a383a148eb05c7bbb95d42791df70b3c8b9394bcf388f2ba0df7b846",
+      "width": 320,
+      "height": 2160,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "97cce1f623f5743e9ebff3d92b9d0a4429014b8e32a4426ff863e7660b7e7366",
+          "review": "sheet-11.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "d18e8880562bbbd1fb842f980917b207d9be4c81fb98367b2804b04d0cdc7ea8",
+          "review": "sheet-06.png#tile-4"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "f28a3474641fecc91c03c5d81138a671eda6ceb2f3da8568f898a66dd600a24e",
+          "review": "sheet-06.png#tile-5"
+        },
+        {
+          "y0": 1950,
+          "y1": 2160,
+          "pixel_sha256": "3cc0ffc5f8c1f03b186e035810ad35f9791f85eba2b3cbfbb595a902ae63def3",
+          "review": "sheet-07.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-registration-token-error-320-2x.png",
+      "sha256": "ddb73a78536fe25f54985efc9c052cc72de4e4972d035930fd23c29fb28966b4",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b2b43cac909c42c6f09eee421e06c5303b9aa79722910ff322e13b089c69cec5",
+          "review": "sheet-08.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "207b85dcb54b4d0574ed4b0d73030f9f5dcb2d74e7c196ace1f08677a211b46c",
+          "review": "../notification-current-visual-review/sheet-36.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-registration-token-error-393-1x.long.png",
+      "sha256": "3e29c1bf4b6b6af4a77ee25f9fb68bb4a8e25b4d78f99fdd1a6f2d1650bdb70d",
+      "width": 393,
+      "height": 965,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "5d62275382e27f96cd30a4e8ff596562f445c1538f0cdcdac4331f7afefd5688",
+          "review": "sheet-12.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 965,
+          "pixel_sha256": "107e377ff74bd5ea2a48b7a2bf7cf30003b2dfc5ef93bb738ace6735b52023b3",
+          "review": "../notification-current-visual-review/sheet-40.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-registration-token-error-393-1x.png",
+      "sha256": "69ab0a9f5cc33edb7eb2bf949d7c34a7395a4f7312ab39c35f7056065c36b229",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "dac8fd456498a37c7f452901fb1ec6c4135d8ae7dea344026374d0784c3d3032",
+          "review": "sheet-12.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "b4b99a0d04c2be294ac08d55dbe363a6b31d01e3b27363fab4077bc3a886fc1c",
+          "review": "sheet-11.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-registration-waiting-320-2x.long.png",
+      "sha256": "551ee6428f74d8b759d9a9492381e56028c7c1fc25a215a0f7e7f5b8a5701a62",
+      "width": 320,
+      "height": 2010,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "c5afbcedf672af10f5485fa1652e6bdbda9f9fda64ee908843607da1deb2a3a5",
+          "review": "sheet-12.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "f14f573b2c1608818634566bf44a50089c33a0fc8a9ae4960a74d2d52b8c182d",
+          "review": "../notification-current-visual-review/sheet-31.png#tile-3"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "0d2f367db56d520ca4c3ddb30de75e4b6204e16df9051a7e0584b5f9dbd20af5",
+          "review": "../notification-current-visual-review/sheet-31.png#tile-4"
+        },
+        {
+          "y0": 1950,
+          "y1": 2010,
+          "pixel_sha256": "537d3a9985cdf45916cb6680251cfec975a71bc8fc1431664af3405f7e117542",
+          "review": "../notification-current-visual-review/sheet-31.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-registration-waiting-320-2x.png",
+      "sha256": "27eaa11b50b735bc3bb4a01dcf58fbfce0fe0c4c07695aa1418c7ae7d687b174",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "faf31f76b5ba166e91ef9a3d454737cb1e172e7eb25a91ee31993a72f69d9e2b",
+          "review": "sheet-12.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "759718b9d5d1ddd8e4cb3155d188b0f5311bf5d0ba2439a11358f339b65e17b9",
+          "review": "sheet-12.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-registration-waiting-393-1x.long.png",
+      "sha256": "55412c7d045c7af8ecd9ebf297caf902047c4df2cddbf0151368e2bd7272835f",
+      "width": 393,
+      "height": 895,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "3e00ce7e3f076735b934a4e7db8f38b9d998c19f4e9004ca7a5208459fedb372",
+          "review": "sheet-12.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 895,
+          "pixel_sha256": "5f660963e6a364b48f770395b16904a95ec5551e2e0d915ea31ee747b2398ceb",
+          "review": "../notification-current-visual-review/sheet-32.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-registration-waiting-393-1x.png",
+      "sha256": "cde5270280a8c0868a366e0e85fac1f530aca478f346c826c1be8fc552d2ea3c",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "570d7baf189a9a1e390e6c81656695ac4a1f0879c6792b8d8859d695d7c569db",
+          "review": "sheet-13.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "d841441590c960d3a4a284bfc3a814b8b42bdc594afcf996b5065a193118247e",
+          "review": "../notification-current-visual-review/sheet-32.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-request-authorized-320-2x.long.png",
+      "sha256": "2b450898306855bcf0074d29c1ae5f3270f68cb241b8dc76ae79d34e225ad0fb",
+      "width": 320,
+      "height": 1856,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "b2528664ad664d6a9d0a6a579d5a182d81aab0d0ced241027d477a7ae21fd991",
+          "review": "../notification-current-visual-review/sheet-03.png#tile-4"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "150cf14a6dc1c4f510c4dacdbab34a8454513e7c763bad33f1dab9852135a7ba",
+          "review": "../notification-current-visual-review/sheet-02.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1856,
+          "pixel_sha256": "c5a2b9a192188b2954202ac20905b5bae466c0fbc863439441a9aefc05ec7756",
+          "review": "../notification-current-visual-review/sheet-02.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-request-authorized-320-2x.png",
+      "sha256": "6eeebd6322031df4654719e613b33fa15d1e6b568d1b4b73cb718b604d3fda27",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "caf0b359dc6664fd8adab4e9ec7a12480faec414466b1f0a343757b240869335",
+          "review": "sheet-13.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "06d11630e676b1130c96b95ff5336a56d5eb6dda9ad4da1c74160ac630185034",
+          "review": "sheet-13.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-request-authorized-393-1x.long.png",
+      "sha256": "d87293e710a46fc2902973359d0190d7bfe2e428e33a174c9b8daeebafc70f1b",
+      "width": 393,
+      "height": 877,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "e40f59618a29d6b7e44991550df0ccd9a21a9fa7e77f87af923d7ad6cb132947",
+          "review": "../notification-current-visual-review/sheet-04.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 877,
+          "pixel_sha256": "5c798c3a4cdf5d8b3e2d9ed0b91d7d571ca109ab6885bfd425770f7ab32a2f2e",
+          "review": "../notification-current-visual-review/sheet-03.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-request-authorized-393-1x.png",
+      "sha256": "3cee73e1484ed656aa518937448b8991510c7d4ce75c880faf19cba36f7c9fcd",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "7391e2081f8ec6e135717e84cc9c92860d3ea5f7230ba0f398746c171b3ca0b8",
+          "review": "../notification-current-visual-review/sheet-04.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "9c9563fffab33ddae6117574131fc438ba92f98554f59fdf804602434a656b11",
+          "review": "../notification-current-visual-review/sheet-03.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-request-error-320-2x.long.png",
+      "sha256": "7d72fefa4a03fda6c6f2534b103239c0ec1abbee27261c615e8eeb8b3ee423d6",
+      "width": 320,
+      "height": 2048,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "000e62e311dbf4b69458fb2564026fd6e836014cd95cf5d95626ce5264a8e90c",
+          "review": "sheet-02.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "2c61388e3be82c5b5897d2e07deb4c947de4a17e40727fbff2686ab1c53a8ab1",
+          "review": "sheet-02.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "0f5732dc4756d72b2b429676954862b09eeb2a0962bccd6dfa52cd9ba4b6962d",
+          "review": "sheet-02.png#tile-3"
+        },
+        {
+          "y0": 1950,
+          "y1": 2048,
+          "pixel_sha256": "1773c259ca5fc04dfbeae04e0755f5d5bc71a667d062b9bd63633e386e5775e0",
+          "review": "sheet-02.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-request-error-320-2x.png",
+      "sha256": "f49c589e25d978fe4857dd48fe04e907d4c003437a290489eb58ecc1ddf1f320",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "01e07eb7d312ae5c4b643af1c87ef88291a8e4ddaf2cec9c31ffee5654cb5c07",
+          "review": "sheet-02.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "79ad7a883de6ddc9321c2fb8a297bac32fcf2dfab8271f5dc104edf43560ec4e",
+          "review": "sheet-03.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-request-error-393-1x.long.png",
+      "sha256": "42092d1cf621a45a83a9db78bc928bfe03b662e9ca55affccd466870423b0286",
+      "width": 393,
+      "height": 877,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ce6c8552a98ed105937c1126bb6b4d8c1ccc849ac333ea9b690fb5c2bfa14371",
+          "review": "sheet-03.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 877,
+          "pixel_sha256": "d061572051e4191fd0b1783a64772a93c587a80f53b5ec3174d8133b1710387f",
+          "review": "sheet-03.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-request-error-393-1x.png",
+      "sha256": "57faf6805cc56fba68c75c0be045f6323498ba1f16018f2186a551c6bb9dc40c",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "d81d1913c2187ed6cf2ed403f4651e9babf683a23d5cc2da2f09d28afad6d81c",
+          "review": "sheet-03.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "452b31bf451e1081960d4b30eb563cb92216193fa8194d56ed79ec6ed1f36105",
+          "review": "sheet-03.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-request-error-dismissed-320-2x.long.png",
+      "sha256": "b9db6e157e111b3294b30cc0738e9148c1e8baa05e372e1160e59b8c563050c1",
+      "width": 320,
+      "height": 2048,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "000e62e311dbf4b69458fb2564026fd6e836014cd95cf5d95626ce5264a8e90c",
+          "review": "sheet-02.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "2c61388e3be82c5b5897d2e07deb4c947de4a17e40727fbff2686ab1c53a8ab1",
+          "review": "sheet-02.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "a99120a849b2e384839969af7ae7cfed7f267cb38e1b20a41bc04b4208daa94e",
+          "review": "../notification-current-visual-review/sheet-20.png#tile-2"
+        },
+        {
+          "y0": 1950,
+          "y1": 2048,
+          "pixel_sha256": "ff6c68e2a27458d7efe4c9bf1fa771fc30042d85020172192789f08641dda643",
+          "review": "../notification-current-visual-review/sheet-20.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-request-error-dismissed-320-2x.png",
+      "sha256": "f1193c08552a978d0e5a5c12a7b54fc716b385e9ded12615058017485ceb3c6a",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "cef4dc1f82c032f8851de409327a81cba36840d6dcdee8cd9e6b6073b2374c51",
+          "review": "sheet-05.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "90cdec09e14fdad50bd757470733822b5046045dc9a22f288d2d2385e84b6b38",
+          "review": "sheet-05.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-request-error-dismissed-393-1x.long.png",
+      "sha256": "dc4aa1067816f85cf184abb9795b0e4ff157aa981f04ba806edd906b090201e9",
+      "width": 393,
+      "height": 877,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "ce6c8552a98ed105937c1126bb6b4d8c1ccc849ac333ea9b690fb5c2bfa14371",
+          "review": "sheet-03.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 877,
+          "pixel_sha256": "5c798c3a4cdf5d8b3e2d9ed0b91d7d571ca109ab6885bfd425770f7ab32a2f2e",
+          "review": "../notification-current-visual-review/sheet-03.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-request-error-dismissed-393-1x.png",
+      "sha256": "e8fec6879a7fa63062f8d7511ab6d26ec3ebc08e3cc8515e16846a79f69061b6",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "d81d1913c2187ed6cf2ed403f4651e9babf683a23d5cc2da2f09d28afad6d81c",
+          "review": "sheet-03.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "9c9563fffab33ddae6117574131fc438ba92f98554f59fdf804602434a656b11",
+          "review": "../notification-current-visual-review/sheet-03.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-request-error-education-320-2x.png",
+      "sha256": "f3cae7a74c4bda2e771face23ebe704f0f12543205da4cf0d95998c30d2a7de5",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "0c978e904d7c962027fcb14fa5eddef5c0b61654f31229aa340d25a30c02936a",
+          "review": "sheet-03.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "992969bd223cc35bd461d04566bf26756b3565e350162589fd17a3732436876f",
+          "review": "sheet-04.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-request-error-education-393-1x.png",
+      "sha256": "b0d97b40553213a7fd4fcea6ed83e04f59fed92ab9998de5fc9142e4ba22cf47",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "cd9bfe776c82d3451c80abde7d3dbc481498b13edb815913d509e32913ef6543",
+          "review": "sheet-04.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "fe7792c33c792f76e3c655dd5836ec86629c5e170de35c7c66af0af8972a2a09",
+          "review": "sheet-04.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-request-inbox-320-2x.png",
+      "sha256": "d87ff0fff73b3f1cfff2f928e2c3a11de2bd19fcbb0bcf36a68f8d7cbefadb05",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "519ff9428b67f0330d367132652262e3bf3f9bc242f052e2694185e023769db7",
+          "review": "../notification-current-visual-review/sheet-06.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "94269320474d661f9d8142ede1ff2919f042a15c63033d5911fad41d5ea40b09",
+          "review": "../notification-current-visual-review/sheet-06.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-request-inbox-393-1x.png",
+      "sha256": "e55b634cfb38e5aee2d434badba0379c70705d382cff8ad2a51280473c32ec40",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "d130be8c6c7f469ad640ae2b6539198c08b414096f26091eabc878588d89b626",
+          "review": "../notification-current-visual-review/sheet-06.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "5e269ca9e36daffe984531405b8fd9a7fd95687843288196663912cae234267b",
+          "review": "../account-current-visual-review/sheet-05.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-request-inbox-return-320-2x.png",
+      "sha256": "d87ff0fff73b3f1cfff2f928e2c3a11de2bd19fcbb0bcf36a68f8d7cbefadb05",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "519ff9428b67f0330d367132652262e3bf3f9bc242f052e2694185e023769db7",
+          "review": "../notification-current-visual-review/sheet-06.png#tile-0"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "94269320474d661f9d8142ede1ff2919f042a15c63033d5911fad41d5ea40b09",
+          "review": "../notification-current-visual-review/sheet-06.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-request-inbox-return-393-1x.png",
+      "sha256": "e55b634cfb38e5aee2d434badba0379c70705d382cff8ad2a51280473c32ec40",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "d130be8c6c7f469ad640ae2b6539198c08b414096f26091eabc878588d89b626",
+          "review": "../notification-current-visual-review/sheet-06.png#tile-2"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "5e269ca9e36daffe984531405b8fd9a7fd95687843288196663912cae234267b",
+          "review": "../account-current-visual-review/sheet-05.png#tile-2"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-request-more-320-2x.long.png",
+      "sha256": "edf60b2ff688bc915d2bb5b78dcd590592f80dc819f88b78e894a18c3c8b4a1d",
+      "width": 320,
+      "height": 1177,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "45deeca5fc0f885b8c8217e880d15e7853492fa7d920cd2c7845ecde312a0519",
+          "review": "../notification-current-visual-review/sheet-06.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1177,
+          "pixel_sha256": "b2990c1b14961c2b593f140c54b5269bcd336d812e3623b8a61d0e6713c21131",
+          "review": "../more-current-visual-review/sheet-05.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-request-more-320-2x.png",
+      "sha256": "328ca0e756ae7287b083fef2202b55d073beb0f20e6e8f19047a08f0b2292e1c",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "45deeca5fc0f885b8c8217e880d15e7853492fa7d920cd2c7845ecde312a0519",
+          "review": "../notification-current-visual-review/sheet-06.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "6a6ad6eda43220222ae31b7f385fb43f1901e21c5fad76b65c9e7b65b56c9ddf",
+          "review": "../notification-current-visual-review/sheet-06.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-request-more-393-1x.png",
+      "sha256": "9a5ed794dbe75feb34e0fa9d9716ed6f090b4543d2adf74442af56ab29b870c1",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "54c8e86e75b74c4fc90af4628975ba93a1179d33bb7c77659fb1dbefc1dc6416",
+          "review": "../notification-current-visual-review/sheet-06.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "ae4f630d503ab6fd4f559f429de09469456c11d171c0c3898413ee795bf5b433",
+          "review": "../baby-development-date-visual-review/sheet-05.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-request-more-return-320-2x.long.png",
+      "sha256": "edf60b2ff688bc915d2bb5b78dcd590592f80dc819f88b78e894a18c3c8b4a1d",
+      "width": 320,
+      "height": 1177,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "45deeca5fc0f885b8c8217e880d15e7853492fa7d920cd2c7845ecde312a0519",
+          "review": "../notification-current-visual-review/sheet-06.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 1177,
+          "pixel_sha256": "b2990c1b14961c2b593f140c54b5269bcd336d812e3623b8a61d0e6713c21131",
+          "review": "../more-current-visual-review/sheet-05.png#tile-5"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-request-more-return-320-2x.png",
+      "sha256": "328ca0e756ae7287b083fef2202b55d073beb0f20e6e8f19047a08f0b2292e1c",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "45deeca5fc0f885b8c8217e880d15e7853492fa7d920cd2c7845ecde312a0519",
+          "review": "../notification-current-visual-review/sheet-06.png#tile-3"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "6a6ad6eda43220222ae31b7f385fb43f1901e21c5fad76b65c9e7b65b56c9ddf",
+          "review": "../notification-current-visual-review/sheet-06.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-request-more-return-393-1x.png",
+      "sha256": "9a5ed794dbe75feb34e0fa9d9716ed6f090b4543d2adf74442af56ab29b870c1",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "54c8e86e75b74c4fc90af4628975ba93a1179d33bb7c77659fb1dbefc1dc6416",
+          "review": "../notification-current-visual-review/sheet-06.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "ae4f630d503ab6fd4f559f429de09469456c11d171c0c3898413ee795bf5b433",
+          "review": "../baby-development-date-visual-review/sheet-05.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-request-ready-320-2x.long.png",
+      "sha256": "3acbfd81c25ebfeced1d4cb54214f93e950c63e62b02c14f1947cfb7d3946e96",
+      "width": 320,
+      "height": 2048,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "000e62e311dbf4b69458fb2564026fd6e836014cd95cf5d95626ce5264a8e90c",
+          "review": "sheet-02.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 1300,
+          "pixel_sha256": "cf4b13ea88c67096fa2317f2f230921678365dc6a6a638d709fc0572e3438c9e",
+          "review": "sheet-05.png#tile-2"
+        },
+        {
+          "y0": 1300,
+          "y1": 1950,
+          "pixel_sha256": "47dcce463019705d924b6eb8f4eab8b4d2f631bf7b41d7602a29c842564905aa",
+          "review": "sheet-05.png#tile-3"
+        },
+        {
+          "y0": 1950,
+          "y1": 2048,
+          "pixel_sha256": "ff6c68e2a27458d7efe4c9bf1fa771fc30042d85020172192789f08641dda643",
+          "review": "../notification-current-visual-review/sheet-20.png#tile-3"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-request-ready-320-2x.png",
+      "sha256": "0645e84cb12f51bca137a308a35c5d173ea4db874200450974c8b82a7c91602d",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "000e62e311dbf4b69458fb2564026fd6e836014cd95cf5d95626ce5264a8e90c",
+          "review": "sheet-02.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "8161bdfd22f0d3bbb7fb9447d75bd354d9cee733ac38bb9d1b23c75b9eb26c25",
+          "review": "sheet-05.png#tile-4"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-request-ready-393-1x.long.png",
+      "sha256": "92982e238e15f1f94f031b011ec25d89ca28bf8d73fbf20ce3f0e4b6039b6b70",
+      "width": 393,
+      "height": 877,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "79224d917bca527c1fed7f4c5045ed0f9ced0941b141d22d71e5076f72dddba7",
+          "review": "sheet-05.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 877,
+          "pixel_sha256": "5c798c3a4cdf5d8b3e2d9ed0b91d7d571ca109ab6885bfd425770f7ab32a2f2e",
+          "review": "../notification-current-visual-review/sheet-03.png#tile-1"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-request-ready-393-1x.png",
+      "sha256": "815e3bbf69691d17d09933a41d9f702c384d43225769683f4dac6f09b7b1adcc",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "79224d917bca527c1fed7f4c5045ed0f9ced0941b141d22d71e5076f72dddba7",
+          "review": "sheet-05.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "0dbde4b36dd63a86c98cdc2991c40b16266ab8b274e9f5dd1121c78731eeb026",
+          "review": "../notification-current-visual-review/sheet-21.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-request-retry-education-320-2x.png",
+      "sha256": "f3cae7a74c4bda2e771face23ebe704f0f12543205da4cf0d95998c30d2a7de5",
+      "width": 320,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "0c978e904d7c962027fcb14fa5eddef5c0b61654f31229aa340d25a30c02936a",
+          "review": "sheet-03.png#tile-5"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "992969bd223cc35bd461d04566bf26756b3565e350162589fd17a3732436876f",
+          "review": "sheet-04.png#tile-0"
+        }
+      ]
+    },
+    {
+      "source": "raw/test/goldens/ui_inventory/notification-permission-current-request-retry-education-393-1x.png",
+      "sha256": "b0d97b40553213a7fd4fcea6ed83e04f59fed92ab9998de5fc9142e4ba22cf47",
+      "width": 393,
+      "height": 844,
+      "segments": [
+        {
+          "y0": 0,
+          "y1": 650,
+          "pixel_sha256": "cd9bfe776c82d3451c80abde7d3dbc481498b13edb815913d509e32913ef6543",
+          "review": "sheet-04.png#tile-1"
+        },
+        {
+          "y0": 650,
+          "y1": 844,
+          "pixel_sha256": "fe7792c33c792f76e3c655dd5836ec86629c5e170de35c7c66af0af8972a2a09",
+          "review": "sheet-04.png#tile-2"
+        }
+      ]
+    }
+  ],
+  "unique_segments": 108,
+  "new_segments": 75,
+  "new_sheets": 13
+}

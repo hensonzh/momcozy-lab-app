@@ -1,0 +1,853 @@
+{
+  "gap": "G04",
+  "completion": "CLOSED_FOR_RECORDED_SOURCE",
+  "initial_run": "runs/20260914T075559-auth-current",
+  "final_route_run": "runs/20260914T080136-auth-current",
+  "reviewed_images": [
+    {
+      "id": "01-auth/auth-busy-320-2x-short",
+      "image": "../raw/test/goldens/design_system/auth-busy-320-2x-short.long.png",
+      "sha256": "74af7ae88a8ccfd58e4dbaf0fe489588c3919eb37839e1c03fdceb0e5012ab0e",
+      "metadata": "raw/test/goldens/design_system/auth-busy-320-2x-short.png.json",
+      "long_capture": {
+        "status": "complete-measured-scroll-stitch",
+        "file": "/Users/lute/project/momcozy-lab/app/docs/app-ui-inventory/raw/test/goldens/design_system/auth-busy-320-2x-short.long.png",
+        "offsets": [
+          0.0,
+          252.0,
+          504.0,
+          756.0,
+          764.0
+        ],
+        "scroll_bounds": [
+          0.0,
+          0.0,
+          320.0,
+          568.0
+        ],
+        "frame_scroll_bounds": [
+          [
+            0.0,
+            0.0,
+            320.0,
+            568.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            568.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            568.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            568.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            568.0
+          ]
+        ],
+        "content_height": 1332.0,
+        "interior_strip_edge_guard": 64.0,
+        "fixed_bottom_overlay_bounds": [],
+        "original_scroll_offset": 764.0,
+        "tooltip_preserved_from_matched_viewport": false
+      },
+      "normal_route": false
+    },
+    {
+      "id": "01-auth/auth-code-expired-320-2x-short",
+      "image": "../raw/test/goldens/design_system/auth-code-expired-320-2x-short.long.png",
+      "sha256": "4924a0e088d8fa2a5a665a37be1a591cf06517e31a507ed17f688c9b732fa955",
+      "metadata": "raw/test/goldens/design_system/auth-code-expired-320-2x-short.png.json",
+      "long_capture": {
+        "status": "complete-measured-scroll-stitch",
+        "file": "/Users/lute/project/momcozy-lab/app/docs/app-ui-inventory/raw/test/goldens/design_system/auth-code-expired-320-2x-short.long.png",
+        "offsets": [
+          0.0,
+          252.0,
+          504.0,
+          756.0,
+          969.0
+        ],
+        "scroll_bounds": [
+          0.0,
+          0.0,
+          320.0,
+          568.0
+        ],
+        "frame_scroll_bounds": [
+          [
+            0.0,
+            0.0,
+            320.0,
+            568.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            568.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            568.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            568.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            568.0
+          ]
+        ],
+        "content_height": 1537.0,
+        "interior_strip_edge_guard": 64.0,
+        "fixed_bottom_overlay_bounds": [],
+        "original_scroll_offset": 557.0,
+        "tooltip_preserved_from_matched_viewport": false
+      },
+      "normal_route": false
+    },
+    {
+      "id": "01-auth/auth-code-validation-320-2x-short",
+      "image": "../raw/test/goldens/design_system/auth-code-validation-320-2x-short.long.png",
+      "sha256": "acb5e88f806023fd75025db2ab118703a53082f3770c76a20b14205952198379",
+      "metadata": "raw/test/goldens/design_system/auth-code-validation-320-2x-short.png.json",
+      "long_capture": {
+        "status": "complete-measured-scroll-stitch",
+        "file": "/Users/lute/project/momcozy-lab/app/docs/app-ui-inventory/raw/test/goldens/design_system/auth-code-validation-320-2x-short.long.png",
+        "offsets": [
+          0.0,
+          252.0,
+          504.0,
+          756.0,
+          957.0
+        ],
+        "scroll_bounds": [
+          0.0,
+          0.0,
+          320.0,
+          568.0
+        ],
+        "frame_scroll_bounds": [
+          [
+            0.0,
+            0.0,
+            320.0,
+            568.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            568.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            568.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            568.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            568.0
+          ]
+        ],
+        "content_height": 1525.0,
+        "interior_strip_edge_guard": 64.0,
+        "fixed_bottom_overlay_bounds": [],
+        "original_scroll_offset": 911.0,
+        "tooltip_preserved_from_matched_viewport": false
+      },
+      "normal_route": false
+    },
+    {
+      "id": "01-auth/auth-followup-forgot-email-unavailable",
+      "image": "../raw/test/goldens/ui_inventory/auth-followup-forgot-email-unavailable-393-1x.png",
+      "sha256": "864da17a5cf4f59cabd2a67302016be100912e2a3ac3e5dcb0238e3fdb5a0117",
+      "metadata": "raw/test/goldens/ui_inventory/auth-followup-forgot-email-unavailable-393-1x.png.json",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "normal_route": true
+    },
+    {
+      "id": "01-auth/auth-followup-forgot-empty",
+      "image": "../raw/test/goldens/ui_inventory/auth-followup-forgot-empty-393-1x.png",
+      "sha256": "aaa1bf16c8ccb204bd860bb0d3875564091c7cd73c5beb624f8465610549a8cb",
+      "metadata": "raw/test/goldens/ui_inventory/auth-followup-forgot-empty-393-1x.png.json",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "normal_route": true
+    },
+    {
+      "id": "01-auth/auth-followup-forgot-offline",
+      "image": "../raw/test/goldens/ui_inventory/auth-followup-forgot-offline-393-1x.png",
+      "sha256": "924c83cdcd93f6233d103dec759b18f8927b6b3825ecc80f8cb616e000024272",
+      "metadata": "raw/test/goldens/ui_inventory/auth-followup-forgot-offline-393-1x.png.json",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "normal_route": true
+    },
+    {
+      "id": "01-auth/auth-followup-forgot-pending",
+      "image": "../raw/test/goldens/ui_inventory/auth-followup-forgot-pending-393-1x.png",
+      "sha256": "20e2632a531a2f53e199a59e43461fa90afa6818552cbe5687a2fff4bd2b36d2",
+      "metadata": "raw/test/goldens/ui_inventory/auth-followup-forgot-pending-393-1x.png.json",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "normal_route": true
+    },
+    {
+      "id": "01-auth/auth-followup-forgot-validation",
+      "image": "../raw/test/goldens/ui_inventory/auth-followup-forgot-validation-393-1x.png",
+      "sha256": "7ae73c9f6ada23078cbe0b65e7bc7823fe8adf24897e1f9e321e4ae7a034c7b7",
+      "metadata": "raw/test/goldens/ui_inventory/auth-followup-forgot-validation-393-1x.png.json",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "normal_route": true
+    },
+    {
+      "id": "01-auth/auth-followup-login-password-visible",
+      "image": "../raw/test/goldens/ui_inventory/auth-followup-login-password-visible-393-1x.png",
+      "sha256": "9084515eb1a26a564c83fde50d18db4f54e5f0002ea831be295d25de87d66894",
+      "metadata": "raw/test/goldens/ui_inventory/auth-followup-login-password-visible-393-1x.png.json",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "normal_route": true
+    },
+    {
+      "id": "01-auth/auth-followup-reset-code-form",
+      "image": "../raw/test/goldens/ui_inventory/auth-followup-reset-code-form-393-1x.png",
+      "sha256": "119fbddd31f50b5ba3dc58ba4438739355ee7a89a21c08a0dfff8d7e22e880fa",
+      "metadata": "raw/test/goldens/ui_inventory/auth-followup-reset-code-form-393-1x.png.json",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "normal_route": true
+    },
+    {
+      "id": "01-auth/auth-followup-reset-complete",
+      "image": "../raw/test/goldens/ui_inventory/auth-followup-reset-complete-393-1x.png",
+      "sha256": "5e4d2c0c16ff716fb84564c42c9e6f49bfdb17fc4855e00a288164c0afc30e62",
+      "metadata": "raw/test/goldens/ui_inventory/auth-followup-reset-complete-393-1x.png.json",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "normal_route": true
+    },
+    {
+      "id": "01-auth/auth-followup-reset-empty-validation",
+      "image": "../raw/test/goldens/ui_inventory/auth-followup-reset-empty-validation-393-1x.png",
+      "sha256": "24e8245ffff6603ad04673fc00ffe607bc403904e1548ecf8142ad052252d307",
+      "metadata": "raw/test/goldens/ui_inventory/auth-followup-reset-empty-validation-393-1x.png.json",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "normal_route": true
+    },
+    {
+      "id": "01-auth/auth-followup-reset-entry",
+      "image": "../raw/test/goldens/ui_inventory/auth-followup-reset-entry-393-1x.png",
+      "sha256": "8d6db55209450d35df3b0346318c4dd6de15a11f192ed12a57b9f0efd685c21a",
+      "metadata": "raw/test/goldens/ui_inventory/auth-followup-reset-entry-393-1x.png.json",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "normal_route": true
+    },
+    {
+      "id": "01-auth/auth-followup-reset-expired-code",
+      "image": "../raw/test/goldens/ui_inventory/auth-followup-reset-expired-code-393-1x.png",
+      "sha256": "8523bcefa04b8de86132b0a5976ac4eb1b883bdc90a11f0aa054d68ec242a08e",
+      "metadata": "raw/test/goldens/ui_inventory/auth-followup-reset-expired-code-393-1x.png.json",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "normal_route": true
+    },
+    {
+      "id": "01-auth/auth-followup-reset-login-more",
+      "image": "../raw/test/goldens/ui_inventory/auth-followup-reset-login-more-393-1x.png",
+      "sha256": "54f8f7ebcc0a13ead2bae0956aefd718384cc6c518e4e7d47140f69b59c30a92",
+      "metadata": "raw/test/goldens/ui_inventory/auth-followup-reset-login-more-393-1x.png.json",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "normal_route": true
+    },
+    {
+      "id": "01-auth/auth-followup-reset-password-validation",
+      "image": "../raw/test/goldens/ui_inventory/auth-followup-reset-password-validation-393-1x.png",
+      "sha256": "25465e531ef0cba5b2b5868beb0471534b447752bdf205e327295440be5015bc",
+      "metadata": "raw/test/goldens/ui_inventory/auth-followup-reset-password-validation-393-1x.png.json",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "normal_route": true
+    },
+    {
+      "id": "01-auth/auth-followup-reset-pending",
+      "image": "../raw/test/goldens/ui_inventory/auth-followup-reset-pending-393-1x.png",
+      "sha256": "6c730148dd568650401eb18164daa120231182274468234b3c05084de36eada5",
+      "metadata": "raw/test/goldens/ui_inventory/auth-followup-reset-pending-393-1x.png.json",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "normal_route": true
+    },
+    {
+      "id": "01-auth/auth-followup-reset-rate-limited",
+      "image": "../raw/test/goldens/ui_inventory/auth-followup-reset-rate-limited-393-1x.png",
+      "sha256": "b2fcc19a4c7099531418882348a5da853cff813da0156107a7c5ecd2651ce410",
+      "metadata": "raw/test/goldens/ui_inventory/auth-followup-reset-rate-limited-393-1x.png.json",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "normal_route": true
+    },
+    {
+      "id": "01-auth/auth-followup-reset-resend-cooldown",
+      "image": "../raw/test/goldens/ui_inventory/auth-followup-reset-resend-cooldown-393-1x.png",
+      "sha256": "467b646aec32176e628ff35d42e1a81f1e75c26e5b5fcff5933f1c4ee87cd954",
+      "metadata": "raw/test/goldens/ui_inventory/auth-followup-reset-resend-cooldown-393-1x.png.json",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "normal_route": true
+    },
+    {
+      "id": "01-auth/auth-forgot",
+      "image": "../raw/test/goldens/design_system/auth-forgot-390.png",
+      "sha256": "9f4e73ef9d4062531ee75faef682611956559606fa2683c28c47392c1f18858c",
+      "metadata": "raw/test/goldens/design_system/auth-forgot-390.png.json",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "normal_route": false
+    },
+    {
+      "id": "01-auth/auth-google-error-320-2x-short",
+      "image": "../raw/test/goldens/design_system/auth-google-error-320-2x-short.long.png",
+      "sha256": "1eadea5532fc6c3e79525898789e8afab906e928e52e9600f5c5fcbbc6bbd3dd",
+      "metadata": "raw/test/goldens/design_system/auth-google-error-320-2x-short.png.json",
+      "long_capture": {
+        "status": "complete-measured-scroll-stitch",
+        "file": "/Users/lute/project/momcozy-lab/app/docs/app-ui-inventory/raw/test/goldens/design_system/auth-google-error-320-2x-short.long.png",
+        "offsets": [
+          0.0,
+          252.0,
+          504.0,
+          756.0,
+          928.0
+        ],
+        "scroll_bounds": [
+          0.0,
+          0.0,
+          320.0,
+          568.0
+        ],
+        "frame_scroll_bounds": [
+          [
+            0.0,
+            0.0,
+            320.0,
+            568.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            568.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            568.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            568.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            568.0
+          ]
+        ],
+        "content_height": 1496.0,
+        "interior_strip_edge_guard": 64.0,
+        "fixed_bottom_overlay_bounds": [],
+        "original_scroll_offset": 589.0,
+        "tooltip_preserved_from_matched_viewport": false
+      },
+      "normal_route": false
+    },
+    {
+      "id": "01-auth/auth-journey-code-expired",
+      "image": "../raw/test/goldens/ui_inventory/auth-journey-code-expired-393.png",
+      "sha256": "b61879970ba4b611cd03902510c50e3caf6945d58b40426cdbb5f011dc816252",
+      "metadata": "raw/test/goldens/ui_inventory/auth-journey-code-expired-393.png.json",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "normal_route": true
+    },
+    {
+      "id": "01-auth/auth-journey-code-validation",
+      "image": "../raw/test/goldens/ui_inventory/auth-journey-code-validation-393.png",
+      "sha256": "458a668d339fa62cbda424250d8b978ad0acbc25b0a7dd2d34af3c46a4b27cd0",
+      "metadata": "raw/test/goldens/ui_inventory/auth-journey-code-validation-393.png.json",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "normal_route": true
+    },
+    {
+      "id": "01-auth/auth-journey-register",
+      "image": "../raw/test/goldens/ui_inventory/auth-journey-register-393.png",
+      "sha256": "714d2c60c897d498029136c57a0a8f9fb3587c989244aa4c34af47a7b4512890",
+      "metadata": "raw/test/goldens/ui_inventory/auth-journey-register-393.png.json",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "normal_route": true
+    },
+    {
+      "id": "01-auth/auth-journey-resend-cooldown",
+      "image": "../raw/test/goldens/ui_inventory/auth-journey-resend-cooldown-393.png",
+      "sha256": "0283f26ca495b4d27ca0295f1734a5050ea8ac74c3ca04fd9d62e6ae811e3c71",
+      "metadata": "raw/test/goldens/ui_inventory/auth-journey-resend-cooldown-393.png.json",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "normal_route": true
+    },
+    {
+      "id": "01-auth/auth-journey-signed-out",
+      "image": "../raw/test/goldens/ui_inventory/auth-journey-signed-out-393.png",
+      "sha256": "8d6db55209450d35df3b0346318c4dd6de15a11f192ed12a57b9f0efd685c21a",
+      "metadata": "raw/test/goldens/ui_inventory/auth-journey-signed-out-393.png.json",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "normal_route": true
+    },
+    {
+      "id": "01-auth/auth-journey-verify",
+      "image": "../raw/test/goldens/ui_inventory/auth-journey-verify-393.png",
+      "sha256": "60fa94c0972ccc110917f7ae65a713071d8f89ecab4eab6f193984cdb96ab8e6",
+      "metadata": "raw/test/goldens/ui_inventory/auth-journey-verify-393.png.json",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "normal_route": true
+    },
+    {
+      "id": "01-auth/auth-language",
+      "image": "../raw/test/goldens/design_system/auth-language-390.png",
+      "sha256": "6f6681ed4f00d7366b560d389d9f4b766c06bf4a657fdcff9149a13177a495e9",
+      "metadata": "raw/test/goldens/design_system/auth-language-390.png.json",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "normal_route": false
+    },
+    {
+      "id": "01-auth/auth-legal",
+      "image": "../raw/test/goldens/design_system/auth-legal-390.png",
+      "sha256": "a3e0e5114dd343ab6a44ba1eba2f94544bf1aca27b0f646f1e6a3f8700e14420",
+      "metadata": "raw/test/goldens/design_system/auth-legal-390.png.json",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "normal_route": false
+    },
+    {
+      "id": "01-auth/auth-login",
+      "image": "../raw/test/goldens/design_system/auth-login-390.png",
+      "sha256": "a3e0e5114dd343ab6a44ba1eba2f94544bf1aca27b0f646f1e6a3f8700e14420",
+      "metadata": "raw/test/goldens/design_system/auth-login-390.png.json",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "normal_route": false
+    },
+    {
+      "id": "01-auth/auth-login-error-320-2x-short",
+      "image": "../raw/test/goldens/design_system/auth-login-error-320-2x-short.long.png",
+      "sha256": "af5b83810028e47579e474dd6911ff9d9c7f83784e70f7a5a793aa5df406eaa9",
+      "metadata": "raw/test/goldens/design_system/auth-login-error-320-2x-short.png.json",
+      "long_capture": {
+        "status": "complete-measured-scroll-stitch",
+        "file": "/Users/lute/project/momcozy-lab/app/docs/app-ui-inventory/raw/test/goldens/design_system/auth-login-error-320-2x-short.long.png",
+        "offsets": [
+          0.0,
+          252.0,
+          504.0,
+          756.0,
+          894.0
+        ],
+        "scroll_bounds": [
+          0.0,
+          0.0,
+          320.0,
+          568.0
+        ],
+        "frame_scroll_bounds": [
+          [
+            0.0,
+            0.0,
+            320.0,
+            568.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            568.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            568.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            568.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            568.0
+          ]
+        ],
+        "content_height": 1462.0,
+        "interior_strip_edge_guard": 64.0,
+        "fixed_bottom_overlay_bounds": [],
+        "original_scroll_offset": 477.0,
+        "tooltip_preserved_from_matched_viewport": false
+      },
+      "normal_route": false
+    },
+    {
+      "id": "01-auth/auth-register",
+      "image": "../raw/test/goldens/design_system/auth-register-390.png",
+      "sha256": "07280b6ee14eddf592b8ee297b37256754479a96fa230eef505d1e2192f0d53c",
+      "metadata": "raw/test/goldens/design_system/auth-register-390.png.json",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "normal_route": false
+    },
+    {
+      "id": "01-auth/auth-register-validation",
+      "image": "../raw/test/goldens/design_system/auth-register-validation-390.png",
+      "sha256": "d5af72cc9a83364b12fb85a08f882098c8968a2e0c4c24f13ca948b96b421152",
+      "metadata": "raw/test/goldens/design_system/auth-register-validation-390.png.json",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "normal_route": false
+    },
+    {
+      "id": "01-auth/auth-resend-busy-320-2x-short",
+      "image": "../raw/test/goldens/design_system/auth-resend-busy-320-2x-short.long.png",
+      "sha256": "54bc3c7ad1b19abd959f7ca3d3a2bfa681371ce484a96e53b00c216c120858b1",
+      "metadata": "raw/test/goldens/design_system/auth-resend-busy-320-2x-short.png.json",
+      "long_capture": {
+        "status": "complete-measured-scroll-stitch",
+        "file": "/Users/lute/project/momcozy-lab/app/docs/app-ui-inventory/raw/test/goldens/design_system/auth-resend-busy-320-2x-short.long.png",
+        "offsets": [
+          0.0,
+          252.0,
+          504.0,
+          683.0
+        ],
+        "scroll_bounds": [
+          0.0,
+          0.0,
+          320.0,
+          568.0
+        ],
+        "frame_scroll_bounds": [
+          [
+            0.0,
+            0.0,
+            320.0,
+            568.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            568.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            568.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            568.0
+          ]
+        ],
+        "content_height": 1251.0,
+        "interior_strip_edge_guard": 64.0,
+        "fixed_bottom_overlay_bounds": [],
+        "original_scroll_offset": 683.0,
+        "tooltip_preserved_from_matched_viewport": false
+      },
+      "normal_route": false
+    },
+    {
+      "id": "01-auth/auth-resend-cooldown-320-2x-short",
+      "image": "../raw/test/goldens/design_system/auth-resend-cooldown-320-2x-short.long.png",
+      "sha256": "c17ffe5398579bd181e0c0ad4288a9e3811a915dc81456407a28d8ef2946ba56",
+      "metadata": "raw/test/goldens/design_system/auth-resend-cooldown-320-2x-short.png.json",
+      "long_capture": {
+        "status": "complete-measured-scroll-stitch",
+        "file": "/Users/lute/project/momcozy-lab/app/docs/app-ui-inventory/raw/test/goldens/design_system/auth-resend-cooldown-320-2x-short.long.png",
+        "offsets": [
+          0.0,
+          252.0,
+          504.0,
+          756.0,
+          837.0
+        ],
+        "scroll_bounds": [
+          0.0,
+          0.0,
+          320.0,
+          568.0
+        ],
+        "frame_scroll_bounds": [
+          [
+            0.0,
+            0.0,
+            320.0,
+            568.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            568.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            568.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            568.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            568.0
+          ]
+        ],
+        "content_height": 1405.0,
+        "interior_strip_edge_guard": 64.0,
+        "fixed_bottom_overlay_bounds": [],
+        "original_scroll_offset": 359.0,
+        "tooltip_preserved_from_matched_viewport": false
+      },
+      "normal_route": false
+    },
+    {
+      "id": "01-auth/auth-reset",
+      "image": "../raw/test/goldens/design_system/auth-reset-390.png",
+      "sha256": "7dc5119b796b63e94fe925c0e2fd9b4f4d010d57d9b8ca93a92c56297a9c2e66",
+      "metadata": "raw/test/goldens/design_system/auth-reset-390.png.json",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "normal_route": false
+    },
+    {
+      "id": "01-auth/auth-reset-complete",
+      "image": "../raw/test/goldens/design_system/auth-reset-complete-390.png",
+      "sha256": "03fd2dac0db47be94440f040acab924c611f8a5a18610c355b806b6b6b2982b6",
+      "metadata": "raw/test/goldens/design_system/auth-reset-complete-390.png.json",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "normal_route": false
+    },
+    {
+      "id": "01-auth/auth-storage-error-320-2x-short",
+      "image": "../raw/test/goldens/design_system/auth-storage-error-320-2x-short.long.png",
+      "sha256": "48952ef98b45b41ecc1ea558e639b9bfb31da7e0b6866f5ef0459cfa90e4ff7f",
+      "metadata": "raw/test/goldens/design_system/auth-storage-error-320-2x-short.png.json",
+      "long_capture": {
+        "status": "complete-measured-scroll-stitch",
+        "file": "/Users/lute/project/momcozy-lab/app/docs/app-ui-inventory/raw/test/goldens/design_system/auth-storage-error-320-2x-short.long.png",
+        "offsets": [
+          0.0,
+          252.0,
+          504.0,
+          756.0,
+          1008.0,
+          1014.0
+        ],
+        "scroll_bounds": [
+          0.0,
+          0.0,
+          320.0,
+          568.0
+        ],
+        "frame_scroll_bounds": [
+          [
+            0.0,
+            0.0,
+            320.0,
+            568.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            568.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            568.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            568.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            568.0
+          ],
+          [
+            0.0,
+            0.0,
+            320.0,
+            568.0
+          ]
+        ],
+        "content_height": 1582.0,
+        "interior_strip_edge_guard": 64.0,
+        "fixed_bottom_overlay_bounds": [],
+        "original_scroll_offset": 477.0,
+        "tooltip_preserved_from_matched_viewport": false
+      },
+      "normal_route": false
+    },
+    {
+      "id": "01-auth/auth-verify",
+      "image": "../raw/test/goldens/design_system/auth-verify-390.png",
+      "sha256": "05e0fbfea50bc38c6694d8664be0206003adc53df670cb752c5587ef533199e9",
+      "metadata": "raw/test/goldens/design_system/auth-verify-390.png.json",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "normal_route": false
+    },
+    {
+      "id": "07-me/account-journey-verified-more",
+      "image": "../raw/test/goldens/ui_inventory/account-journey-verified-more-393.png",
+      "sha256": "54f8f7ebcc0a13ead2bae0956aefd718384cc6c518e4e7d47140f69b59c30a92",
+      "metadata": "raw/test/goldens/ui_inventory/account-journey-verified-more-393.png.json",
+      "long_capture": {
+        "status": "no-active-vertical-overflow"
+      },
+      "normal_route": true
+    }
+  ],
+  "relevant_source_hashes": {
+    "lib/app/mom_bottom_navigation.dart": "b762f1e2b67b9febb2e5662d1d29125556dd8d08a6b485f64e42b08a63759dff",
+    "lib/app/momcozy_app.dart": "00881d1d0901b24af222b6e08fd61b0a1ffd6ac309e02277cd1f400b6f1a59a0",
+    "lib/core/observability/momcozy_observability.dart": "f9e8e964dbab041804babc1038c5be0c2e04b4175ec0f2c12ad8c77625385f4f",
+    "lib/features/auth/presentation/auth_login_chrome.dart": "3808b5484b0cda026e8007c5ce940027bc672e1185ba2fc4ac354d3d385ab7bb",
+    "lib/features/auth/presentation/auth_page.dart": "77bf0ab04f1599f353bbb66c4a3dab2fe826d5e5e04f7f1b106f0b73ec07475f",
+    "lib/modules/profile/presentation/more_page.dart": "546a6a3221c0f6344c77f97b88f6f3419e4ea574479df1eede367438f151e60e",
+    "lib/shared/widgets/mom_companion_widgets.dart": "93c5cc4e022ac56ee5ca31dc5208f6c3a8df03d08e39ace0d761b101e04571ab",
+    "lib/shared/widgets/mom_settings_row.dart": "4821938015ac71d8f9e9fac8d2b481535930fdb8717228d8e2d218a386c4efff",
+    "lib/shared/widgets/mom_settings_widgets.dart": "271b022cb619641d956e92a5600e5f5585d2a5b469446132d53d402987403025",
+    "lib/shared/widgets/momcozy_components.dart": "5477eff325acaa95e4ac6036fe3aedda03d15104b49b6ba772e586fe8ffb1157",
+    "lib/shared/widgets/momcozy_line_icon.dart": "5d4442b930359144e47316073efd7b99e8779abdadf1df6c965fe061d9de6eb6",
+    "test/features/auth/auth_design_test.dart": "21a46fbbab3b280eac940b685659cace8021dea887b0aa0472297d424d39a4ca",
+    "test/features/auth/auth_followup_inventory_test.dart": "245e4748d85a652bdc7edf86780a1b7f5a9baaab72f9c31e0d494da366227ee4",
+    "test/features/auth/auth_inventory_journey_test.dart": "e5796444aa2fab9a4ef6dfb11287188ca4a6c2c55c74364e37a2a4a563c3e8b6",
+    "test/features/auth/auth_redesign_states_test.dart": "a4ccda8389947cc59c3a8911f9cf7046b64a1b0c84d647f355078da0b8b35094"
+  },
+  "unrelated_source_drift": [
+    "lib/features/agent_hub/agent_hub_page.dart",
+    "lib/features/agent_hub/presentation/agent_attachment_tile.dart",
+    "lib/features/agent_hub/presentation/agent_file_previews.dart",
+    "lib/features/agent_hub/presentation/agent_message_menu.dart",
+    "lib/features/agent_hub/presentation/agent_image_previews.dart"
+  ],
+  "relevant_source_drift": [],
+  "initial_to_final_change": [
+    "test/features/auth/auth_followup_inventory_test.dart"
+  ],
+  "visual_review": "39 complete images reviewed in eight sheets; added visible-password image reviewed separately; original 39 full-image hashes unchanged. Eight measured long images complete. Two More images are route evidence only, not visual acceptance of More.",
+  "test_scope": "Nine existing selected scenarios. Final recovery route rerun after one visibility snapshot; no added test cases or viewport cross product.",
+  "boundaries": [
+    "Test HTTP/session/native channels isolated",
+    "Widget keyboard insets are not native keyboard evidence",
+    "Real Google provider and browser acceptance excluded; G10",
+    "Configured invite excluded; G12",
+    "Registration submit/service error and verify submit evidence still require shared-state reuse review under G11; not declared fully audited"
+  ]
+}

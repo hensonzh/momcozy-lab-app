@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/notification-navigation-current-rejection-403-320-2x.png",
+  "previous_source": "test/goldens/ui_inventory/notification-navigation-current-rejection-unsafe-route-320-2x.png",
+  "route": "/notifications?from=/more",
+  "trigger": "Open notification returns 403 → retained unread item and open-error Snackbar",
+  "root_entry": "Authenticated More page",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production notification coordinator/repository/controller; isolated HTTP, push gateway and permission platform; real router.go and ScaffoldMessenger callbacks, no native OS dialog or remote push",
+  "test": "test/features/notifications/notification_navigation_current_inventory_test.dart"
+}

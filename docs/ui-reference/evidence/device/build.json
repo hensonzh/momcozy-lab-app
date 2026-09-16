@@ -1,0 +1,9 @@
+{
+  "apk": "build/app/outputs/flutter-apk/app-local-debug.apk",
+  "sha256": "c4ba4adefdab8f22bd34e85da58c5fea198356010bd309cc40fe0cf405252207",
+  "version": "1.0.0+57",
+  "flavor": "local",
+  "installed_on": "emulator-5554",
+  "test_account": "Mia",
+  "restored": "regular app signed in, password manager prompt dismissed"
+}

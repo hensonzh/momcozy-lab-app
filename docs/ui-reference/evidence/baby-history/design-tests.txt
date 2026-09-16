@@ -1,0 +1,48 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: baby home and knowledge scroll with double text at 320.0
+00:00 +1: feeding editor remains usable at 320.0 / 1.0
+00:00 +2: feeding editor remains usable at 320.0 / 2.0
+00:00 +3: sleep editor remains usable at 320.0 / 1.0
+00:00 +4: sleep editor remains usable at 320.0 / 2.0
+00:00 +5: diaper editor remains usable at 320.0 / 1.0
+00:00 +6: diaper editor remains usable at 320.0 / 2.0
+00:00 +7: growth editor remains usable at 320.0 / 1.0
+00:01 +8: growth editor remains usable at 320.0 / 2.0
+00:01 +9: development editor remains usable at 320.0 / 1.0
+00:01 +10: development editor remains usable at 320.0 / 2.0
+00:01 +11: baby home and knowledge scroll with double text at 390.0
+00:01 +12: feeding editor remains usable at 390.0 / 1.0
+00:01 +13: feeding editor remains usable at 390.0 / 2.0
+00:01 +14: sleep editor remains usable at 390.0 / 1.0
+00:01 +15: sleep editor remains usable at 390.0 / 2.0
+00:01 +16: diaper editor remains usable at 390.0 / 1.0
+00:01 +17: diaper editor remains usable at 390.0 / 2.0
+00:01 +18: growth editor remains usable at 390.0 / 1.0
+00:01 +19: growth editor remains usable at 390.0 / 2.0
+00:01 +20: development editor remains usable at 390.0 / 1.0
+00:01 +21: development editor remains usable at 390.0 / 2.0
+00:01 +22: baby home and knowledge scroll with double text at 430.0
+00:01 +23: feeding editor remains usable at 430.0 / 1.0
+00:01 +24: feeding editor remains usable at 430.0 / 2.0
+00:01 +25: sleep editor remains usable at 430.0 / 1.0
+00:01 +26: sleep editor remains usable at 430.0 / 2.0
+00:01 +27: diaper editor remains usable at 430.0 / 1.0
+00:01 +28: diaper editor remains usable at 430.0 / 2.0
+00:01 +29: growth editor remains usable at 430.0 / 1.0
+00:01 +30: growth editor remains usable at 430.0 / 2.0
+00:01 +31: development editor remains usable at 430.0 / 1.0
+00:01 +32: development editor remains usable at 430.0 / 2.0
+00:02 +33: history edits and restores the same baby record at 320.0 / 1.0
+00:02 +34: history edits and restores the same baby record at 320.0 / 2.0
+00:02 +35: history edits and restores the same baby record at 390.0 / 1.0
+00:02 +36: history edits and restores the same baby record at 390.0 / 2.0
+00:02 +37: history edits and restores the same baby record at 430.0 / 1.0
+00:02 +38: history edits and restores the same baby record at 430.0 / 2.0
+00:02 +39: a record URL cannot load a baby outside the owned profiles
+00:02 +40: a failed home request is not presented as no records
+00:02 +41: baby overview matches the current product design at 320.0
+00:02 +42: baby overview matches the current product design at 390.0
+00:02 +43: baby overview matches the current product design at 430.0
+00:02 +44: (tearDownAll)
+00:02 +44: All tests passed!

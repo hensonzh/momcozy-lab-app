@@ -1,0 +1,14 @@
+[
+  {
+    "path": "docs/app-ui-inventory/10-global-modals/not-found/default.png",
+    "sha256": "66a2a921f9352562b16f92d6cd89612aab6fe29d17999e58c8e514482aed6eed"
+  },
+  {
+    "path": "docs/app-ui-inventory/09-motion/motion-guide/default.png",
+    "sha256": "9aae0eaa0b29dd989d7de568bdecc23dd3c0857d3e44f8527f0cce5bbfcefa6b"
+  },
+  {
+    "path": "docs/app-ui-inventory/09-motion/motion-failure/default.png",
+    "sha256": "b9f8c82fff18313549cac026fde5d61e6c2fedb0870bb3b63c25f2989e2515f5"
+  }
+]

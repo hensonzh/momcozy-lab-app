@@ -1,0 +1,365 @@
+{
+  "source": "test/goldens/design_system/onboarding-short-busy-320-2x.png",
+  "evidence": "current-widget-test-render; golden comparison passed",
+  "test_description": "profile short viewport keeps save pending and recovers draft",
+  "sequence": 1,
+  "sha256": "3b5d38d207b9b8da701464f80c27cdf6541da72653f378b7524e75838dad7f31",
+  "width": 320,
+  "height": 568,
+  "captured_at": "2026-09-14T08:24:29.153700Z",
+  "widget_types": [
+    "AbsorbPointer",
+    "Actions",
+    "Align",
+    "AnimatedBuilder",
+    "AnimatedDefaultTextStyle",
+    "AnimatedPhysicalModel",
+    "AnimatedTheme",
+    "BlockSemantics",
+    "Builder",
+    "Center",
+    "CircularProgressIndicator",
+    "ClipRect",
+    "ColoredBox",
+    "Column",
+    "ConstrainedBox",
+    "CupertinoTheme",
+    "CustomMultiChildLayout",
+    "CustomPaint",
+    "DefaultSelectionStyle",
+    "DefaultTextEditingShortcuts",
+    "DefaultTextStyle",
+    "Directionality",
+    "DropdownButton<String?>",
+    "DropdownButton<int>",
+    "DropdownButtonFormField<String?>",
+    "DropdownButtonFormField<int>",
+    "DropdownButtonHideUnderline",
+    "DropdownMenuItem<String?>",
+    "DropdownMenuItem<int>",
+    "DualTransitionBuilder",
+    "ExcludeFocus",
+    "ExcludeSemantics",
+    "Expanded",
+    "FadeTransition",
+    "FilledButton",
+    "Focus",
+    "FocusScope",
+    "FocusTraversalGroup",
+    "FractionalTranslation",
+    "GestureDetector",
+    "HeroControllerScope",
+    "Icon",
+    "IconButtonTheme",
+    "IconTheme",
+    "IgnorePointer",
+    "IndexedStack",
+    "InheritedCupertinoTheme",
+    "Ink",
+    "InkWell",
+    "InputDecorator",
+    "KeyedSubtree",
+    "LayoutId",
+    "LinearProgressIndicator",
+    "ListenableBuilder",
+    "Listener",
+    "Localizations",
+    "Material",
+    "MaterialApp",
+    "MediaQuery",
+    "ModalBarrier",
+    "MomCozyPageBody",
+    "MomCozyPrimaryButton",
+    "MomHomeSurface",
+    "MomSettingsCard",
+    "MouseRegion",
+    "Navigator",
+    "NotificationListener<LayoutChangedNotification>",
+    "NotificationListener<NavigationNotification>",
+    "NotificationListener<ScrollMetricsNotification>",
+    "NotificationListener<ScrollNotification>",
+    "NotificationListener<ScrollUpdateNotification>",
+    "Offstage",
+    "OnboardingPage",
+    "Overlay",
+    "Padding",
+    "PageStorage",
+    "PhysicalModel",
+    "PhysicalShape",
+    "PrimaryScrollController",
+    "RawGestureDetector",
+    "RawView",
+    "RepaintBoundary",
+    "RestorationScope",
+    "RichText",
+    "RootRestorationScope",
+    "RotationTransition",
+    "Row",
+    "SafeArea",
+    "Scaffold",
+    "ScaffoldMessenger",
+    "ScaleTransition",
+    "ScrollConfiguration",
+    "ScrollNotificationObserver",
+    "Scrollable",
+    "Semantics",
+    "SharedAppData",
+    "ShortcutRegistrar",
+    "Shortcuts",
+    "SingleChildScrollView",
+    "SizedBox",
+    "SlideTransition",
+    "Stack",
+    "StretchEffect",
+    "StretchingOverscrollIndicator",
+    "TapRegionSurface",
+    "Text",
+    "Theme",
+    "TickerMode",
+    "Title",
+    "Transform",
+    "UnmanagedRestorationScope",
+    "ValueListenableBuilder<bool>",
+    "View",
+    "Visibility",
+    "WidgetsApp",
+    "Wrap",
+    "_ActionsScope",
+    "_BodyBuilder",
+    "_BorderContainer",
+    "_CountField",
+    "_Decorator",
+    "_EffectiveTickerMode",
+    "_FadeForwardsPageTransition",
+    "_FloatingActionButtonTransition",
+    "_FocusInheritedScope",
+    "_FocusScopeWithExternalFocusNode",
+    "_GestureSemantics",
+    "_HelperError",
+    "_InheritedTheme",
+    "_InkFeatures",
+    "_InkResponseStateWidget",
+    "_InputPadding",
+    "_LocalizationsScope",
+    "_MaterialInterior",
+    "_MediaQueryFromView",
+    "_ModalBarrierGestureDetector",
+    "_ModalScope<dynamic>",
+    "_ModalScopeStatus",
+    "_OverlayEntryWidget",
+    "_PageTransitionsThemeTransitions<dynamic>",
+    "_ParentInkResponseProvider",
+    "_PipelineOwnerScope",
+    "_PredictiveBackGestureDetector",
+    "_ProfileField",
+    "_ProfileStep",
+    "_RawIndexedStack",
+    "_RawViewInternal",
+    "_RenderTheaterMarker",
+    "_ScaffoldMessengerScope",
+    "_ScaffoldScope",
+    "_ScrollNotificationObserverScope",
+    "_ScrollSemantics",
+    "_ScrollableScope",
+    "_SetupProgressHeader",
+    "_ShapeBorderPaint",
+    "_SharedAppModel",
+    "_ShortcutRegistrarScope",
+    "_SingleChildViewport",
+    "_Theater",
+    "_ViewScope",
+    "_Visibility",
+    "_VisibilityScope"
+  ],
+  "texts": [
+    "Your setup",
+    "3/4",
+    "How was your delivery?",
+    "Delivery method and baby count help personalize recovery and create the right baby profiles.",
+    "Delivery method (optional)",
+    "Cesarean birth",
+    "How many babies did you welcome?",
+    "6",
+    "Save and continue"
+  ],
+  "scrolls": [
+    {
+      "foreground": true,
+      "axis": "vertical",
+      "direction": "down",
+      "pixels": 520.2,
+      "min": 0.0,
+      "max": 520.2,
+      "viewport": 502.0
+    }
+  ],
+  "controls": [
+    {
+      "widget": "FilledButton",
+      "key": null,
+      "labels": [
+        "Save and continue"
+      ],
+      "enabled": false,
+      "bounds": [
+        33.0,
+        402.99999999999994,
+        254.0,
+        120.00000000000006
+      ],
+      "selected": null,
+      "note": "Observed mounted control; nested InkWell may duplicate its parent button; not a completeness assertion"
+    }
+  ],
+  "needs_long_capture": true,
+  "interactions_since_previous_capture": [
+    {
+      "action": "tap",
+      "labels_at_start": [
+        "OK"
+      ],
+      "from": [
+        265.0719985961914,
+        514.0
+      ],
+      "to": [
+        265.0719985961914,
+        514.0
+      ]
+    },
+    {
+      "action": "tap",
+      "labels_at_start": [
+        "Continue"
+      ],
+      "from": [
+        160.0,
+        493.0
+      ],
+      "to": [
+        160.0,
+        493.0
+      ]
+    },
+    {
+      "action": "tap",
+      "labels_at_start": [
+        "Prefer not to say yet"
+      ],
+      "from": [
+        150.0,
+        196.79999999999995
+      ],
+      "to": [
+        150.0,
+        196.79999999999995
+      ]
+    },
+    {
+      "action": "tap",
+      "labels_at_start": [
+        "How many babies did you welcome?",
+        "Cesarean birth"
+      ],
+      "from": [
+        128.20000457763672,
+        292.79999999999995
+      ],
+      "to": [
+        128.20000457763672,
+        292.79999999999995
+      ]
+    },
+    {
+      "action": "tap",
+      "labels_at_start": [
+        "1"
+      ],
+      "from": [
+        60.769996643066406,
+        377.4
+      ],
+      "to": [
+        60.769996643066406,
+        377.4
+      ]
+    },
+    {
+      "action": "tap",
+      "labels_at_start": [
+        "Save and continue",
+        "6"
+      ],
+      "from": [
+        40.769996643066406,
+        488.0
+      ],
+      "to": [
+        40.769996643066406,
+        488.0
+      ]
+    },
+    {
+      "action": "tap",
+      "labels_at_start": [
+        "Save and continue"
+      ],
+      "from": [
+        160.0,
+        474.99999999999994
+      ],
+      "to": [
+        160.0,
+        474.99999999999994
+      ]
+    }
+  ],
+  "call_stack": "#0      _InventoryComparator._record (file:///Users/lute/project/momcozy-lab/app/test/support/ui_inventory_capture.dart:169:32)\n<asynchronous suspension>\n#1      _InventoryComparator.compare (file:///Users/lute/project/momcozy-lab/app/test/support/ui_inventory_capture.dart:96:17)\n<asynchronous suspension>\n#2      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)\n<asynchronous suspension>\n#3      _AsyncCompleter.complete (dart:async/future_impl.dart:96:3)\n<asynchronous suspension>\n#4      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)\n<asynchronous suspension>\n#5      StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)\n<asynchronous suspension>\n#6      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)\n<asynchronous suspension>\n#7      main.capture (file:///Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart:65:11)\n<asynchronous suspension>\n#8      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart:264:13)\n<asynchronous suspension>\n#9      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)\n<asynchronous suspension>\n#10     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)\n<asynchronous suspension>\n#11     StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)\n<asynchronous suspension>\n",
+  "long_capture": {
+    "status": "complete-measured-scroll-stitch",
+    "file": "/Users/lute/project/momcozy-lab/app/docs/app-ui-inventory/raw/test/goldens/design_system/onboarding-short-busy-320-2x.long.png",
+    "offsets": [
+      0.0,
+      219.0,
+      438.0,
+      520.2
+    ],
+    "scroll_bounds": [
+      0.0,
+      66.0,
+      320.0,
+      502.0
+    ],
+    "frame_scroll_bounds": [
+      [
+        0.0,
+        66.0,
+        320.0,
+        502.0
+      ],
+      [
+        0.0,
+        66.0,
+        320.0,
+        502.0
+      ],
+      [
+        0.0,
+        66.0,
+        320.0,
+        502.0
+      ],
+      [
+        0.0,
+        66.0,
+        320.0,
+        502.0
+      ]
+    ],
+    "content_height": 1022.2,
+    "interior_strip_edge_guard": 64.0,
+    "fixed_bottom_overlay_bounds": [],
+    "original_scroll_offset": 520.2,
+    "tooltip_preserved_from_matched_viewport": false
+  }
+}

@@ -1,0 +1,57 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_home_test.dart
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_page_golden_test.dart: service periods use actual dates and the display filter
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: true
+  Actual: <false>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_page_golden_test.dart:58:5)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_page_golden_test.dart line 58
+The test description was:
+  service periods use actual dates and the display filter
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +0 -1: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_home_test.dart: default home opens grouped diary, saves and refreshes only current API data
+00:00 +0 -1: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_page_golden_test.dart: service periods use actual dates and the display filter [E]
+  Test failed. See exception logs above.
+  The test description was: service periods use actual dates and the display filter
+  
+00:00 +0 -1: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_home_test.dart: default home opens grouped diary, saves and refreshes only current API data
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: true
+  Actual: <false>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/mom/mother_home_test.dart:105:7)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/modules/mom/mother_home_test.dart line 105
+The test description was:
+  default home opens grouped diary, saves and refreshes only current API data
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +0 -2: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_home_test.dart: default home opens grouped diary, saves and refreshes only current API data [E]
+  Test failed. See exception logs above.
+  The test description was: default home opens grouped diary, saves and refreshes only current API data
+  
+00:00 +0 -2: Some tests failed.
+
+Failing tests:
+  /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_home_test.dart: default home opens grouped diary, saves and refreshes only current API data
+  /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_page_golden_test.dart: service periods use actual dates and the display filter

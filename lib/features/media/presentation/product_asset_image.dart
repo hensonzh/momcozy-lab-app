@@ -79,6 +79,9 @@ class _ProductAssetImageState extends State<ProductAssetImage> {
   void _retry() {
     setState(() {
       _content = _load();
+      // A fast failure can arrive before FutureBuilder subscribes next frame.
+      // It still receives the error; this listener covers the intervening gap.
+      _content.ignore();
     });
   }
 
@@ -87,6 +90,10 @@ class _ProductAssetImageState extends State<ProductAssetImage> {
     return FutureBuilder<ProductAssetContent>(
       future: _content,
       builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return widget.loadingBuilder?.call(context) ??
+              const _DefaultProductAssetImageLoading();
+        }
         final error = snapshot.error;
         if (error != null) {
           return widget.errorBuilder?.call(context, error, _retry) ??

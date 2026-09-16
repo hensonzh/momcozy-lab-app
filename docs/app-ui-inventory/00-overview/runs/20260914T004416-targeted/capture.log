@@ -1,0 +1,14 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/modules/services/service_current_inventory_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: current service catalog all package and team entries false
+00:02 +1: current catalog loading empty errors and refresh false
+00:03 +2: current package loading missing recovery disabled payment false
+00:03 +3: current owned service progress and booking entries false
+00:04 +4: current pending service order open failure and resume false
+00:05 +5: current service catalog all package and team entries true
+00:07 +6: current catalog loading empty errors and refresh true
+00:08 +7: current package loading missing recovery disabled payment true
+00:09 +8: current owned service progress and booking entries true
+00:10 +9: current pending service order open failure and resume true
+00:11 +10: (tearDownAll)
+00:11 +10: All tests passed!

@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/agent-history-journey-target-error-393.png",
+  "previous_source": "test/goldens/ui_inventory/agent-history-journey-notification-entry-393.png",
+  "route": "/?conversationId=22222222-2222-4222-8222-222222222222",
+  "trigger": "Open notification → default target route throws ArgumentError for string Expando key before history HTTP",
+  "root_entry": "Authenticated More page",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, notification coordinator and default Agent builder; isolated notification HTTP and push/permission boundaries. Target route crashes before history repository invocation; no page/feature flag override.",
+  "test": "test/features/agent_hub/agent_history_inventory_journey_test.dart"
+}

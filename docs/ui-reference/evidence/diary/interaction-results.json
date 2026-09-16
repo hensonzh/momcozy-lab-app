@@ -1,0 +1,21 @@
+{
+  "device": "emulator-5554",
+  "flavor": "local",
+  "version": "1.0.0+57",
+  "apk_sha256": "1dcee159ecceab81e1b4af23def59f90f6e1cf1d53c914862293426d8bf7219e",
+  "record_date": "2026-09-12",
+  "account_scope": "local test account",
+  "steps": [
+    "Open rest from Me, real postpartum day 21",
+    "Choose sleep 4–5 hours, interruptions 1–2, recovery manageable",
+    "Switch body, choose energetic",
+    "Switch mood, choose steady",
+    "Save: today record saved; no failure",
+    "Close: Me reflects 4–5 hours, energetic and steady"
+  ],
+  "tests": 134,
+  "additional_design_tests": 18,
+  "limitations": [
+    "Supplementary expanded forms, conditional discomfort and historical state entries remain separately reviewed."
+  ]
+}

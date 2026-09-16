@@ -1,0 +1,20 @@
+{
+  "pages_by_scope": {
+    "default": 27,
+    "navigator": 1,
+    "configured": 4,
+    "fallback": 1,
+    "unreachable": 1
+  },
+  "overlay_families": 35,
+  "all_evidence_entries": 2837,
+  "assigned_to_pages": 2793,
+  "shared_component_references": 25,
+  "workbench_excluded": 19,
+  "pixel_groups": 1928,
+  "exact_duplicate_entries_folded": 909,
+  "supplemental_flutter_images": 792,
+  "images_deleted": 0,
+  "current_source_changed_files": [],
+  "completion": "COMPLETE: separate requirement review in AUDIT.md"
+}

@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/mom-rest-clear-day-rest-cleared-393-1x.png",
+  "previous_source": "test/goldens/ui_inventory/mom-rest-clear-day-rest-selected-393-1x.png",
+  "route": "/me",
+  "trigger": "Tap selected 今天有没有一段不被打扰的休息 again → no selection",
+  "root_entry": "Authenticated More → tap Me bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/mom/mom_rest_clear_inventory_test.dart"
+}

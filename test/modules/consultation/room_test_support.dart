@@ -1,5 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:livekit_client/livekit_client.dart' as lk;
+import 'package:momcozy_flutter_app/services/consultations/device_check.dart';
 import 'package:momcozy_flutter_app/domain/care/consultation_room.dart';
 import 'package:momcozy_flutter_app/modules/consultation/application/room_controller.dart';
 import 'package:momcozy_flutter_app/services/consultations/consultation_media.dart';
@@ -16,8 +19,25 @@ Map<String, Object?> roomFixture() => Map<String, Object?>.from(
       as Map,
 );
 
+class _ReadyCamera extends Fake implements lk.LocalVideoTrack {
+  @override
+  Future<bool> stop() async => true;
+  @override
+  Future<bool> dispose() async => true;
+}
+
+class TestReadyDeviceCheck extends ConsultationDeviceCheck {
+  @override
+  Future<void> start() async {
+    video = _ReadyCamera();
+    microphoneAvailable = true;
+  }
+}
+
 class TestRoomRepository implements ConsultationRoomRepository {
-  final json = roomFixture();
+  TestRoomRepository({Map<String, Object?>? fixture})
+    : json = fixture ?? roomFixture();
+  final Map<String, Object?> json;
   final keys = <String>[];
   final sentPresence = <ParticipantPresence>[];
   int endCalls = 0, prepareCalls = 0;

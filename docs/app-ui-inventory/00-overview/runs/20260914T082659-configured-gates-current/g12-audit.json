@@ -1,0 +1,638 @@
+{
+  "gap": "G12",
+  "scope": "Existing configured page representative states, not default reachability or all historical states",
+  "source_hashes": {
+    "lib/features/auth/presentation/auth_login_chrome.dart": "3808b5484b0cda026e8007c5ce940027bc672e1185ba2fc4ac354d3d385ab7bb",
+    "lib/features/auth/presentation/auth_page.dart": "77bf0ab04f1599f353bbb66c4a3dab2fe826d5e5e04f7f1b106f0b73ec07475f",
+    "lib/features/auth/presentation/invite_auth_page.dart": "51b02cb9d3c973aa931abbeb7e9ec3352476b889db496b7cd583ef757732c51b",
+    "lib/features/onboarding/presentation/avatar_task_banner.dart": "38ba39c2419ef2b34c8c0993862106d2c19d77c18a474cf8a8fd374fea77946e",
+    "lib/features/onboarding/presentation/onboarding_page.dart": "2d5ec507c926086540c9bbdc770e3aa68c319dbe3357a7b57d7a0ff1a28487dc",
+    "lib/shared/widgets/mom_companion_widgets.dart": "93c5cc4e022ac56ee5ca31dc5208f6c3a8df03d08e39ace0d761b101e04571ab",
+    "lib/shared/widgets/mom_settings_widgets.dart": "271b022cb619641d956e92a5600e5f5585d2a5b469446132d53d402987403025",
+    "lib/shared/widgets/momcozy_components.dart": "5477eff325acaa95e4ac6036fe3aedda03d15104b49b6ba772e586fe8ffb1157",
+    "test/features/auth/auth_design_test.dart": "21a46fbbab3b280eac940b685659cace8021dea887b0aa0472297d424d39a4ca",
+    "test/features/onboarding/onboarding_design_test.dart": "7433288e6092533856f303b01adf2c41d2f0ef08fee05b6fd19e34040447670e"
+  },
+  "visual_scenarios_passed": 11,
+  "initial_run_exit_code": 1,
+  "initial_failure": "Separate capability gate file failed compilation due to concurrently changed Agent voice notice. No product fix made by inventory task.",
+  "gate_rerun_exit_code": 0,
+  "gate_scenarios_passed": 2,
+  "images": [
+    {
+      "id": "01-auth/auth-invite",
+      "image": "raw/test/goldens/design_system/auth-invite-390.png",
+      "sha256": "26a77c65d4179add370370dc2bd30857745b514aa0de22b98fff015787cde206",
+      "scenario": "invite entry with short keyboard viewport at 390.0 / 1.0",
+      "scroll": {
+        "status": "no-active-vertical-overflow"
+      }
+    },
+    {
+      "id": "01-auth/auth-invite-validation",
+      "image": "raw/test/goldens/design_system/auth-invite-validation-390.long.png",
+      "sha256": "12cbf6d0591487a84a27b4e49673ebd3aca1f9b1f07f2797079692563cd09f8c",
+      "scenario": "invite entry with short keyboard viewport at 390.0 / 1.0",
+      "scroll": {
+        "status": "complete-measured-scroll-stitch",
+        "file": "/Users/lute/project/momcozy-lab/app/docs/app-ui-inventory/raw/test/goldens/design_system/auth-invite-validation-390.long.png",
+        "offsets": [
+          0.0,
+          102.0,
+          136.0
+        ],
+        "scroll_bounds": [
+          0.0,
+          0.0,
+          390.0,
+          268.0
+        ],
+        "frame_scroll_bounds": [
+          [
+            0.0,
+            0.0,
+            390.0,
+            268.0
+          ],
+          [
+            0.0,
+            0.0,
+            390.0,
+            268.0
+          ],
+          [
+            0.0,
+            0.0,
+            390.0,
+            268.0
+          ]
+        ],
+        "content_height": 404.0,
+        "interior_strip_edge_guard": 64.0,
+        "fixed_bottom_overlay_bounds": [],
+        "original_scroll_offset": 78.0,
+        "tooltip_preserved_from_matched_viewport": false
+      }
+    },
+    {
+      "id": "01-auth/onboarding-avatar-short-confirm-busy",
+      "image": "raw/test/goldens/design_system/onboarding-avatar-short-confirm-busy-320-2x.long.png",
+      "sha256": "0837cf2c13c1b93f0c1b601740cec5205a962afefa7a151cde3604579c7918e3",
+      "scenario": "avatar short screen retries thumbnail and locks confirmation",
+      "scroll": {
+        "status": "complete-measured-scroll-stitch",
+        "file": "/Users/lute/project/momcozy-lab/app/docs/app-ui-inventory/raw/test/goldens/design_system/onboarding-avatar-short-confirm-busy-320-2x.long.png",
+        "offsets": [
+          0.0,
+          219.0,
+          438.0,
+          657.0,
+          876.0,
+          929.2820512820513
+        ],
+        "scroll_bounds": [
+          0.0,
+          66.0,
+          320.0,
+          502.0
+        ],
+        "frame_scroll_bounds": [
+          [
+            0.0,
+            66.0,
+            320.0,
+            502.0
+          ],
+          [
+            0.0,
+            66.0,
+            320.0,
+            502.0
+          ],
+          [
+            0.0,
+            66.0,
+            320.0,
+            502.0
+          ],
+          [
+            0.0,
+            66.0,
+            320.0,
+            502.0
+          ],
+          [
+            0.0,
+            66.0,
+            320.0,
+            502.0
+          ],
+          [
+            0.0,
+            66.0,
+            320.0,
+            502.0
+          ]
+        ],
+        "content_height": 1431.2820512820513,
+        "interior_strip_edge_guard": 64.0,
+        "fixed_bottom_overlay_bounds": [],
+        "original_scroll_offset": 929.2820512820513,
+        "tooltip_preserved_from_matched_viewport": false
+      }
+    },
+    {
+      "id": "01-auth/onboarding-avatar-short-confirm-error",
+      "image": "raw/test/goldens/design_system/onboarding-avatar-short-confirm-error-320-2x.long.png",
+      "sha256": "8e879deac2c1afcbd3bcbab60d573071e5ddd4d1a8ad16d7832e3ca460ca5bab",
+      "scenario": "avatar short screen retries thumbnail and locks confirmation",
+      "scroll": {
+        "status": "complete-measured-scroll-stitch",
+        "file": "/Users/lute/project/momcozy-lab/app/docs/app-ui-inventory/raw/test/goldens/design_system/onboarding-avatar-short-confirm-error-320-2x.long.png",
+        "offsets": [
+          0.0,
+          219.0,
+          438.0,
+          657.0,
+          876.0,
+          1049.2820512820513
+        ],
+        "scroll_bounds": [
+          0.0,
+          66.0,
+          320.0,
+          502.0
+        ],
+        "frame_scroll_bounds": [
+          [
+            0.0,
+            66.0,
+            320.0,
+            502.0
+          ],
+          [
+            0.0,
+            66.0,
+            320.0,
+            502.0
+          ],
+          [
+            0.0,
+            66.0,
+            320.0,
+            502.0
+          ],
+          [
+            0.0,
+            66.0,
+            320.0,
+            502.0
+          ],
+          [
+            0.0,
+            66.0,
+            320.0,
+            502.0
+          ],
+          [
+            0.0,
+            66.0,
+            320.0,
+            502.0
+          ]
+        ],
+        "content_height": 1551.2820512820513,
+        "interior_strip_edge_guard": 64.0,
+        "fixed_bottom_overlay_bounds": [],
+        "original_scroll_offset": 1049.2820512820513,
+        "tooltip_preserved_from_matched_viewport": false
+      }
+    },
+    {
+      "id": "01-auth/onboarding-avatar-short-image-error",
+      "image": "raw/test/goldens/design_system/onboarding-avatar-short-image-error-320-2x.long.png",
+      "sha256": "e1380bf59c891054e9b1e595ae40a2380d2bba59e57406f6647ebd9268275a32",
+      "scenario": "avatar short screen retries thumbnail and locks confirmation",
+      "scroll": {
+        "status": "complete-measured-scroll-stitch",
+        "file": "/Users/lute/project/momcozy-lab/app/docs/app-ui-inventory/raw/test/goldens/design_system/onboarding-avatar-short-image-error-320-2x.long.png",
+        "offsets": [
+          0.0,
+          219.0,
+          438.0,
+          657.0,
+          876.0,
+          905.2820512820513
+        ],
+        "scroll_bounds": [
+          0.0,
+          66.0,
+          320.0,
+          502.0
+        ],
+        "frame_scroll_bounds": [
+          [
+            0.0,
+            66.0,
+            320.0,
+            502.0
+          ],
+          [
+            0.0,
+            66.0,
+            320.0,
+            502.0
+          ],
+          [
+            0.0,
+            66.0,
+            320.0,
+            502.0
+          ],
+          [
+            0.0,
+            66.0,
+            320.0,
+            502.0
+          ],
+          [
+            0.0,
+            66.0,
+            320.0,
+            502.0
+          ],
+          [
+            0.0,
+            66.0,
+            320.0,
+            502.0
+          ]
+        ],
+        "content_height": 1407.2820512820513,
+        "interior_strip_edge_guard": 64.0,
+        "fixed_bottom_overlay_bounds": [],
+        "original_scroll_offset": 552.0,
+        "tooltip_preserved_from_matched_viewport": false
+      }
+    },
+    {
+      "id": "01-auth/onboarding-banners",
+      "image": "raw/test/goldens/design_system/onboarding-banners-390.png",
+      "sha256": "f15a9f4e589401f37321dfeb10bbc10587be2bf0c3dbdd1f2d2150b4a619ca5f",
+      "scenario": "avatar task banners at 390.0 / 1.0",
+      "scroll": {
+        "status": "no-active-vertical-overflow"
+      }
+    },
+    {
+      "id": "01-auth/onboarding-basics",
+      "image": "raw/test/goldens/design_system/onboarding-basics-390.png",
+      "sha256": "4ba9cd9baa254555d679796976b66925055abe2c243fce379514c7c166d10ae8",
+      "scenario": "onboarding profile forms at 390.0 / 1.0",
+      "scroll": {
+        "status": "no-active-vertical-overflow"
+      }
+    },
+    {
+      "id": "01-auth/onboarding-birth",
+      "image": "raw/test/goldens/design_system/onboarding-birth-390.png",
+      "sha256": "a1a501971d08fc8ec58423c72af6a1f0dfe9afdb0bc51466d372e97bd86d1eb8",
+      "scenario": "onboarding profile forms at 390.0 / 1.0",
+      "scroll": {
+        "status": "no-active-vertical-overflow"
+      }
+    },
+    {
+      "id": "01-auth/onboarding-birth-error",
+      "image": "raw/test/goldens/design_system/onboarding-birth-error-390.png",
+      "sha256": "6a880ed8fb11df44030467b5232062dfaaf72448d32c0dc4321c36aded8b807e",
+      "scenario": "onboarding profile forms at 390.0 / 1.0",
+      "scroll": {
+        "status": "no-active-vertical-overflow"
+      }
+    },
+    {
+      "id": "01-auth/onboarding-default-confirm",
+      "image": "raw/test/goldens/design_system/onboarding-default-confirm-390.png",
+      "sha256": "980f9c47824c0f061782e9ea96fc95a11c2fc9713d6211bd11831c2242236869",
+      "scenario": "avatar photo failure and default confirmation at 390.0 / 1.0",
+      "scroll": {
+        "status": "no-active-vertical-overflow"
+      }
+    },
+    {
+      "id": "01-auth/onboarding-delivery",
+      "image": "raw/test/goldens/design_system/onboarding-delivery-390.png",
+      "sha256": "42566ebb3ea54df3902f8bf24b3bf62bfad9dfde25dda328884bd981efd4a0fe",
+      "scenario": "onboarding profile forms at 390.0 / 1.0",
+      "scroll": {
+        "status": "no-active-vertical-overflow"
+      }
+    },
+    {
+      "id": "01-auth/onboarding-failed",
+      "image": "raw/test/goldens/design_system/onboarding-failed-390.png",
+      "sha256": "ed323dc83f9431762f28932e81d43f39d1cdde25534ec18d1df6527d8bd47d04",
+      "scenario": "onboarding avatar failed at 390.0 / 1.0",
+      "scroll": {
+        "status": "no-active-vertical-overflow"
+      }
+    },
+    {
+      "id": "01-auth/onboarding-failed-source",
+      "image": "raw/test/goldens/design_system/onboarding-failed-source-390.png",
+      "sha256": "4aa476712499abb99e461e49e8b3f08475f97e387067232426673d6b028787bd",
+      "scenario": "onboarding avatar failed at 390.0 / 1.0",
+      "scroll": {
+        "status": "no-active-vertical-overflow"
+      }
+    },
+    {
+      "id": "01-auth/onboarding-generating",
+      "image": "raw/test/goldens/design_system/onboarding-generating-390.png",
+      "sha256": "a991f47b4cb032940e8c6e097e1dd81148096ac761e965e546cc5e7a18de7013",
+      "scenario": "onboarding avatar generating at 390.0 / 1.0",
+      "scroll": {
+        "status": "no-active-vertical-overflow"
+      }
+    },
+    {
+      "id": "01-auth/onboarding-load-error",
+      "image": "raw/test/goldens/design_system/onboarding-load-error-390.png",
+      "sha256": "89cd6127622dd52c282b38e740c9f9e95365a3e79f62e969df78ff83e6bd5918",
+      "scenario": "onboarding load failure retries at 390.0 / 1.0",
+      "scroll": {
+        "status": "no-active-vertical-overflow"
+      }
+    },
+    {
+      "id": "01-auth/onboarding-loading",
+      "image": "raw/test/goldens/design_system/onboarding-loading-390.png",
+      "sha256": "296dfd0ea9e392caab06316b13a440d0c44691830d00c5d5e9056df05e17a3c6",
+      "scenario": "onboarding load failure retries at 390.0 / 1.0",
+      "scroll": {
+        "status": "no-active-vertical-overflow"
+      }
+    },
+    {
+      "id": "01-auth/onboarding-photo-error",
+      "image": "raw/test/goldens/design_system/onboarding-photo-error-390.png",
+      "sha256": "86916b11f6dff9bd49e2da243be2e5d6786aaa0d11b007ec7b8e798f71eb0d9e",
+      "scenario": "avatar photo failure and default confirmation at 390.0 / 1.0",
+      "scroll": {
+        "status": "no-active-vertical-overflow"
+      }
+    },
+    {
+      "id": "01-auth/onboarding-required",
+      "image": "raw/test/goldens/design_system/onboarding-required-390.png",
+      "sha256": "9401087dc59d6d24941ea9141ffb0bc250b2e9b089138abf2ef8c5b572458f43",
+      "scenario": "onboarding avatar required at 390.0 / 1.0",
+      "scroll": {
+        "status": "no-active-vertical-overflow"
+      }
+    },
+    {
+      "id": "01-auth/onboarding-required-source",
+      "image": "raw/test/goldens/design_system/onboarding-required-source-390.png",
+      "sha256": "43e22ae057e4ab8a095e151441f1135307e6ab2ec526a721d7ae75c8a1a6cb5f",
+      "scenario": "onboarding avatar required at 390.0 / 1.0",
+      "scroll": {
+        "status": "no-active-vertical-overflow"
+      }
+    },
+    {
+      "id": "01-auth/onboarding-review",
+      "image": "raw/test/goldens/design_system/onboarding-review-390.long.png",
+      "sha256": "89bee8fe6e8a38420860e9040c239ab4d9a5abbd31fd4d662ee6269fd1110cf2",
+      "scenario": "onboarding avatar review at 390.0 / 1.0",
+      "scroll": {
+        "status": "complete-measured-scroll-stitch",
+        "file": "/Users/lute/project/momcozy-lab/app/docs/app-ui-inventory/raw/test/goldens/design_system/onboarding-review-390.long.png",
+        "offsets": [
+          0.0,
+          113.025641025641
+        ],
+        "scroll_bounds": [
+          0.0,
+          66.0,
+          390.0,
+          778.0
+        ],
+        "frame_scroll_bounds": [
+          [
+            0.0,
+            66.0,
+            390.0,
+            778.0
+          ],
+          [
+            0.0,
+            66.0,
+            390.0,
+            778.0
+          ]
+        ],
+        "content_height": 891.025641025641,
+        "interior_strip_edge_guard": 64.0,
+        "fixed_bottom_overlay_bounds": [],
+        "original_scroll_offset": 0.0,
+        "tooltip_preserved_from_matched_viewport": false
+      }
+    },
+    {
+      "id": "01-auth/onboarding-review-footer",
+      "image": "raw/test/goldens/design_system/onboarding-review-footer-390.long.png",
+      "sha256": "7822be186644aa653dc3e10d4a69f5786d440531ae34c8c3b9382c113916250a",
+      "scenario": "onboarding avatar review at 390.0 / 1.0",
+      "scroll": {
+        "status": "complete-measured-scroll-stitch",
+        "file": "/Users/lute/project/momcozy-lab/app/docs/app-ui-inventory/raw/test/goldens/design_system/onboarding-review-footer-390.long.png",
+        "offsets": [
+          0.0,
+          114.025641025641
+        ],
+        "scroll_bounds": [
+          0.0,
+          66.0,
+          390.0,
+          778.0
+        ],
+        "frame_scroll_bounds": [
+          [
+            0.0,
+            66.0,
+            390.0,
+            778.0
+          ],
+          [
+            0.0,
+            66.0,
+            390.0,
+            778.0
+          ]
+        ],
+        "content_height": 892.025641025641,
+        "interior_strip_edge_guard": 64.0,
+        "fixed_bottom_overlay_bounds": [],
+        "original_scroll_offset": 114.025641025641,
+        "tooltip_preserved_from_matched_viewport": false
+      }
+    },
+    {
+      "id": "01-auth/onboarding-review-selected",
+      "image": "raw/test/goldens/design_system/onboarding-review-selected-390.long.png",
+      "sha256": "9417ffe6e9da8a2270fd665b177decd03d39ef2415a76cfe9a78f3cd8c26b593",
+      "scenario": "onboarding avatar review at 390.0 / 1.0",
+      "scroll": {
+        "status": "complete-measured-scroll-stitch",
+        "file": "/Users/lute/project/momcozy-lab/app/docs/app-ui-inventory/raw/test/goldens/design_system/onboarding-review-selected-390.long.png",
+        "offsets": [
+          0.0,
+          113.025641025641
+        ],
+        "scroll_bounds": [
+          0.0,
+          66.0,
+          390.0,
+          778.0
+        ],
+        "frame_scroll_bounds": [
+          [
+            0.0,
+            66.0,
+            390.0,
+            778.0
+          ],
+          [
+            0.0,
+            66.0,
+            390.0,
+            778.0
+          ]
+        ],
+        "content_height": 891.025641025641,
+        "interior_strip_edge_guard": 64.0,
+        "fixed_bottom_overlay_bounds": [],
+        "original_scroll_offset": 113.025641025641,
+        "tooltip_preserved_from_matched_viewport": false
+      }
+    },
+    {
+      "id": "01-auth/onboarding-short-busy",
+      "image": "raw/test/goldens/design_system/onboarding-short-busy-320-2x.long.png",
+      "sha256": "27879f54b94107e7dc8941a8eb1ddb534b7f5d96b51ce31d0415f72eedf06906",
+      "scenario": "profile short viewport keeps save pending and recovers draft",
+      "scroll": {
+        "status": "complete-measured-scroll-stitch",
+        "file": "/Users/lute/project/momcozy-lab/app/docs/app-ui-inventory/raw/test/goldens/design_system/onboarding-short-busy-320-2x.long.png",
+        "offsets": [
+          0.0,
+          219.0,
+          438.0,
+          520.2
+        ],
+        "scroll_bounds": [
+          0.0,
+          66.0,
+          320.0,
+          502.0
+        ],
+        "frame_scroll_bounds": [
+          [
+            0.0,
+            66.0,
+            320.0,
+            502.0
+          ],
+          [
+            0.0,
+            66.0,
+            320.0,
+            502.0
+          ],
+          [
+            0.0,
+            66.0,
+            320.0,
+            502.0
+          ],
+          [
+            0.0,
+            66.0,
+            320.0,
+            502.0
+          ]
+        ],
+        "content_height": 1022.2,
+        "interior_strip_edge_guard": 64.0,
+        "fixed_bottom_overlay_bounds": [],
+        "original_scroll_offset": 520.2,
+        "tooltip_preserved_from_matched_viewport": false
+      }
+    },
+    {
+      "id": "01-auth/onboarding-short-date-input",
+      "image": "raw/test/goldens/design_system/onboarding-short-date-input-320-2x.png",
+      "sha256": "a2d69b0969f14630c2bfb326cce3d9ccbed35b119def340711c00232ea07d0d5",
+      "scenario": "profile short viewport keeps save pending and recovers draft",
+      "scroll": {
+        "status": "no-active-vertical-overflow"
+      }
+    },
+    {
+      "id": "01-auth/onboarding-short-error",
+      "image": "raw/test/goldens/design_system/onboarding-short-error-320-2x.long.png",
+      "sha256": "b2aa7590377e75c3bf3060a727c5caef51b158bb0c288ab4ba87aeb2acb29293",
+      "scenario": "profile short viewport keeps save pending and recovers draft",
+      "scroll": {
+        "status": "complete-measured-scroll-stitch",
+        "file": "/Users/lute/project/momcozy-lab/app/docs/app-ui-inventory/raw/test/goldens/design_system/onboarding-short-error-320-2x.long.png",
+        "offsets": [
+          0.0,
+          219.0,
+          438.0,
+          654.2
+        ],
+        "scroll_bounds": [
+          0.0,
+          66.0,
+          320.0,
+          502.0
+        ],
+        "frame_scroll_bounds": [
+          [
+            0.0,
+            66.0,
+            320.0,
+            502.0
+          ],
+          [
+            0.0,
+            66.0,
+            320.0,
+            502.0
+          ],
+          [
+            0.0,
+            66.0,
+            320.0,
+            502.0
+          ],
+          [
+            0.0,
+            66.0,
+            320.0,
+            502.0
+          ]
+        ],
+        "content_height": 1156.2,
+        "interior_strip_edge_guard": 64.0,
+        "fixed_bottom_overlay_bounds": [],
+        "original_scroll_offset": 654.2,
+        "tooltip_preserved_from_matched_viewport": false
+      }
+    }
+  ],
+  "visual_review": "25 full windows, including 9 measured long images, reviewed across 4 sheets; existing strict goldens reused; no baseline update or new cases"
+}

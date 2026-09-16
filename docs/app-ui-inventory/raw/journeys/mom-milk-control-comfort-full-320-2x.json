@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/mom-milk-control-comfort-full-320-2x.png",
+  "previous_source": "test/goldens/ui_inventory/mom-milk-control-comfort-comfortable-cleared-320-2x.png",
+  "route": "/me",
+  "trigger": "Select breast comfort 胀满",
+  "root_entry": "Authenticated More → tap Me bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/mom/mom_milk_control_inventory_test.dart"
+}

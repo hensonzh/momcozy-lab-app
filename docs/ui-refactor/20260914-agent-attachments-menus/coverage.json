@@ -1,0 +1,138 @@
+[
+  {
+    "id": "05-agent/agent-attachment-menu",
+    "figma_nodes": [
+      "259:1097",
+      "259:1336"
+    ],
+    "note": "Existing source state covered; no claim for the full attachment journey or full-screen media viewer."
+  },
+  {
+    "id": "05-agent/agent-attachment-pending-file",
+    "figma_nodes": [
+      "259:1162",
+      "259:1405"
+    ],
+    "note": "Existing source state covered; no claim for the full attachment journey or full-screen media viewer."
+  },
+  {
+    "id": "05-agent/agent-attachment-pending-image",
+    "figma_nodes": [
+      "259:1130",
+      "259:1370"
+    ],
+    "note": "Existing source state covered; no claim for the full attachment journey or full-screen media viewer."
+  },
+  {
+    "id": "05-agent/agent-attachment-sent-files",
+    "figma_nodes": [
+      "259:1226",
+      "259:1475"
+    ],
+    "note": "Existing source state covered; no claim for the full attachment journey or full-screen media viewer."
+  },
+  {
+    "id": "05-agent/agent-attachment-uploading",
+    "figma_nodes": [
+      "259:1194",
+      "259:1440"
+    ],
+    "note": "Existing source state covered; no claim for the full attachment journey or full-screen media viewer."
+  },
+  {
+    "id": "05-agent/agent-journey-assistant-menu",
+    "figma_nodes": [
+      "259:1270",
+      "259:1519"
+    ],
+    "note": "Existing source state covered; no claim for the full attachment journey or full-screen media viewer."
+  },
+  {
+    "id": "05-agent/agent-journey-attachment-menu",
+    "figma_nodes": [
+      "259:1097",
+      "259:1336"
+    ],
+    "note": "Existing source state covered; no claim for the full attachment journey or full-screen media viewer."
+  },
+  {
+    "id": "05-agent/agent-journey-copy-failed",
+    "figma_nodes": [
+      "259:1322",
+      "259:1571"
+    ],
+    "note": "Existing source state covered; no claim for the full attachment journey or full-screen media viewer."
+  },
+  {
+    "id": "05-agent/agent-journey-copy-recovered",
+    "figma_nodes": [
+      "259:1308",
+      "259:1557"
+    ],
+    "note": "Existing source state covered; no claim for the full attachment journey or full-screen media viewer."
+  },
+  {
+    "id": "05-agent/agent-journey-menu-dismissed",
+    "figma_nodes": [
+      "246:1144",
+      "247:1150"
+    ],
+    "note": "Existing source state covered; no claim for the full attachment journey or full-screen media viewer."
+  },
+  {
+    "id": "05-agent/agent-journey-menu-system-back-failed",
+    "figma_nodes": [
+      "259:1270",
+      "259:1519"
+    ],
+    "note": "Existing source state redesigned with shared MomCozy tokens. System Back failure is fixed and protected by actual App route regression."
+  },
+  {
+    "id": "05-agent/agent-journey-partial-menu",
+    "figma_nodes": [
+      "259:1287",
+      "259:1536"
+    ],
+    "note": "Existing source state covered; no claim for the full attachment journey or full-screen media viewer."
+  },
+  {
+    "id": "05-agent/agent-journey-user-menu",
+    "figma_nodes": [
+      "259:1253",
+      "259:1502"
+    ],
+    "note": "Existing source state covered; no claim for the full attachment journey or full-screen media viewer."
+  },
+  {
+    "id": "05-agent/agent-menu-assistant",
+    "figma_nodes": [
+      "259:1270",
+      "259:1519"
+    ],
+    "note": "Existing source state covered; no claim for the full attachment journey or full-screen media viewer."
+  },
+  {
+    "id": "05-agent/agent-menu-retry",
+    "figma_nodes": [
+      "259:1287",
+      "259:1536"
+    ],
+    "note": "Existing source state covered; no claim for the full attachment journey or full-screen media viewer."
+  },
+  {
+    "id": "05-agent/agent-menu-user",
+    "figma_nodes": [
+      "259:1253",
+      "259:1502"
+    ],
+    "note": "Existing source state covered; no claim for the full attachment journey or full-screen media viewer."
+  },
+  {
+    "id": "05-agent/agent-image-metadata",
+    "figma_nodes": [
+      "262:1086",
+      "262:1115"
+    ],
+    "note": "Existing source state covered; no claim for the full attachment journey or full-screen media viewer."
+  }
+]

@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/mom-body-control-site-other-393-1x.png",
+  "previous_source": "test/goldens/ui_inventory/mom-body-control-site-headChest-393-1x.png",
+  "route": "/me",
+  "trigger": "Body / 今天哪里最需要照顾？ → select 其他",
+  "root_entry": "Authenticated More → tap Me bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+  "test": "test/modules/mom/mom_body_control_inventory_test.dart"
+}

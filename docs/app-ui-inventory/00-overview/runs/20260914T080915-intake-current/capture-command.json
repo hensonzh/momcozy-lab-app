@@ -1,0 +1,14 @@
+{
+  "command": [
+    "/Users/lute/.local/share/momcozy-toolchains/flutter/bin/flutter",
+    "--suppress-analytics",
+    "test",
+    "--no-pub",
+    "test/modules/services/intake_test.dart",
+    "--plain-name",
+    "intake design disclosures consent and save at 390.0 / 1.0",
+    "--reporter",
+    "expanded"
+  ],
+  "scope": "Existing current golden scenarios; one standard viewport plus existing unique state cases; full scroll capture only, no baseline update or added tests"
+}

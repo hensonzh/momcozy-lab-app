@@ -122,6 +122,30 @@ void main() {
       expect(connector.body, isNull);
     });
 
+    test('keeps schedule optimistic-lock query out of the DELETE path', () async {
+      final connector = _RecordingApiHttpConnector(
+        const ApiHttpResponse(
+          statusCode: 204,
+          statusText: 'No Content',
+          body: '',
+        ),
+      );
+      final transport = IoApiJsonTransport(
+        baseUri: Uri.parse('http://127.0.0.1:8769?existing=1'),
+        connector: connector,
+      );
+      const timestamp = '2026-09-12T03:32:00.123456Z';
+      await transport.deleteJson(
+        '/v1/schedule/personal/test-id?expected_updated_at=${Uri.encodeQueryComponent(timestamp)}',
+      );
+      expect(connector.method, 'DELETE');
+      expect(connector.uri!.path, '/v1/schedule/personal/test-id');
+      expect(connector.uri!.queryParameters, {
+        'existing': '1',
+        'expected_updated_at': timestamp,
+      });
+    });
+
     test('accepts an empty successful DELETE response', () async {
       final connector = _RecordingApiHttpConnector(
         const ApiHttpResponse(

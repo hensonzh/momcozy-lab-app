@@ -1,0 +1,9 @@
+{
+  "source": "test/goldens/ui_inventory/agent-voice-journey-greeting-finished-away-320-2x.png",
+  "previous_source": "test/goldens/ui_inventory/agent-voice-journey-greeting-finished-320-2x.png",
+  "route": "/more",
+  "trigger": "Tap More during voice journey",
+  "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+  "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage via public agentHubBuilder; production SSE parser, runner with default retries, cancel client and profile repository; isolated SSE/control HTTP and controllable playback player at public runtime boundary. Voice coordinator, error notice, speaking avatar and replay handlers are production components; no sound output or provider latency measured. History disabled as in default local build; no remote model request.",
+  "test": "test/features/agent_hub/agent_voice_inventory_journey_test.dart"
+}

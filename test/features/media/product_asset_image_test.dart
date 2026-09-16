@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
@@ -9,6 +10,41 @@ import 'package:momcozy_flutter_app/features/media/domain/product_asset.dart';
 import 'package:momcozy_flutter_app/features/media/presentation/product_asset_image.dart';
 
 void main() {
+  testWidgets('switching resources hides the previous image while loading', (
+    tester,
+  ) async {
+    final repository = _DeferredImages();
+    await tester.pumpWidget(
+      _host(
+        ProductAssetImage(reference: _imageReference, repository: repository),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.byType(Image), findsOneWidget);
+    repository.pending = Completer<ProductAssetContent>();
+    const next = ProductAssetReference(
+      assetId: 'second-image',
+      kind: ProductAssetKind.image,
+    );
+    await tester.pumpWidget(
+      _host(ProductAssetImage(reference: next, repository: repository)),
+    );
+    await tester.pump();
+    expect(find.byType(Image), findsNothing);
+    expect(
+      find.byKey(const ValueKey('product-asset-image-loading')),
+      findsOneWidget,
+    );
+    repository.pending!.complete(
+      ProductAssetContent(
+        reference: next,
+        contentType: 'image/png',
+        bytes: _onePixelPng,
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.byType(Image), findsOneWidget);
+  });
   testWidgets('renders loaded product asset bytes as an in-memory image', (
     tester,
   ) async {
@@ -178,4 +214,20 @@ class _FakeProductAssetConnector implements ProductAssetHttpConnector {
     uris.add(uri);
     return _responses.removeAt(0);
   }
+}
+
+class _DeferredImages extends ProductAssetRepository {
+  _DeferredImages() : super(baseUri: Uri.parse('https://api.example.test'));
+  Completer<ProductAssetContent>? pending;
+  @override
+  Future<ProductAssetContent> load(
+    ProductAssetReference reference, {
+    ProductAssetVariant variant = ProductAssetVariant.original,
+  }) async =>
+      pending?.future ??
+      ProductAssetContent(
+        reference: reference,
+        contentType: 'image/png',
+        bytes: _onePixelPng,
+      );
 }

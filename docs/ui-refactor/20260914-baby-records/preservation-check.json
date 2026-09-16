@@ -1,0 +1,95 @@
+{
+  "source_count": 19,
+  "all_source_images_unchanged": true,
+  "sources": [
+    {
+      "path": "docs/app-ui-inventory/04-baby/baby-journey-history-sleep-empty/default.png",
+      "unchanged": true
+    },
+    {
+      "path": "docs/app-ui-inventory/04-baby/baby-journey-history-first-page/default.png",
+      "unchanged": true
+    },
+    {
+      "path": "docs/app-ui-inventory/04-baby/baby-journey-history-feeding/default.png",
+      "unchanged": true
+    },
+    {
+      "path": "docs/app-ui-inventory/04-baby/baby-journey-history-previous-month/default.png",
+      "unchanged": true
+    },
+    {
+      "path": "docs/app-ui-inventory/04-baby/baby-journey-history-more-loading/default.png",
+      "unchanged": true
+    },
+    {
+      "path": "docs/app-ui-inventory/04-baby/baby-journey-history-more-error/default.png",
+      "unchanged": true
+    },
+    {
+      "path": "docs/app-ui-inventory/04-baby/baby-journey-history-deleted/default.png",
+      "unchanged": true
+    },
+    {
+      "path": "docs/app-ui-inventory/04-baby/baby-journey-history-restored/default.png",
+      "unchanged": true
+    },
+    {
+      "path": "docs/app-ui-inventory/04-baby/baby-journey-feeding-filled/default.png",
+      "unchanged": true
+    },
+    {
+      "path": "docs/app-ui-inventory/04-baby/baby-journey-sleep-active-editor/default.png",
+      "unchanged": true
+    },
+    {
+      "path": "docs/app-ui-inventory/04-baby/baby-journey-wet-tab/default.png",
+      "unchanged": true
+    },
+    {
+      "path": "docs/app-ui-inventory/04-baby/baby-journey-stool-tab/default.png",
+      "unchanged": true
+    },
+    {
+      "path": "docs/app-ui-inventory/04-baby/baby-journey-growth-three-values/default.png",
+      "unchanged": true
+    },
+    {
+      "path": "docs/app-ui-inventory/04-baby/baby-journey-development-editor/default.png",
+      "unchanged": true
+    },
+    {
+      "path": "docs/app-ui-inventory/04-baby/baby-journey-history-edit/default.png",
+      "unchanged": true
+    },
+    {
+      "path": "docs/app-ui-inventory/04-baby/baby-journey-feeding-validation/default.png",
+      "unchanged": true
+    },
+    {
+      "path": "docs/app-ui-inventory/04-baby/baby-journey-growth-invalid-value/default.png",
+      "unchanged": true
+    },
+    {
+      "path": "docs/app-ui-inventory/04-baby/baby-journey-record-saving/default.png",
+      "unchanged": true
+    },
+    {
+      "path": "docs/app-ui-inventory/04-baby/baby-journey-feeding-saved/default.png",
+      "unchanged": true
+    }
+  ],
+  "manifest_unchanged": true,
+  "business_controllers": [
+    {
+      "path": "lib/modules/baby/application/baby_records_controller.dart",
+      "sha256": "13e36fb92d9ce0cf721c5254cc84afd3f232f97673bf29fea198e376e865a5ee",
+      "byte_identical": true
+    },
+    {
+      "path": "lib/modules/baby/application/baby_record_editor_controller.dart",
+      "sha256": "148a69c0f19637a6039232c2d9c30172eb6c3746aafe4c2eb249df89170c6ae7",
+      "byte_identical": true
+    }
+  ]
+}

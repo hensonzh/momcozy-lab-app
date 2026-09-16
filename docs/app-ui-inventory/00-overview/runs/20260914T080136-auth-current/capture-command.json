@@ -1,0 +1,14 @@
+{
+  "command": [
+    "/Users/lute/.local/share/momcozy-toolchains/flutter/bin/flutter",
+    "--suppress-analytics",
+    "test",
+    "--no-pub",
+    "test/features/auth/auth_followup_inventory_test.dart",
+    "--plain-name",
+    "auth normal password recovery chain 393.0/1.0",
+    "--reporter",
+    "expanded"
+  ],
+  "scope": "G04 reuse existing form/state scenarios, normal recovery and registration routes; select one size per scenario, no new combinations"
+}
