@@ -1,0 +1,2403 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart: (setUpAll)
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: (setUpAll)
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart: image metadata, empty response, retry and zoom 320.0/1.0
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media missing unavailable and return 320.0 / 1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/media-unavailable-missing-320.png": Pixel test failed, 99.99%,
+270058px diff detected.
+Failure feedback can be found at /Users/lute/project/momcozy-lab/app/test/features/media/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      _golden (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:309:5)
+<asynchronous suspension>
+#7      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:27:11)
+<asynchronous suspension>
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +0 -1: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart: image metadata, empty response, retry and zoom 320.0/1.0
+00:00 +0 -1: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media missing unavailable and return 320.0 / 1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: media missing unavailable and return 320.0 / 1.0
+  
+00:00 +0 -1: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media image unavailable and return 320.0 / 1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/media-unavailable-image-320.png": Pixel test failed, 20.05%,
+54159px diff detected.
+Failure feedback can be found at /Users/lute/project/momcozy-lab/app/test/features/media/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      _golden (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:309:5)
+<asynchronous suspension>
+#7      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:27:11)
+<asynchronous suspension>
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +0 -2: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart: image metadata, empty response, retry and zoom 320.0/1.0
+00:00 +0 -2: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media image unavailable and return 320.0 / 1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: media image unavailable and return 320.0 / 1.0
+  
+00:00 +0 -2: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart: image metadata, empty response, retry and zoom 320.0/1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: FlutterError:<Golden "../../goldens/design_system/agent-image-empty-response-320-1x.png":
+Pixel test failed, 39.62%, 72013px diff detected.
+          Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/features/agent_hub/failures>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure>.capture (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart:18:13)
+#5      verifyAgentImage (file:///Users/lute/project/momcozy-lab/app/test/support/agent_image_scenarios.dart:83:16)
+<asynchronous suspension>
+#6      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart:27:11)
+<asynchronous suspension>
+#7      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#8      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart line 18
+The test description was:
+  image metadata, empty response, retry and zoom 320.0/1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +0 -3: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media pdf unavailable and return 320.0 / 1.0
+00:00 +0 -3: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart: image metadata, empty response, retry and zoom 320.0/1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: image metadata, empty response, retry and zoom 320.0/1.0
+  
+00:00 +0 -3: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media pdf unavailable and return 320.0 / 1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/media-unavailable-pdf-320.png": Pixel test failed, 99.99%,
+270044px diff detected.
+Failure feedback can be found at /Users/lute/project/momcozy-lab/app/test/features/media/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      _golden (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:309:5)
+<asynchronous suspension>
+#7      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:27:11)
+<asynchronous suspension>
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +0 -4: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart: image metadata, empty response, retry and zoom 320.0/2.0
+00:00 +0 -4: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media pdf unavailable and return 320.0 / 1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: media pdf unavailable and return 320.0 / 1.0
+  
+00:00 +0 -4: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media video unavailable and return 320.0 / 1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/media-unavailable-video-320.png": Pixel test failed, 20.05%,
+54159px diff detected.
+Failure feedback can be found at /Users/lute/project/momcozy-lab/app/test/features/media/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      _golden (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:309:5)
+<asynchronous suspension>
+#7      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:27:11)
+<asynchronous suspension>
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +0 -5: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart: image metadata, empty response, retry and zoom 320.0/2.0
+00:00 +0 -5: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media video unavailable and return 320.0 / 1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: media video unavailable and return 320.0 / 1.0
+  
+00:00 +0 -5: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart: image metadata, empty response, retry and zoom 320.0/2.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: FlutterError:<Golden "../../goldens/design_system/agent-image-empty-response-320-2x.png":
+Pixel test failed, 53.44%, 97135px diff detected.
+          Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/features/agent_hub/failures>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure>.capture (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart:18:13)
+#5      verifyAgentImage (file:///Users/lute/project/momcozy-lab/app/test/support/agent_image_scenarios.dart:83:16)
+<asynchronous suspension>
+#6      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart:27:11)
+<asynchronous suspension>
+#7      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#8      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart line 18
+The test description was:
+  image metadata, empty response, retry and zoom 320.0/2.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +0 -6: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: image loading failure retry and zoom 320.0 / 1.0
+00:00 +0 -6: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart: image metadata, empty response, retry and zoom 320.0/2.0 [E]
+  Test failed. See exception logs above.
+  The test description was: image metadata, empty response, retry and zoom 320.0/2.0
+  
+00:00 +0 -6: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: image loading failure retry and zoom 320.0 / 1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/media-image-loading-320.png": Pixel test failed, 15.84%, 42793px
+diff detected.
+Failure feedback can be found at /Users/lute/project/momcozy-lab/app/test/features/media/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      _golden (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:309:5)
+<asynchronous suspension>
+#7      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:53:9)
+<asynchronous suspension>
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/media-image-retry-320.png": Pixel test failed, 26.66%, 72015px
+diff detected.
+Failure feedback can be found at /Users/lute/project/momcozy-lab/app/test/features/media/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      _golden (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:309:5)
+<asynchronous suspension>
+#7      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:60:9)
+<asynchronous suspension>
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +0 -6: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart: image metadata, empty response, retry and zoom 390.0/1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: FlutterError:<Golden "../../goldens/design_system/agent-image-empty-response-390-1x.png":
+Pixel test failed, 40.22%, 89089px diff detected.
+          Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/features/agent_hub/failures>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure>.capture (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart:18:13)
+#5      verifyAgentImage (file:///Users/lute/project/momcozy-lab/app/test/support/agent_image_scenarios.dart:83:16)
+<asynchronous suspension>
+#6      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart:27:11)
+<asynchronous suspension>
+#7      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#8      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart line 18
+The test description was:
+  image metadata, empty response, retry and zoom 390.0/1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +0 -7: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: image loading failure retry and zoom 320.0 / 1.0
+00:00 +0 -7: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart: image metadata, empty response, retry and zoom 390.0/1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: image metadata, empty response, retry and zoom 390.0/1.0
+  
+00:00 +0 -7: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: image loading failure retry and zoom 320.0 / 1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/media-image-loaded-320.png": Pixel test failed, 33.92%, 91612px
+diff detected.
+Failure feedback can be found at /Users/lute/project/momcozy-lab/app/test/features/media/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      _golden (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:309:5)
+<asynchronous suspension>
+#7      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:82:9)
+<asynchronous suspension>
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +0 -7: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart: image metadata, empty response, retry and zoom 390.0/2.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: FlutterError:<Golden "../../goldens/design_system/agent-image-empty-response-390-2x.png":
+Pixel test failed, 54.15%, 119947px diff detected.
+          Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/features/agent_hub/failures>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure>.capture (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart:18:13)
+#5      verifyAgentImage (file:///Users/lute/project/momcozy-lab/app/test/support/agent_image_scenarios.dart:83:16)
+<asynchronous suspension>
+#6      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart:27:11)
+<asynchronous suspension>
+#7      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#8      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart line 18
+The test description was:
+  image metadata, empty response, retry and zoom 390.0/2.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +0 -8: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: image loading failure retry and zoom 320.0 / 1.0
+00:00 +0 -8: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart: image metadata, empty response, retry and zoom 390.0/2.0 [E]
+  Test failed. See exception logs above.
+  The test description was: image metadata, empty response, retry and zoom 390.0/2.0
+  
+00:00 +0 -8: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: image loading failure retry and zoom 320.0 / 1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: 'Multiple exceptions (3) were detected during the running of the current test, and at
+least one was unexpected.'
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:96:9)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart line 96
+The test description was:
+  image loading failure retry and zoom 320.0 / 1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +0 -9: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: image loading failure retry and zoom 320.0 / 1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: image loading failure retry and zoom 320.0 / 1.0
+  
+00:00 +0 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart: image metadata, empty response, retry and zoom 430.0/1.0
+00:01 +0 -9: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: PDF loading failure retry and return 320.0 / 1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/media-pdf-loading-320.png": Pixel test failed, 99.98%, 270037px
+diff detected.
+Failure feedback can be found at /Users/lute/project/momcozy-lab/app/test/features/media/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      _golden (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:309:5)
+<asynchronous suspension>
+#7      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:121:9)
+<asynchronous suspension>
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/media-pdf-retry-320.png": Pixel test failed, 99.99%, 270044px
+diff detected.
+Failure feedback can be found at /Users/lute/project/momcozy-lab/app/test/features/media/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      _golden (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:309:5)
+<asynchronous suspension>
+#7      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:125:9)
+<asynchronous suspension>
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: 'Multiple exceptions (2) were detected during the running of the current test, and at
+least one was unexpected.'
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:139:9)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart line 139
+The test description was:
+  PDF loading failure retry and return 320.0 / 1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +0 -10: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart: image metadata, empty response, retry and zoom 430.0/1.0
+00:01 +0 -10: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: PDF loading failure retry and return 320.0 / 1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: PDF loading failure retry and return 320.0 / 1.0
+  
+00:01 +0 -10: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart: image metadata, empty response, retry and zoom 430.0/1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: FlutterError:<Golden "../../goldens/design_system/agent-image-empty-response-430-1x.png":
+Pixel test failed, 40.47%, 98853px diff detected.
+          Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/features/agent_hub/failures>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure>.capture (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart:18:13)
+#5      verifyAgentImage (file:///Users/lute/project/momcozy-lab/app/test/support/agent_image_scenarios.dart:83:16)
+<asynchronous suspension>
+#6      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart:27:11)
+<asynchronous suspension>
+#7      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#8      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart line 18
+The test description was:
+  image metadata, empty response, retry and zoom 430.0/1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +0 -11: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media missing unavailable and return 320.0 / 2.0
+00:01 +0 -11: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart: image metadata, empty response, retry and zoom 430.0/1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: image metadata, empty response, retry and zoom 430.0/1.0
+  
+00:01 +0 -11: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media missing unavailable and return 320.0 / 2.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/media-unavailable-missing-320-2x.png": Pixel test failed,
+99.99%, 270066px diff detected.
+Failure feedback can be found at /Users/lute/project/momcozy-lab/app/test/features/media/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      _golden (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:309:5)
+<asynchronous suspension>
+#7      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:27:11)
+<asynchronous suspension>
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +0 -12: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart: image metadata, empty response, retry and zoom 430.0/2.0
+00:01 +0 -12: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media missing unavailable and return 320.0 / 2.0 [E]
+  Test failed. See exception logs above.
+  The test description was: media missing unavailable and return 320.0 / 2.0
+  
+00:01 +0 -12: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media image unavailable and return 320.0 / 2.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/media-unavailable-image-320-2x.png": Pixel test failed, 28.08%,
+75829px diff detected.
+Failure feedback can be found at /Users/lute/project/momcozy-lab/app/test/features/media/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      _golden (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:309:5)
+<asynchronous suspension>
+#7      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:27:11)
+<asynchronous suspension>
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +0 -13: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart: image metadata, empty response, retry and zoom 430.0/2.0
+00:01 +0 -13: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media image unavailable and return 320.0 / 2.0 [E]
+  Test failed. See exception logs above.
+  The test description was: media image unavailable and return 320.0 / 2.0
+  
+00:01 +0 -13: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart: image metadata, empty response, retry and zoom 430.0/2.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: FlutterError:<Golden "../../goldens/design_system/agent-image-empty-response-430-2x.png":
+Pixel test failed, 54.45%, 132986px diff detected.
+          Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/features/agent_hub/failures>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure>.capture (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart:18:13)
+#5      verifyAgentImage (file:///Users/lute/project/momcozy-lab/app/test/support/agent_image_scenarios.dart:83:16)
+<asynchronous suspension>
+#6      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart:27:11)
+<asynchronous suspension>
+#7      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#8      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart line 18
+The test description was:
+  image metadata, empty response, retry and zoom 430.0/2.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +0 -14: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media pdf unavailable and return 320.0 / 2.0
+00:01 +0 -14: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart: image metadata, empty response, retry and zoom 430.0/2.0 [E]
+  Test failed. See exception logs above.
+  The test description was: image metadata, empty response, retry and zoom 430.0/2.0
+  
+00:01 +0 -14: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media pdf unavailable and return 320.0 / 2.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/media-unavailable-pdf-320-2x.png": Pixel test failed, 99.98%,
+270037px diff detected.
+Failure feedback can be found at /Users/lute/project/momcozy-lab/app/test/features/media/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      _golden (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:309:5)
+<asynchronous suspension>
+#7      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:27:11)
+<asynchronous suspension>
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +0 -15: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media pdf unavailable and return 320.0 / 2.0 [E]
+  Test failed. See exception logs above.
+  The test description was: media pdf unavailable and return 320.0 / 2.0
+  
+00:01 +0 -15: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media video unavailable and return 320.0 / 2.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/media-unavailable-video-320-2x.png": Pixel test failed, 28.08%,
+75829px diff detected.
+Failure feedback can be found at /Users/lute/project/momcozy-lab/app/test/features/media/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      _golden (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:309:5)
+<asynchronous suspension>
+#7      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:27:11)
+<asynchronous suspension>
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +0 -16: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media video unavailable and return 320.0 / 2.0 [E]
+  Test failed. See exception logs above.
+  The test description was: media video unavailable and return 320.0 / 2.0
+  
+00:01 +0 -16: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: image loading failure retry and zoom 320.0 / 2.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/media-image-loading-320-2x.png": Pixel test failed, 23.84%,
+64395px diff detected.
+Failure feedback can be found at /Users/lute/project/momcozy-lab/app/test/features/media/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      _golden (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:309:5)
+<asynchronous suspension>
+#7      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:53:9)
+<asynchronous suspension>
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/media-image-retry-320-2x.png": Pixel test failed, 35.97%,
+97141px diff detected.
+Failure feedback can be found at /Users/lute/project/momcozy-lab/app/test/features/media/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      _golden (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:309:5)
+<asynchronous suspension>
+#7      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:60:9)
+<asynchronous suspension>
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/media-image-loaded-320-2x.png": Pixel test failed, 39.56%,
+106848px diff detected.
+Failure feedback can be found at /Users/lute/project/momcozy-lab/app/test/features/media/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      _golden (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:309:5)
+<asynchronous suspension>
+#7      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:82:9)
+<asynchronous suspension>
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: 'Multiple exceptions (3) were detected during the running of the current test, and at
+least one was unexpected.'
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:96:9)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart line 96
+The test description was:
+  image loading failure retry and zoom 320.0 / 2.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +0 -17: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: image loading failure retry and zoom 320.0 / 2.0 [E]
+  Test failed. See exception logs above.
+  The test description was: image loading failure retry and zoom 320.0 / 2.0
+  
+00:01 +0 -17: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: PDF loading failure retry and return 320.0 / 2.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/media-pdf-loading-320-2x.png": Pixel test failed, 99.99%,
+270044px diff detected.
+Failure feedback can be found at /Users/lute/project/momcozy-lab/app/test/features/media/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      _golden (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:309:5)
+<asynchronous suspension>
+#7      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:121:9)
+<asynchronous suspension>
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/media-pdf-retry-320-2x.png": Pixel test failed, 99.98%, 270037px
+diff detected.
+Failure feedback can be found at /Users/lute/project/momcozy-lab/app/test/features/media/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      _golden (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:309:5)
+<asynchronous suspension>
+#7      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:125:9)
+<asynchronous suspension>
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: 'Multiple exceptions (2) were detected during the running of the current test, and at
+least one was unexpected.'
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:139:9)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart line 139
+The test description was:
+  PDF loading failure retry and return 320.0 / 2.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +0 -18: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: PDF loading failure retry and return 320.0 / 2.0 [E]
+  Test failed. See exception logs above.
+  The test description was: PDF loading failure retry and return 320.0 / 2.0
+  
+00:01 +0 -18: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media missing unavailable and return 390.0 / 1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/media-unavailable-missing-390.png": Pixel test failed, 99.99%,
+329138px diff detected.
+Failure feedback can be found at /Users/lute/project/momcozy-lab/app/test/features/media/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      _golden (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:309:5)
+<asynchronous suspension>
+#7      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:27:11)
+<asynchronous suspension>
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +0 -19: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media missing unavailable and return 390.0 / 1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: media missing unavailable and return 390.0 / 1.0
+  
+00:01 +0 -19: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media image unavailable and return 390.0 / 1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/media-unavailable-image-390.png": Pixel test failed, 20.32%,
+66897px diff detected.
+Failure feedback can be found at /Users/lute/project/momcozy-lab/app/test/features/media/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      _golden (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:309:5)
+<asynchronous suspension>
+#7      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:27:11)
+<asynchronous suspension>
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +0 -20: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media image unavailable and return 390.0 / 1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: media image unavailable and return 390.0 / 1.0
+  
+00:01 +0 -20: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media pdf unavailable and return 390.0 / 1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/media-unavailable-pdf-390.png": Pixel test failed, 99.99%,
+329122px diff detected.
+Failure feedback can be found at /Users/lute/project/momcozy-lab/app/test/features/media/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      _golden (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:309:5)
+<asynchronous suspension>
+#7      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:27:11)
+<asynchronous suspension>
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +0 -21: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media pdf unavailable and return 390.0 / 1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: media pdf unavailable and return 390.0 / 1.0
+  
+00:01 +0 -21: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media video unavailable and return 390.0 / 1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/media-unavailable-video-390.png": Pixel test failed, 20.32%,
+66897px diff detected.
+Failure feedback can be found at /Users/lute/project/momcozy-lab/app/test/features/media/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      _golden (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:309:5)
+<asynchronous suspension>
+#7      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:27:11)
+<asynchronous suspension>
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +0 -22: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media video unavailable and return 390.0 / 1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: media video unavailable and return 390.0 / 1.0
+  
+00:01 +0 -22: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: image loading failure retry and zoom 390.0 / 1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/media-image-loading-390.png": Pixel test failed, 16.02%, 52731px
+diff detected.
+Failure feedback can be found at /Users/lute/project/momcozy-lab/app/test/features/media/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      _golden (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:309:5)
+<asynchronous suspension>
+#7      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:53:9)
+<asynchronous suspension>
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/media-image-retry-390.png": Pixel test failed, 27.07%, 89093px
+diff detected.
+Failure feedback can be found at /Users/lute/project/momcozy-lab/app/test/features/media/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      _golden (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:309:5)
+<asynchronous suspension>
+#7      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:60:9)
+<asynchronous suspension>
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/media-image-loaded-390.png": Pixel test failed, 39.28%, 129290px
+diff detected.
+Failure feedback can be found at /Users/lute/project/momcozy-lab/app/test/features/media/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      _golden (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:309:5)
+<asynchronous suspension>
+#7      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:82:9)
+<asynchronous suspension>
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: 'Multiple exceptions (3) were detected during the running of the current test, and at
+least one was unexpected.'
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:96:9)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart line 96
+The test description was:
+  image loading failure retry and zoom 390.0 / 1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:02 +0 -23: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: image loading failure retry and zoom 390.0 / 1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: image loading failure retry and zoom 390.0 / 1.0
+  
+00:02 +0 -23: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: PDF loading failure retry and return 390.0 / 1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/media-pdf-loading-390.png": Pixel test failed, 99.99%, 329115px
+diff detected.
+Failure feedback can be found at /Users/lute/project/momcozy-lab/app/test/features/media/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      _golden (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:309:5)
+<asynchronous suspension>
+#7      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:121:9)
+<asynchronous suspension>
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/media-pdf-retry-390.png": Pixel test failed, 99.99%, 329122px
+diff detected.
+Failure feedback can be found at /Users/lute/project/momcozy-lab/app/test/features/media/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      _golden (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:309:5)
+<asynchronous suspension>
+#7      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:125:9)
+<asynchronous suspension>
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: 'Multiple exceptions (2) were detected during the running of the current test, and at
+least one was unexpected.'
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:139:9)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart line 139
+The test description was:
+  PDF loading failure retry and return 390.0 / 1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:02 +0 -24: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: PDF loading failure retry and return 390.0 / 1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: PDF loading failure retry and return 390.0 / 1.0
+  
+00:02 +0 -24: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media missing unavailable and return 390.0 / 2.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/media-unavailable-missing-390-2x.png": Pixel test failed,
+100.00%, 329146px diff detected.
+Failure feedback can be found at /Users/lute/project/momcozy-lab/app/test/features/media/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      _golden (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:309:5)
+<asynchronous suspension>
+#7      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:27:11)
+<asynchronous suspension>
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:02 +0 -25: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media missing unavailable and return 390.0 / 2.0 [E]
+  Test failed. See exception logs above.
+  The test description was: media missing unavailable and return 390.0 / 2.0
+  
+00:02 +0 -25: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media image unavailable and return 390.0 / 2.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/media-unavailable-image-390-2x.png": Pixel test failed, 28.40%,
+93468px diff detected.
+Failure feedback can be found at /Users/lute/project/momcozy-lab/app/test/features/media/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      _golden (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:309:5)
+<asynchronous suspension>
+#7      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:27:11)
+<asynchronous suspension>
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:02 +0 -26: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media image unavailable and return 390.0 / 2.0 [E]
+  Test failed. See exception logs above.
+  The test description was: media image unavailable and return 390.0 / 2.0
+  
+00:02 +0 -26: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media pdf unavailable and return 390.0 / 2.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/media-unavailable-pdf-390-2x.png": Pixel test failed, 99.99%,
+329115px diff detected.
+Failure feedback can be found at /Users/lute/project/momcozy-lab/app/test/features/media/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      _golden (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:309:5)
+<asynchronous suspension>
+#7      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:27:11)
+<asynchronous suspension>
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:02 +0 -27: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media pdf unavailable and return 390.0 / 2.0 [E]
+  Test failed. See exception logs above.
+  The test description was: media pdf unavailable and return 390.0 / 2.0
+  
+00:02 +0 -27: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media video unavailable and return 390.0 / 2.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/media-unavailable-video-390-2x.png": Pixel test failed, 28.40%,
+93468px diff detected.
+Failure feedback can be found at /Users/lute/project/momcozy-lab/app/test/features/media/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      _golden (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:309:5)
+<asynchronous suspension>
+#7      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:27:11)
+<asynchronous suspension>
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:02 +0 -28: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media video unavailable and return 390.0 / 2.0 [E]
+  Test failed. See exception logs above.
+  The test description was: media video unavailable and return 390.0 / 2.0
+  
+00:02 +0 -28: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: image loading failure retry and zoom 390.0 / 2.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/media-image-loading-390-2x.png": Pixel test failed, 24.07%,
+79234px diff detected.
+Failure feedback can be found at /Users/lute/project/momcozy-lab/app/test/features/media/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      _golden (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:309:5)
+<asynchronous suspension>
+#7      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:53:9)
+<asynchronous suspension>
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/media-image-retry-390-2x.png": Pixel test failed, 36.44%,
+119960px diff detected.
+Failure feedback can be found at /Users/lute/project/momcozy-lab/app/test/features/media/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      _golden (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:309:5)
+<asynchronous suspension>
+#7      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:60:9)
+<asynchronous suspension>
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/media-image-loaded-390-2x.png": Pixel test failed, 44.93%,
+147884px diff detected.
+Failure feedback can be found at /Users/lute/project/momcozy-lab/app/test/features/media/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      _golden (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:309:5)
+<asynchronous suspension>
+#7      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:82:9)
+<asynchronous suspension>
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: 'Multiple exceptions (3) were detected during the running of the current test, and at
+least one was unexpected.'
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:96:9)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart line 96
+The test description was:
+  image loading failure retry and zoom 390.0 / 2.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:02 +0 -29: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: image loading failure retry and zoom 390.0 / 2.0 [E]
+  Test failed. See exception logs above.
+  The test description was: image loading failure retry and zoom 390.0 / 2.0
+  
+00:02 +0 -29: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: PDF loading failure retry and return 390.0 / 2.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/media-pdf-loading-390-2x.png": Pixel test failed, 99.99%,
+329122px diff detected.
+Failure feedback can be found at /Users/lute/project/momcozy-lab/app/test/features/media/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      _golden (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:309:5)
+<asynchronous suspension>
+#7      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:121:9)
+<asynchronous suspension>
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/media-pdf-retry-390-2x.png": Pixel test failed, 99.99%, 329115px
+diff detected.
+Failure feedback can be found at /Users/lute/project/momcozy-lab/app/test/features/media/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      _golden (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:309:5)
+<asynchronous suspension>
+#7      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:125:9)
+<asynchronous suspension>
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: 'Multiple exceptions (2) were detected during the running of the current test, and at
+least one was unexpected.'
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:139:9)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart line 139
+The test description was:
+  PDF loading failure retry and return 390.0 / 2.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:02 +0 -30: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: PDF loading failure retry and return 390.0 / 2.0 [E]
+  Test failed. See exception logs above.
+  The test description was: PDF loading failure retry and return 390.0 / 2.0
+  
+00:02 +0 -30: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media missing unavailable and return 430.0 / 1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/media-unavailable-missing-430.png": Pixel test failed, 99.99%,
+362898px diff detected.
+Failure feedback can be found at /Users/lute/project/momcozy-lab/app/test/features/media/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      _golden (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:309:5)
+<asynchronous suspension>
+#7      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:27:11)
+<asynchronous suspension>
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:02 +0 -31: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media missing unavailable and return 430.0 / 1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: media missing unavailable and return 430.0 / 1.0
+  
+00:02 +0 -31: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media image unavailable and return 430.0 / 1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/media-unavailable-image-430.png": Pixel test failed, 20.44%,
+74183px diff detected.
+Failure feedback can be found at /Users/lute/project/momcozy-lab/app/test/features/media/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      _golden (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:309:5)
+<asynchronous suspension>
+#7      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:27:11)
+<asynchronous suspension>
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:03 +0 -32: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media image unavailable and return 430.0 / 1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: media image unavailable and return 430.0 / 1.0
+  
+00:03 +0 -32: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media pdf unavailable and return 430.0 / 1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/media-unavailable-pdf-430.png": Pixel test failed, 99.99%,
+362888px diff detected.
+Failure feedback can be found at /Users/lute/project/momcozy-lab/app/test/features/media/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      _golden (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:309:5)
+<asynchronous suspension>
+#7      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:27:11)
+<asynchronous suspension>
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:03 +0 -33: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media pdf unavailable and return 430.0 / 1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: media pdf unavailable and return 430.0 / 1.0
+  
+00:03 +0 -33: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media video unavailable and return 430.0 / 1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/media-unavailable-video-430.png": Pixel test failed, 20.44%,
+74183px diff detected.
+Failure feedback can be found at /Users/lute/project/momcozy-lab/app/test/features/media/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      _golden (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:309:5)
+<asynchronous suspension>
+#7      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:27:11)
+<asynchronous suspension>
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:03 +0 -34: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media video unavailable and return 430.0 / 1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: media video unavailable and return 430.0 / 1.0
+  
+00:03 +0 -34: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: image loading failure retry and zoom 430.0 / 1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/media-image-loading-430.png": Pixel test failed, 16.10%, 58417px
+diff detected.
+Failure feedback can be found at /Users/lute/project/momcozy-lab/app/test/features/media/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      _golden (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:309:5)
+<asynchronous suspension>
+#7      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:53:9)
+<asynchronous suspension>
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/media-image-retry-430.png": Pixel test failed, 27.24%, 98859px
+diff detected.
+Failure feedback can be found at /Users/lute/project/momcozy-lab/app/test/features/media/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      _golden (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:309:5)
+<asynchronous suspension>
+#7      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:60:9)
+<asynchronous suspension>
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/media-image-loaded-430.png": Pixel test failed, 42.31%, 153551px
+diff detected.
+Failure feedback can be found at /Users/lute/project/momcozy-lab/app/test/features/media/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      _golden (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:309:5)
+<asynchronous suspension>
+#7      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:82:9)
+<asynchronous suspension>
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: 'Multiple exceptions (3) were detected during the running of the current test, and at
+least one was unexpected.'
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:96:9)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart line 96
+The test description was:
+  image loading failure retry and zoom 430.0 / 1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:03 +0 -35: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: image loading failure retry and zoom 430.0 / 1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: image loading failure retry and zoom 430.0 / 1.0
+  
+00:03 +0 -35: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: PDF loading failure retry and return 430.0 / 1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/media-pdf-loading-430.png": Pixel test failed, 99.99%, 362881px
+diff detected.
+Failure feedback can be found at /Users/lute/project/momcozy-lab/app/test/features/media/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      _golden (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:309:5)
+<asynchronous suspension>
+#7      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:121:9)
+<asynchronous suspension>
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/media-pdf-retry-430.png": Pixel test failed, 99.99%, 362888px
+diff detected.
+Failure feedback can be found at /Users/lute/project/momcozy-lab/app/test/features/media/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      _golden (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:309:5)
+<asynchronous suspension>
+#7      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:125:9)
+<asynchronous suspension>
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: 'Multiple exceptions (2) were detected during the running of the current test, and at
+least one was unexpected.'
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:139:9)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart line 139
+The test description was:
+  PDF loading failure retry and return 430.0 / 1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:03 +0 -36: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: PDF loading failure retry and return 430.0 / 1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: PDF loading failure retry and return 430.0 / 1.0
+  
+00:03 +0 -36: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media missing unavailable and return 430.0 / 2.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/media-unavailable-missing-430-2x.png": Pixel test failed,
+100.00%, 362906px diff detected.
+Failure feedback can be found at /Users/lute/project/momcozy-lab/app/test/features/media/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      _golden (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:309:5)
+<asynchronous suspension>
+#7      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:27:11)
+<asynchronous suspension>
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:03 +0 -37: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media missing unavailable and return 430.0 / 2.0 [E]
+  Test failed. See exception logs above.
+  The test description was: media missing unavailable and return 430.0 / 2.0
+  
+00:03 +0 -37: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media image unavailable and return 430.0 / 2.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/media-unavailable-image-430-2x.png": Pixel test failed, 28.53%,
+103532px diff detected.
+Failure feedback can be found at /Users/lute/project/momcozy-lab/app/test/features/media/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      _golden (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:309:5)
+<asynchronous suspension>
+#7      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:27:11)
+<asynchronous suspension>
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:03 +0 -38: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media image unavailable and return 430.0 / 2.0 [E]
+  Test failed. See exception logs above.
+  The test description was: media image unavailable and return 430.0 / 2.0
+  
+00:03 +0 -38: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media pdf unavailable and return 430.0 / 2.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/media-unavailable-pdf-430-2x.png": Pixel test failed, 99.98%,
+362860px diff detected.
+Failure feedback can be found at /Users/lute/project/momcozy-lab/app/test/features/media/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      _golden (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:309:5)
+<asynchronous suspension>
+#7      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:27:11)
+<asynchronous suspension>
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:03 +0 -39: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media pdf unavailable and return 430.0 / 2.0 [E]
+  Test failed. See exception logs above.
+  The test description was: media pdf unavailable and return 430.0 / 2.0
+  
+00:03 +0 -39: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media video unavailable and return 430.0 / 2.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/media-unavailable-video-430-2x.png": Pixel test failed, 28.53%,
+103532px diff detected.
+Failure feedback can be found at /Users/lute/project/momcozy-lab/app/test/features/media/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      _golden (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:309:5)
+<asynchronous suspension>
+#7      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:27:11)
+<asynchronous suspension>
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:03 +0 -40: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: media video unavailable and return 430.0 / 2.0 [E]
+  Test failed. See exception logs above.
+  The test description was: media video unavailable and return 430.0 / 2.0
+  
+00:03 +0 -40: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: image loading failure retry and zoom 430.0 / 2.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/media-image-loading-430-2x.png": Pixel test failed, 24.16%,
+87698px diff detected.
+Failure feedback can be found at /Users/lute/project/momcozy-lab/app/test/features/media/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      _golden (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:309:5)
+<asynchronous suspension>
+#7      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:53:9)
+<asynchronous suspension>
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/media-image-retry-430-2x.png": Pixel test failed, 36.64%,
+132984px diff detected.
+Failure feedback can be found at /Users/lute/project/momcozy-lab/app/test/features/media/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      _golden (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:309:5)
+<asynchronous suspension>
+#7      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:60:9)
+<asynchronous suspension>
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/media-image-loaded-430-2x.png": Pixel test failed, 48.10%,
+174556px diff detected.
+Failure feedback can be found at /Users/lute/project/momcozy-lab/app/test/features/media/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      _golden (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:309:5)
+<asynchronous suspension>
+#7      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:82:9)
+<asynchronous suspension>
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: 'Multiple exceptions (3) were detected during the running of the current test, and at
+least one was unexpected.'
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:96:9)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart line 96
+The test description was:
+  image loading failure retry and zoom 430.0 / 2.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:04 +0 -41: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: image loading failure retry and zoom 430.0 / 2.0 [E]
+  Test failed. See exception logs above.
+  The test description was: image loading failure retry and zoom 430.0 / 2.0
+  
+00:04 +0 -41: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: PDF loading failure retry and return 430.0 / 2.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/media-pdf-loading-430-2x.png": Pixel test failed, 99.99%,
+362867px diff detected.
+Failure feedback can be found at /Users/lute/project/momcozy-lab/app/test/features/media/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      _golden (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:309:5)
+<asynchronous suspension>
+#7      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:121:9)
+<asynchronous suspension>
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/media-pdf-retry-430-2x.png": Pixel test failed, 99.98%, 362860px
+diff detected.
+Failure feedback can be found at /Users/lute/project/momcozy-lab/app/test/features/media/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      _golden (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:309:5)
+<asynchronous suspension>
+#7      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:125:9)
+<asynchronous suspension>
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: 'Multiple exceptions (2) were detected during the running of the current test, and at
+least one was unexpected.'
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:139:9)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart line 139
+The test description was:
+  PDF loading failure retry and return 430.0 / 2.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:04 +0 -42: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: PDF loading failure retry and return 430.0 / 2.0 [E]
+  Test failed. See exception logs above.
+  The test description was: PDF loading failure retry and return 430.0 / 2.0
+  
+00:04 +0 -42: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: short large missing keeps header and recovery reachable
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: one widget whose rasterized image matches golden image
+"../../goldens/design_system/media-short-missing-320-2x.png"
+  Actual: _KeyWidgetFinder:<Found 1 widget with key [<'media-capture'>]: [
+            RepaintBoundary-[<'media-capture'>](renderObject: RenderRepaintBoundary#d202e),
+          ]>
+   Which: Could not be compared against non-existent file:
+"../../goldens/design_system/media-short-missing-320-2x.png"
+
+When the exception was thrown, this was the stack:
+#0      fail (package:matcher/src/expect/expect.dart:187:31)
+#1      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:155:13)
+<asynchronous suspension>
+<asynchronous suspension>
+#8      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#9      _golden (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:309:5)
+<asynchronous suspension>
+#10     main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:182:7)
+<asynchronous suspension>
+#11     testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#12     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 7 frames from dart:async and package:stack_trace)
+
+The test description was:
+  short large missing keeps header and recovery reachable
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:04 +0 -43: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: short large missing keeps header and recovery reachable [E]
+  Test failed. See exception logs above.
+  The test description was: short large missing keeps header and recovery reachable
+  
+00:04 +0 -43: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: short large image keeps header and recovery reachable
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following ProductAssetLoadException was thrown running a test:
+ProductAssetLoadException(http_error)
+
+When the exception was thrown, this was the stack:
+#0      ProductAssetRepository._loadAndCache (package:momcozy_flutter_app/features/media/data/product_asset_repository.dart:198:9)
+<asynchronous suspension>
+
+The test description was:
+  short large image keeps header and recovery reachable
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:04 +0 -44: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: short large image keeps header and recovery reachable [E]
+  Test failed. See exception logs above.
+  The test description was: short large image keeps header and recovery reachable
+  
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test (but after the test had completed):
+Expected: one widget whose rasterized image matches golden image
+"../../goldens/design_system/media-short-image-320-2x.png"
+  Actual: _KeyWidgetFinder:<Found 1 widget with key [<'media-capture'>]: [
+            RepaintBoundary-[<'media-capture'>](renderObject: RenderRepaintBoundary#fa914),
+          ]>
+   Which: Could not be compared against non-existent file:
+"../../goldens/design_system/media-short-image-320-2x.png"
+
+When the exception was thrown, this was the stack:
+#0      fail (package:matcher/src/expect/expect.dart:187:31)
+#1      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:155:13)
+<asynchronous suspension>
+<asynchronous suspension>
+#8      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#9      _golden (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:309:5)
+<asynchronous suspension>
+#10     main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:182:7)
+<asynchronous suspension>
+#11     testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#12     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 7 frames from dart:async and package:stack_trace)
+════════════════════════════════════════════════════════════════════════════════════════════════════
+  Test failed. See exception logs above.
+  The test description was: short large image keeps header and recovery reachable
+  
+00:04 +0 -44: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: short large pdf keeps header and recovery reachable
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following ProductAssetLoadException was thrown running a test:
+ProductAssetLoadException(http_error)
+
+When the exception was thrown, this was the stack:
+#0      ProductAssetRepository._loadAndCache (package:momcozy_flutter_app/features/media/data/product_asset_repository.dart:198:9)
+<asynchronous suspension>
+
+The test description was:
+  short large pdf keeps header and recovery reachable
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:04 +0 -45: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: short large pdf keeps header and recovery reachable [E]
+  Test failed. See exception logs above.
+  The test description was: short large pdf keeps header and recovery reachable
+  
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test (but after the test had completed):
+Expected: one widget whose rasterized image matches golden image
+"../../goldens/design_system/media-short-pdf-320-2x.png"
+  Actual: _KeyWidgetFinder:<Found 1 widget with key [<'media-capture'>]: [
+            RepaintBoundary-[<'media-capture'>](renderObject: RenderRepaintBoundary#67a45),
+          ]>
+   Which: Could not be compared against non-existent file:
+"../../goldens/design_system/media-short-pdf-320-2x.png"
+
+When the exception was thrown, this was the stack:
+#0      fail (package:matcher/src/expect/expect.dart:187:31)
+#1      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:155:13)
+<asynchronous suspension>
+<asynchronous suspension>
+#8      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#9      _golden (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:309:5)
+<asynchronous suspension>
+#10     main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart:182:7)
+<asynchronous suspension>
+#11     testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#12     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 7 frames from dart:async and package:stack_trace)
+════════════════════════════════════════════════════════════════════════════════════════════════════
+  Test failed. See exception logs above.
+  The test description was: short large pdf keeps header and recovery reachable
+  
+00:04 +0 -45: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: image authorization or unsupported content 401 remains retryable
+00:04 +1 -45: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: image authorization or unsupported content 403 remains retryable
+00:04 +2 -45: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: image authorization or unsupported content 200 remains retryable
+00:04 +3 -45: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: pdf authorization or unsupported content 401 remains retryable
+00:04 +4 -45: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: pdf authorization or unsupported content 403 remains retryable
+00:04 +5 -45: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: pdf authorization or unsupported content 200 remains retryable
+00:04 +6 -45: /Users/lute/project/momcozy-lab/app/test/features/media/media_design_test.dart: (tearDownAll)
+00:04 +6 -45: Some tests failed.
+
+Failing tests:
+  /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart: image metadata, empty response, retry and zoom 320.0/1.0
+  /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart: image metadata, empty response, retry and zoom 320.0/2.0
+  /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart: image metadata, empty response, retry and zoom 390.0/1.0
+  /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_design_test.dart: image metadata, empty response, retry and zoom 390.0/2.0
+  ... and 41 more

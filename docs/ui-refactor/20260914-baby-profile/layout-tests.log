@@ -1,0 +1,185 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: profile dialog scrolls and saves at 320.0 / 1.0 / long=false
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: FlutterError:<Golden "../../goldens/design_system/baby-profile-editor-320.png": Pixel test
+failed, 78.98%, 213322px diff detected.
+          Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/modules/baby/failures>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart:86:13)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart line 86
+The test description was:
+  profile dialog scrolls and saves at 320.0 / 1.0 / long=false
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +0 -1: profile dialog scrolls and saves at 320.0 / 1.0 / long=false [E]
+  Test failed. See exception logs above.
+  The test description was: profile dialog scrolls and saves at 320.0 / 1.0 / long=false
+  
+00:00 +0 -1: profile dialog scrolls and saves at 320.0 / 1.0 / long=true
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: FlutterError:<Golden "../../goldens/design_system/baby-profile-short-320.png": Pixel test
+failed, 88.61%, 170134px diff detected.
+          Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/modules/baby/failures>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart:86:13)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart line 86
+The test description was:
+  profile dialog scrolls and saves at 320.0 / 1.0 / long=true
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +0 -2: profile dialog scrolls and saves at 320.0 / 1.0 / long=true [E]
+  Test failed. See exception logs above.
+  The test description was: profile dialog scrolls and saves at 320.0 / 1.0 / long=true
+  
+00:00 +0 -2: profile dialog scrolls and saves at 320.0 / 2.0 / long=false
+00:00 +1 -2: profile dialog scrolls and saves at 320.0 / 2.0 / long=true
+00:00 +2 -2: profile dialog scrolls and saves at 390.0 / 1.0 / long=false
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: FlutterError:<Golden "../../goldens/design_system/baby-profile-editor-390.png": Pixel test
+failed, 80.16%, 263864px diff detected.
+          Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/modules/baby/failures>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart:86:13)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart line 86
+The test description was:
+  profile dialog scrolls and saves at 390.0 / 1.0 / long=false
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +2 -3: profile dialog scrolls and saves at 390.0 / 1.0 / long=false [E]
+  Test failed. See exception logs above.
+  The test description was: profile dialog scrolls and saves at 390.0 / 1.0 / long=false
+  
+00:01 +2 -3: profile dialog scrolls and saves at 390.0 / 1.0 / long=true
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: FlutterError:<Golden "../../goldens/design_system/baby-profile-short-390.png": Pixel test
+failed, 89.94%, 210454px diff detected.
+          Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/modules/baby/failures>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart:86:13)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart line 86
+The test description was:
+  profile dialog scrolls and saves at 390.0 / 1.0 / long=true
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +2 -4: profile dialog scrolls and saves at 390.0 / 1.0 / long=true [E]
+  Test failed. See exception logs above.
+  The test description was: profile dialog scrolls and saves at 390.0 / 1.0 / long=true
+  
+00:01 +2 -4: profile dialog scrolls and saves at 390.0 / 2.0 / long=false
+00:01 +3 -4: profile dialog scrolls and saves at 390.0 / 2.0 / long=true
+00:01 +4 -4: profile dialog scrolls and saves at 430.0 / 1.0 / long=false
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: FlutterError:<Golden "../../goldens/design_system/baby-profile-editor-430.png": Pixel test
+failed, 80.66%, 292744px diff detected.
+          Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/modules/baby/failures>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart:86:13)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart line 86
+The test description was:
+  profile dialog scrolls and saves at 430.0 / 1.0 / long=false
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +4 -5: profile dialog scrolls and saves at 430.0 / 1.0 / long=false [E]
+  Test failed. See exception logs above.
+  The test description was: profile dialog scrolls and saves at 430.0 / 1.0 / long=false
+  
+00:01 +4 -5: profile dialog scrolls and saves at 430.0 / 1.0 / long=true
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: FlutterError:<Golden "../../goldens/design_system/baby-profile-short-430.png": Pixel test
+failed, 90.50%, 233494px diff detected.
+          Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/modules/baby/failures>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart:86:13)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart line 86
+The test description was:
+  profile dialog scrolls and saves at 430.0 / 1.0 / long=true
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +4 -6: profile dialog scrolls and saves at 430.0 / 1.0 / long=true [E]
+  Test failed. See exception logs above.
+  The test description was: profile dialog scrolls and saves at 430.0 / 1.0 / long=true
+  
+00:01 +4 -6: profile dialog scrolls and saves at 430.0 / 2.0 / long=false
+00:01 +5 -6: profile dialog scrolls and saves at 430.0 / 2.0 / long=true
+00:01 +6 -6: (tearDownAll)
+00:01 +6 -6: Some tests failed.
+
+Failing tests:
+  /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart: profile dialog scrolls and saves at 320.0 / 1.0 / long=false
+  /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart: profile dialog scrolls and saves at 320.0 / 1.0 / long=true
+  /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart: profile dialog scrolls and saves at 390.0 / 1.0 / long=false
+  /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart: profile dialog scrolls and saves at 390.0 / 1.0 / long=true
+  ... and 2 more

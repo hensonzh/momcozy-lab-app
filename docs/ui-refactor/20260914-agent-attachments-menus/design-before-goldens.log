@@ -1,0 +1,974 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: (setUpAll)
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: (setUpAll)
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 320.0/1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/agent-menu-user-320-1x.png": Pixel test failed, 26.15%, 47522px
+diff detected.
+Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/features/agent_hub/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      main.<anonymous closure>.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart:37:13)
+<asynchronous suspension>
+#7      verifyAgentMessageMenu (file:///Users/lute/project/momcozy-lab/app/test/support/agent_message_menu_scenarios.dart:57:3)
+<asynchronous suspension>
+#8      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart:33:9)
+<asynchronous suspension>
+#9      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#10     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/agent-menu-assistant-320-1x.png": Pixel test failed, 26.13%,
+47501px diff detected.
+Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/features/agent_hub/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      main.<anonymous closure>.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart:37:13)
+<asynchronous suspension>
+#7      verifyAgentMessageMenu (file:///Users/lute/project/momcozy-lab/app/test/support/agent_message_menu_scenarios.dart:79:3)
+<asynchronous suspension>
+#8      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart:33:9)
+<asynchronous suspension>
+#9      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#10     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/agent-menu-retry-320-1x.png": Pixel test failed, 15.44%, 28057px
+diff detected.
+Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/features/agent_hub/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      main.<anonymous closure>.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart:37:13)
+<asynchronous suspension>
+#7      verifyAgentMessageMenu (file:///Users/lute/project/momcozy-lab/app/test/support/agent_message_menu_scenarios.dart:115:3)
+<asynchronous suspension>
+#8      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart:33:9)
+<asynchronous suspension>
+#9      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#10     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: 'Multiple exceptions (3) were detected during the running of the current test, and at
+least one was unexpected.'
+
+When the exception was thrown, this was the stack:
+#4      verifyAgentMessageMenu (file:///Users/lute/project/momcozy-lab/app/test/support/agent_message_menu_scenarios.dart:119:3)
+<asynchronous suspension>
+#5      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart:33:9)
+<asynchronous suspension>
+#6      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#7      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/support/agent_message_menu_scenarios.dart line 119
+The test description was:
+  message menu 320.0/1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +0 -1: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+00:00 +0 -1: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 320.0/1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: message menu 320.0/1.0
+  
+00:01 +0 -1: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 320.0/2.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/agent-menu-user-320-2x.png": Pixel test failed, 77.31%, 140521px
+diff detected.
+Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/features/agent_hub/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      main.<anonymous closure>.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart:37:13)
+<asynchronous suspension>
+#7      verifyAgentMessageMenu (file:///Users/lute/project/momcozy-lab/app/test/support/agent_message_menu_scenarios.dart:57:3)
+<asynchronous suspension>
+#8      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart:33:9)
+<asynchronous suspension>
+#9      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#10     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/agent-menu-assistant-320-2x.png": Pixel test failed, 76.73%,
+139471px diff detected.
+Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/features/agent_hub/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      main.<anonymous closure>.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart:37:13)
+<asynchronous suspension>
+#7      verifyAgentMessageMenu (file:///Users/lute/project/momcozy-lab/app/test/support/agent_message_menu_scenarios.dart:79:3)
+<asynchronous suspension>
+#8      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart:33:9)
+<asynchronous suspension>
+#9      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#10     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +0 -1: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: FlutterError:<Golden "../../goldens/design_system/agent-attachment-menu-320-1x.png": Pixel
+test failed, 25.68%, 46670px diff detected.
+          Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/features/agent_hub/failures>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure>.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart:21:13)
+#5      verifyAgentAttachments (file:///Users/lute/project/momcozy-lab/app/test/support/agent_attachment_scenarios.dart:133:16)
+<asynchronous suspension>
+#6      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart:17:9)
+<asynchronous suspension>
+#7      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#8      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart line 21
+The test description was:
+  attachment layout and draft actions 320.0/1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +0 -2: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 320.0/2.0
+00:01 +0 -2: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: attachment layout and draft actions 320.0/1.0
+  
+00:01 +0 -2: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 320.0/2.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/agent-menu-retry-320-2x.png": Pixel test failed, 37.10%, 67424px
+diff detected.
+Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/features/agent_hub/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      main.<anonymous closure>.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart:37:13)
+<asynchronous suspension>
+#7      verifyAgentMessageMenu (file:///Users/lute/project/momcozy-lab/app/test/support/agent_message_menu_scenarios.dart:115:3)
+<asynchronous suspension>
+#8      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart:33:9)
+<asynchronous suspension>
+#9      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#10     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: 'Multiple exceptions (3) were detected during the running of the current test, and at
+least one was unexpected.'
+
+When the exception was thrown, this was the stack:
+#4      verifyAgentMessageMenu (file:///Users/lute/project/momcozy-lab/app/test/support/agent_message_menu_scenarios.dart:119:3)
+<asynchronous suspension>
+#5      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart:33:9)
+<asynchronous suspension>
+#6      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#7      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/support/agent_message_menu_scenarios.dart line 119
+The test description was:
+  message menu 320.0/2.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +0 -3: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/2.0
+00:01 +0 -3: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 320.0/2.0 [E]
+  Test failed. See exception logs above.
+  The test description was: message menu 320.0/2.0
+  
+00:01 +0 -3: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 390.0/1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/agent-menu-user-390-1x.png": Pixel test failed, 23.06%, 51087px
+diff detected.
+Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/features/agent_hub/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      main.<anonymous closure>.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart:37:13)
+<asynchronous suspension>
+#7      verifyAgentMessageMenu (file:///Users/lute/project/momcozy-lab/app/test/support/agent_message_menu_scenarios.dart:57:3)
+<asynchronous suspension>
+#8      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart:33:9)
+<asynchronous suspension>
+#9      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#10     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/agent-menu-assistant-390-1x.png": Pixel test failed, 23.04%,
+51042px diff detected.
+Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/features/agent_hub/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      main.<anonymous closure>.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart:37:13)
+<asynchronous suspension>
+#7      verifyAgentMessageMenu (file:///Users/lute/project/momcozy-lab/app/test/support/agent_message_menu_scenarios.dart:79:3)
+<asynchronous suspension>
+#8      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart:33:9)
+<asynchronous suspension>
+#9      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#10     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +0 -3: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/2.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: FlutterError:<Golden "../../goldens/design_system/agent-attachment-menu-320-2x.png": Pixel
+test failed, 58.43%, 106201px diff detected.
+          Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/features/agent_hub/failures>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure>.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart:21:13)
+#5      verifyAgentAttachments (file:///Users/lute/project/momcozy-lab/app/test/support/agent_attachment_scenarios.dart:133:16)
+<asynchronous suspension>
+#6      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart:17:9)
+<asynchronous suspension>
+#7      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#8      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart line 21
+The test description was:
+  attachment layout and draft actions 320.0/2.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +0 -4: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 390.0/1.0
+00:01 +0 -4: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/2.0 [E]
+  Test failed. See exception logs above.
+  The test description was: attachment layout and draft actions 320.0/2.0
+  
+00:01 +0 -4: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 390.0/1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/agent-menu-retry-390-1x.png": Pixel test failed, 15.32%, 33935px
+diff detected.
+Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/features/agent_hub/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      main.<anonymous closure>.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart:37:13)
+<asynchronous suspension>
+#7      verifyAgentMessageMenu (file:///Users/lute/project/momcozy-lab/app/test/support/agent_message_menu_scenarios.dart:115:3)
+<asynchronous suspension>
+#8      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart:33:9)
+<asynchronous suspension>
+#9      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#10     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: 'Multiple exceptions (3) were detected during the running of the current test, and at
+least one was unexpected.'
+
+When the exception was thrown, this was the stack:
+#4      verifyAgentMessageMenu (file:///Users/lute/project/momcozy-lab/app/test/support/agent_message_menu_scenarios.dart:119:3)
+<asynchronous suspension>
+#5      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart:33:9)
+<asynchronous suspension>
+#6      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#7      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/support/agent_message_menu_scenarios.dart line 119
+The test description was:
+  message menu 390.0/1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +0 -5: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 390.0/1.0
+00:01 +0 -5: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 390.0/1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: message menu 390.0/1.0
+  
+00:01 +0 -5: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 390.0/1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: FlutterError:<Golden "../../goldens/design_system/agent-attachment-menu-390-1x.png": Pixel
+test failed, 23.00%, 50940px diff detected.
+          Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/features/agent_hub/failures>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure>.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart:21:13)
+#5      verifyAgentAttachments (file:///Users/lute/project/momcozy-lab/app/test/support/agent_attachment_scenarios.dart:133:16)
+<asynchronous suspension>
+#6      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart:17:9)
+<asynchronous suspension>
+#7      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#8      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart line 21
+The test description was:
+  attachment layout and draft actions 390.0/1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +0 -6: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 390.0/2.0
+00:01 +0 -6: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 390.0/1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: attachment layout and draft actions 390.0/1.0
+  
+00:01 +0 -6: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 390.0/2.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/agent-menu-user-390-2x.png": Pixel test failed, 73.45%, 162699px
+diff detected.
+Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/features/agent_hub/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      main.<anonymous closure>.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart:37:13)
+<asynchronous suspension>
+#7      verifyAgentMessageMenu (file:///Users/lute/project/momcozy-lab/app/test/support/agent_message_menu_scenarios.dart:57:3)
+<asynchronous suspension>
+#8      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart:33:9)
+<asynchronous suspension>
+#9      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#10     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/agent-menu-assistant-390-2x.png": Pixel test failed, 75.85%,
+168026px diff detected.
+Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/features/agent_hub/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      main.<anonymous closure>.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart:37:13)
+<asynchronous suspension>
+#7      verifyAgentMessageMenu (file:///Users/lute/project/momcozy-lab/app/test/support/agent_message_menu_scenarios.dart:79:3)
+<asynchronous suspension>
+#8      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart:33:9)
+<asynchronous suspension>
+#9      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#10     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/agent-menu-retry-390-2x.png": Pixel test failed, 35.56%, 78779px
+diff detected.
+Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/features/agent_hub/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      main.<anonymous closure>.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart:37:13)
+<asynchronous suspension>
+#7      verifyAgentMessageMenu (file:///Users/lute/project/momcozy-lab/app/test/support/agent_message_menu_scenarios.dart:115:3)
+<asynchronous suspension>
+#8      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart:33:9)
+<asynchronous suspension>
+#9      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#10     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: 'Multiple exceptions (3) were detected during the running of the current test, and at
+least one was unexpected.'
+
+When the exception was thrown, this was the stack:
+#4      verifyAgentMessageMenu (file:///Users/lute/project/momcozy-lab/app/test/support/agent_message_menu_scenarios.dart:119:3)
+<asynchronous suspension>
+#5      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart:33:9)
+<asynchronous suspension>
+#6      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#7      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/support/agent_message_menu_scenarios.dart line 119
+The test description was:
+  message menu 390.0/2.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +0 -7: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 390.0/2.0
+00:01 +0 -7: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 390.0/2.0 [E]
+  Test failed. See exception logs above.
+  The test description was: message menu 390.0/2.0
+  
+00:01 +0 -7: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 390.0/2.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: FlutterError:<Golden "../../goldens/design_system/agent-attachment-menu-390-2x.png": Pixel
+test failed, 38.25%, 84735px diff detected.
+          Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/features/agent_hub/failures>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure>.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart:21:13)
+#5      verifyAgentAttachments (file:///Users/lute/project/momcozy-lab/app/test/support/agent_attachment_scenarios.dart:133:16)
+<asynchronous suspension>
+#6      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart:17:9)
+<asynchronous suspension>
+#7      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#8      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart line 21
+The test description was:
+  attachment layout and draft actions 390.0/2.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +0 -8: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 430.0/1.0
+00:01 +0 -8: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 390.0/2.0 [E]
+  Test failed. See exception logs above.
+  The test description was: attachment layout and draft actions 390.0/2.0
+  
+00:01 +0 -8: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 430.0/1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/agent-menu-user-430-1x.png": Pixel test failed, 22.57%, 55127px
+diff detected.
+Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/features/agent_hub/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      main.<anonymous closure>.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart:37:13)
+<asynchronous suspension>
+#7      verifyAgentMessageMenu (file:///Users/lute/project/momcozy-lab/app/test/support/agent_message_menu_scenarios.dart:57:3)
+<asynchronous suspension>
+#8      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart:33:9)
+<asynchronous suspension>
+#9      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#10     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/agent-menu-assistant-430-1x.png": Pixel test failed, 22.55%,
+55082px diff detected.
+Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/features/agent_hub/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      main.<anonymous closure>.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart:37:13)
+<asynchronous suspension>
+#7      verifyAgentMessageMenu (file:///Users/lute/project/momcozy-lab/app/test/support/agent_message_menu_scenarios.dart:79:3)
+<asynchronous suspension>
+#8      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart:33:9)
+<asynchronous suspension>
+#9      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#10     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/agent-menu-retry-430-1x.png": Pixel test failed, 14.96%, 36535px
+diff detected.
+Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/features/agent_hub/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      main.<anonymous closure>.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart:37:13)
+<asynchronous suspension>
+#7      verifyAgentMessageMenu (file:///Users/lute/project/momcozy-lab/app/test/support/agent_message_menu_scenarios.dart:115:3)
+<asynchronous suspension>
+#8      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart:33:9)
+<asynchronous suspension>
+#9      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#10     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: 'Multiple exceptions (3) were detected during the running of the current test, and at
+least one was unexpected.'
+
+When the exception was thrown, this was the stack:
+#4      verifyAgentMessageMenu (file:///Users/lute/project/momcozy-lab/app/test/support/agent_message_menu_scenarios.dart:119:3)
+<asynchronous suspension>
+#5      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart:33:9)
+<asynchronous suspension>
+#6      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#7      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/support/agent_message_menu_scenarios.dart line 119
+The test description was:
+  message menu 430.0/1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +0 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 430.0/1.0
+00:01 +0 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 430.0/1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: message menu 430.0/1.0
+  
+00:01 +0 -9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 430.0/1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: FlutterError:<Golden "../../goldens/design_system/agent-attachment-menu-430-1x.png": Pixel
+test failed, 21.86%, 53380px diff detected.
+          Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/features/agent_hub/failures>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure>.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart:21:13)
+#5      verifyAgentAttachments (file:///Users/lute/project/momcozy-lab/app/test/support/agent_attachment_scenarios.dart:133:16)
+<asynchronous suspension>
+#6      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart:17:9)
+<asynchronous suspension>
+#7      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#8      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart line 21
+The test description was:
+  attachment layout and draft actions 430.0/1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +0 -10: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 430.0/2.0
+00:01 +0 -10: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 430.0/1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: attachment layout and draft actions 430.0/1.0
+  
+00:02 +0 -10: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 430.0/2.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/agent-menu-user-430-2x.png": Pixel test failed, 70.38%, 171902px
+diff detected.
+Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/features/agent_hub/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      main.<anonymous closure>.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart:37:13)
+<asynchronous suspension>
+#7      verifyAgentMessageMenu (file:///Users/lute/project/momcozy-lab/app/test/support/agent_message_menu_scenarios.dart:57:3)
+<asynchronous suspension>
+#8      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart:33:9)
+<asynchronous suspension>
+#9      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#10     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/agent-menu-assistant-430-2x.png": Pixel test failed, 72.88%,
+178014px diff detected.
+Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/features/agent_hub/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      main.<anonymous closure>.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart:37:13)
+<asynchronous suspension>
+#7      verifyAgentMessageMenu (file:///Users/lute/project/momcozy-lab/app/test/support/agent_message_menu_scenarios.dart:79:3)
+<asynchronous suspension>
+#8      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart:33:9)
+<asynchronous suspension>
+#9      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#10     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:02 +0 -10: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 430.0/2.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: FlutterError:<Golden "../../goldens/design_system/agent-attachment-menu-430-2x.png": Pixel
+test failed, 36.71%, 89655px diff detected.
+          Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/features/agent_hub/failures>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure>.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart:21:13)
+#5      verifyAgentAttachments (file:///Users/lute/project/momcozy-lab/app/test/support/agent_attachment_scenarios.dart:133:16)
+<asynchronous suspension>
+#6      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart:17:9)
+<asynchronous suspension>
+#7      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#8      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart line 21
+The test description was:
+  attachment layout and draft actions 430.0/2.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:02 +0 -11: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 430.0/2.0
+00:02 +0 -11: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 430.0/2.0 [E]
+  Test failed. See exception logs above.
+  The test description was: attachment layout and draft actions 430.0/2.0
+  
+00:02 +0 -11: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 430.0/2.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/design_system/agent-menu-retry-430-2x.png": Pixel test failed, 30.44%, 74341px
+diff detected.
+Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/features/agent_hub/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      main.<anonymous closure>.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart:37:13)
+<asynchronous suspension>
+#7      verifyAgentMessageMenu (file:///Users/lute/project/momcozy-lab/app/test/support/agent_message_menu_scenarios.dart:115:3)
+<asynchronous suspension>
+#8      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart:33:9)
+<asynchronous suspension>
+#9      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#10     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: 'Multiple exceptions (3) were detected during the running of the current test, and at
+least one was unexpected.'
+
+When the exception was thrown, this was the stack:
+#4      verifyAgentMessageMenu (file:///Users/lute/project/momcozy-lab/app/test/support/agent_message_menu_scenarios.dart:119:3)
+<asynchronous suspension>
+#5      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart:33:9)
+<asynchronous suspension>
+#6      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#7      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/support/agent_message_menu_scenarios.dart line 119
+The test description was:
+  message menu 430.0/2.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:02 +0 -12: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: message menu 430.0/2.0 [E]
+  Test failed. See exception logs above.
+  The test description was: message menu 430.0/2.0
+  
+00:02 +0 -12: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_design_test.dart: (tearDownAll)
+00:02 +0 -12: Some tests failed.
+
+Failing tests:
+  /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/1.0
+  /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 320.0/2.0
+  /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 390.0/1.0
+  /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_attachment_design_test.dart: attachment layout and draft actions 390.0/2.0
+  ... and 8 more

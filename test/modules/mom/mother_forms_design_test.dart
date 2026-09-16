@@ -38,6 +38,7 @@ void main() {
                       repository: repository,
                       date: LocalDate(2026, 9, 8),
                       section: section,
+                      stageLabel: '产后第 21 天 · 恢复建立期',
                     ),
                     child: const Text('记录'),
                   ),
@@ -64,6 +65,14 @@ void main() {
           await tester.ensureVisible(find.text(selection));
           await tester.tap(find.text(selection));
           await tester.pumpAndSettle();
+          if (scale == 1) {
+            await expectLater(
+              find.byType(MaterialApp),
+              matchesGoldenFile(
+                '../../goldens/design_system/diary-${section.name}-selected-${width.toInt()}.png',
+              ),
+            );
+          }
           await tester.tap(find.byTooltip('关闭记录'));
           await tester.pumpAndSettle();
           expect(find.text('离开这次记录？'), findsOneWidget);

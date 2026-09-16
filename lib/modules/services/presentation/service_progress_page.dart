@@ -1,13 +1,14 @@
-import '../../../shared/care/care_labels.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
-import '../../../shared/widgets/momcozy_components.dart';
-import '../../../domain/care/care_episode.dart';
-import '../../../domain/care/care_order.dart';
 import '../../../domain/care/appointment.dart';
-import '../../../shared/design_system/momcozy_design_system.dart';
+import '../../../domain/care/care_order.dart';
+import '../../../domain/care/care_episode.dart';
+import '../../../shared/design_system/mom_home_tokens.dart';
+import '../../../shared/design_system/mom_settings_theme.dart';
+import '../../../shared/widgets/mom_settings_widgets.dart';
 import '../../../shared/widgets/product_feedback.dart';
 import '../application/care_overview_controller.dart';
+import 'service_timeline.dart';
 
 class ServiceProgressPage extends StatefulWidget {
   const ServiceProgressPage({
@@ -18,6 +19,7 @@ class ServiceProgressPage extends StatefulWidget {
     required this.onBook,
     this.appointmentRepository,
     this.onOpenAppointment,
+    this.onRenew,
   });
   final CareRepository repository;
   final String episodeId;
@@ -25,213 +27,155 @@ class ServiceProgressPage extends StatefulWidget {
   final ValueChanged<CareEpisode> onBook;
   final AppointmentRepository? appointmentRepository;
   final ValueChanged<CareAppointment>? onOpenAppointment;
+  final VoidCallback? onRenew;
   @override
   State<ServiceProgressPage> createState() => _ServiceProgressPageState();
 }
 
 class _ServiceProgressPageState extends State<ServiceProgressPage> {
   late final controller = CareOverviewController(widget.repository);
-  CareAppointment? _appointment;
-  bool _appointmentLoading = false;
+  List<CareAppointment> _appointments = [];
+  bool _appointmentLoading = false, _appointmentFailed = false;
+  int _generation = 0;
   @override
   void initState() {
     super.initState();
-    unawaited(controller.load());
+    unawaited(_reload());
   }
 
   @override
   void dispose() {
+    _generation++;
     controller.dispose();
     super.dispose();
   }
 
+  Future<void> _reload() async {
+    final generation = ++_generation;
+    await controller.load();
+    if (!mounted || generation != _generation || controller.failure != null) {
+      return;
+    }
+    if (!controller.overview!.episodes.any((e) => e.id == widget.episodeId)) {
+      return;
+    }
+    final repository = widget.appointmentRepository;
+    if (repository == null) return;
+    setState(() {
+      _appointmentLoading = true;
+      _appointmentFailed = false;
+    });
+    try {
+      final context = await repository.context(widget.episodeId);
+      if (!mounted || generation != _generation) return;
+      setState(() {
+        _appointments =
+            context.appointments
+                .where(
+                  (a) =>
+                      a.episodeId == widget.episodeId &&
+                      a.status != AppointmentStatus.held,
+                )
+                .toList()
+              ..sort((a, b) => a.startsAt.compareTo(b.startsAt));
+        _appointmentLoading = false;
+      });
+    } catch (_) {
+      if (!mounted || generation != _generation) return;
+      setState(() {
+        _appointmentFailed = true;
+        _appointmentLoading = false;
+      });
+    }
+  }
+
   @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(
-      title: const Text('服务进度'),
-      leading: BackButton(onPressed: widget.onBack),
-    ),
-    body: MomCozyPageBody(
-      child: AnimatedBuilder(
-        animation: controller,
-        builder: (context, _) {
-          if (controller.failure case final failure?) {
-            return ProductErrorView(failure: failure, onRetry: controller.load);
-          }
-          if (controller.overview == null) {
-            return const ProductLoadingView();
-          }
-          final episode = controller.overview!.episodes
-              .where((item) => item.id == widget.episodeId)
-              .firstOrNull;
-          if (episode == null) {
-            return const ProductEmptyView(title: '没有找到这个服务');
-          }
-          final order = controller.overview!.orders
-              .where((item) => item.id == episode.orderId)
-              .first;
-          final package = controller.catalog!.packages
-              .where((item) => item.id == episode.packageId)
-              .first;
-          if (widget.appointmentRepository != null && !_appointmentLoading) {
-            _appointmentLoading = true;
-            unawaited(_loadAppointment(episode.id));
-          }
-          return RefreshIndicator(
-            onRefresh: controller.load,
-            child: ListView(
-              padding: MomCozyInsets.page,
-              children: [
-                Text(
-                  package.name,
-                  style: const TextStyle(
-                    fontSize: MomCozyTypography.pageTitleSize,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                const SizedBox(height: MomCozySpacing.statusGap),
-                Text(
-                  '${episodeStatusLabels[episode.status]} · ${careStageLabels[episode.stage]}',
-                  style: const TextStyle(color: MomCozyColors.care),
-                ),
-                const SizedBox(height: MomCozySpacing.section),
-                _Event(
-                  date: order.createdAt,
-                  title: '服务包已购买',
-                  description:
-                      '${order.durationDays} 天支持 · ${order.totalSessions} 次 IBCLC 在线咨询',
-                ),
-                if (episode.startsAt != null)
-                  _Event(
-                    date: episode.startsAt!,
-                    title: '服务已开始',
-                    description:
-                        '${careStageLabels[episode.stage]} · 剩余 ${episode.remainingSessions} 次咨询',
-                  ),
-                if (_appointment != null)
-                  _Event(
-                    date: _appointment!.startsAt,
-                    title: switch (_appointment!.status) {
-                      AppointmentStatus.held => '咨询时段待确认',
-                      AppointmentStatus.confirmed => '已预约咨询',
-                      AppointmentStatus.inProgress => '咨询进行中',
-                      AppointmentStatus.completed => '咨询已完成',
-                      AppointmentStatus.cancelled => '预约已取消',
-                      AppointmentStatus.expired => '预约已过期',
-                    },
-                    description:
-                        '${_appointment!.providerName} · ${_appointment!.timezone}',
-                  ),
-                if (episode.canBook)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 20),
-                    child: FilledButton(
-                      onPressed: () => widget.onBook(episode),
-                      child: const Text('预约咨询'),
-                    ),
-                  ),
-                if (_appointment != null &&
-                    _appointment!.status != AppointmentStatus.cancelled &&
-                    _appointment!.status != AppointmentStatus.expired)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 10),
-                    child: OutlinedButton(
-                      onPressed: () =>
-                          widget.onOpenAppointment?.call(_appointment!),
-                      child: Text(
-                        _appointment!.status == AppointmentStatus.completed
-                            ? '查看咨询总结'
-                            : '打开预约详情',
+  Widget build(BuildContext context) => Theme(
+    data: momSettingsTheme(Theme.of(context)),
+    child: Scaffold(
+      appBar: AppBar(
+        toolbarHeight: MediaQuery.textScalerOf(context).scale(1) > 1.3
+            ? 96
+            : 56,
+        leadingWidth: MediaQuery.textScalerOf(context).scale(1) > 1.3 ? 88 : 72,
+        title: const Text('服务进度'),
+        leading: TextButton(onPressed: widget.onBack, child: const Text('返回')),
+      ),
+      body: ClipRect(
+        child: SafeArea(
+          top: false,
+          child: AnimatedBuilder(
+            animation: controller,
+            builder: (context, _) {
+              if (controller.failure case final failure?) {
+                return SingleChildScrollView(
+                  padding: const EdgeInsets.all(16),
+                  child: ProductErrorView(failure: failure, onRetry: _reload),
+                );
+              }
+              if (controller.overview == null) {
+                return SingleChildScrollView(
+                  padding: const EdgeInsets.all(16),
+                  child: MomSettingsCard(
+                    children: [
+                      Text(
+                        '正在加载服务进度…',
+                        style: MomHomeTokens.text(16, weight: FontWeight.w700),
                       ),
-                    ),
+                      const LinearProgressIndicator(),
+                    ],
                   ),
-                const SizedBox(height: MomCozySpacing.section),
-                Text(
-                  '已显示当前服务记录\n${episodeStatusLabels[episode.status]} · 仅展示已同步的信息',
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    color: MomCozyColors.mutedForeground,
-                    fontSize: MomCozyTypography.captionSize,
+                );
+              }
+              final episode = controller.overview!.episodes
+                  .where((e) => e.id == widget.episodeId)
+                  .firstOrNull;
+              final order = controller.overview!.orders
+                  .where((o) => o.id == episode?.orderId)
+                  .firstOrNull;
+              final package = controller.catalog!.packages
+                  .where((p) => p.id == episode?.packageId)
+                  .firstOrNull;
+              if (episode == null || order == null || package == null) {
+                return SingleChildScrollView(
+                  padding: const EdgeInsets.all(16),
+                  child: MomSettingsCard(
+                    children: [
+                      Text(
+                        '暂时找不到这个服务包',
+                        style: MomHomeTokens.text(16, weight: FontWeight.w700),
+                      ),
+                      Text(
+                        '服务信息可能已更新，请从妈妈主页重新进入。',
+                        style: MomHomeTokens.text(
+                          13,
+                          color: MomHomeTokens.secondary,
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: widget.onBack,
+                        child: const Text('返回妈妈主页'),
+                      ),
+                    ],
                   ),
-                ),
-              ],
-            ),
-          );
-        },
+                );
+              }
+              return ServiceTimeline(
+                episode: episode,
+                order: order,
+                package: package,
+                appointments: _appointments,
+                loading: controller.loading || _appointmentLoading,
+                failed: _appointmentFailed,
+                onRefresh: _reload,
+                onBook: () => widget.onBook(episode),
+                onOpenAppointment: widget.onOpenAppointment,
+                onRenew: widget.onRenew,
+              );
+            },
+          ),
+        ),
       ),
     ),
   );
-
-  Future<void> _loadAppointment(String episodeId) async {
-    try {
-      final context = await widget.appointmentRepository!.context(episodeId);
-      if (!mounted) return;
-      final active =
-          context.appointments
-              .where((item) => item.status != AppointmentStatus.expired)
-              .toList()
-            ..sort((a, b) => b.startsAt.compareTo(a.startsAt));
-      setState(() => _appointment = active.firstOrNull);
-    } catch (_) {
-      // The rest of the durable service timeline remains available.
-    }
-  }
-}
-
-class _Event extends StatelessWidget {
-  const _Event({
-    required this.date,
-    required this.title,
-    required this.description,
-  });
-  final DateTime date;
-  final String title, description;
-  @override
-  Widget build(BuildContext context) {
-    final time = date.toLocal();
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 20),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: MediaQuery.textScalerOf(context).scale(58),
-            child: Text(
-              '${time.month}/${time.day}\n${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}',
-              style: const TextStyle(
-                fontSize: MomCozyTypography.labelSize,
-                color: MomCozyColors.mutedForeground,
-              ),
-            ),
-          ),
-          const Padding(
-            padding: EdgeInsets.only(top: 5, right: 12),
-            child: Icon(Icons.circle, size: 8, color: MomCozyColors.primary),
-          ),
-          Expanded(
-            child: MomCozySurface(
-              padding: MomCozyInsets.compactCard,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: const TextStyle(fontWeight: FontWeight.w600),
-                  ),
-                  const SizedBox(height: MomCozySpacing.compact),
-                  Text(
-                    description,
-                    style: const TextStyle(
-                      fontSize: MomCozyTypography.secondarySize,
-                      height: 1.6,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }

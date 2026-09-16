@@ -1,0 +1,13 @@
+{
+  "controller_unchanged": true,
+  "page_mutations_and_dialog_routes_unchanged": true,
+  "agenda_date_filters_and_order_unchanged": true,
+  "calendar_month_grid_calculation_unchanged": true,
+  "calendar_service_period_selection_unchanged": true,
+  "checkbox_completion_and_skip_rules_unchanged": true,
+  "plan_task_menu_dispatch_unchanged": true,
+  "editor_save_and_idempotency_unchanged": true,
+  "editor_dirty_and_editability_rules_unchanged": true,
+  "editor_failure_meanings_unchanged": true,
+  "editor_discard_and_pop_rules_unchanged": true
+}

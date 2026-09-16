@@ -1,0 +1,1346 @@
+--- before/lib/shared/widgets/choice_field.dart
++++ after/lib/shared/widgets/choice_field.dart
+@@ -1,7 +1,14 @@
+ import 'package:flutter/material.dart';
+ import '../design_system/momcozy_design_system.dart';
+-
+-enum ChoiceFieldStyle { chips, warmTiles, warmSegmented }
++import '../design_system/mom_home_tokens.dart';
++
++enum ChoiceFieldStyle {
++  chips,
++  warmTiles,
++  warmSegmented,
++  momTiles,
++  momSegmented,
++}
+ 
+ /// Wraps instead of truncating choices on small screens or at large text scales.
+ class ChoiceField<T extends Enum> extends StatelessWidget {
+@@ -29,18 +36,32 @@
+   final T? exclusiveValue;
+   final Widget Function(T value)? optionIcon;
+ 
++  bool get _mom =>
++      style == ChoiceFieldStyle.momTiles ||
++      style == ChoiceFieldStyle.momSegmented;
++
+   @override
+   Widget build(BuildContext context) => Padding(
+-    padding: EdgeInsets.only(bottom: style == ChoiceFieldStyle.chips ? 24 : 20),
++    padding: EdgeInsets.only(
++      bottom: _mom
++          ? 0
++          : style == ChoiceFieldStyle.chips
++          ? 24
++          : 20,
++    ),
+     child: Column(
+       crossAxisAlignment: CrossAxisAlignment.start,
+       children: [
+         if (title.isNotEmpty)
+           Padding(
+-            padding: const EdgeInsets.only(bottom: MomCozySpacing.content),
++            padding: EdgeInsets.only(
++              bottom: _mom ? MomHomeTokens.gap : MomCozySpacing.content,
++            ),
+             child: _heading(),
+           ),
+-        if (style != ChoiceFieldStyle.chips)
++        if (_mom)
++          _momChoices(context)
++        else if (style != ChoiceFieldStyle.chips)
+           _warmChoices(context)
+         else
+           Wrap(
+@@ -78,6 +99,20 @@
+   );
+ 
+   Widget _heading() {
++    if (_mom) {
++      return Column(
++        crossAxisAlignment: CrossAxisAlignment.start,
++        spacing: MomHomeTokens.gap,
++        children: [
++          Text(title, style: MomHomeTokens.text(14, weight: FontWeight.w700)),
++          if (hint != null)
++            Text(
++              hint!,
++              style: MomHomeTokens.text(12, color: MomHomeTokens.secondary),
++            ),
++        ],
++      );
++    }
+     final label = Text(
+       title,
+       style: TextStyle(
+@@ -122,6 +157,106 @@
+       next.remove(key);
+     }
+     onChanged(Set.unmodifiable(next));
++  }
++
++  Widget _momChoices(BuildContext context) {
++    final segmented = style == ChoiceFieldStyle.momSegmented;
++    final largeText = MediaQuery.textScalerOf(context).scale(14) > 20;
++    return Container(
++      width: double.infinity,
++      padding: segmented ? const EdgeInsets.all(4) : EdgeInsets.zero,
++      decoration: segmented
++          ? BoxDecoration(
++              color: MomHomeTokens.neutralSurface,
++              borderRadius: BorderRadius.circular(16),
++            )
++          : null,
++      child: LayoutBuilder(
++        builder: (context, constraints) {
++          final count = largeText
++              ? (constraints.maxWidth < 280 ? 1 : 2)
++              : columns;
++          final width = (constraints.maxWidth - 8 * (count - 1)) / count;
++          return Column(
++            crossAxisAlignment: CrossAxisAlignment.stretch,
++            spacing: 8,
++            children: [
++              for (var start = 0; start < options.length; start += count)
++                IntrinsicHeight(
++                  child: Row(
++                    crossAxisAlignment: CrossAxisAlignment.stretch,
++                    spacing: 8,
++                    children: [
++                      for (final entry
++                          in options.entries.skip(start).take(count))
++                        SizedBox(
++                          width: width,
++                          child: Semantics(
++                            selected: selected.contains(entry.key),
++                            child: OutlinedButton(
++                              onPressed: () => _select(
++                                entry.key,
++                                !selected.contains(entry.key),
++                              ),
++                              style: OutlinedButton.styleFrom(
++                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
++                                minimumSize: Size(
++                                  0,
++                                  optionIcon == null ? 44 : 64,
++                                ),
++                                padding: const EdgeInsets.symmetric(
++                                  horizontal: 6,
++                                  vertical: 10,
++                                ),
++                                backgroundColor: selected.contains(entry.key)
++                                    ? MomHomeTokens.mint
++                                    : MomHomeTokens.surface,
++                                foregroundColor: selected.contains(entry.key)
++                                    ? MomHomeTokens.teal
++                                    : MomHomeTokens.secondary,
++                                side: BorderSide(
++                                  color: selected.contains(entry.key)
++                                      ? MomHomeTokens.teal
++                                      : MomHomeTokens.border,
++                                  width: selected.contains(entry.key) ? 2 : 1,
++                                ),
++                                shape: RoundedRectangleBorder(
++                                  borderRadius: BorderRadius.circular(16),
++                                ),
++                                textStyle: MomHomeTokens.text(
++                                  14,
++                                  weight: selected.contains(entry.key)
++                                      ? FontWeight.w700
++                                      : FontWeight.w400,
++                                ),
++                              ),
++                              child: optionIcon == null
++                                  ? Text(
++                                      entry.value,
++                                      textAlign: TextAlign.center,
++                                    )
++                                  : Column(
++                                      mainAxisSize: MainAxisSize.min,
++                                      children: [
++                                        optionIcon!(entry.key),
++                                        const SizedBox(height: 5),
++                                        Text(
++                                          entry.value,
++                                          textAlign: TextAlign.center,
++                                        ),
++                                      ],
++                                    ),
++                            ),
++                          ),
++                        ),
++                    ],
++                  ),
++                ),
++            ],
++          );
++        },
++      ),
++    );
+   }
+ 
+   Widget _warmChoices(BuildContext context) {
+--- before/lib/modules/mom/presentation/mother_diary_page.dart
++++ after/lib/modules/mom/presentation/mother_diary_page.dart
+@@ -3,7 +3,7 @@
+ import '../../../shared/widgets/momcozy_components.dart';
+ import '../../../domain/mother/mother_diary.dart';
+ import '../../../domain/shared/local_date.dart';
+-import '../../../shared/design_system/momcozy_design_system.dart';
++import '../../../shared/design_system/mom_home_tokens.dart';
+ import '../application/mother_diary_controller.dart';
+ import 'mother_diary_editor.dart';
+ 
+@@ -42,7 +42,7 @@
+ 
+   @override
+   Widget build(BuildContext context) => Scaffold(
+-    backgroundColor: MomCozyColors.warmFormSurface,
++    backgroundColor: MomHomeTokens.background,
+     body: MomCozyPageBody(
+       child: MotherDiaryEditor(
+         controller: _controller,
+--- before/lib/modules/mom/presentation/diary_fields.dart
++++ after/lib/modules/mom/presentation/diary_fields.dart
+@@ -1,10 +1,16 @@
+ import 'package:flutter/material.dart';
+-import '../../../shared/design_system/momcozy_design_system.dart';
++import '../../../shared/design_system/mom_home_tokens.dart';
++import '../../../shared/widgets/mom_settings_widgets.dart';
+ import '../../../domain/mother/mother_diary.dart';
+ import '../../../shared/widgets/choice_field.dart';
+ import 'diary_labels.dart';
+ 
+ Set<T> _selected<T>(T? value) => {?value};
++
++Widget _question(Widget child, {bool surface = true}) => Padding(
++  padding: const EdgeInsets.only(bottom: MomHomeTokens.gap),
++  child: surface ? MomSettingsCard(children: [child]) : child,
++);
+ 
+ class RestFields extends StatelessWidget {
+   const RestFields({super.key, required this.value, required this.onChanged});
+@@ -14,32 +20,41 @@
+   Widget build(BuildContext context) => Column(
+     crossAxisAlignment: CrossAxisAlignment.stretch,
+     children: [
+-      ChoiceField(
+-        style: ChoiceFieldStyle.warmTiles,
+-        title: '昨夜大约睡了多久',
+-        options: sleepTotalLabels,
+-        selected: _selected(value.total),
+-        onChanged: (v) => onChanged(value.copyWith(total: () => v.firstOrNull)),
+-      ),
+-      ChoiceField(
+-        style: ChoiceFieldStyle.warmTiles,
+-        title: '夜里大约被打断几次',
+-        options: interruptionsLabels,
+-        selected: _selected(value.interruptions),
+-        onChanged: (v) =>
+-            onChanged(value.copyWith(interruptions: () => v.firstOrNull)),
+-      ),
+-      ChoiceField(
+-        style: ChoiceFieldStyle.warmSegmented,
+-        title: '今天醒来时感觉怎样',
+-        options: recoveryLabels,
+-        selected: _selected(value.recovery),
+-        onChanged: (v) =>
+-            onChanged(value.copyWith(recovery: () => v.firstOrNull)),
++      _question(
++        ChoiceField(
++          style: ChoiceFieldStyle.momTiles,
++          title: '昨夜大约睡了多久',
++          options: sleepTotalLabels,
++          selected: _selected(value.total),
++          onChanged: (v) =>
++              onChanged(value.copyWith(total: () => v.firstOrNull)),
++        ),
++      ),
++      _question(
++        ChoiceField(
++          style: ChoiceFieldStyle.momTiles,
++          title: '夜里大约被打断几次',
++          options: interruptionsLabels,
++          selected: _selected(value.interruptions),
++          onChanged: (v) =>
++              onChanged(value.copyWith(interruptions: () => v.firstOrNull)),
++        ),
++      ),
++      _question(
++        ChoiceField(
++          style: ChoiceFieldStyle.momSegmented,
++          title: '今天醒来时感觉怎样',
++          options: recoveryLabels,
++          selected: _selected(value.recovery),
++          onChanged: (v) =>
++              onChanged(value.copyWith(recovery: () => v.firstOrNull)),
++        ),
+       ),
+       ExpansionTile(
+-        tilePadding: const EdgeInsets.symmetric(horizontal: 13),
+-        childrenPadding: const EdgeInsets.fromLTRB(13, 16, 13, 0),
++        tilePadding: const EdgeInsets.symmetric(
++          horizontal: MomHomeTokens.inset,
++        ),
++        childrenPadding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+         title: _OptionalTitle(
+           '补充休息情况',
+           status:
+@@ -52,41 +67,54 @@
+         ),
+ 
+         children: [
+-          ChoiceField(
+-            style: ChoiceFieldStyle.warmTiles,
+-            title: '最长一段完整休息',
+-            options: stretchLabels,
+-            selected: _selected(value.longestStretch),
+-            onChanged: (v) =>
+-                onChanged(value.copyWith(longestStretch: () => v.firstOrNull)),
+-          ),
+-          ChoiceField(
+-            style: ChoiceFieldStyle.warmTiles,
+-            columns: MediaQuery.sizeOf(context).width <= 390 ? 2 : 4,
+-            title: '今天有没有一段不被打扰的休息',
+-            options: dayRestLabels,
+-            selected: _selected(value.dayRest),
+-            onChanged: (v) =>
+-                onChanged(value.copyWith(dayRest: () => v.firstOrNull)),
+-          ),
+-          ChoiceField(
+-            style: ChoiceFieldStyle.warmSegmented,
+-            title: '醒来后容易再睡着吗',
+-            options: resleepLabels,
+-            selected: _selected(value.resleepDifficulty),
+-            onChanged: (v) => onChanged(
+-              value.copyWith(resleepDifficulty: () => v.firstOrNull),
+-            ),
+-          ),
+-          ChoiceField(
+-            style: ChoiceFieldStyle.warmTiles,
+-            columns: MediaQuery.sizeOf(context).width <= 390 ? 2 : 3,
+-            title: '影响休息的原因',
+-            hint: '可多选',
+-            options: disruptionLabels,
+-            selected: value.disruptions,
+-            multiple: true,
+-            onChanged: (v) => onChanged(value.copyWith(disruptions: v)),
++          _question(
++            ChoiceField(
++              style: ChoiceFieldStyle.momTiles,
++              title: '最长一段完整休息',
++              options: stretchLabels,
++              selected: _selected(value.longestStretch),
++              onChanged: (v) => onChanged(
++                value.copyWith(longestStretch: () => v.firstOrNull),
++              ),
++            ),
++            surface: false,
++          ),
++          _question(
++            ChoiceField(
++              style: ChoiceFieldStyle.momTiles,
++              columns: MediaQuery.sizeOf(context).width <= 390 ? 2 : 4,
++              title: '今天有没有一段不被打扰的休息',
++              options: dayRestLabels,
++              selected: _selected(value.dayRest),
++              onChanged: (v) =>
++                  onChanged(value.copyWith(dayRest: () => v.firstOrNull)),
++            ),
++            surface: false,
++          ),
++          _question(
++            ChoiceField(
++              style: ChoiceFieldStyle.momSegmented,
++              title: '醒来后容易再睡着吗',
++              options: resleepLabels,
++              selected: _selected(value.resleepDifficulty),
++              onChanged: (v) => onChanged(
++                value.copyWith(resleepDifficulty: () => v.firstOrNull),
++              ),
++            ),
++            surface: false,
++          ),
++          _question(
++            ChoiceField(
++              style: ChoiceFieldStyle.momTiles,
++              columns: MediaQuery.sizeOf(context).width <= 390 ? 2 : 3,
++              title: '影响休息的原因',
++              hint: '可多选',
++              options: disruptionLabels,
++              selected: value.disruptions,
++              multiple: true,
++              onChanged: (v) => onChanged(value.copyWith(disruptions: v)),
++            ),
++            surface: false,
+           ),
+         ],
+       ),
+@@ -102,90 +130,115 @@
+   Widget build(BuildContext context) => Column(
+     crossAxisAlignment: CrossAxisAlignment.stretch,
+     children: [
+-      ChoiceField(
+-        style: ChoiceFieldStyle.warmTiles,
+-        title: '今天身体的电量',
+-        hint: '不和别人比较',
+-        options: energyLabels,
+-        selected: _selected(value.energy),
+-        onChanged: (v) =>
+-            onChanged(value.copyWith(energy: () => v.firstOrNull)),
+-      ),
+-      ChoiceField(
+-        style: ChoiceFieldStyle.warmTiles,
+-        columns: 2,
+-        title: '今天哪里最需要照顾？',
+-        hint: '可多选',
+-        options: siteLabels,
+-        selected: value.discomfortSites,
+-        multiple: true,
+-        onChanged: (v) => onChanged(
+-          value.copyWith(
+-            discomfortSites: v,
+-            severity: v.isEmpty ? () => null : null,
+-            impact: v.isEmpty ? () => null : null,
++      _question(
++        ChoiceField(
++          style: ChoiceFieldStyle.momTiles,
++          title: '今天身体的电量',
++          hint: '不和别人比较',
++          options: energyLabels,
++          selected: _selected(value.energy),
++          onChanged: (v) =>
++              onChanged(value.copyWith(energy: () => v.firstOrNull)),
++        ),
++      ),
++      _question(
++        ChoiceField(
++          style: ChoiceFieldStyle.momTiles,
++          columns: 2,
++          title: '今天哪里最需要照顾？',
++          hint: '可多选',
++          options: siteLabels,
++          selected: value.discomfortSites,
++          multiple: true,
++          onChanged: (v) => onChanged(
++            value.copyWith(
++              discomfortSites: v,
++              severity: v.isEmpty ? () => null : null,
++              impact: v.isEmpty ? () => null : null,
++            ),
+           ),
+         ),
+       ),
+       if (value.discomfortSites.isNotEmpty) ...[
+-        ChoiceField(
+-          style: ChoiceFieldStyle.warmTiles,
+-          title: '这种不适有多难受？',
+-          options: severityLabels,
+-          selected: _selected(value.severity),
+-          onChanged: (v) =>
+-              onChanged(value.copyWith(severity: () => v.firstOrNull)),
+-        ),
+-        ChoiceField(
+-          style: ChoiceFieldStyle.warmTiles,
+-          title: '这种不适影响到你了吗？',
+-          options: bodyImpactLabels,
+-          selected: _selected(value.impact),
+-          onChanged: (v) =>
+-              onChanged(value.copyWith(impact: () => v.firstOrNull)),
++        _question(
++          ChoiceField(
++            style: ChoiceFieldStyle.momTiles,
++            title: '这种不适有多难受？',
++            options: severityLabels,
++            selected: _selected(value.severity),
++            onChanged: (v) =>
++                onChanged(value.copyWith(severity: () => v.firstOrNull)),
++          ),
++        ),
++        _question(
++          ChoiceField(
++            style: ChoiceFieldStyle.momTiles,
++            title: '这种不适影响到你了吗？',
++            options: bodyImpactLabels,
++            selected: _selected(value.impact),
++            onChanged: (v) =>
++                onChanged(value.copyWith(impact: () => v.firstOrNull)),
++          ),
+         ),
+       ],
+-      ChoiceField(
+-        style: ChoiceFieldStyle.warmSegmented,
+-        title: '和昨天相比，身体感觉',
+-        options: trendLabels,
+-        selected: _selected(value.trend),
+-        onChanged: (v) => onChanged(value.copyWith(trend: () => v.firstOrNull)),
++      _question(
++        ChoiceField(
++          style: ChoiceFieldStyle.momSegmented,
++          title: '和昨天相比，身体感觉',
++          options: trendLabels,
++          selected: _selected(value.trend),
++          onChanged: (v) =>
++              onChanged(value.copyWith(trend: () => v.firstOrNull)),
++        ),
+       ),
+       ExpansionTile(
+-        tilePadding: const EdgeInsets.symmetric(horizontal: 13),
+-        childrenPadding: const EdgeInsets.fromLTRB(13, 16, 13, 0),
++        tilePadding: const EdgeInsets.symmetric(
++          horizontal: MomHomeTokens.inset,
++        ),
++        childrenPadding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+         title: const _OptionalTitle('如厕与盆底', status: '可选'),
+ 
+         children: [
+-          ChoiceField(
+-            style: ChoiceFieldStyle.warmTiles,
+-            title: '排尿',
+-            options: urinationLabels,
+-            selected: _selected(value.urination),
+-            onChanged: (v) =>
+-                onChanged(value.copyWith(urination: () => v.firstOrNull)),
+-          ),
+-          ChoiceField(
+-            style: ChoiceFieldStyle.warmTiles,
+-            title: '排便',
+-            options: bowelLabels,
+-            selected: _selected(value.bowel),
+-            onChanged: (v) =>
+-                onChanged(value.copyWith(bowel: () => v.firstOrNull)),
++          _question(
++            ChoiceField(
++              style: ChoiceFieldStyle.momTiles,
++              title: '排尿',
++              options: urinationLabels,
++              selected: _selected(value.urination),
++              onChanged: (v) =>
++                  onChanged(value.copyWith(urination: () => v.firstOrNull)),
++            ),
++            surface: false,
++          ),
++          _question(
++            ChoiceField(
++              style: ChoiceFieldStyle.momTiles,
++              title: '排便',
++              options: bowelLabels,
++              selected: _selected(value.bowel),
++              onChanged: (v) =>
++                  onChanged(value.copyWith(bowel: () => v.firstOrNull)),
++            ),
++            surface: false,
+           ),
+         ],
+       ),
+-      const SizedBox(height: MomCozySpacing.card),
+-      TextFormField(
+-        initialValue: value.note,
+-        maxLines: 3,
+-        maxLength: 2000,
+-        decoration: const InputDecoration(
+-          labelText: '今天身体最想告诉你什么？',
+-          hintText: '可选',
+-        ),
+-        onChanged: (note) => onChanged(value.copyWith(note: note)),
++      const SizedBox(height: MomHomeTokens.gap),
++      Text(
++        '今天身体最想告诉你什么？',
++        style: MomHomeTokens.text(12, color: MomHomeTokens.secondary),
++      ),
++      const SizedBox(height: MomHomeTokens.gap),
++      Semantics(
++        label: '今天身体最想告诉你什么？',
++        child: TextFormField(
++          initialValue: value.note,
++          maxLines: 3,
++          maxLength: 2000,
++          style: MomHomeTokens.text(16),
++          decoration: const InputDecoration(hintText: '可选'),
++          onChanged: (note) => onChanged(value.copyWith(note: note)),
++        ),
+       ),
+     ],
+   );
+@@ -199,41 +252,50 @@
+   Widget build(BuildContext context) => Column(
+     crossAxisAlignment: CrossAxisAlignment.stretch,
+     children: [
+-      ChoiceField(
+-        style: ChoiceFieldStyle.warmTiles,
+-        title: '今天心里更接近哪一种',
+-        hint: '可以说不清楚',
+-        options: toneLabels,
+-        selected: _selected(value.tone),
+-        onChanged: (v) => onChanged(value.copyWith(tone: () => v.firstOrNull)),
+-      ),
+-      ChoiceField(
+-        style: ChoiceFieldStyle.warmTiles,
+-        columns: 2,
+-        title: '什么一直占据着你的心？',
+-        hint: '可多选',
+-        options: pressureLabels,
+-        selected: value.pressures,
+-        multiple: true,
+-        exclusiveValue: MoodPressure.unclear,
+-        onChanged: (v) => onChanged(value.copyWith(pressures: v)),
+-      ),
+-      ChoiceField(
+-        style: ChoiceFieldStyle.warmSegmented,
+-        title: '这份难受影响到你了吗？',
+-        options: moodImpactLabels,
+-        selected: _selected(value.impact),
+-        onChanged: (v) =>
+-            onChanged(value.copyWith(impact: () => v.firstOrNull)),
+-      ),
+-      ChoiceField(
+-        style: ChoiceFieldStyle.warmTiles,
+-        columns: MediaQuery.sizeOf(context).width < 359 ? 1 : 2,
+-        title: '今天有人接住你吗？',
+-        options: supportLabels,
+-        selected: _selected(value.support),
+-        onChanged: (v) =>
+-            onChanged(value.copyWith(support: () => v.firstOrNull)),
++      _question(
++        ChoiceField(
++          style: ChoiceFieldStyle.momTiles,
++          title: '今天心里更接近哪一种',
++          hint: '可以说不清楚',
++          options: toneLabels,
++          selected: _selected(value.tone),
++          onChanged: (v) =>
++              onChanged(value.copyWith(tone: () => v.firstOrNull)),
++        ),
++      ),
++      _question(
++        ChoiceField(
++          style: ChoiceFieldStyle.momTiles,
++          columns: 2,
++          title: '什么一直占据着你的心？',
++          hint: '可多选',
++          options: pressureLabels,
++          selected: value.pressures,
++          multiple: true,
++          exclusiveValue: MoodPressure.unclear,
++          onChanged: (v) => onChanged(value.copyWith(pressures: v)),
++        ),
++      ),
++      _question(
++        ChoiceField(
++          style: ChoiceFieldStyle.momSegmented,
++          title: '这份难受影响到你了吗？',
++          options: moodImpactLabels,
++          selected: _selected(value.impact),
++          onChanged: (v) =>
++              onChanged(value.copyWith(impact: () => v.firstOrNull)),
++        ),
++      ),
++      _question(
++        ChoiceField(
++          style: ChoiceFieldStyle.momTiles,
++          columns: MediaQuery.sizeOf(context).width < 359 ? 1 : 2,
++          title: '今天有人接住你吗？',
++          options: supportLabels,
++          selected: _selected(value.support),
++          onChanged: (v) =>
++              onChanged(value.copyWith(support: () => v.firstOrNull)),
++        ),
+       ),
+     ],
+   );
+@@ -248,14 +310,14 @@
+   Widget build(BuildContext context) {
+     final label = Text(
+       title,
+-      style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
++      style: MomHomeTokens.text(14, weight: FontWeight.w700),
+     );
+     final detail = Text(
+       status,
+       style: const TextStyle(
+-        fontSize: 11,
++        fontSize: 12,
+         fontWeight: FontWeight.w400,
+-        color: MomCozyColors.diaryMuted,
++        color: MomHomeTokens.secondary,
+       ),
+     );
+     if (MediaQuery.textScalerOf(context).scale(13) > 18) {
+--- before/lib/modules/mom/presentation/mother_diary_editor.dart
++++ after/lib/modules/mom/presentation/mother_diary_editor.dart
+@@ -9,6 +9,9 @@
+ import '../../../domain/shared/product_failure.dart';
+ import '../../../shared/design_system/momcozy_design_system.dart';
+ import '../../../shared/widgets/confirm_discard.dart';
++import '../../../shared/design_system/mom_home_tokens.dart';
++import '../../../shared/design_system/mom_settings_theme.dart';
++import '../../../shared/widgets/mom_settings_widgets.dart';
+ import '../../../shared/widgets/product_feedback.dart';
+ import '../../../shared/widgets/momcozy_line_icon.dart';
+ import '../application/mother_diary_controller.dart';
+@@ -47,7 +50,7 @@
+       builder: (context) => BackdropFilter(
+         filter: ui.ImageFilter.blur(sigmaX: 2, sigmaY: 2),
+         child: Dialog(
+-          backgroundColor: MomCozyColors.warmFormSurface,
++          backgroundColor: MomHomeTokens.background,
+           insetPadding: const EdgeInsets.all(MomCozySpacing.content),
+           clipBehavior: Clip.antiAlias,
+           shape: RoundedRectangleBorder(
+@@ -98,6 +101,7 @@
+   bool _saved = false;
+   bool _emptyAttempt = false;
+   bool _confirming = false;
++  int _reloadRevision = 0;
+   final _fieldsScroll = ScrollController();
+ 
+   @override
+@@ -106,8 +110,11 @@
+     super.dispose();
+   }
+ 
+-  Future<bool> _confirmDiscard() =>
+-      confirmDiscard(context, confirmLabel: '放弃修改');
++  Future<bool> _confirmDiscard() => confirmDiscard(
++    context,
++    confirmLabel: '放弃修改',
++    theme: momSettingsTheme(Theme.of(context)),
++  );
+ 
+   Future<void> _close() async {
+     if (_confirming || widget.controller.phase == DiaryPhase.saving) return;
+@@ -150,6 +157,9 @@
+ 
+   Future<void> _reloadConflict() async {
+     if (await _confirmDiscard() && mounted) {
++      // A fast repository load may finish before an intermediate loading frame.
++      // Recreate the initial-value form after the user confirms discarding it.
++      setState(() => _reloadRevision++);
+       await widget.controller.reloadAfterConflict();
+     }
+   }
+@@ -171,219 +181,217 @@
+         },
+         child: LayoutBuilder(
+           builder: (context, constraints) {
+-            final narrow = MediaQuery.sizeOf(context).width < 359;
+             final compact = constraints.maxHeight < 540;
+             final radius = RoundedRectangleBorder(
+-              borderRadius: BorderRadius.circular(14),
+-              side: const BorderSide(color: MomCozyColors.warmFormBorder),
++              borderRadius: BorderRadius.circular(MomHomeTokens.cardRadius),
++              side: const BorderSide(color: MomHomeTokens.border),
+             );
+             return Theme(
+-              data: Theme.of(context).copyWith(
++              data: momSettingsTheme(Theme.of(context)).copyWith(
+                 expansionTileTheme: ExpansionTileThemeData(
+-                  backgroundColor: MomCozyColors.warmQuietSurface,
+-                  collapsedBackgroundColor: MomCozyColors.warmQuietSurface,
+-                  textColor: MomCozyColors.diaryInk,
+-                  collapsedTextColor: MomCozyColors.diaryInk,
+-                  iconColor: MomCozyColors.diaryMuted,
+-                  collapsedIconColor: MomCozyColors.diaryMuted,
++                  backgroundColor: MomHomeTokens.surface,
++                  collapsedBackgroundColor: MomHomeTokens.surface,
++                  textColor: MomHomeTokens.ink,
++                  collapsedTextColor: MomHomeTokens.ink,
++                  iconColor: MomHomeTokens.secondary,
++                  collapsedIconColor: MomHomeTokens.secondary,
+                   shape: radius,
+                   collapsedShape: radius,
+                 ),
+-                inputDecorationTheme: Theme.of(context).inputDecorationTheme
+-                    .copyWith(
+-                      fillColor: MomCozyColors.warmFormField,
+-                      enabledBorder: OutlineInputBorder(
+-                        borderRadius: BorderRadius.circular(12),
+-                        borderSide: const BorderSide(
+-                          color: MomCozyColors.warmFormBorder,
+-                        ),
+-                      ),
+-                      focusedBorder: OutlineInputBorder(
+-                        borderRadius: BorderRadius.circular(12),
+-                        borderSide: const BorderSide(
+-                          color: MomCozyColors.diarySelectionBorder,
+-                        ),
+-                      ),
+-                    ),
+               ),
+               child: ColoredBox(
+-                color: MomCozyColors.warmFormSurface,
++                color: MomHomeTokens.background,
+                 child: Column(
+                   crossAxisAlignment: CrossAxisAlignment.stretch,
+                   children: [
+-                    _DiaryHeader(
+-                      title: title,
+-                      section: _section,
+-                      stageLabel: widget.stageLabel,
+-                      date: controller.date,
+-                      count: controller.draft.completedGroups,
+-                      compact: compact,
+-                      onClose: controller.phase == DiaryPhase.saving
+-                          ? null
+-                          : _close,
++                    ColoredBox(
++                      color: MomHomeTokens.surface,
++                      child: Padding(
++                        padding: EdgeInsets.symmetric(
++                          horizontal: 16,
++                          vertical: compact ? 8 : 16,
++                        ),
++                        child: Row(
++                          children: [
++                            Expanded(
++                              child: Text(
++                                title,
++                                style: MomHomeTokens.text(
++                                  20,
++                                  weight: FontWeight.w700,
++                                ),
++                              ),
++                            ),
++                            const SizedBox(width: 12),
++                            IconButton(
++                              tooltip: '关闭记录',
++                              onPressed: controller.phase == DiaryPhase.saving
++                                  ? null
++                                  : _close,
++                              style: IconButton.styleFrom(
++                                foregroundColor: MomHomeTokens.rose,
++                                minimumSize: const Size(44, 44),
++                              ),
++                              icon: const Icon(Icons.close, size: 20),
++                            ),
++                          ],
++                        ),
++                      ),
++                    ),
++                    ColoredBox(
++                      color: MomHomeTokens.surface,
++                      child: Padding(
++                        padding: EdgeInsets.fromLTRB(
++                          16,
++                          0,
++                          16,
++                          compact ? 10 : 14,
++                        ),
++                        child: _DiaryTabs(
++                          completed: {
++                            if (!controller.draft.rest.isEmpty)
++                              DiarySection.rest,
++                            if (!controller.draft.body.isEmpty)
++                              DiarySection.body,
++                            if (!controller.draft.mood.isEmpty)
++                              DiarySection.mood,
++                          },
++                          selected: _section,
++                          onSelected: controller.phase == DiaryPhase.saving
++                              ? null
++                              : (value) => setState(() => _section = value),
++                        ),
++                      ),
+                     ),
+                     Expanded(
++                      child: switch (controller.phase) {
++                        DiaryPhase.loading => const ProductLoadingView(),
++                        DiaryPhase.failed => SingleChildScrollView(
++                          padding: const EdgeInsets.all(16),
++                          child: ProductErrorView(
++                            useMomStyle: true,
++                            failure: controller.failure!,
++                            onRetry: controller.load,
++                          ),
++                        ),
++                        DiaryPhase.ready || DiaryPhase.saving => AbsorbPointer(
++                          absorbing: controller.phase == DiaryPhase.saving,
++                          child: SingleChildScrollView(
++                            key: ValueKey(_section),
++                            controller: _fieldsScroll,
++                            padding: const EdgeInsets.all(16),
++                            child: Column(
++                              crossAxisAlignment: CrossAxisAlignment.stretch,
++                              children: [
++                                _DiaryContext(
++                                  section: _section,
++                                  stageLabel: widget.stageLabel,
++                                  date: controller.date,
++                                  count: controller.draft.completedGroups,
++                                ),
++                                const SizedBox(height: MomHomeTokens.gap),
++                                switch (_section) {
++                                  DiarySection.rest => RestFields(
++                                    value: controller.draft.rest,
++                                    onChanged: (value) {
++                                      _saved = false;
++                                      controller.edit(
++                                        controller.draft.copyWith(rest: value),
++                                      );
++                                    },
++                                  ),
++                                  DiarySection.body => BodyFields(
++                                    key: ValueKey(_reloadRevision),
++                                    value: controller.draft.body,
++                                    onChanged: (value) {
++                                      _saved = false;
++                                      controller.edit(
++                                        controller.draft.copyWith(body: value),
++                                      );
++                                    },
++                                  ),
++                                  DiarySection.mood => MoodFields(
++                                    value: controller.draft.mood,
++                                    onChanged: (value) {
++                                      _saved = false;
++                                      controller.edit(
++                                        controller.draft.copyWith(mood: value),
++                                      );
++                                    },
++                                  ),
++                                },
++                                if (_emptyAttempt && controller.draft.isEmpty)
++                                  Padding(
++                                    padding: const EdgeInsets.only(
++                                      top: MomHomeTokens.gap,
++                                    ),
++                                    child: Semantics(
++                                      liveRegion: true,
++                                      child: MomSettingsCard(
++                                        color: MomCozyColors.amberSoft,
++                                        children: [
++                                          Text(
++                                            '先记录一项今天的状态，再保存。',
++                                            style: MomHomeTokens.text(13),
++                                          ),
++                                        ],
++                                      ),
++                                    ),
++                                  ),
++                                if (controller.failure != null &&
++                                    controller.phase != DiaryPhase.failed)
++                                  ProductErrorView(
++                                    useMomStyle: true,
++                                    failure: controller.failure!,
++                                    preserveDraft: true,
++                                    onRetry:
++                                        controller.failure!.kind ==
++                                            ProductFailureKind.conflict
++                                        ? _reloadConflict
++                                        : null,
++                                  ),
++                              ],
++                            ),
++                          ),
++                        ),
++                      },
++                    ),
++                    ColoredBox(
++                      color: MomHomeTokens.surface,
+                       child: Padding(
+-                        padding: EdgeInsets.fromLTRB(
+-                          narrow ? 14 : 20,
+-                          compact ? 10 : 18,
+-                          narrow ? 14 : 20,
+-                          compact ? 10 : 20,
++                        padding: EdgeInsets.symmetric(
++                          horizontal: 16,
++                          vertical: compact ? 10 : 16,
+                         ),
+                         child: Column(
+                           crossAxisAlignment: CrossAxisAlignment.stretch,
++                          spacing: MomHomeTokens.gap,
+                           children: [
+-                            _DiaryTabs(
+-                              completed: {
+-                                if (!controller.draft.rest.isEmpty)
+-                                  DiarySection.rest,
+-                                if (!controller.draft.body.isEmpty)
+-                                  DiarySection.body,
+-                                if (!controller.draft.mood.isEmpty)
+-                                  DiarySection.mood,
+-                              },
+-                              selected: _section,
+-                              onSelected: controller.phase == DiaryPhase.saving
+-                                  ? null
+-                                  : (value) => setState(() {
+-                                      _section = value;
+-                                    }),
+-                            ),
+-                            SizedBox(height: compact ? 10 : 16),
+-                            Expanded(
+-                              child: switch (controller.phase) {
+-                                DiaryPhase.loading =>
+-                                  const ProductLoadingView(),
+-                                DiaryPhase.failed => SingleChildScrollView(
+-                                  child: ProductErrorView(
+-                                    failure: controller.failure!,
+-                                    onRetry: controller.load,
+-                                  ),
+-                                ),
+-                                DiaryPhase.ready ||
+-                                DiaryPhase.saving => AbsorbPointer(
+-                                  absorbing:
+-                                      controller.phase == DiaryPhase.saving,
+-                                  child: SingleChildScrollView(
+-                                    key: ValueKey(_section),
+-                                    controller: _fieldsScroll,
+-                                    child: Column(
+-                                      crossAxisAlignment:
+-                                          CrossAxisAlignment.stretch,
+-                                      children: [
+-                                        switch (_section) {
+-                                          DiarySection.rest => RestFields(
+-                                            value: controller.draft.rest,
+-                                            onChanged: (value) {
+-                                              _saved = false;
+-                                              controller.edit(
+-                                                controller.draft.copyWith(
+-                                                  rest: value,
+-                                                ),
+-                                              );
+-                                            },
+-                                          ),
+-                                          DiarySection.body => BodyFields(
+-                                            value: controller.draft.body,
+-                                            onChanged: (value) {
+-                                              _saved = false;
+-                                              controller.edit(
+-                                                controller.draft.copyWith(
+-                                                  body: value,
+-                                                ),
+-                                              );
+-                                            },
+-                                          ),
+-                                          DiarySection.mood => MoodFields(
+-                                            value: controller.draft.mood,
+-                                            onChanged: (value) {
+-                                              _saved = false;
+-                                              controller.edit(
+-                                                controller.draft.copyWith(
+-                                                  mood: value,
+-                                                ),
+-                                              );
+-                                            },
+-                                          ),
+-                                        },
+-                                        if (_emptyAttempt &&
+-                                            controller.draft.isEmpty)
+-                                          Semantics(
+-                                            liveRegion: true,
+-                                            child: Container(
+-                                              margin:
+-                                                  const EdgeInsets.symmetric(
+-                                                    vertical: 8,
+-                                                  ),
+-                                              padding: const EdgeInsets.all(14),
+-                                              decoration: BoxDecoration(
+-                                                color: MomCozyColors.amberSoft,
+-                                                borderRadius:
+-                                                    BorderRadius.circular(
+-                                                      MomCozyRadii.control,
+-                                                    ),
+-                                              ),
+-                                              child: const Text(
+-                                                '先记录一项今天的状态，再保存。',
+-                                              ),
+-                                            ),
+-                                          ),
+-                                        if (controller.failure != null &&
+-                                            controller.phase !=
+-                                                DiaryPhase.failed)
+-                                          ProductErrorView(
+-                                            failure: controller.failure!,
+-                                            preserveDraft: true,
+-                                            onRetry:
+-                                                controller.failure!.kind ==
+-                                                    ProductFailureKind.conflict
+-                                                ? _reloadConflict
+-                                                : null,
+-                                          ),
+-                                      ],
+-                                    ),
+-                                  ),
+-                                ),
+-                              },
+-                            ),
+                             if (_saved)
+-                              Padding(
+-                                padding: const EdgeInsets.only(top: 8),
+-                                child: Semantics(
+-                                  liveRegion: true,
+-                                  child: const Text(
+-                                    '今天的记录已保存',
+-                                    textAlign: TextAlign.center,
+-                                    style: TextStyle(
+-                                      fontSize: 12,
+-                                      color: MomCozyColors.care,
+-                                    ),
++                              Semantics(
++                                liveRegion: true,
++                                child: Text(
++                                  '今天的记录已保存',
++                                  textAlign: TextAlign.center,
++                                  style: MomHomeTokens.text(
++                                    13,
++                                    color: MomHomeTokens.teal,
+                                   ),
+                                 ),
+                               ),
+-                            const SizedBox(height: 14),
+                             FilledButton(
++                              style: FilledButton.styleFrom(
++                                disabledBackgroundColor:
++                                    MomHomeTokens.neutralSurface,
++                                disabledForegroundColor:
++                                    MomHomeTokens.secondary,
++                              ),
+                               onPressed:
+                                   controller.canSave ||
+                                       (controller.canEdit &&
+                                           controller.draft.isEmpty)
+                                   ? _save
+                                   : null,
+-                              style: FilledButton.styleFrom(
+-                                minimumSize: const Size(0, 48),
+-                                backgroundColor: MomCozyColors.diaryHeader,
+-                                foregroundColor: MomCozyColors.diaryBright,
+-                                shape: RoundedRectangleBorder(
+-                                  borderRadius: BorderRadius.circular(12),
+-                                ),
+-                                textStyle: const TextStyle(
+-                                  fontFamily: MomCozyTypography.fontFamily,
+-                                  fontFamilyFallback:
+-                                      MomCozyTypography.fontFamilyFallback,
+-                                  fontSize: 14,
+-                                  fontWeight: FontWeight.w500,
+-                                ),
+-                              ),
+                               child: Text(
+                                 controller.phase == DiaryPhase.saving
+                                     ? '正在保存…'
+@@ -405,130 +413,64 @@
+   );
+ }
+ 
+-class _DiaryHeader extends StatelessWidget {
+-  const _DiaryHeader({
+-    required this.title,
++class _DiaryContext extends StatelessWidget {
++  const _DiaryContext({
+     required this.section,
+     required this.stageLabel,
+     required this.date,
+     required this.count,
+-    required this.compact,
+-    required this.onClose,
+   });
+-  final String title;
+   final DiarySection section;
+   final String? stageLabel;
+   final LocalDate date;
+   final int count;
+-  final bool compact;
+-  final VoidCallback? onClose;
+ 
+   @override
+-  Widget build(BuildContext context) => Container(
+-    padding: EdgeInsets.fromLTRB(
+-      MediaQuery.sizeOf(context).width < 359 ? 17 : 22,
+-      compact ? 8 : 18,
+-      22,
+-      compact ? 8 : 23,
+-    ),
+-    color: MomCozyColors.diaryHeader,
+-    child: Column(
+-      crossAxisAlignment: CrossAxisAlignment.stretch,
+-      children: [
+-        Row(
+-          children: [
+-            Expanded(
+-              child: Text(
+-                title,
+-                style: TextStyle(
+-                  fontFamily: MomCozyTypography.displayFontFamily,
+-                  fontSize: compact ? 19 : 23,
+-                  height: 1.2,
+-                  letterSpacing: -.69,
+-                  fontWeight: FontWeight.w600,
+-                  color: MomCozyColors.diaryBright,
+-                ),
+-              ),
+-            ),
+-            IconButton(
+-              tooltip: '关闭记录',
+-              onPressed: onClose,
+-              style: IconButton.styleFrom(
+-                foregroundColor: MomCozyColors.diaryBright,
+-                side: const BorderSide(color: Color(0x669d8877)),
+-                minimumSize: const Size(44, 44),
+-                shape: const CircleBorder(),
+-              ),
+-              icon: const Icon(
+-                Icons.close,
+-                size: 20,
+-                color: MomCozyColors.diaryBright,
+-              ),
+-            ),
+-          ],
+-        ),
+-        if (!compact) ...[
+-          const SizedBox(height: 8),
+-          Wrap(
+-            alignment: WrapAlignment.spaceBetween,
+-            spacing: 10,
+-            runSpacing: 4,
+-            children: [
+-              Text(
+-                '${stageLabel == null ? '' : '$stageLabel · '}${date.month}/${date.day}',
+-                style: const TextStyle(
+-                  fontSize: 11,
+-                  height: 1.6,
+-                  color: MomCozyColors.diaryMeta,
+-                ),
+-              ),
+-              Text(
+-                '$count/3 已记录',
+-                style: const TextStyle(
+-                  fontSize: 10,
+-                  height: 1.6,
+-                  color: MomCozyColors.diaryMeta,
+-                ),
+-              ),
+-            ],
+-          ),
+-          const SizedBox(height: 12),
+-          Stack(
+-            clipBehavior: Clip.none,
+-            children: [
+-              Padding(
+-                padding: const EdgeInsets.only(right: 62),
+-                child: Text(
+-                  switch (section) {
+-                    DiarySection.rest => '休息的长短和感受，都值得被看见。',
+-                    DiarySection.body => '慢慢感受，今天的身体需要什么。',
+-                    DiarySection.mood => '不用急着变好，如实记录此刻的心情。',
+-                  },
+-                  style: const TextStyle(
+-                    fontSize: 14,
+-                    height: 1.7,
+-                    color: MomCozyColors.diaryBright,
+-                  ),
+-                ),
+-              ),
+-              Positioned(
+-                right: 0,
+-                bottom: -5,
+-                child: MomCozyLineIcon(
+-                  switch (section) {
+-                    DiarySection.rest => MomCozyLineGlyph.moon,
+-                    DiarySection.body => MomCozyLineGlyph.heart,
+-                    DiarySection.mood => MomCozyLineGlyph.spark,
+-                  },
+-                  size: 46,
+-                  color: const Color(0xb3d2b89f),
+-                ),
+-              ),
+-            ],
++  Widget build(BuildContext context) => MomSettingsCard(
++    gradient: switch (section) {
++      DiarySection.rest => MomHomeTokens.sleep,
++      DiarySection.body => MomHomeTokens.body,
++      DiarySection.mood => MomHomeTokens.mood,
++    },
++    children: [
++      Wrap(
++        alignment: WrapAlignment.spaceBetween,
++        spacing: 12,
++        runSpacing: 8,
++        children: [
++          Text(
++            '${stageLabel == null ? '' : '$stageLabel · '}${date.month}/${date.day}',
++            style: MomHomeTokens.text(13, color: MomHomeTokens.secondary),
++          ),
++          Text(
++            '$count/3 已记录',
++            style: MomHomeTokens.text(13, color: MomHomeTokens.secondary),
+           ),
+         ],
+-      ],
+-    ),
++      ),
++      Row(
++        crossAxisAlignment: CrossAxisAlignment.start,
++        children: [
++          MomCozyLineIcon(
++            switch (section) {
++              DiarySection.rest => MomCozyLineGlyph.moon,
++              DiarySection.body => MomCozyLineGlyph.heart,
++              DiarySection.mood => MomCozyLineGlyph.spark,
++            },
++            size: 24,
++            color: MomHomeTokens.teal,
++          ),
++          const SizedBox(width: 12),
++          Expanded(
++            child: Text(switch (section) {
++              DiarySection.rest => '休息的长短和感受，都值得被看见。',
++              DiarySection.body => '慢慢感受，今天的身体需要什么。',
++              DiarySection.mood => '不用急着变好，如实记录此刻的心情。',
++            }, style: MomHomeTokens.text(13, color: MomHomeTokens.secondary)),
++          ),
++        ],
++      ),
++    ],
+   );
+ }
+ 
+@@ -545,8 +487,8 @@
+   Widget build(BuildContext context) => Container(
+     padding: const EdgeInsets.all(4),
+     decoration: BoxDecoration(
+-      color: MomCozyColors.warmFormTab,
+-      borderRadius: BorderRadius.circular(13),
++      color: MomHomeTokens.neutralSurface,
++      borderRadius: BorderRadius.circular(16),
+     ),
+     child: Row(
+       children: [
+@@ -561,20 +503,15 @@
+                   minimumSize: const Size(0, 44),
+                   padding: const EdgeInsets.all(4),
+                   foregroundColor: selected == value
+-                      ? MomCozyColors.diaryBright
+-                      : MomCozyColors.diaryMuted,
++                      ? MomHomeTokens.teal
++                      : MomHomeTokens.secondary,
+                   backgroundColor: selected == value
+-                      ? MomCozyColors.warmFormSelected
++                      ? MomHomeTokens.mint
+                       : Colors.transparent,
+                   shape: RoundedRectangleBorder(
+-                    borderRadius: BorderRadius.circular(8),
++                    borderRadius: BorderRadius.circular(16),
+                   ),
+-                  textStyle: const TextStyle(
+-                    fontFamily: MomCozyTypography.fontFamily,
+-                    fontFamilyFallback: MomCozyTypography.fontFamilyFallback,
+-                    fontSize: 13,
+-                    fontWeight: FontWeight.w500,
+-                  ),
++                  textStyle: MomHomeTokens.text(13, weight: FontWeight.w700),
+                 ),
+                 child: Row(
+                   mainAxisAlignment: MainAxisAlignment.center,
+@@ -596,8 +533,8 @@
+                           decoration: BoxDecoration(
+                             shape: BoxShape.circle,
+                             color: selected == value
+-                                ? MomCozyColors.diaryMeta
+-                                : MomCozyColors.diaryMuted,
++                                ? MomHomeTokens.teal
++                                : MomHomeTokens.secondary,
+                           ),
+                         ),
+                       ),

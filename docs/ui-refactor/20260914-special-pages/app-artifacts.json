@@ -1,0 +1,104 @@
+[
+  {
+    "path": "test/goldens/design_system/not-found-320-2x.png",
+    "width": 320,
+    "height": 568,
+    "sha256": "195899ef39389ddaf86d4230a9b49b667815a1d914ad6c5b94d9fa9bccf64f17"
+  },
+  {
+    "path": "test/goldens/design_system/not-found-320.png",
+    "width": 320,
+    "height": 568,
+    "sha256": "42353421481fb8ae0308f7c559ab40b05969c8d7375ae356b3e3ea24935c2974"
+  },
+  {
+    "path": "test/goldens/design_system/not-found-390.png",
+    "width": 390,
+    "height": 568,
+    "sha256": "07533b044d326c6bb0edbaf3875dbaf1162bf726cde860aca7ce8448cc7dc288"
+  },
+  {
+    "path": "test/goldens/design_system/not-found-430.png",
+    "width": 430,
+    "height": 568,
+    "sha256": "3a6013c78d1fac9fd758b0daf295d8fd87572fc13d9fb4fdc037d0c3e08b71ab"
+  },
+  {
+    "path": "test/goldens/design_system/motion-guide-320-2x.png",
+    "width": 320,
+    "height": 320,
+    "sha256": "6ed02c2942aa18df5c71af285b90841b99386ee6799beec3cdca64637ff465ba"
+  },
+  {
+    "path": "test/goldens/design_system/motion-guide-320.png",
+    "width": 320,
+    "height": 720,
+    "sha256": "9da80454fd39b23b02354e6c9555c9cf4290b6b40d04f626f67a5e9b4afad9ea"
+  },
+  {
+    "path": "test/goldens/design_system/motion-guide-390-2x.png",
+    "width": 390,
+    "height": 320,
+    "sha256": "34b0c8cc63419691f6a2edfa0afd42ed19d68ec49941727a6eba31ca2cafd7d8"
+  },
+  {
+    "path": "test/goldens/design_system/motion-guide-390.png",
+    "width": 390,
+    "height": 720,
+    "sha256": "7707a05a321b41259516faa7cd158892a7b10fbe1ca7a82e01876c04cdbb93f7"
+  },
+  {
+    "path": "test/goldens/design_system/motion-guide-430-2x.png",
+    "width": 430,
+    "height": 320,
+    "sha256": "910884ccc8b9ca241ac46a2f36c137925666bc054aaff5de716bb559a873a099"
+  },
+  {
+    "path": "test/goldens/design_system/motion-guide-430.png",
+    "width": 430,
+    "height": 720,
+    "sha256": "9bcd1d9eda32986cf399850e78e970e3cccf3242eaa61c62a68d9faf0e764982"
+  },
+  {
+    "path": "test/goldens/design_system/motion-failure-320-2x.png",
+    "width": 320,
+    "height": 320,
+    "sha256": "719b37551b3c72cbb2755a377873fa519194589f01b57915f6bbf6972148890b"
+  },
+  {
+    "path": "test/goldens/design_system/motion-failure-320.png",
+    "width": 320,
+    "height": 720,
+    "sha256": "08ce1dbf54761037c12d09e57c2ae0233e3007bcd2cedf5503b235739a1d52fc"
+  },
+  {
+    "path": "test/goldens/design_system/motion-failure-390-2x.png",
+    "width": 390,
+    "height": 320,
+    "sha256": "27a8afd4a4d2df9b7b7e73028bb0c392898254abac0427a202e1cded89976a91"
+  },
+  {
+    "path": "test/goldens/design_system/motion-failure-390.png",
+    "width": 390,
+    "height": 720,
+    "sha256": "5d0522b1eecdb9da6c915d70950f6105ac02411c06682f02fcfe8b2eda6e1538"
+  },
+  {
+    "path": "test/goldens/design_system/motion-failure-430-2x.png",
+    "width": 430,
+    "height": 320,
+    "sha256": "1f0dfe693440afb61897336aeeccfe5685765931547087420c55464e960e01dd"
+  },
+  {
+    "path": "test/goldens/design_system/motion-failure-430.png",
+    "width": 430,
+    "height": 720,
+    "sha256": "d520d9884df21935a028852859273b01dde5620608f7b1d030514075a2e711e8"
+  },
+  {
+    "path": "test/goldens/design_system/motion-failure-actions-320-2x.png",
+    "width": 320,
+    "height": 320,
+    "sha256": "2869661d9d393c3af3ff33940130ef420490cf078b94ac171b4625ad4c111dfa"
+  }
+]

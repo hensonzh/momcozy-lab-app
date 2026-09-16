@@ -1,0 +1,292 @@
+[
+  {
+    "id": "05-agent/agent-form",
+    "figma_nodes": [
+      "282:1086",
+      "282:1125"
+    ],
+    "note": "Shared form dialog implemented and widget verified; source data, field types and action semantics preserved."
+  },
+  {
+    "id": "05-agent/agent-form-choices",
+    "figma_nodes": [
+      "276:1136",
+      "276:1448"
+    ],
+    "note": "Shared form dialog implemented and widget verified; source data, field types and action semantics preserved."
+  },
+  {
+    "id": "05-agent/agent-form-entry",
+    "figma_nodes": [
+      "271:1560",
+      "271:2117"
+    ],
+    "note": "Entry already redesigned in reading/card stage; refreshed current form-suite captures verify unchanged entry and submitted status."
+  },
+  {
+    "id": "05-agent/agent-form-failed",
+    "figma_nodes": [
+      "276:1241",
+      "276:1553"
+    ],
+    "note": "Shared form dialog implemented and widget verified; source data, field types and action semantics preserved."
+  },
+  {
+    "id": "05-agent/agent-form-pending",
+    "figma_nodes": [
+      "276:1296",
+      "276:1608"
+    ],
+    "note": "Shared form dialog implemented and widget verified; source data, field types and action semantics preserved."
+  },
+  {
+    "id": "05-agent/agent-form-short-keyboard",
+    "figma_nodes": [
+      "276:1710"
+    ],
+    "note": "Shared form dialog implemented and widget verified; source data, field types and action semantics preserved."
+  },
+  {
+    "id": "05-agent/agent-form-submitted-detail",
+    "figma_nodes": [
+      "276:1348",
+      "276:1660"
+    ],
+    "note": "Shared form dialog implemented and widget verified; source data, field types and action semantics preserved."
+  },
+  {
+    "id": "05-agent/agent-form-submitted-entry",
+    "figma_nodes": [
+      "271:1560",
+      "271:2117"
+    ],
+    "note": "Entry already redesigned in reading/card stage; refreshed current form-suite captures verify unchanged entry and submitted status."
+  },
+  {
+    "id": "05-agent/agent-form-top",
+    "figma_nodes": [
+      "276:1086",
+      "276:1398"
+    ],
+    "note": "Shared form dialog implemented and widget verified; source data, field types and action semantics preserved."
+  },
+  {
+    "id": "05-agent/agent-form-validation",
+    "figma_nodes": [
+      "276:1188",
+      "276:1500"
+    ],
+    "note": "Shared form dialog implemented and widget verified; source data, field types and action semantics preserved."
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-intake-accepted",
+    "figma_nodes": [
+      "246:1173",
+      "247:1182",
+      "271:1560",
+      "271:2117"
+    ],
+    "note": "Conversation request/loading/accepted/reply or return state visually reviewed against existing conversation and form-entry design; no new transcript layout. Agent Hub regression suite covers auto-open, drafts, submission and streamed return."
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-intake-auto-loading",
+    "figma_nodes": [
+      "246:1173",
+      "247:1182",
+      "271:1560",
+      "271:2117"
+    ],
+    "note": "Conversation request/loading/accepted/reply or return state visually reviewed against existing conversation and form-entry design; no new transcript layout. Agent Hub regression suite covers auto-open, drafts, submission and streamed return."
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-intake-auto-open",
+    "figma_nodes": [
+      "276:1760",
+      "276:2115"
+    ],
+    "note": "Shared form dialog implemented and widget verified; source data, field types and action semantics preserved."
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-intake-cancelled",
+    "figma_nodes": [
+      "246:1173",
+      "247:1182",
+      "271:1560",
+      "271:2117"
+    ],
+    "note": "Conversation request/loading/accepted/reply or return state visually reviewed against existing conversation and form-entry design; no new transcript layout. Agent Hub regression suite covers auto-open, drafts, submission and streamed return."
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-intake-date-picker",
+    "figma_nodes": [
+      "277:1138",
+      "277:1260"
+    ],
+    "note": "Shared form dialog implemented and widget verified; source data, field types and action semantics preserved."
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-intake-date-selected",
+    "figma_nodes": [
+      "277:1199",
+      "277:1260"
+    ],
+    "note": "Shared form dialog implemented and widget verified; source data, field types and action semantics preserved."
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-intake-draft-return",
+    "figma_nodes": [
+      "283:1086",
+      "283:1135"
+    ],
+    "note": "Shared form dialog implemented and widget verified; source data, field types and action semantics preserved."
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-intake-dropdown",
+    "figma_nodes": [
+      "277:1086"
+    ],
+    "note": "Shared form dialog implemented and widget verified; source data, field types and action semantics preserved."
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-intake-filled",
+    "figma_nodes": [
+      "276:1807",
+      "276:2162"
+    ],
+    "note": "Shared form dialog implemented and widget verified; source data, field types and action semantics preserved."
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-intake-readonly",
+    "figma_nodes": [
+      "276:1955",
+      "276:2310"
+    ],
+    "note": "Shared form dialog implemented and widget verified; source data, field types and action semantics preserved."
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-intake-readonly-return",
+    "figma_nodes": [
+      "246:1173",
+      "247:1182",
+      "271:1560",
+      "271:2117"
+    ],
+    "note": "Conversation request/loading/accepted/reply or return state visually reviewed against existing conversation and form-entry design; no new transcript layout. Agent Hub regression suite covers auto-open, drafts, submission and streamed return."
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-intake-reply",
+    "figma_nodes": [
+      "246:1173",
+      "247:1182",
+      "271:1560",
+      "271:2117"
+    ],
+    "note": "Conversation request/loading/accepted/reply or return state visually reviewed against existing conversation and form-entry design; no new transcript layout. Agent Hub regression suite covers auto-open, drafts, submission and streamed return."
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-intake-request",
+    "figma_nodes": [
+      "246:1173",
+      "247:1182",
+      "271:1560",
+      "271:2117"
+    ],
+    "note": "Conversation request/loading/accepted/reply or return state visually reviewed against existing conversation and form-entry design; no new transcript layout. Agent Hub regression suite covers auto-open, drafts, submission and streamed return."
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-intake-submitting",
+    "figma_nodes": [
+      "276:1906",
+      "276:2261"
+    ],
+    "note": "Shared form dialog implemented and widget verified; source data, field types and action semantics preserved."
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-intake-validation",
+    "figma_nodes": [
+      "276:1856",
+      "276:2211"
+    ],
+    "note": "Shared form dialog implemented and widget verified; source data, field types and action semantics preserved."
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-ticket-auto-loading",
+    "figma_nodes": [
+      "246:1212",
+      "247:1218",
+      "271:1560",
+      "271:2117"
+    ],
+    "note": "Existing conversation and form-entry patterns cover request/loading/submitted return. Production support-ticket routing/retry protected by Agent Hub tests; current ticket component captures do not claim new HTTP integration coverage."
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-ticket-auto-open",
+    "figma_nodes": [
+      "276:2002",
+      "280:1086"
+    ],
+    "note": "Shared form dialog implemented and widget verified; source data, field types and action semantics preserved."
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-ticket-failed",
+    "figma_nodes": [
+      "276:2030",
+      "280:1114"
+    ],
+    "note": "Shared form dialog implemented and widget verified; source data, field types and action semantics preserved."
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-ticket-readonly",
+    "figma_nodes": [
+      "276:2089",
+      "280:1173"
+    ],
+    "note": "Shared form dialog implemented and widget verified; source data, field types and action semantics preserved."
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-ticket-request",
+    "figma_nodes": [
+      "246:1212",
+      "247:1218",
+      "271:1560",
+      "271:2117"
+    ],
+    "note": "Existing conversation and form-entry patterns cover request/loading/submitted return. Production support-ticket routing/retry protected by Agent Hub tests; current ticket component captures do not claim new HTTP integration coverage."
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-ticket-retrying",
+    "figma_nodes": [
+      "276:2061",
+      "280:1145"
+    ],
+    "note": "Shared form dialog implemented and widget verified; source data, field types and action semantics preserved."
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-ticket-return",
+    "figma_nodes": [
+      "246:1212",
+      "247:1218",
+      "271:1560",
+      "271:2117"
+    ],
+    "note": "Existing conversation and form-entry patterns cover request/loading/submitted return. Production support-ticket routing/retry protected by Agent Hub tests; current ticket component captures do not claim new HTTP integration coverage."
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-ticket-submitted",
+    "figma_nodes": [
+      "246:1212",
+      "247:1218",
+      "271:1560",
+      "271:2117"
+    ],
+    "note": "Existing conversation and form-entry patterns cover request/loading/submitted return. Production support-ticket routing/retry protected by Agent Hub tests; current ticket component captures do not claim new HTTP integration coverage."
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-ticket-submitting",
+    "figma_nodes": [
+      "276:2061",
+      "280:1145"
+    ],
+    "note": "Shared form dialog implemented and widget verified; source data, field types and action semantics preserved."
+  }
+]

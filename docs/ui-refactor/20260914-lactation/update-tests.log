@@ -1,0 +1,116 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart: wire contract keeps methods exclusive and carries the deletion version
+00:00 +1: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart: uncertain save retries the same payload and key, blocks duplicate taps, and undo uses receipt
+00:00 +2: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart: changing method clears the old measurement and rejects invalid typed input
+00:00 +3: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart: single record editor saves a real observation, then delete and undo change the list
+00:00 +4: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart: lactation modal switches to nursing and saves at 320.0 / 1.0
+00:00 +5: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart: lactation modal switches to nursing and saves at 320.0 / 2.0
+00:00 +6: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart: lactation list renders at 320.0 / 1.0
+00:00 +7: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart: lactation list renders at 320.0 / 2.0
+00:01 +8: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart: lactation entry renders at 320.0 / 1.0
+00:01 +9: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart: lactation entry renders at 320.0 / 2.0
+00:01 +10: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart: lactation modal switches to nursing and saves at 390.0 / 1.0
+00:01 +11: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart: lactation modal switches to nursing and saves at 390.0 / 2.0
+00:01 +12: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart: lactation list renders at 390.0 / 1.0
+00:01 +13: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart: lactation list renders at 390.0 / 2.0
+00:01 +14: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart: lactation entry renders at 390.0 / 1.0
+00:01 +15: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart: lactation entry renders at 390.0 / 2.0
+00:01 +16: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart: lactation modal switches to nursing and saves at 430.0 / 1.0
+00:01 +17: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart: lactation modal switches to nursing and saves at 430.0 / 2.0
+00:01 +18: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart: lactation list renders at 430.0 / 1.0
+00:01 +19: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart: lactation list renders at 430.0 / 2.0
+00:01 +20: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart: lactation entry renders at 430.0 / 1.0
+00:01 +21: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart: lactation entry renders at 430.0 / 2.0
+00:02 +22: loading /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart
+00:02 +22: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: (setUpAll)
+00:02 +22: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/1.0
+00:03 +23: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/2.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: exactly one matching candidate
+  Actual: _HitTestableWidgetFinder:<Found 0 widgets with text "这次记录已保存。" (considering only
+hit-testable widgets with a RenderBox): []>
+   Which: means none were found but one was expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart:123:11)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart line 123
+The test description was:
+  lactation states validate, retry, edit and undo 320.0/2.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:03 +23 -1: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/2.0 [E]
+  Test failed. See exception logs above.
+  The test description was: lactation states validate, retry, edit and undo 320.0/2.0
+  
+00:03 +23 -1: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 390.0/1.0
+00:04 +24 -1: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 390.0/2.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: exactly one matching candidate
+  Actual: _HitTestableWidgetFinder:<Found 0 widgets with text "这次记录已保存。" (considering only
+hit-testable widgets with a RenderBox): []>
+   Which: means none were found but one was expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart:123:11)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart line 123
+The test description was:
+  lactation states validate, retry, edit and undo 390.0/2.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:04 +24 -2: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 390.0/2.0 [E]
+  Test failed. See exception logs above.
+  The test description was: lactation states validate, retry, edit and undo 390.0/2.0
+  
+00:04 +24 -2: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 430.0/1.0
+00:04 +25 -2: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 430.0/2.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: exactly one matching candidate
+  Actual: _HitTestableWidgetFinder:<Found 0 widgets with text "这次记录已保存。" (considering only
+hit-testable widgets with a RenderBox): []>
+   Which: means none were found but one was expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart:123:11)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart line 123
+The test description was:
+  lactation states validate, retry, edit and undo 430.0/2.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:04 +25 -3: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 430.0/2.0 [E]
+  Test failed. See exception logs above.
+  The test description was: lactation states validate, retry, edit and undo 430.0/2.0
+  
+00:04 +25 -3: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: (tearDownAll)
+00:04 +25 -3: Some tests failed.
+
+Failing tests:
+  /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/2.0
+  /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 390.0/2.0
+  /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 430.0/2.0

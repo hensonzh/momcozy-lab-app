@@ -1,0 +1,194 @@
+[
+  {
+    "id": "201:1108",
+    "name": "Consultation summary / published-full",
+    "x": 0,
+    "y": 66000,
+    "width": 393,
+    "height": 1188
+  },
+  {
+    "id": "201:1159",
+    "name": "Consultation summary / published",
+    "x": 460,
+    "y": 66000,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "201:1210",
+    "name": "Consultation summary / service-information",
+    "x": 920,
+    "y": 66000,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "201:1272",
+    "name": "Consultation summary / loading",
+    "x": 1380,
+    "y": 66000,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "201:1286",
+    "name": "Consultation summary / pending",
+    "x": 1840,
+    "y": 66000,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "201:1302",
+    "name": "Consultation summary / empty",
+    "x": 0,
+    "y": 67900,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "201:1317",
+    "name": "Consultation summary / failed",
+    "x": 460,
+    "y": 67900,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "201:1332",
+    "name": "Consultation summary / offline",
+    "x": 920,
+    "y": 67900,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "201:1347",
+    "name": "Consultation summary / refresh-error",
+    "x": 1380,
+    "y": 67900,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "201:1402",
+    "name": "Consultation summary / large-published",
+    "x": 1840,
+    "y": 67900,
+    "width": 320,
+    "height": 844
+  },
+  {
+    "id": "202:1108",
+    "name": "Summary task / pending",
+    "x": 0,
+    "y": 69600,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "202:1180",
+    "name": "Summary task / in-progress",
+    "x": 460,
+    "y": 69600,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "202:1252",
+    "name": "Summary task / completed",
+    "x": 920,
+    "y": 69600,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "202:1324",
+    "name": "Summary task / skipped",
+    "x": 1380,
+    "y": 69600,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "202:1396",
+    "name": "Summary task / updating",
+    "x": 1840,
+    "y": 69600,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "202:1469",
+    "name": "Summary task / uncertain",
+    "x": 0,
+    "y": 71500,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "202:1546",
+    "name": "Summary task / superseded",
+    "x": 460,
+    "y": 71500,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "202:1622",
+    "name": "Summary task / removed",
+    "x": 920,
+    "y": 71500,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "202:1681",
+    "name": "Summary task / scheduled",
+    "x": 1380,
+    "y": 71500,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "202:1754",
+    "name": "Summary task / large-uncertain",
+    "x": 1840,
+    "y": 71500,
+    "width": 320,
+    "height": 844
+  },
+  {
+    "id": "202:1834",
+    "name": "Consultation summary / large-information",
+    "x": 0,
+    "y": 73400,
+    "width": 320,
+    "height": 844
+  },
+  {
+    "id": "202:1896",
+    "name": "Consultation summary / large-pending",
+    "x": 460,
+    "y": 73400,
+    "width": 320,
+    "height": 844
+  },
+  {
+    "id": "202:1912",
+    "name": "Consultation summary / no-actions",
+    "x": 920,
+    "y": 73400,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "202:1950",
+    "name": "Summary task / short-large-progress",
+    "x": 1380,
+    "y": 73400,
+    "width": 320,
+    "height": 568
+  }
+]

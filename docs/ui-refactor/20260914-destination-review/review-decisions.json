@@ -1,0 +1,371 @@
+[
+  {
+    "id": "07-me/more-current-both-unavailable-mom",
+    "routes": [
+      "/me"
+    ],
+    "status": "reviewed_existing_design",
+    "design_nodes": [
+      "19:2",
+      "88:111"
+    ],
+    "note": "Mother-page entry/return with existing empty, purchased, appointment, or exhausted entitlement state; no new visual design required."
+  },
+  {
+    "id": "07-me/more-current-email-unavailable-mom",
+    "routes": [
+      "/me"
+    ],
+    "status": "reviewed_existing_design",
+    "design_nodes": [
+      "19:2",
+      "88:111"
+    ],
+    "note": "Mother-page entry/return with existing empty, purchased, appointment, or exhausted entitlement state; no new visual design required."
+  },
+  {
+    "id": "07-me/more-current-logout-error-mom",
+    "routes": [
+      "/me"
+    ],
+    "status": "reviewed_existing_design",
+    "design_nodes": [
+      "19:2",
+      "88:111"
+    ],
+    "note": "Mother-page entry/return with existing empty, purchased, appointment, or exhausted entitlement state; no new visual design required."
+  },
+  {
+    "id": "07-me/more-current-long-mom",
+    "routes": [
+      "/me"
+    ],
+    "status": "reviewed_existing_design",
+    "design_nodes": [
+      "19:2",
+      "88:111"
+    ],
+    "note": "Mother-page entry/return with existing empty, purchased, appointment, or exhausted entitlement state; no new visual design required."
+  },
+  {
+    "id": "07-me/more-current-name-unavailable-mom",
+    "routes": [
+      "/me"
+    ],
+    "status": "reviewed_existing_design",
+    "design_nodes": [
+      "19:2",
+      "88:111"
+    ],
+    "note": "Mother-page entry/return with existing empty, purchased, appointment, or exhausted entitlement state; no new visual design required."
+  },
+  {
+    "id": "07-me/more-current-pending-mom",
+    "routes": [
+      "/me"
+    ],
+    "status": "reviewed_existing_design",
+    "design_nodes": [
+      "19:2",
+      "88:111"
+    ],
+    "note": "Mother-page entry/return with existing empty, purchased, appointment, or exhausted entitlement state; no new visual design required."
+  },
+  {
+    "id": "07-me/more-current-routes-mom",
+    "routes": [
+      "/me"
+    ],
+    "status": "reviewed_existing_design",
+    "design_nodes": [
+      "19:2",
+      "88:111"
+    ],
+    "note": "Mother-page entry/return with existing empty, purchased, appointment, or exhausted entitlement state; no new visual design required."
+  },
+  {
+    "id": "07-me/account-current-delete-mom",
+    "routes": [
+      "/me"
+    ],
+    "status": "reviewed_existing_design",
+    "design_nodes": [
+      "19:2",
+      "88:111"
+    ],
+    "note": "Mother-page entry/return with existing empty, purchased, appointment, or exhausted entitlement state; no new visual design required."
+  },
+  {
+    "id": "07-me/account-current-disabled-empty-mom",
+    "routes": [
+      "/me"
+    ],
+    "status": "reviewed_existing_design",
+    "design_nodes": [
+      "19:2",
+      "88:111"
+    ],
+    "note": "Mother-page entry/return with existing empty, purchased, appointment, or exhausted entitlement state; no new visual design required."
+  },
+  {
+    "id": "07-me/account-current-google-only-mom",
+    "routes": [
+      "/me"
+    ],
+    "status": "reviewed_existing_design",
+    "design_nodes": [
+      "19:2",
+      "88:111"
+    ],
+    "note": "Mother-page entry/return with existing empty, purchased, appointment, or exhausted entitlement state; no new visual design required."
+  },
+  {
+    "id": "07-me/account-current-logout-error-mom",
+    "routes": [
+      "/me"
+    ],
+    "status": "reviewed_existing_design",
+    "design_nodes": [
+      "19:2",
+      "88:111"
+    ],
+    "note": "Mother-page entry/return with existing empty, purchased, appointment, or exhausted entitlement state; no new visual design required."
+  },
+  {
+    "id": "07-me/account-current-logout-success-mom",
+    "routes": [
+      "/me"
+    ],
+    "status": "reviewed_existing_design",
+    "design_nodes": [
+      "19:2",
+      "88:111"
+    ],
+    "note": "Mother-page entry/return with existing empty, purchased, appointment, or exhausted entitlement state; no new visual design required."
+  },
+  {
+    "id": "07-me/account-current-long-pending-other-mom",
+    "routes": [
+      "/me"
+    ],
+    "status": "reviewed_existing_design",
+    "design_nodes": [
+      "19:2",
+      "88:111"
+    ],
+    "note": "Mother-page entry/return with existing empty, purchased, appointment, or exhausted entitlement state; no new visual design required."
+  },
+  {
+    "id": "07-me/account-current-password-mom",
+    "routes": [
+      "/me"
+    ],
+    "status": "reviewed_existing_design",
+    "design_nodes": [
+      "19:2",
+      "88:111"
+    ],
+    "note": "Mother-page entry/return with existing empty, purchased, appointment, or exhausted entitlement state; no new visual design required."
+  },
+  {
+    "id": "07-me/account-current-read-mom",
+    "routes": [
+      "/me"
+    ],
+    "status": "reviewed_existing_design",
+    "design_nodes": [
+      "19:2",
+      "88:111"
+    ],
+    "note": "Mother-page entry/return with existing empty, purchased, appointment, or exhausted entitlement state; no new visual design required."
+  },
+  {
+    "id": "07-me/notification-navigation-current-conversation-opened",
+    "routes": [
+      "/?conversationId=22222222-2222-4222-8222-222222222222"
+    ],
+    "status": "pending_review",
+    "design_nodes": [],
+    "note": "Navigation crash reproduced and fixed; conversation visual redesign remains pending."
+  },
+  {
+    "id": "07-me/notification-navigation-current-episode-home-return",
+    "routes": [
+      "/me"
+    ],
+    "status": "reviewed_existing_design",
+    "design_nodes": [
+      "19:2",
+      "88:111"
+    ],
+    "note": "Mother-page entry/return with existing empty, purchased, appointment, or exhausted entitlement state; no new visual design required."
+  },
+  {
+    "id": "07-me/notification-navigation-current-intake-home-return",
+    "routes": [
+      "/me"
+    ],
+    "status": "reviewed_existing_design",
+    "design_nodes": [
+      "19:2",
+      "88:111"
+    ],
+    "note": "Mother-page entry/return with existing empty, purchased, appointment, or exhausted entitlement state; no new visual design required."
+  },
+  {
+    "id": "07-me/notification-navigation-current-room-home-return",
+    "routes": [
+      "/me"
+    ],
+    "status": "reviewed_existing_design",
+    "design_nodes": [
+      "19:2",
+      "88:111"
+    ],
+    "note": "Mother-page entry/return with existing empty, purchased, appointment, or exhausted entitlement state; no new visual design required."
+  },
+  {
+    "id": "07-me/notification-navigation-current-room-opened",
+    "routes": [
+      "/services/appointments/11111111-1111-4111-8111-111111111111/room"
+    ],
+    "status": "reviewed_existing_design",
+    "design_nodes": [
+      "178:1108",
+      "178:1276"
+    ],
+    "note": "Existing consultation preparation design covers this notification destination."
+  },
+  {
+    "id": "07-me/notification-navigation-current-summary-home-return",
+    "routes": [
+      "/me"
+    ],
+    "status": "reviewed_existing_design",
+    "design_nodes": [
+      "19:2",
+      "88:111"
+    ],
+    "note": "Mother-page entry/return with existing empty, purchased, appointment, or exhausted entitlement state; no new visual design required."
+  },
+  {
+    "id": "08-expert-service/service-current-catalog-home-return",
+    "routes": [
+      "/me"
+    ],
+    "status": "reviewed_existing_design",
+    "design_nodes": [
+      "19:2",
+      "88:111"
+    ],
+    "note": "Mother-page entry/return with existing empty, purchased, appointment, or exhausted entitlement state; no new visual design required."
+  },
+  {
+    "id": "08-expert-service/service-current-catalog-recovery-home",
+    "routes": [
+      "/me"
+    ],
+    "status": "reviewed_existing_design",
+    "design_nodes": [
+      "19:2",
+      "88:111"
+    ],
+    "note": "Mother-page entry/return with existing empty, purchased, appointment, or exhausted entitlement state; no new visual design required."
+  },
+  {
+    "id": "08-expert-service/service-current-catalog-recovery-home-return",
+    "routes": [
+      "/me"
+    ],
+    "status": "reviewed_existing_design",
+    "design_nodes": [
+      "19:2",
+      "88:111"
+    ],
+    "note": "Mother-page entry/return with existing empty, purchased, appointment, or exhausted entitlement state; no new visual design required."
+  },
+  {
+    "id": "08-expert-service/service-current-discovery-home",
+    "routes": [
+      "/me"
+    ],
+    "status": "reviewed_existing_design",
+    "design_nodes": [
+      "19:2",
+      "88:111"
+    ],
+    "note": "Mother-page entry/return with existing empty, purchased, appointment, or exhausted entitlement state; no new visual design required."
+  },
+  {
+    "id": "08-expert-service/service-current-owned-home",
+    "routes": [
+      "/me"
+    ],
+    "status": "reviewed_existing_design",
+    "design_nodes": [
+      "19:2",
+      "88:111"
+    ],
+    "note": "Mother-page entry/return with existing empty, purchased, appointment, or exhausted entitlement state; no new visual design required."
+  },
+  {
+    "id": "08-expert-service/service-current-owned-home-return",
+    "routes": [
+      "/me"
+    ],
+    "status": "reviewed_existing_design",
+    "design_nodes": [
+      "19:2",
+      "88:111"
+    ],
+    "note": "Mother-page entry/return with existing empty, purchased, appointment, or exhausted entitlement state; no new visual design required."
+  },
+  {
+    "id": "08-expert-service/service-current-package-recovery-home",
+    "routes": [
+      "/me"
+    ],
+    "status": "reviewed_existing_design",
+    "design_nodes": [
+      "19:2",
+      "88:111"
+    ],
+    "note": "Mother-page entry/return with existing empty, purchased, appointment, or exhausted entitlement state; no new visual design required."
+  },
+  {
+    "id": "08-expert-service/service-current-package-recovery-home-return",
+    "routes": [
+      "/me"
+    ],
+    "status": "reviewed_existing_design",
+    "design_nodes": [
+      "19:2",
+      "88:111"
+    ],
+    "note": "Mother-page entry/return with existing empty, purchased, appointment, or exhausted entitlement state; no new visual design required."
+  },
+  {
+    "id": "08-expert-service/service-current-pending-home",
+    "routes": [
+      "/me"
+    ],
+    "status": "reviewed_existing_design",
+    "design_nodes": [
+      "19:2",
+      "88:111"
+    ],
+    "note": "Mother-page entry/return with existing empty, purchased, appointment, or exhausted entitlement state; no new visual design required."
+  },
+  {
+    "id": "08-expert-service/service-current-pending-home-return",
+    "routes": [
+      "/me"
+    ],
+    "status": "reviewed_existing_design",
+    "design_nodes": [
+      "19:2",
+      "88:111"
+    ],
+    "note": "Mother-page entry/return with existing empty, purchased, appointment, or exhausted entitlement state; no new visual design required."
+  }
+]

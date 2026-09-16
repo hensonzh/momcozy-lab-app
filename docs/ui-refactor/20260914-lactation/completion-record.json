@@ -1,0 +1,10 @@
+{
+  "recorded_at": "2026-09-14T09:46:41.524312+00:00",
+  "implemented_scopes": 32,
+  "observed_states": 2788,
+  "pending_review": 168,
+  "source_files_verified": 916,
+  "verification_images": 177,
+  "final_tests": 94,
+  "goal_status": "active"
+}

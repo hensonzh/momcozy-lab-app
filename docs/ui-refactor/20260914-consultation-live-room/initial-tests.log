@@ -1,0 +1,657 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/modules/consultation/user_video_test.dart
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/modules/consultation/user_video_test.dart: user waiting media controls and leave 320.0 / 1.0
+00:00 +1: /Users/lute/project/momcozy-lab/app/test/modules/consultation/user_video_test.dart: user waiting media controls and leave 320.0 / 1.0
+00:00 +2: /Users/lute/project/momcozy-lab/app/test/modules/consultation/user_video_test.dart: user waiting media controls and leave 320.0 / 1.0
+00:00 +2: /Users/lute/project/momcozy-lab/app/test/modules/consultation/room_leave_recovery_test.dart: leave recovery 320.0 / 1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/product_baseline/room-leave-failure-320-1x.png": Pixel test failed, 70.23%,
+189673px diff detected.
+Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/modules/consultation/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      verifyRoomLeaveRecovery (file:///Users/lute/project/momcozy-lab/app/test/support/room_leave_recovery_scenarios.dart:81:3)
+<asynchronous suspension>
+#7      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/consultation/room_leave_recovery_test.dart:58:9)
+<asynchronous suspension>
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/product_baseline/room-leave-retry-confirmation-320-1x.png": Pixel test failed,
+95.73%, 258550px diff detected.
+Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/modules/consultation/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      verifyRoomLeaveRecovery (file:///Users/lute/project/momcozy-lab/app/test/support/room_leave_recovery_scenarios.dart:83:3)
+<asynchronous suspension>
+#7      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/consultation/room_leave_recovery_test.dart:58:9)
+<asynchronous suspension>
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +2: /Users/lute/project/momcozy-lab/app/test/modules/consultation/user_video_test.dart: user waiting media controls and leave 320.0 / 1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: FlutterError:<Golden "../../goldens/design_system/video-waiting-320.png": Pixel test
+failed, 73.57%, 198705px diff detected.
+          Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/modules/consultation/failures>
+
+When the exception was thrown, this was the stack:
+#4      shot (file:///Users/lute/project/momcozy-lab/app/test/modules/consultation/user_video_test.dart:68:3)
+<asynchronous suspension>
+#5      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/consultation/user_video_test.dart:145:9)
+<asynchronous suspension>
+#6      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#7      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/modules/consultation/user_video_test.dart line 68
+The test description was:
+  user waiting media controls and leave 320.0 / 1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +2 -1: /Users/lute/project/momcozy-lab/app/test/modules/consultation/room_leave_recovery_test.dart: leave recovery 320.0 / 1.0
+00:00 +2 -1: /Users/lute/project/momcozy-lab/app/test/modules/consultation/user_video_test.dart: user waiting media controls and leave 320.0 / 1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: user waiting media controls and leave 320.0 / 1.0
+  
+00:00 +2 -1: /Users/lute/project/momcozy-lab/app/test/modules/consultation/room_leave_recovery_test.dart: leave recovery 320.0 / 1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: 'Multiple exceptions (2) were detected during the running of the current test, and at
+least one was unexpected.'
+
+When the exception was thrown, this was the stack:
+#4      verifyRoomLeaveRecovery (file:///Users/lute/project/momcozy-lab/app/test/support/room_leave_recovery_scenarios.dart:94:3)
+<asynchronous suspension>
+#5      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/consultation/room_leave_recovery_test.dart:58:9)
+<asynchronous suspension>
+#6      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#7      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/support/room_leave_recovery_scenarios.dart line 94
+The test description was:
+  leave recovery 320.0 / 1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +2 -2: /Users/lute/project/momcozy-lab/app/test/modules/consultation/user_video_test.dart: user waiting media controls and leave 320.0 / 2.0
+00:00 +2 -2: /Users/lute/project/momcozy-lab/app/test/modules/consultation/room_leave_recovery_test.dart: leave recovery 320.0 / 1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: leave recovery 320.0 / 1.0
+  
+00:01 +2 -2: /Users/lute/project/momcozy-lab/app/test/modules/consultation/user_video_test.dart: user waiting media controls and leave 320.0 / 2.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: FlutterError:<Golden "../../goldens/design_system/video-waiting-320-2x.png": Pixel test
+failed, 63.11%, 170448px diff detected.
+          Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/modules/consultation/failures>
+
+When the exception was thrown, this was the stack:
+#4      shot (file:///Users/lute/project/momcozy-lab/app/test/modules/consultation/user_video_test.dart:68:3)
+<asynchronous suspension>
+#5      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/consultation/user_video_test.dart:145:9)
+<asynchronous suspension>
+#6      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#7      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/modules/consultation/user_video_test.dart line 68
+The test description was:
+  user waiting media controls and leave 320.0 / 2.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +2 -3: /Users/lute/project/momcozy-lab/app/test/modules/consultation/room_leave_recovery_test.dart: leave recovery 320.0 / 2.0
+00:01 +2 -3: /Users/lute/project/momcozy-lab/app/test/modules/consultation/user_video_test.dart: user waiting media controls and leave 320.0 / 2.0 [E]
+  Test failed. See exception logs above.
+  The test description was: user waiting media controls and leave 320.0 / 2.0
+  
+00:01 +2 -3: /Users/lute/project/momcozy-lab/app/test/modules/consultation/room_leave_recovery_test.dart: leave recovery 320.0 / 2.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/product_baseline/room-leave-failure-320-2x.png": Pixel test failed, 63.01%,
+170190px diff detected.
+Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/modules/consultation/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      verifyRoomLeaveRecovery (file:///Users/lute/project/momcozy-lab/app/test/support/room_leave_recovery_scenarios.dart:81:3)
+<asynchronous suspension>
+#7      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/consultation/room_leave_recovery_test.dart:58:9)
+<asynchronous suspension>
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following StateError was thrown running a test:
+Bad state: No element
+
+When the exception was thrown, this was the stack:
+#0      Iterable.single (dart:core/iterable.dart:694:25)
+#1      WidgetController.element (package:flutter_test/src/controller.dart:888:30)
+#2      WidgetController.ensureVisible (package:flutter_test/src/controller.dart:2389:32)
+#3      verifyRoomLeaveRecovery.click (file:///Users/lute/project/momcozy-lab/app/test/support/room_leave_recovery_scenarios.dart:56:18)
+#4      verifyRoomLeaveRecovery (file:///Users/lute/project/momcozy-lab/app/test/support/room_leave_recovery_scenarios.dart:82:9)
+<asynchronous suspension>
+#5      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/consultation/room_leave_recovery_test.dart:58:9)
+<asynchronous suspension>
+#6      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#7      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  leave recovery 320.0 / 2.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following message was thrown:
+Multiple exceptions (2) were detected during the running of the current test, and at least one was
+unexpected.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +2 -4: /Users/lute/project/momcozy-lab/app/test/modules/consultation/user_video_test.dart: user waiting media controls and leave 390.0 / 1.0
+00:01 +2 -4: /Users/lute/project/momcozy-lab/app/test/modules/consultation/room_leave_recovery_test.dart: leave recovery 320.0 / 2.0 [E]
+  Test failed. See exception logs above.
+  The test description was: leave recovery 320.0 / 2.0
+  
+00:01 +2 -4: /Users/lute/project/momcozy-lab/app/test/modules/consultation/user_video_test.dart: user waiting media controls and leave 390.0 / 1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: FlutterError:<Golden "../../goldens/design_system/video-waiting-390.png": Pixel test
+failed, 74.73%, 245977px diff detected.
+          Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/modules/consultation/failures>
+
+When the exception was thrown, this was the stack:
+#4      shot (file:///Users/lute/project/momcozy-lab/app/test/modules/consultation/user_video_test.dart:68:3)
+<asynchronous suspension>
+#5      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/consultation/user_video_test.dart:145:9)
+<asynchronous suspension>
+#6      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#7      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/modules/consultation/user_video_test.dart line 68
+The test description was:
+  user waiting media controls and leave 390.0 / 1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +2 -5: /Users/lute/project/momcozy-lab/app/test/modules/consultation/room_leave_recovery_test.dart: leave recovery 390.0 / 1.0
+00:01 +2 -5: /Users/lute/project/momcozy-lab/app/test/modules/consultation/user_video_test.dart: user waiting media controls and leave 390.0 / 1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: user waiting media controls and leave 390.0 / 1.0
+  
+00:01 +2 -5: /Users/lute/project/momcozy-lab/app/test/modules/consultation/room_leave_recovery_test.dart: leave recovery 390.0 / 1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/product_baseline/room-leave-failure-390-1x.png": Pixel test failed, 72.74%,
+239419px diff detected.
+Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/modules/consultation/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      verifyRoomLeaveRecovery (file:///Users/lute/project/momcozy-lab/app/test/support/room_leave_recovery_scenarios.dart:81:3)
+<asynchronous suspension>
+#7      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/consultation/room_leave_recovery_test.dart:58:9)
+<asynchronous suspension>
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/product_baseline/room-leave-retry-confirmation-390-1x.png": Pixel test failed,
+97.43%, 320706px diff detected.
+Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/modules/consultation/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      verifyRoomLeaveRecovery (file:///Users/lute/project/momcozy-lab/app/test/support/room_leave_recovery_scenarios.dart:83:3)
+<asynchronous suspension>
+#7      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/consultation/room_leave_recovery_test.dart:58:9)
+<asynchronous suspension>
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: 'Multiple exceptions (2) were detected during the running of the current test, and at
+least one was unexpected.'
+
+When the exception was thrown, this was the stack:
+#4      verifyRoomLeaveRecovery (file:///Users/lute/project/momcozy-lab/app/test/support/room_leave_recovery_scenarios.dart:94:3)
+<asynchronous suspension>
+#5      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/consultation/room_leave_recovery_test.dart:58:9)
+<asynchronous suspension>
+#6      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#7      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/support/room_leave_recovery_scenarios.dart line 94
+The test description was:
+  leave recovery 390.0 / 1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +2 -6: /Users/lute/project/momcozy-lab/app/test/modules/consultation/user_video_test.dart: user waiting media controls and leave 390.0 / 2.0
+00:01 +2 -6: /Users/lute/project/momcozy-lab/app/test/modules/consultation/room_leave_recovery_test.dart: leave recovery 390.0 / 1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: leave recovery 390.0 / 1.0
+  
+00:01 +2 -6: /Users/lute/project/momcozy-lab/app/test/modules/consultation/user_video_test.dart: user waiting media controls and leave 390.0 / 2.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following StateError was thrown running a test:
+Bad state: No element
+
+When the exception was thrown, this was the stack:
+#0      Iterable.single (dart:core/iterable.dart:694:25)
+#1      WidgetController.element (package:flutter_test/src/controller.dart:888:30)
+#2      WidgetController.ensureVisible (package:flutter_test/src/controller.dart:2389:32)
+#3      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/consultation/user_video_test.dart:168:22)
+<asynchronous suspension>
+#4      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#5      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  user waiting media controls and leave 390.0 / 2.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +2 -7: /Users/lute/project/momcozy-lab/app/test/modules/consultation/room_leave_recovery_test.dart: leave recovery 390.0 / 2.0
+00:01 +2 -7: /Users/lute/project/momcozy-lab/app/test/modules/consultation/user_video_test.dart: user waiting media controls and leave 390.0 / 2.0 [E]
+  Test failed. See exception logs above.
+  The test description was: user waiting media controls and leave 390.0 / 2.0
+  
+00:01 +2 -7: /Users/lute/project/momcozy-lab/app/test/modules/consultation/room_leave_recovery_test.dart: leave recovery 390.0 / 2.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/product_baseline/room-leave-failure-390-2x.png": Pixel test failed, 58.17%,
+191480px diff detected.
+Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/modules/consultation/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      verifyRoomLeaveRecovery (file:///Users/lute/project/momcozy-lab/app/test/support/room_leave_recovery_scenarios.dart:81:3)
+<asynchronous suspension>
+#7      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/consultation/room_leave_recovery_test.dart:58:9)
+<asynchronous suspension>
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following StateError was thrown running a test:
+Bad state: No element
+
+When the exception was thrown, this was the stack:
+#0      Iterable.single (dart:core/iterable.dart:694:25)
+#1      WidgetController.element (package:flutter_test/src/controller.dart:888:30)
+#2      WidgetController.ensureVisible (package:flutter_test/src/controller.dart:2389:32)
+#3      verifyRoomLeaveRecovery.click (file:///Users/lute/project/momcozy-lab/app/test/support/room_leave_recovery_scenarios.dart:56:18)
+#4      verifyRoomLeaveRecovery (file:///Users/lute/project/momcozy-lab/app/test/support/room_leave_recovery_scenarios.dart:82:9)
+<asynchronous suspension>
+#5      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/consultation/room_leave_recovery_test.dart:58:9)
+<asynchronous suspension>
+#6      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#7      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  leave recovery 390.0 / 2.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following message was thrown:
+Multiple exceptions (2) were detected during the running of the current test, and at least one was
+unexpected.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +2 -8: /Users/lute/project/momcozy-lab/app/test/modules/consultation/user_video_test.dart: user waiting media controls and leave 430.0 / 1.0
+00:01 +2 -8: /Users/lute/project/momcozy-lab/app/test/modules/consultation/room_leave_recovery_test.dart: leave recovery 390.0 / 2.0 [E]
+  Test failed. See exception logs above.
+  The test description was: leave recovery 390.0 / 2.0
+  
+00:01 +2 -8: /Users/lute/project/momcozy-lab/app/test/modules/consultation/user_video_test.dart: user waiting media controls and leave 430.0 / 1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: FlutterError:<Golden "../../goldens/design_system/video-waiting-430.png": Pixel test
+failed, 73.87%, 268101px diff detected.
+          Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/modules/consultation/failures>
+
+When the exception was thrown, this was the stack:
+#4      shot (file:///Users/lute/project/momcozy-lab/app/test/modules/consultation/user_video_test.dart:68:3)
+<asynchronous suspension>
+#5      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/consultation/user_video_test.dart:145:9)
+<asynchronous suspension>
+#6      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#7      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/modules/consultation/user_video_test.dart line 68
+The test description was:
+  user waiting media controls and leave 430.0 / 1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +2 -9: /Users/lute/project/momcozy-lab/app/test/modules/consultation/room_leave_recovery_test.dart: leave recovery 430.0 / 1.0
+00:01 +2 -9: /Users/lute/project/momcozy-lab/app/test/modules/consultation/user_video_test.dart: user waiting media controls and leave 430.0 / 1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: user waiting media controls and leave 430.0 / 1.0
+  
+00:01 +2 -9: /Users/lute/project/momcozy-lab/app/test/modules/consultation/room_leave_recovery_test.dart: leave recovery 430.0 / 1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/product_baseline/room-leave-failure-430-1x.png": Pixel test failed, 71.70%,
+260229px diff detected.
+Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/modules/consultation/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      verifyRoomLeaveRecovery (file:///Users/lute/project/momcozy-lab/app/test/support/room_leave_recovery_scenarios.dart:81:3)
+<asynchronous suspension>
+#7      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/consultation/room_leave_recovery_test.dart:58:9)
+<asynchronous suspension>
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/product_baseline/room-leave-retry-confirmation-430-1x.png": Pixel test failed,
+97.27%, 353026px diff detected.
+Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/modules/consultation/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      verifyRoomLeaveRecovery (file:///Users/lute/project/momcozy-lab/app/test/support/room_leave_recovery_scenarios.dart:83:3)
+<asynchronous suspension>
+#7      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/consultation/room_leave_recovery_test.dart:58:9)
+<asynchronous suspension>
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: 'Multiple exceptions (2) were detected during the running of the current test, and at
+least one was unexpected.'
+
+When the exception was thrown, this was the stack:
+#4      verifyRoomLeaveRecovery (file:///Users/lute/project/momcozy-lab/app/test/support/room_leave_recovery_scenarios.dart:94:3)
+<asynchronous suspension>
+#5      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/consultation/room_leave_recovery_test.dart:58:9)
+<asynchronous suspension>
+#6      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#7      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/support/room_leave_recovery_scenarios.dart line 94
+The test description was:
+  leave recovery 430.0 / 1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +2 -10: /Users/lute/project/momcozy-lab/app/test/modules/consultation/user_video_test.dart: user waiting media controls and leave 430.0 / 2.0
+00:01 +2 -10: /Users/lute/project/momcozy-lab/app/test/modules/consultation/room_leave_recovery_test.dart: leave recovery 430.0 / 1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: leave recovery 430.0 / 1.0
+  
+00:01 +2 -10: /Users/lute/project/momcozy-lab/app/test/modules/consultation/user_video_test.dart: user waiting media controls and leave 430.0 / 2.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following StateError was thrown running a test:
+Bad state: No element
+
+When the exception was thrown, this was the stack:
+#0      Iterable.single (dart:core/iterable.dart:694:25)
+#1      WidgetController.element (package:flutter_test/src/controller.dart:888:30)
+#2      WidgetController.ensureVisible (package:flutter_test/src/controller.dart:2389:32)
+#3      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/consultation/user_video_test.dart:168:22)
+<asynchronous suspension>
+#4      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#5      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  user waiting media controls and leave 430.0 / 2.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +2 -11: /Users/lute/project/momcozy-lab/app/test/modules/consultation/room_leave_recovery_test.dart: leave recovery 430.0 / 2.0
+00:01 +2 -11: /Users/lute/project/momcozy-lab/app/test/modules/consultation/user_video_test.dart: user waiting media controls and leave 430.0 / 2.0 [E]
+  Test failed. See exception logs above.
+  The test description was: user waiting media controls and leave 430.0 / 2.0
+  
+00:01 +2 -11: /Users/lute/project/momcozy-lab/app/test/modules/consultation/room_leave_recovery_test.dart: leave recovery 430.0 / 2.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/product_baseline/room-leave-failure-430-2x.png": Pixel test failed, 62.46%,
+226676px diff detected.
+Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/modules/consultation/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      verifyRoomLeaveRecovery (file:///Users/lute/project/momcozy-lab/app/test/support/room_leave_recovery_scenarios.dart:81:3)
+<asynchronous suspension>
+#7      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/consultation/room_leave_recovery_test.dart:58:9)
+<asynchronous suspension>
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following StateError was thrown running a test:
+Bad state: No element
+
+When the exception was thrown, this was the stack:
+#0      Iterable.single (dart:core/iterable.dart:694:25)
+#1      WidgetController.element (package:flutter_test/src/controller.dart:888:30)
+#2      WidgetController.ensureVisible (package:flutter_test/src/controller.dart:2389:32)
+#3      verifyRoomLeaveRecovery.click (file:///Users/lute/project/momcozy-lab/app/test/support/room_leave_recovery_scenarios.dart:56:18)
+#4      verifyRoomLeaveRecovery (file:///Users/lute/project/momcozy-lab/app/test/support/room_leave_recovery_scenarios.dart:82:9)
+<asynchronous suspension>
+#5      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/consultation/room_leave_recovery_test.dart:58:9)
+<asynchronous suspension>
+#6      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#7      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  leave recovery 430.0 / 2.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following message was thrown:
+Multiple exceptions (2) were detected during the running of the current test, and at least one was
+unexpected.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +2 -12: /Users/lute/project/momcozy-lab/app/test/modules/consultation/room_leave_recovery_test.dart: leave recovery 430.0 / 2.0 [E]
+  Test failed. See exception logs above.
+  The test description was: leave recovery 430.0 / 2.0
+  
+00:01 +2 -12: /Users/lute/project/momcozy-lab/app/test/modules/consultation/room_leave_recovery_test.dart: (tearDownAll)
+00:01 +2 -12: Some tests failed.
+
+Failing tests:
+  /Users/lute/project/momcozy-lab/app/test/modules/consultation/room_leave_recovery_test.dart: leave recovery 320.0 / 1.0
+  /Users/lute/project/momcozy-lab/app/test/modules/consultation/room_leave_recovery_test.dart: leave recovery 320.0 / 2.0
+  /Users/lute/project/momcozy-lab/app/test/modules/consultation/room_leave_recovery_test.dart: leave recovery 390.0 / 1.0
+  /Users/lute/project/momcozy-lab/app/test/modules/consultation/room_leave_recovery_test.dart: leave recovery 390.0 / 2.0
+  ... and 8 more

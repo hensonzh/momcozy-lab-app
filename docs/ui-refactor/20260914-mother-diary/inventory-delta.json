@@ -1,0 +1,40 @@
+{
+  "observed_states": 2818,
+  "added": [
+    "03-mom/lactation-current-30-days",
+    "03-mom/lactation-current-delete-error",
+    "03-mom/lactation-current-leave-confirm",
+    "03-mom/lactation-current-loading",
+    "03-mom/lactation-current-long-note-end",
+    "03-mom/lactation-current-long-note-start",
+    "03-mom/lactation-current-overview",
+    "03-mom/lactation-current-read-error",
+    "03-mom/lactation-current-restore-error",
+    "03-mom/lactation-current-restored",
+    "03-mom/lactation-current-save-conflict",
+    "03-mom/lactation-current-saved-zero",
+    "03-mom/lactation-current-saving",
+    "03-mom/lactation-current-time-dial",
+    "03-mom/lactation-current-time-input",
+    "03-mom/lactation-current-time-invalid",
+    "03-mom/lactation-current-uncertain-leave",
+    "03-mom/mom-diary-loading",
+    "08-expert-service/home-consultation-journey-window-expired",
+    "08-expert-service/intake-consent-validation",
+    "08-expert-service/room-leave-pending",
+    "11-media/media-fullscreen-playing",
+    "11-media/media-video-error",
+    "11-media/media-video-interrupted",
+    "11-media/media-video-loading",
+    "11-media/media-video-paused",
+    "11-media/media-video-playing",
+    "11-media/media-video-recovered",
+    "11-media/media-video-returned",
+    "11-media/media-video-seek-mute"
+  ],
+  "changed": [
+    "11-media/media-fullscreen",
+    "11-media/media-video"
+  ],
+  "pending_review": 198
+}

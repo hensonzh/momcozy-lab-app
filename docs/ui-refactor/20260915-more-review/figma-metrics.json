@@ -1,0 +1,1314 @@
+[
+  {
+    "id": "122:9",
+    "name": "screen/more-default",
+    "w": 393,
+    "h": 844,
+    "nodes": [
+      {
+        "id": "122:10",
+        "name": "content/more",
+        "x": 0,
+        "y": 0,
+        "w": 393,
+        "h": 770
+      },
+      {
+        "id": "122:11",
+        "name": "header/more",
+        "x": 16,
+        "y": 24,
+        "w": 361,
+        "h": 44
+      },
+      {
+        "id": "122:12",
+        "name": "更多",
+        "text": "更多",
+        "x": 16,
+        "y": 33,
+        "w": 317,
+        "h": 26,
+        "font": 22,
+        "line": {
+          "unit": "AUTO"
+        }
+      },
+      {
+        "id": "122:14",
+        "name": "隐私",
+        "text": "隐私",
+        "x": 341,
+        "y": 36,
+        "w": 24,
+        "h": 14,
+        "font": 12,
+        "line": {
+          "unit": "AUTO"
+        }
+      },
+      {
+        "id": "122:15",
+        "name": "text/subtitle",
+        "text": "照顾好自己，也安心管理每一份陪伴",
+        "x": 16,
+        "y": 82,
+        "w": 192,
+        "h": 14,
+        "font": 12,
+        "line": {
+          "unit": "AUTO"
+        }
+      },
+      {
+        "id": "122:16",
+        "name": "card/account",
+        "x": 16,
+        "y": 110,
+        "w": 361,
+        "h": 99
+      },
+      {
+        "id": "122:17",
+        "name": "avatar/initials",
+        "x": 32,
+        "y": 133.5,
+        "w": 52,
+        "h": 52
+      },
+      {
+        "id": "122:18",
+        "name": "MC",
+        "text": "MC",
+        "x": 45,
+        "y": 149.5,
+        "w": 26,
+        "h": 20,
+        "font": 17,
+        "line": {
+          "unit": "AUTO"
+        }
+      },
+      {
+        "id": "122:20",
+        "name": "name",
+        "text": "Mia Chen",
+        "x": 98,
+        "y": 132,
+        "w": 263,
+        "h": 25,
+        "font": 19,
+        "line": {
+          "unit": "PERCENT",
+          "value": 139.9999976158142
+        }
+      },
+      {
+        "id": "122:21",
+        "name": "email",
+        "text": "mia@example.test",
+        "x": 98,
+        "y": 162,
+        "w": 263,
+        "h": 25,
+        "font": 12,
+        "line": {
+          "unit": "PERCENT",
+          "value": 139.9999976158142
+        }
+      },
+      {
+        "id": "122:22",
+        "name": "section/daily-management",
+        "text": "日常管理",
+        "x": 16,
+        "y": 223,
+        "w": 72,
+        "h": 30,
+        "font": 18,
+        "line": {
+          "unit": "PIXELS",
+          "value": 30
+        }
+      },
+      {
+        "id": "122:23",
+        "name": "card/settings",
+        "x": 16,
+        "y": 267,
+        "w": 361,
+        "h": 169
+      },
+      {
+        "id": "I122:24;122:4",
+        "name": "title",
+        "text": "账号设置",
+        "x": 32,
+        "y": 283,
+        "w": 299,
+        "h": 24,
+        "font": 16,
+        "line": {
+          "unit": "PERCENT",
+          "value": 139.9999976158142
+        }
+      },
+      {
+        "id": "I122:24;122:5",
+        "name": "subtitle",
+        "text": "登录方式与账号管理",
+        "x": 32,
+        "y": 311,
+        "w": 299,
+        "h": 24,
+        "font": 12,
+        "line": {
+          "unit": "PERCENT",
+          "value": 139.9999976158142
+        }
+      },
+      {
+        "id": "I122:32;122:4",
+        "name": "title",
+        "text": "通知",
+        "x": 32,
+        "y": 368,
+        "w": 299,
+        "h": 24,
+        "font": 16,
+        "line": {
+          "unit": "PERCENT",
+          "value": 139.9999976158142
+        }
+      },
+      {
+        "id": "I122:32;122:5",
+        "name": "subtitle",
+        "text": "查看消息与服务提醒",
+        "x": 32,
+        "y": 396,
+        "w": 299,
+        "h": 24,
+        "font": 12,
+        "line": {
+          "unit": "PERCENT",
+          "value": 139.9999976158142
+        }
+      },
+      {
+        "id": "122:55",
+        "name": "section/expert-companion",
+        "text": "专家陪伴",
+        "x": 16,
+        "y": 450,
+        "w": 72,
+        "h": 30,
+        "font": 18,
+        "line": {
+          "unit": "PIXELS",
+          "value": 30
+        }
+      },
+      {
+        "id": "122:56",
+        "name": "MomCozy/ExpertSupport",
+        "x": 16,
+        "y": 494,
+        "w": 361,
+        "h": 88
+      },
+      {
+        "id": "I122:56;122:51",
+        "name": "title",
+        "text": "专家支持",
+        "x": 90,
+        "y": 514,
+        "w": 237,
+        "h": 20,
+        "font": 14,
+        "line": {
+          "unit": "PERCENT",
+          "value": 139.9999976158142
+        }
+      },
+      {
+        "id": "I122:56;122:52",
+        "name": "subtitle",
+        "text": "专家 + AI 持续服务，从分析问题到跟进改善，全程有人陪",
+        "x": 90,
+        "y": 534,
+        "w": 237,
+        "h": 28,
+        "font": 10,
+        "line": {
+          "unit": "PERCENT",
+          "value": 139.9999976158142
+        }
+      },
+      {
+        "id": "122:67",
+        "name": "action/logout",
+        "x": 16,
+        "y": 596,
+        "w": 361,
+        "h": 44
+      },
+      {
+        "id": "122:68",
+        "name": "退出登录",
+        "text": "退出登录",
+        "x": 170.5,
+        "y": 610,
+        "w": 52,
+        "h": 16,
+        "font": 13,
+        "line": {
+          "unit": "AUTO"
+        }
+      },
+      {
+        "id": "122:69",
+        "name": "navigation/bottom",
+        "x": 0,
+        "y": 770,
+        "w": 393,
+        "h": 74
+      },
+      {
+        "id": "122:72",
+        "name": "slot/icon",
+        "x": 13,
+        "y": 780,
+        "w": 44,
+        "h": 38
+      },
+      {
+        "id": "122:77",
+        "name": "label/me",
+        "text": "Me",
+        "x": 5,
+        "y": 820,
+        "w": 60,
+        "h": 16,
+        "font": 11,
+        "line": {
+          "unit": "AUTO"
+        }
+      },
+      {
+        "id": "122:79",
+        "name": "slot/icon",
+        "x": 93.75,
+        "y": 780,
+        "w": 44,
+        "h": 38
+      },
+      {
+        "id": "122:87",
+        "name": "label/baby",
+        "text": "Baby",
+        "x": 85.75,
+        "y": 820,
+        "w": 60,
+        "h": 16,
+        "font": 11,
+        "line": {
+          "unit": "AUTO"
+        }
+      },
+      {
+        "id": "122:89",
+        "name": "slot/icon",
+        "x": 174.5,
+        "y": 780,
+        "w": 44,
+        "h": 38
+      },
+      {
+        "id": "122:90",
+        "name": "avatar/cozymate-nav",
+        "x": 178.5,
+        "y": 781,
+        "w": 36,
+        "h": 36
+      },
+      {
+        "id": "122:91",
+        "name": "label/cozymate",
+        "text": "Cozymate",
+        "x": 166.5,
+        "y": 820,
+        "w": 60,
+        "h": 16,
+        "font": 11,
+        "line": {
+          "unit": "AUTO"
+        }
+      },
+      {
+        "id": "122:93",
+        "name": "slot/icon",
+        "x": 255.25,
+        "y": 780,
+        "w": 44,
+        "h": 38
+      },
+      {
+        "id": "122:97",
+        "name": "label/schedule",
+        "text": "Schedule",
+        "x": 247.25,
+        "y": 820,
+        "w": 60,
+        "h": 16,
+        "font": 11,
+        "line": {
+          "unit": "AUTO"
+        }
+      },
+      {
+        "id": "122:99",
+        "name": "slot/icon",
+        "x": 336,
+        "y": 780,
+        "w": 44,
+        "h": 38
+      },
+      {
+        "id": "122:104",
+        "name": "label/more",
+        "text": "More",
+        "x": 328,
+        "y": 820,
+        "w": 60,
+        "h": 16,
+        "font": 11,
+        "line": {
+          "unit": "AUTO"
+        }
+      }
+    ]
+  },
+  {
+    "id": "122:105",
+    "name": "screen/more-loading",
+    "w": 393,
+    "h": 844,
+    "nodes": [
+      {
+        "id": "122:106",
+        "name": "content/more",
+        "x": 0,
+        "y": 0,
+        "w": 393,
+        "h": 770
+      },
+      {
+        "id": "122:107",
+        "name": "header/more",
+        "x": 16,
+        "y": 24,
+        "w": 361,
+        "h": 44
+      },
+      {
+        "id": "122:108",
+        "name": "更多",
+        "text": "更多",
+        "x": 16,
+        "y": 33,
+        "w": 317,
+        "h": 26,
+        "font": 22,
+        "line": {
+          "unit": "AUTO"
+        }
+      },
+      {
+        "id": "122:110",
+        "name": "隐私",
+        "text": "隐私",
+        "x": 341,
+        "y": 36,
+        "w": 24,
+        "h": 14,
+        "font": 12,
+        "line": {
+          "unit": "AUTO"
+        }
+      },
+      {
+        "id": "122:111",
+        "name": "text/subtitle",
+        "text": "照顾好自己，也安心管理每一份陪伴",
+        "x": 16,
+        "y": 82,
+        "w": 192,
+        "h": 14,
+        "font": 12,
+        "line": {
+          "unit": "AUTO"
+        }
+      },
+      {
+        "id": "122:112",
+        "name": "card/account",
+        "x": 16,
+        "y": 110,
+        "w": 361,
+        "h": 99
+      },
+      {
+        "id": "122:113",
+        "name": "avatar/initials",
+        "x": 32,
+        "y": 133.5,
+        "w": 52,
+        "h": 52
+      },
+      {
+        "id": "122:114",
+        "name": "…",
+        "text": "…",
+        "x": 49.5,
+        "y": 149.5,
+        "w": 17,
+        "h": 20,
+        "font": 17,
+        "line": {
+          "unit": "AUTO"
+        }
+      },
+      {
+        "id": "122:116",
+        "name": "name",
+        "text": "我的账号",
+        "x": 98,
+        "y": 132,
+        "w": 263,
+        "h": 25,
+        "font": 19,
+        "line": {
+          "unit": "PERCENT",
+          "value": 139.9999976158142
+        }
+      },
+      {
+        "id": "122:117",
+        "name": "email",
+        "text": "正在加载账号…",
+        "x": 98,
+        "y": 162,
+        "w": 263,
+        "h": 25,
+        "font": 12,
+        "line": {
+          "unit": "PERCENT",
+          "value": 139.9999976158142
+        }
+      },
+      {
+        "id": "122:118",
+        "name": "section/daily-management",
+        "text": "日常管理",
+        "x": 16,
+        "y": 223,
+        "w": 72,
+        "h": 30,
+        "font": 18,
+        "line": {
+          "unit": "PIXELS",
+          "value": 30
+        }
+      },
+      {
+        "id": "122:119",
+        "name": "card/settings",
+        "x": 16,
+        "y": 267,
+        "w": 361,
+        "h": 169
+      },
+      {
+        "id": "I122:120;122:4",
+        "name": "title",
+        "text": "账号设置",
+        "x": 32,
+        "y": 283,
+        "w": 299,
+        "h": 24,
+        "font": 16,
+        "line": {
+          "unit": "PERCENT",
+          "value": 139.9999976158142
+        }
+      },
+      {
+        "id": "I122:120;122:5",
+        "name": "subtitle",
+        "text": "登录方式与账号管理",
+        "x": 32,
+        "y": 311,
+        "w": 299,
+        "h": 24,
+        "font": 12,
+        "line": {
+          "unit": "PERCENT",
+          "value": 139.9999976158142
+        }
+      },
+      {
+        "id": "I122:122;122:4",
+        "name": "title",
+        "text": "通知",
+        "x": 32,
+        "y": 368,
+        "w": 299,
+        "h": 24,
+        "font": 16,
+        "line": {
+          "unit": "PERCENT",
+          "value": 139.9999976158142
+        }
+      },
+      {
+        "id": "I122:122;122:5",
+        "name": "subtitle",
+        "text": "查看消息与服务提醒",
+        "x": 32,
+        "y": 396,
+        "w": 299,
+        "h": 24,
+        "font": 12,
+        "line": {
+          "unit": "PERCENT",
+          "value": 139.9999976158142
+        }
+      },
+      {
+        "id": "122:123",
+        "name": "section/expert-companion",
+        "text": "专家陪伴",
+        "x": 16,
+        "y": 450,
+        "w": 72,
+        "h": 30,
+        "font": 18,
+        "line": {
+          "unit": "PIXELS",
+          "value": 30
+        }
+      },
+      {
+        "id": "122:124",
+        "name": "MomCozy/ExpertSupport",
+        "x": 16,
+        "y": 494,
+        "w": 361,
+        "h": 88
+      },
+      {
+        "id": "I122:124;122:51",
+        "name": "title",
+        "text": "专家支持",
+        "x": 90,
+        "y": 514,
+        "w": 237,
+        "h": 20,
+        "font": 14,
+        "line": {
+          "unit": "PERCENT",
+          "value": 139.9999976158142
+        }
+      },
+      {
+        "id": "I122:124;122:52",
+        "name": "subtitle",
+        "text": "专家 + AI 持续服务，从分析问题到跟进改善，全程有人陪",
+        "x": 90,
+        "y": 534,
+        "w": 237,
+        "h": 28,
+        "font": 10,
+        "line": {
+          "unit": "PERCENT",
+          "value": 139.9999976158142
+        }
+      },
+      {
+        "id": "122:125",
+        "name": "action/logout",
+        "x": 16,
+        "y": 596,
+        "w": 361,
+        "h": 44
+      },
+      {
+        "id": "122:126",
+        "name": "退出登录",
+        "text": "退出登录",
+        "x": 170.5,
+        "y": 610,
+        "w": 52,
+        "h": 16,
+        "font": 13,
+        "line": {
+          "unit": "AUTO"
+        }
+      },
+      {
+        "id": "122:127",
+        "name": "navigation/bottom",
+        "x": 0,
+        "y": 770,
+        "w": 393,
+        "h": 74
+      },
+      {
+        "id": "122:130",
+        "name": "slot/icon",
+        "x": 13,
+        "y": 780,
+        "w": 44,
+        "h": 38
+      },
+      {
+        "id": "122:135",
+        "name": "label/me",
+        "text": "Me",
+        "x": 5,
+        "y": 820,
+        "w": 60,
+        "h": 16,
+        "font": 11,
+        "line": {
+          "unit": "AUTO"
+        }
+      },
+      {
+        "id": "122:137",
+        "name": "slot/icon",
+        "x": 93.75,
+        "y": 780,
+        "w": 44,
+        "h": 38
+      },
+      {
+        "id": "122:145",
+        "name": "label/baby",
+        "text": "Baby",
+        "x": 85.75,
+        "y": 820,
+        "w": 60,
+        "h": 16,
+        "font": 11,
+        "line": {
+          "unit": "AUTO"
+        }
+      },
+      {
+        "id": "122:147",
+        "name": "slot/icon",
+        "x": 174.5,
+        "y": 780,
+        "w": 44,
+        "h": 38
+      },
+      {
+        "id": "122:148",
+        "name": "avatar/cozymate-nav",
+        "x": 178.5,
+        "y": 781,
+        "w": 36,
+        "h": 36
+      },
+      {
+        "id": "122:149",
+        "name": "label/cozymate",
+        "text": "Cozymate",
+        "x": 166.5,
+        "y": 820,
+        "w": 60,
+        "h": 16,
+        "font": 11,
+        "line": {
+          "unit": "AUTO"
+        }
+      },
+      {
+        "id": "122:151",
+        "name": "slot/icon",
+        "x": 255.25,
+        "y": 780,
+        "w": 44,
+        "h": 38
+      },
+      {
+        "id": "122:155",
+        "name": "label/schedule",
+        "text": "Schedule",
+        "x": 247.25,
+        "y": 820,
+        "w": 60,
+        "h": 16,
+        "font": 11,
+        "line": {
+          "unit": "AUTO"
+        }
+      },
+      {
+        "id": "122:157",
+        "name": "slot/icon",
+        "x": 336,
+        "y": 780,
+        "w": 44,
+        "h": 38
+      },
+      {
+        "id": "122:162",
+        "name": "label/more",
+        "text": "More",
+        "x": 328,
+        "y": 820,
+        "w": 60,
+        "h": 16,
+        "font": 11,
+        "line": {
+          "unit": "AUTO"
+        }
+      }
+    ]
+  },
+  {
+    "id": "122:185",
+    "missing": true
+  },
+  {
+    "id": "124:68",
+    "missing": true
+  },
+  {
+    "id": "225:1400",
+    "name": "Auth / 退出登录失败提示",
+    "w": 393,
+    "h": 844,
+    "nodes": [
+      {
+        "id": "225:1401",
+        "name": "scroll-content",
+        "x": 0,
+        "y": 0,
+        "w": 393,
+        "h": 676
+      },
+      {
+        "id": "225:1403",
+        "name": "Momcozy",
+        "text": "Momcozy",
+        "x": 16,
+        "y": 16,
+        "w": 125,
+        "h": 45,
+        "font": 32,
+        "line": {
+          "unit": "PERCENT",
+          "value": 139.9999976158142
+        }
+      },
+      {
+        "id": "225:1405",
+        "name": "◎ English ⌄",
+        "text": "◎ English ⌄",
+        "x": 247,
+        "y": 29,
+        "w": 130,
+        "h": 18,
+        "font": 13,
+        "line": {
+          "unit": "PERCENT",
+          "value": 139.9999976158142
+        }
+      },
+      {
+        "id": "225:1410",
+        "name": "Welcome back",
+        "text": "Welcome back",
+        "x": 32,
+        "y": 90,
+        "w": 269,
+        "h": 34,
+        "font": 24,
+        "line": {
+          "unit": "PERCENT",
+          "value": 139.9999976158142
+        }
+      },
+      {
+        "id": "225:1411",
+        "name": "Care and support, every step of the wa",
+        "text": "Care and support, every step of the way.",
+        "x": 32,
+        "y": 132,
+        "w": 269,
+        "h": 18,
+        "font": 13,
+        "line": {
+          "unit": "PERCENT",
+          "value": 139.9999976158142
+        }
+      },
+      {
+        "id": "225:1415",
+        "name": "Continue with Google",
+        "text": "Continue with Google",
+        "x": 139.5,
+        "y": 208,
+        "w": 142,
+        "h": 20,
+        "font": 14,
+        "line": {
+          "unit": "PERCENT",
+          "value": 139.9999976158142
+        }
+      },
+      {
+        "id": "225:1416",
+        "name": "or continue with email",
+        "text": "or continue with email",
+        "x": 32,
+        "y": 258,
+        "w": 329,
+        "h": 17,
+        "font": 12,
+        "line": {
+          "unit": "PERCENT",
+          "value": 139.9999976158142
+        }
+      },
+      {
+        "id": "225:1418",
+        "name": "Email",
+        "text": "Email",
+        "x": 32,
+        "y": 289,
+        "w": 329,
+        "h": 17,
+        "font": 12,
+        "line": {
+          "unit": "PERCENT",
+          "value": 139.9999976158142
+        }
+      },
+      {
+        "id": "225:1420",
+        "name": "you@example.com",
+        "text": "you@example.com",
+        "x": 44,
+        "y": 326,
+        "w": 600,
+        "h": 20,
+        "font": 14,
+        "line": {
+          "unit": "PERCENT",
+          "value": 139.9999976158142
+        }
+      },
+      {
+        "id": "225:1422",
+        "name": "Password",
+        "text": "Password",
+        "x": 32,
+        "y": 389.5,
+        "w": 75,
+        "h": 17,
+        "font": 12,
+        "line": {
+          "unit": "PERCENT",
+          "value": 139.9999976158142
+        }
+      },
+      {
+        "id": "225:1424",
+        "name": "Forgot password?",
+        "text": "Forgot password?",
+        "x": 216,
+        "y": 389,
+        "w": 145,
+        "h": 18,
+        "font": 13,
+        "line": {
+          "unit": "PERCENT",
+          "value": 139.9999976158142
+        }
+      },
+      {
+        "id": "225:1426",
+        "name": "Enter your password",
+        "text": "Enter your password",
+        "x": 44,
+        "y": 440,
+        "w": 600,
+        "h": 20,
+        "font": 14,
+        "line": {
+          "unit": "PERCENT",
+          "value": 139.9999976158142
+        }
+      },
+      {
+        "id": "225:1428",
+        "name": "Sign in",
+        "text": "Sign in",
+        "x": 44,
+        "y": 503,
+        "w": 305,
+        "h": 18,
+        "font": 13,
+        "line": {
+          "unit": "PERCENT",
+          "value": 139.9999976158142
+        }
+      },
+      {
+        "id": "225:1429",
+        "name": "New here?",
+        "text": "New here?",
+        "x": 82.5,
+        "y": 561,
+        "w": 75,
+        "h": 18,
+        "font": 13,
+        "line": {
+          "unit": "PERCENT",
+          "value": 139.9999976158142
+        }
+      },
+      {
+        "id": "225:1431",
+        "name": "Create an account",
+        "text": "Create an account",
+        "x": 165.5,
+        "y": 561,
+        "w": 145,
+        "h": 18,
+        "font": 13,
+        "line": {
+          "unit": "PERCENT",
+          "value": 139.9999976158142
+        }
+      },
+      {
+        "id": "225:1433",
+        "name": "By continuing, you agree to our",
+        "text": "By continuing, you agree to our",
+        "x": 16,
+        "y": 622,
+        "w": 361,
+        "h": 17,
+        "font": 12,
+        "line": {
+          "unit": "PERCENT",
+          "value": 139.9999976158142
+        }
+      },
+      {
+        "id": "225:1434",
+        "name": "Terms of Use and Privacy Policy.",
+        "text": "Terms of Use and Privacy Policy.",
+        "x": 16,
+        "y": 643,
+        "w": 361,
+        "h": 17,
+        "font": 12,
+        "line": {
+          "unit": "PERCENT",
+          "value": 139.9999976158142
+        }
+      },
+      {
+        "id": "225:1435",
+        "name": "existing-route-snackbar",
+        "x": 16,
+        "y": 760,
+        "w": 361,
+        "h": 68
+      },
+      {
+        "id": "225:1436",
+        "name": "已退出本机登录，但服务器会话暂未撤销。",
+        "text": "Sign-out could not finish on the server or this device. Reconnect and try again.",
+        "x": 32,
+        "y": 776,
+        "w": 329,
+        "h": 36,
+        "font": 13,
+        "line": {
+          "unit": "PERCENT",
+          "value": 139.9999976158142
+        }
+      }
+    ]
+  },
+  {
+    "id": "228:1150",
+    "name": "Auth / 更多页退出失败提示",
+    "w": 393,
+    "h": 844,
+    "nodes": [
+      {
+        "id": "228:1151",
+        "name": "scroll-content",
+        "x": 0,
+        "y": 0,
+        "w": 393,
+        "h": 676
+      },
+      {
+        "id": "228:1153",
+        "name": "Momcozy",
+        "text": "Momcozy",
+        "x": 16,
+        "y": 16,
+        "w": 125,
+        "h": 45,
+        "font": 32,
+        "line": {
+          "unit": "PERCENT",
+          "value": 139.9999976158142
+        }
+      },
+      {
+        "id": "228:1155",
+        "name": "◎ English ⌄",
+        "text": "◎ English ⌄",
+        "x": 247,
+        "y": 29,
+        "w": 130,
+        "h": 18,
+        "font": 13,
+        "line": {
+          "unit": "PERCENT",
+          "value": 139.9999976158142
+        }
+      },
+      {
+        "id": "228:1159",
+        "name": "Welcome back",
+        "text": "Welcome back",
+        "x": 32,
+        "y": 90,
+        "w": 269,
+        "h": 34,
+        "font": 24,
+        "line": {
+          "unit": "PERCENT",
+          "value": 139.9999976158142
+        }
+      },
+      {
+        "id": "228:1160",
+        "name": "Care and support, every step of the wa",
+        "text": "Care and support, every step of the way.",
+        "x": 32,
+        "y": 132,
+        "w": 269,
+        "h": 18,
+        "font": 13,
+        "line": {
+          "unit": "PERCENT",
+          "value": 139.9999976158142
+        }
+      },
+      {
+        "id": "228:1165",
+        "name": "Continue with Google",
+        "text": "Continue with Google",
+        "x": 139.5,
+        "y": 208,
+        "w": 142,
+        "h": 20,
+        "font": 14,
+        "line": {
+          "unit": "PERCENT",
+          "value": 139.9999976158142
+        }
+      },
+      {
+        "id": "228:1166",
+        "name": "or continue with email",
+        "text": "or continue with email",
+        "x": 32,
+        "y": 258,
+        "w": 329,
+        "h": 17,
+        "font": 12,
+        "line": {
+          "unit": "PERCENT",
+          "value": 139.9999976158142
+        }
+      },
+      {
+        "id": "228:1168",
+        "name": "Email",
+        "text": "Email",
+        "x": 32,
+        "y": 289,
+        "w": 329,
+        "h": 17,
+        "font": 12,
+        "line": {
+          "unit": "PERCENT",
+          "value": 139.9999976158142
+        }
+      },
+      {
+        "id": "228:1170",
+        "name": "you@example.com",
+        "text": "you@example.com",
+        "x": 44,
+        "y": 326,
+        "w": 600,
+        "h": 20,
+        "font": 14,
+        "line": {
+          "unit": "PERCENT",
+          "value": 139.9999976158142
+        }
+      },
+      {
+        "id": "228:1173",
+        "name": "Password",
+        "text": "Password",
+        "x": 32,
+        "y": 389.5,
+        "w": 75,
+        "h": 17,
+        "font": 12,
+        "line": {
+          "unit": "PERCENT",
+          "value": 139.9999976158142
+        }
+      },
+      {
+        "id": "228:1175",
+        "name": "Forgot password?",
+        "text": "Forgot password?",
+        "x": 216,
+        "y": 389,
+        "w": 145,
+        "h": 18,
+        "font": 13,
+        "line": {
+          "unit": "PERCENT",
+          "value": 139.9999976158142
+        }
+      },
+      {
+        "id": "228:1177",
+        "name": "Enter your password",
+        "text": "Enter your password",
+        "x": 44,
+        "y": 440,
+        "w": 600,
+        "h": 20,
+        "font": 14,
+        "line": {
+          "unit": "PERCENT",
+          "value": 139.9999976158142
+        }
+      },
+      {
+        "id": "228:1179",
+        "name": "Sign in",
+        "text": "Sign in",
+        "x": 44,
+        "y": 503,
+        "w": 305,
+        "h": 18,
+        "font": 13,
+        "line": {
+          "unit": "PERCENT",
+          "value": 139.9999976158142
+        }
+      },
+      {
+        "id": "228:1181",
+        "name": "New here?",
+        "text": "New here?",
+        "x": 82.5,
+        "y": 561,
+        "w": 75,
+        "h": 18,
+        "font": 13,
+        "line": {
+          "unit": "PERCENT",
+          "value": 139.9999976158142
+        }
+      },
+      {
+        "id": "228:1183",
+        "name": "Create an account",
+        "text": "Create an account",
+        "x": 165.5,
+        "y": 561,
+        "w": 145,
+        "h": 18,
+        "font": 13,
+        "line": {
+          "unit": "PERCENT",
+          "value": 139.9999976158142
+        }
+      },
+      {
+        "id": "228:1185",
+        "name": "By continuing, you agree to our",
+        "text": "By continuing, you agree to our",
+        "x": 16,
+        "y": 622,
+        "w": 361,
+        "h": 17,
+        "font": 12,
+        "line": {
+          "unit": "PERCENT",
+          "value": 139.9999976158142
+        }
+      },
+      {
+        "id": "228:1186",
+        "name": "Terms of Use and Privacy Policy.",
+        "text": "Terms of Use and Privacy Policy.",
+        "x": 16,
+        "y": 643,
+        "w": 361,
+        "h": 17,
+        "font": 12,
+        "line": {
+          "unit": "PERCENT",
+          "value": 139.9999976158142
+        }
+      },
+      {
+        "id": "228:1187",
+        "name": "existing-route-snackbar",
+        "x": 16,
+        "y": 778,
+        "w": 361,
+        "h": 50
+      },
+      {
+        "id": "228:1188",
+        "name": "已退出本机登录，但服务器会话暂未撤销。",
+        "text": "Sign-out could not finish. Reconnect and try again.",
+        "x": 32,
+        "y": 794,
+        "w": 329,
+        "h": 18,
+        "font": 13,
+        "line": {
+          "unit": "PERCENT",
+          "value": 139.9999976158142
+        }
+      }
+    ]
+  }
+]

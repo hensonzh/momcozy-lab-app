@@ -128,10 +128,7 @@ void main() {
         await tester.pump();
         await tester.pump(const Duration(milliseconds: 100));
 
-        expect(
-          find.byKey(const ValueKey('auth-email-field')),
-          findsOneWidget,
-        );
+        expect(find.byKey(const ValueKey('auth-email-field')), findsOneWidget);
         expect(router.routeInformationProvider.value.uri.path, '/login');
 
         fixture.controller.replaceRuntime(

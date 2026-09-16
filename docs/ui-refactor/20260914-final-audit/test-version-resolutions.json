@@ -1,0 +1,54 @@
+{
+  "production_files_indexed": 84,
+  "production_files_matching_archived_version": 84,
+  "scope": "142 files explicitly covered by two archive schemas; this is not a claim that all repo files or states were audited. Historical hashes remain unchanged.",
+  "test_resolutions": [
+    {
+      "path": "test/app/notification_conversation_route_test.dart",
+      "current_sha256": "dc1a10e2541b93182165c77e74979f6970385d596e20a3fbd0d406f8099abfdd",
+      "status": "current_test_version_inspected_and_passed",
+      "test_log": "current-version-tests.log",
+      "finding": "新增目的页在场、菜单与历史抽屉返回路径断言；inventory 元数据写入受环境变量保护，本次变量未设置。"
+    },
+    {
+      "path": "test/features/media/product_asset_video_player_test.dart",
+      "current_sha256": "f3da945c13d40992b8f94440e716157bd22b2f84e16772e283cbfdb6c0c6088e",
+      "status": "current_test_version_inspected_and_passed",
+      "test_log": "current-version-tests.log",
+      "finding": "当前覆盖加载/播放/暂停/拖动/全屏/中断恢复及释放；实际生产文件匹配媒体交付。"
+    },
+    {
+      "path": "test/modules/consultation/room_leave_recovery_test.dart",
+      "current_sha256": "820416b351276747a98d33382817b770f1bac6f34359f0c45f9abef49025c960",
+      "status": "current_test_version_inspected_and_passed",
+      "test_log": "current-version-tests.log",
+      "finding": "当前覆盖退出请求未完成、迟到响应、控制器释放和字号变体；只读既有基线。"
+    },
+    {
+      "path": "test/modules/services/intake_test.dart",
+      "current_sha256": "bb9e04750a7c997713d8b091ddef53fbee3fddc6bb821887c0ec1391378a79db",
+      "status": "current_test_version_inspected_and_passed",
+      "test_log": "intake-current-tests.log",
+      "finding": "早期归档测试与当前不一致；当前源码包含 consent_conflict 返回提示 golden 与业务断言，并覆盖授权、未确认保存快照和预问诊回调。单独运行当前 27 项通过。未假称拥有缺失的早期测试副本。"
+    },
+    {
+      "path": "test/modules/services/service_renew_test.dart",
+      "current_sha256": "1d233b9ead6f18097b5004d6372946276a9326dc2d17439934e6e80b9f1d8e61",
+      "status": "current_test_version_inspected_and_passed",
+      "test_log": "current-version-tests.log",
+      "finding": "当前覆盖短屏加载/返回、暂停与配置中已购方案及刷新选择锁定；生产文件匹配交付。"
+    },
+    {
+      "path": "test/support/agent_markdown_scenarios.dart",
+      "current_sha256": "27021e8fbae7f82a4b4aebac792b0c57293279e037cec10fe036449ecd50feea",
+      "status": "current_test_version_inspected_and_passed",
+      "test_log": "current-version-tests.log",
+      "finding": "当前采用已批准 Noto/Mom 字体与标题度量，预加载真实头像；通过 agent_markdown_design_test 调用。之前四个基线修订见增量复核报告。"
+    }
+  ],
+  "distinct_current_tests": 159,
+  "logs": [
+    "current-version-tests.log",
+    "intake-current-tests.log"
+  ]
+}

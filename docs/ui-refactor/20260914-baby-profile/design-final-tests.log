@@ -1,0 +1,31 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_redesign_test.dart
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_redesign_test.dart: (setUpAll)
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_redesign_test.dart: profile draft, conflict reload and removed profile 320.0/1.0
+00:00 +1: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_redesign_test.dart: profile choices and uncertain save preserve exact request 320.0/1.0
+00:01 +2: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_redesign_test.dart: profile draft, conflict reload and removed profile 320.0/2.0
+00:01 +3: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_redesign_test.dart: profile choices and uncertain save preserve exact request 320.0/2.0
+00:01 +4: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_redesign_test.dart: profile draft, conflict reload and removed profile 390.0/1.0
+00:01 +5: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_redesign_test.dart: profile choices and uncertain save preserve exact request 390.0/1.0
+00:02 +6: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_redesign_test.dart: profile draft, conflict reload and removed profile 390.0/2.0
+00:02 +7: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_redesign_test.dart: profile choices and uncertain save preserve exact request 390.0/2.0
+00:02 +8: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_redesign_test.dart: profile draft, conflict reload and removed profile 430.0/1.0
+00:02 +9: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_redesign_test.dart: profile choices and uncertain save preserve exact request 430.0/1.0
+00:03 +10: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_redesign_test.dart: profile draft, conflict reload and removed profile 430.0/2.0
+00:03 +11: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_redesign_test.dart: profile choices and uncertain save preserve exact request 430.0/2.0
+00:03 +12: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_redesign_test.dart: (tearDownAll)
+00:03 +12: loading /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart
+00:03 +12: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart: (setUpAll)
+00:03 +12: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart: profile dialog scrolls and saves at 320.0 / 1.0 / long=false
+00:04 +13: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart: profile dialog scrolls and saves at 320.0 / 1.0 / long=true
+00:04 +14: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart: profile dialog scrolls and saves at 320.0 / 2.0 / long=false
+00:04 +15: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart: profile dialog scrolls and saves at 320.0 / 2.0 / long=true
+00:04 +16: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart: profile dialog scrolls and saves at 390.0 / 1.0 / long=false
+00:04 +17: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart: profile dialog scrolls and saves at 390.0 / 1.0 / long=true
+00:04 +18: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart: profile dialog scrolls and saves at 390.0 / 2.0 / long=false
+00:04 +19: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart: profile dialog scrolls and saves at 390.0 / 2.0 / long=true
+00:04 +20: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart: profile dialog scrolls and saves at 430.0 / 1.0 / long=false
+00:04 +21: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart: profile dialog scrolls and saves at 430.0 / 1.0 / long=true
+00:04 +22: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart: profile dialog scrolls and saves at 430.0 / 2.0 / long=false
+00:04 +23: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart: profile dialog scrolls and saves at 430.0 / 2.0 / long=true
+00:04 +24: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart: (tearDownAll)
+00:05 +24: All tests passed!

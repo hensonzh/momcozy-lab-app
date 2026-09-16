@@ -1,0 +1,68 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_home_redesign_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: home redesign layout and original navigation 390.0/1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: 'NotoSansSCHome'
+  Actual: 'Manrope'
+   Which: is different.
+          Expected: NotoSansSC ...
+            Actual: Manrope
+                    ^
+           Differ at offset 0
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_home_redesign_test.dart:108:7)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_home_redesign_test.dart line 108
+The test description was:
+  home redesign layout and original navigation 390.0/1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +0 -1: home redesign layout and original navigation 390.0/1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: home redesign layout and original navigation 390.0/1.0
+  
+00:00 +0 -1: home redesign layout and original navigation 320.0/2.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: 'NotoSansSCHome'
+  Actual: 'Manrope'
+   Which: is different.
+          Expected: NotoSansSC ...
+            Actual: Manrope
+                    ^
+           Differ at offset 0
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_home_redesign_test.dart:108:7)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/modules/baby/baby_home_redesign_test.dart line 108
+The test description was:
+  home redesign layout and original navigation 320.0/2.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +0 -2: home redesign layout and original navigation 320.0/2.0 [E]
+  Test failed. See exception logs above.
+  The test description was: home redesign layout and original navigation 320.0/2.0
+  
+00:00 +0 -2: (tearDownAll)
+00:00 +0 -2: Some tests failed.
+
+Failing tests:
+  /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_home_redesign_test.dart: home redesign layout and original navigation 320.0/2.0
+  /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_home_redesign_test.dart: home redesign layout and original navigation 390.0/1.0

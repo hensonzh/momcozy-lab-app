@@ -119,6 +119,7 @@ final class ScheduleController extends ChangeNotifier {
     required LocalDate date,
     required String startTime,
     required String note,
+    String? idempotencyKey,
   }) async {
     if (existing == null) {
       await repository.create(
@@ -126,7 +127,9 @@ final class ScheduleController extends ChangeNotifier {
         date: date,
         startTime: startTime,
         note: note,
-        idempotencyKey: 'schedule-${DateTime.now().microsecondsSinceEpoch}',
+        idempotencyKey:
+            idempotencyKey ??
+            'schedule-${DateTime.now().microsecondsSinceEpoch}',
       );
     } else {
       await repository.update(

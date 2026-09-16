@@ -1,0 +1,368 @@
+[
+  {
+    "texts": [
+      {
+        "id": "122:12",
+        "name": "更多",
+        "text": "更多",
+        "size": 22,
+        "font": {
+          "family": "Noto Sans SC",
+          "style": "Bold",
+          "variationSettings": {
+            "wght": 700
+          }
+        }
+      },
+      {
+        "id": "122:14",
+        "name": "隐私",
+        "text": "隐私",
+        "size": 12,
+        "font": {
+          "family": "Noto Sans SC",
+          "style": "Regular",
+          "variationSettings": {
+            "wght": 400
+          }
+        }
+      },
+      {
+        "id": "122:15",
+        "name": "text/subtitle",
+        "text": "照顾好自己，也安心管理每一份陪伴",
+        "size": 12,
+        "font": {
+          "family": "Noto Sans SC",
+          "style": "Regular",
+          "variationSettings": {
+            "wght": 400
+          }
+        }
+      },
+      {
+        "id": "122:18",
+        "name": "MC",
+        "text": "MC",
+        "size": 17,
+        "font": {
+          "family": "Noto Sans SC",
+          "style": "Bold",
+          "variationSettings": {
+            "wght": 700
+          }
+        }
+      },
+      {
+        "id": "122:20",
+        "name": "name",
+        "text": "Mia Chen",
+        "size": 19,
+        "font": {
+          "family": "Noto Sans SC",
+          "style": "Bold",
+          "variationSettings": {
+            "wght": 700
+          }
+        }
+      },
+      {
+        "id": "122:21",
+        "name": "email",
+        "text": "mia@example.test",
+        "size": 12,
+        "font": {
+          "family": "Noto Sans SC",
+          "style": "Regular",
+          "variationSettings": {
+            "wght": 400
+          }
+        }
+      },
+      {
+        "id": "122:22",
+        "name": "section/daily-management",
+        "text": "日常管理",
+        "size": 18,
+        "font": {
+          "family": "Noto Sans SC",
+          "style": "Bold",
+          "variationSettings": {
+            "wght": 700
+          }
+        }
+      },
+      {
+        "id": "I122:24;122:4",
+        "name": "title",
+        "text": "账号设置",
+        "size": 16,
+        "font": {
+          "family": "Noto Sans SC",
+          "style": "Bold",
+          "variationSettings": {
+            "wght": 700
+          }
+        }
+      },
+      {
+        "id": "I122:24;122:5",
+        "name": "subtitle",
+        "text": "登录方式与账号管理",
+        "size": 12,
+        "font": {
+          "family": "Noto Sans SC",
+          "style": "Regular",
+          "variationSettings": {
+            "wght": 400
+          }
+        }
+      },
+      {
+        "id": "I122:32;122:4",
+        "name": "title",
+        "text": "通知",
+        "size": 16,
+        "font": {
+          "family": "Noto Sans SC",
+          "style": "Bold",
+          "variationSettings": {
+            "wght": 700
+          }
+        }
+      },
+      {
+        "id": "I122:32;122:5",
+        "name": "subtitle",
+        "text": "查看消息与服务提醒",
+        "size": 12,
+        "font": {
+          "family": "Noto Sans SC",
+          "style": "Regular",
+          "variationSettings": {
+            "wght": 400
+          }
+        }
+      },
+      {
+        "id": "122:55",
+        "name": "section/expert-companion",
+        "text": "专家陪伴",
+        "size": 18,
+        "font": {
+          "family": "Noto Sans SC",
+          "style": "Bold",
+          "variationSettings": {
+            "wght": 700
+          }
+        }
+      },
+      {
+        "id": "I122:56;122:51",
+        "name": "title",
+        "text": "专家支持",
+        "size": 14,
+        "font": {
+          "family": "Noto Sans SC",
+          "style": "Bold",
+          "variationSettings": {
+            "wght": 700
+          }
+        }
+      },
+      {
+        "id": "I122:56;122:52",
+        "name": "subtitle",
+        "text": "专家 + AI 持续服务，从分析问题到跟进改善，全程有人陪",
+        "size": 10,
+        "font": {
+          "family": "Noto Sans SC",
+          "style": "Regular",
+          "variationSettings": {
+            "wght": 400
+          }
+        }
+      },
+      {
+        "id": "122:68",
+        "name": "退出登录",
+        "text": "退出登录",
+        "size": 13,
+        "font": {
+          "family": "Noto Sans SC",
+          "style": "Regular",
+          "variationSettings": {
+            "wght": 400
+          }
+        }
+      },
+      {
+        "id": "122:77",
+        "name": "label/me",
+        "text": "Me",
+        "size": 11,
+        "font": {
+          "family": "Noto Sans SC",
+          "style": "Medium",
+          "variationSettings": {
+            "wght": 500
+          }
+        }
+      },
+      {
+        "id": "122:87",
+        "name": "label/baby",
+        "text": "Baby",
+        "size": 11,
+        "font": {
+          "family": "Noto Sans SC",
+          "style": "Medium",
+          "variationSettings": {
+            "wght": 500
+          }
+        }
+      },
+      {
+        "id": "122:91",
+        "name": "label/cozymate",
+        "text": "Cozymate",
+        "size": 11,
+        "font": {
+          "family": "Noto Sans SC",
+          "style": "Medium",
+          "variationSettings": {
+            "wght": 500
+          }
+        }
+      },
+      {
+        "id": "122:97",
+        "name": "label/schedule",
+        "text": "Schedule",
+        "size": 11,
+        "font": {
+          "family": "Noto Sans SC",
+          "style": "Medium",
+          "variationSettings": {
+            "wght": 500
+          }
+        }
+      },
+      {
+        "id": "122:104",
+        "name": "label/more",
+        "text": "More",
+        "size": 11,
+        "font": {
+          "family": "Noto Sans SC",
+          "style": "Medium",
+          "variationSettings": {
+            "wght": 500
+          }
+        }
+      }
+    ],
+    "expert": [
+      {
+        "id": "122:42",
+        "name": "decoration/expert-support-halo",
+        "width": 112,
+        "height": 112
+      },
+      {
+        "id": "122:43",
+        "name": "decoration/expert-support-leaves",
+        "width": 58,
+        "height": 65
+      },
+      {
+        "id": "122:44",
+        "name": "Vector",
+        "width": 42.59375,
+        "height": 52.36111068725586
+      },
+      {
+        "id": "122:45",
+        "name": "icon-tile/expert-support",
+        "width": 44,
+        "height": 44
+      },
+      {
+        "id": "122:46",
+        "name": "icon/experts",
+        "width": 24,
+        "height": 24
+      },
+      {
+        "id": "122:47",
+        "name": "Vector",
+        "width": 6,
+        "height": 6
+      },
+      {
+        "id": "122:48",
+        "name": "Vector",
+        "width": 11,
+        "height": 6.5
+      },
+      {
+        "id": "122:49",
+        "name": "Vector",
+        "width": 5,
+        "height": 13.5
+      },
+      {
+        "id": "122:50",
+        "name": "content",
+        "width": 237,
+        "height": 48
+      },
+      {
+        "id": "122:53",
+        "name": "icon/expert-support-arrow",
+        "width": 20,
+        "height": 20
+      },
+      {
+        "id": "122:54",
+        "name": "Vector",
+        "width": 6,
+        "height": 12
+      }
+    ],
+    "row": {
+      "id": "122:2",
+      "width": 361,
+      "height": 84
+    },
+    "instances": [
+      {
+        "id": "122:24",
+        "name": "MomCozy/SettingsRow"
+      },
+      {
+        "id": "122:32",
+        "name": "MomCozy/SettingsRow"
+      },
+      {
+        "id": "122:56",
+        "name": "MomCozy/ExpertSupport"
+      }
+    ],
+    "collections": [
+      {
+        "name": "MomCozy / Primitives",
+        "count": 11
+      },
+      {
+        "name": "MomCozy / Semantic",
+        "count": 11
+      }
+    ],
+    "textStyles": [
+      "MomCozy/heading",
+      "MomCozy/title",
+      "MomCozy/body"
+    ]
+  }
+]

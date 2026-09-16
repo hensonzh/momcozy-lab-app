@@ -1,0 +1,851 @@
+[
+  {
+    "source_id": "04-baby/baby-development-date-birth-cleared",
+    "design_family": "cleared",
+    "figma_nodes": [
+      "317:1156",
+      "317:1576"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-development-date-profile-editor",
+    "design_family": "existing",
+    "figma_nodes": [
+      "317:1120",
+      "317:1540",
+      "317:1926",
+      "317:1996"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-journey-feeding-mode-menu",
+    "design_family": "feeding-menu",
+    "figma_nodes": [
+      "317:1190",
+      "317:1610"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-journey-feeding-mode-selected",
+    "design_family": "existing",
+    "figma_nodes": [
+      "317:1120",
+      "317:1540",
+      "317:1926",
+      "317:1996"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-journey-first-profile-form",
+    "design_family": "new",
+    "figma_nodes": [
+      "317:1086",
+      "317:1506",
+      "317:1962"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-journey-growth-profile-entry",
+    "design_family": "existing",
+    "figma_nodes": [
+      "317:1120",
+      "317:1540",
+      "317:1926",
+      "317:1996"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-journey-profile-discard-confirm",
+    "design_family": "shared-discard-confirmation",
+    "figma_nodes": [
+      "309:1086",
+      "309:1094"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-journey-profile-draft-preserved",
+    "design_family": "existing",
+    "figma_nodes": [
+      "317:1120",
+      "317:1540",
+      "317:1926",
+      "317:1996"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-journey-profile-existing",
+    "design_family": "existing",
+    "figma_nodes": [
+      "317:1120",
+      "317:1540",
+      "317:1926",
+      "317:1996"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-journey-profile-new",
+    "design_family": "new",
+    "figma_nodes": [
+      "317:1086",
+      "317:1506",
+      "317:1962"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-journey-profile-new-validation",
+    "design_family": "validation",
+    "figma_nodes": [
+      "317:1237",
+      "317:1657"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-profile-boundaries-birth-open",
+    "design_family": "native-calendar",
+    "figma_nodes": [
+      "175:1325",
+      "175:1446"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-profile-boundaries-calendar-confirmed",
+    "design_family": "existing",
+    "figma_nodes": [
+      "317:1120",
+      "317:1540",
+      "317:1926",
+      "317:1996"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-profile-boundaries-date-before-minimum",
+    "design_family": "native-date-validation",
+    "figma_nodes": [
+      "216:1479",
+      "175:1446"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-profile-boundaries-date-corrected",
+    "design_family": "existing",
+    "figma_nodes": [
+      "317:1120",
+      "317:1540",
+      "317:1926",
+      "317:1996"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-profile-boundaries-day-selected",
+    "design_family": "native-calendar",
+    "figma_nodes": [
+      "175:1325",
+      "175:1446"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-profile-boundaries-input-to-calendar",
+    "design_family": "native-calendar",
+    "figma_nodes": [
+      "175:1325",
+      "175:1446"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-profile-boundaries-invalid-date-format",
+    "design_family": "native-date-validation",
+    "figma_nodes": [
+      "216:1479",
+      "175:1446"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-profile-boundaries-latest-month",
+    "design_family": "native-calendar",
+    "figma_nodes": [
+      "175:1325",
+      "175:1446"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-profile-boundaries-maximum-name-reopened",
+    "design_family": "long-name",
+    "figma_nodes": [
+      "317:1470",
+      "317:1890"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-profile-boundaries-name-119",
+    "design_family": "long-name",
+    "figma_nodes": [
+      "317:1470",
+      "317:1890"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-profile-boundaries-name-120",
+    "design_family": "long-name",
+    "figma_nodes": [
+      "317:1470",
+      "317:1890"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-profile-boundaries-name-121-truncated",
+    "design_family": "long-name",
+    "figma_nodes": [
+      "317:1470",
+      "317:1890"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-profile-boundaries-name-scroll-end",
+    "design_family": "long-name",
+    "figma_nodes": [
+      "317:1470",
+      "317:1890"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-profile-boundaries-name-scroll-start",
+    "design_family": "long-name",
+    "figma_nodes": [
+      "317:1470",
+      "317:1890"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-profile-boundaries-next-month",
+    "design_family": "native-calendar",
+    "figma_nodes": [
+      "175:1325",
+      "175:1446"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-profile-boundaries-previous-month",
+    "design_family": "native-calendar",
+    "figma_nodes": [
+      "175:1325",
+      "175:1446"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-profile-boundaries-removed-before-reload-conflict",
+    "design_family": "conflict",
+    "figma_nodes": [
+      "317:1275",
+      "317:1695",
+      "317:2032"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-profile-boundaries-removed-leave-confirm",
+    "design_family": "shared-discard-confirmation",
+    "figma_nodes": [
+      "309:1086",
+      "309:1094"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-profile-boundaries-removed-on-reload",
+    "design_family": "forbidden",
+    "figma_nodes": [
+      "317:1316",
+      "317:1736"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-profile-boundaries-unicode-length-validation",
+    "design_family": "validation",
+    "figma_nodes": [
+      "317:1237",
+      "317:1657"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-profile-boundaries-year-list",
+    "design_family": "native-calendar",
+    "figma_nodes": [
+      "175:1325",
+      "175:1446"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-profile-boundaries-year-selected",
+    "design_family": "native-calendar",
+    "figma_nodes": [
+      "175:1325",
+      "175:1446"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-profile-controls-birth-cancelled",
+    "design_family": "existing",
+    "figma_nodes": [
+      "317:1120",
+      "317:1540",
+      "317:1926",
+      "317:1996"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-profile-controls-birth-changed",
+    "design_family": "existing",
+    "figma_nodes": [
+      "317:1120",
+      "317:1540",
+      "317:1926",
+      "317:1996"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-profile-controls-birth-cleared",
+    "design_family": "cleared",
+    "figma_nodes": [
+      "317:1156",
+      "317:1576"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-profile-controls-birth-future-rejected",
+    "design_family": "native-date-validation",
+    "figma_nodes": [
+      "216:1479",
+      "175:1446"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-profile-controls-birth-input",
+    "design_family": "native-date-input",
+    "figma_nodes": [
+      "175:1446"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-profile-controls-birth-open",
+    "design_family": "native-calendar",
+    "figma_nodes": [
+      "175:1325",
+      "175:1446"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-profile-controls-birth-restored",
+    "design_family": "existing",
+    "figma_nodes": [
+      "317:1120",
+      "317:1540",
+      "317:1926",
+      "317:1996"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-profile-controls-editor",
+    "design_family": "existing",
+    "figma_nodes": [
+      "317:1120",
+      "317:1540",
+      "317:1926",
+      "317:1996"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-profile-controls-feeding-breastfeeding",
+    "design_family": "existing",
+    "figma_nodes": [
+      "317:1120",
+      "317:1540",
+      "317:1926",
+      "317:1996"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-profile-controls-feeding-expressedMilk",
+    "design_family": "existing",
+    "figma_nodes": [
+      "317:1120",
+      "317:1540",
+      "317:1926",
+      "317:1996"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-profile-controls-feeding-formula",
+    "design_family": "existing",
+    "figma_nodes": [
+      "317:1120",
+      "317:1540",
+      "317:1926",
+      "317:1996"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-profile-controls-feeding-menu-breastfeeding",
+    "design_family": "feeding-menu",
+    "figma_nodes": [
+      "317:1190",
+      "317:1610"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-profile-controls-feeding-menu-expressedMilk",
+    "design_family": "feeding-menu",
+    "figma_nodes": [
+      "317:1190",
+      "317:1610"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-profile-controls-feeding-menu-formula",
+    "design_family": "feeding-menu",
+    "figma_nodes": [
+      "317:1190",
+      "317:1610"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-profile-controls-feeding-menu-mixed",
+    "design_family": "feeding-menu",
+    "figma_nodes": [
+      "317:1190",
+      "317:1610"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-profile-controls-feeding-menu-unknown",
+    "design_family": "feeding-menu",
+    "figma_nodes": [
+      "317:1190",
+      "317:1610"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-profile-controls-feeding-mixed",
+    "design_family": "existing",
+    "figma_nodes": [
+      "317:1120",
+      "317:1540",
+      "317:1926",
+      "317:1996"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-profile-controls-feeding-unknown",
+    "design_family": "existing",
+    "figma_nodes": [
+      "317:1120",
+      "317:1540",
+      "317:1926",
+      "317:1996"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-profile-controls-missing-birth-picker",
+    "design_family": "native-calendar",
+    "figma_nodes": [
+      "175:1325",
+      "175:1446"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-profile-controls-missing-birth-reopened",
+    "design_family": "existing",
+    "figma_nodes": [
+      "317:1120",
+      "317:1540",
+      "317:1926",
+      "317:1996"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-profile-controls-name-corrected",
+    "design_family": "existing",
+    "figma_nodes": [
+      "317:1120",
+      "317:1540",
+      "317:1926",
+      "317:1996"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-profile-controls-name-empty-validation",
+    "design_family": "validation",
+    "figma_nodes": [
+      "317:1237",
+      "317:1657"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-profile-controls-save-unconfirmed",
+    "design_family": "uncertain",
+    "figma_nodes": [
+      "317:1430",
+      "317:1850"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-profile-controls-saved-reopened",
+    "design_family": "existing",
+    "figma_nodes": [
+      "317:1120",
+      "317:1540",
+      "317:1926",
+      "317:1996"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-profile-controls-sex-female",
+    "design_family": "existing",
+    "figma_nodes": [
+      "317:1120",
+      "317:1540",
+      "317:1926",
+      "317:1996"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-profile-controls-sex-male",
+    "design_family": "existing",
+    "figma_nodes": [
+      "317:1120",
+      "317:1540",
+      "317:1926",
+      "317:1996"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-profile-controls-sex-unspecified",
+    "design_family": "existing",
+    "figma_nodes": [
+      "317:1120",
+      "317:1540",
+      "317:1926",
+      "317:1996"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-profile-controls-uncertain-leave-confirm",
+    "design_family": "shared-discard-confirmation",
+    "figma_nodes": [
+      "309:1086",
+      "309:1094"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-profile-controls-uncertain-stay",
+    "design_family": "uncertain",
+    "figma_nodes": [
+      "317:1430",
+      "317:1850"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-profile-editor",
+    "design_family": "new",
+    "figma_nodes": [
+      "317:1086",
+      "317:1506",
+      "317:1962"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-profile-existing",
+    "design_family": "existing",
+    "figma_nodes": [
+      "317:1120",
+      "317:1540",
+      "317:1926",
+      "317:1996"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-profile-recovery-busy-close-blocked",
+    "design_family": "pending",
+    "figma_nodes": [
+      "317:1394",
+      "317:1814"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-profile-recovery-conflict",
+    "design_family": "conflict",
+    "figma_nodes": [
+      "317:1275",
+      "317:1695",
+      "317:2032"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-profile-recovery-conflict-again",
+    "design_family": "conflict",
+    "figma_nodes": [
+      "317:1275",
+      "317:1695",
+      "317:2032"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-profile-recovery-forbidden-discard-confirm",
+    "design_family": "shared-discard-confirmation",
+    "figma_nodes": [
+      "309:1086",
+      "309:1094"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-profile-recovery-local-draft",
+    "design_family": "existing",
+    "figma_nodes": [
+      "317:1120",
+      "317:1540",
+      "317:1926",
+      "317:1996"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-profile-recovery-reload-current",
+    "design_family": "existing",
+    "figma_nodes": [
+      "317:1120",
+      "317:1540",
+      "317:1926",
+      "317:1996"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-profile-recovery-reload-pending",
+    "design_family": "pending",
+    "figma_nodes": [
+      "317:1394",
+      "317:1814"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-profile-recovery-reload-unavailable",
+    "design_family": "unavailable",
+    "figma_nodes": [
+      "317:1355",
+      "317:1775"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-profile-recovery-save-forbidden",
+    "design_family": "forbidden",
+    "figma_nodes": [
+      "317:1316",
+      "317:1736"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-profile-recovery-save-pending",
+    "design_family": "pending",
+    "figma_nodes": [
+      "317:1394",
+      "317:1814"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-profile-recovery-saved-reopened",
+    "design_family": "existing",
+    "figma_nodes": [
+      "317:1120",
+      "317:1540",
+      "317:1926",
+      "317:1996"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-profile-recovery-unconfirmed",
+    "design_family": "uncertain",
+    "figma_nodes": [
+      "317:1430",
+      "317:1850"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-profile-recovery-unconfirmed-leave-dialog",
+    "design_family": "shared-discard-confirmation",
+    "figma_nodes": [
+      "309:1086",
+      "309:1094"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-profile-recovery-unconfirmed-reopened",
+    "design_family": "uncertain",
+    "figma_nodes": [
+      "317:1430",
+      "317:1850"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  },
+  {
+    "source_id": "04-baby/baby-profile-short",
+    "design_family": "existing",
+    "figma_nodes": [
+      "317:1120",
+      "317:1540",
+      "317:1926",
+      "317:1996"
+    ],
+    "source_visually_reviewed": true,
+    "verification": "Representative widget flow and visual family coverage; not a replay of each source journey."
+  }
+]

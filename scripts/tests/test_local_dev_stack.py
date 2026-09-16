@@ -58,6 +58,18 @@ class LocalDevStackTest(unittest.TestCase):
                 "docker compose -f docker-compose.local.yml up -d --build --wait api worker"
             )
             self.assertLess(product, agent)
+            account = result.stdout.index("make backend-local-account")
+            self.assertLess(product, account)
+            self.assertLess(account, agent)
+
+    def test_account_command_does_not_rebuild_services(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            workspace = Path(directory)
+            self._write_fixture(workspace)
+            result = self._run(workspace, "account", {"MOMCOZY_LOCAL_DEV_DRY_RUN": "1"})
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertIn("make backend-local-account", result.stdout)
+            self.assertNotIn("--build", result.stdout)
 
     def test_verify_uses_invite_session_across_both_services(self) -> None:
         product = _RecordingServer("product")
@@ -97,6 +109,30 @@ class LocalDevStackTest(unittest.TestCase):
             agent.requests[-1][2].get("authorization"),
             "Bearer local-e2e-access-token",
         )
+
+    def test_app_preserves_saved_session_unless_reset_is_requested(self) -> None:
+        product = _RecordingServer("product")
+        agent = _RecordingServer("agent")
+        product.start()
+        agent.start()
+        self.addCleanup(product.close)
+        self.addCleanup(agent.close)
+        with tempfile.TemporaryDirectory() as directory:
+            workspace = Path(directory)
+            self._write_fixture(workspace)
+            (workspace / "backend/Makefile").write_text("backend-local-account:\n\t@echo test-account-ready\n")
+            (workspace / "app/scripts/run-flutter-invite-dev.mjs").write_text(
+                'console.log("RESET=" + process.env.MOMCOZY_RESET_INVITE_APP);\n'
+            )
+            env = {"MOMCOZY_LOCAL_PRODUCT_URL": product.url, "MOMCOZY_LOCAL_AGENT_URL": agent.url,
+                   "MOMCOZY_RESET_INVITE_APP": ""}
+            result = self._run(workspace, "app", env)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertIn("test-account-ready", result.stdout)
+            self.assertIn("RESET=0", result.stdout)
+            result = self._run(workspace, "app", {**env, "MOMCOZY_RESET_INVITE_APP": "1"})
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertIn("RESET=1", result.stdout)
 
     def _run(
         self,

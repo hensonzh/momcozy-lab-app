@@ -1,0 +1,204 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart: wire contract keeps methods exclusive and carries the deletion version
+00:00 +1: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart: uncertain save retries the same payload and key, blocks duplicate taps, and undo uses receipt
+00:00 +2: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart: changing method clears the old measurement and rejects invalid typed input
+00:00 +3: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart: single record editor saves a real observation, then delete and undo change the list
+00:00 +4: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart: lactation modal switches to nursing and saves at 320.0 / 1.0
+00:00 +5: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart: lactation modal switches to nursing and saves at 320.0 / 2.0
+00:00 +6: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart: lactation list renders at 320.0 / 1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/product_baseline/lactation-list-320.png": Pixel test failed, 0.09%, 250px diff
+detected.
+Failure feedback can be found at /Users/lute/project/momcozy-lab/app/test/modules/mom/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart:291:15)
+<asynchronous suspension>
+#7      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#8      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +6 -1: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart: lactation list renders at 320.0 / 1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: lactation list renders at 320.0 / 1.0
+  
+00:00 +6 -1: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart: lactation list renders at 320.0 / 2.0
+00:01 +7 -1: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart: lactation entry renders at 320.0 / 1.0
+00:01 +8 -1: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart: lactation entry renders at 320.0 / 2.0
+00:01 +9 -1: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart: lactation modal switches to nursing and saves at 390.0 / 1.0
+00:01 +10 -1: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart: lactation modal switches to nursing and saves at 390.0 / 2.0
+00:01 +11 -1: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart: lactation list renders at 390.0 / 1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/product_baseline/lactation-list-390.png": Pixel test failed, 0.10%, 320px diff
+detected.
+Failure feedback can be found at /Users/lute/project/momcozy-lab/app/test/modules/mom/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart:291:15)
+<asynchronous suspension>
+#7      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#8      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +11 -2: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart: lactation list renders at 390.0 / 1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: lactation list renders at 390.0 / 1.0
+  
+00:01 +11 -2: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart: lactation list renders at 390.0 / 2.0
+00:01 +12 -2: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart: lactation entry renders at 390.0 / 1.0
+00:01 +13 -2: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart: lactation entry renders at 390.0 / 2.0
+00:01 +14 -2: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart: lactation modal switches to nursing and saves at 430.0 / 1.0
+00:01 +15 -2: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart: lactation modal switches to nursing and saves at 430.0 / 2.0
+00:01 +16 -2: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart: lactation list renders at 430.0 / 1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "../../goldens/product_baseline/lactation-list-430.png": Pixel test failed, 0.10%, 360px diff
+detected.
+Failure feedback can be found at /Users/lute/project/momcozy-lab/app/test/modules/mom/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart:291:15)
+<asynchronous suspension>
+#7      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#8      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +16 -3: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart: lactation list renders at 430.0 / 1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: lactation list renders at 430.0 / 1.0
+  
+00:01 +16 -3: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart: lactation list renders at 430.0 / 2.0
+00:01 +17 -3: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart: lactation entry renders at 430.0 / 1.0
+00:02 +18 -3: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart: lactation entry renders at 430.0 / 2.0
+00:02 +19 -3: loading /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart
+00:02 +19 -3: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: (setUpAll)
+00:02 +19 -3: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/1.0
+00:03 +20 -3: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 320.0/2.0
+00:03 +21 -3: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 390.0/1.0
+00:04 +22 -3: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 390.0/2.0
+00:04 +23 -3: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 430.0/1.0
+00:04 +24 -3: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: lactation states validate, retry, edit and undo 430.0/2.0
+00:05 +25 -3: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_states_test.dart: (tearDownAll)
+00:05 +25 -3: loading /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_redesign_test.dart
+00:05 +25 -3: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_redesign_test.dart: (setUpAll)
+00:05 +25 -3: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_redesign_test.dart: lactation route reads, charts, long notes, conflicts and undo 320.0/1.0
+00:06 +26 -3: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_redesign_test.dart: lactation route time input validates and pending save locks edits 320.0/1.0
+00:06 +27 -3: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_redesign_test.dart: lactation route reads, charts, long notes, conflicts and undo 320.0/2.0
+00:07 +28 -3: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_redesign_test.dart: lactation route time input validates and pending save locks edits 320.0/2.0
+00:07 +29 -3: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_redesign_test.dart: lactation route reads, charts, long notes, conflicts and undo 390.0/1.0
+00:07 +30 -3: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_redesign_test.dart: lactation route time input validates and pending save locks edits 390.0/1.0
+00:08 +31 -3: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_redesign_test.dart: lactation route reads, charts, long notes, conflicts and undo 390.0/2.0
+00:08 +32 -3: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_redesign_test.dart: lactation route time input validates and pending save locks edits 390.0/2.0
+00:08 +33 -3: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_redesign_test.dart: lactation route reads, charts, long notes, conflicts and undo 430.0/1.0
+00:08 +34 -3: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_redesign_test.dart: lactation route time input validates and pending save locks edits 430.0/1.0
+00:08 +35 -3: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_redesign_test.dart: lactation route reads, charts, long notes, conflicts and undo 430.0/2.0
+00:09 +36 -3: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_redesign_test.dart: lactation route time input validates and pending save locks edits 430.0/2.0
+00:09 +37 -3: /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_redesign_test.dart: (tearDownAll)
+00:09 +37 -3: loading /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_home_test.dart
+00:12 +37 -3: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_home_test.dart: default home opens grouped diary, saves and refreshes only current API data
+00:13 +38 -3: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_home_test.dart: mother home matches the product baseline at 320.0 / 1.0
+00:13 +39 -3: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_home_test.dart: mother home matches the product baseline at 320.0 / 2.0
+00:13 +40 -3: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_home_test.dart: mother home matches the product baseline at 390.0 / 1.0
+00:13 +41 -3: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_home_test.dart: mother home matches the product baseline at 390.0 / 2.0
+00:13 +42 -3: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_home_test.dart: mother home matches the product baseline at 430.0 / 1.0
+00:13 +43 -3: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_home_test.dart: mother home matches the product baseline at 430.0 / 2.0
+00:14 +44 -3: /Users/lute/project/momcozy-lab/app/test/modules/mom/mother_home_test.dart: failed state is distinct from an empty diary and retries safely
+00:14 +45 -3: loading /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart
+00:14 +45 -3: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: (setUpAll)
+00:14 +45 -3: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: quick mood starts a draft; save preserves other groups and refreshes home
+00:15 +46 -3: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: lactation create uses the existing editor and refreshes total and analysis
+00:15 +47 -3: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: first frame uses skeleton then independent purchased and empty records
+00:15 +48 -3: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: generating insight preserves its state without a ready conclusion
+00:15 +49 -3: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: failed portrait uses single expert fallback and keeps service actions
+00:15 +50 -3: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: paused service retains progress and disables new booking
+00:15 +51 -3: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: expired service retains progress and disables new booking
+00:15 +52 -3: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: exhausted service retains progress and disables new booking
+00:15 +53 -3: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: partial records preserve missing sections and unknown percentages
+00:15 +54 -3: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: record refresh reloads insight; failure cannot show a stale conclusion
+00:15 +55 -3: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: diary failure is local; missing delivery date has honest stage fallback
+00:15 +56 -3: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: handoff initial 320.0/1.0
+00:15 +57 -3: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: handoff recorded 320.0/1.0
+00:15 +58 -3: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: handoff purchased 320.0/1.0
+00:16 +59 -3: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: handoff initial 320.0/2.0
+00:16 +60 -3: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: handoff recorded 320.0/2.0
+00:16 +61 -3: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: handoff purchased 320.0/2.0
+00:16 +62 -3: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: handoff initial 360.0/1.0
+00:16 +63 -3: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: handoff recorded 360.0/1.0
+00:16 +64 -3: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: handoff purchased 360.0/1.0
+00:16 +65 -3: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: handoff initial 360.0/2.0
+00:16 +66 -3: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: handoff recorded 360.0/2.0
+00:16 +67 -3: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: handoff purchased 360.0/2.0
+00:17 +68 -3: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: handoff initial 393.0/1.0
+00:17 +69 -3: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: handoff recorded 393.0/1.0
+00:17 +70 -3: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: handoff purchased 393.0/1.0
+00:17 +71 -3: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: handoff initial 393.0/2.0
+00:17 +72 -3: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: handoff recorded 393.0/2.0
+00:17 +73 -3: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: handoff purchased 393.0/2.0
+00:17 +74 -3: /Users/lute/project/momcozy-lab/app/test/modules/mom/mom_home_handoff_test.dart: (tearDownAll)
+00:17 +74 -3: loading /Users/lute/project/momcozy-lab/app/test/shared/date_time_picker_test.dart
+00:18 +74 -3: /Users/lute/project/momcozy-lab/app/test/shared/date_time_picker_test.dart: large 12-hour picker preserves midnight and noon
+00:18 +75 -3: /Users/lute/project/momcozy-lab/app/test/shared/date_time_picker_test.dart: large picker bounds, locale and time validation en_US
+00:18 +76 -3: /Users/lute/project/momcozy-lab/app/test/shared/date_time_picker_test.dart: large picker bounds, locale and time validation zh_CN
+00:18 +77 -3: /Users/lute/project/momcozy-lab/app/test/shared/date_time_picker_test.dart: date and time dialogs settle without elapsed motion
+00:19 +78 -3: loading /Users/lute/project/momcozy-lab/app/test/app/mom_navigation_test.dart
+00:19 +78 -3: /Users/lute/project/momcozy-lab/app/test/app/mom_navigation_test.dart: (setUpAll)
+00:19 +78 -3: /Users/lute/project/momcozy-lab/app/test/app/mom_navigation_test.dart: navigation reference at 320.0 with all selected states
+00:20 +79 -3: /Users/lute/project/momcozy-lab/app/test/app/mom_navigation_test.dart: five navigation destinations remain readable and tappable at 2x text on 320.0
+00:20 +80 -3: /Users/lute/project/momcozy-lab/app/test/app/mom_navigation_test.dart: navigation reference at 390.0 with all selected states
+00:20 +81 -3: /Users/lute/project/momcozy-lab/app/test/app/mom_navigation_test.dart: five navigation destinations remain readable and tappable at 2x text on 390.0
+00:20 +82 -3: /Users/lute/project/momcozy-lab/app/test/app/mom_navigation_test.dart: navigation reference at 430.0 with all selected states
+00:20 +83 -3: /Users/lute/project/momcozy-lab/app/test/app/mom_navigation_test.dart: five navigation destinations remain readable and tappable at 2x text on 430.0
+00:20 +84 -3: /Users/lute/project/momcozy-lab/app/test/app/mom_navigation_test.dart: (tearDownAll)
+00:20 +84 -3: Some tests failed.
+
+Failing tests:
+  /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart: lactation list renders at 320.0 / 1.0
+  /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart: lactation list renders at 390.0 / 1.0
+  /Users/lute/project/momcozy-lab/app/test/modules/mom/lactation_test.dart: lactation list renders at 430.0 / 1.0

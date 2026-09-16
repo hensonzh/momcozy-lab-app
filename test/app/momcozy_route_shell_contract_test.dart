@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter/material.dart';
+import 'package:momcozy_flutter_app/app/mom_bottom_navigation.dart';
 import 'package:momcozy_flutter_app/app/momcozy_app.dart';
 import 'package:momcozy_flutter_app/app/mom_module_routes.dart';
 import 'package:momcozy_flutter_app/app/baby_module_routes.dart';
@@ -8,6 +10,37 @@ import 'package:momcozy_flutter_app/app/baby_module_routes.dart';
 import '../support/fixture_reader.dart';
 
 void main() {
+  testWidgets('primary navigation is hidden on secondary pages', (
+    tester,
+  ) async {
+    for (final location in [
+      '/me',
+      '/baby',
+      '/',
+      '/schedule',
+      '/more',
+      '/notifications',
+      '/media-viewer',
+    ]) {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: MomCozyRouteShell(
+            location: location,
+            child: Text('Content: $location'),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(
+        find.byType(MomCozyBottomNavigation),
+        ['/notifications', '/media-viewer'].contains(location)
+            ? findsNothing
+            : findsOneWidget,
+      );
+      expect(find.text('Content: $location'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    }
+  });
   group('MomCozy route shell contract', () {
     test('registers every documented Flutter route shell path', () {
       final routePaths = {
@@ -37,10 +70,8 @@ void main() {
         featurePages,
         contains('modules/profile/presentation/more_page.dart'),
       );
-      expect(
-        Directory('lib/features/profile_overview/presentation').listSync(),
-        isEmpty,
-      );
+      final retired = Directory('lib/features/profile_overview/presentation');
+      expect(retired.existsSync() ? retired.listSync() : [], isEmpty);
     });
 
     test(
@@ -74,6 +105,9 @@ void main() {
 }
 
 const _documentedRoutePaths = {
+  '/privacy',
+  '/services/renew',
+  '/services/episodes/:episodeId/renew',
   '/',
   '/me',
   '/baby',

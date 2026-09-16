@@ -88,20 +88,164 @@ void main() {
         await tester.tap(viewer);
         await tester.pumpAndSettle();
         expect(transform.value.getMaxScaleOnAxis(), 2.5);
+        await _golden('media-image-zoomed', width, scale);
+        final beforePan = transform.value.getTranslation();
+        await tester.drag(viewer, const Offset(60, 40));
+        await tester.pumpAndSettle();
+        expect(transform.value.getTranslation(), isNot(beforePan));
+        expect(transform.value.getMaxScaleOnAxis(), 2.5);
+        await _golden('media-image-panned', width, scale);
         await tester.tap(viewer);
         await tester.pump(const Duration(milliseconds: 50));
         await tester.tap(viewer);
         await tester.pumpAndSettle();
         expect(transform.value.getMaxScaleOnAxis(), 1);
+        await _golden('media-image-reset', width, scale);
         expect(tester.takeException(), isNull);
         await tester.pumpWidget(const SizedBox());
       });
+      testWidgets('PDF loading failure retry and return $width / $scale', (
+        tester,
+      ) async {
+        _size(tester, width);
+        final pending = Completer<ProductAssetHttpResponse>();
+        final retry = Completer<ProductAssetHttpResponse>();
+        final connector = _Connector()..response = () => pending.future;
+        await tester.pumpWidget(
+          _app(
+            scale,
+            kind: 'pdf',
+            repository: ProductAssetRepository(
+              baseUri: Uri.parse('https://api.example.test'),
+              connector: connector,
+            ),
+          ),
+        );
+        await tester.pump(const Duration(milliseconds: 100));
+        expect(
+          find.byKey(const ValueKey('media-viewer-loading')),
+          findsOneWidget,
+        );
+        await _golden('media-pdf-loading', width, scale);
+        pending.complete(_failure());
+        await tester.pumpAndSettle();
+        expect(find.text('PDF 加载失败'), findsOneWidget);
+        await _golden('media-pdf-retry', width, scale);
+        connector.response = () => retry.future;
+        await tester.tap(find.byKey(const ValueKey('media-viewer-retry')));
+        await tester.pump(const Duration(milliseconds: 100));
+        expect(connector.calls, 2);
+        expect(
+          find.byKey(const ValueKey('media-viewer-loading')),
+          findsOneWidget,
+        );
+        await tester.tap(find.byKey(const ValueKey('media-return-button')));
+        await tester.pumpAndSettle();
+        retry.complete(_failure());
+        await tester.pumpAndSettle();
+        expect(find.text('返回首页'), findsOneWidget);
+        expect(tester.takeException(), isNull);
+      });
+    }
+  }
+  for (final kind in ['missing', 'image', 'pdf']) {
+    testWidgets('short large $kind keeps header and recovery reachable', (
+      tester,
+    ) async {
+      _size(tester, 320, height: 568);
+      final connector = _Connector()..response = () async => _failure();
+      await tester.pumpWidget(
+        _app(
+          2,
+          kind: kind,
+          repository: kind == 'missing'
+              ? null
+              : ProductAssetRepository(
+                  baseUri: Uri.parse('https://api.example.test'),
+                  connector: connector,
+                ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      final back = find.byKey(const ValueKey('media-return-button'));
+      expect(tester.getSize(back).shortestSide, greaterThanOrEqualTo(44));
+      if (kind != 'missing') {
+        expect(
+          find.byTooltip('喂养姿势与照护指南 · Feeding positions and care'),
+          findsOneWidget,
+        );
+        final retry = find.byKey(const ValueKey('media-viewer-retry'));
+        await tester.ensureVisible(retry);
+        await tester.pumpAndSettle();
+        expect(find.text('重新加载'), findsOneWidget);
+        expect(tester.getSize(retry).height, greaterThanOrEqualTo(44));
+        expect(tester.getBottomRight(retry).dy, lessThanOrEqualTo(568));
+        await tester.tap(retry);
+        await tester.pumpAndSettle();
+        expect(connector.calls, 2);
+      } else {
+        expect(find.text('请从资料卡片打开图片、视频或文档。'), findsOneWidget);
+      }
+      expect(tester.takeException(), isNull);
+      await _golden('media-short-$kind', 320, 2);
+      await tester.tap(back);
+      await tester.pumpAndSettle();
+      expect(find.text('返回首页'), findsOneWidget);
+    });
+  }
+  for (final kind in ['image', 'pdf']) {
+    for (final status in [401, 403, 200]) {
+      testWidgets(
+        '$kind authorization or unsupported content $status remains retryable',
+        (tester) async {
+          _size(tester, 320);
+          final connector = _Connector()
+            ..response = () async => ProductAssetHttpResponse(
+              statusCode: status,
+              statusText: 'Fixture',
+              contentType: 'text/plain',
+              body: Uint8List.fromList([
+                110,
+                111,
+                116,
+                32,
+                109,
+                101,
+                100,
+                105,
+                97,
+              ]),
+            );
+          var refreshed = 0;
+          final repository = ProductAssetRepository(
+            baseUri: Uri.parse('https://api.example.test'),
+            connector: connector,
+            tokenProvider: () => 'fixture-token',
+            onUnauthorized: () async {
+              refreshed++;
+              return true;
+            },
+          );
+          await tester.pumpWidget(_app(2, kind: kind, repository: repository));
+          await tester.pumpAndSettle();
+          expect(
+            find.byKey(const ValueKey('media-viewer-retry')),
+            findsOneWidget,
+          );
+          expect(refreshed, status == 401 ? 1 : 0);
+          expect(connector.calls, status == 401 ? 2 : 1);
+          await tester.tap(find.byKey(const ValueKey('media-return-button')));
+          await tester.pumpAndSettle();
+          expect(find.text('返回首页'), findsOneWidget);
+          expect(tester.takeException(), isNull);
+        },
+      );
     }
   }
 }
 
-void _size(WidgetTester tester, double width) {
-  tester.view.physicalSize = Size(width, 844);
+void _size(WidgetTester tester, double width, {double height = 844}) {
+  tester.view.physicalSize = Size(width, height);
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.resetPhysicalSize);
   addTearDown(tester.view.resetDevicePixelRatio);
@@ -134,7 +278,7 @@ Widget _app(
                     'kind': kind,
                     'url': repository == null
                         ? 'invalid'
-                        : '/v1/assets/asset-image?kind=image',
+                        : '/v1/assets/asset-$kind?kind=$kind',
                     'title': '喂养姿势与照护指南 · Feeding positions and care',
                   },
           ),
@@ -169,11 +313,11 @@ Widget _app(
 }
 
 Future<void> _golden(String name, double width, double scale) async {
-  if (scale == 1) {
+  {
     await expectLater(
       find.byKey(const ValueKey('media-capture')),
       matchesGoldenFile(
-        '../../goldens/design_system/$name-${width.toInt()}.png',
+        '../../goldens/design_system/$name-${width.toInt()}${scale == 2 ? '-2x' : ''}.png',
       ),
     );
   }

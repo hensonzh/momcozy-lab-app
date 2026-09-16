@@ -1,0 +1,7 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/features/agent_hub/artifacts/agent_result_card_test.dart
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/artifacts/agent_motion_assessment_card_test.dart: maps the motion assessment artifact to a dedicated card contract
+00:00 +1: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/artifacts/agent_motion_assessment_card_test.dart: does not expose a legacy target without an implemented evaluator
+00:00 +2: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/artifacts/agent_motion_assessment_card_test.dart: maps the generic posture screen entry without narrowing it to neck
+00:00 +3: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/artifacts/agent_motion_assessment_card_test.dart: motion assessment card emits only its dedicated route action
+00:00 +4: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/artifacts/agent_motion_assessment_card_test.dart: motion assessment card emits only its dedicated route action
+00:00 +5: All tests passed!

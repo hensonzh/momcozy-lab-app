@@ -1,0 +1,2090 @@
+{
+  "scope": "All path-to-SHA256 entries in implementation-hashes.json and verified-files.json. Other preservation schemas are checked separately. A match identifies an archived version, not full state acceptance.",
+  "files": [
+    {
+      "path": "lib/app/mom_bottom_navigation.dart",
+      "current_sha256": "b762f1e2b67b9febb2e5662d1d29125556dd8d08a6b485f64e42b08a63759dff",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-consultation-current-review/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-consultation-current-review/implementation-hashes.json",
+          "sha256": "b762f1e2b67b9febb2e5662d1d29125556dd8d08a6b485f64e42b08a63759dff"
+        }
+      ]
+    },
+    {
+      "path": "lib/app/momcozy_app.dart",
+      "current_sha256": "19ee287166d09efecb8a9babd37cd4e4a4a4bae2f107856a1c6ec40c210523eb",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-special-pages/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-special-pages/implementation-hashes.json",
+          "sha256": "19ee287166d09efecb8a9babd37cd4e4a4a4bae2f107856a1c6ec40c210523eb"
+        },
+        {
+          "report": "docs/ui-refactor/20260914-agent-attachments-menus/implementation-hashes.json",
+          "sha256": "4e28954f3c930728bd0efd196e2a59a374ab3962675bf9305ca7ad8b77e57627"
+        },
+        {
+          "report": "docs/ui-refactor/20260914-consultation-current-review/implementation-hashes.json",
+          "sha256": "00881d1d0901b24af222b6e08fd61b0a1ffd6ac309e02277cd1f400b6f1a59a0"
+        },
+        {
+          "report": "docs/ui-refactor/20260914-destination-review/implementation-hashes.json",
+          "sha256": "00881d1d0901b24af222b6e08fd61b0a1ffd6ac309e02277cd1f400b6f1a59a0"
+        },
+        {
+          "report": "docs/ui-refactor/20260914-notification-conversation/implementation-hashes.json",
+          "sha256": "00881d1d0901b24af222b6e08fd61b0a1ffd6ac309e02277cd1f400b6f1a59a0"
+        }
+      ]
+    },
+    {
+      "path": "lib/core/observability/momcozy_observability.dart",
+      "current_sha256": "f9e8e964dbab041804babc1038c5be0c2e04b4175ec0f2c12ad8c77625385f4f",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-consultation-current-review/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-consultation-current-review/implementation-hashes.json",
+          "sha256": "f9e8e964dbab041804babc1038c5be0c2e04b4175ec0f2c12ad8c77625385f4f"
+        }
+      ]
+    },
+    {
+      "path": "lib/features/agent_hub/agent_hub_page.dart",
+      "current_sha256": "f8873ef56dec4899557067eefbc0b838c2523ab0a16a3b3fc65176cc06a557ff",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-agent-actions-results/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-agent-conversation/implementation-hashes.json",
+          "sha256": "5e85204a5b07e094746251d76538afb464dc6c83ed803252015e2d76fc876318"
+        },
+        {
+          "report": "docs/ui-refactor/20260914-agent-voice-notices/implementation-hashes.json",
+          "sha256": "c3a6784442db5d9ee2653e9426d7f713499d1408c3b81059194950e2ba338e6e"
+        },
+        {
+          "report": "docs/ui-refactor/20260914-agent-attachments-menus/implementation-hashes.json",
+          "sha256": "3e1605e59fb749e486f367fd9b3b124647b11ed679a806d0d8da62a55f9b236c"
+        },
+        {
+          "report": "docs/ui-refactor/20260914-agent-reading-cards/implementation-hashes.json",
+          "sha256": "dd4337c095c001286b6b212f007a68dc989f96fc39873e5974d5ffc6e3c0327f"
+        },
+        {
+          "report": "docs/ui-refactor/20260914-agent-actions-results/implementation-hashes.json",
+          "sha256": "f8873ef56dec4899557067eefbc0b838c2523ab0a16a3b3fc65176cc06a557ff"
+        },
+        {
+          "report": "docs/ui-refactor/20260914-notification-conversation/implementation-hashes.json",
+          "sha256": "5e85204a5b07e094746251d76538afb464dc6c83ed803252015e2d76fc876318"
+        }
+      ]
+    },
+    {
+      "path": "lib/features/agent_hub/artifacts/agent_artifact_panel.dart",
+      "current_sha256": "034d14ed097cc402d04ad35bf32189a1a08dcdf0a0d89370a173da0e84972588",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-agent-reading-cards/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-agent-reading-cards/implementation-hashes.json",
+          "sha256": "034d14ed097cc402d04ad35bf32189a1a08dcdf0a0d89370a173da0e84972588"
+        }
+      ]
+    },
+    {
+      "path": "lib/features/agent_hub/artifacts/cards/agent_artifact_card_registry.dart",
+      "current_sha256": "70281c706e7a7ba290687dc8511d54490a044e12a7824c7868624c0d03addff4",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-agent-reading-cards/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-agent-reading-cards/implementation-hashes.json",
+          "sha256": "70281c706e7a7ba290687dc8511d54490a044e12a7824c7868624c0d03addff4"
+        }
+      ]
+    },
+    {
+      "path": "lib/features/agent_hub/artifacts/cards/agent_result_card.dart",
+      "current_sha256": "7b382d4f4c2b25593a1eb66be213fc95d406ba23d90bd504c93e93fc203b3f29",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-agent-reading-cards/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-agent-reading-cards/implementation-hashes.json",
+          "sha256": "7b382d4f4c2b25593a1eb66be213fc95d406ba23d90bd504c93e93fc203b3f29"
+        }
+      ]
+    },
+    {
+      "path": "lib/features/agent_hub/artifacts/forms/agent_artifact_form.dart",
+      "current_sha256": "75270b8cc241249bf2b9c34dbc9c75b14fb98e86a64ec13711db6f1fd0dedf69",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-agent-form-dialogs/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-agent-form-dialogs/implementation-hashes.json",
+          "sha256": "75270b8cc241249bf2b9c34dbc9c75b14fb98e86a64ec13711db6f1fd0dedf69"
+        }
+      ]
+    },
+    {
+      "path": "lib/features/agent_hub/artifacts/forms/agent_artifact_form_dialog.dart",
+      "current_sha256": "f2fa1623d32726adaa6653d7c1cdf64e72053088d30ac2fae4d0392d2bb977ad",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-agent-form-dialogs/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-agent-form-dialogs/implementation-hashes.json",
+          "sha256": "f2fa1623d32726adaa6653d7c1cdf64e72053088d30ac2fae4d0392d2bb977ad"
+        },
+        {
+          "report": "docs/ui-refactor/20260914-agent-reading-cards/implementation-hashes.json",
+          "sha256": "a1565dabf4d3a6d3956c710165fc53ba6608cb90b65887f0ceced2dad9f54040"
+        }
+      ]
+    },
+    {
+      "path": "lib/features/agent_hub/presentation/agent_attachment_tile.dart",
+      "current_sha256": "73885fac981b003a4e568b85432e4c031d516211303237a2ca56988764ea1fe4",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-agent-attachments-menus/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-agent-attachments-menus/implementation-hashes.json",
+          "sha256": "73885fac981b003a4e568b85432e4c031d516211303237a2ca56988764ea1fe4"
+        }
+      ]
+    },
+    {
+      "path": "lib/features/agent_hub/presentation/agent_conversation_panel.dart",
+      "current_sha256": "8432026a75a605272424cde00358dd3fd4060799620eabf222e58a6965c49ef3",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-agent-history/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-agent-history/implementation-hashes.json",
+          "sha256": "8432026a75a605272424cde00358dd3fd4060799620eabf222e58a6965c49ef3"
+        }
+      ]
+    },
+    {
+      "path": "lib/features/agent_hub/presentation/agent_file_previews.dart",
+      "current_sha256": "353a7c882ad2fd28a317feca7a7c44b7cd87c3209ab658af30d602ebc17fecc4",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-agent-attachments-menus/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-agent-attachments-menus/implementation-hashes.json",
+          "sha256": "353a7c882ad2fd28a317feca7a7c44b7cd87c3209ab658af30d602ebc17fecc4"
+        }
+      ]
+    },
+    {
+      "path": "lib/features/agent_hub/presentation/agent_image_previews.dart",
+      "current_sha256": "1454b56253e9955ac9a694a8a790c09f1f84b2047a18157ab5bd07f23a43e258",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-agent-attachments-menus/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-agent-attachments-menus/implementation-hashes.json",
+          "sha256": "1454b56253e9955ac9a694a8a790c09f1f84b2047a18157ab5bd07f23a43e258"
+        }
+      ]
+    },
+    {
+      "path": "lib/features/agent_hub/presentation/agent_message_menu.dart",
+      "current_sha256": "f4dd0cc284faa10ee6f17028bb847f71ad72a09f9ee1725ef41ea099e85bfeae",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-agent-attachments-menus/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-agent-attachments-menus/implementation-hashes.json",
+          "sha256": "f4dd0cc284faa10ee6f17028bb847f71ad72a09f9ee1725ef41ea099e85bfeae"
+        }
+      ]
+    },
+    {
+      "path": "lib/features/agent_hub/presentation/agent_voice_notice.dart",
+      "current_sha256": "9ac42384e4a905d39b19f618fb0cdf687f46a45de9ce9ae2a65caa03e9394dd6",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-agent-voice-notices/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-agent-voice-notices/implementation-hashes.json",
+          "sha256": "9ac42384e4a905d39b19f618fb0cdf687f46a45de9ce9ae2a65caa03e9394dd6"
+        }
+      ]
+    },
+    {
+      "path": "lib/features/app_pages/momcozy_feature_pages.dart",
+      "current_sha256": "10612b5c5641b2d02d6dbd7345feea933586a46fbf5690dda9774fb8fedb4c8f",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-consultation-current-review/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-consultation-current-review/implementation-hashes.json",
+          "sha256": "10612b5c5641b2d02d6dbd7345feea933586a46fbf5690dda9774fb8fedb4c8f"
+        }
+      ]
+    },
+    {
+      "path": "lib/features/auth/presentation/account_page.dart",
+      "current_sha256": "44a45439a1f4d0cb6b4e7c485d1d198874361ba9e1decc43ce98cb566c2e441c",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-notifications/verified-files.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-account/verified-files.json",
+          "sha256": "c824ec778eb353aeb201c0aa7373709b7c2ab37bad193ff5b51b025aaaf40751"
+        },
+        {
+          "report": "docs/ui-refactor/20260914-notifications/verified-files.json",
+          "sha256": "44a45439a1f4d0cb6b4e7c485d1d198874361ba9e1decc43ce98cb566c2e441c"
+        }
+      ]
+    },
+    {
+      "path": "lib/features/auth/presentation/auth_login_chrome.dart",
+      "current_sha256": "3808b5484b0cda026e8007c5ce940027bc672e1185ba2fc4ac354d3d385ab7bb",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-auth/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-auth/implementation-hashes.json",
+          "sha256": "3808b5484b0cda026e8007c5ce940027bc672e1185ba2fc4ac354d3d385ab7bb"
+        }
+      ]
+    },
+    {
+      "path": "lib/features/auth/presentation/auth_page.dart",
+      "current_sha256": "77bf0ab04f1599f353bbb66c4a3dab2fe826d5e5e04f7f1b106f0b73ec07475f",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-auth/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-auth/implementation-hashes.json",
+          "sha256": "77bf0ab04f1599f353bbb66c4a3dab2fe826d5e5e04f7f1b106f0b73ec07475f"
+        }
+      ]
+    },
+    {
+      "path": "lib/features/auth/presentation/invite_auth_page.dart",
+      "current_sha256": "51b02cb9d3c973aa931abbeb7e9ec3352476b889db496b7cd583ef757732c51b",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-auth/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-auth/implementation-hashes.json",
+          "sha256": "51b02cb9d3c973aa931abbeb7e9ec3352476b889db496b7cd583ef757732c51b"
+        }
+      ]
+    },
+    {
+      "path": "lib/features/media/presentation/media_viewer_feedback.dart",
+      "current_sha256": "e96c1542356308782b6607eaac4b3b490da3baa0c65709fe2df18fbefa0bacd6",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-media-controls/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-media-controls/implementation-hashes.json",
+          "sha256": "e96c1542356308782b6607eaac4b3b490da3baa0c65709fe2df18fbefa0bacd6"
+        },
+        {
+          "report": "docs/ui-refactor/20260914-media-viewer/implementation-hashes.json",
+          "sha256": "d8e6782d3d213b2ad0a0ae6b319becde2b4d10bc3d16dbd356064b1abe6a58ab"
+        }
+      ]
+    },
+    {
+      "path": "lib/features/media/presentation/media_viewer_header.dart",
+      "current_sha256": "3b0851ca19afdf2995a8d9dd5135c2051bc9c39e1c26b3d76c6fef092db620e3",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-media-viewer/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-media-viewer/implementation-hashes.json",
+          "sha256": "3b0851ca19afdf2995a8d9dd5135c2051bc9c39e1c26b3d76c6fef092db620e3"
+        }
+      ]
+    },
+    {
+      "path": "lib/features/media/presentation/media_viewer_page.dart",
+      "current_sha256": "4ef74f4df4d7254774086da4df76013a46034c57bd7e01c234cc105711e15beb",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-media-controls/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-media-controls/implementation-hashes.json",
+          "sha256": "4ef74f4df4d7254774086da4df76013a46034c57bd7e01c234cc105711e15beb"
+        },
+        {
+          "report": "docs/ui-refactor/20260914-media-viewer/implementation-hashes.json",
+          "sha256": "904e88d01850acb2a6413d068e35e47ceec72b55407a8a2601714ddbc5584af5"
+        }
+      ]
+    },
+    {
+      "path": "lib/features/media/presentation/pdf_document_toolbar.dart",
+      "current_sha256": "f4e5e05eea453584b1049429be7e535ae7b799a8dba42db3e092299f74d87335",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-media-controls/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-media-controls/implementation-hashes.json",
+          "sha256": "f4e5e05eea453584b1049429be7e535ae7b799a8dba42db3e092299f74d87335"
+        }
+      ]
+    },
+    {
+      "path": "lib/features/media/presentation/product_asset_image.dart",
+      "current_sha256": "0188614166549815a3fae2f780fdba902f2ebab17918683642c8dbd6eaa585b1",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-media-viewer/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-media-viewer/implementation-hashes.json",
+          "sha256": "0188614166549815a3fae2f780fdba902f2ebab17918683642c8dbd6eaa585b1"
+        }
+      ]
+    },
+    {
+      "path": "lib/features/media/presentation/product_asset_video_player.dart",
+      "current_sha256": "97ebf46698abe55482b54fa75a5cd11db629dec24bf6ec5f67552a00493cda21",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-media-controls/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-media-controls/implementation-hashes.json",
+          "sha256": "97ebf46698abe55482b54fa75a5cd11db629dec24bf6ec5f67552a00493cda21"
+        }
+      ]
+    },
+    {
+      "path": "lib/features/motion_assessment/presentation/motion_assessment_controller.dart",
+      "current_sha256": "57b43e288688d153a09d2c9a0d80da825fa1a98921e168d2594ed6ebd96509df",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-special-pages/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-special-pages/implementation-hashes.json",
+          "sha256": "57b43e288688d153a09d2c9a0d80da825fa1a98921e168d2594ed6ebd96509df"
+        }
+      ]
+    },
+    {
+      "path": "lib/features/motion_assessment/presentation/motion_assessment_page.dart",
+      "current_sha256": "6f7ddf076aac516b62381a0f932480d4d3e0f4f5d70a1af95c83e6a7e778f2b9",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-special-pages/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-special-pages/implementation-hashes.json",
+          "sha256": "6f7ddf076aac516b62381a0f932480d4d3e0f4f5d70a1af95c83e6a7e778f2b9"
+        }
+      ]
+    },
+    {
+      "path": "lib/features/notifications/presentation/notification_permission_dialogs.dart",
+      "current_sha256": "49c420065d2df840182fd518d5611798cdcdc06d182324af0840731bfc87b42d",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-notifications/verified-files.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-notifications/verified-files.json",
+          "sha256": "49c420065d2df840182fd518d5611798cdcdc06d182324af0840731bfc87b42d"
+        }
+      ]
+    },
+    {
+      "path": "lib/features/notifications/presentation/notification_settings_page.dart",
+      "current_sha256": "18f3d4f67a8cb09aefafc036f887317201cef8be6c6ee5db602a75e3669522ad",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-notifications/verified-files.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-notifications/verified-files.json",
+          "sha256": "18f3d4f67a8cb09aefafc036f887317201cef8be6c6ee5db602a75e3669522ad"
+        }
+      ]
+    },
+    {
+      "path": "lib/features/notifications/presentation/notifications_page.dart",
+      "current_sha256": "d5aac8f47bed55917886a8ec0c8eb363e066832a8a7634186518ee89d785dc34",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-notifications/verified-files.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-notifications/verified-files.json",
+          "sha256": "d5aac8f47bed55917886a8ec0c8eb363e066832a8a7634186518ee89d785dc34"
+        }
+      ]
+    },
+    {
+      "path": "lib/features/onboarding/presentation/avatar_task_banner.dart",
+      "current_sha256": "38ba39c2419ef2b34c8c0993862106d2c19d77c18a474cf8a8fd374fea77946e",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-onboarding-avatar/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-onboarding-avatar/implementation-hashes.json",
+          "sha256": "38ba39c2419ef2b34c8c0993862106d2c19d77c18a474cf8a8fd374fea77946e"
+        }
+      ]
+    },
+    {
+      "path": "lib/features/onboarding/presentation/onboarding_page.dart",
+      "current_sha256": "2d5ec507c926086540c9bbdc770e3aa68c319dbe3357a7b57d7a0ff1a28487dc",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-onboarding-avatar/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-onboarding-profile/implementation-hashes.json",
+          "sha256": "3839711ce7ff7268f6b6e2999a4ebd6dd5421e9280e23016761b9c0e96d0bd60"
+        },
+        {
+          "report": "docs/ui-refactor/20260914-onboarding-avatar/implementation-hashes.json",
+          "sha256": "2d5ec507c926086540c9bbdc770e3aa68c319dbe3357a7b57d7a0ff1a28487dc"
+        }
+      ]
+    },
+    {
+      "path": "lib/modules/baby/application/baby_record_editor_controller.dart",
+      "current_sha256": "148a69c0f19637a6039232c2d9c30172eb6c3746aafe4c2eb249df89170c6ae7",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-baby-records/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-baby-records/implementation-hashes.json",
+          "sha256": "148a69c0f19637a6039232c2d9c30172eb6c3746aafe4c2eb249df89170c6ae7"
+        }
+      ]
+    },
+    {
+      "path": "lib/modules/baby/application/baby_records_controller.dart",
+      "current_sha256": "13e36fb92d9ce0cf721c5254cc84afd3f232f97673bf29fea198e376e865a5ee",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-baby-records/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-baby-records/implementation-hashes.json",
+          "sha256": "13e36fb92d9ce0cf721c5254cc84afd3f232f97673bf29fea198e376e865a5ee"
+        }
+      ]
+    },
+    {
+      "path": "lib/modules/baby/presentation/baby_record_editor.dart",
+      "current_sha256": "15235fb28172bc4b8589366ecdeb40e35d8286236b80bdfb51a190a633078278",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-baby-records/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-baby-records/implementation-hashes.json",
+          "sha256": "15235fb28172bc4b8589366ecdeb40e35d8286236b80bdfb51a190a633078278"
+        }
+      ]
+    },
+    {
+      "path": "lib/modules/baby/presentation/baby_record_fields.dart",
+      "current_sha256": "3791ef754b9c48a2496e7b40b8828a1a0ac642cbab96f5aa6318a0d638827890",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-baby-records/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-baby-records/implementation-hashes.json",
+          "sha256": "3791ef754b9c48a2496e7b40b8828a1a0ac642cbab96f5aa6318a0d638827890"
+        }
+      ]
+    },
+    {
+      "path": "lib/modules/baby/presentation/baby_records_page.dart",
+      "current_sha256": "27aa15abfab2ea4a13e2b5b007596966cf9ea3776c178955b1757538c29261c0",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-baby-records/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-baby-records/implementation-hashes.json",
+          "sha256": "27aa15abfab2ea4a13e2b5b007596966cf9ea3776c178955b1757538c29261c0"
+        }
+      ]
+    },
+    {
+      "path": "lib/modules/consultation/application/room_controller.dart",
+      "current_sha256": "f132e15522022d8203ffd1360829dd6067266ed1214db9316582f5dc5557577b",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-consultation-entry/implementation-hashes.json",
+        "docs/ui-refactor/20260914-consultation-current-review/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-consultation-entry/implementation-hashes.json",
+          "sha256": "f132e15522022d8203ffd1360829dd6067266ed1214db9316582f5dc5557577b"
+        },
+        {
+          "report": "docs/ui-refactor/20260914-consultation-current-review/implementation-hashes.json",
+          "sha256": "f132e15522022d8203ffd1360829dd6067266ed1214db9316582f5dc5557577b"
+        }
+      ]
+    },
+    {
+      "path": "lib/modules/consultation/presentation/consultation_outcome.dart",
+      "current_sha256": "bc79d3f0b00bb25eb9e1853e034bb64ff5f4aeabb41cdf9b040338b503d5b013",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-consultation-outcomes/implementation-hashes.json",
+        "docs/ui-refactor/20260914-consultation-current-review/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-consultation-outcomes/implementation-hashes.json",
+          "sha256": "bc79d3f0b00bb25eb9e1853e034bb64ff5f4aeabb41cdf9b040338b503d5b013"
+        },
+        {
+          "report": "docs/ui-refactor/20260914-consultation-current-review/implementation-hashes.json",
+          "sha256": "bc79d3f0b00bb25eb9e1853e034bb64ff5f4aeabb41cdf9b040338b503d5b013"
+        }
+      ]
+    },
+    {
+      "path": "lib/modules/consultation/presentation/consultation_preparation.dart",
+      "current_sha256": "942b93bbc38b6eb2c43e273fa4a2a0c292d1dde70acd862d39253f15ff383313",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-consultation-current-review/implementation-hashes.json",
+        "docs/ui-refactor/20260914-consultation-preparation/verified-files.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-consultation-current-review/implementation-hashes.json",
+          "sha256": "942b93bbc38b6eb2c43e273fa4a2a0c292d1dde70acd862d39253f15ff383313"
+        },
+        {
+          "report": "docs/ui-refactor/20260914-consultation-preparation/verified-files.json",
+          "sha256": "942b93bbc38b6eb2c43e273fa4a2a0c292d1dde70acd862d39253f15ff383313"
+        }
+      ]
+    },
+    {
+      "path": "lib/modules/consultation/presentation/consultation_start_dialog.dart",
+      "current_sha256": "de86de9a8c1abb0143b175feb1a8e595b44d906637e5a636d1f47af7cc98cd0f",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-consultation-preflight/verified-files.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-consultation-preflight/verified-files.json",
+          "sha256": "de86de9a8c1abb0143b175feb1a8e595b44d906637e5a636d1f47af7cc98cd0f"
+        }
+      ]
+    },
+    {
+      "path": "lib/modules/consultation/presentation/device_check_dialog.dart",
+      "current_sha256": "6ea94e71e9041f386c7dd5e313fad06743d1ceb013c2a94772d1b036ea4f5f7c",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-consultation-preflight/verified-files.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-consultation-preflight/verified-files.json",
+          "sha256": "6ea94e71e9041f386c7dd5e313fad06743d1ceb013c2a94772d1b036ea4f5f7c"
+        }
+      ]
+    },
+    {
+      "path": "lib/modules/consultation/presentation/room_page.dart",
+      "current_sha256": "2431630b028d90bf090d9b7f726fa420d2b1908da23175e4c37a2a6f4a553f35",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-consultation-entry/implementation-hashes.json",
+        "docs/ui-refactor/20260914-consultation-current-review/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-consultation-outcomes/implementation-hashes.json",
+          "sha256": "4d33c9718020029c0b3f10767e90023705a02f37536fdd761be9a71a14a93c9a"
+        },
+        {
+          "report": "docs/ui-refactor/20260914-consultation-entry/implementation-hashes.json",
+          "sha256": "2431630b028d90bf090d9b7f726fa420d2b1908da23175e4c37a2a6f4a553f35"
+        },
+        {
+          "report": "docs/ui-refactor/20260914-consultation-current-review/implementation-hashes.json",
+          "sha256": "2431630b028d90bf090d9b7f726fa420d2b1908da23175e4c37a2a6f4a553f35"
+        },
+        {
+          "report": "docs/ui-refactor/20260914-consultation-live-room/implementation-hashes.json",
+          "sha256": "f5a6dbaad54f6cf9ad505174c18cb15535409008a6b3ec065936311aaa4e04bc"
+        },
+        {
+          "report": "docs/ui-refactor/20260914-consultation-preparation/verified-files.json",
+          "sha256": "8162beedf70c32dbdc68d4dd5d929f05f24c8c89c360ad0f256762afeacbf998"
+        }
+      ]
+    },
+    {
+      "path": "lib/modules/consultation/presentation/user_video_stage.dart",
+      "current_sha256": "7799cc3483a77aa095749dfa8879b74e360ee006cd9550c1f2884fffc9333160",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-consultation-current-review/implementation-hashes.json",
+        "docs/ui-refactor/20260914-consultation-live-room/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-consultation-current-review/implementation-hashes.json",
+          "sha256": "7799cc3483a77aa095749dfa8879b74e360ee006cd9550c1f2884fffc9333160"
+        },
+        {
+          "report": "docs/ui-refactor/20260914-consultation-live-room/implementation-hashes.json",
+          "sha256": "7799cc3483a77aa095749dfa8879b74e360ee006cd9550c1f2884fffc9333160"
+        }
+      ]
+    },
+    {
+      "path": "lib/modules/consultation/presentation/video_stage.dart",
+      "current_sha256": "5de9cb2ac09413da03cb4e55e4435615957e062f23a79baaada59d7d66c67118",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-consultation-current-review/implementation-hashes.json",
+        "docs/ui-refactor/20260914-consultation-live-room/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-consultation-current-review/implementation-hashes.json",
+          "sha256": "5de9cb2ac09413da03cb4e55e4435615957e062f23a79baaada59d7d66c67118"
+        },
+        {
+          "report": "docs/ui-refactor/20260914-consultation-live-room/implementation-hashes.json",
+          "sha256": "5de9cb2ac09413da03cb4e55e4435615957e062f23a79baaada59d7d66c67118"
+        }
+      ]
+    },
+    {
+      "path": "lib/modules/mom/presentation/lactation_chart.dart",
+      "current_sha256": "191d1f6258a66b87458bc4f839f0be51069381a3754812482a89a982b892c193",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-lactation/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-lactation/implementation-hashes.json",
+          "sha256": "191d1f6258a66b87458bc4f839f0be51069381a3754812482a89a982b892c193"
+        }
+      ]
+    },
+    {
+      "path": "lib/modules/mom/presentation/lactation_page.dart",
+      "current_sha256": "42728ee50584f3a277fca222b031f0d0322404243ebe72fb6e4000ce78753dde",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-lactation/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-lactation/implementation-hashes.json",
+          "sha256": "42728ee50584f3a277fca222b031f0d0322404243ebe72fb6e4000ce78753dde"
+        }
+      ]
+    },
+    {
+      "path": "lib/modules/mom/presentation/lactation_panel.dart",
+      "current_sha256": "cca15bc2bcd010080f45facd13833ddc0e9fd0ccc72c0f3ab72f9f58ba242d00",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-lactation/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-lactation/implementation-hashes.json",
+          "sha256": "cca15bc2bcd010080f45facd13833ddc0e9fd0ccc72c0f3ab72f9f58ba242d00"
+        }
+      ]
+    },
+    {
+      "path": "lib/modules/mom/presentation/mom_home_sections.dart",
+      "current_sha256": "884f5cd02a0ec1e9df1225da58c381baad7ca1fadc8ce805bbda0534f1b7431a",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-consultation-current-review/implementation-hashes.json",
+        "docs/ui-refactor/20260914-more/verified-files.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-consultation-current-review/implementation-hashes.json",
+          "sha256": "884f5cd02a0ec1e9df1225da58c381baad7ca1fadc8ce805bbda0534f1b7431a"
+        },
+        {
+          "report": "docs/ui-refactor/20260914-more/verified-files.json",
+          "sha256": "884f5cd02a0ec1e9df1225da58c381baad7ca1fadc8ce805bbda0534f1b7431a"
+        }
+      ]
+    },
+    {
+      "path": "lib/modules/mom/presentation/mother_home_page.dart",
+      "current_sha256": "cb009de401d7aed7ab950a5638acf7e95c5cfb6c0711c78cf45d3abb7b88ca45",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-consultation-current-review/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-consultation-current-review/implementation-hashes.json",
+          "sha256": "cb009de401d7aed7ab950a5638acf7e95c5cfb6c0711c78cf45d3abb7b88ca45"
+        }
+      ]
+    },
+    {
+      "path": "lib/modules/profile/presentation/more_page.dart",
+      "current_sha256": "546a6a3221c0f6344c77f97b88f6f3419e4ea574479df1eede367438f151e60e",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-more/verified-files.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-more/verified-files.json",
+          "sha256": "546a6a3221c0f6344c77f97b88f6f3419e4ea574479df1eede367438f151e60e"
+        }
+      ]
+    },
+    {
+      "path": "lib/modules/schedule/application/schedule_controller.dart",
+      "current_sha256": "d767738a12d7a8fb27dcd0e4889091f5c0096fa0615fd626eb2e2da095600f00",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-schedule/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-schedule/implementation-hashes.json",
+          "sha256": "d767738a12d7a8fb27dcd0e4889091f5c0096fa0615fd626eb2e2da095600f00"
+        }
+      ]
+    },
+    {
+      "path": "lib/modules/schedule/presentation/personal_schedule_editor.dart",
+      "current_sha256": "bd11ff86a30046974ba188131c6f4ca46d2c59c2977c06386d662f71d6200c7f",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-schedule/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-schedule/implementation-hashes.json",
+          "sha256": "bd11ff86a30046974ba188131c6f4ca46d2c59c2977c06386d662f71d6200c7f"
+        }
+      ]
+    },
+    {
+      "path": "lib/modules/schedule/presentation/schedule_page.dart",
+      "current_sha256": "87f06c1ea10cfb6ee6b503f7f709015a761f58965d7715bdb93423df33db20ba",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-consultation-current-review/implementation-hashes.json",
+        "docs/ui-refactor/20260914-schedule/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-consultation-current-review/implementation-hashes.json",
+          "sha256": "87f06c1ea10cfb6ee6b503f7f709015a761f58965d7715bdb93423df33db20ba"
+        },
+        {
+          "report": "docs/ui-refactor/20260914-schedule/implementation-hashes.json",
+          "sha256": "87f06c1ea10cfb6ee6b503f7f709015a761f58965d7715bdb93423df33db20ba"
+        }
+      ]
+    },
+    {
+      "path": "lib/modules/services/application/care_overview_controller.dart",
+      "current_sha256": "612e8dc2aee7207987aa466bb7e2fff60e394d91c1c7088479c18a43c9a0f966",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-service-renew/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-service-renew/implementation-hashes.json",
+          "sha256": "612e8dc2aee7207987aa466bb7e2fff60e394d91c1c7088479c18a43c9a0f966"
+        }
+      ]
+    },
+    {
+      "path": "lib/modules/services/application/summary_controller.dart",
+      "current_sha256": "9d4cb5ec509810478196b258a9e5d69d4daa213794af23e58e450a72b3f8ece1",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-consultation-summary/implementation-hashes.json",
+        "docs/ui-refactor/20260914-consultation-current-review/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-consultation-summary/implementation-hashes.json",
+          "sha256": "9d4cb5ec509810478196b258a9e5d69d4daa213794af23e58e450a72b3f8ece1"
+        },
+        {
+          "report": "docs/ui-refactor/20260914-consultation-current-review/implementation-hashes.json",
+          "sha256": "9d4cb5ec509810478196b258a9e5d69d4daa213794af23e58e450a72b3f8ece1"
+        }
+      ]
+    },
+    {
+      "path": "lib/modules/services/presentation/appointment_cancel_dialog.dart",
+      "current_sha256": "0e2726f1794fc4659050790330dcc49f8e22a049fb8327277f331feb106557c1",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-booking/verified-files.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-booking/verified-files.json",
+          "sha256": "0e2726f1794fc4659050790330dcc49f8e22a049fb8327277f331feb106557c1"
+        }
+      ]
+    },
+    {
+      "path": "lib/modules/services/presentation/appointment_detail_page.dart",
+      "current_sha256": "8c07302f96022551748e69adf4e0f7a1d3a601183a7026f05869d429a8d541cb",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-appointment-detail/verified-files.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-appointment-detail/verified-files.json",
+          "sha256": "8c07302f96022551748e69adf4e0f7a1d3a601183a7026f05869d429a8d541cb"
+        }
+      ]
+    },
+    {
+      "path": "lib/modules/services/presentation/booking_flow_dialogs.dart",
+      "current_sha256": "6f26e42062c018aa697d74d0f162f3a3c5169cbb6440754321e04480cc21fd00",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-consultation-current-review/implementation-hashes.json",
+        "docs/ui-refactor/20260914-booking/verified-files.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-consultation-current-review/implementation-hashes.json",
+          "sha256": "6f26e42062c018aa697d74d0f162f3a3c5169cbb6440754321e04480cc21fd00"
+        },
+        {
+          "report": "docs/ui-refactor/20260914-booking/verified-files.json",
+          "sha256": "6f26e42062c018aa697d74d0f162f3a3c5169cbb6440754321e04480cc21fd00"
+        }
+      ]
+    },
+    {
+      "path": "lib/modules/services/presentation/booking_page.dart",
+      "current_sha256": "cde6c656d8a9464b2b5b77a8f120b4998ba26ea542ee8828c7180a21404918b9",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-consultation-current-review/implementation-hashes.json",
+        "docs/ui-refactor/20260914-booking/verified-files.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-consultation-current-review/implementation-hashes.json",
+          "sha256": "cde6c656d8a9464b2b5b77a8f120b4998ba26ea542ee8828c7180a21404918b9"
+        },
+        {
+          "report": "docs/ui-refactor/20260914-booking/verified-files.json",
+          "sha256": "cde6c656d8a9464b2b5b77a8f120b4998ba26ea542ee8828c7180a21404918b9"
+        }
+      ]
+    },
+    {
+      "path": "lib/modules/services/presentation/consultation_summary_content.dart",
+      "current_sha256": "d2f13602e2faae53d5b36179f9d0f806db369fd391247d6f4cbb7f6ad7ab65a5",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-consultation-summary/implementation-hashes.json",
+        "docs/ui-refactor/20260914-consultation-current-review/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-consultation-summary/implementation-hashes.json",
+          "sha256": "d2f13602e2faae53d5b36179f9d0f806db369fd391247d6f4cbb7f6ad7ab65a5"
+        },
+        {
+          "report": "docs/ui-refactor/20260914-consultation-current-review/implementation-hashes.json",
+          "sha256": "d2f13602e2faae53d5b36179f9d0f806db369fd391247d6f4cbb7f6ad7ab65a5"
+        }
+      ]
+    },
+    {
+      "path": "lib/modules/services/presentation/consultation_summary_page.dart",
+      "current_sha256": "545bbfa5a4bdb6a23a74f9d782561824ddb9e873dfcb0eab95eed51014dd2531",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-consultation-summary/implementation-hashes.json",
+        "docs/ui-refactor/20260914-consultation-current-review/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-consultation-summary/implementation-hashes.json",
+          "sha256": "545bbfa5a4bdb6a23a74f9d782561824ddb9e873dfcb0eab95eed51014dd2531"
+        },
+        {
+          "report": "docs/ui-refactor/20260914-consultation-current-review/implementation-hashes.json",
+          "sha256": "545bbfa5a4bdb6a23a74f9d782561824ddb9e873dfcb0eab95eed51014dd2531"
+        }
+      ]
+    },
+    {
+      "path": "lib/modules/services/presentation/expert_support_section.dart",
+      "current_sha256": "563987b018dfa1f49e6acab183124287071a583c9fc6c80012eb96ffb70dd901",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-consultation-current-review/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-consultation-current-review/implementation-hashes.json",
+          "sha256": "563987b018dfa1f49e6acab183124287071a583c9fc6c80012eb96ffb70dd901"
+        }
+      ]
+    },
+    {
+      "path": "lib/modules/services/presentation/intake_page.dart",
+      "current_sha256": "8b1beec777fd069e0847ef3680506185534259527eec71b7bd49965b4800f10e",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-intake/verified-files.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-intake/verified-files.json",
+          "sha256": "8b1beec777fd069e0847ef3680506185534259527eec71b7bd49965b4800f10e"
+        }
+      ]
+    },
+    {
+      "path": "lib/modules/services/presentation/mom_appointment_widgets.dart",
+      "current_sha256": "945ec979bc6b7c32b5495368ee584389c6e1294b2637a345b6b69f21c86c2ca9",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-consultation-current-review/implementation-hashes.json",
+        "docs/ui-refactor/20260914-booking/verified-files.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-consultation-current-review/implementation-hashes.json",
+          "sha256": "945ec979bc6b7c32b5495368ee584389c6e1294b2637a345b6b69f21c86c2ca9"
+        },
+        {
+          "report": "docs/ui-refactor/20260914-booking/verified-files.json",
+          "sha256": "945ec979bc6b7c32b5495368ee584389c6e1294b2637a345b6b69f21c86c2ca9"
+        }
+      ]
+    },
+    {
+      "path": "lib/modules/services/presentation/mom_service_widgets.dart",
+      "current_sha256": "43e53d98f9ddbdb13d8c294af4c53d7cd867e12be1b2eebd380947a77a6a3ea1",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-service-catalog/verified-files.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-service-catalog/verified-files.json",
+          "sha256": "43e53d98f9ddbdb13d8c294af4c53d7cd867e12be1b2eebd380947a77a6a3ea1"
+        }
+      ]
+    },
+    {
+      "path": "lib/modules/services/presentation/service_catalog_page.dart",
+      "current_sha256": "2a5422ae83b92a085cd29625def47d75b47f26788801b53062c894b088d71802",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-service-catalog/verified-files.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-service-catalog/verified-files.json",
+          "sha256": "2a5422ae83b92a085cd29625def47d75b47f26788801b53062c894b088d71802"
+        }
+      ]
+    },
+    {
+      "path": "lib/modules/services/presentation/service_package_page.dart",
+      "current_sha256": "6ed6b240500325c7d763b02ede7d54f286062b982464a983f21be59116a5ec32",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-service-package/verified-files.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-service-package/verified-files.json",
+          "sha256": "6ed6b240500325c7d763b02ede7d54f286062b982464a983f21be59116a5ec32"
+        }
+      ]
+    },
+    {
+      "path": "lib/modules/services/presentation/service_progress_page.dart",
+      "current_sha256": "132c950cf4a34bddbcafbcf41064d0ad073bb6defa1a23b78a292898076a1f51",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-consultation-current-review/implementation-hashes.json",
+        "docs/ui-refactor/20260914-service-progress/verified-files.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-consultation-current-review/implementation-hashes.json",
+          "sha256": "132c950cf4a34bddbcafbcf41064d0ad073bb6defa1a23b78a292898076a1f51"
+        },
+        {
+          "report": "docs/ui-refactor/20260914-service-progress/verified-files.json",
+          "sha256": "132c950cf4a34bddbcafbcf41064d0ad073bb6defa1a23b78a292898076a1f51"
+        }
+      ]
+    },
+    {
+      "path": "lib/modules/services/presentation/service_purchase_dialog.dart",
+      "current_sha256": "ab1280bcecd27eda6240d107d365fc561ddbd068a24fad30b2f879d38de5fdfe",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-service-renew/implementation-hashes.json",
+        "docs/ui-refactor/20260914-service-package/verified-files.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-service-renew/implementation-hashes.json",
+          "sha256": "ab1280bcecd27eda6240d107d365fc561ddbd068a24fad30b2f879d38de5fdfe"
+        },
+        {
+          "report": "docs/ui-refactor/20260914-service-package/verified-files.json",
+          "sha256": "ab1280bcecd27eda6240d107d365fc561ddbd068a24fad30b2f879d38de5fdfe"
+        }
+      ]
+    },
+    {
+      "path": "lib/modules/services/presentation/service_renew_page.dart",
+      "current_sha256": "f01adf5d24ec28ef69b9c37fc4020acfac26aece466f4395ae0cd829e1fcea47",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-service-renew/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-service-renew/implementation-hashes.json",
+          "sha256": "f01adf5d24ec28ef69b9c37fc4020acfac26aece466f4395ae0cd829e1fcea47"
+        }
+      ]
+    },
+    {
+      "path": "lib/modules/services/presentation/service_timeline.dart",
+      "current_sha256": "26ba50f6b1c10097bbb4ff9125c219e060e30a8ba54eb52b9d7a997be43831c2",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-consultation-current-review/implementation-hashes.json",
+        "docs/ui-refactor/20260914-service-progress/verified-files.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-consultation-current-review/implementation-hashes.json",
+          "sha256": "26ba50f6b1c10097bbb4ff9125c219e060e30a8ba54eb52b9d7a997be43831c2"
+        },
+        {
+          "report": "docs/ui-refactor/20260914-service-progress/verified-files.json",
+          "sha256": "26ba50f6b1c10097bbb4ff9125c219e060e30a8ba54eb52b9d7a997be43831c2"
+        }
+      ]
+    },
+    {
+      "path": "lib/shared/design_system/mom_home_tokens.dart",
+      "current_sha256": "9a29742884083678da9dff00c0d5a95da969a899f13e5f6fc2e1ab34232fa3d1",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-account/verified-files.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-more/verified-files.json",
+          "sha256": "e03b79f53d47cb14b4de2256ac7095c4d850d039c2a655977c521f72e28c0b15"
+        },
+        {
+          "report": "docs/ui-refactor/20260914-account/verified-files.json",
+          "sha256": "9a29742884083678da9dff00c0d5a95da969a899f13e5f6fc2e1ab34232fa3d1"
+        }
+      ]
+    },
+    {
+      "path": "lib/shared/design_system/mom_settings_theme.dart",
+      "current_sha256": "c584f5c1ef469a525857bbbfa38c126d579e7b7068bb597c465e01c117665cd7",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-notifications/verified-files.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-account/verified-files.json",
+          "sha256": "15ad7235ad89f71f59f812fa58aeda1052dd05353144a1c417a720b953ef3618"
+        },
+        {
+          "report": "docs/ui-refactor/20260914-notifications/verified-files.json",
+          "sha256": "c584f5c1ef469a525857bbbfa38c126d579e7b7068bb597c465e01c117665cd7"
+        }
+      ]
+    },
+    {
+      "path": "lib/shared/widgets/confirm_discard.dart",
+      "current_sha256": "b9fff096973f4fe68d224b2cf6b4628c1e0541c809434795624e3712251d887e",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-intake/verified-files.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-intake/verified-files.json",
+          "sha256": "b9fff096973f4fe68d224b2cf6b4628c1e0541c809434795624e3712251d887e"
+        }
+      ]
+    },
+    {
+      "path": "lib/shared/widgets/date_time_picker.dart",
+      "current_sha256": "6ee6f91496b6d825e8926544657dc2b4195da9cc92360bd3a19745eb419a0a80",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-booking/verified-files.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-booking/verified-files.json",
+          "sha256": "6ee6f91496b6d825e8926544657dc2b4195da9cc92360bd3a19745eb419a0a80"
+        }
+      ]
+    },
+    {
+      "path": "lib/shared/widgets/mom_companion_widgets.dart",
+      "current_sha256": "93c5cc4e022ac56ee5ca31dc5208f6c3a8df03d08e39ace0d761b101e04571ab",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-consultation-current-review/implementation-hashes.json",
+        "docs/ui-refactor/20260914-more/verified-files.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-consultation-current-review/implementation-hashes.json",
+          "sha256": "93c5cc4e022ac56ee5ca31dc5208f6c3a8df03d08e39ace0d761b101e04571ab"
+        },
+        {
+          "report": "docs/ui-refactor/20260914-more/verified-files.json",
+          "sha256": "93c5cc4e022ac56ee5ca31dc5208f6c3a8df03d08e39ace0d761b101e04571ab"
+        }
+      ]
+    },
+    {
+      "path": "lib/shared/widgets/mom_settings_row.dart",
+      "current_sha256": "4821938015ac71d8f9e9fac8d2b481535930fdb8717228d8e2d218a386c4efff",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-more/verified-files.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-more/verified-files.json",
+          "sha256": "4821938015ac71d8f9e9fac8d2b481535930fdb8717228d8e2d218a386c4efff"
+        }
+      ]
+    },
+    {
+      "path": "lib/shared/widgets/mom_settings_widgets.dart",
+      "current_sha256": "271b022cb619641d956e92a5600e5f5585d2a5b469446132d53d402987403025",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-consultation-current-review/implementation-hashes.json",
+        "docs/ui-refactor/20260914-intake/verified-files.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-consultation-current-review/implementation-hashes.json",
+          "sha256": "271b022cb619641d956e92a5600e5f5585d2a5b469446132d53d402987403025"
+        },
+        {
+          "report": "docs/ui-refactor/20260914-intake/verified-files.json",
+          "sha256": "271b022cb619641d956e92a5600e5f5585d2a5b469446132d53d402987403025"
+        },
+        {
+          "report": "docs/ui-refactor/20260914-service-package/verified-files.json",
+          "sha256": "30895ea0189f4115b3dfb8982dee67e5178f7b7ea6843a06de94bcc2f9938247"
+        },
+        {
+          "report": "docs/ui-refactor/20260914-notifications/verified-files.json",
+          "sha256": "baab234aa8fa573a8215a103730e333ac5f4bcd447db1a9b3e3daf0b0a58bcfc"
+        }
+      ]
+    },
+    {
+      "path": "lib/shared/widgets/mom_timeline_event.dart",
+      "current_sha256": "0078e9c95e317b2dac65e071d8a8122b2495b3420a3050a4dd3ee92339113d72",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-consultation-current-review/implementation-hashes.json",
+        "docs/ui-refactor/20260914-service-progress/verified-files.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-consultation-current-review/implementation-hashes.json",
+          "sha256": "0078e9c95e317b2dac65e071d8a8122b2495b3420a3050a4dd3ee92339113d72"
+        },
+        {
+          "report": "docs/ui-refactor/20260914-service-progress/verified-files.json",
+          "sha256": "0078e9c95e317b2dac65e071d8a8122b2495b3420a3050a4dd3ee92339113d72"
+        }
+      ]
+    },
+    {
+      "path": "lib/shared/widgets/momcozy_components.dart",
+      "current_sha256": "5477eff325acaa95e4ac6036fe3aedda03d15104b49b6ba772e586fe8ffb1157",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-consultation-current-review/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-consultation-current-review/implementation-hashes.json",
+          "sha256": "5477eff325acaa95e4ac6036fe3aedda03d15104b49b6ba772e586fe8ffb1157"
+        }
+      ]
+    },
+    {
+      "path": "lib/shared/widgets/product_feedback.dart",
+      "current_sha256": "f0e9384b049cfc0e3c0db31f4f751723d3b7faa587a136caee1d0db75b004af1",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-consultation-summary/implementation-hashes.json",
+        "docs/ui-refactor/20260914-consultation-current-review/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-consultation-summary/implementation-hashes.json",
+          "sha256": "f0e9384b049cfc0e3c0db31f4f751723d3b7faa587a136caee1d0db75b004af1"
+        },
+        {
+          "report": "docs/ui-refactor/20260914-consultation-current-review/implementation-hashes.json",
+          "sha256": "f0e9384b049cfc0e3c0db31f4f751723d3b7faa587a136caee1d0db75b004af1"
+        }
+      ]
+    },
+    {
+      "path": "lib/shared/widgets/zoned_datetime_field.dart",
+      "current_sha256": "337d894d6d909c81f63d261d6921a7211de7a22f58369f98a218736e22a0fd5b",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-baby-records/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-baby-records/implementation-hashes.json",
+          "sha256": "337d894d6d909c81f63d261d6921a7211de7a22f58369f98a218736e22a0fd5b"
+        }
+      ]
+    },
+    {
+      "path": "test/app/more_redesign_states_test.dart",
+      "current_sha256": "8c282cbf4c50a2634830a42e9fd43736f83a076915e5c09a3be4a9579e454938",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-more/verified-files.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-more/verified-files.json",
+          "sha256": "8c282cbf4c50a2634830a42e9fd43736f83a076915e5c09a3be4a9579e454938"
+        }
+      ]
+    },
+    {
+      "path": "test/app/not_found_design_test.dart",
+      "current_sha256": "118310bd6ae1f4c940c8ae83d77f35bdd8135cd3147922d61c72be0b89a6b85d",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-special-pages/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-special-pages/implementation-hashes.json",
+          "sha256": "118310bd6ae1f4c940c8ae83d77f35bdd8135cd3147922d61c72be0b89a6b85d"
+        }
+      ]
+    },
+    {
+      "path": "test/app/notification_conversation_route_test.dart",
+      "current_sha256": "dc1a10e2541b93182165c77e74979f6970385d596e20a3fbd0d406f8099abfdd",
+      "matching_archives": [],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-agent-attachments-menus/implementation-hashes.json",
+          "sha256": "799cab7b59c829ca635d23e716f271224a6b1ed7ea606240e94d35a05acdeb61"
+        },
+        {
+          "report": "docs/ui-refactor/20260914-destination-review/implementation-hashes.json",
+          "sha256": "928256e7c92a1e748008ee9dfc17cfecd4effcf5471f89de6588b0ba1241984c"
+        },
+        {
+          "report": "docs/ui-refactor/20260914-notification-conversation/implementation-hashes.json",
+          "sha256": "0c3a1a611f80a22420db4d6e41381ac0b013bf451017dd6ac9cb3d3f46788197"
+        }
+      ]
+    },
+    {
+      "path": "test/features/agent_hub/agent_action_design_test.dart",
+      "current_sha256": "9a98015687e38187811506522e4d6b02d4fabf549c881ba01152ae53de372204",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-agent-actions-results/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-agent-actions-results/implementation-hashes.json",
+          "sha256": "9a98015687e38187811506522e4d6b02d4fabf549c881ba01152ae53de372204"
+        }
+      ]
+    },
+    {
+      "path": "test/features/agent_hub/agent_attachment_notice_design_test.dart",
+      "current_sha256": "0b0d8043ab2cd2fd8c0fbf349c6163b4103644afe7b801b54c1b926acd5020c8",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-agent-voice-notices/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-agent-voice-notices/implementation-hashes.json",
+          "sha256": "0b0d8043ab2cd2fd8c0fbf349c6163b4103644afe7b801b54c1b926acd5020c8"
+        }
+      ]
+    },
+    {
+      "path": "test/features/agent_hub/agent_conversation_design_test.dart",
+      "current_sha256": "53cd4d5980121cd178dbeb99e999917ff1d2ddca4d2a0dcfa2bddc596fde10c7",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-agent-conversation/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-agent-conversation/implementation-hashes.json",
+          "sha256": "53cd4d5980121cd178dbeb99e999917ff1d2ddca4d2a0dcfa2bddc596fde10c7"
+        }
+      ]
+    },
+    {
+      "path": "test/features/agent_hub/agent_form_design_test.dart",
+      "current_sha256": "6eb49e03f1e171df327c0d65063e1ce7f144daa9466ab4f7a7764041419acc7f",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-agent-form-dialogs/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-agent-form-dialogs/implementation-hashes.json",
+          "sha256": "6eb49e03f1e171df327c0d65063e1ce7f144daa9466ab4f7a7764041419acc7f"
+        }
+      ]
+    },
+    {
+      "path": "test/features/agent_hub/agent_history_design_test.dart",
+      "current_sha256": "f5b8c88db1ebfb032bbe2d90a26d7690df5901331473bff2d77f7c2481379d34",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-agent-history/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-agent-history/implementation-hashes.json",
+          "sha256": "f5b8c88db1ebfb032bbe2d90a26d7690df5901331473bff2d77f7c2481379d34"
+        }
+      ]
+    },
+    {
+      "path": "test/features/agent_hub/agent_hub_page_test.dart",
+      "current_sha256": "9a6ef95d933b6429674ca540010b6e85b368b623c63f27267672cbf584deceb3",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-agent-form-dialogs/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-agent-form-dialogs/implementation-hashes.json",
+          "sha256": "9a6ef95d933b6429674ca540010b6e85b368b623c63f27267672cbf584deceb3"
+        },
+        {
+          "report": "docs/ui-refactor/20260914-agent-reading-cards/implementation-hashes.json",
+          "sha256": "0c8d2dc3caf78fef7704b4eac568eb2d3c81e18635f9546ab433acd2bdfcaf8b"
+        }
+      ]
+    },
+    {
+      "path": "test/features/agent_hub/agent_me_design_test.dart",
+      "current_sha256": "e8fbe436e75d589844844c5d4229561d0ab212e310764a6e3a521ae3974970fb",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-agent-reading-cards/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-agent-reading-cards/implementation-hashes.json",
+          "sha256": "e8fbe436e75d589844844c5d4229561d0ab212e310764a6e3a521ae3974970fb"
+        }
+      ]
+    },
+    {
+      "path": "test/features/agent_hub/agent_message_menu_design_test.dart",
+      "current_sha256": "fa24afb3b2e28749f2aaa8317d97008c2e5af96bfdf5b1c3af9179fff20c5697",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-agent-attachments-menus/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-agent-attachments-menus/implementation-hashes.json",
+          "sha256": "fa24afb3b2e28749f2aaa8317d97008c2e5af96bfdf5b1c3af9179fff20c5697"
+        }
+      ]
+    },
+    {
+      "path": "test/features/agent_hub/agent_resource_card_design_test.dart",
+      "current_sha256": "69d0658ec795199e6ab5dab2177cd2a534bc3ab88b3a7f3dc7c47e15ab1f37a7",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-agent-reading-cards/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-agent-reading-cards/implementation-hashes.json",
+          "sha256": "69d0658ec795199e6ab5dab2177cd2a534bc3ab88b3a7f3dc7c47e15ab1f37a7"
+        }
+      ]
+    },
+    {
+      "path": "test/features/agent_hub/agent_result_design_test.dart",
+      "current_sha256": "0086cd0b2bd8c780299b36044b13940eb7473a8177713a53346fea2a3acb1ed9",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-agent-actions-results/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-agent-actions-results/implementation-hashes.json",
+          "sha256": "0086cd0b2bd8c780299b36044b13940eb7473a8177713a53346fea2a3acb1ed9"
+        }
+      ]
+    },
+    {
+      "path": "test/features/agent_hub/agent_ticket_form_design_test.dart",
+      "current_sha256": "a9a3d492d4d3e33f1b0ba0df6be2164bcd9cffc0f1bba432842dff798be2c812",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-agent-form-dialogs/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-agent-form-dialogs/implementation-hashes.json",
+          "sha256": "a9a3d492d4d3e33f1b0ba0df6be2164bcd9cffc0f1bba432842dff798be2c812"
+        }
+      ]
+    },
+    {
+      "path": "test/features/agent_hub/agent_voice_design_test.dart",
+      "current_sha256": "f6dc326a69708efed4cbff435b46f966fd5556eecd459e07aac4c3b882bad9b5",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-agent-voice-notices/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-agent-voice-notices/implementation-hashes.json",
+          "sha256": "f6dc326a69708efed4cbff435b46f966fd5556eecd459e07aac4c3b882bad9b5"
+        }
+      ]
+    },
+    {
+      "path": "test/features/auth/account_redesign_states_test.dart",
+      "current_sha256": "0db55c882aef752f3cc0b59474d5868d46156d110bc994560bbc80343604c131",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-account/verified-files.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-account/verified-files.json",
+          "sha256": "0db55c882aef752f3cc0b59474d5868d46156d110bc994560bbc80343604c131"
+        }
+      ]
+    },
+    {
+      "path": "test/features/auth/auth_design_test.dart",
+      "current_sha256": "21a46fbbab3b280eac940b685659cace8021dea887b0aa0472297d424d39a4ca",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-auth/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-auth/implementation-hashes.json",
+          "sha256": "21a46fbbab3b280eac940b685659cace8021dea887b0aa0472297d424d39a4ca"
+        }
+      ]
+    },
+    {
+      "path": "test/features/auth/auth_redesign_states_test.dart",
+      "current_sha256": "a4ccda8389947cc59c3a8911f9cf7046b64a1b0c84d647f355078da0b8b35094",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-auth/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-auth/implementation-hashes.json",
+          "sha256": "a4ccda8389947cc59c3a8911f9cf7046b64a1b0c84d647f355078da0b8b35094"
+        }
+      ]
+    },
+    {
+      "path": "test/features/media/media_design_test.dart",
+      "current_sha256": "e99d932ce72a87dac489a7eb70010999447bc3ee6f010a5eadf033cd15214222",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-media-viewer/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-media-viewer/implementation-hashes.json",
+          "sha256": "e99d932ce72a87dac489a7eb70010999447bc3ee6f010a5eadf033cd15214222"
+        }
+      ]
+    },
+    {
+      "path": "test/features/media/product_asset_video_player_test.dart",
+      "current_sha256": "f3da945c13d40992b8f94440e716157bd22b2f84e16772e283cbfdb6c0c6088e",
+      "matching_archives": [],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-media-controls/implementation-hashes.json",
+          "sha256": "c4e536ecfddc7f408f1091def1bc348ad016a47003362a9566532de908928813"
+        }
+      ]
+    },
+    {
+      "path": "test/features/motion_assessment/presentation/motion_assessment_controller_test.dart",
+      "current_sha256": "4193d23b8ab7cd6e01149582120b45734f4faaf487b3ad03066f5049de82b7ff",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-special-pages/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-special-pages/implementation-hashes.json",
+          "sha256": "4193d23b8ab7cd6e01149582120b45734f4faaf487b3ad03066f5049de82b7ff"
+        }
+      ]
+    },
+    {
+      "path": "test/features/notifications/notification_redesign_states_test.dart",
+      "current_sha256": "7f52f8d49688a66124afdf4c6191b0509f7c8c7517b6d4e01e58621f0c2b6874",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-notifications/verified-files.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-notifications/verified-files.json",
+          "sha256": "7f52f8d49688a66124afdf4c6191b0509f7c8c7517b6d4e01e58621f0c2b6874"
+        }
+      ]
+    },
+    {
+      "path": "test/features/onboarding/onboarding_design_test.dart",
+      "current_sha256": "7433288e6092533856f303b01adf2c41d2f0ef08fee05b6fd19e34040447670e",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-onboarding-avatar/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-onboarding-profile/implementation-hashes.json",
+          "sha256": "fb0d90274f0d3d7336ef07f10eaeaac458586b259b8f36d3695cfb329ea275b0"
+        },
+        {
+          "report": "docs/ui-refactor/20260914-onboarding-avatar/implementation-hashes.json",
+          "sha256": "7433288e6092533856f303b01adf2c41d2f0ef08fee05b6fd19e34040447670e"
+        }
+      ]
+    },
+    {
+      "path": "test/goldens/design_system/home-preparation-error-short-320-2x.png",
+      "current_sha256": "50f5b9c652a54ce2757bf354af451b74094ced8371428bb210ef831f2c5aa5ad",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-destination-review/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-destination-review/implementation-hashes.json",
+          "sha256": "50f5b9c652a54ce2757bf354af451b74094ced8371428bb210ef831f2c5aa5ad"
+        }
+      ]
+    },
+    {
+      "path": "test/goldens/design_system/home-preparation-loading-short-320-2x.png",
+      "current_sha256": "feedb5d12d8f7eddae0ac3629eb3911831198f2f2c0d757ab5ea447eae0830b8",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-destination-review/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-destination-review/implementation-hashes.json",
+          "sha256": "feedb5d12d8f7eddae0ac3629eb3911831198f2f2c0d757ab5ea447eae0830b8"
+        }
+      ]
+    },
+    {
+      "path": "test/modules/baby/baby_editor_states_test.dart",
+      "current_sha256": "8e1d682c2ddc5305a70cd278642b58663694d105d9a8319142299a9277fc6bb4",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-baby-records/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-baby-records/implementation-hashes.json",
+          "sha256": "8e1d682c2ddc5305a70cd278642b58663694d105d9a8319142299a9277fc6bb4"
+        }
+      ]
+    },
+    {
+      "path": "test/modules/baby/baby_pages_test.dart",
+      "current_sha256": "d3fe5580752613856a36dee072c5c11c0041567ea31fa9c97c80480749e234f9",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-baby-records/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-baby-records/implementation-hashes.json",
+          "sha256": "d3fe5580752613856a36dee072c5c11c0041567ea31fa9c97c80480749e234f9"
+        }
+      ]
+    },
+    {
+      "path": "test/modules/baby/baby_records_redesign_test.dart",
+      "current_sha256": "7c371c40dbe473c458767de443e8037c5eb1cbd29e7e75d35da4de7451d4b4d1",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-baby-records/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-baby-records/implementation-hashes.json",
+          "sha256": "7c371c40dbe473c458767de443e8037c5eb1cbd29e7e75d35da4de7451d4b4d1"
+        }
+      ]
+    },
+    {
+      "path": "test/modules/consultation/consultation_preparation_test.dart",
+      "current_sha256": "eea9234f141621a4f708ac1b860f24bb1e40110a415f7c44ffe04115d407783f",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-consultation-preparation/verified-files.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-consultation-preparation/verified-files.json",
+          "sha256": "eea9234f141621a4f708ac1b860f24bb1e40110a415f7c44ffe04115d407783f"
+        }
+      ]
+    },
+    {
+      "path": "test/modules/consultation/consultation_start_test.dart",
+      "current_sha256": "ff67153470c8496cc55c3e8c522cb0b981ef384451aee442f68df10e28aa7619",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-consultation-preflight/verified-files.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-consultation-preflight/verified-files.json",
+          "sha256": "ff67153470c8496cc55c3e8c522cb0b981ef384451aee442f68df10e28aa7619"
+        }
+      ]
+    },
+    {
+      "path": "test/modules/consultation/device_check_design_test.dart",
+      "current_sha256": "e8cebeb91546df7f22131c25de19292b3d3d5c558a19f90aff7ceac4ef8ff954",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-consultation-preflight/verified-files.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-consultation-preflight/verified-files.json",
+          "sha256": "e8cebeb91546df7f22131c25de19292b3d3d5c558a19f90aff7ceac4ef8ff954"
+        }
+      ]
+    },
+    {
+      "path": "test/modules/consultation/device_check_test.dart",
+      "current_sha256": "a89d4e034d2622fccd2d2475685e602c863afc1fef6932ce7e431fb66a07b0d2",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-consultation-preflight/verified-files.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-consultation-preflight/verified-files.json",
+          "sha256": "a89d4e034d2622fccd2d2475685e602c863afc1fef6932ce7e431fb66a07b0d2"
+        }
+      ]
+    },
+    {
+      "path": "test/modules/consultation/home_consultation_dialog_test.dart",
+      "current_sha256": "e0a8c8b7f94e44ffe0a9d413e6f41eede78b6a5dc2f26d1baa78ef85cd6ebc61",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-destination-review/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-destination-review/implementation-hashes.json",
+          "sha256": "e0a8c8b7f94e44ffe0a9d413e6f41eede78b6a5dc2f26d1baa78ef85cd6ebc61"
+        },
+        {
+          "report": "docs/ui-refactor/20260914-consultation-preparation/verified-files.json",
+          "sha256": "43756dc177d0ef7789b3a96897ce22d949684dffa9b510f3948658e6f6d4cf59"
+        }
+      ]
+    },
+    {
+      "path": "test/modules/consultation/room_design_test.dart",
+      "current_sha256": "8d032b1bb714999d2439c52dce570631cffd83b1592e62996218aa2896c7b43a",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-consultation-preflight/verified-files.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-consultation-preflight/verified-files.json",
+          "sha256": "8d032b1bb714999d2439c52dce570631cffd83b1592e62996218aa2896c7b43a"
+        }
+      ]
+    },
+    {
+      "path": "test/modules/consultation/room_entry_design_test.dart",
+      "current_sha256": "c169df75598463a37396739709ebb2d6323da5bb273dcc986861eca921876939",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-consultation-entry/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-consultation-entry/implementation-hashes.json",
+          "sha256": "c169df75598463a37396739709ebb2d6323da5bb273dcc986861eca921876939"
+        }
+      ]
+    },
+    {
+      "path": "test/modules/consultation/room_leave_recovery_test.dart",
+      "current_sha256": "820416b351276747a98d33382817b770f1bac6f34359f0c45f9abef49025c960",
+      "matching_archives": [],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-consultation-current-review/implementation-hashes.json",
+          "sha256": "6546a3da1893a54bbd643910f4d531a877c461b6e8b9d2594fe40746fe05fbad"
+        }
+      ]
+    },
+    {
+      "path": "test/modules/consultation/room_outcome_design_test.dart",
+      "current_sha256": "5b1fee00ac1ad9d9d8108533687a5907fdac1e74b0ce7fe2ced8d636953bbf98",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-consultation-outcomes/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-consultation-outcomes/implementation-hashes.json",
+          "sha256": "5b1fee00ac1ad9d9d8108533687a5907fdac1e74b0ce7fe2ced8d636953bbf98"
+        }
+      ]
+    },
+    {
+      "path": "test/modules/consultation/room_page_test.dart",
+      "current_sha256": "2566a0d7d2a9811beec7c462231e2b03664a40450b3f1c4e7ac77e1c8d5cdac8",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-consultation-live-room/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-consultation-live-room/implementation-hashes.json",
+          "sha256": "2566a0d7d2a9811beec7c462231e2b03664a40450b3f1c4e7ac77e1c8d5cdac8"
+        }
+      ]
+    },
+    {
+      "path": "test/modules/consultation/user_video_test.dart",
+      "current_sha256": "55055a93fe34a378388db7de4ef1501970cbd68c60ffb48f5a34edbda59d8ac4",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-consultation-current-review/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-consultation-current-review/implementation-hashes.json",
+          "sha256": "55055a93fe34a378388db7de4ef1501970cbd68c60ffb48f5a34edbda59d8ac4"
+        },
+        {
+          "report": "docs/ui-refactor/20260914-consultation-live-room/implementation-hashes.json",
+          "sha256": "2fa145159eb5d76aa319a1295b10c3c1fe0aefa479327cb93ab907a772e63c3f"
+        }
+      ]
+    },
+    {
+      "path": "test/modules/mom/lactation_redesign_test.dart",
+      "current_sha256": "85f015472b60874cbddbda12631e3d229a52acc01988431041d15e50ee49662a",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-lactation/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-lactation/implementation-hashes.json",
+          "sha256": "85f015472b60874cbddbda12631e3d229a52acc01988431041d15e50ee49662a"
+        }
+      ]
+    },
+    {
+      "path": "test/modules/schedule/personal_schedule_editor_test.dart",
+      "current_sha256": "df868fd49b7ae19f50b83acd0f843aae2ea5972772c4b366c78e7e8887f93ddc",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-schedule/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-schedule/implementation-hashes.json",
+          "sha256": "df868fd49b7ae19f50b83acd0f843aae2ea5972772c4b366c78e7e8887f93ddc"
+        }
+      ]
+    },
+    {
+      "path": "test/modules/schedule/schedule_page_golden_test.dart",
+      "current_sha256": "741032fc9f11192e3cf446823d3374c784e2c02f2d0955e5cf94655e5c0b15fb",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-consultation-current-review/implementation-hashes.json",
+        "docs/ui-refactor/20260914-schedule/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-consultation-current-review/implementation-hashes.json",
+          "sha256": "741032fc9f11192e3cf446823d3374c784e2c02f2d0955e5cf94655e5c0b15fb"
+        },
+        {
+          "report": "docs/ui-refactor/20260914-schedule/implementation-hashes.json",
+          "sha256": "741032fc9f11192e3cf446823d3374c784e2c02f2d0955e5cf94655e5c0b15fb"
+        }
+      ]
+    },
+    {
+      "path": "test/modules/services/appointment_detail_test.dart",
+      "current_sha256": "9b3c6e8f7f7ff4cb3f88d98fd84a01586261bbe2b030eda297362dab5a1e478b",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-appointment-detail/verified-files.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-booking/verified-files.json",
+          "sha256": "29ac15fa3f4ddfaf70d96f44052c5fccc51e9217e00129090ce848339cf127f5"
+        },
+        {
+          "report": "docs/ui-refactor/20260914-appointment-detail/verified-files.json",
+          "sha256": "9b3c6e8f7f7ff4cb3f88d98fd84a01586261bbe2b030eda297362dab5a1e478b"
+        }
+      ]
+    },
+    {
+      "path": "test/modules/services/booking_test.dart",
+      "current_sha256": "69b7e4bb52c34e3cad7edf9fb9d9b2ac4af34ee7509450792834c0f2f1b209f4",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-consultation-current-review/implementation-hashes.json",
+        "docs/ui-refactor/20260914-booking/verified-files.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-consultation-current-review/implementation-hashes.json",
+          "sha256": "69b7e4bb52c34e3cad7edf9fb9d9b2ac4af34ee7509450792834c0f2f1b209f4"
+        },
+        {
+          "report": "docs/ui-refactor/20260914-booking/verified-files.json",
+          "sha256": "69b7e4bb52c34e3cad7edf9fb9d9b2ac4af34ee7509450792834c0f2f1b209f4"
+        }
+      ]
+    },
+    {
+      "path": "test/modules/services/consultation_summary_test.dart",
+      "current_sha256": "ea579f18bc4ff989ae5bfea3d8384403741f58f3e3893d6de9a8ec5a4d3d0219",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-consultation-summary/implementation-hashes.json",
+        "docs/ui-refactor/20260914-consultation-current-review/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-consultation-summary/implementation-hashes.json",
+          "sha256": "ea579f18bc4ff989ae5bfea3d8384403741f58f3e3893d6de9a8ec5a4d3d0219"
+        },
+        {
+          "report": "docs/ui-refactor/20260914-consultation-current-review/implementation-hashes.json",
+          "sha256": "ea579f18bc4ff989ae5bfea3d8384403741f58f3e3893d6de9a8ec5a4d3d0219"
+        }
+      ]
+    },
+    {
+      "path": "test/modules/services/intake_test.dart",
+      "current_sha256": "bb9e04750a7c997713d8b091ddef53fbee3fddc6bb821887c0ec1391378a79db",
+      "matching_archives": [],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-intake/verified-files.json",
+          "sha256": "a7937aea09d2824352a7f6e3d16337a8cbf2f99c2b06133bc68750c275104f67"
+        }
+      ]
+    },
+    {
+      "path": "test/modules/services/service_catalog_redesign_test.dart",
+      "current_sha256": "f611df086e03b7a2573a24bfd674afe125d411df1cc8225c18162f90b4ba0488",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-service-catalog/verified-files.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-service-catalog/verified-files.json",
+          "sha256": "f611df086e03b7a2573a24bfd674afe125d411df1cc8225c18162f90b4ba0488"
+        }
+      ]
+    },
+    {
+      "path": "test/modules/services/service_design_test.dart",
+      "current_sha256": "92ed965a74751fdc1c46d8c4965d5909a2f506dbfd7b0dfc98cac65080a03132",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-service-package/verified-files.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-service-catalog/verified-files.json",
+          "sha256": "bd2a084c9eae061a75627b5275c36476b1df7f9348b89a2a187bab33a05609e3"
+        },
+        {
+          "report": "docs/ui-refactor/20260914-service-package/verified-files.json",
+          "sha256": "92ed965a74751fdc1c46d8c4965d5909a2f506dbfd7b0dfc98cac65080a03132"
+        }
+      ]
+    },
+    {
+      "path": "test/modules/services/service_package_redesign_test.dart",
+      "current_sha256": "45fbd308feb09abf5bf0c63bdf4e617a44f09875b89bcaa4e607333ac4656309",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-service-package/verified-files.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-service-package/verified-files.json",
+          "sha256": "45fbd308feb09abf5bf0c63bdf4e617a44f09875b89bcaa4e607333ac4656309"
+        }
+      ]
+    },
+    {
+      "path": "test/modules/services/service_progress_test.dart",
+      "current_sha256": "e5ed776d87617c605a10ca2ce61128c16231b2bd5af54733e97e16b6deab8b5c",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-consultation-current-review/implementation-hashes.json",
+        "docs/ui-refactor/20260914-service-progress/verified-files.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-consultation-current-review/implementation-hashes.json",
+          "sha256": "e5ed776d87617c605a10ca2ce61128c16231b2bd5af54733e97e16b6deab8b5c"
+        },
+        {
+          "report": "docs/ui-refactor/20260914-service-progress/verified-files.json",
+          "sha256": "e5ed776d87617c605a10ca2ce61128c16231b2bd5af54733e97e16b6deab8b5c"
+        }
+      ]
+    },
+    {
+      "path": "test/modules/services/service_purchase_test.dart",
+      "current_sha256": "22ad4db9b433e25395744fc55d3972e8fbf5f3c366083ac41d64125bfc8a7762",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-service-package/verified-files.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-service-package/verified-files.json",
+          "sha256": "22ad4db9b433e25395744fc55d3972e8fbf5f3c366083ac41d64125bfc8a7762"
+        }
+      ]
+    },
+    {
+      "path": "test/modules/services/service_renew_test.dart",
+      "current_sha256": "1d233b9ead6f18097b5004d6372946276a9326dc2d17439934e6e80b9f1d8e61",
+      "matching_archives": [],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-service-renew/implementation-hashes.json",
+          "sha256": "4e3ce1e1b90674b949fda73776be16864b039fc045c8babc649f773da3233901"
+        }
+      ]
+    },
+    {
+      "path": "test/native/media_pdf_design_test.dart",
+      "current_sha256": "3c273e38896a8859a9cd07809348adf19fa10802b5577e913282473b7031dd38",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-media-controls/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-media-controls/implementation-hashes.json",
+          "sha256": "3c273e38896a8859a9cd07809348adf19fa10802b5577e913282473b7031dd38"
+        }
+      ]
+    },
+    {
+      "path": "test/shared/date_time_picker_test.dart",
+      "current_sha256": "d7e011f3f3c3085b2875f5211c8c38fa7b2b08dd99f6166f1339b3888df93583",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-baby-records/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-baby-records/implementation-hashes.json",
+          "sha256": "d7e011f3f3c3085b2875f5211c8c38fa7b2b08dd99f6166f1339b3888df93583"
+        }
+      ]
+    },
+    {
+      "path": "test/support/agent_conversation_scenarios.dart",
+      "current_sha256": "095421e7cedb82d5f6ebe1f0f54d358fce429c746f81db458bd8457231363265",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-agent-conversation/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-agent-conversation/implementation-hashes.json",
+          "sha256": "095421e7cedb82d5f6ebe1f0f54d358fce429c746f81db458bd8457231363265"
+        }
+      ]
+    },
+    {
+      "path": "test/support/agent_form_scenarios.dart",
+      "current_sha256": "8f9f7cab3234f34a5c42f893a24208fc930f37573d2fc1a2669e8bfac6d1130f",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-agent-form-dialogs/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-agent-form-dialogs/implementation-hashes.json",
+          "sha256": "8f9f7cab3234f34a5c42f893a24208fc930f37573d2fc1a2669e8bfac6d1130f"
+        }
+      ]
+    },
+    {
+      "path": "test/support/agent_markdown_scenarios.dart",
+      "current_sha256": "27021e8fbae7f82a4b4aebac792b0c57293279e037cec10fe036449ecd50feea",
+      "matching_archives": [],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-agent-reading-cards/implementation-hashes.json",
+          "sha256": "86aeb124274dd97ff642295f51f8078d741592f980cfb1d3bdaf1b2834a4f7d2"
+        }
+      ]
+    },
+    {
+      "path": "test/support/agent_result_scenarios.dart",
+      "current_sha256": "5243f16a9d773875197e082c8cc4038cbbdeb44af0567de20de5697ce73beea0",
+      "matching_archives": [
+        "docs/ui-refactor/20260914-agent-actions-results/implementation-hashes.json"
+      ],
+      "archives": [
+        {
+          "report": "docs/ui-refactor/20260914-agent-actions-results/implementation-hashes.json",
+          "sha256": "5243f16a9d773875197e082c8cc4038cbbdeb44af0567de20de5697ce73beea0"
+        }
+      ]
+    }
+  ],
+  "total": 142,
+  "matching": 136,
+  "unmatched": [
+    "test/app/notification_conversation_route_test.dart",
+    "test/features/media/product_asset_video_player_test.dart",
+    "test/modules/consultation/room_leave_recovery_test.dart",
+    "test/modules/services/intake_test.dart",
+    "test/modules/services/service_renew_test.dart",
+    "test/support/agent_markdown_scenarios.dart"
+  ]
+}

@@ -1,0 +1,2291 @@
+[
+  {
+    "id": "05-agent/agent-attachment-journey-image-panned",
+    "module": "Cozymate",
+    "label": "嗨 Mia，  /  / 今天想聊点什么呢？  /  / 把你现在最关心的事情告诉我就好，我会陪你一起梳理。",
+    "state": "agent-attachment-journey-image-panned",
+    "image": "05-agent/agent-attachment-journey-image-panned/default.png",
+    "viewport": "05-agent/agent-attachment-journey-image-panned/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "agent/home",
+      "agent/attachments",
+      "agent/message-menu",
+      "agent/image-preview",
+      "agent/file-preview",
+      "agent/voice",
+      "common/not-found",
+      "agent/state-03",
+      "agent/12-agent-error",
+      "agent/12b-agent-conversation"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/features/agent_hub/agent_hub_page.dart",
+      "lib/features/agent_hub/presentation/agent_attachment_tile.dart",
+      "lib/features/agent_hub/presentation/agent_file_previews.dart",
+      "lib/features/agent_hub/presentation/agent_image_previews.dart",
+      "lib/features/agent_hub/presentation/agent_message_menu.dart",
+      "lib/features/media/presentation/media_viewer_header.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/agent_hub/agent_attachment_inventory_journey_test.dart",
+    "test_case": "inventory attachment mixed send and image viewer 393.0",
+    "metadata": "raw/test/goldens/ui_inventory/agent-attachment-journey-image-panned-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/agent-attachment-journey-image-panned-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-attachment-journey-image-panned-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/agent-attachment-journey-image-panned-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-attachment-journey-image-panned-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/",
+    "entry": "Authenticated More → tap Cozymate bottom navigation",
+    "trigger": "Drag enlarged image → panned view",
+    "journey": {
+      "source": "test/goldens/ui_inventory/agent-attachment-journey-image-panned-393.png",
+      "previous_source": "test/goldens/ui_inventory/agent-attachment-journey-image-zoomed-393.png",
+      "route": "/",
+      "trigger": "Drag enlarged image → panned view",
+      "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage via public agentHubBuilder; production SSE parser, runner with default retries, cancel client and profile repository; isolated SSE/control/multipart/content HTTP, native picker and voice dependencies; production media repositories and PDF picker validation. History disabled as in default local build; no remote model request.",
+      "test": "test/features/agent_hub/agent_attachment_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "05-agent/agent-attachment-journey-image-remote-failed",
+    "module": "Cozymate",
+    "label": "嗨 Mia，  /  / 今天想聊点什么呢？  /  / 把你现在最关心的事情告诉我就好，我会陪你一起梳理。",
+    "state": "agent-attachment-journey-image-remote-failed",
+    "image": "05-agent/agent-attachment-journey-image-remote-failed/default.png",
+    "viewport": "05-agent/agent-attachment-journey-image-remote-failed/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "agent/home",
+      "agent/attachments",
+      "agent/message-menu",
+      "agent/image-preview",
+      "agent/voice",
+      "common/not-found",
+      "common/loading",
+      "common/empty",
+      "common/error",
+      "agent/state-03",
+      "agent/12-agent-error",
+      "agent/12b-agent-conversation"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/features/agent_hub/agent_hub_page.dart",
+      "lib/features/agent_hub/presentation/agent_attachment_tile.dart",
+      "lib/features/agent_hub/presentation/agent_image_previews.dart",
+      "lib/features/agent_hub/presentation/agent_message_menu.dart",
+      "lib/features/media/presentation/media_viewer_feedback.dart",
+      "lib/features/media/presentation/media_viewer_header.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/product_feedback.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/agent_hub/agent_attachment_inventory_journey_test.dart",
+    "test_case": "inventory attachment image upload failure and preview retry",
+    "metadata": "raw/test/goldens/ui_inventory/agent-attachment-journey-image-remote-failed-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/agent-attachment-journey-image-remote-failed-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-attachment-journey-image-remote-failed-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/",
+    "entry": "Authenticated More → tap Cozymate bottom navigation",
+    "trigger": "Reload original via authenticated content repository → HTTP error",
+    "journey": {
+      "source": "test/goldens/ui_inventory/agent-attachment-journey-image-remote-failed-393.png",
+      "previous_source": "test/goldens/ui_inventory/agent-attachment-journey-image-viewer-error-393.png",
+      "route": "/",
+      "trigger": "Reload original via authenticated content repository → HTTP error",
+      "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage via public agentHubBuilder; production SSE parser, runner with default retries, cancel client and profile repository; isolated SSE/control/multipart/content HTTP, native picker and voice dependencies; production media repositories and PDF picker validation. History disabled as in default local build; no remote model request.",
+      "test": "test/features/agent_hub/agent_attachment_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "05-agent/agent-attachment-journey-image-remote-loading",
+    "module": "Cozymate",
+    "label": "嗨 Mia，  /  / 今天想聊点什么呢？  /  / 把你现在最关心的事情告诉我就好，我会陪你一起梳理。",
+    "state": "agent-attachment-journey-image-remote-loading",
+    "image": "05-agent/agent-attachment-journey-image-remote-loading/default.png",
+    "viewport": "05-agent/agent-attachment-journey-image-remote-loading/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "agent/home",
+      "agent/attachments",
+      "agent/message-menu",
+      "agent/image-preview",
+      "agent/voice",
+      "common/not-found",
+      "common/loading",
+      "common/empty",
+      "common/error",
+      "agent/state-03",
+      "agent/12-agent-error",
+      "agent/12b-agent-conversation"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/features/agent_hub/agent_hub_page.dart",
+      "lib/features/agent_hub/presentation/agent_attachment_tile.dart",
+      "lib/features/agent_hub/presentation/agent_image_previews.dart",
+      "lib/features/agent_hub/presentation/agent_message_menu.dart",
+      "lib/features/media/presentation/media_viewer_feedback.dart",
+      "lib/features/media/presentation/media_viewer_header.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/product_feedback.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/agent_hub/agent_attachment_inventory_journey_test.dart",
+    "test_case": "inventory attachment image upload failure and preview retry",
+    "metadata": "raw/test/goldens/ui_inventory/agent-attachment-journey-image-remote-loading-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/agent-attachment-journey-image-remote-loading-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-attachment-journey-image-remote-loading-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/",
+    "entry": "Authenticated More → tap Cozymate bottom navigation",
+    "trigger": "Retry original image → loading indicator",
+    "journey": {
+      "source": "test/goldens/ui_inventory/agent-attachment-journey-image-remote-loading-393.png",
+      "previous_source": "test/goldens/ui_inventory/agent-attachment-journey-image-remote-failed-393.png",
+      "route": "/",
+      "trigger": "Retry original image → loading indicator",
+      "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage via public agentHubBuilder; production SSE parser, runner with default retries, cancel client and profile repository; isolated SSE/control/multipart/content HTTP, native picker and voice dependencies; production media repositories and PDF picker validation. History disabled as in default local build; no remote model request.",
+      "test": "test/features/agent_hub/agent_attachment_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "05-agent/agent-attachment-journey-image-remote-recovered",
+    "module": "Cozymate",
+    "label": "嗨 Mia，  /  / 今天想聊点什么呢？  /  / 把你现在最关心的事情告诉我就好，我会陪你一起梳理。",
+    "state": "agent-attachment-journey-image-remote-recovered",
+    "image": "05-agent/agent-attachment-journey-image-remote-recovered/default.png",
+    "viewport": "05-agent/agent-attachment-journey-image-remote-recovered/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "agent/home",
+      "agent/attachments",
+      "agent/message-menu",
+      "agent/image-preview",
+      "agent/voice",
+      "common/not-found",
+      "agent/state-03",
+      "agent/12-agent-error",
+      "agent/12b-agent-conversation"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/features/agent_hub/agent_hub_page.dart",
+      "lib/features/agent_hub/presentation/agent_attachment_tile.dart",
+      "lib/features/agent_hub/presentation/agent_image_previews.dart",
+      "lib/features/agent_hub/presentation/agent_message_menu.dart",
+      "lib/features/media/presentation/media_viewer_header.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/agent_hub/agent_attachment_inventory_journey_test.dart",
+    "test_case": "inventory attachment image upload failure and preview retry",
+    "metadata": "raw/test/goldens/ui_inventory/agent-attachment-journey-image-remote-recovered-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/agent-attachment-journey-image-remote-recovered-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-attachment-journey-image-remote-recovered-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/",
+    "entry": "Authenticated More → tap Cozymate bottom navigation",
+    "trigger": "Valid remote original received → image available",
+    "journey": {
+      "source": "test/goldens/ui_inventory/agent-attachment-journey-image-remote-recovered-393.png",
+      "previous_source": "test/goldens/ui_inventory/agent-attachment-journey-image-remote-loading-393.png",
+      "route": "/",
+      "trigger": "Valid remote original received → image available",
+      "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage via public agentHubBuilder; production SSE parser, runner with default retries, cancel client and profile repository; isolated SSE/control/multipart/content HTTP, native picker and voice dependencies; production media repositories and PDF picker validation. History disabled as in default local build; no remote model request.",
+      "test": "test/features/agent_hub/agent_attachment_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "05-agent/agent-attachment-journey-image-remote-return",
+    "module": "Cozymate",
+    "label": "嗨 Mia，  /  / 今天想聊点什么呢？  /  / 把你现在最关心的事情告诉我就好，我会陪你一起梳理。",
+    "state": "agent-attachment-journey-image-remote-return",
+    "image": "05-agent/agent-attachment-journey-image-remote-return/default.png",
+    "viewport": "05-agent/agent-attachment-journey-image-remote-return/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "agent/home",
+      "agent/attachments",
+      "agent/message-menu",
+      "agent/image-preview",
+      "agent/voice",
+      "common/not-found",
+      "agent/state-03",
+      "agent/12-agent-error",
+      "agent/12b-agent-conversation"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/features/agent_hub/agent_hub_page.dart",
+      "lib/features/agent_hub/presentation/agent_attachment_tile.dart",
+      "lib/features/agent_hub/presentation/agent_image_previews.dart",
+      "lib/features/agent_hub/presentation/agent_message_menu.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/agent_hub/agent_attachment_inventory_journey_test.dart",
+    "test_case": "inventory attachment image upload failure and preview retry",
+    "metadata": "raw/test/goldens/ui_inventory/agent-attachment-journey-image-remote-return-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/agent-attachment-journey-image-remote-return-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-attachment-journey-image-remote-return-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/",
+    "entry": "Authenticated More → tap Cozymate bottom navigation",
+    "trigger": "Return after remote recovery → original transcript",
+    "journey": {
+      "source": "test/goldens/ui_inventory/agent-attachment-journey-image-remote-return-393.png",
+      "previous_source": "test/goldens/ui_inventory/agent-attachment-journey-image-remote-recovered-393.png",
+      "route": "/",
+      "trigger": "Return after remote recovery → original transcript",
+      "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage via public agentHubBuilder; production SSE parser, runner with default retries, cancel client and profile repository; isolated SSE/control/multipart/content HTTP, native picker and voice dependencies; production media repositories and PDF picker validation. History disabled as in default local build; no remote model request.",
+      "test": "test/features/agent_hub/agent_attachment_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "05-agent/agent-attachment-journey-image-viewer",
+    "module": "Cozymate",
+    "label": "嗨 Mia，  /  / 今天想聊点什么呢？  /  / 把你现在最关心的事情告诉我就好，我会陪你一起梳理。",
+    "state": "agent-attachment-journey-image-viewer",
+    "image": "05-agent/agent-attachment-journey-image-viewer/default.png",
+    "viewport": "05-agent/agent-attachment-journey-image-viewer/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "agent/home",
+      "agent/attachments",
+      "agent/message-menu",
+      "agent/image-preview",
+      "agent/file-preview",
+      "agent/voice",
+      "common/not-found",
+      "agent/state-03",
+      "agent/12-agent-error",
+      "agent/12b-agent-conversation"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/features/agent_hub/agent_hub_page.dart",
+      "lib/features/agent_hub/presentation/agent_attachment_tile.dart",
+      "lib/features/agent_hub/presentation/agent_file_previews.dart",
+      "lib/features/agent_hub/presentation/agent_image_previews.dart",
+      "lib/features/agent_hub/presentation/agent_message_menu.dart",
+      "lib/features/media/presentation/media_viewer_header.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/agent_hub/agent_attachment_inventory_journey_test.dart",
+    "test_case": "inventory attachment mixed send and image viewer 393.0",
+    "metadata": "raw/test/goldens/ui_inventory/agent-attachment-journey-image-viewer-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/agent-attachment-journey-image-viewer-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-attachment-journey-image-viewer-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/agent-attachment-journey-image-viewer-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-attachment-journey-image-viewer-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/",
+    "entry": "Authenticated More → tap Cozymate bottom navigation",
+    "trigger": "Tap sent image → full-screen local image",
+    "journey": {
+      "source": "test/goldens/ui_inventory/agent-attachment-journey-image-viewer-393.png",
+      "previous_source": "test/goldens/ui_inventory/agent-attachment-journey-mixed-completed-393.png",
+      "route": "/",
+      "trigger": "Tap sent image → full-screen local image",
+      "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage via public agentHubBuilder; production SSE parser, runner with default retries, cancel client and profile repository; isolated SSE/control/multipart/content HTTP, native picker and voice dependencies; production media repositories and PDF picker validation. History disabled as in default local build; no remote model request.",
+      "test": "test/features/agent_hub/agent_attachment_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "05-agent/agent-attachment-journey-image-viewer-error",
+    "module": "Cozymate",
+    "label": "嗨 Mia，  /  / 今天想聊点什么呢？  /  / 把你现在最关心的事情告诉我就好，我会陪你一起梳理。",
+    "state": "agent-attachment-journey-image-viewer-error",
+    "image": "05-agent/agent-attachment-journey-image-viewer-error/default.png",
+    "viewport": "05-agent/agent-attachment-journey-image-viewer-error/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "agent/home",
+      "agent/attachments",
+      "agent/message-menu",
+      "agent/image-preview",
+      "agent/voice",
+      "common/not-found",
+      "common/loading",
+      "common/empty",
+      "common/error",
+      "agent/state-03",
+      "agent/12-agent-error",
+      "agent/12b-agent-conversation"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/features/agent_hub/agent_hub_page.dart",
+      "lib/features/agent_hub/presentation/agent_attachment_tile.dart",
+      "lib/features/agent_hub/presentation/agent_image_previews.dart",
+      "lib/features/agent_hub/presentation/agent_message_menu.dart",
+      "lib/features/media/presentation/media_viewer_feedback.dart",
+      "lib/features/media/presentation/media_viewer_header.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/product_feedback.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/agent_hub/agent_attachment_inventory_journey_test.dart",
+    "test_case": "inventory attachment image upload failure and preview retry",
+    "metadata": "raw/test/goldens/ui_inventory/agent-attachment-journey-image-viewer-error-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/agent-attachment-journey-image-viewer-error-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-attachment-journey-image-viewer-error-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/",
+    "entry": "Authenticated More → tap Cozymate bottom navigation",
+    "trigger": "Open corrupt local image → full-screen error with remote reload",
+    "journey": {
+      "source": "test/goldens/ui_inventory/agent-attachment-journey-image-viewer-error-393.png",
+      "previous_source": "test/goldens/ui_inventory/agent-attachment-journey-image-decode-fallback-393.png",
+      "route": "/",
+      "trigger": "Open corrupt local image → full-screen error with remote reload",
+      "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage via public agentHubBuilder; production SSE parser, runner with default retries, cancel client and profile repository; isolated SSE/control/multipart/content HTTP, native picker and voice dependencies; production media repositories and PDF picker validation. History disabled as in default local build; no remote model request.",
+      "test": "test/features/agent_hub/agent_attachment_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "05-agent/agent-attachment-journey-image-viewer-return",
+    "module": "Cozymate",
+    "label": "嗨 Mia，  /  / 今天想聊点什么呢？  /  / 把你现在最关心的事情告诉我就好，我会陪你一起梳理。",
+    "state": "agent-attachment-journey-image-viewer-return",
+    "image": "05-agent/agent-attachment-journey-image-viewer-return/default.png",
+    "viewport": "05-agent/agent-attachment-journey-image-viewer-return/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "agent/home",
+      "agent/attachments",
+      "agent/message-menu",
+      "agent/image-preview",
+      "agent/file-preview",
+      "agent/voice",
+      "common/not-found",
+      "agent/state-03",
+      "agent/12-agent-error",
+      "agent/12b-agent-conversation"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/features/agent_hub/agent_hub_page.dart",
+      "lib/features/agent_hub/presentation/agent_attachment_tile.dart",
+      "lib/features/agent_hub/presentation/agent_file_previews.dart",
+      "lib/features/agent_hub/presentation/agent_image_previews.dart",
+      "lib/features/agent_hub/presentation/agent_message_menu.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/agent_hub/agent_attachment_inventory_journey_test.dart",
+    "test_case": "inventory attachment mixed send and image viewer 393.0",
+    "metadata": "raw/test/goldens/ui_inventory/agent-attachment-journey-image-viewer-return-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/agent-attachment-journey-image-viewer-return-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-attachment-journey-image-viewer-return-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/agent-attachment-journey-image-viewer-return-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-attachment-journey-image-viewer-return-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/",
+    "entry": "Authenticated More → tap Cozymate bottom navigation",
+    "trigger": "Viewer return button → same conversation",
+    "journey": {
+      "source": "test/goldens/ui_inventory/agent-attachment-journey-image-viewer-return-393.png",
+      "previous_source": "test/goldens/ui_inventory/agent-attachment-journey-image-panned-393.png",
+      "route": "/",
+      "trigger": "Viewer return button → same conversation",
+      "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage via public agentHubBuilder; production SSE parser, runner with default retries, cancel client and profile repository; isolated SSE/control/multipart/content HTTP, native picker and voice dependencies; production media repositories and PDF picker validation. History disabled as in default local build; no remote model request.",
+      "test": "test/features/agent_hub/agent_attachment_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "05-agent/agent-attachment-journey-image-zoomed",
+    "module": "Cozymate",
+    "label": "嗨 Mia，  /  / 今天想聊点什么呢？  /  / 把你现在最关心的事情告诉我就好，我会陪你一起梳理。",
+    "state": "agent-attachment-journey-image-zoomed",
+    "image": "05-agent/agent-attachment-journey-image-zoomed/default.png",
+    "viewport": "05-agent/agent-attachment-journey-image-zoomed/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "agent/home",
+      "agent/attachments",
+      "agent/message-menu",
+      "agent/image-preview",
+      "agent/file-preview",
+      "agent/voice",
+      "common/not-found",
+      "agent/state-03",
+      "agent/12-agent-error",
+      "agent/12b-agent-conversation"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/features/agent_hub/agent_hub_page.dart",
+      "lib/features/agent_hub/presentation/agent_attachment_tile.dart",
+      "lib/features/agent_hub/presentation/agent_file_previews.dart",
+      "lib/features/agent_hub/presentation/agent_image_previews.dart",
+      "lib/features/agent_hub/presentation/agent_message_menu.dart",
+      "lib/features/media/presentation/media_viewer_header.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/agent_hub/agent_attachment_inventory_journey_test.dart",
+    "test_case": "inventory attachment mixed send and image viewer 393.0",
+    "metadata": "raw/test/goldens/ui_inventory/agent-attachment-journey-image-zoomed-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/agent-attachment-journey-image-zoomed-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-attachment-journey-image-zoomed-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/agent-attachment-journey-image-zoomed-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-attachment-journey-image-zoomed-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/",
+    "entry": "Authenticated More → tap Cozymate bottom navigation",
+    "trigger": "Two-finger pinch → enlarged image",
+    "journey": {
+      "source": "test/goldens/ui_inventory/agent-attachment-journey-image-zoomed-393.png",
+      "previous_source": "test/goldens/ui_inventory/agent-attachment-journey-image-viewer-393.png",
+      "route": "/",
+      "trigger": "Two-finger pinch → enlarged image",
+      "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage via public agentHubBuilder; production SSE parser, runner with default retries, cancel client and profile repository; isolated SSE/control/multipart/content HTTP, native picker and voice dependencies; production media repositories and PDF picker validation. History disabled as in default local build; no remote model request.",
+      "test": "test/features/agent_hub/agent_attachment_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "05-agent/agent-image-empty-response",
+    "module": "Cozymate",
+    "label": "Feeding notes and observations with a long image name.png",
+    "state": "agent-image-empty-response",
+    "image": "05-agent/agent-image-empty-response/default.png",
+    "viewport": "05-agent/agent-image-empty-response/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [
+      "agent/image-preview",
+      "common/loading",
+      "common/empty",
+      "common/error"
+    ],
+    "production_widget_files": [
+      "lib/features/agent_hub/presentation/agent_attachment_tile.dart",
+      "lib/features/agent_hub/presentation/agent_image_previews.dart",
+      "lib/features/media/presentation/media_viewer_feedback.dart",
+      "lib/features/media/presentation/media_viewer_header.dart",
+      "lib/shared/widgets/product_feedback.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/features/agent_hub/agent_image_design_test.dart",
+    "test_case": "image metadata, empty response, retry and zoom 390.0/1.0",
+    "metadata": "raw/test/goldens/design_system/agent-image-empty-response-390-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/agent-image-empty-response-320-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-image-empty-response-320-1x.png.json",
+        "width": 320,
+        "height": 568
+      },
+      {
+        "source": "test/goldens/design_system/agent-image-empty-response-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-image-empty-response-320-2x.png.json",
+        "width": 320,
+        "height": 568
+      },
+      {
+        "source": "test/goldens/design_system/agent-image-empty-response-390-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-image-empty-response-390-1x.png.json",
+        "width": 390,
+        "height": 568
+      },
+      {
+        "source": "test/goldens/design_system/agent-image-empty-response-390-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-image-empty-response-390-2x.png.json",
+        "width": 390,
+        "height": 568
+      },
+      {
+        "source": "test/goldens/design_system/agent-image-empty-response-430-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-image-empty-response-430-1x.png.json",
+        "width": 430,
+        "height": 568
+      },
+      {
+        "source": "test/goldens/design_system/agent-image-empty-response-430-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-image-empty-response-430-2x.png.json",
+        "width": 430,
+        "height": 568
+      }
+    ]
+  },
+  {
+    "id": "05-agent/agent-image-loaded",
+    "module": "Cozymate",
+    "label": "Feeding notes and observations with a long image name.png",
+    "state": "agent-image-loaded",
+    "image": "05-agent/agent-image-loaded/default.png",
+    "viewport": "05-agent/agent-image-loaded/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [
+      "agent/image-preview"
+    ],
+    "production_widget_files": [
+      "lib/features/agent_hub/presentation/agent_attachment_tile.dart",
+      "lib/features/agent_hub/presentation/agent_image_previews.dart",
+      "lib/features/media/presentation/media_viewer_header.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/features/agent_hub/agent_image_design_test.dart",
+    "test_case": "image metadata, empty response, retry and zoom 390.0/1.0",
+    "metadata": "raw/test/goldens/design_system/agent-image-loaded-390-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/agent-image-loaded-320-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-image-loaded-320-1x.png.json",
+        "width": 320,
+        "height": 568
+      },
+      {
+        "source": "test/goldens/design_system/agent-image-loaded-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-image-loaded-320-2x.png.json",
+        "width": 320,
+        "height": 568
+      },
+      {
+        "source": "test/goldens/design_system/agent-image-loaded-390-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-image-loaded-390-1x.png.json",
+        "width": 390,
+        "height": 568
+      },
+      {
+        "source": "test/goldens/design_system/agent-image-loaded-390-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-image-loaded-390-2x.png.json",
+        "width": 390,
+        "height": 568
+      },
+      {
+        "source": "test/goldens/design_system/agent-image-loaded-430-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-image-loaded-430-1x.png.json",
+        "width": 430,
+        "height": 568
+      },
+      {
+        "source": "test/goldens/design_system/agent-image-loaded-430-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-image-loaded-430-2x.png.json",
+        "width": 430,
+        "height": 568
+      }
+    ]
+  },
+  {
+    "id": "05-agent/agent-image-loading",
+    "module": "Cozymate",
+    "label": "Feeding notes and observations with a long image name.png",
+    "state": "agent-image-loading",
+    "image": "05-agent/agent-image-loading/default.png",
+    "viewport": "05-agent/agent-image-loading/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [
+      "agent/image-preview",
+      "common/loading",
+      "common/empty",
+      "common/error"
+    ],
+    "production_widget_files": [
+      "lib/features/agent_hub/presentation/agent_attachment_tile.dart",
+      "lib/features/agent_hub/presentation/agent_image_previews.dart",
+      "lib/features/media/presentation/media_viewer_feedback.dart",
+      "lib/features/media/presentation/media_viewer_header.dart",
+      "lib/shared/widgets/product_feedback.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/features/agent_hub/agent_image_design_test.dart",
+    "test_case": "image metadata, empty response, retry and zoom 390.0/1.0",
+    "metadata": "raw/test/goldens/design_system/agent-image-loading-390-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/agent-image-loading-320-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-image-loading-320-1x.png.json",
+        "width": 320,
+        "height": 568
+      },
+      {
+        "source": "test/goldens/design_system/agent-image-loading-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-image-loading-320-2x.png.json",
+        "width": 320,
+        "height": 568
+      },
+      {
+        "source": "test/goldens/design_system/agent-image-loading-390-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-image-loading-390-1x.png.json",
+        "width": 390,
+        "height": 568
+      },
+      {
+        "source": "test/goldens/design_system/agent-image-loading-390-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-image-loading-390-2x.png.json",
+        "width": 390,
+        "height": 568
+      },
+      {
+        "source": "test/goldens/design_system/agent-image-loading-430-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-image-loading-430-1x.png.json",
+        "width": 430,
+        "height": 568
+      },
+      {
+        "source": "test/goldens/design_system/agent-image-loading-430-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-image-loading-430-2x.png.json",
+        "width": 430,
+        "height": 568
+      }
+    ]
+  },
+  {
+    "id": "05-agent/agent-image-unavailable",
+    "module": "Cozymate",
+    "label": "Unavailable image.png",
+    "state": "agent-image-unavailable",
+    "image": "05-agent/agent-image-unavailable/default.png",
+    "viewport": "05-agent/agent-image-unavailable/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [
+      "agent/image-preview",
+      "common/loading",
+      "common/empty",
+      "common/error"
+    ],
+    "production_widget_files": [
+      "lib/features/agent_hub/presentation/agent_attachment_tile.dart",
+      "lib/features/agent_hub/presentation/agent_image_previews.dart",
+      "lib/features/media/presentation/media_viewer_feedback.dart",
+      "lib/features/media/presentation/media_viewer_header.dart",
+      "lib/shared/widgets/product_feedback.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/features/agent_hub/agent_image_design_test.dart",
+    "test_case": "image metadata, empty response, retry and zoom 390.0/1.0",
+    "metadata": "raw/test/goldens/design_system/agent-image-unavailable-390-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/agent-image-unavailable-320-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-image-unavailable-320-1x.png.json",
+        "width": 320,
+        "height": 568
+      },
+      {
+        "source": "test/goldens/design_system/agent-image-unavailable-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-image-unavailable-320-2x.png.json",
+        "width": 320,
+        "height": 568
+      },
+      {
+        "source": "test/goldens/design_system/agent-image-unavailable-390-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-image-unavailable-390-1x.png.json",
+        "width": 390,
+        "height": 568
+      },
+      {
+        "source": "test/goldens/design_system/agent-image-unavailable-390-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-image-unavailable-390-2x.png.json",
+        "width": 390,
+        "height": 568
+      },
+      {
+        "source": "test/goldens/design_system/agent-image-unavailable-430-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-image-unavailable-430-1x.png.json",
+        "width": 430,
+        "height": 568
+      },
+      {
+        "source": "test/goldens/design_system/agent-image-unavailable-430-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-image-unavailable-430-2x.png.json",
+        "width": 430,
+        "height": 568
+      }
+    ]
+  },
+  {
+    "id": "05-agent/agent-image-zoomed",
+    "module": "Cozymate",
+    "label": "Feeding notes and observations with a long image name.png",
+    "state": "agent-image-zoomed",
+    "image": "05-agent/agent-image-zoomed/default.png",
+    "viewport": "05-agent/agent-image-zoomed/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [
+      "agent/image-preview"
+    ],
+    "production_widget_files": [
+      "lib/features/agent_hub/presentation/agent_attachment_tile.dart",
+      "lib/features/agent_hub/presentation/agent_image_previews.dart",
+      "lib/features/media/presentation/media_viewer_header.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/features/agent_hub/agent_image_design_test.dart",
+    "test_case": "image metadata, empty response, retry and zoom 390.0/1.0",
+    "metadata": "raw/test/goldens/design_system/agent-image-zoomed-390-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/agent-image-zoomed-320-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-image-zoomed-320-1x.png.json",
+        "width": 320,
+        "height": 568
+      },
+      {
+        "source": "test/goldens/design_system/agent-image-zoomed-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-image-zoomed-320-2x.png.json",
+        "width": 320,
+        "height": 568
+      },
+      {
+        "source": "test/goldens/design_system/agent-image-zoomed-390-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-image-zoomed-390-1x.png.json",
+        "width": 390,
+        "height": 568
+      },
+      {
+        "source": "test/goldens/design_system/agent-image-zoomed-390-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-image-zoomed-390-2x.png.json",
+        "width": 390,
+        "height": 568
+      },
+      {
+        "source": "test/goldens/design_system/agent-image-zoomed-430-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-image-zoomed-430-1x.png.json",
+        "width": 430,
+        "height": 568
+      },
+      {
+        "source": "test/goldens/design_system/agent-image-zoomed-430-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-image-zoomed-430-2x.png.json",
+        "width": 430,
+        "height": 568
+      }
+    ]
+  },
+  {
+    "id": "05-agent/agent-resource-journey-image-cached",
+    "module": "Cozymate",
+    "label": "查看示意图片",
+    "state": "agent-resource-journey-image-cached",
+    "image": "05-agent/agent-resource-journey-image-cached/default.png",
+    "viewport": "05-agent/agent-resource-journey-image-cached/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/media-viewer"
+    ],
+    "mapped_design_candidates": [
+      "common/media",
+      "common/pdf",
+      "common/not-found"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/features/app_pages/momcozy_feature_pages.dart",
+      "lib/features/media/presentation/media_viewer_header.dart",
+      "lib/features/media/presentation/media_viewer_page.dart",
+      "lib/features/media/presentation/product_asset_image.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/agent_hub/agent_resource_inventory_journey_test.dart",
+    "test_case": "inventory agent image entry loading retry gestures and return 393.0",
+    "metadata": "raw/test/goldens/ui_inventory/agent-resource-journey-image-cached-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/agent-resource-journey-image-cached-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-resource-journey-image-cached-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/agent-resource-journey-image-cached-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-resource-journey-image-cached-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/media-viewer",
+    "entry": "Authenticated More → tap Cozymate bottom navigation",
+    "trigger": "Reopen same image → in-memory cache, no additional asset HTTP",
+    "journey": {
+      "source": "test/goldens/ui_inventory/agent-resource-journey-image-cached-393.png",
+      "previous_source": "test/goldens/ui_inventory/agent-resource-journey-image-return-393.png",
+      "route": "/media-viewer",
+      "trigger": "Reopen same image → in-memory cache, no additional asset HTTP",
+      "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage through public builder; real SSE parser, runner, artifact mapper and dispatcher, media and Care repositories; only SSE/HTTP bytes, voice, session and video platform isolated. Real image bytes decoded; video texture/native decoder is a platform stub. Default local history flag; no remote requests.",
+      "test": "test/features/agent_hub/agent_resource_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "05-agent/agent-resource-journey-image-error",
+    "module": "Cozymate",
+    "label": "查看示意图片",
+    "state": "agent-resource-journey-image-error",
+    "image": "05-agent/agent-resource-journey-image-error/default.png",
+    "viewport": "05-agent/agent-resource-journey-image-error/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/media-viewer"
+    ],
+    "mapped_design_candidates": [
+      "common/media",
+      "common/pdf",
+      "common/not-found",
+      "common/loading",
+      "common/empty",
+      "common/error"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/features/app_pages/momcozy_feature_pages.dart",
+      "lib/features/media/presentation/media_viewer_feedback.dart",
+      "lib/features/media/presentation/media_viewer_header.dart",
+      "lib/features/media/presentation/media_viewer_page.dart",
+      "lib/features/media/presentation/product_asset_image.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/product_feedback.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/agent_hub/agent_resource_inventory_journey_test.dart",
+    "test_case": "inventory agent image entry loading retry gestures and return 393.0",
+    "metadata": "raw/test/goldens/ui_inventory/agent-resource-journey-image-error-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/agent-resource-journey-image-error-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-resource-journey-image-error-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/agent-resource-journey-image-error-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-resource-journey-image-error-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/media-viewer",
+    "entry": "Authenticated More → tap Cozymate bottom navigation",
+    "trigger": "Image HTTP 503 → retry state in actual viewer",
+    "journey": {
+      "source": "test/goldens/ui_inventory/agent-resource-journey-image-error-393.png",
+      "previous_source": "test/goldens/ui_inventory/agent-resource-journey-image-loading-393.png",
+      "route": "/media-viewer",
+      "trigger": "Image HTTP 503 → retry state in actual viewer",
+      "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage through public builder; real SSE parser, runner, artifact mapper and dispatcher, media and Care repositories; only SSE/HTTP bytes, voice, session and video platform isolated. Real image bytes decoded; video texture/native decoder is a platform stub. Default local history flag; no remote requests.",
+      "test": "test/features/agent_hub/agent_resource_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "05-agent/agent-resource-journey-image-loaded",
+    "module": "Cozymate",
+    "label": "查看示意图片",
+    "state": "agent-resource-journey-image-loaded",
+    "image": "05-agent/agent-resource-journey-image-loaded/default.png",
+    "viewport": "05-agent/agent-resource-journey-image-loaded/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/media-viewer"
+    ],
+    "mapped_design_candidates": [
+      "common/media",
+      "common/pdf",
+      "common/not-found"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/features/app_pages/momcozy_feature_pages.dart",
+      "lib/features/media/presentation/media_viewer_header.dart",
+      "lib/features/media/presentation/media_viewer_page.dart",
+      "lib/features/media/presentation/product_asset_image.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/agent_hub/agent_resource_inventory_journey_test.dart",
+    "test_case": "inventory agent image entry loading retry gestures and return 393.0",
+    "metadata": "raw/test/goldens/ui_inventory/agent-resource-journey-image-loaded-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/agent-resource-journey-image-loaded-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-resource-journey-image-loaded-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/agent-resource-journey-image-loaded-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-resource-journey-image-loaded-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/media-viewer",
+    "entry": "Authenticated More → tap Cozymate bottom navigation",
+    "trigger": "Retry decodes actual local PNG bytes through ProductAssetRepository",
+    "journey": {
+      "source": "test/goldens/ui_inventory/agent-resource-journey-image-loaded-393.png",
+      "previous_source": "test/goldens/ui_inventory/agent-resource-journey-image-error-393.png",
+      "route": "/media-viewer",
+      "trigger": "Retry decodes actual local PNG bytes through ProductAssetRepository",
+      "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage through public builder; real SSE parser, runner, artifact mapper and dispatcher, media and Care repositories; only SSE/HTTP bytes, voice, session and video platform isolated. Real image bytes decoded; video texture/native decoder is a platform stub. Default local history flag; no remote requests.",
+      "test": "test/features/agent_hub/agent_resource_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "05-agent/agent-resource-journey-image-loading",
+    "module": "Cozymate",
+    "label": "查看示意图片",
+    "state": "agent-resource-journey-image-loading",
+    "image": "05-agent/agent-resource-journey-image-loading/default.png",
+    "viewport": "05-agent/agent-resource-journey-image-loading/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/media-viewer"
+    ],
+    "mapped_design_candidates": [
+      "common/media",
+      "common/pdf",
+      "common/not-found",
+      "common/loading",
+      "common/empty",
+      "common/error"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/features/app_pages/momcozy_feature_pages.dart",
+      "lib/features/media/presentation/media_viewer_feedback.dart",
+      "lib/features/media/presentation/media_viewer_header.dart",
+      "lib/features/media/presentation/media_viewer_page.dart",
+      "lib/features/media/presentation/product_asset_image.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/product_feedback.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/agent_hub/agent_resource_inventory_journey_test.dart",
+    "test_case": "inventory agent image entry loading retry gestures and return 393.0",
+    "metadata": "raw/test/goldens/ui_inventory/agent-resource-journey-image-loading-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/agent-resource-journey-image-loading-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-resource-journey-image-loading-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/agent-resource-journey-image-loading-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-resource-journey-image-loading-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/media-viewer",
+    "entry": "Authenticated More → tap Cozymate bottom navigation",
+    "trigger": "Tap stable image asset action → actual viewer waiting for authenticated bytes",
+    "journey": {
+      "source": "test/goldens/ui_inventory/agent-resource-journey-image-loading-393.png",
+      "previous_source": "test/goldens/ui_inventory/agent-resource-journey-image-card-393.png",
+      "route": "/media-viewer",
+      "trigger": "Tap stable image asset action → actual viewer waiting for authenticated bytes",
+      "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage through public builder; real SSE parser, runner, artifact mapper and dispatcher, media and Care repositories; only SSE/HTTP bytes, voice, session and video platform isolated. Real image bytes decoded; video texture/native decoder is a platform stub. Default local history flag; no remote requests.",
+      "test": "test/features/agent_hub/agent_resource_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "05-agent/agent-resource-journey-image-panned",
+    "module": "Cozymate",
+    "label": "查看示意图片",
+    "state": "agent-resource-journey-image-panned",
+    "image": "05-agent/agent-resource-journey-image-panned/default.png",
+    "viewport": "05-agent/agent-resource-journey-image-panned/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/media-viewer"
+    ],
+    "mapped_design_candidates": [
+      "common/media",
+      "common/pdf",
+      "common/not-found"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/features/app_pages/momcozy_feature_pages.dart",
+      "lib/features/media/presentation/media_viewer_header.dart",
+      "lib/features/media/presentation/media_viewer_page.dart",
+      "lib/features/media/presentation/product_asset_image.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/agent_hub/agent_resource_inventory_journey_test.dart",
+    "test_case": "inventory agent image entry loading retry gestures and return 393.0",
+    "metadata": "raw/test/goldens/ui_inventory/agent-resource-journey-image-panned-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/agent-resource-journey-image-panned-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-resource-journey-image-panned-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/agent-resource-journey-image-panned-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-resource-journey-image-panned-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/media-viewer",
+    "entry": "Authenticated More → tap Cozymate bottom navigation",
+    "trigger": "Drag zoomed image → translated content",
+    "journey": {
+      "source": "test/goldens/ui_inventory/agent-resource-journey-image-panned-393.png",
+      "previous_source": "test/goldens/ui_inventory/agent-resource-journey-image-zoomed-393.png",
+      "route": "/media-viewer",
+      "trigger": "Drag zoomed image → translated content",
+      "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage through public builder; real SSE parser, runner, artifact mapper and dispatcher, media and Care repositories; only SSE/HTTP bytes, voice, session and video platform isolated. Real image bytes decoded; video texture/native decoder is a platform stub. Default local history flag; no remote requests.",
+      "test": "test/features/agent_hub/agent_resource_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "05-agent/agent-resource-journey-image-reset",
+    "module": "Cozymate",
+    "label": "查看示意图片",
+    "state": "agent-resource-journey-image-reset",
+    "image": "05-agent/agent-resource-journey-image-reset/default.png",
+    "viewport": "05-agent/agent-resource-journey-image-reset/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/media-viewer"
+    ],
+    "mapped_design_candidates": [
+      "common/media",
+      "common/pdf",
+      "common/not-found"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/features/app_pages/momcozy_feature_pages.dart",
+      "lib/features/media/presentation/media_viewer_header.dart",
+      "lib/features/media/presentation/media_viewer_page.dart",
+      "lib/features/media/presentation/product_asset_image.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/agent_hub/agent_resource_inventory_journey_test.dart",
+    "test_case": "inventory agent image entry loading retry gestures and return 393.0",
+    "metadata": "raw/test/goldens/ui_inventory/agent-resource-journey-image-reset-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/agent-resource-journey-image-reset-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-resource-journey-image-reset-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/agent-resource-journey-image-reset-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-resource-journey-image-reset-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/media-viewer",
+    "entry": "Authenticated More → tap Cozymate bottom navigation",
+    "trigger": "Double tap zoomed image → reset to fit",
+    "journey": {
+      "source": "test/goldens/ui_inventory/agent-resource-journey-image-reset-393.png",
+      "previous_source": "test/goldens/ui_inventory/agent-resource-journey-image-panned-393.png",
+      "route": "/media-viewer",
+      "trigger": "Double tap zoomed image → reset to fit",
+      "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage through public builder; real SSE parser, runner, artifact mapper and dispatcher, media and Care repositories; only SSE/HTTP bytes, voice, session and video platform isolated. Real image bytes decoded; video texture/native decoder is a platform stub. Default local history flag; no remote requests.",
+      "test": "test/features/agent_hub/agent_resource_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "05-agent/agent-resource-journey-image-zoomed",
+    "module": "Cozymate",
+    "label": "查看示意图片",
+    "state": "agent-resource-journey-image-zoomed",
+    "image": "05-agent/agent-resource-journey-image-zoomed/default.png",
+    "viewport": "05-agent/agent-resource-journey-image-zoomed/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/media-viewer"
+    ],
+    "mapped_design_candidates": [
+      "common/media",
+      "common/pdf",
+      "common/not-found"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/features/app_pages/momcozy_feature_pages.dart",
+      "lib/features/media/presentation/media_viewer_header.dart",
+      "lib/features/media/presentation/media_viewer_page.dart",
+      "lib/features/media/presentation/product_asset_image.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/agent_hub/agent_resource_inventory_journey_test.dart",
+    "test_case": "inventory agent image entry loading retry gestures and return 393.0",
+    "metadata": "raw/test/goldens/ui_inventory/agent-resource-journey-image-zoomed-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/agent-resource-journey-image-zoomed-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-resource-journey-image-zoomed-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/agent-resource-journey-image-zoomed-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-resource-journey-image-zoomed-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/media-viewer",
+    "entry": "Authenticated More → tap Cozymate bottom navigation",
+    "trigger": "Double tap actual image → 2.5x zoom",
+    "journey": {
+      "source": "test/goldens/ui_inventory/agent-resource-journey-image-zoomed-393.png",
+      "previous_source": "test/goldens/ui_inventory/agent-resource-journey-image-loaded-393.png",
+      "route": "/media-viewer",
+      "trigger": "Double tap actual image → 2.5x zoom",
+      "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage through public builder; real SSE parser, runner, artifact mapper and dispatcher, media and Care repositories; only SSE/HTTP bytes, voice, session and video platform isolated. Real image bytes decoded; video texture/native decoder is a platform stub. Default local history flag; no remote requests.",
+      "test": "test/features/agent_hub/agent_resource_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "05-agent/agent-resource-journey-pdf-error",
+    "module": "Cozymate",
+    "label": "阅读资料 PDF",
+    "state": "agent-resource-journey-pdf-error",
+    "image": "05-agent/agent-resource-journey-pdf-error/default.png",
+    "viewport": "05-agent/agent-resource-journey-pdf-error/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/media-viewer"
+    ],
+    "mapped_design_candidates": [
+      "common/media",
+      "common/pdf",
+      "common/not-found",
+      "common/loading",
+      "common/empty",
+      "common/error"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/features/app_pages/momcozy_feature_pages.dart",
+      "lib/features/media/presentation/media_viewer_feedback.dart",
+      "lib/features/media/presentation/media_viewer_header.dart",
+      "lib/features/media/presentation/media_viewer_page.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/product_feedback.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/agent_hub/agent_resource_inventory_journey_test.dart",
+    "test_case": "inventory agent PDF entry failure retry and pending return 393.0",
+    "metadata": "raw/test/goldens/ui_inventory/agent-resource-journey-pdf-error-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/agent-resource-journey-pdf-error-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-resource-journey-pdf-error-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/agent-resource-journey-pdf-error-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-resource-journey-pdf-error-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/media-viewer",
+    "entry": "Authenticated More → tap Cozymate bottom navigation",
+    "trigger": "PDF HTTP 503 → actual retry control",
+    "journey": {
+      "source": "test/goldens/ui_inventory/agent-resource-journey-pdf-error-393.png",
+      "previous_source": "test/goldens/ui_inventory/agent-resource-journey-pdf-loading-393.png",
+      "route": "/media-viewer",
+      "trigger": "PDF HTTP 503 → actual retry control",
+      "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage through public builder; real SSE parser, runner, artifact mapper and dispatcher, media and Care repositories; only SSE/HTTP bytes, voice, session and video platform isolated. Real image bytes decoded; video texture/native decoder is a platform stub. Default local history flag; no remote requests.",
+      "test": "test/features/agent_hub/agent_resource_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "05-agent/agent-resource-journey-pdf-forbidden",
+    "module": "Cozymate",
+    "label": "阅读资料 PDF",
+    "state": "agent-resource-journey-pdf-forbidden",
+    "image": "05-agent/agent-resource-journey-pdf-forbidden/default.png",
+    "viewport": "05-agent/agent-resource-journey-pdf-forbidden/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/media-viewer"
+    ],
+    "mapped_design_candidates": [
+      "common/media",
+      "common/pdf",
+      "common/not-found",
+      "common/loading",
+      "common/empty",
+      "common/error"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/features/app_pages/momcozy_feature_pages.dart",
+      "lib/features/media/presentation/media_viewer_feedback.dart",
+      "lib/features/media/presentation/media_viewer_header.dart",
+      "lib/features/media/presentation/media_viewer_page.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/product_feedback.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/agent_hub/agent_resource_inventory_journey_test.dart",
+    "test_case": "inventory agent PDF entry failure retry and pending return 393.0",
+    "metadata": "raw/test/goldens/ui_inventory/agent-resource-journey-pdf-forbidden-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/agent-resource-journey-pdf-forbidden-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-resource-journey-pdf-forbidden-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/agent-resource-journey-pdf-forbidden-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-resource-journey-pdf-forbidden-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/media-viewer",
+    "entry": "Authenticated More → tap Cozymate bottom navigation",
+    "trigger": "Reopen after failed pending read → asset denied 403, still retryable",
+    "journey": {
+      "source": "test/goldens/ui_inventory/agent-resource-journey-pdf-forbidden-393.png",
+      "previous_source": "test/goldens/ui_inventory/agent-resource-journey-pdf-pending-return-393.png",
+      "route": "/media-viewer",
+      "trigger": "Reopen after failed pending read → asset denied 403, still retryable",
+      "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage through public builder; real SSE parser, runner, artifact mapper and dispatcher, media and Care repositories; only SSE/HTTP bytes, voice, session and video platform isolated. Real image bytes decoded; video texture/native decoder is a platform stub. Default local history flag; no remote requests.",
+      "test": "test/features/agent_hub/agent_resource_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "05-agent/agent-resource-journey-pdf-loading",
+    "module": "Cozymate",
+    "label": "阅读资料 PDF",
+    "state": "agent-resource-journey-pdf-loading",
+    "image": "05-agent/agent-resource-journey-pdf-loading/default.png",
+    "viewport": "05-agent/agent-resource-journey-pdf-loading/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/media-viewer"
+    ],
+    "mapped_design_candidates": [
+      "common/media",
+      "common/pdf",
+      "common/not-found",
+      "common/loading",
+      "common/empty",
+      "common/error"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/features/app_pages/momcozy_feature_pages.dart",
+      "lib/features/media/presentation/media_viewer_feedback.dart",
+      "lib/features/media/presentation/media_viewer_header.dart",
+      "lib/features/media/presentation/media_viewer_page.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/product_feedback.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/agent_hub/agent_resource_inventory_journey_test.dart",
+    "test_case": "inventory agent PDF entry failure retry and pending return 393.0",
+    "metadata": "raw/test/goldens/ui_inventory/agent-resource-journey-pdf-loading-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/agent-resource-journey-pdf-loading-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-resource-journey-pdf-loading-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/agent-resource-journey-pdf-loading-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-resource-journey-pdf-loading-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/media-viewer",
+    "entry": "Authenticated More → tap Cozymate bottom navigation",
+    "trigger": "Tap stable PDF action → viewer requests authenticated PDF",
+    "journey": {
+      "source": "test/goldens/ui_inventory/agent-resource-journey-pdf-loading-393.png",
+      "previous_source": "test/goldens/ui_inventory/agent-resource-journey-pdf-card-393.png",
+      "route": "/media-viewer",
+      "trigger": "Tap stable PDF action → viewer requests authenticated PDF",
+      "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage through public builder; real SSE parser, runner, artifact mapper and dispatcher, media and Care repositories; only SSE/HTTP bytes, voice, session and video platform isolated. Real image bytes decoded; video texture/native decoder is a platform stub. Default local history flag; no remote requests.",
+      "test": "test/features/agent_hub/agent_resource_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "05-agent/agent-resource-journey-pdf-retrying",
+    "module": "Cozymate",
+    "label": "阅读资料 PDF",
+    "state": "agent-resource-journey-pdf-retrying",
+    "image": "05-agent/agent-resource-journey-pdf-retrying/default.png",
+    "viewport": "05-agent/agent-resource-journey-pdf-retrying/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/media-viewer"
+    ],
+    "mapped_design_candidates": [
+      "common/media",
+      "common/pdf",
+      "common/not-found",
+      "common/loading",
+      "common/empty",
+      "common/error"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/features/app_pages/momcozy_feature_pages.dart",
+      "lib/features/media/presentation/media_viewer_feedback.dart",
+      "lib/features/media/presentation/media_viewer_header.dart",
+      "lib/features/media/presentation/media_viewer_page.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/product_feedback.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/agent_hub/agent_resource_inventory_journey_test.dart",
+    "test_case": "inventory agent PDF entry failure retry and pending return 393.0",
+    "metadata": "raw/test/goldens/ui_inventory/agent-resource-journey-pdf-retrying-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/agent-resource-journey-pdf-retrying-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-resource-journey-pdf-retrying-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/agent-resource-journey-pdf-retrying-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-resource-journey-pdf-retrying-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/media-viewer",
+    "entry": "Authenticated More → tap Cozymate bottom navigation",
+    "trigger": "Retry PDF → request pending again",
+    "journey": {
+      "source": "test/goldens/ui_inventory/agent-resource-journey-pdf-retrying-393.png",
+      "previous_source": "test/goldens/ui_inventory/agent-resource-journey-pdf-error-393.png",
+      "route": "/media-viewer",
+      "trigger": "Retry PDF → request pending again",
+      "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage through public builder; real SSE parser, runner, artifact mapper and dispatcher, media and Care repositories; only SSE/HTTP bytes, voice, session and video platform isolated. Real image bytes decoded; video texture/native decoder is a platform stub. Default local history flag; no remote requests.",
+      "test": "test/features/agent_hub/agent_resource_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "11-media/media-image-loaded",
+    "module": "媒体",
+    "label": "喂养姿势与照护指南 · Feeding positions and care",
+    "state": "media-image-loaded",
+    "image": "11-media/media-image-loaded/default.png",
+    "viewport": "11-media/media-image-loaded/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/media-viewer"
+    ],
+    "mapped_design_candidates": [
+      "common/media",
+      "common/pdf"
+    ],
+    "production_widget_files": [
+      "lib/features/media/presentation/media_viewer_header.dart",
+      "lib/features/media/presentation/media_viewer_page.dart",
+      "lib/features/media/presentation/product_asset_image.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/features/media/media_design_test.dart",
+    "test_case": "image loading failure retry and zoom 390.0 / 1.0",
+    "metadata": "raw/test/goldens/design_system/media-image-loaded-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/media-image-loaded-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/media-image-loaded-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/media-image-loaded-320.png",
+        "metadata": "raw/test/goldens/design_system/media-image-loaded-320.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/media-image-loaded-390-2x.png",
+        "metadata": "raw/test/goldens/design_system/media-image-loaded-390-2x.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/media-image-loaded-390.png",
+        "metadata": "raw/test/goldens/design_system/media-image-loaded-390.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/media-image-loaded-430-2x.png",
+        "metadata": "raw/test/goldens/design_system/media-image-loaded-430-2x.png.json",
+        "width": 430,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/media-image-loaded-430.png",
+        "metadata": "raw/test/goldens/design_system/media-image-loaded-430.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "11-media/media-image-loading",
+    "module": "媒体",
+    "label": "喂养姿势与照护指南 · Feeding positions and care",
+    "state": "media-image-loading",
+    "image": "11-media/media-image-loading/default.png",
+    "viewport": "11-media/media-image-loading/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/media-viewer"
+    ],
+    "mapped_design_candidates": [
+      "common/media",
+      "common/pdf",
+      "common/loading",
+      "common/empty",
+      "common/error"
+    ],
+    "production_widget_files": [
+      "lib/features/media/presentation/media_viewer_feedback.dart",
+      "lib/features/media/presentation/media_viewer_header.dart",
+      "lib/features/media/presentation/media_viewer_page.dart",
+      "lib/features/media/presentation/product_asset_image.dart",
+      "lib/shared/widgets/product_feedback.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/features/media/media_design_test.dart",
+    "test_case": "image loading failure retry and zoom 390.0 / 1.0",
+    "metadata": "raw/test/goldens/design_system/media-image-loading-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/media-image-loading-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/media-image-loading-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/media-image-loading-320.png",
+        "metadata": "raw/test/goldens/design_system/media-image-loading-320.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/media-image-loading-390-2x.png",
+        "metadata": "raw/test/goldens/design_system/media-image-loading-390-2x.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/media-image-loading-390.png",
+        "metadata": "raw/test/goldens/design_system/media-image-loading-390.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/media-image-loading-430-2x.png",
+        "metadata": "raw/test/goldens/design_system/media-image-loading-430-2x.png.json",
+        "width": 430,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/media-image-loading-430.png",
+        "metadata": "raw/test/goldens/design_system/media-image-loading-430.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "11-media/media-image-retry",
+    "module": "媒体",
+    "label": "喂养姿势与照护指南 · Feeding positions and care",
+    "state": "media-image-retry",
+    "image": "11-media/media-image-retry/default.png",
+    "viewport": "11-media/media-image-retry/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/media-viewer"
+    ],
+    "mapped_design_candidates": [
+      "common/media",
+      "common/pdf",
+      "common/loading",
+      "common/empty",
+      "common/error"
+    ],
+    "production_widget_files": [
+      "lib/features/media/presentation/media_viewer_feedback.dart",
+      "lib/features/media/presentation/media_viewer_header.dart",
+      "lib/features/media/presentation/media_viewer_page.dart",
+      "lib/features/media/presentation/product_asset_image.dart",
+      "lib/shared/widgets/product_feedback.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/features/media/media_design_test.dart",
+    "test_case": "image loading failure retry and zoom 390.0 / 1.0",
+    "metadata": "raw/test/goldens/design_system/media-image-retry-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/media-image-retry-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/media-image-retry-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/media-image-retry-320.png",
+        "metadata": "raw/test/goldens/design_system/media-image-retry-320.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/media-image-retry-390-2x.png",
+        "metadata": "raw/test/goldens/design_system/media-image-retry-390-2x.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/media-image-retry-390.png",
+        "metadata": "raw/test/goldens/design_system/media-image-retry-390.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/media-image-retry-430-2x.png",
+        "metadata": "raw/test/goldens/design_system/media-image-retry-430-2x.png.json",
+        "width": 430,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/media-image-retry-430.png",
+        "metadata": "raw/test/goldens/design_system/media-image-retry-430.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "11-media/media-pdf-loading",
+    "module": "媒体",
+    "label": "喂养姿势与照护指南 · Feeding positions and care",
+    "state": "media-pdf-loading",
+    "image": "11-media/media-pdf-loading/default.png",
+    "viewport": "11-media/media-pdf-loading/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/media-viewer"
+    ],
+    "mapped_design_candidates": [
+      "common/media",
+      "common/pdf",
+      "common/loading",
+      "common/empty",
+      "common/error"
+    ],
+    "production_widget_files": [
+      "lib/features/media/presentation/media_viewer_feedback.dart",
+      "lib/features/media/presentation/media_viewer_header.dart",
+      "lib/features/media/presentation/media_viewer_page.dart",
+      "lib/shared/widgets/product_feedback.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/features/media/media_design_test.dart",
+    "test_case": "PDF loading failure retry and return 390.0 / 1.0",
+    "metadata": "raw/test/goldens/design_system/media-pdf-loading-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/media-pdf-loading-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/media-pdf-loading-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/media-pdf-loading-320.png",
+        "metadata": "raw/test/goldens/design_system/media-pdf-loading-320.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/media-pdf-loading-390-2x.png",
+        "metadata": "raw/test/goldens/design_system/media-pdf-loading-390-2x.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/media-pdf-loading-390.png",
+        "metadata": "raw/test/goldens/design_system/media-pdf-loading-390.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/media-pdf-loading-430-2x.png",
+        "metadata": "raw/test/goldens/design_system/media-pdf-loading-430-2x.png.json",
+        "width": 430,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/media-pdf-loading-430.png",
+        "metadata": "raw/test/goldens/design_system/media-pdf-loading-430.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "11-media/media-pdf-retry",
+    "module": "媒体",
+    "label": "喂养姿势与照护指南 · Feeding positions and care",
+    "state": "media-pdf-retry",
+    "image": "11-media/media-pdf-retry/default.png",
+    "viewport": "11-media/media-pdf-retry/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/media-viewer"
+    ],
+    "mapped_design_candidates": [
+      "common/media",
+      "common/pdf",
+      "common/loading",
+      "common/empty",
+      "common/error"
+    ],
+    "production_widget_files": [
+      "lib/features/media/presentation/media_viewer_feedback.dart",
+      "lib/features/media/presentation/media_viewer_header.dart",
+      "lib/features/media/presentation/media_viewer_page.dart",
+      "lib/shared/widgets/product_feedback.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/features/media/media_design_test.dart",
+    "test_case": "PDF loading failure retry and return 390.0 / 1.0",
+    "metadata": "raw/test/goldens/design_system/media-pdf-retry-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/media-pdf-retry-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/media-pdf-retry-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/media-pdf-retry-320.png",
+        "metadata": "raw/test/goldens/design_system/media-pdf-retry-320.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/media-pdf-retry-390-2x.png",
+        "metadata": "raw/test/goldens/design_system/media-pdf-retry-390-2x.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/media-pdf-retry-390.png",
+        "metadata": "raw/test/goldens/design_system/media-pdf-retry-390.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/media-pdf-retry-430-2x.png",
+        "metadata": "raw/test/goldens/design_system/media-pdf-retry-430-2x.png.json",
+        "width": 430,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/media-pdf-retry-430.png",
+        "metadata": "raw/test/goldens/design_system/media-pdf-retry-430.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "11-media/media-unavailable-image",
+    "module": "媒体",
+    "label": "喂养姿势与照护指南 · Feeding positions and care",
+    "state": "media-unavailable-image",
+    "image": "11-media/media-unavailable-image/default.png",
+    "viewport": "11-media/media-unavailable-image/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/media-viewer"
+    ],
+    "mapped_design_candidates": [
+      "common/media",
+      "common/pdf",
+      "common/loading",
+      "common/empty",
+      "common/error"
+    ],
+    "production_widget_files": [
+      "lib/features/media/presentation/media_viewer_feedback.dart",
+      "lib/features/media/presentation/media_viewer_header.dart",
+      "lib/features/media/presentation/media_viewer_page.dart",
+      "lib/shared/widgets/product_feedback.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/features/media/media_design_test.dart",
+    "test_case": "media image unavailable and return 390.0 / 1.0",
+    "metadata": "raw/test/goldens/design_system/media-unavailable-image-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/media-unavailable-image-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/media-unavailable-image-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/media-unavailable-image-320.png",
+        "metadata": "raw/test/goldens/design_system/media-unavailable-image-320.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/media-unavailable-image-390-2x.png",
+        "metadata": "raw/test/goldens/design_system/media-unavailable-image-390-2x.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/media-unavailable-image-390.png",
+        "metadata": "raw/test/goldens/design_system/media-unavailable-image-390.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/media-unavailable-image-430-2x.png",
+        "metadata": "raw/test/goldens/design_system/media-unavailable-image-430-2x.png.json",
+        "width": 430,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/media-unavailable-image-430.png",
+        "metadata": "raw/test/goldens/design_system/media-unavailable-image-430.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "11-media/media-unavailable-missing",
+    "module": "媒体",
+    "label": "媒体",
+    "state": "media-unavailable-missing",
+    "image": "11-media/media-unavailable-missing/default.png",
+    "viewport": "11-media/media-unavailable-missing/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/media-viewer"
+    ],
+    "mapped_design_candidates": [
+      "common/media",
+      "common/pdf",
+      "common/loading",
+      "common/empty",
+      "common/error"
+    ],
+    "production_widget_files": [
+      "lib/features/media/presentation/media_viewer_header.dart",
+      "lib/features/media/presentation/media_viewer_page.dart",
+      "lib/shared/widgets/product_feedback.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/features/media/media_design_test.dart",
+    "test_case": "media missing unavailable and return 390.0 / 1.0",
+    "metadata": "raw/test/goldens/design_system/media-unavailable-missing-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/media-unavailable-missing-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/media-unavailable-missing-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/media-unavailable-missing-320.png",
+        "metadata": "raw/test/goldens/design_system/media-unavailable-missing-320.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/media-unavailable-missing-390-2x.png",
+        "metadata": "raw/test/goldens/design_system/media-unavailable-missing-390-2x.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/media-unavailable-missing-390.png",
+        "metadata": "raw/test/goldens/design_system/media-unavailable-missing-390.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/media-unavailable-missing-430-2x.png",
+        "metadata": "raw/test/goldens/design_system/media-unavailable-missing-430-2x.png.json",
+        "width": 430,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/media-unavailable-missing-430.png",
+        "metadata": "raw/test/goldens/design_system/media-unavailable-missing-430.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "11-media/media-unavailable-pdf",
+    "module": "媒体",
+    "label": "喂养姿势与照护指南 · Feeding positions and care",
+    "state": "media-unavailable-pdf",
+    "image": "11-media/media-unavailable-pdf/default.png",
+    "viewport": "11-media/media-unavailable-pdf/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/media-viewer"
+    ],
+    "mapped_design_candidates": [
+      "common/media",
+      "common/pdf",
+      "common/loading",
+      "common/empty",
+      "common/error"
+    ],
+    "production_widget_files": [
+      "lib/features/media/presentation/media_viewer_feedback.dart",
+      "lib/features/media/presentation/media_viewer_header.dart",
+      "lib/features/media/presentation/media_viewer_page.dart",
+      "lib/shared/widgets/product_feedback.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/features/media/media_design_test.dart",
+    "test_case": "media pdf unavailable and return 390.0 / 1.0",
+    "metadata": "raw/test/goldens/design_system/media-unavailable-pdf-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/media-unavailable-pdf-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/media-unavailable-pdf-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/media-unavailable-pdf-320.png",
+        "metadata": "raw/test/goldens/design_system/media-unavailable-pdf-320.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/media-unavailable-pdf-390-2x.png",
+        "metadata": "raw/test/goldens/design_system/media-unavailable-pdf-390-2x.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/media-unavailable-pdf-390.png",
+        "metadata": "raw/test/goldens/design_system/media-unavailable-pdf-390.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/media-unavailable-pdf-430-2x.png",
+        "metadata": "raw/test/goldens/design_system/media-unavailable-pdf-430-2x.png.json",
+        "width": 430,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/media-unavailable-pdf-430.png",
+        "metadata": "raw/test/goldens/design_system/media-unavailable-pdf-430.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "11-media/media-unavailable-video",
+    "module": "媒体",
+    "label": "喂养姿势与照护指南 · Feeding positions and care",
+    "state": "media-unavailable-video",
+    "image": "11-media/media-unavailable-video/default.png",
+    "viewport": "11-media/media-unavailable-video/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/media-viewer"
+    ],
+    "mapped_design_candidates": [
+      "common/media",
+      "common/pdf",
+      "common/loading",
+      "common/empty",
+      "common/error"
+    ],
+    "production_widget_files": [
+      "lib/features/media/presentation/media_viewer_feedback.dart",
+      "lib/features/media/presentation/media_viewer_header.dart",
+      "lib/features/media/presentation/media_viewer_page.dart",
+      "lib/shared/widgets/product_feedback.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/features/media/media_design_test.dart",
+    "test_case": "media video unavailable and return 390.0 / 1.0",
+    "metadata": "raw/test/goldens/design_system/media-unavailable-video-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/media-unavailable-video-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/media-unavailable-video-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/media-unavailable-video-320.png",
+        "metadata": "raw/test/goldens/design_system/media-unavailable-video-320.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/media-unavailable-video-390-2x.png",
+        "metadata": "raw/test/goldens/design_system/media-unavailable-video-390-2x.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/media-unavailable-video-390.png",
+        "metadata": "raw/test/goldens/design_system/media-unavailable-video-390.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/media-unavailable-video-430-2x.png",
+        "metadata": "raw/test/goldens/design_system/media-unavailable-video-430-2x.png.json",
+        "width": 430,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/media-unavailable-video-430.png",
+        "metadata": "raw/test/goldens/design_system/media-unavailable-video-430.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "11-media/native-resource-image",
+    "module": "媒体",
+    "label": "原生图片查看",
+    "state": "原生图片查看",
+    "image": "11-media/native-resource-image/default.png",
+    "viewport": "native/resource-journey/native-resource-image.png",
+    "extent": "native-viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/media-viewer"
+    ],
+    "mapped_design_candidates": [],
+    "production_widget_files": [
+      "lib/features/media/presentation/media_viewer_page.dart"
+    ],
+    "evidence_kind": "Android-native-normal-route-with-isolated-data",
+    "normal_entry_verified": true,
+    "test": "integration_test/agent_resource_inventory_test.dart",
+    "test_case": "Image card → native decoded PNG",
+    "metadata": "native/resource-manifest.json",
+    "variants": [],
+    "journey": {
+      "from": "05-agent/native-resource-video-return",
+      "to": "11-media/native-resource-image",
+      "source": "native/resource-journey/native-resource-image.png",
+      "root_entry": "More → Cozymate → send question → SSE artifact card → actual action button",
+      "route": "/media-viewer",
+      "trigger": "Image card → native decoded PNG",
+      "evidence": "实际 Android App 路由；从 More 点击 Cozymate，发送问题并消费隔离 SSE；卡片按钮执行正式 dispatcher。业务/会话为测试依赖，媒体通过本地 HTTP 与实际 PDFium、Android 视频插件、图片解码器。",
+      "test": "integration_test/agent_resource_inventory_test.dart",
+      "metadata": "native/resource-manifest.json"
+    },
+    "verified_route": "/media-viewer",
+    "entry": "More → Cozymate → send question → SSE artifact card → actual action button",
+    "trigger": "Image card → native decoded PNG"
+  },
+  {
+    "id": "11-media/native-resource-image-zoom",
+    "module": "媒体",
+    "label": "原生图片双击放大",
+    "state": "原生图片双击放大",
+    "image": "11-media/native-resource-image-zoom/default.png",
+    "viewport": "native/resource-journey/native-resource-image-zoom.png",
+    "extent": "native-viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/media-viewer"
+    ],
+    "mapped_design_candidates": [],
+    "production_widget_files": [
+      "lib/features/media/presentation/media_viewer_page.dart"
+    ],
+    "evidence_kind": "Android-native-normal-route-with-isolated-data",
+    "normal_entry_verified": true,
+    "test": "integration_test/agent_resource_inventory_test.dart",
+    "test_case": "Double tap → 2.5x image zoom",
+    "metadata": "native/resource-manifest.json",
+    "variants": [],
+    "journey": {
+      "from": "11-media/native-resource-image",
+      "to": "11-media/native-resource-image-zoom",
+      "source": "native/resource-journey/native-resource-image-zoom.png",
+      "root_entry": "More → Cozymate → send question → SSE artifact card → actual action button",
+      "route": "/media-viewer",
+      "trigger": "Double tap → 2.5x image zoom",
+      "evidence": "实际 Android App 路由；从 More 点击 Cozymate，发送问题并消费隔离 SSE；卡片按钮执行正式 dispatcher。业务/会话为测试依赖，媒体通过本地 HTTP 与实际 PDFium、Android 视频插件、图片解码器。",
+      "test": "integration_test/agent_resource_inventory_test.dart",
+      "metadata": "native/resource-manifest.json"
+    },
+    "verified_route": "/media-viewer",
+    "entry": "More → Cozymate → send question → SSE artifact card → actual action button",
+    "trigger": "Double tap → 2.5x image zoom"
+  }
+]

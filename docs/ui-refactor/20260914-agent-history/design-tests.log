@@ -1,0 +1,19 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_history_design_test.dart
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_history_design_test.dart: (setUpAll)
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_panel_test.dart: current conversation closes while switching is locked
+00:00 +1: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_history_design_test.dart: history states 320.0/1.0
+00:00 +2: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_history_design_test.dart: history states 320.0/1.0
+00:00 +3: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_history_design_test.dart: history states 320.0/1.0
+00:00 +4: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_panel_test.dart: selecting a conversation restores it and closes the panel
+00:00 +5: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_history_design_test.dart: history states 320.0/2.0
+00:00 +6: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_history_design_test.dart: history states 320.0/2.0
+00:00 +7: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_history_design_test.dart: history states 320.0/2.0
+00:00 +8: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_history_design_test.dart: history states 320.0/2.0
+00:01 +9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_conversation_panel_test.dart: older conversation history loads only after user requests it
+00:01 +10: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_history_design_test.dart: history states 390.0/1.0
+00:01 +11: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_history_design_test.dart: history states 390.0/1.0
+00:01 +12: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_history_design_test.dart: history states 390.0/2.0
+00:01 +13: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_history_design_test.dart: history states 430.0/1.0
+00:01 +14: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_history_design_test.dart: history states 430.0/2.0
+00:01 +15: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_history_design_test.dart: (tearDownAll)
+00:01 +15: All tests passed!

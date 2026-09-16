@@ -1,0 +1,3806 @@
+[
+  {
+    "id": "01-auth/auth-followup-forgot-back-entry",
+    "module": "登录与首次使用",
+    "label": "Momcozy",
+    "state": "auth-followup-forgot-back-entry",
+    "image": "01-auth/auth-followup-forgot-back-entry/default.png",
+    "viewport": "01-auth/auth-followup-forgot-back-entry/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/login"
+    ],
+    "mapped_design_candidates": [
+      "common/not-found",
+      "auth/login",
+      "auth/register",
+      "auth/verify",
+      "auth/forgot",
+      "auth/reset",
+      "auth/language",
+      "auth/legal"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/auth/presentation/auth_login_chrome.dart",
+      "lib/features/auth/presentation/auth_page.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/auth/auth_followup_inventory_test.dart",
+    "test_case": "auth language dismissal legal failure and back navigation",
+    "metadata": "raw/test/goldens/ui_inventory/auth-followup-forgot-back-entry-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/auth-followup-forgot-back-entry-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/auth-followup-forgot-back-entry-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/login",
+    "entry": "Open More while signed out → real auth redirect",
+    "trigger": "Login → forgot form with existing email",
+    "journey": {
+      "source": "test/goldens/ui_inventory/auth-followup-forgot-back-entry-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/auth-followup-privacy-open-error-393-1x.png",
+      "route": "/login",
+      "trigger": "Login → forgot form with existing email",
+      "root_entry": "Open More while signed out → real auth redirect",
+      "evidence": "Actual MomCozyFlutterApp and createMomCozyRouter; only HTTP/session/native-intent dependencies replaced with isolated fixtures",
+      "test": "test/features/auth/auth_followup_inventory_test.dart"
+    }
+  },
+  {
+    "id": "01-auth/auth-followup-forgot-back-login",
+    "module": "登录与首次使用",
+    "label": "English",
+    "state": "auth-followup-forgot-back-login",
+    "image": "01-auth/auth-followup-forgot-back-login/default.png",
+    "viewport": "01-auth/auth-followup-forgot-back-login/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/login"
+    ],
+    "mapped_design_candidates": [
+      "common/not-found",
+      "auth/login",
+      "auth/register",
+      "auth/verify",
+      "auth/forgot",
+      "auth/reset",
+      "auth/language",
+      "auth/legal"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/auth/presentation/auth_login_chrome.dart",
+      "lib/features/auth/presentation/auth_page.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/auth/auth_followup_inventory_test.dart",
+    "test_case": "auth language dismissal legal failure and back navigation",
+    "metadata": "raw/test/goldens/ui_inventory/auth-followup-forgot-back-login-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/auth-followup-forgot-back-login-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/auth-followup-forgot-back-login-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/login",
+    "entry": "Open More while signed out → real auth redirect",
+    "trigger": "Forgot form Back to sign in → draft retained",
+    "journey": {
+      "source": "test/goldens/ui_inventory/auth-followup-forgot-back-login-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/auth-followup-forgot-back-entry-393-1x.png",
+      "route": "/login",
+      "trigger": "Forgot form Back to sign in → draft retained",
+      "root_entry": "Open More while signed out → real auth redirect",
+      "evidence": "Actual MomCozyFlutterApp and createMomCozyRouter; only HTTP/session/native-intent dependencies replaced with isolated fixtures",
+      "test": "test/features/auth/auth_followup_inventory_test.dart"
+    }
+  },
+  {
+    "id": "01-auth/auth-followup-forgot-email-unavailable",
+    "module": "登录与首次使用",
+    "label": "Momcozy",
+    "state": "auth-followup-forgot-email-unavailable",
+    "image": "01-auth/auth-followup-forgot-email-unavailable/default.png",
+    "viewport": "01-auth/auth-followup-forgot-email-unavailable/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/login"
+    ],
+    "mapped_design_candidates": [
+      "common/not-found",
+      "auth/login",
+      "auth/register",
+      "auth/verify",
+      "auth/forgot",
+      "auth/reset",
+      "auth/language",
+      "auth/legal"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/auth/presentation/auth_login_chrome.dart",
+      "lib/features/auth/presentation/auth_page.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/auth/auth_followup_inventory_test.dart",
+    "test_case": "auth normal password recovery chain 393.0/1.0",
+    "metadata": "raw/test/goldens/ui_inventory/auth-followup-forgot-email-unavailable-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/auth-followup-forgot-email-unavailable-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/auth-followup-forgot-email-unavailable-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/auth-followup-forgot-email-unavailable-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/auth-followup-forgot-email-unavailable-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/login",
+    "entry": "Open More while signed out → real auth redirect",
+    "trigger": "Retry recovery → email service unavailable",
+    "journey": {
+      "source": "test/goldens/ui_inventory/auth-followup-forgot-email-unavailable-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/auth-followup-forgot-offline-393-1x.png",
+      "route": "/login",
+      "trigger": "Retry recovery → email service unavailable",
+      "root_entry": "Open More while signed out → real auth redirect",
+      "evidence": "Actual MomCozyFlutterApp and createMomCozyRouter; only HTTP/session/native-intent dependencies replaced with isolated fixtures",
+      "test": "test/features/auth/auth_followup_inventory_test.dart"
+    }
+  },
+  {
+    "id": "01-auth/auth-followup-forgot-empty",
+    "module": "登录与首次使用",
+    "label": "Momcozy",
+    "state": "auth-followup-forgot-empty",
+    "image": "01-auth/auth-followup-forgot-empty/default.png",
+    "viewport": "01-auth/auth-followup-forgot-empty/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/login"
+    ],
+    "mapped_design_candidates": [
+      "common/not-found",
+      "auth/login",
+      "auth/register",
+      "auth/verify",
+      "auth/forgot",
+      "auth/reset",
+      "auth/language",
+      "auth/legal"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/auth/presentation/auth_login_chrome.dart",
+      "lib/features/auth/presentation/auth_page.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/auth/auth_followup_inventory_test.dart",
+    "test_case": "auth normal password recovery chain 393.0/1.0",
+    "metadata": "raw/test/goldens/ui_inventory/auth-followup-forgot-empty-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/auth-followup-forgot-empty-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/auth-followup-forgot-empty-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/auth-followup-forgot-empty-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/auth-followup-forgot-empty-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/login",
+    "entry": "Open More while signed out → real auth redirect",
+    "trigger": "Login forgot password → email recovery form",
+    "journey": {
+      "source": "test/goldens/ui_inventory/auth-followup-forgot-empty-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/auth-followup-reset-entry-393-1x.png",
+      "route": "/login",
+      "trigger": "Login forgot password → email recovery form",
+      "root_entry": "Open More while signed out → real auth redirect",
+      "evidence": "Actual MomCozyFlutterApp and createMomCozyRouter; only HTTP/session/native-intent dependencies replaced with isolated fixtures",
+      "test": "test/features/auth/auth_followup_inventory_test.dart"
+    }
+  },
+  {
+    "id": "01-auth/auth-followup-forgot-offline",
+    "module": "登录与首次使用",
+    "label": "Momcozy",
+    "state": "auth-followup-forgot-offline",
+    "image": "01-auth/auth-followup-forgot-offline/default.png",
+    "viewport": "01-auth/auth-followup-forgot-offline/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/login"
+    ],
+    "mapped_design_candidates": [
+      "common/not-found",
+      "auth/login",
+      "auth/register",
+      "auth/verify",
+      "auth/forgot",
+      "auth/reset",
+      "auth/language",
+      "auth/legal"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/auth/presentation/auth_login_chrome.dart",
+      "lib/features/auth/presentation/auth_page.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/auth/auth_followup_inventory_test.dart",
+    "test_case": "auth normal password recovery chain 393.0/1.0",
+    "metadata": "raw/test/goldens/ui_inventory/auth-followup-forgot-offline-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/auth-followup-forgot-offline-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/auth-followup-forgot-offline-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/auth-followup-forgot-offline-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/auth-followup-forgot-offline-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/login",
+    "entry": "Open More while signed out → real auth redirect",
+    "trigger": "Recovery request offline → form retained and retry possible",
+    "journey": {
+      "source": "test/goldens/ui_inventory/auth-followup-forgot-offline-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/auth-followup-forgot-validation-393-1x.png",
+      "route": "/login",
+      "trigger": "Recovery request offline → form retained and retry possible",
+      "root_entry": "Open More while signed out → real auth redirect",
+      "evidence": "Actual MomCozyFlutterApp and createMomCozyRouter; only HTTP/session/native-intent dependencies replaced with isolated fixtures",
+      "test": "test/features/auth/auth_followup_inventory_test.dart"
+    }
+  },
+  {
+    "id": "01-auth/auth-followup-forgot-pending",
+    "module": "登录与首次使用",
+    "label": "Momcozy",
+    "state": "auth-followup-forgot-pending",
+    "image": "01-auth/auth-followup-forgot-pending/default.png",
+    "viewport": "01-auth/auth-followup-forgot-pending/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/login"
+    ],
+    "mapped_design_candidates": [
+      "common/not-found",
+      "auth/login",
+      "auth/register",
+      "auth/verify",
+      "auth/forgot",
+      "auth/reset",
+      "auth/language",
+      "auth/legal"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/auth/presentation/auth_login_chrome.dart",
+      "lib/features/auth/presentation/auth_page.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/auth/auth_followup_inventory_test.dart",
+    "test_case": "auth normal password recovery chain 393.0/1.0",
+    "metadata": "raw/test/goldens/ui_inventory/auth-followup-forgot-pending-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/auth-followup-forgot-pending-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/auth-followup-forgot-pending-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/auth-followup-forgot-pending-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/auth-followup-forgot-pending-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/login",
+    "entry": "Open More while signed out → real auth redirect",
+    "trigger": "Submit → /v1/auth/forgot-password request pending, form disabled",
+    "journey": {
+      "source": "test/goldens/ui_inventory/auth-followup-forgot-pending-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/auth-followup-forgot-email-unavailable-393-1x.png",
+      "route": "/login",
+      "trigger": "Submit → /v1/auth/forgot-password request pending, form disabled",
+      "root_entry": "Open More while signed out → real auth redirect",
+      "evidence": "Actual MomCozyFlutterApp and createMomCozyRouter; only HTTP/session/native-intent dependencies replaced with isolated fixtures",
+      "test": "test/features/auth/auth_followup_inventory_test.dart"
+    }
+  },
+  {
+    "id": "01-auth/auth-followup-forgot-validation",
+    "module": "登录与首次使用",
+    "label": "Momcozy",
+    "state": "auth-followup-forgot-validation",
+    "image": "01-auth/auth-followup-forgot-validation/default.png",
+    "viewport": "01-auth/auth-followup-forgot-validation/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/login"
+    ],
+    "mapped_design_candidates": [
+      "common/not-found",
+      "auth/login",
+      "auth/register",
+      "auth/verify",
+      "auth/forgot",
+      "auth/reset",
+      "auth/language",
+      "auth/legal"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/auth/presentation/auth_login_chrome.dart",
+      "lib/features/auth/presentation/auth_page.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/auth/auth_followup_inventory_test.dart",
+    "test_case": "auth normal password recovery chain 393.0/1.0",
+    "metadata": "raw/test/goldens/ui_inventory/auth-followup-forgot-validation-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/auth-followup-forgot-validation-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/auth-followup-forgot-validation-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/auth-followup-forgot-validation-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/auth-followup-forgot-validation-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/login",
+    "entry": "Open More while signed out → real auth redirect",
+    "trigger": "Submit empty recovery email → validation",
+    "journey": {
+      "source": "test/goldens/ui_inventory/auth-followup-forgot-validation-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/auth-followup-forgot-empty-393-1x.png",
+      "route": "/login",
+      "trigger": "Submit empty recovery email → validation",
+      "root_entry": "Open More while signed out → real auth redirect",
+      "evidence": "Actual MomCozyFlutterApp and createMomCozyRouter; only HTTP/session/native-intent dependencies replaced with isolated fixtures",
+      "test": "test/features/auth/auth_followup_inventory_test.dart"
+    }
+  },
+  {
+    "id": "01-auth/auth-followup-language-dismissed",
+    "module": "登录与首次使用",
+    "label": "English",
+    "state": "auth-followup-language-dismissed",
+    "image": "01-auth/auth-followup-language-dismissed/default.png",
+    "viewport": "01-auth/auth-followup-language-dismissed/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/login"
+    ],
+    "mapped_design_candidates": [
+      "common/not-found",
+      "auth/login",
+      "auth/register",
+      "auth/verify",
+      "auth/forgot",
+      "auth/reset",
+      "auth/language",
+      "auth/legal"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/auth/presentation/auth_login_chrome.dart",
+      "lib/features/auth/presentation/auth_page.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/auth/auth_followup_inventory_test.dart",
+    "test_case": "auth language dismissal legal failure and back navigation",
+    "metadata": "raw/test/goldens/ui_inventory/auth-followup-language-dismissed-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/auth-followup-language-dismissed-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/auth-followup-language-dismissed-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/login",
+    "entry": "Open More while signed out → real auth redirect",
+    "trigger": "Reopen language sheet → tap outside → login retained",
+    "journey": {
+      "source": "test/goldens/ui_inventory/auth-followup-language-dismissed-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/auth-followup-language-selected-393-1x.png",
+      "route": "/login",
+      "trigger": "Reopen language sheet → tap outside → login retained",
+      "root_entry": "Open More while signed out → real auth redirect",
+      "evidence": "Actual MomCozyFlutterApp and createMomCozyRouter; only HTTP/session/native-intent dependencies replaced with isolated fixtures",
+      "test": "test/features/auth/auth_followup_inventory_test.dart"
+    }
+  },
+  {
+    "id": "01-auth/auth-followup-language-entry",
+    "module": "登录与首次使用",
+    "label": "English",
+    "state": "auth-followup-language-entry",
+    "image": "01-auth/auth-followup-language-entry/default.png",
+    "viewport": "01-auth/auth-followup-language-entry/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/login"
+    ],
+    "mapped_design_candidates": [
+      "common/not-found",
+      "auth/login",
+      "auth/register",
+      "auth/verify",
+      "auth/forgot",
+      "auth/reset",
+      "auth/language",
+      "auth/legal"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/auth/presentation/auth_login_chrome.dart",
+      "lib/features/auth/presentation/auth_page.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/auth/auth_followup_inventory_test.dart",
+    "test_case": "auth language dismissal legal failure and back navigation",
+    "metadata": "raw/test/goldens/ui_inventory/auth-followup-language-entry-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/auth-followup-language-entry-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/auth-followup-language-entry-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/login",
+    "entry": "Open More while signed out → real auth redirect",
+    "trigger": "Signed out login with synthetic form draft",
+    "journey": {
+      "source": "test/goldens/ui_inventory/auth-followup-language-entry-393-1x.png",
+      "previous_source": null,
+      "route": "/login",
+      "trigger": "Signed out login with synthetic form draft",
+      "root_entry": "Open More while signed out → real auth redirect",
+      "evidence": "Actual MomCozyFlutterApp and createMomCozyRouter; only HTTP/session/native-intent dependencies replaced with isolated fixtures",
+      "test": "test/features/auth/auth_followup_inventory_test.dart"
+    }
+  },
+  {
+    "id": "01-auth/auth-followup-language-selected",
+    "module": "登录与首次使用",
+    "label": "English",
+    "state": "auth-followup-language-selected",
+    "image": "01-auth/auth-followup-language-selected/default.png",
+    "viewport": "01-auth/auth-followup-language-selected/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/login"
+    ],
+    "mapped_design_candidates": [
+      "common/not-found",
+      "auth/login",
+      "auth/register",
+      "auth/verify",
+      "auth/forgot",
+      "auth/reset",
+      "auth/language",
+      "auth/legal"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/auth/presentation/auth_login_chrome.dart",
+      "lib/features/auth/presentation/auth_page.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/auth/auth_followup_inventory_test.dart",
+    "test_case": "auth language dismissal legal failure and back navigation",
+    "metadata": "raw/test/goldens/ui_inventory/auth-followup-language-selected-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/auth-followup-language-selected-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/auth-followup-language-selected-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/login",
+    "entry": "Open More while signed out → real auth redirect",
+    "trigger": "Select English → close sheet and preserve email/password draft",
+    "journey": {
+      "source": "test/goldens/ui_inventory/auth-followup-language-selected-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/auth-followup-language-sheet-393-1x.png",
+      "route": "/login",
+      "trigger": "Select English → close sheet and preserve email/password draft",
+      "root_entry": "Open More while signed out → real auth redirect",
+      "evidence": "Actual MomCozyFlutterApp and createMomCozyRouter; only HTTP/session/native-intent dependencies replaced with isolated fixtures",
+      "test": "test/features/auth/auth_followup_inventory_test.dart"
+    }
+  },
+  {
+    "id": "01-auth/auth-followup-language-sheet",
+    "module": "登录与首次使用",
+    "label": "English",
+    "state": "auth-followup-language-sheet",
+    "image": "01-auth/auth-followup-language-sheet/default.png",
+    "viewport": "01-auth/auth-followup-language-sheet/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/login"
+    ],
+    "mapped_design_candidates": [
+      "common/not-found",
+      "auth/login",
+      "auth/register",
+      "auth/verify",
+      "auth/forgot",
+      "auth/reset",
+      "auth/language",
+      "auth/legal"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/auth/presentation/auth_login_chrome.dart",
+      "lib/features/auth/presentation/auth_page.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/auth/auth_followup_inventory_test.dart",
+    "test_case": "auth language dismissal legal failure and back navigation",
+    "metadata": "raw/test/goldens/ui_inventory/auth-followup-language-sheet-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/auth-followup-language-sheet-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/auth-followup-language-sheet-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/login",
+    "entry": "Open More while signed out → real auth redirect",
+    "trigger": "Language button → English selection sheet",
+    "journey": {
+      "source": "test/goldens/ui_inventory/auth-followup-language-sheet-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/auth-followup-language-entry-393-1x.png",
+      "route": "/login",
+      "trigger": "Language button → English selection sheet",
+      "root_entry": "Open More while signed out → real auth redirect",
+      "evidence": "Actual MomCozyFlutterApp and createMomCozyRouter; only HTTP/session/native-intent dependencies replaced with isolated fixtures",
+      "test": "test/features/auth/auth_followup_inventory_test.dart"
+    }
+  },
+  {
+    "id": "01-auth/auth-followup-privacy-open-error",
+    "module": "登录与首次使用",
+    "label": "English",
+    "state": "auth-followup-privacy-open-error",
+    "image": "01-auth/auth-followup-privacy-open-error/default.png",
+    "viewport": "01-auth/auth-followup-privacy-open-error/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/login"
+    ],
+    "mapped_design_candidates": [
+      "common/not-found",
+      "auth/login",
+      "auth/register",
+      "auth/verify",
+      "auth/forgot",
+      "auth/reset",
+      "auth/language",
+      "auth/legal"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/auth/presentation/auth_login_chrome.dart",
+      "lib/features/auth/presentation/auth_page.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/auth/auth_followup_inventory_test.dart",
+    "test_case": "auth language dismissal legal failure and back navigation",
+    "metadata": "raw/test/goldens/ui_inventory/auth-followup-privacy-open-error-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/auth-followup-privacy-open-error-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/auth-followup-privacy-open-error-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/login",
+    "entry": "Open More while signed out → real auth redirect",
+    "trigger": "Tap Privacy Policy. → external browser launch fails → Snackbar",
+    "journey": {
+      "source": "test/goldens/ui_inventory/auth-followup-privacy-open-error-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/auth-followup-terms-open-error-393-1x.png",
+      "route": "/login",
+      "trigger": "Tap Privacy Policy. → external browser launch fails → Snackbar",
+      "root_entry": "Open More while signed out → real auth redirect",
+      "evidence": "Actual MomCozyFlutterApp and createMomCozyRouter; only HTTP/session/native-intent dependencies replaced with isolated fixtures",
+      "test": "test/features/auth/auth_followup_inventory_test.dart"
+    }
+  },
+  {
+    "id": "01-auth/auth-followup-register-back-entry",
+    "module": "登录与首次使用",
+    "label": "Momcozy",
+    "state": "auth-followup-register-back-entry",
+    "image": "01-auth/auth-followup-register-back-entry/default.png",
+    "viewport": "01-auth/auth-followup-register-back-entry/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/login"
+    ],
+    "mapped_design_candidates": [
+      "common/not-found",
+      "auth/login",
+      "auth/register",
+      "auth/verify",
+      "auth/forgot",
+      "auth/reset",
+      "auth/language",
+      "auth/legal"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/auth/presentation/auth_login_chrome.dart",
+      "lib/features/auth/presentation/auth_page.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/auth/auth_followup_inventory_test.dart",
+    "test_case": "auth language dismissal legal failure and back navigation",
+    "metadata": "raw/test/goldens/ui_inventory/auth-followup-register-back-entry-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/auth-followup-register-back-entry-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/auth-followup-register-back-entry-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/login",
+    "entry": "Open More while signed out → real auth redirect",
+    "trigger": "Login → registration form",
+    "journey": {
+      "source": "test/goldens/ui_inventory/auth-followup-register-back-entry-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/auth-followup-forgot-back-login-393-1x.png",
+      "route": "/login",
+      "trigger": "Login → registration form",
+      "root_entry": "Open More while signed out → real auth redirect",
+      "evidence": "Actual MomCozyFlutterApp and createMomCozyRouter; only HTTP/session/native-intent dependencies replaced with isolated fixtures",
+      "test": "test/features/auth/auth_followup_inventory_test.dart"
+    }
+  },
+  {
+    "id": "01-auth/auth-followup-register-back-login",
+    "module": "登录与首次使用",
+    "label": "English",
+    "state": "auth-followup-register-back-login",
+    "image": "01-auth/auth-followup-register-back-login/default.png",
+    "viewport": "01-auth/auth-followup-register-back-login/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/login"
+    ],
+    "mapped_design_candidates": [
+      "common/not-found",
+      "auth/login",
+      "auth/register",
+      "auth/verify",
+      "auth/forgot",
+      "auth/reset",
+      "auth/language",
+      "auth/legal"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/auth/presentation/auth_login_chrome.dart",
+      "lib/features/auth/presentation/auth_page.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/auth/auth_followup_inventory_test.dart",
+    "test_case": "auth language dismissal legal failure and back navigation",
+    "metadata": "raw/test/goldens/ui_inventory/auth-followup-register-back-login-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/auth-followup-register-back-login-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/auth-followup-register-back-login-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/login",
+    "entry": "Open More while signed out → real auth redirect",
+    "trigger": "Register Back to sign in → login",
+    "journey": {
+      "source": "test/goldens/ui_inventory/auth-followup-register-back-login-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/auth-followup-register-back-entry-393-1x.png",
+      "route": "/login",
+      "trigger": "Register Back to sign in → login",
+      "root_entry": "Open More while signed out → real auth redirect",
+      "evidence": "Actual MomCozyFlutterApp and createMomCozyRouter; only HTTP/session/native-intent dependencies replaced with isolated fixtures",
+      "test": "test/features/auth/auth_followup_inventory_test.dart"
+    }
+  },
+  {
+    "id": "01-auth/auth-followup-reset-code-form",
+    "module": "登录与首次使用",
+    "label": "Momcozy",
+    "state": "auth-followup-reset-code-form",
+    "image": "01-auth/auth-followup-reset-code-form/default.png",
+    "viewport": "01-auth/auth-followup-reset-code-form/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/login"
+    ],
+    "mapped_design_candidates": [
+      "common/not-found",
+      "auth/login",
+      "auth/register",
+      "auth/verify",
+      "auth/forgot",
+      "auth/reset",
+      "auth/language",
+      "auth/legal"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/auth/presentation/auth_login_chrome.dart",
+      "lib/features/auth/presentation/auth_page.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/auth/auth_followup_inventory_test.dart",
+    "test_case": "auth normal password recovery chain 393.0/1.0",
+    "metadata": "raw/test/goldens/ui_inventory/auth-followup-reset-code-form-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/auth-followup-reset-code-form-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/auth-followup-reset-code-form-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/auth-followup-reset-code-form-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/auth-followup-reset-code-form-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/login",
+    "entry": "Open More while signed out → real auth redirect",
+    "trigger": "Recovery accepted → reset code and new password form",
+    "journey": {
+      "source": "test/goldens/ui_inventory/auth-followup-reset-code-form-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/auth-followup-forgot-pending-393-1x.png",
+      "route": "/login",
+      "trigger": "Recovery accepted → reset code and new password form",
+      "root_entry": "Open More while signed out → real auth redirect",
+      "evidence": "Actual MomCozyFlutterApp and createMomCozyRouter; only HTTP/session/native-intent dependencies replaced with isolated fixtures",
+      "test": "test/features/auth/auth_followup_inventory_test.dart"
+    }
+  },
+  {
+    "id": "01-auth/auth-followup-reset-complete",
+    "module": "登录与首次使用",
+    "label": "English",
+    "state": "auth-followup-reset-complete",
+    "image": "01-auth/auth-followup-reset-complete/default.png",
+    "viewport": "01-auth/auth-followup-reset-complete/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/login"
+    ],
+    "mapped_design_candidates": [
+      "common/not-found",
+      "auth/login",
+      "auth/register",
+      "auth/verify",
+      "auth/forgot",
+      "auth/reset",
+      "auth/language",
+      "auth/legal"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/auth/presentation/auth_login_chrome.dart",
+      "lib/features/auth/presentation/auth_page.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/auth/auth_followup_inventory_test.dart",
+    "test_case": "auth normal password recovery chain 393.0/1.0",
+    "metadata": "raw/test/goldens/ui_inventory/auth-followup-reset-complete-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/auth-followup-reset-complete-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/auth-followup-reset-complete-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/auth-followup-reset-complete-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/auth-followup-reset-complete-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/login",
+    "entry": "Open More while signed out → real auth redirect",
+    "trigger": "Reset accepted → login with success message, password cleared, still signed out",
+    "journey": {
+      "source": "test/goldens/ui_inventory/auth-followup-reset-complete-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/auth-followup-reset-pending-393-1x.png",
+      "route": "/login",
+      "trigger": "Reset accepted → login with success message, password cleared, still signed out",
+      "root_entry": "Open More while signed out → real auth redirect",
+      "evidence": "Actual MomCozyFlutterApp and createMomCozyRouter; only HTTP/session/native-intent dependencies replaced with isolated fixtures",
+      "test": "test/features/auth/auth_followup_inventory_test.dart"
+    }
+  },
+  {
+    "id": "01-auth/auth-followup-reset-empty-validation",
+    "module": "登录与首次使用",
+    "label": "Momcozy",
+    "state": "auth-followup-reset-empty-validation",
+    "image": "01-auth/auth-followup-reset-empty-validation/default.png",
+    "viewport": "01-auth/auth-followup-reset-empty-validation/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/login"
+    ],
+    "mapped_design_candidates": [
+      "common/not-found",
+      "auth/login",
+      "auth/register",
+      "auth/verify",
+      "auth/forgot",
+      "auth/reset",
+      "auth/language",
+      "auth/legal"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/auth/presentation/auth_login_chrome.dart",
+      "lib/features/auth/presentation/auth_page.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/auth/auth_followup_inventory_test.dart",
+    "test_case": "auth normal password recovery chain 393.0/1.0",
+    "metadata": "raw/test/goldens/ui_inventory/auth-followup-reset-empty-validation-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/auth-followup-reset-empty-validation-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/auth-followup-reset-empty-validation-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/auth-followup-reset-empty-validation-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/auth-followup-reset-empty-validation-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/login",
+    "entry": "Open More while signed out → real auth redirect",
+    "trigger": "Submit empty code and new password → field errors",
+    "journey": {
+      "source": "test/goldens/ui_inventory/auth-followup-reset-empty-validation-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/auth-followup-reset-resend-cooldown-393-1x.png",
+      "route": "/login",
+      "trigger": "Submit empty code and new password → field errors",
+      "root_entry": "Open More while signed out → real auth redirect",
+      "evidence": "Actual MomCozyFlutterApp and createMomCozyRouter; only HTTP/session/native-intent dependencies replaced with isolated fixtures",
+      "test": "test/features/auth/auth_followup_inventory_test.dart"
+    }
+  },
+  {
+    "id": "01-auth/auth-followup-reset-entry",
+    "module": "登录与首次使用",
+    "label": "English",
+    "state": "auth-followup-reset-entry",
+    "image": "01-auth/auth-followup-reset-entry/default.png",
+    "viewport": "01-auth/auth-followup-reset-entry/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/login"
+    ],
+    "mapped_design_candidates": [
+      "common/not-found",
+      "auth/login",
+      "auth/register",
+      "auth/verify",
+      "auth/forgot",
+      "auth/reset",
+      "auth/language",
+      "auth/legal"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/auth/presentation/auth_login_chrome.dart",
+      "lib/features/auth/presentation/auth_page.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/auth/auth_followup_inventory_test.dart",
+    "test_case": "auth normal password recovery chain 393.0/1.0",
+    "metadata": "raw/test/goldens/ui_inventory/auth-followup-reset-entry-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/auth-followup-reset-entry-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/auth-followup-reset-entry-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/auth-followup-reset-entry-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/auth-followup-reset-entry-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/login",
+    "entry": "Open More while signed out → real auth redirect",
+    "trigger": "Signed out More redirect → login",
+    "journey": {
+      "source": "test/goldens/ui_inventory/auth-followup-reset-entry-393-1x.png",
+      "previous_source": null,
+      "route": "/login",
+      "trigger": "Signed out More redirect → login",
+      "root_entry": "Open More while signed out → real auth redirect",
+      "evidence": "Actual MomCozyFlutterApp and createMomCozyRouter; only HTTP/session/native-intent dependencies replaced with isolated fixtures",
+      "test": "test/features/auth/auth_followup_inventory_test.dart"
+    }
+  },
+  {
+    "id": "01-auth/auth-followup-reset-expired-code",
+    "module": "登录与首次使用",
+    "label": "Momcozy",
+    "state": "auth-followup-reset-expired-code",
+    "image": "01-auth/auth-followup-reset-expired-code/default.png",
+    "viewport": "01-auth/auth-followup-reset-expired-code/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/login"
+    ],
+    "mapped_design_candidates": [
+      "common/not-found",
+      "auth/login",
+      "auth/register",
+      "auth/verify",
+      "auth/forgot",
+      "auth/reset",
+      "auth/language",
+      "auth/legal"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/auth/presentation/auth_login_chrome.dart",
+      "lib/features/auth/presentation/auth_page.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/auth/auth_followup_inventory_test.dart",
+    "test_case": "auth normal password recovery chain 393.0/1.0",
+    "metadata": "raw/test/goldens/ui_inventory/auth-followup-reset-expired-code-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/auth-followup-reset-expired-code-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/auth-followup-reset-expired-code-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/auth-followup-reset-expired-code-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/auth-followup-reset-expired-code-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/login",
+    "entry": "Open More while signed out → real auth redirect",
+    "trigger": "Reset submission → expired code and values retained",
+    "journey": {
+      "source": "test/goldens/ui_inventory/auth-followup-reset-expired-code-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/auth-followup-reset-password-validation-393-1x.png",
+      "route": "/login",
+      "trigger": "Reset submission → expired code and values retained",
+      "root_entry": "Open More while signed out → real auth redirect",
+      "evidence": "Actual MomCozyFlutterApp and createMomCozyRouter; only HTTP/session/native-intent dependencies replaced with isolated fixtures",
+      "test": "test/features/auth/auth_followup_inventory_test.dart"
+    }
+  },
+  {
+    "id": "01-auth/auth-followup-reset-password-validation",
+    "module": "登录与首次使用",
+    "label": "Momcozy",
+    "state": "auth-followup-reset-password-validation",
+    "image": "01-auth/auth-followup-reset-password-validation/default.png",
+    "viewport": "01-auth/auth-followup-reset-password-validation/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/login"
+    ],
+    "mapped_design_candidates": [
+      "common/not-found",
+      "auth/login",
+      "auth/register",
+      "auth/verify",
+      "auth/forgot",
+      "auth/reset",
+      "auth/language",
+      "auth/legal"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/auth/presentation/auth_login_chrome.dart",
+      "lib/features/auth/presentation/auth_page.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/auth/auth_followup_inventory_test.dart",
+    "test_case": "auth normal password recovery chain 393.0/1.0",
+    "metadata": "raw/test/goldens/ui_inventory/auth-followup-reset-password-validation-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/auth-followup-reset-password-validation-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/auth-followup-reset-password-validation-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/auth-followup-reset-password-validation-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/auth-followup-reset-password-validation-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/login",
+    "entry": "Open More while signed out → real auth redirect",
+    "trigger": "Eight digit code and weak new password → password rule error",
+    "journey": {
+      "source": "test/goldens/ui_inventory/auth-followup-reset-password-validation-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/auth-followup-reset-empty-validation-393-1x.png",
+      "route": "/login",
+      "trigger": "Eight digit code and weak new password → password rule error",
+      "root_entry": "Open More while signed out → real auth redirect",
+      "evidence": "Actual MomCozyFlutterApp and createMomCozyRouter; only HTTP/session/native-intent dependencies replaced with isolated fixtures",
+      "test": "test/features/auth/auth_followup_inventory_test.dart"
+    }
+  },
+  {
+    "id": "01-auth/auth-followup-reset-pending",
+    "module": "登录与首次使用",
+    "label": "Momcozy",
+    "state": "auth-followup-reset-pending",
+    "image": "01-auth/auth-followup-reset-pending/default.png",
+    "viewport": "01-auth/auth-followup-reset-pending/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/login"
+    ],
+    "mapped_design_candidates": [
+      "common/not-found",
+      "auth/login",
+      "auth/register",
+      "auth/verify",
+      "auth/forgot",
+      "auth/reset",
+      "auth/language",
+      "auth/legal"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/auth/presentation/auth_login_chrome.dart",
+      "lib/features/auth/presentation/auth_page.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/auth/auth_followup_inventory_test.dart",
+    "test_case": "auth normal password recovery chain 393.0/1.0",
+    "metadata": "raw/test/goldens/ui_inventory/auth-followup-reset-pending-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/auth-followup-reset-pending-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/auth-followup-reset-pending-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/auth-followup-reset-pending-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/auth-followup-reset-pending-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/login",
+    "entry": "Open More while signed out → real auth redirect",
+    "trigger": "Submit → /v1/auth/reset-password request pending, form disabled",
+    "journey": {
+      "source": "test/goldens/ui_inventory/auth-followup-reset-pending-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/auth-followup-reset-rate-limited-393-1x.png",
+      "route": "/login",
+      "trigger": "Submit → /v1/auth/reset-password request pending, form disabled",
+      "root_entry": "Open More while signed out → real auth redirect",
+      "evidence": "Actual MomCozyFlutterApp and createMomCozyRouter; only HTTP/session/native-intent dependencies replaced with isolated fixtures",
+      "test": "test/features/auth/auth_followup_inventory_test.dart"
+    }
+  },
+  {
+    "id": "01-auth/auth-followup-reset-rate-limited",
+    "module": "登录与首次使用",
+    "label": "Momcozy",
+    "state": "auth-followup-reset-rate-limited",
+    "image": "01-auth/auth-followup-reset-rate-limited/default.png",
+    "viewport": "01-auth/auth-followup-reset-rate-limited/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/login"
+    ],
+    "mapped_design_candidates": [
+      "common/not-found",
+      "auth/login",
+      "auth/register",
+      "auth/verify",
+      "auth/forgot",
+      "auth/reset",
+      "auth/language",
+      "auth/legal"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/auth/presentation/auth_login_chrome.dart",
+      "lib/features/auth/presentation/auth_page.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/auth/auth_followup_inventory_test.dart",
+    "test_case": "auth normal password recovery chain 393.0/1.0",
+    "metadata": "raw/test/goldens/ui_inventory/auth-followup-reset-rate-limited-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/auth-followup-reset-rate-limited-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/auth-followup-reset-rate-limited-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/auth-followup-reset-rate-limited-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/auth-followup-reset-rate-limited-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/login",
+    "entry": "Open More while signed out → real auth redirect",
+    "trigger": "Retry reset → server rate limit",
+    "journey": {
+      "source": "test/goldens/ui_inventory/auth-followup-reset-rate-limited-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/auth-followup-reset-expired-code-393-1x.png",
+      "route": "/login",
+      "trigger": "Retry reset → server rate limit",
+      "root_entry": "Open More while signed out → real auth redirect",
+      "evidence": "Actual MomCozyFlutterApp and createMomCozyRouter; only HTTP/session/native-intent dependencies replaced with isolated fixtures",
+      "test": "test/features/auth/auth_followup_inventory_test.dart"
+    }
+  },
+  {
+    "id": "01-auth/auth-followup-reset-resend-cooldown",
+    "module": "登录与首次使用",
+    "label": "Momcozy",
+    "state": "auth-followup-reset-resend-cooldown",
+    "image": "01-auth/auth-followup-reset-resend-cooldown/default.png",
+    "viewport": "01-auth/auth-followup-reset-resend-cooldown/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/login"
+    ],
+    "mapped_design_candidates": [
+      "common/not-found",
+      "auth/login",
+      "auth/register",
+      "auth/verify",
+      "auth/forgot",
+      "auth/reset",
+      "auth/language",
+      "auth/legal"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/auth/presentation/auth_login_chrome.dart",
+      "lib/features/auth/presentation/auth_page.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/auth/auth_followup_inventory_test.dart",
+    "test_case": "auth normal password recovery chain 393.0/1.0",
+    "metadata": "raw/test/goldens/ui_inventory/auth-followup-reset-resend-cooldown-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/auth-followup-reset-resend-cooldown-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/auth-followup-reset-resend-cooldown-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/auth-followup-reset-resend-cooldown-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/auth-followup-reset-resend-cooldown-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/login",
+    "entry": "Open More while signed out → real auth redirect",
+    "trigger": "Immediate reset code resend → cooldown message",
+    "journey": {
+      "source": "test/goldens/ui_inventory/auth-followup-reset-resend-cooldown-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/auth-followup-reset-code-form-393-1x.png",
+      "route": "/login",
+      "trigger": "Immediate reset code resend → cooldown message",
+      "root_entry": "Open More while signed out → real auth redirect",
+      "evidence": "Actual MomCozyFlutterApp and createMomCozyRouter; only HTTP/session/native-intent dependencies replaced with isolated fixtures",
+      "test": "test/features/auth/auth_followup_inventory_test.dart"
+    }
+  },
+  {
+    "id": "01-auth/auth-followup-terms-open-error",
+    "module": "登录与首次使用",
+    "label": "English",
+    "state": "auth-followup-terms-open-error",
+    "image": "01-auth/auth-followup-terms-open-error/default.png",
+    "viewport": "01-auth/auth-followup-terms-open-error/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/login"
+    ],
+    "mapped_design_candidates": [
+      "common/not-found",
+      "auth/login",
+      "auth/register",
+      "auth/verify",
+      "auth/forgot",
+      "auth/reset",
+      "auth/language",
+      "auth/legal"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/auth/presentation/auth_login_chrome.dart",
+      "lib/features/auth/presentation/auth_page.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/auth/auth_followup_inventory_test.dart",
+    "test_case": "auth language dismissal legal failure and back navigation",
+    "metadata": "raw/test/goldens/ui_inventory/auth-followup-terms-open-error-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/auth-followup-terms-open-error-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/auth-followup-terms-open-error-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/login",
+    "entry": "Open More while signed out → real auth redirect",
+    "trigger": "Tap Terms of Use → external browser launch fails → Snackbar",
+    "journey": {
+      "source": "test/goldens/ui_inventory/auth-followup-terms-open-error-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/auth-followup-language-dismissed-393-1x.png",
+      "route": "/login",
+      "trigger": "Tap Terms of Use → external browser launch fails → Snackbar",
+      "root_entry": "Open More while signed out → real auth redirect",
+      "evidence": "Actual MomCozyFlutterApp and createMomCozyRouter; only HTTP/session/native-intent dependencies replaced with isolated fixtures",
+      "test": "test/features/auth/auth_followup_inventory_test.dart"
+    }
+  },
+  {
+    "id": "01-auth/auth-followup-verify-entry",
+    "module": "登录与首次使用",
+    "label": "English",
+    "state": "auth-followup-verify-entry",
+    "image": "01-auth/auth-followup-verify-entry/default.png",
+    "viewport": "01-auth/auth-followup-verify-entry/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/login"
+    ],
+    "mapped_design_candidates": [
+      "common/not-found",
+      "auth/login",
+      "auth/register",
+      "auth/verify",
+      "auth/forgot",
+      "auth/reset",
+      "auth/language",
+      "auth/legal"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/auth/presentation/auth_login_chrome.dart",
+      "lib/features/auth/presentation/auth_page.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/auth/auth_followup_inventory_test.dart",
+    "test_case": "auth unverified login and resend errors retry verify",
+    "metadata": "raw/test/goldens/ui_inventory/auth-followup-verify-entry-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/auth-followup-verify-entry-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/auth-followup-verify-entry-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/login",
+    "entry": "Open More while signed out → real auth redirect",
+    "trigger": "Signed out More → login",
+    "journey": {
+      "source": "test/goldens/ui_inventory/auth-followup-verify-entry-393-1x.png",
+      "previous_source": null,
+      "route": "/login",
+      "trigger": "Signed out More → login",
+      "root_entry": "Open More while signed out → real auth redirect",
+      "evidence": "Actual MomCozyFlutterApp and createMomCozyRouter; only HTTP/session/native-intent dependencies replaced with isolated fixtures",
+      "test": "test/features/auth/auth_followup_inventory_test.dart"
+    }
+  },
+  {
+    "id": "01-auth/auth-followup-verify-from-login",
+    "module": "登录与首次使用",
+    "label": "Momcozy",
+    "state": "auth-followup-verify-from-login",
+    "image": "01-auth/auth-followup-verify-from-login/default.png",
+    "viewport": "01-auth/auth-followup-verify-from-login/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/login"
+    ],
+    "mapped_design_candidates": [
+      "common/not-found",
+      "auth/login",
+      "auth/register",
+      "auth/verify",
+      "auth/forgot",
+      "auth/reset",
+      "auth/language",
+      "auth/legal"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/auth/presentation/auth_login_chrome.dart",
+      "lib/features/auth/presentation/auth_page.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/auth/auth_followup_inventory_test.dart",
+    "test_case": "auth unverified login and resend errors retry verify",
+    "metadata": "raw/test/goldens/ui_inventory/auth-followup-verify-from-login-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/auth-followup-verify-from-login-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/auth-followup-verify-from-login-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/login",
+    "entry": "Open More while signed out → real auth redirect",
+    "trigger": "Retry unverified login → code sent and verification form",
+    "journey": {
+      "source": "test/goldens/ui_inventory/auth-followup-verify-from-login-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/auth-followup-verify-initial-send-error-393-1x.png",
+      "route": "/login",
+      "trigger": "Retry unverified login → code sent and verification form",
+      "root_entry": "Open More while signed out → real auth redirect",
+      "evidence": "Actual MomCozyFlutterApp and createMomCozyRouter; only HTTP/session/native-intent dependencies replaced with isolated fixtures",
+      "test": "test/features/auth/auth_followup_inventory_test.dart"
+    }
+  },
+  {
+    "id": "01-auth/auth-followup-verify-initial-send-error",
+    "module": "登录与首次使用",
+    "label": "English",
+    "state": "auth-followup-verify-initial-send-error",
+    "image": "01-auth/auth-followup-verify-initial-send-error/default.png",
+    "viewport": "01-auth/auth-followup-verify-initial-send-error/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/login"
+    ],
+    "mapped_design_candidates": [
+      "common/not-found",
+      "auth/login",
+      "auth/register",
+      "auth/verify",
+      "auth/forgot",
+      "auth/reset",
+      "auth/language",
+      "auth/legal"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/auth/presentation/auth_login_chrome.dart",
+      "lib/features/auth/presentation/auth_page.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/auth/auth_followup_inventory_test.dart",
+    "test_case": "auth unverified login and resend errors retry verify",
+    "metadata": "raw/test/goldens/ui_inventory/auth-followup-verify-initial-send-error-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/auth-followup-verify-initial-send-error-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/auth-followup-verify-initial-send-error-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/login",
+    "entry": "Open More while signed out → real auth redirect",
+    "trigger": "Unverified login → automatic verification email send fails, login retained",
+    "journey": {
+      "source": "test/goldens/ui_inventory/auth-followup-verify-initial-send-error-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/auth-followup-verify-entry-393-1x.png",
+      "route": "/login",
+      "trigger": "Unverified login → automatic verification email send fails, login retained",
+      "root_entry": "Open More while signed out → real auth redirect",
+      "evidence": "Actual MomCozyFlutterApp and createMomCozyRouter; only HTTP/session/native-intent dependencies replaced with isolated fixtures",
+      "test": "test/features/auth/auth_followup_inventory_test.dart"
+    }
+  },
+  {
+    "id": "01-auth/auth-followup-verify-resend-email-required",
+    "module": "登录与首次使用",
+    "label": "Momcozy",
+    "state": "auth-followup-verify-resend-email-required",
+    "image": "01-auth/auth-followup-verify-resend-email-required/default.png",
+    "viewport": "01-auth/auth-followup-verify-resend-email-required/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/login"
+    ],
+    "mapped_design_candidates": [
+      "common/not-found",
+      "auth/login",
+      "auth/register",
+      "auth/verify",
+      "auth/forgot",
+      "auth/reset",
+      "auth/language",
+      "auth/legal"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/auth/presentation/auth_login_chrome.dart",
+      "lib/features/auth/presentation/auth_page.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/auth/auth_followup_inventory_test.dart",
+    "test_case": "auth unverified login and resend errors retry verify",
+    "metadata": "raw/test/goldens/ui_inventory/auth-followup-verify-resend-email-required-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/auth-followup-verify-resend-email-required-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/auth-followup-verify-resend-email-required-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/login",
+    "entry": "Open More while signed out → real auth redirect",
+    "trigger": "Clear email and resend → required email feedback",
+    "journey": {
+      "source": "test/goldens/ui_inventory/auth-followup-verify-resend-email-required-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/auth-followup-verify-from-login-393-1x.png",
+      "route": "/login",
+      "trigger": "Clear email and resend → required email feedback",
+      "root_entry": "Open More while signed out → real auth redirect",
+      "evidence": "Actual MomCozyFlutterApp and createMomCozyRouter; only HTTP/session/native-intent dependencies replaced with isolated fixtures",
+      "test": "test/features/auth/auth_followup_inventory_test.dart"
+    }
+  },
+  {
+    "id": "01-auth/auth-followup-verify-resend-pending",
+    "module": "登录与首次使用",
+    "label": "Momcozy",
+    "state": "auth-followup-verify-resend-pending",
+    "image": "01-auth/auth-followup-verify-resend-pending/default.png",
+    "viewport": "01-auth/auth-followup-verify-resend-pending/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/login"
+    ],
+    "mapped_design_candidates": [
+      "common/not-found",
+      "auth/login",
+      "auth/register",
+      "auth/verify",
+      "auth/forgot",
+      "auth/reset",
+      "auth/language",
+      "auth/legal"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/auth/presentation/auth_login_chrome.dart",
+      "lib/features/auth/presentation/auth_page.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/auth/auth_followup_inventory_test.dart",
+    "test_case": "auth unverified login and resend errors retry verify",
+    "metadata": "raw/test/goldens/ui_inventory/auth-followup-verify-resend-pending-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/auth-followup-verify-resend-pending-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/auth-followup-verify-resend-pending-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/login",
+    "entry": "Open More while signed out → real auth redirect",
+    "trigger": "Resend code → request pending and form disabled",
+    "journey": {
+      "source": "test/goldens/ui_inventory/auth-followup-verify-resend-pending-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/auth-followup-verify-resend-rate-limited-393-1x.png",
+      "route": "/login",
+      "trigger": "Resend code → request pending and form disabled",
+      "root_entry": "Open More while signed out → real auth redirect",
+      "evidence": "Actual MomCozyFlutterApp and createMomCozyRouter; only HTTP/session/native-intent dependencies replaced with isolated fixtures",
+      "test": "test/features/auth/auth_followup_inventory_test.dart"
+    }
+  },
+  {
+    "id": "01-auth/auth-followup-verify-resend-rate-limited",
+    "module": "登录与首次使用",
+    "label": "Momcozy",
+    "state": "auth-followup-verify-resend-rate-limited",
+    "image": "01-auth/auth-followup-verify-resend-rate-limited/default.png",
+    "viewport": "01-auth/auth-followup-verify-resend-rate-limited/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/login"
+    ],
+    "mapped_design_candidates": [
+      "common/not-found",
+      "auth/login",
+      "auth/register",
+      "auth/verify",
+      "auth/forgot",
+      "auth/reset",
+      "auth/language",
+      "auth/legal"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/auth/presentation/auth_login_chrome.dart",
+      "lib/features/auth/presentation/auth_page.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/auth/auth_followup_inventory_test.dart",
+    "test_case": "auth unverified login and resend errors retry verify",
+    "metadata": "raw/test/goldens/ui_inventory/auth-followup-verify-resend-rate-limited-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/auth-followup-verify-resend-rate-limited-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/auth-followup-verify-resend-rate-limited-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/login",
+    "entry": "Open More while signed out → real auth redirect",
+    "trigger": "Resend code → server rate limit",
+    "journey": {
+      "source": "test/goldens/ui_inventory/auth-followup-verify-resend-rate-limited-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/auth-followup-verify-resend-email-required-393-1x.png",
+      "route": "/login",
+      "trigger": "Resend code → server rate limit",
+      "root_entry": "Open More while signed out → real auth redirect",
+      "evidence": "Actual MomCozyFlutterApp and createMomCozyRouter; only HTTP/session/native-intent dependencies replaced with isolated fixtures",
+      "test": "test/features/auth/auth_followup_inventory_test.dart"
+    }
+  },
+  {
+    "id": "01-auth/auth-followup-verify-resend-success",
+    "module": "登录与首次使用",
+    "label": "Momcozy",
+    "state": "auth-followup-verify-resend-success",
+    "image": "01-auth/auth-followup-verify-resend-success/default.png",
+    "viewport": "01-auth/auth-followup-verify-resend-success/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/login"
+    ],
+    "mapped_design_candidates": [
+      "common/not-found",
+      "auth/login",
+      "auth/register",
+      "auth/verify",
+      "auth/forgot",
+      "auth/reset",
+      "auth/language",
+      "auth/legal"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/auth/presentation/auth_login_chrome.dart",
+      "lib/features/auth/presentation/auth_page.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/auth/auth_followup_inventory_test.dart",
+    "test_case": "auth unverified login and resend errors retry verify",
+    "metadata": "raw/test/goldens/ui_inventory/auth-followup-verify-resend-success-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/auth-followup-verify-resend-success-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/auth-followup-verify-resend-success-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/login",
+    "entry": "Open More while signed out → real auth redirect",
+    "trigger": "Resend accepted → success message",
+    "journey": {
+      "source": "test/goldens/ui_inventory/auth-followup-verify-resend-success-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/auth-followup-verify-resend-pending-393-1x.png",
+      "route": "/login",
+      "trigger": "Resend accepted → success message",
+      "root_entry": "Open More while signed out → real auth redirect",
+      "evidence": "Actual MomCozyFlutterApp and createMomCozyRouter; only HTTP/session/native-intent dependencies replaced with isolated fixtures",
+      "test": "test/features/auth/auth_followup_inventory_test.dart"
+    }
+  },
+  {
+    "id": "01-auth/auth-forgot",
+    "module": "登录与首次使用",
+    "label": "Momcozy",
+    "state": "auth-forgot",
+    "image": "01-auth/auth-forgot/default.png",
+    "viewport": "01-auth/auth-forgot/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/login"
+    ],
+    "mapped_design_candidates": [
+      "auth/login",
+      "auth/register",
+      "auth/verify",
+      "auth/forgot",
+      "auth/reset",
+      "auth/language",
+      "auth/legal"
+    ],
+    "production_widget_files": [
+      "lib/features/auth/presentation/auth_login_chrome.dart",
+      "lib/features/auth/presentation/auth_page.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/features/auth/auth_design_test.dart",
+    "test_case": "reset form with keyboard at 390.0 / 1.0",
+    "metadata": "raw/test/goldens/design_system/auth-forgot-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/auth-forgot-320.png",
+        "metadata": "raw/test/goldens/design_system/auth-forgot-320.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/auth-forgot-390.png",
+        "metadata": "raw/test/goldens/design_system/auth-forgot-390.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/auth-forgot-430.png",
+        "metadata": "raw/test/goldens/design_system/auth-forgot-430.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "01-auth/auth-invite",
+    "module": "登录与首次使用",
+    "label": "欢迎使用",
+    "state": "auth-invite",
+    "image": "01-auth/auth-invite/default.png",
+    "viewport": "01-auth/auth-invite/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/login",
+      "/login (internalInviteOnly)"
+    ],
+    "mapped_design_candidates": [
+      "auth/login",
+      "auth/register",
+      "auth/verify",
+      "auth/forgot",
+      "auth/reset",
+      "auth/language",
+      "auth/legal",
+      "auth/invite"
+    ],
+    "production_widget_files": [
+      "lib/features/auth/presentation/auth_page.dart",
+      "lib/features/auth/presentation/invite_auth_page.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/features/auth/auth_design_test.dart",
+    "test_case": "invite entry with short keyboard viewport at 390.0 / 1.0",
+    "metadata": "raw/test/goldens/design_system/auth-invite-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/auth-invite-320.png",
+        "metadata": "raw/test/goldens/design_system/auth-invite-320.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/auth-invite-390.png",
+        "metadata": "raw/test/goldens/design_system/auth-invite-390.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/auth-invite-430.png",
+        "metadata": "raw/test/goldens/design_system/auth-invite-430.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "01-auth/auth-invite-validation",
+    "module": "登录与首次使用",
+    "label": "欢迎使用",
+    "state": "auth-invite-validation",
+    "image": "01-auth/auth-invite-validation/default.png",
+    "viewport": "01-auth/auth-invite-validation/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/login",
+      "/login (internalInviteOnly)"
+    ],
+    "mapped_design_candidates": [
+      "auth/login",
+      "auth/register",
+      "auth/verify",
+      "auth/forgot",
+      "auth/reset",
+      "auth/language",
+      "auth/legal",
+      "auth/invite"
+    ],
+    "production_widget_files": [
+      "lib/features/auth/presentation/auth_page.dart",
+      "lib/features/auth/presentation/invite_auth_page.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/features/auth/auth_design_test.dart",
+    "test_case": "invite entry with short keyboard viewport at 390.0 / 1.0",
+    "metadata": "raw/test/goldens/design_system/auth-invite-validation-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/auth-invite-validation-320.png",
+        "metadata": "raw/test/goldens/design_system/auth-invite-validation-320.png.json",
+        "width": 320,
+        "height": 568
+      },
+      {
+        "source": "test/goldens/design_system/auth-invite-validation-390.png",
+        "metadata": "raw/test/goldens/design_system/auth-invite-validation-390.png.json",
+        "width": 390,
+        "height": 568
+      },
+      {
+        "source": "test/goldens/design_system/auth-invite-validation-430.png",
+        "metadata": "raw/test/goldens/design_system/auth-invite-validation-430.png.json",
+        "width": 430,
+        "height": 568
+      }
+    ]
+  },
+  {
+    "id": "01-auth/auth-journey-code-expired",
+    "module": "登录与首次使用",
+    "label": "Momcozy",
+    "state": "auth-journey-code-expired",
+    "image": "01-auth/auth-journey-code-expired/default.png",
+    "viewport": "01-auth/auth-journey-code-expired/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/login"
+    ],
+    "mapped_design_candidates": [
+      "common/not-found",
+      "auth/login",
+      "auth/register",
+      "auth/verify",
+      "auth/forgot",
+      "auth/reset",
+      "auth/language",
+      "auth/legal"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/auth/presentation/auth_login_chrome.dart",
+      "lib/features/auth/presentation/auth_page.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/auth/auth_inventory_journey_test.dart",
+    "test_case": "inventory registration verification resend and real sign out",
+    "metadata": "raw/test/goldens/ui_inventory/auth-journey-code-expired-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/auth-journey-code-expired-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/auth-journey-code-expired-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/login",
+    "entry": "Open More while signed out → real auth redirect",
+    "trigger": "Verify email → invalid_or_expired_code",
+    "journey": {
+      "source": "test/goldens/ui_inventory/auth-journey-code-expired-393.png",
+      "previous_source": "test/goldens/ui_inventory/auth-journey-code-validation-393.png",
+      "route": "/login",
+      "trigger": "Verify email → invalid_or_expired_code",
+      "root_entry": "Open More while signed out → real auth redirect",
+      "evidence": "Actual MomCozyFlutterApp and createMomCozyRouter; only HTTP/session/native-intent dependencies replaced with isolated fixtures",
+      "test": "test/features/auth/auth_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "01-auth/auth-journey-code-validation",
+    "module": "登录与首次使用",
+    "label": "Momcozy",
+    "state": "auth-journey-code-validation",
+    "image": "01-auth/auth-journey-code-validation/default.png",
+    "viewport": "01-auth/auth-journey-code-validation/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/login"
+    ],
+    "mapped_design_candidates": [
+      "common/not-found",
+      "auth/login",
+      "auth/register",
+      "auth/verify",
+      "auth/forgot",
+      "auth/reset",
+      "auth/language",
+      "auth/legal"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/auth/presentation/auth_login_chrome.dart",
+      "lib/features/auth/presentation/auth_page.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/auth/auth_inventory_journey_test.dart",
+    "test_case": "inventory registration verification resend and real sign out",
+    "metadata": "raw/test/goldens/ui_inventory/auth-journey-code-validation-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/auth-journey-code-validation-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/auth-journey-code-validation-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/login",
+    "entry": "Open More while signed out → real auth redirect",
+    "trigger": "Submit without eight-digit code → field validation",
+    "journey": {
+      "source": "test/goldens/ui_inventory/auth-journey-code-validation-393.png",
+      "previous_source": "test/goldens/ui_inventory/auth-journey-resend-cooldown-393.png",
+      "route": "/login",
+      "trigger": "Submit without eight-digit code → field validation",
+      "root_entry": "Open More while signed out → real auth redirect",
+      "evidence": "Actual MomCozyFlutterApp and createMomCozyRouter; only HTTP/session/native-intent dependencies replaced with isolated fixtures",
+      "test": "test/features/auth/auth_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "01-auth/auth-journey-deleted",
+    "module": "登录与首次使用",
+    "label": "English",
+    "state": "auth-journey-deleted",
+    "image": "01-auth/auth-journey-deleted/default.png",
+    "viewport": "01-auth/auth-journey-deleted/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/login"
+    ],
+    "mapped_design_candidates": [
+      "common/not-found",
+      "auth/login",
+      "auth/register",
+      "auth/verify",
+      "auth/forgot",
+      "auth/reset",
+      "auth/language",
+      "auth/legal"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/auth/presentation/auth_login_chrome.dart",
+      "lib/features/auth/presentation/auth_page.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/auth/auth_inventory_journey_test.dart",
+    "test_case": "inventory real login → More → account → deletion → login",
+    "metadata": "raw/test/goldens/ui_inventory/auth-journey-deleted-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/auth-journey-deleted-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/auth-journey-deleted-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/login",
+    "entry": "Open More while signed out → real auth redirect",
+    "trigger": "Confirm delete → fixture success → session cleared → login plus deletion Snackbar",
+    "journey": {
+      "source": "test/goldens/ui_inventory/auth-journey-deleted-393.png",
+      "previous_source": "test/goldens/ui_inventory/account-journey-delete-error-393.png",
+      "route": "/login",
+      "trigger": "Confirm delete → fixture success → session cleared → login plus deletion Snackbar",
+      "root_entry": "Open More while signed out → real auth redirect",
+      "evidence": "Actual MomCozyFlutterApp and createMomCozyRouter; only HTTP/session/native-intent dependencies replaced with isolated fixtures",
+      "test": "test/features/auth/auth_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "01-auth/auth-journey-empty-validation",
+    "module": "登录与首次使用",
+    "label": "English",
+    "state": "auth-journey-empty-validation",
+    "image": "01-auth/auth-journey-empty-validation/default.png",
+    "viewport": "01-auth/auth-journey-empty-validation/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/login"
+    ],
+    "mapped_design_candidates": [
+      "common/not-found",
+      "auth/login",
+      "auth/register",
+      "auth/verify",
+      "auth/forgot",
+      "auth/reset",
+      "auth/language",
+      "auth/legal"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/auth/presentation/auth_login_chrome.dart",
+      "lib/features/auth/presentation/auth_page.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/auth/auth_inventory_journey_test.dart",
+    "test_case": "inventory real login → More → account → deletion → login",
+    "metadata": "raw/test/goldens/ui_inventory/auth-journey-empty-validation-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/auth-journey-empty-validation-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/auth-journey-empty-validation-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/login",
+    "entry": "Open More while signed out → real auth redirect",
+    "trigger": "Submit empty email and password",
+    "journey": {
+      "source": "test/goldens/ui_inventory/auth-journey-empty-validation-393.png",
+      "previous_source": "test/goldens/ui_inventory/auth-journey-login-393.png",
+      "route": "/login",
+      "trigger": "Submit empty email and password",
+      "root_entry": "Open More while signed out → real auth redirect",
+      "evidence": "Actual MomCozyFlutterApp and createMomCozyRouter; only HTTP/session/native-intent dependencies replaced with isolated fixtures",
+      "test": "test/features/auth/auth_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "01-auth/auth-journey-google-unavailable",
+    "module": "登录与首次使用",
+    "label": "English",
+    "state": "auth-journey-google-unavailable",
+    "image": "01-auth/auth-journey-google-unavailable/default.png",
+    "viewport": "01-auth/auth-journey-google-unavailable/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/login"
+    ],
+    "mapped_design_candidates": [
+      "common/not-found",
+      "auth/login",
+      "auth/register",
+      "auth/verify",
+      "auth/forgot",
+      "auth/reset",
+      "auth/language",
+      "auth/legal"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/auth/presentation/auth_login_chrome.dart",
+      "lib/features/auth/presentation/auth_page.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/auth/auth_inventory_journey_test.dart",
+    "test_case": "inventory real login → More → account → deletion → login",
+    "metadata": "raw/test/goldens/ui_inventory/auth-journey-google-unavailable-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/auth-journey-google-unavailable-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/auth-journey-google-unavailable-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/login",
+    "entry": "Open More while signed out → real auth redirect",
+    "trigger": "Continue with Google; current build has no client ID",
+    "journey": {
+      "source": "test/goldens/ui_inventory/auth-journey-google-unavailable-393.png",
+      "previous_source": "test/goldens/ui_inventory/auth-journey-empty-validation-393.png",
+      "route": "/login",
+      "trigger": "Continue with Google; current build has no client ID",
+      "root_entry": "Open More while signed out → real auth redirect",
+      "evidence": "Actual MomCozyFlutterApp and createMomCozyRouter; only HTTP/session/native-intent dependencies replaced with isolated fixtures",
+      "test": "test/features/auth/auth_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "01-auth/auth-journey-invalid-credentials",
+    "module": "登录与首次使用",
+    "label": "English",
+    "state": "auth-journey-invalid-credentials",
+    "image": "01-auth/auth-journey-invalid-credentials/default.png",
+    "viewport": "01-auth/auth-journey-invalid-credentials/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/login"
+    ],
+    "mapped_design_candidates": [
+      "common/not-found",
+      "auth/login",
+      "auth/register",
+      "auth/verify",
+      "auth/forgot",
+      "auth/reset",
+      "auth/language",
+      "auth/legal"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/auth/presentation/auth_login_chrome.dart",
+      "lib/features/auth/presentation/auth_page.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/auth/auth_inventory_journey_test.dart",
+    "test_case": "inventory real login → More → account → deletion → login",
+    "metadata": "raw/test/goldens/ui_inventory/auth-journey-invalid-credentials-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/auth-journey-invalid-credentials-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/auth-journey-invalid-credentials-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/login",
+    "entry": "Open More while signed out → real auth redirect",
+    "trigger": "Sign in; backend returns authentication_required",
+    "journey": {
+      "source": "test/goldens/ui_inventory/auth-journey-invalid-credentials-393.png",
+      "previous_source": "test/goldens/ui_inventory/auth-journey-password-tooltip-393.png",
+      "route": "/login",
+      "trigger": "Sign in; backend returns authentication_required",
+      "root_entry": "Open More while signed out → real auth redirect",
+      "evidence": "Actual MomCozyFlutterApp and createMomCozyRouter; only HTTP/session/native-intent dependencies replaced with isolated fixtures",
+      "test": "test/features/auth/auth_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "01-auth/auth-journey-login",
+    "module": "登录与首次使用",
+    "label": "English",
+    "state": "auth-journey-login",
+    "image": "01-auth/auth-journey-login/default.png",
+    "viewport": "01-auth/auth-journey-login/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/login"
+    ],
+    "mapped_design_candidates": [
+      "common/not-found",
+      "auth/login",
+      "auth/register",
+      "auth/verify",
+      "auth/forgot",
+      "auth/reset",
+      "auth/language",
+      "auth/legal"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/auth/presentation/auth_login_chrome.dart",
+      "lib/features/auth/presentation/auth_page.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/auth/auth_inventory_journey_test.dart",
+    "test_case": "inventory real login → More → account → deletion → login",
+    "metadata": "raw/test/goldens/ui_inventory/auth-journey-login-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/auth-journey-login-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/auth-journey-login-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/login",
+    "entry": "Open More while signed out → real auth redirect",
+    "trigger": "Anonymous open /more; guard redirects to login with return location",
+    "journey": {
+      "source": "test/goldens/ui_inventory/auth-journey-login-393.png",
+      "previous_source": null,
+      "route": "/login",
+      "trigger": "Anonymous open /more; guard redirects to login with return location",
+      "root_entry": "Open More while signed out → real auth redirect",
+      "evidence": "Actual MomCozyFlutterApp and createMomCozyRouter; only HTTP/session/native-intent dependencies replaced with isolated fixtures",
+      "test": "test/features/auth/auth_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "01-auth/auth-journey-login-busy",
+    "module": "登录与首次使用",
+    "label": "English",
+    "state": "auth-journey-login-busy",
+    "image": "01-auth/auth-journey-login-busy/default.png",
+    "viewport": "01-auth/auth-journey-login-busy/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/login"
+    ],
+    "mapped_design_candidates": [
+      "common/not-found",
+      "auth/login",
+      "auth/register",
+      "auth/verify",
+      "auth/forgot",
+      "auth/reset",
+      "auth/language",
+      "auth/legal"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/auth/presentation/auth_login_chrome.dart",
+      "lib/features/auth/presentation/auth_page.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/auth/auth_inventory_journey_test.dart",
+    "test_case": "inventory real login → More → account → deletion → login",
+    "metadata": "raw/test/goldens/ui_inventory/auth-journey-login-busy-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/auth-journey-login-busy-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/auth-journey-login-busy-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/login",
+    "entry": "Open More while signed out → real auth redirect",
+    "trigger": "Sign in; HTTP response is still pending",
+    "journey": {
+      "source": "test/goldens/ui_inventory/auth-journey-login-busy-393.png",
+      "previous_source": "test/goldens/ui_inventory/auth-journey-rate-limit-393.png",
+      "route": "/login",
+      "trigger": "Sign in; HTTP response is still pending",
+      "root_entry": "Open More while signed out → real auth redirect",
+      "evidence": "Actual MomCozyFlutterApp and createMomCozyRouter; only HTTP/session/native-intent dependencies replaced with isolated fixtures",
+      "test": "test/features/auth/auth_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "01-auth/auth-journey-password-tooltip",
+    "module": "登录与首次使用",
+    "label": "English",
+    "state": "auth-journey-password-tooltip",
+    "image": "01-auth/auth-journey-password-tooltip/default.png",
+    "viewport": "01-auth/auth-journey-password-tooltip/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/login"
+    ],
+    "mapped_design_candidates": [
+      "common/not-found",
+      "auth/login",
+      "auth/register",
+      "auth/verify",
+      "auth/forgot",
+      "auth/reset",
+      "auth/language",
+      "auth/legal"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/auth/presentation/auth_login_chrome.dart",
+      "lib/features/auth/presentation/auth_page.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/auth/auth_inventory_journey_test.dart",
+    "test_case": "inventory real login → More → account → deletion → login",
+    "metadata": "raw/test/goldens/ui_inventory/auth-journey-password-tooltip-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/auth-journey-password-tooltip-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/auth-journey-password-tooltip-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/login",
+    "entry": "Open More while signed out → real auth redirect",
+    "trigger": "Long press password eye → native Flutter Tooltip",
+    "journey": {
+      "source": "test/goldens/ui_inventory/auth-journey-password-tooltip-393.png",
+      "previous_source": "test/goldens/ui_inventory/auth-journey-password-visible-393.png",
+      "route": "/login",
+      "trigger": "Long press password eye → native Flutter Tooltip",
+      "root_entry": "Open More while signed out → real auth redirect",
+      "evidence": "Actual MomCozyFlutterApp and createMomCozyRouter; only HTTP/session/native-intent dependencies replaced with isolated fixtures",
+      "test": "test/features/auth/auth_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "01-auth/auth-journey-password-visible",
+    "module": "登录与首次使用",
+    "label": "English",
+    "state": "auth-journey-password-visible",
+    "image": "01-auth/auth-journey-password-visible/default.png",
+    "viewport": "01-auth/auth-journey-password-visible/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/login"
+    ],
+    "mapped_design_candidates": [
+      "common/not-found",
+      "auth/login",
+      "auth/register",
+      "auth/verify",
+      "auth/forgot",
+      "auth/reset",
+      "auth/language",
+      "auth/legal"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/auth/presentation/auth_login_chrome.dart",
+      "lib/features/auth/presentation/auth_page.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/auth/auth_inventory_journey_test.dart",
+    "test_case": "inventory real login → More → account → deletion → login",
+    "metadata": "raw/test/goldens/ui_inventory/auth-journey-password-visible-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/auth-journey-password-visible-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/auth-journey-password-visible-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/login",
+    "entry": "Open More while signed out → real auth redirect",
+    "trigger": "Tap password eye; synthetic password is visible",
+    "journey": {
+      "source": "test/goldens/ui_inventory/auth-journey-password-visible-393.png",
+      "previous_source": "test/goldens/ui_inventory/auth-journey-google-unavailable-393.png",
+      "route": "/login",
+      "trigger": "Tap password eye; synthetic password is visible",
+      "root_entry": "Open More while signed out → real auth redirect",
+      "evidence": "Actual MomCozyFlutterApp and createMomCozyRouter; only HTTP/session/native-intent dependencies replaced with isolated fixtures",
+      "test": "test/features/auth/auth_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "01-auth/auth-journey-rate-limit",
+    "module": "登录与首次使用",
+    "label": "English",
+    "state": "auth-journey-rate-limit",
+    "image": "01-auth/auth-journey-rate-limit/default.png",
+    "viewport": "01-auth/auth-journey-rate-limit/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/login"
+    ],
+    "mapped_design_candidates": [
+      "common/not-found",
+      "auth/login",
+      "auth/register",
+      "auth/verify",
+      "auth/forgot",
+      "auth/reset",
+      "auth/language",
+      "auth/legal"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/auth/presentation/auth_login_chrome.dart",
+      "lib/features/auth/presentation/auth_page.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/auth/auth_inventory_journey_test.dart",
+    "test_case": "inventory real login → More → account → deletion → login",
+    "metadata": "raw/test/goldens/ui_inventory/auth-journey-rate-limit-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/auth-journey-rate-limit-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/auth-journey-rate-limit-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/login",
+    "entry": "Open More while signed out → real auth redirect",
+    "trigger": "Retry sign in; backend returns HTTP 429",
+    "journey": {
+      "source": "test/goldens/ui_inventory/auth-journey-rate-limit-393.png",
+      "previous_source": "test/goldens/ui_inventory/auth-journey-invalid-credentials-393.png",
+      "route": "/login",
+      "trigger": "Retry sign in; backend returns HTTP 429",
+      "root_entry": "Open More while signed out → real auth redirect",
+      "evidence": "Actual MomCozyFlutterApp and createMomCozyRouter; only HTTP/session/native-intent dependencies replaced with isolated fixtures",
+      "test": "test/features/auth/auth_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "01-auth/auth-journey-register",
+    "module": "登录与首次使用",
+    "label": "Momcozy",
+    "state": "auth-journey-register",
+    "image": "01-auth/auth-journey-register/default.png",
+    "viewport": "01-auth/auth-journey-register/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/login"
+    ],
+    "mapped_design_candidates": [
+      "common/not-found",
+      "auth/login",
+      "auth/register",
+      "auth/verify",
+      "auth/forgot",
+      "auth/reset",
+      "auth/language",
+      "auth/legal"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/auth/presentation/auth_login_chrome.dart",
+      "lib/features/auth/presentation/auth_page.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/auth/auth_inventory_journey_test.dart",
+    "test_case": "inventory registration verification resend and real sign out",
+    "metadata": "raw/test/goldens/ui_inventory/auth-journey-register-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/auth-journey-register-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/auth-journey-register-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/login",
+    "entry": "Open More while signed out → real auth redirect",
+    "trigger": "Login → Create an account",
+    "journey": {
+      "source": "test/goldens/ui_inventory/auth-journey-register-393.png",
+      "previous_source": null,
+      "route": "/login",
+      "trigger": "Login → Create an account",
+      "root_entry": "Open More while signed out → real auth redirect",
+      "evidence": "Actual MomCozyFlutterApp and createMomCozyRouter; only HTTP/session/native-intent dependencies replaced with isolated fixtures",
+      "test": "test/features/auth/auth_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "01-auth/auth-journey-resend-cooldown",
+    "module": "登录与首次使用",
+    "label": "Momcozy",
+    "state": "auth-journey-resend-cooldown",
+    "image": "01-auth/auth-journey-resend-cooldown/default.png",
+    "viewport": "01-auth/auth-journey-resend-cooldown/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/login"
+    ],
+    "mapped_design_candidates": [
+      "common/not-found",
+      "auth/login",
+      "auth/register",
+      "auth/verify",
+      "auth/forgot",
+      "auth/reset",
+      "auth/language",
+      "auth/legal"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/auth/presentation/auth_login_chrome.dart",
+      "lib/features/auth/presentation/auth_page.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/auth/auth_inventory_journey_test.dart",
+    "test_case": "inventory registration verification resend and real sign out",
+    "metadata": "raw/test/goldens/ui_inventory/auth-journey-resend-cooldown-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/auth-journey-resend-cooldown-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/auth-journey-resend-cooldown-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/login",
+    "entry": "Open More while signed out → real auth redirect",
+    "trigger": "Immediately resend → cooldown message",
+    "journey": {
+      "source": "test/goldens/ui_inventory/auth-journey-resend-cooldown-393.png",
+      "previous_source": "test/goldens/ui_inventory/auth-journey-verify-393.png",
+      "route": "/login",
+      "trigger": "Immediately resend → cooldown message",
+      "root_entry": "Open More while signed out → real auth redirect",
+      "evidence": "Actual MomCozyFlutterApp and createMomCozyRouter; only HTTP/session/native-intent dependencies replaced with isolated fixtures",
+      "test": "test/features/auth/auth_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "01-auth/auth-journey-signed-out",
+    "module": "登录与首次使用",
+    "label": "English",
+    "state": "auth-journey-signed-out",
+    "image": "01-auth/auth-journey-signed-out/default.png",
+    "viewport": "01-auth/auth-journey-signed-out/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/login"
+    ],
+    "mapped_design_candidates": [
+      "common/not-found",
+      "auth/login",
+      "auth/register",
+      "auth/verify",
+      "auth/forgot",
+      "auth/reset",
+      "auth/language",
+      "auth/legal"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/auth/presentation/auth_login_chrome.dart",
+      "lib/features/auth/presentation/auth_page.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/auth/auth_inventory_journey_test.dart",
+    "test_case": "inventory registration verification resend and real sign out",
+    "metadata": "raw/test/goldens/ui_inventory/auth-journey-signed-out-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/auth-journey-signed-out-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/auth-journey-signed-out-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/login",
+    "entry": "Open More while signed out → real auth redirect",
+    "trigger": "More → Account settings → Sign out → anonymous login",
+    "journey": {
+      "source": "test/goldens/ui_inventory/auth-journey-signed-out-393.png",
+      "previous_source": "test/goldens/ui_inventory/account-journey-verified-more-393.png",
+      "route": "/login",
+      "trigger": "More → Account settings → Sign out → anonymous login",
+      "root_entry": "Open More while signed out → real auth redirect",
+      "evidence": "Actual MomCozyFlutterApp and createMomCozyRouter; only HTTP/session/native-intent dependencies replaced with isolated fixtures",
+      "test": "test/features/auth/auth_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "01-auth/auth-journey-verify",
+    "module": "登录与首次使用",
+    "label": "Momcozy",
+    "state": "auth-journey-verify",
+    "image": "01-auth/auth-journey-verify/default.png",
+    "viewport": "01-auth/auth-journey-verify/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/login"
+    ],
+    "mapped_design_candidates": [
+      "common/not-found",
+      "auth/login",
+      "auth/register",
+      "auth/verify",
+      "auth/forgot",
+      "auth/reset",
+      "auth/language",
+      "auth/legal"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/auth/presentation/auth_login_chrome.dart",
+      "lib/features/auth/presentation/auth_page.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/auth/auth_inventory_journey_test.dart",
+    "test_case": "inventory registration verification resend and real sign out",
+    "metadata": "raw/test/goldens/ui_inventory/auth-journey-verify-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/auth-journey-verify-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/auth-journey-verify-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/login",
+    "entry": "Open More while signed out → real auth redirect",
+    "trigger": "Submit registration → backend verification_required → verify form",
+    "journey": {
+      "source": "test/goldens/ui_inventory/auth-journey-verify-393.png",
+      "previous_source": "test/goldens/ui_inventory/auth-journey-register-393.png",
+      "route": "/login",
+      "trigger": "Submit registration → backend verification_required → verify form",
+      "root_entry": "Open More while signed out → real auth redirect",
+      "evidence": "Actual MomCozyFlutterApp and createMomCozyRouter; only HTTP/session/native-intent dependencies replaced with isolated fixtures",
+      "test": "test/features/auth/auth_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "01-auth/auth-language",
+    "module": "登录与首次使用",
+    "label": "English",
+    "state": "auth-language",
+    "image": "01-auth/auth-language/default.png",
+    "viewport": "01-auth/auth-language/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/login"
+    ],
+    "mapped_design_candidates": [
+      "auth/login",
+      "auth/register",
+      "auth/verify",
+      "auth/forgot",
+      "auth/reset",
+      "auth/language",
+      "auth/legal"
+    ],
+    "production_widget_files": [
+      "lib/features/auth/presentation/auth_login_chrome.dart",
+      "lib/features/auth/presentation/auth_page.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/features/auth/auth_design_test.dart",
+    "test_case": "email entry and registration at 390.0 / 1.0",
+    "metadata": "raw/test/goldens/design_system/auth-language-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/auth-language-320.png",
+        "metadata": "raw/test/goldens/design_system/auth-language-320.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/auth-language-390.png",
+        "metadata": "raw/test/goldens/design_system/auth-language-390.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/auth-language-430.png",
+        "metadata": "raw/test/goldens/design_system/auth-language-430.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "01-auth/auth-legal",
+    "module": "登录与首次使用",
+    "label": "English",
+    "state": "auth-legal",
+    "image": "01-auth/auth-legal/default.png",
+    "viewport": "01-auth/auth-legal/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/login"
+    ],
+    "mapped_design_candidates": [
+      "auth/login",
+      "auth/register",
+      "auth/verify",
+      "auth/forgot",
+      "auth/reset",
+      "auth/language",
+      "auth/legal"
+    ],
+    "production_widget_files": [
+      "lib/features/auth/presentation/auth_login_chrome.dart",
+      "lib/features/auth/presentation/auth_page.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/features/auth/auth_design_test.dart",
+    "test_case": "email entry and registration at 390.0 / 1.0",
+    "metadata": "raw/test/goldens/design_system/auth-legal-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/auth-legal-320.png",
+        "metadata": "raw/test/goldens/design_system/auth-legal-320.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/auth-legal-390.png",
+        "metadata": "raw/test/goldens/design_system/auth-legal-390.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/auth-legal-430.png",
+        "metadata": "raw/test/goldens/design_system/auth-legal-430.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "01-auth/auth-login",
+    "module": "登录与首次使用",
+    "label": "English",
+    "state": "auth-login",
+    "image": "01-auth/auth-login/default.png",
+    "viewport": "01-auth/auth-login/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/login"
+    ],
+    "mapped_design_candidates": [
+      "auth/login",
+      "auth/register",
+      "auth/verify",
+      "auth/forgot",
+      "auth/reset",
+      "auth/language",
+      "auth/legal"
+    ],
+    "production_widget_files": [
+      "lib/features/auth/presentation/auth_login_chrome.dart",
+      "lib/features/auth/presentation/auth_page.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/features/auth/auth_design_test.dart",
+    "test_case": "email entry and registration at 390.0 / 1.0",
+    "metadata": "raw/test/goldens/design_system/auth-login-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/auth-login-320.png",
+        "metadata": "raw/test/goldens/design_system/auth-login-320.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/auth-login-390.png",
+        "metadata": "raw/test/goldens/design_system/auth-login-390.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/auth-login-430.png",
+        "metadata": "raw/test/goldens/design_system/auth-login-430.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "01-auth/auth-register",
+    "module": "登录与首次使用",
+    "label": "Momcozy",
+    "state": "auth-register",
+    "image": "01-auth/auth-register/default.png",
+    "viewport": "01-auth/auth-register/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/login"
+    ],
+    "mapped_design_candidates": [
+      "auth/login",
+      "auth/register",
+      "auth/verify",
+      "auth/forgot",
+      "auth/reset",
+      "auth/language",
+      "auth/legal"
+    ],
+    "production_widget_files": [
+      "lib/features/auth/presentation/auth_login_chrome.dart",
+      "lib/features/auth/presentation/auth_page.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/features/auth/auth_design_test.dart",
+    "test_case": "email entry and registration at 390.0 / 1.0",
+    "metadata": "raw/test/goldens/design_system/auth-register-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/auth-register-320.png",
+        "metadata": "raw/test/goldens/design_system/auth-register-320.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/auth-register-390.png",
+        "metadata": "raw/test/goldens/design_system/auth-register-390.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/auth-register-430.png",
+        "metadata": "raw/test/goldens/design_system/auth-register-430.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "01-auth/auth-register-validation",
+    "module": "登录与首次使用",
+    "label": "Momcozy",
+    "state": "auth-register-validation",
+    "image": "01-auth/auth-register-validation/default.png",
+    "viewport": "01-auth/auth-register-validation/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/login"
+    ],
+    "mapped_design_candidates": [
+      "auth/login",
+      "auth/register",
+      "auth/verify",
+      "auth/forgot",
+      "auth/reset",
+      "auth/language",
+      "auth/legal"
+    ],
+    "production_widget_files": [
+      "lib/features/auth/presentation/auth_login_chrome.dart",
+      "lib/features/auth/presentation/auth_page.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/features/auth/auth_design_test.dart",
+    "test_case": "email entry and registration at 390.0 / 1.0",
+    "metadata": "raw/test/goldens/design_system/auth-register-validation-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/auth-register-validation-320.png",
+        "metadata": "raw/test/goldens/design_system/auth-register-validation-320.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/auth-register-validation-390.png",
+        "metadata": "raw/test/goldens/design_system/auth-register-validation-390.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/auth-register-validation-430.png",
+        "metadata": "raw/test/goldens/design_system/auth-register-validation-430.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "01-auth/auth-reset",
+    "module": "登录与首次使用",
+    "label": "Momcozy",
+    "state": "auth-reset",
+    "image": "01-auth/auth-reset/default.png",
+    "viewport": "01-auth/auth-reset/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/login"
+    ],
+    "mapped_design_candidates": [
+      "auth/login",
+      "auth/register",
+      "auth/verify",
+      "auth/forgot",
+      "auth/reset",
+      "auth/language",
+      "auth/legal"
+    ],
+    "production_widget_files": [
+      "lib/features/auth/presentation/auth_login_chrome.dart",
+      "lib/features/auth/presentation/auth_page.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/features/auth/auth_design_test.dart",
+    "test_case": "reset form with keyboard at 390.0 / 1.0",
+    "metadata": "raw/test/goldens/design_system/auth-reset-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/auth-reset-320.png",
+        "metadata": "raw/test/goldens/design_system/auth-reset-320.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/auth-reset-390.png",
+        "metadata": "raw/test/goldens/design_system/auth-reset-390.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/auth-reset-430.png",
+        "metadata": "raw/test/goldens/design_system/auth-reset-430.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "01-auth/auth-reset-complete",
+    "module": "登录与首次使用",
+    "label": "English",
+    "state": "auth-reset-complete",
+    "image": "01-auth/auth-reset-complete/default.png",
+    "viewport": "01-auth/auth-reset-complete/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/login"
+    ],
+    "mapped_design_candidates": [
+      "auth/login",
+      "auth/register",
+      "auth/verify",
+      "auth/forgot",
+      "auth/reset",
+      "auth/language",
+      "auth/legal"
+    ],
+    "production_widget_files": [
+      "lib/features/auth/presentation/auth_login_chrome.dart",
+      "lib/features/auth/presentation/auth_page.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/features/auth/auth_design_test.dart",
+    "test_case": "reset form with keyboard at 390.0 / 1.0",
+    "metadata": "raw/test/goldens/design_system/auth-reset-complete-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/auth-reset-complete-320.png",
+        "metadata": "raw/test/goldens/design_system/auth-reset-complete-320.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/auth-reset-complete-390.png",
+        "metadata": "raw/test/goldens/design_system/auth-reset-complete-390.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/auth-reset-complete-430.png",
+        "metadata": "raw/test/goldens/design_system/auth-reset-complete-430.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "01-auth/auth-verify",
+    "module": "登录与首次使用",
+    "label": "Momcozy",
+    "state": "auth-verify",
+    "image": "01-auth/auth-verify/default.png",
+    "viewport": "01-auth/auth-verify/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/login"
+    ],
+    "mapped_design_candidates": [
+      "auth/login",
+      "auth/register",
+      "auth/verify",
+      "auth/forgot",
+      "auth/reset",
+      "auth/language",
+      "auth/legal"
+    ],
+    "production_widget_files": [
+      "lib/features/auth/presentation/auth_login_chrome.dart",
+      "lib/features/auth/presentation/auth_page.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/features/auth/auth_design_test.dart",
+    "test_case": "email entry and registration at 390.0 / 1.0",
+    "metadata": "raw/test/goldens/design_system/auth-verify-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/auth-verify-320.png",
+        "metadata": "raw/test/goldens/design_system/auth-verify-320.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/auth-verify-390.png",
+        "metadata": "raw/test/goldens/design_system/auth-verify-390.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/auth-verify-430.png",
+        "metadata": "raw/test/goldens/design_system/auth-verify-430.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "07-me/account-current-deleted-login",
+    "module": "账号与隐私",
+    "label": "English",
+    "state": "account-current-deleted-login",
+    "image": "07-me/account-current-deleted-login/default.png",
+    "viewport": "07-me/account-current-deleted-login/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/login"
+    ],
+    "mapped_design_candidates": [
+      "common/not-found",
+      "auth/login",
+      "auth/register",
+      "auth/verify",
+      "auth/forgot",
+      "auth/reset",
+      "auth/language",
+      "auth/legal"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/auth/presentation/auth_login_chrome.dart",
+      "lib/features/auth/presentation/auth_page.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/profile/account_current_inventory_test.dart",
+    "test_case": "inventory current Account delete recovery success false",
+    "metadata": "raw/test/goldens/ui_inventory/account-current-deleted-login-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/account-current-deleted-login-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/account-current-deleted-login-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/account-current-deleted-login-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/account-current-deleted-login-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/login",
+    "entry": "Authenticated Me → tap More bottom navigation",
+    "trigger": "Erasure Snackbar expires → login remains",
+    "journey": {
+      "source": "test/goldens/ui_inventory/account-current-deleted-login-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/account-current-deleted-login-message-393-1x.png",
+      "route": "/login",
+      "trigger": "Erasure Snackbar expires → login remains",
+      "root_entry": "Authenticated Me → tap More bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production More/account/privacy/service pages and notification coordinator/repositories; isolated HTTP, push gateway and permission platform; real router.go and ScaffoldMessenger callbacks, no native OS dialog or remote push",
+      "test": "test/modules/profile/account_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "07-me/account-current-deleted-login-message",
+    "module": "账号与隐私",
+    "label": "English",
+    "state": "account-current-deleted-login-message",
+    "image": "07-me/account-current-deleted-login-message/default.png",
+    "viewport": "07-me/account-current-deleted-login-message/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/login"
+    ],
+    "mapped_design_candidates": [
+      "common/not-found",
+      "auth/login",
+      "auth/register",
+      "auth/verify",
+      "auth/forgot",
+      "auth/reset",
+      "auth/language",
+      "auth/legal"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/auth/presentation/auth_login_chrome.dart",
+      "lib/features/auth/presentation/auth_page.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/profile/account_current_inventory_test.dart",
+    "test_case": "inventory current Account delete recovery success false",
+    "metadata": "raw/test/goldens/ui_inventory/account-current-deleted-login-message-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/account-current-deleted-login-message-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/account-current-deleted-login-message-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/account-current-deleted-login-message-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/account-current-deleted-login-message-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/login",
+    "entry": "Authenticated Me → tap More bottom navigation",
+    "trigger": "DELETE succeeds → local session cleared, login and erasure Snackbar",
+    "journey": {
+      "source": "test/goldens/ui_inventory/account-current-deleted-login-message-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/account-current-delete-retry-pending-393-1x.png",
+      "route": "/login",
+      "trigger": "DELETE succeeds → local session cleared, login and erasure Snackbar",
+      "root_entry": "Authenticated Me → tap More bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production More/account/privacy/service pages and notification coordinator/repositories; isolated HTTP, push gateway and permission platform; real router.go and ScaffoldMessenger callbacks, no native OS dialog or remote push",
+      "test": "test/modules/profile/account_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "07-me/account-current-logout-error-dismissed",
+    "module": "账号与隐私",
+    "label": "English",
+    "state": "account-current-logout-error-dismissed",
+    "image": "07-me/account-current-logout-error-dismissed/default.png",
+    "viewport": "07-me/account-current-logout-error-dismissed/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/login"
+    ],
+    "mapped_design_candidates": [
+      "common/not-found",
+      "auth/login",
+      "auth/register",
+      "auth/verify",
+      "auth/forgot",
+      "auth/reset",
+      "auth/language",
+      "auth/legal"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/auth/presentation/auth_login_chrome.dart",
+      "lib/features/auth/presentation/auth_page.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/profile/account_current_inventory_test.dart",
+    "test_case": "inventory current Account logout true false",
+    "metadata": "raw/test/goldens/ui_inventory/account-current-logout-error-dismissed-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/account-current-logout-error-dismissed-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/account-current-logout-error-dismissed-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/account-current-logout-error-dismissed-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/account-current-logout-error-dismissed-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/login",
+    "entry": "Authenticated Me → tap More bottom navigation",
+    "trigger": "Sign-out error expires → login",
+    "journey": {
+      "source": "test/goldens/ui_inventory/account-current-logout-error-dismissed-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/account-current-logout-error-result-393-1x.png",
+      "route": "/login",
+      "trigger": "Sign-out error expires → login",
+      "root_entry": "Authenticated Me → tap More bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production More/account/privacy/service pages and notification coordinator/repositories; isolated HTTP, push gateway and permission platform; real router.go and ScaffoldMessenger callbacks, no native OS dialog or remote push",
+      "test": "test/modules/profile/account_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "07-me/account-current-logout-error-pending",
+    "module": "账号与隐私",
+    "label": "English",
+    "state": "account-current-logout-error-pending",
+    "image": "07-me/account-current-logout-error-pending/default.png",
+    "viewport": "07-me/account-current-logout-error-pending/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/login"
+    ],
+    "mapped_design_candidates": [
+      "common/not-found",
+      "auth/login",
+      "auth/register",
+      "auth/verify",
+      "auth/forgot",
+      "auth/reset",
+      "auth/language",
+      "auth/legal"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/auth/presentation/auth_login_chrome.dart",
+      "lib/features/auth/presentation/auth_page.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/profile/account_current_inventory_test.dart",
+    "test_case": "inventory current Account logout true false",
+    "metadata": "raw/test/goldens/ui_inventory/account-current-logout-error-pending-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/account-current-logout-error-pending-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/account-current-logout-error-pending-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/account-current-logout-error-pending-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/account-current-logout-error-pending-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/login",
+    "entry": "Authenticated Me → tap More bottom navigation",
+    "trigger": "Sign out → login while remote revoke pending",
+    "journey": {
+      "source": "test/goldens/ui_inventory/account-current-logout-error-pending-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/account-current-logout-error-ready-393-1x.png",
+      "route": "/login",
+      "trigger": "Sign out → login while remote revoke pending",
+      "root_entry": "Authenticated Me → tap More bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production More/account/privacy/service pages and notification coordinator/repositories; isolated HTTP, push gateway and permission platform; real router.go and ScaffoldMessenger callbacks, no native OS dialog or remote push",
+      "test": "test/modules/profile/account_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "07-me/account-current-logout-error-result",
+    "module": "账号与隐私",
+    "label": "English",
+    "state": "account-current-logout-error-result",
+    "image": "07-me/account-current-logout-error-result/default.png",
+    "viewport": "07-me/account-current-logout-error-result/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/login"
+    ],
+    "mapped_design_candidates": [
+      "common/not-found",
+      "auth/login",
+      "auth/register",
+      "auth/verify",
+      "auth/forgot",
+      "auth/reset",
+      "auth/language",
+      "auth/legal"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/auth/presentation/auth_login_chrome.dart",
+      "lib/features/auth/presentation/auth_page.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/profile/account_current_inventory_test.dart",
+    "test_case": "inventory current Account logout true false",
+    "metadata": "raw/test/goldens/ui_inventory/account-current-logout-error-result-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/account-current-logout-error-result-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/account-current-logout-error-result-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/account-current-logout-error-result-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/account-current-logout-error-result-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/login",
+    "entry": "Authenticated Me → tap More bottom navigation",
+    "trigger": "Remote revoke 503 → Account-specific sign-out Snackbar",
+    "journey": {
+      "source": "test/goldens/ui_inventory/account-current-logout-error-result-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/account-current-logout-error-pending-393-1x.png",
+      "route": "/login",
+      "trigger": "Remote revoke 503 → Account-specific sign-out Snackbar",
+      "root_entry": "Authenticated Me → tap More bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production More/account/privacy/service pages and notification coordinator/repositories; isolated HTTP, push gateway and permission platform; real router.go and ScaffoldMessenger callbacks, no native OS dialog or remote push",
+      "test": "test/modules/profile/account_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "07-me/account-current-logout-success-pending",
+    "module": "账号与隐私",
+    "label": "English",
+    "state": "account-current-logout-success-pending",
+    "image": "07-me/account-current-logout-success-pending/default.png",
+    "viewport": "07-me/account-current-logout-success-pending/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/login"
+    ],
+    "mapped_design_candidates": [
+      "common/not-found",
+      "auth/login",
+      "auth/register",
+      "auth/verify",
+      "auth/forgot",
+      "auth/reset",
+      "auth/language",
+      "auth/legal"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/auth/presentation/auth_login_chrome.dart",
+      "lib/features/auth/presentation/auth_page.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/profile/account_current_inventory_test.dart",
+    "test_case": "inventory current Account logout false false",
+    "metadata": "raw/test/goldens/ui_inventory/account-current-logout-success-pending-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/account-current-logout-success-pending-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/account-current-logout-success-pending-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/account-current-logout-success-pending-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/account-current-logout-success-pending-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/login",
+    "entry": "Authenticated Me → tap More bottom navigation",
+    "trigger": "Sign out → login while remote revoke pending",
+    "journey": {
+      "source": "test/goldens/ui_inventory/account-current-logout-success-pending-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/account-current-logout-success-ready-393-1x.png",
+      "route": "/login",
+      "trigger": "Sign out → login while remote revoke pending",
+      "root_entry": "Authenticated Me → tap More bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production More/account/privacy/service pages and notification coordinator/repositories; isolated HTTP, push gateway and permission platform; real router.go and ScaffoldMessenger callbacks, no native OS dialog or remote push",
+      "test": "test/modules/profile/account_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "07-me/account-current-logout-success-result",
+    "module": "账号与隐私",
+    "label": "English",
+    "state": "account-current-logout-success-result",
+    "image": "07-me/account-current-logout-success-result/default.png",
+    "viewport": "07-me/account-current-logout-success-result/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/login"
+    ],
+    "mapped_design_candidates": [
+      "common/not-found",
+      "auth/login",
+      "auth/register",
+      "auth/verify",
+      "auth/forgot",
+      "auth/reset",
+      "auth/language",
+      "auth/legal"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/auth/presentation/auth_login_chrome.dart",
+      "lib/features/auth/presentation/auth_page.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/profile/account_current_inventory_test.dart",
+    "test_case": "inventory current Account logout false false",
+    "metadata": "raw/test/goldens/ui_inventory/account-current-logout-success-result-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/account-current-logout-success-result-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/account-current-logout-success-result-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/account-current-logout-success-result-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/account-current-logout-success-result-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/login",
+    "entry": "Authenticated Me → tap More bottom navigation",
+    "trigger": "Remote revoke success → login",
+    "journey": {
+      "source": "test/goldens/ui_inventory/account-current-logout-success-result-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/account-current-logout-success-pending-393-1x.png",
+      "route": "/login",
+      "trigger": "Remote revoke success → login",
+      "root_entry": "Authenticated Me → tap More bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production More/account/privacy/service pages and notification coordinator/repositories; isolated HTTP, push gateway and permission platform; real router.go and ScaffoldMessenger callbacks, no native OS dialog or remote push",
+      "test": "test/modules/profile/account_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "07-me/more-current-logout-complete",
+    "module": "账号与隐私",
+    "label": "English",
+    "state": "more-current-logout-complete",
+    "image": "07-me/more-current-logout-complete/default.png",
+    "viewport": "07-me/more-current-logout-complete/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/login"
+    ],
+    "mapped_design_candidates": [
+      "common/not-found",
+      "auth/login",
+      "auth/register",
+      "auth/verify",
+      "auth/forgot",
+      "auth/reset",
+      "auth/language",
+      "auth/legal"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/auth/presentation/auth_login_chrome.dart",
+      "lib/features/auth/presentation/auth_page.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/profile/more_current_inventory_test.dart",
+    "test_case": "inventory current More routes 393/1x",
+    "metadata": "raw/test/goldens/ui_inventory/more-current-logout-complete-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/more-current-logout-complete-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/more-current-logout-complete-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/more-current-logout-complete-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/more-current-logout-complete-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/login",
+    "entry": "Authenticated Me → tap More bottom navigation",
+    "trigger": "Remote logout-session completed → login remains",
+    "journey": {
+      "source": "test/goldens/ui_inventory/more-current-logout-complete-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/more-current-logout-remote-pending-393-1x.png",
+      "route": "/login",
+      "trigger": "Remote logout-session completed → login remains",
+      "root_entry": "Authenticated Me → tap More bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production More/account/privacy/service pages and notification coordinator/repositories; isolated HTTP, push gateway and permission platform; real router.go and ScaffoldMessenger callbacks, no native OS dialog or remote push",
+      "test": "test/modules/profile/more_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "07-me/more-current-logout-error-dismissed",
+    "module": "账号与隐私",
+    "label": "English",
+    "state": "more-current-logout-error-dismissed",
+    "image": "07-me/more-current-logout-error-dismissed/default.png",
+    "viewport": "07-me/more-current-logout-error-dismissed/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/login"
+    ],
+    "mapped_design_candidates": [
+      "common/not-found",
+      "auth/login",
+      "auth/register",
+      "auth/verify",
+      "auth/forgot",
+      "auth/reset",
+      "auth/language",
+      "auth/legal"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/auth/presentation/auth_login_chrome.dart",
+      "lib/features/auth/presentation/auth_page.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/profile/more_current_inventory_test.dart",
+    "test_case": "inventory current More remote signout error 393/1x",
+    "metadata": "raw/test/goldens/ui_inventory/more-current-logout-error-dismissed-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/more-current-logout-error-dismissed-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/more-current-logout-error-dismissed-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/more-current-logout-error-dismissed-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/more-current-logout-error-dismissed-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/login",
+    "entry": "Authenticated Me → tap More bottom navigation",
+    "trigger": "Snackbar expires → anonymous login persists",
+    "journey": {
+      "source": "test/goldens/ui_inventory/more-current-logout-error-dismissed-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/more-current-logout-error-message-393-1x.png",
+      "route": "/login",
+      "trigger": "Snackbar expires → anonymous login persists",
+      "root_entry": "Authenticated Me → tap More bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production More/account/privacy/service pages and notification coordinator/repositories; isolated HTTP, push gateway and permission platform; real router.go and ScaffoldMessenger callbacks, no native OS dialog or remote push",
+      "test": "test/modules/profile/more_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "07-me/more-current-logout-error-message",
+    "module": "账号与隐私",
+    "label": "English",
+    "state": "more-current-logout-error-message",
+    "image": "07-me/more-current-logout-error-message/default.png",
+    "viewport": "07-me/more-current-logout-error-message/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/login"
+    ],
+    "mapped_design_candidates": [
+      "common/not-found",
+      "auth/login",
+      "auth/register",
+      "auth/verify",
+      "auth/forgot",
+      "auth/reset",
+      "auth/language",
+      "auth/legal"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/auth/presentation/auth_login_chrome.dart",
+      "lib/features/auth/presentation/auth_page.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/profile/more_current_inventory_test.dart",
+    "test_case": "inventory current More remote signout error 393/1x",
+    "metadata": "raw/test/goldens/ui_inventory/more-current-logout-error-message-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/more-current-logout-error-message-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/more-current-logout-error-message-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/more-current-logout-error-message-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/more-current-logout-error-message-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/login",
+    "entry": "Authenticated Me → tap More bottom navigation",
+    "trigger": "Remote revoke returns 503 → login with sign-out failure Snackbar",
+    "journey": {
+      "source": "test/goldens/ui_inventory/more-current-logout-error-message-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/more-current-logout-error-ready-393-1x.png",
+      "route": "/login",
+      "trigger": "Remote revoke returns 503 → login with sign-out failure Snackbar",
+      "root_entry": "Authenticated Me → tap More bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production More/account/privacy/service pages and notification coordinator/repositories; isolated HTTP, push gateway and permission platform; real router.go and ScaffoldMessenger callbacks, no native OS dialog or remote push",
+      "test": "test/modules/profile/more_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "07-me/more-current-logout-remote-pending",
+    "module": "账号与隐私",
+    "label": "English",
+    "state": "more-current-logout-remote-pending",
+    "image": "07-me/more-current-logout-remote-pending/default.png",
+    "viewport": "07-me/more-current-logout-remote-pending/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/login"
+    ],
+    "mapped_design_candidates": [
+      "common/not-found",
+      "auth/login",
+      "auth/register",
+      "auth/verify",
+      "auth/forgot",
+      "auth/reset",
+      "auth/language",
+      "auth/legal"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/auth/presentation/auth_login_chrome.dart",
+      "lib/features/auth/presentation/auth_page.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/profile/more_current_inventory_test.dart",
+    "test_case": "inventory current More routes 393/1x",
+    "metadata": "raw/test/goldens/ui_inventory/more-current-logout-remote-pending-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/more-current-logout-remote-pending-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/more-current-logout-remote-pending-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/more-current-logout-remote-pending-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/more-current-logout-remote-pending-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/login",
+    "entry": "Authenticated Me → tap More bottom navigation",
+    "trigger": "Sign out → local session cleared and login immediately, remote revoke pending",
+    "journey": {
+      "source": "test/goldens/ui_inventory/more-current-logout-remote-pending-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/more-current-logout-visible-393-1x.png",
+      "route": "/login",
+      "trigger": "Sign out → local session cleared and login immediately, remote revoke pending",
+      "root_entry": "Authenticated Me → tap More bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production More/account/privacy/service pages and notification coordinator/repositories; isolated HTTP, push gateway and permission platform; real router.go and ScaffoldMessenger callbacks, no native OS dialog or remote push",
+      "test": "test/modules/profile/more_current_inventory_test.dart"
+    }
+  }
+]

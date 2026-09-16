@@ -1,0 +1,7 @@
+{
+  "lib/modules/consultation/presentation/room_page.dart": "f5a6dbaad54f6cf9ad505174c18cb15535409008a6b3ec065936311aaa4e04bc",
+  "lib/modules/consultation/presentation/video_stage.dart": "5de9cb2ac09413da03cb4e55e4435615957e062f23a79baaada59d7d66c67118",
+  "lib/modules/consultation/presentation/user_video_stage.dart": "7799cc3483a77aa095749dfa8879b74e360ee006cd9550c1f2884fffc9333160",
+  "test/modules/consultation/user_video_test.dart": "2fa145159eb5d76aa319a1295b10c3c1fe0aefa479327cb93ab907a772e63c3f",
+  "test/modules/consultation/room_page_test.dart": "2566a0d7d2a9811beec7c462231e2b03664a40450b3f1c4e7ac77e1c8d5cdac8"
+}

@@ -53,14 +53,22 @@ class CareApiRepository implements CareRepository, StripeCheckoutRepository {
     ),
   );
   @override
-  Future<StripeCheckout> stripeCheckout(String orderId) => withProductFailure(() async {
-    final json = await transport.postJson('/v1/care/orders/${Uri.encodeComponent(orderId)}/checkout');
-    final url = Uri.tryParse(json['checkout_url'] as String? ?? '');
-    if (url == null || !url.isAbsolute || url.scheme != 'https') {
-      throw StateError('Stripe returned an invalid Checkout URL');
-    }
-    return StripeCheckout(url: url, purchase: readPurchase((json['purchase'] as Map).cast<String, Object?>()));
-  });
+  Future<StripeCheckout> stripeCheckout(String orderId) =>
+      withProductFailure(() async {
+        final json = await transport.postJson(
+          '/v1/care/orders/${Uri.encodeComponent(orderId)}/checkout',
+        );
+        final url = Uri.tryParse(json['checkout_url'] as String? ?? '');
+        if (url == null || !url.isAbsolute || url.scheme != 'https') {
+          throw StateError('Stripe returned an invalid Checkout URL');
+        }
+        return StripeCheckout(
+          url: url,
+          purchase: readPurchase(
+            (json['purchase'] as Map).cast<String, Object?>(),
+          ),
+        );
+      });
   @override
   Future<Purchase> sandboxPayment(
     String orderId, {

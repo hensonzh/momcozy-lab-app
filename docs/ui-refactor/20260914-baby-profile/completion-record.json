@@ -1,0 +1,21 @@
+{
+  "recorded_at": "2026-09-14T10:32:06.429585+00:00",
+  "source_states": 79,
+  "source_files_verified": 444,
+  "new_figma_frames": 26,
+  "reused_figma_nodes": 5,
+  "figma_live_nodes_verified": 31,
+  "verified_app_images": 105,
+  "joint_tests_passed": 164,
+  "final_affected_tests_passed": 12,
+  "affected_tests_overlap_joint_total": true,
+  "static_analysis": "2 files, no issues",
+  "production_files_changed_this_slice": [
+    "lib/modules/baby/presentation/baby_profile_editor.dart"
+  ],
+  "controller_unchanged": true,
+  "implemented_scopes": 34,
+  "observed_states": 2818,
+  "pending_review": 0,
+  "goal_status": "active"
+}

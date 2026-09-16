@@ -1,0 +1,8 @@
+{
+  "source_images_unchanged": true,
+  "motion_controller_byte_identical": true,
+  "motion_lifecycle_before_build_unchanged": true,
+  "motion_painter_byte_identical": true,
+  "app_router_unchanged": true,
+  "manifest_unchanged": true
+}

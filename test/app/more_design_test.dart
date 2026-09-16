@@ -8,6 +8,7 @@ import 'package:momcozy_flutter_app/modules/profile/presentation/more_page.dart'
 import 'package:momcozy_flutter_app/shared/design_system/momcozy_theme.dart';
 import 'package:momcozy_flutter_app/shared/design_system/momcozy_design_system.dart';
 import '../support/momcozy_test_fonts.dart';
+import '../support/fixture_api_transport.dart';
 
 void main() {
   setUpAll(loadMomCozyTestFonts);
@@ -27,6 +28,10 @@ void main() {
             babyId: 'baby',
             locale: 'en',
           ),
+          jsonTransport: FixtureApiJsonTransport({
+            'display_name': 'Mia Chen',
+            'email': 'mia@example.test',
+          }),
         );
         final router = GoRouter(
           initialLocation: '/more',
@@ -43,7 +48,12 @@ void main() {
                 ),
               ),
             ),
-            for (final path in ['/account', '/notifications', '/services'])
+            for (final path in [
+              '/account',
+              '/notifications',
+              '/services',
+              '/privacy',
+            ])
               GoRoute(
                 path: path,
                 builder: (_, _) => Scaffold(body: Text(path)),
@@ -66,12 +76,14 @@ void main() {
         );
         await tester.pumpAndSettle();
         final context = tester.element(find.byType(MorePage));
-        await tester.runAsync(
-          () => precacheImage(
-            const AssetImage(MomCozyAssets.agentAvatar),
-            context,
-          ),
-        );
+        await tester.runAsync(() async {
+          for (final asset in [
+            MomCozyAssets.agentAvatar,
+            'assets/images/mom_home/expert_group.png',
+          ]) {
+            await precacheImage(AssetImage(asset), context);
+          }
+        });
         await tester.pumpAndSettle();
         expect(tester.takeException(), isNull);
         if (scale == 1) {
@@ -82,22 +94,25 @@ void main() {
             ),
           );
         }
-        final privacy = find.text('隐私与授权');
+        expect(find.text('Mia Chen'), findsOneWidget);
+        expect(find.text('mia@example.test'), findsOneWidget);
+        final privacy = find.text('隐私');
         await tester.scrollUntilVisible(privacy, 240);
         await tester.pumpAndSettle();
         await tester.tap(privacy);
         await tester.pumpAndSettle();
         expect(tester.takeException(), isNull);
-        await tester.tap(find.text('知道了'));
+        expect(find.text('/privacy'), findsOneWidget);
+        router.go('/more');
         await tester.pumpAndSettle();
         for (final entry in {
-          'Account settings': '/account',
+          '账号设置': '/account',
           '通知': '/notifications',
           '专家支持': '/services',
         }.entries) {
           await tester.scrollUntilVisible(
             find.text(entry.key),
-            entry.key == 'Account settings' ? -240 : 240,
+            entry.key == '账号设置' ? -240 : 240,
           );
           await tester.pumpAndSettle();
           await tester.tap(find.text(entry.key));

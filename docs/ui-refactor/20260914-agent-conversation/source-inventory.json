@@ -1,0 +1,608 @@
+[
+  {
+    "id": "05-agent/agent-chat",
+    "module": "Cozymate",
+    "label": "我们可以一起整理今天的记录。",
+    "state": "agent-chat",
+    "image": "05-agent/agent-chat/default.png",
+    "viewport": "05-agent/agent-chat/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [
+      "agent/home",
+      "agent/attachments",
+      "agent/message-menu",
+      "agent/voice",
+      "agent/state-03",
+      "agent/12-agent-error",
+      "agent/12b-agent-conversation"
+    ],
+    "production_widget_files": [
+      "lib/features/agent_hub/agent_hub_page.dart",
+      "lib/features/agent_hub/presentation/agent_message_menu.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/features/agent_hub/agent_me_design_test.dart",
+    "test_case": "Agent transcript at 390.0",
+    "metadata": "raw/test/goldens/design_system/agent-chat-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/agent-chat-320.png",
+        "metadata": "raw/test/goldens/design_system/agent-chat-320.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/agent-chat-390.png",
+        "metadata": "raw/test/goldens/design_system/agent-chat-390.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/agent-chat-430.png",
+        "metadata": "raw/test/goldens/design_system/agent-chat-430.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "05-agent/agent-conversation-disconnected-empty",
+    "module": "Cozymate",
+    "label": "嗨 Mia，  /  / 今天想聊点什么呢？  /  / 把你现在最关心的事情告诉我就好，我会陪你一起梳理。",
+    "state": "agent-conversation-disconnected-empty",
+    "image": "05-agent/agent-conversation-disconnected-empty/default.png",
+    "viewport": "05-agent/agent-conversation-disconnected-empty/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/",
+      "/me /baby / /schedule /more"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "agent/home",
+      "agent/attachments",
+      "agent/message-menu",
+      "agent/voice",
+      "agent/state-03",
+      "agent/12-agent-error",
+      "agent/12b-agent-conversation"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/features/agent_hub/agent_hub_page.dart",
+      "lib/features/agent_hub/presentation/agent_message_menu.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/features/agent_hub/agent_conversation_design_test.dart",
+    "test_case": "conversation recovery 390.0/1.0",
+    "metadata": "raw/test/goldens/design_system/agent-conversation-disconnected-empty-390-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/agent-conversation-disconnected-empty-320-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-conversation-disconnected-empty-320-1x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/agent-conversation-disconnected-empty-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-conversation-disconnected-empty-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/agent-conversation-disconnected-empty-390-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-conversation-disconnected-empty-390-1x.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/agent-conversation-disconnected-empty-390-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-conversation-disconnected-empty-390-2x.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/agent-conversation-disconnected-empty-430-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-conversation-disconnected-empty-430-1x.png.json",
+        "width": 430,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/agent-conversation-disconnected-empty-430-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-conversation-disconnected-empty-430-2x.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "05-agent/agent-conversation-disconnected-partial",
+    "module": "Cozymate",
+    "label": "这是一条仅用于本地视觉检查的消息。",
+    "state": "agent-conversation-disconnected-partial",
+    "image": "05-agent/agent-conversation-disconnected-partial/default.png",
+    "viewport": "05-agent/agent-conversation-disconnected-partial/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/",
+      "/me /baby / /schedule /more"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "agent/home",
+      "agent/attachments",
+      "agent/message-menu",
+      "agent/voice",
+      "agent/state-03",
+      "agent/12-agent-error",
+      "agent/12b-agent-conversation"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/features/agent_hub/agent_hub_page.dart",
+      "lib/features/agent_hub/presentation/agent_message_menu.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/features/agent_hub/agent_conversation_design_test.dart",
+    "test_case": "conversation recovery 390.0/1.0",
+    "metadata": "raw/test/goldens/design_system/agent-conversation-disconnected-partial-390-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/agent-conversation-disconnected-partial-320-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-conversation-disconnected-partial-320-1x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/agent-conversation-disconnected-partial-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-conversation-disconnected-partial-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/agent-conversation-disconnected-partial-390-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-conversation-disconnected-partial-390-1x.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/agent-conversation-disconnected-partial-390-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-conversation-disconnected-partial-390-2x.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/agent-conversation-disconnected-partial-430-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-conversation-disconnected-partial-430-1x.png.json",
+        "width": 430,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/agent-conversation-disconnected-partial-430-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-conversation-disconnected-partial-430-2x.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "05-agent/agent-conversation-home",
+    "module": "Cozymate",
+    "label": "嗨 Mia，  /  / 今天想聊点什么呢？  /  / 把你现在最关心的事情告诉我就好，我会陪你一起梳理。",
+    "state": "agent-conversation-home",
+    "image": "05-agent/agent-conversation-home/default.png",
+    "viewport": "05-agent/agent-conversation-home/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/",
+      "/me /baby / /schedule /more"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "agent/home",
+      "agent/attachments",
+      "agent/message-menu",
+      "agent/voice",
+      "agent/state-03",
+      "agent/12-agent-error",
+      "agent/12b-agent-conversation"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/features/agent_hub/agent_hub_page.dart",
+      "lib/features/agent_hub/presentation/agent_message_menu.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/features/agent_hub/agent_conversation_design_test.dart",
+    "test_case": "conversation recovery 390.0/1.0",
+    "metadata": "raw/test/goldens/design_system/agent-conversation-home-390-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/agent-conversation-home-320-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-conversation-home-320-1x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/agent-conversation-home-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-conversation-home-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/agent-conversation-home-390-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-conversation-home-390-1x.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/agent-conversation-home-390-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-conversation-home-390-2x.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/agent-conversation-home-430-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-conversation-home-430-1x.png.json",
+        "width": 430,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/agent-conversation-home-430-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-conversation-home-430-2x.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "05-agent/agent-conversation-reply",
+    "module": "Cozymate",
+    "label": "嗨 Mia，  /  / 今天想聊点什么呢？  /  / 把你现在最关心的事情告诉我就好，我会陪你一起梳理。",
+    "state": "agent-conversation-reply",
+    "image": "05-agent/agent-conversation-reply/default.png",
+    "viewport": "05-agent/agent-conversation-reply/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/",
+      "/me /baby / /schedule /more"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "agent/home",
+      "agent/attachments",
+      "agent/message-menu",
+      "agent/voice",
+      "agent/state-03",
+      "agent/12-agent-error",
+      "agent/12b-agent-conversation"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/features/agent_hub/agent_hub_page.dart",
+      "lib/features/agent_hub/presentation/agent_message_menu.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/features/agent_hub/agent_conversation_design_test.dart",
+    "test_case": "conversation recovery 390.0/1.0",
+    "metadata": "raw/test/goldens/design_system/agent-conversation-reply-390-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/agent-conversation-reply-320-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-conversation-reply-320-1x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/agent-conversation-reply-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-conversation-reply-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/agent-conversation-reply-390-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-conversation-reply-390-1x.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/agent-conversation-reply-390-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-conversation-reply-390-2x.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/agent-conversation-reply-430-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-conversation-reply-430-1x.png.json",
+        "width": 430,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/agent-conversation-reply-430-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-conversation-reply-430-2x.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "05-agent/agent-conversation-resumed",
+    "module": "Cozymate",
+    "label": "嗨 Mia，  /  / 今天想聊点什么呢？  /  / 把你现在最关心的事情告诉我就好，我会陪你一起梳理。",
+    "state": "agent-conversation-resumed",
+    "image": "05-agent/agent-conversation-resumed/default.png",
+    "viewport": "05-agent/agent-conversation-resumed/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/",
+      "/me /baby / /schedule /more"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "agent/home",
+      "agent/attachments",
+      "agent/message-menu",
+      "agent/voice",
+      "agent/state-03",
+      "agent/12-agent-error",
+      "agent/12b-agent-conversation"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/features/agent_hub/agent_hub_page.dart",
+      "lib/features/agent_hub/presentation/agent_message_menu.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/features/agent_hub/agent_conversation_design_test.dart",
+    "test_case": "conversation recovery 390.0/1.0",
+    "metadata": "raw/test/goldens/design_system/agent-conversation-resumed-390-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/agent-conversation-resumed-320-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-conversation-resumed-320-1x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/agent-conversation-resumed-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-conversation-resumed-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/agent-conversation-resumed-390-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-conversation-resumed-390-1x.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/agent-conversation-resumed-390-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-conversation-resumed-390-2x.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/agent-conversation-resumed-430-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-conversation-resumed-430-1x.png.json",
+        "width": 430,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/agent-conversation-resumed-430-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-conversation-resumed-430-2x.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "05-agent/agent-conversation-streaming",
+    "module": "Cozymate",
+    "label": "嗨 Mia，  /  / 今天想聊点什么呢？  /  / 把你现在最关心的事情告诉我就好，我会陪你一起梳理。",
+    "state": "agent-conversation-streaming",
+    "image": "05-agent/agent-conversation-streaming/default.png",
+    "viewport": "05-agent/agent-conversation-streaming/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/",
+      "/me /baby / /schedule /more"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "agent/home",
+      "agent/attachments",
+      "agent/message-menu",
+      "agent/voice",
+      "agent/state-03",
+      "agent/12-agent-error",
+      "agent/12b-agent-conversation"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/features/agent_hub/agent_hub_page.dart",
+      "lib/features/agent_hub/presentation/agent_message_menu.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/features/agent_hub/agent_conversation_design_test.dart",
+    "test_case": "conversation recovery 390.0/1.0",
+    "metadata": "raw/test/goldens/design_system/agent-conversation-streaming-390-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/agent-conversation-streaming-320-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-conversation-streaming-320-1x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/agent-conversation-streaming-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-conversation-streaming-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/agent-conversation-streaming-390-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-conversation-streaming-390-1x.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/agent-conversation-streaming-390-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-conversation-streaming-390-2x.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/agent-conversation-streaming-430-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-conversation-streaming-430-1x.png.json",
+        "width": 430,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/agent-conversation-streaming-430-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-conversation-streaming-430-2x.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "05-agent/agent-conversation-terminal-error",
+    "module": "Cozymate",
+    "label": "嗨 Mia，  /  / 今天想聊点什么呢？  /  / 把你现在最关心的事情告诉我就好，我会陪你一起梳理。",
+    "state": "agent-conversation-terminal-error",
+    "image": "05-agent/agent-conversation-terminal-error/default.png",
+    "viewport": "05-agent/agent-conversation-terminal-error/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/",
+      "/me /baby / /schedule /more"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "agent/home",
+      "agent/attachments",
+      "agent/message-menu",
+      "agent/voice",
+      "agent/state-03",
+      "agent/12-agent-error",
+      "agent/12b-agent-conversation"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/features/agent_hub/agent_hub_page.dart",
+      "lib/features/agent_hub/presentation/agent_message_menu.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/features/agent_hub/agent_conversation_design_test.dart",
+    "test_case": "conversation recovery 390.0/1.0",
+    "metadata": "raw/test/goldens/design_system/agent-conversation-terminal-error-390-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/agent-conversation-terminal-error-320-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-conversation-terminal-error-320-1x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/agent-conversation-terminal-error-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-conversation-terminal-error-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/agent-conversation-terminal-error-390-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-conversation-terminal-error-390-1x.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/agent-conversation-terminal-error-390-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-conversation-terminal-error-390-2x.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/agent-conversation-terminal-error-430-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-conversation-terminal-error-430-1x.png.json",
+        "width": 430,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/agent-conversation-terminal-error-430-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-conversation-terminal-error-430-2x.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "05-agent/agent-home",
+    "module": "Cozymate",
+    "label": "嗨，我是 Cozymate，来自 Momcozy团队。 /  / 你希望我怎么称呼你？今年多大啦？",
+    "state": "agent-home",
+    "image": "05-agent/agent-home/default.png",
+    "viewport": "05-agent/agent-home/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [
+      "agent/home",
+      "agent/attachments",
+      "agent/message-menu",
+      "agent/voice",
+      "agent/state-03",
+      "agent/12-agent-error",
+      "agent/12b-agent-conversation"
+    ],
+    "production_widget_files": [
+      "lib/features/agent_hub/agent_hub_page.dart",
+      "lib/features/agent_hub/presentation/agent_message_menu.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/features/agent_hub/agent_me_design_test.dart",
+    "test_case": "Agent home and keyboard at 390.0 / 1.0",
+    "metadata": "raw/test/goldens/design_system/agent-home-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/agent-home-320.png",
+        "metadata": "raw/test/goldens/design_system/agent-home-320.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/agent-home-390.png",
+        "metadata": "raw/test/goldens/design_system/agent-home-390.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/agent-home-430.png",
+        "metadata": "raw/test/goldens/design_system/agent-home-430.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  }
+]

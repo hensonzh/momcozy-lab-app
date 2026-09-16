@@ -1,0 +1,6 @@
+{
+  "lib/modules/services/presentation/service_catalog_page.dart": "2a5422ae83b92a085cd29625def47d75b47f26788801b53062c894b088d71802",
+  "lib/modules/services/presentation/mom_service_widgets.dart": "43e53d98f9ddbdb13d8c294af4c53d7cd867e12be1b2eebd380947a77a6a3ea1",
+  "test/modules/services/service_catalog_redesign_test.dart": "f611df086e03b7a2573a24bfd674afe125d411df1cc8225c18162f90b4ba0488",
+  "test/modules/services/service_design_test.dart": "bd2a084c9eae061a75627b5275c36476b1df7f9348b89a2a187bab33a05609e3"
+}

@@ -5,6 +5,7 @@ import '../../../domain/mother/mother_profile.dart';
 import '../../../domain/shared/local_date.dart';
 import '../../../domain/shared/product_failure.dart';
 import '../../../domain/shared/resource_state.dart';
+import 'mom_home_view_data.dart';
 
 class MotherHomeController extends ChangeNotifier {
   MotherHomeController({
@@ -13,12 +14,15 @@ class MotherHomeController extends ChangeNotifier {
     required this.lactationRepository,
     required this.ownerUserId,
     required this.now,
+    this.insightRepository,
   });
   final MotherProfileRepository profileRepository;
   final MotherDiaryRepository diaryRepository;
   final LactationRepository lactationRepository;
   final String ownerUserId;
   final DateTime Function() now;
+  final MomDailyInsightRepository? insightRepository;
+  ResourceState<MomDailyInsight> insight = const ResourceState();
   ResourceState<MotherProfile> profile = const ResourceState.loading();
   ResourceState<List<MotherDiaryEntry>> diaries = const ResourceState.loading();
   ResourceState<List<LactationRecord>> lactation =
@@ -45,6 +49,7 @@ class MotherHomeController extends ChangeNotifier {
     profile = ResourceState.loading(profile.value);
     diaries = ResourceState.loading(sameDay ? diaries.value : null);
     lactation = ResourceState.loading(sameDay ? lactation.value : null);
+    insight = const ResourceState.loading();
     notifyListeners();
     await Future.wait([
       _fetch(
@@ -77,6 +82,19 @@ class MotherHomeController extends ChangeNotifier {
         lactation.value,
       ),
     ]);
+    if (_disposed || generation != _generation) return;
+    final repository = insightRepository;
+    if (repository == null) {
+      insight = const ResourceState(value: MomDailyInsight.unavailable);
+      notifyListeners();
+    } else {
+      await _fetch<MomDailyInsight>(
+        () => repository.read(date),
+        (value) => insight = value,
+        generation,
+        null,
+      );
+    }
   }
 
   Future<void> _fetch<T>(

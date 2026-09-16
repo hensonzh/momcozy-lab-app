@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../domain/shared/product_failure.dart';
 import '../design_system/momcozy_design_system.dart';
+import '../design_system/momcozy_text_roles.dart';
+import '../design_system/mom_home_tokens.dart';
+import 'mom_settings_widgets.dart';
 
 class ProductErrorView extends StatelessWidget {
   const ProductErrorView({
@@ -8,10 +11,12 @@ class ProductErrorView extends StatelessWidget {
     required this.failure,
     this.onRetry,
     this.preserveDraft = false,
+    this.useMomStyle = false,
   });
   final ProductFailure failure;
   final VoidCallback? onRetry;
   final bool preserveDraft;
+  final bool useMomStyle;
 
   @override
   Widget build(BuildContext context) {
@@ -23,6 +28,26 @@ class ProductErrorView extends StatelessWidget {
       ProductFailureKind.invalid => '请检查填写内容后重试',
       ProductFailureKind.unavailable => '暂时无法载入，请稍后重试',
     };
+    if (useMomStyle) {
+      return Semantics(
+        liveRegion: true,
+        child: MomSettingsCard(
+          color: MomCozyColors.amberSoft,
+          children: [
+            Text(message, style: MomHomeTokens.text(13, height: 1.55)),
+            if (preserveDraft)
+              Text('这次填写的内容仍然保留。', style: MomHomeTokens.text(13)),
+            if (onRetry != null)
+              TextButton(
+                onPressed: onRetry,
+                child: Text(
+                  failure.kind == ProductFailureKind.conflict ? '重新载入' : '重试',
+                ),
+              ),
+          ],
+        ),
+      );
+    }
     return Semantics(
       liveRegion: true,
       child: Container(
@@ -37,9 +62,15 @@ class ProductErrorView extends StatelessWidget {
           children: [
             Text(
               message,
-              style: const TextStyle(color: MomCozyColors.foreground),
+              style: MomCozyTextRoles.paragraphOf(
+                context,
+              ).copyWith(color: MomCozyColors.foreground),
             ),
-            if (preserveDraft) const Text('这次填写的内容仍然保留。'),
+            if (preserveDraft)
+              Text(
+                '这次填写的内容仍然保留。',
+                style: MomCozyTextRoles.paragraphOf(context),
+              ),
             if (onRetry != null)
               TextButton(
                 onPressed: onRetry,
@@ -62,17 +93,22 @@ class ProductEmptyView extends StatelessWidget {
     this.action,
     this.icon,
     this.foreground,
+    this.textAlign = TextAlign.center,
   });
   final String title;
   final String? description;
   final Widget? action;
   final IconData? icon;
   final Color? foreground;
+  final TextAlign textAlign;
   @override
   Widget build(BuildContext context) => Padding(
     padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 16),
     child: Column(
       mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: textAlign == TextAlign.start
+          ? CrossAxisAlignment.start
+          : CrossAxisAlignment.center,
       children: [
         if (icon != null) ...[
           Icon(
@@ -84,7 +120,7 @@ class ProductEmptyView extends StatelessWidget {
         ],
         Text(
           title,
-          textAlign: TextAlign.center,
+          textAlign: textAlign,
           style: TextStyle(
             color: foreground,
             fontWeight: FontWeight.w600,
@@ -96,8 +132,10 @@ class ProductEmptyView extends StatelessWidget {
             padding: const EdgeInsets.only(top: 8),
             child: Text(
               description!,
-              textAlign: TextAlign.center,
-              style: TextStyle(color: foreground),
+              textAlign: textAlign,
+              style: MomCozyTextRoles.paragraphOf(
+                context,
+              ).copyWith(color: foreground),
             ),
           ),
         if (action != null)
@@ -112,25 +150,33 @@ class ProductLoadingView extends StatelessWidget {
   final String? label;
   final Color? foreground;
   @override
-  Widget build(BuildContext context) => Center(
-    child: Padding(
-      padding: const EdgeInsets.all(MomCozySpacing.section),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          CircularProgressIndicator(color: foreground),
-          if (label != null)
-            Padding(
-              padding: const EdgeInsets.only(top: MomCozySpacing.content),
-              child: Text(
-                label!,
-                textAlign: TextAlign.center,
-                style: MomCozyTypography.secondaryText.copyWith(
-                  color: foreground,
-                ),
-              ),
+  Widget build(BuildContext context) => Semantics(
+    label: label ?? '正在载入',
+    liveRegion: true,
+    child: ExcludeSemantics(
+      child: Center(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(MomCozySpacing.section),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CircularProgressIndicator(color: foreground),
+                if (label != null)
+                  Padding(
+                    padding: const EdgeInsets.only(top: MomCozySpacing.content),
+                    child: Text(
+                      label!,
+                      textAlign: TextAlign.center,
+                      style: MomCozyTypography.secondaryText
+                          .merge(MomCozyTextRoles.paragraphOf(context))
+                          .copyWith(color: foreground),
+                    ),
+                  ),
+              ],
             ),
-        ],
+          ),
+        ),
       ),
     ),
   );

@@ -1,0 +1,6 @@
+Analyzing mother_diary_editor.dart, mother_diary_page.dart, diary_fields.dart, choice_field.dart, mother_diary_redesign_test.dart...
+
+   info - test/modules/mom/mother_diary_redesign_test.dart:121:24 - Use interpolation to compose strings and values. Try using string interpolation to build the composite string. - prefer_interpolation_to_compose_strings
+   info - test/modules/mom/mother_diary_redesign_test.dart:123:62 - Use interpolation to compose strings and values. Try using string interpolation to build the composite string. - prefer_interpolation_to_compose_strings
+
+2 issues found.

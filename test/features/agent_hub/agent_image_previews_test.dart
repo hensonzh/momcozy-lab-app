@@ -1,11 +1,147 @@
-import 'dart:convert';
+import 'dart:io';
+import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_client.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/presentation/agent_image_previews.dart';
+import '../../support/agent_image_scenarios.dart';
 
 void main() {
+  final imageBytes = File('assets/images/mom/milk-hero.png').readAsBytesSync();
+  testWidgets('empty thumbnail stops loading and preserves original access', (
+    tester,
+  ) async {
+    var originals = 0;
+    await tester.pumpWidget(
+      agentImageTestHost(
+        AgentSentImages(
+          images: const [
+            AgentStreamImageInput(
+              dataUrl: '',
+              fileId: 'fixture-id',
+              name: 'Notes.png',
+            ),
+          ],
+          loadImageThumbnail: (_) async => Uint8List(0),
+          loadImageContent: (_) async {
+            originals++;
+            return imageBytes;
+          },
+        ),
+        1,
+      ),
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.byType(CircularProgressIndicator), findsNothing);
+    expect(find.text('Notes.png'), findsOneWidget);
+    await tester.runAsync(
+      () => precacheImage(
+        MemoryImage(imageBytes),
+        tester.element(find.byType(MaterialApp)),
+      ),
+    );
+    await tester.tap(find.byKey(const ValueKey('agent-sent-image-0')));
+    await tester.pumpAndSettle();
+    expect(originals, 1);
+    expect(find.byKey(const ValueKey('agent-image-stage')), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+  for (final failure in ['sync', 'async', 'corrupt', 'local-with-remote']) {
+    testWidgets(
+      'image read failure $failure recovers using authenticated original',
+      (tester) async {
+        var reads = 0;
+        final good = imageBytes;
+        await tester.pumpWidget(
+          agentImageTestHost(
+            AgentSentImages(
+              images: [
+                AgentStreamImageInput(
+                  dataUrl: '',
+                  fileId: 'fixture-id',
+                  name: 'Notes.png',
+                  localBytes: failure == 'local-with-remote'
+                      ? Uint8List.fromList([1, 2, 3])
+                      : null,
+                ),
+              ],
+              loadImageThumbnail: (_) async => good,
+              loadImageContent: (id) {
+                expect(id, 'fixture-id');
+                reads++;
+                if (reads > 1 || failure == 'local-with-remote') {
+                  return Future.value(good);
+                }
+                if (failure == 'sync') throw StateError('fixture-denied');
+                if (failure == 'async') {
+                  return Future.error(StateError('fixture-offline'));
+                }
+                return Future.value(Uint8List.fromList([1, 2, 3]));
+              },
+            ),
+            2,
+          ),
+        );
+        await tester.runAsync(
+          () => precacheImage(
+            MemoryImage(good),
+            tester.element(find.byType(MaterialApp)),
+          ),
+        );
+        await tester.pumpAndSettle();
+        expect(find.text('大小未知'), findsOneWidget);
+        await tester.tap(find.byKey(const ValueKey('agent-sent-image-0')));
+        await tester.runAsync(
+          () async => Future<void>.delayed(const Duration(milliseconds: 50)),
+        );
+        await tester.pumpAndSettle();
+        expect(
+          find.byKey(const ValueKey('media-viewer-load-error')),
+          findsOneWidget,
+        );
+        expect(find.byType(InteractiveViewer), findsNothing);
+        await tester.tap(find.byKey(const ValueKey('media-viewer-retry')));
+        await tester.pumpAndSettle();
+        expect(find.byKey(const ValueKey('agent-image-stage')), findsOneWidget);
+        expect(reads, failure == 'local-with-remote' ? 1 : 2);
+        await tester.tap(find.byKey(const ValueKey('agent-sent-image-close')));
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+      },
+    );
+  }
+  testWidgets('closing a pending original never reopens the image', (
+    tester,
+  ) async {
+    final pending = Completer<Uint8List>();
+    await tester.pumpWidget(
+      agentImageTestHost(
+        AgentSentImages(
+          images: const [
+            AgentStreamImageInput(
+              dataUrl: '',
+              fileId: 'fixture-id',
+              name: 'Notes.png',
+            ),
+          ],
+          loadImageContent: (_) => pending.future,
+        ),
+        1,
+      ),
+    );
+    await tester.tap(find.byKey(const ValueKey('agent-sent-image-0')));
+    await tester.pump(const Duration(milliseconds: 300));
+    await tester.tap(find.byKey(const ValueKey('agent-sent-image-close')));
+    await tester.pumpAndSettle();
+    pending.completeError(StateError('fixture-late-failure'));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('agent-sent-image-close')), findsNothing);
+    expect(find.text('Notes.png'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
   testWidgets('history image loads its authenticated thumbnail by file id', (
     tester,
   ) async {
@@ -26,16 +162,12 @@ void main() {
             loadImageThumbnail: (fileId) async {
               thumbnailLoadCount += 1;
               expect(fileId, '0ea4b76d-2bc4-4ab8-91b7-3b24df53c518');
-              return base64Decode(
-                'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/p9sAAAAASUVORK5CYII=',
-              );
+              return imageBytes;
             },
             loadImageContent: (fileId) async {
               originalLoadCount += 1;
               expect(fileId, '0ea4b76d-2bc4-4ab8-91b7-3b24df53c518');
-              return base64Decode(
-                'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/p9sAAAAASUVORK5CYII=',
-              );
+              return imageBytes;
             },
           ),
         ),

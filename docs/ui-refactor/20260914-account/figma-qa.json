@@ -1,0 +1,98 @@
+[
+  {
+    "frames": [
+      {
+        "id": "128:68",
+        "name": "screen/account-default",
+        "width": 393,
+        "height": 844
+      },
+      {
+        "id": "128:98",
+        "name": "screen/account-loading",
+        "width": 393,
+        "height": 844
+      },
+      {
+        "id": "128:132",
+        "name": "screen/account-load-error",
+        "width": 393,
+        "height": 844
+      },
+      {
+        "id": "128:149",
+        "name": "screen/account-password-focused",
+        "width": 393,
+        "height": 844
+      },
+      {
+        "id": "128:189",
+        "name": "screen/account-delete-confirm",
+        "width": 393,
+        "height": 844
+      },
+      {
+        "id": "128:227",
+        "name": "screen/account-linked",
+        "width": 393,
+        "height": 844
+      },
+      {
+        "id": "128:262",
+        "name": "screen/account-operation-failed",
+        "width": 393,
+        "height": 844
+      },
+      {
+        "id": "128:294",
+        "name": "screen/account-no-providers-disabled",
+        "width": 393,
+        "height": 844
+      },
+      {
+        "id": "128:329",
+        "name": "screen/account-large-text-scroll",
+        "width": 320,
+        "height": 1585
+      },
+      {
+        "id": "128:359",
+        "name": "screen/account-operation-pending",
+        "width": 393,
+        "height": 844
+      },
+      {
+        "id": "130:68",
+        "name": "screen/account-password-confirm",
+        "width": 393,
+        "height": 844
+      },
+      {
+        "id": "130:109",
+        "name": "screen/account-password-keyboard-320",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "id": "132:68",
+        "name": "screen/account-google-unavailable",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "styleBindings": 50,
+    "fontFamilies": [
+      "Noto Sans SC"
+    ],
+    "collections": [
+      {
+        "name": "MomCozy / Primitives",
+        "count": 12
+      },
+      {
+        "name": "MomCozy / Semantic",
+        "count": 12
+      }
+    ]
+  }
+]

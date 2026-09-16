@@ -77,6 +77,20 @@ make local-dev-up
 make local-dev-start
 ```
 
+`local-dev-up`、`local-dev-start` 和 `local-dev-app` 会自动准备一个已验证的本地邮箱账号：
+
+- Email：`dev@example.test`
+- 初始 Password：`MomcozyLocal123!`
+
+账号缺少资料时会补入示例姓名 `Mia`，以及初始化当天往前 21 天的分娩日期，
+让首页显示姓名和产后阶段。后续启动保留已填写的资料，产后天数随日期递增。
+
+在登录页使用上述账号即可进入 App，无需邮件验证码。仅在 `APP_ENV=local` 下创建，
+不授予管理员权限。重复启动保留已有账号、修改后的密码和业务数据。
+统一启动入口默认保留 App 数据，首次登录后后续启动恢复保存的会话。
+若要测试全新安装，可使用 `MOMCOZY_RESET_INVITE_APP=1 make local-dev-start`。
+服务已启动时，可用 `make local-dev-account` 单独准备账号，无需重建服务。
+
 常用维护命令为 `make local-dev-verify`、`make local-dev-status`、`make local-dev-logs` 和 `make local-dev-down`。`local-dev-down` 保留数据库与对象存储卷，方便下一次增量启动。
 
 日常开发只需在工作开始时执行一次 `make local-dev-up`。`make local-dev-start` 保持 Flutter 会话常驻，可直接使用 hot reload；无需发布云端测试环境。服务代码变化后重新执行 `make local-dev-up` 会复用 Docker 构建层和数据卷。

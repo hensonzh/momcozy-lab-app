@@ -1,0 +1,1013 @@
+[
+  {
+    "id": "08-expert-service/consultation-journey-consultation-active",
+    "module": "专家服务与咨询",
+    "label": "TI",
+    "state": "consultation-journey-consultation-active",
+    "image": "08-expert-service/consultation-journey-consultation-active/default.png",
+    "viewport": "08-expert-service/consultation-journey-consultation-active/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/service-appointment/room"
+    ],
+    "mapped_design_candidates": [
+      "services/preparation",
+      "services/room",
+      "services/room-leave",
+      "common/not-found",
+      "services/state-53"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/consultation/presentation/room_page.dart",
+      "lib/modules/consultation/presentation/user_video_stage.dart",
+      "lib/modules/consultation/presentation/video_stage.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/consultation/consultation_inventory_journey_test.dart",
+    "test_case": "inventory consultation device failure retry consent and room entry",
+    "metadata": "raw/test/goldens/ui_inventory/consultation-journey-consultation-active-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/consultation-journey-consultation-active-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/consultation-journey-consultation-active-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/appointments/service-appointment/room",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Server reports expert joined and consultation started → active room",
+    "journey": {
+      "source": "test/goldens/ui_inventory/consultation-journey-consultation-active-393.png",
+      "previous_source": "test/goldens/ui_inventory/consultation-journey-leave-retained-393.png",
+      "route": "/services/appointments/service-appointment/room",
+      "trigger": "Server reports expert joined and consultation started → active room",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories/codecs and LiveKit device checks; isolated HTTP and native method channels, sandbox room, fixed clock/timezone; no real OS permission dialog or remote media",
+      "test": "test/modules/consultation/consultation_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/consultation-journey-join-poll-recovered",
+    "module": "专家服务与咨询",
+    "label": "TI",
+    "state": "consultation-journey-join-poll-recovered",
+    "image": "08-expert-service/consultation-journey-join-poll-recovered/default.png",
+    "viewport": "08-expert-service/consultation-journey-join-poll-recovered/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/service-appointment/room"
+    ],
+    "mapped_design_candidates": [
+      "services/preparation",
+      "services/room",
+      "services/room-leave",
+      "common/not-found",
+      "services/state-53"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/consultation/presentation/room_page.dart",
+      "lib/modules/consultation/presentation/user_video_stage.dart",
+      "lib/modules/consultation/presentation/video_stage.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/consultation/consultation_inventory_journey_test.dart",
+    "test_case": "inventory consultation preflight rejection and retry boundaries",
+    "metadata": "raw/test/goldens/ui_inventory/consultation-journey-join-poll-recovered-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/consultation-journey-join-poll-recovered-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/consultation-journey-join-poll-recovered-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/appointments/service-appointment/room",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Actual room poll retries pending join → waiting room connected",
+    "journey": {
+      "source": "test/goldens/ui_inventory/consultation-journey-join-poll-recovered-393.png",
+      "previous_source": "test/goldens/ui_inventory/consultation-journey-join-request-error-393.png",
+      "route": "/services/appointments/service-appointment/room",
+      "trigger": "Actual room poll retries pending join → waiting room connected",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories/codecs and LiveKit device checks; isolated HTTP and native method channels, sandbox room, fixed clock/timezone; no real OS permission dialog or remote media",
+      "test": "test/modules/consultation/consultation_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/consultation-journey-leave-confirmation",
+    "module": "专家服务与咨询",
+    "label": "TI",
+    "state": "consultation-journey-leave-confirmation",
+    "image": "08-expert-service/consultation-journey-leave-confirmation/default.png",
+    "viewport": "08-expert-service/consultation-journey-leave-confirmation/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/service-appointment/room"
+    ],
+    "mapped_design_candidates": [
+      "services/preparation",
+      "services/room",
+      "services/room-leave",
+      "common/not-found",
+      "services/state-53"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/consultation/presentation/room_page.dart",
+      "lib/modules/consultation/presentation/user_video_stage.dart",
+      "lib/modules/consultation/presentation/video_stage.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/consultation/consultation_inventory_journey_test.dart",
+    "test_case": "inventory consultation device failure retry consent and room entry",
+    "metadata": "raw/test/goldens/ui_inventory/consultation-journey-leave-confirmation-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/consultation-journey-leave-confirmation-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/consultation-journey-leave-confirmation-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/appointments/service-appointment/room",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Leave waiting room → confirmation overlay",
+    "journey": {
+      "source": "test/goldens/ui_inventory/consultation-journey-leave-confirmation-393.png",
+      "previous_source": "test/goldens/ui_inventory/consultation-journey-waiting-room-393.png",
+      "route": "/services/appointments/service-appointment/room",
+      "trigger": "Leave waiting room → confirmation overlay",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories/codecs and LiveKit device checks; isolated HTTP and native method channels, sandbox room, fixed clock/timezone; no real OS permission dialog or remote media",
+      "test": "test/modules/consultation/consultation_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/consultation-journey-leave-retained",
+    "module": "专家服务与咨询",
+    "label": "TI",
+    "state": "consultation-journey-leave-retained",
+    "image": "08-expert-service/consultation-journey-leave-retained/default.png",
+    "viewport": "08-expert-service/consultation-journey-leave-retained/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/service-appointment/room"
+    ],
+    "mapped_design_candidates": [
+      "services/preparation",
+      "services/room",
+      "services/room-leave",
+      "common/not-found",
+      "services/state-53"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/consultation/presentation/room_page.dart",
+      "lib/modules/consultation/presentation/user_video_stage.dart",
+      "lib/modules/consultation/presentation/video_stage.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/consultation/consultation_inventory_journey_test.dart",
+    "test_case": "inventory consultation device failure retry consent and room entry",
+    "metadata": "raw/test/goldens/ui_inventory/consultation-journey-leave-retained-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/consultation-journey-leave-retained-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/consultation-journey-leave-retained-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/appointments/service-appointment/room",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Stay in room → same waiting connection retained",
+    "journey": {
+      "source": "test/goldens/ui_inventory/consultation-journey-leave-retained-393.png",
+      "previous_source": "test/goldens/ui_inventory/consultation-journey-leave-confirmation-393.png",
+      "route": "/services/appointments/service-appointment/room",
+      "trigger": "Stay in room → same waiting connection retained",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories/codecs and LiveKit device checks; isolated HTTP and native method channels, sandbox room, fixed clock/timezone; no real OS permission dialog or remote media",
+      "test": "test/modules/consultation/consultation_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/consultation-journey-safety-before-outcome",
+    "module": "专家服务与咨询",
+    "label": "TI",
+    "state": "consultation-journey-safety-before-outcome",
+    "image": "08-expert-service/consultation-journey-safety-before-outcome/default.png",
+    "viewport": "08-expert-service/consultation-journey-safety-before-outcome/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/service-appointment/room"
+    ],
+    "mapped_design_candidates": [
+      "services/preparation",
+      "services/room",
+      "services/room-leave",
+      "common/not-found",
+      "services/state-53"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/consultation/presentation/room_page.dart",
+      "lib/modules/consultation/presentation/user_video_stage.dart",
+      "lib/modules/consultation/presentation/video_stage.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/consultation/consultation_inventory_journey_test.dart",
+    "test_case": "inventory consultation safety outcome onward routes",
+    "metadata": "raw/test/goldens/ui_inventory/consultation-journey-safety-before-outcome-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/consultation-journey-safety-before-outcome-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/consultation-journey-safety-before-outcome-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/appointments/service-appointment/room",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Passed preflight → consultation before server outcome",
+    "journey": {
+      "source": "test/goldens/ui_inventory/consultation-journey-safety-before-outcome-393.png",
+      "previous_source": null,
+      "route": "/services/appointments/service-appointment/room",
+      "trigger": "Passed preflight → consultation before server outcome",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories/codecs and LiveKit device checks; isolated HTTP and native method channels, sandbox room, fixed clock/timezone; no real OS permission dialog or remote media",
+      "test": "test/modules/consultation/consultation_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/consultation-journey-summary-consultation-started",
+    "module": "专家服务与咨询",
+    "label": "TI",
+    "state": "consultation-journey-summary-consultation-started",
+    "image": "08-expert-service/consultation-journey-summary-consultation-started/default.png",
+    "viewport": "08-expert-service/consultation-journey-summary-consultation-started/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/service-appointment/room"
+    ],
+    "mapped_design_candidates": [
+      "services/preparation",
+      "services/room",
+      "services/room-leave",
+      "common/not-found",
+      "services/state-53"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/consultation/presentation/room_page.dart",
+      "lib/modules/consultation/presentation/user_video_stage.dart",
+      "lib/modules/consultation/presentation/video_stage.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/consultation/consultation_inventory_journey_test.dart",
+    "test_case": "inventory consultation ended summary publication task updates and routes",
+    "metadata": "raw/test/goldens/ui_inventory/consultation-journey-summary-consultation-started-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/consultation-journey-summary-consultation-started-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/consultation-journey-summary-consultation-started-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/appointments/service-appointment/room",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Expert starts consultation → active session before completion",
+    "journey": {
+      "source": "test/goldens/ui_inventory/consultation-journey-summary-consultation-started-393.png",
+      "previous_source": "test/goldens/ui_inventory/consultation-journey-summary-entry-waiting-room-393.png",
+      "route": "/services/appointments/service-appointment/room",
+      "trigger": "Expert starts consultation → active session before completion",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories/codecs and LiveKit device checks; isolated HTTP and native method channels, sandbox room, fixed clock/timezone; no real OS permission dialog or remote media",
+      "test": "test/modules/consultation/consultation_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/consultation-journey-summary-entry-waiting-room",
+    "module": "专家服务与咨询",
+    "label": "TI",
+    "state": "consultation-journey-summary-entry-waiting-room",
+    "image": "08-expert-service/consultation-journey-summary-entry-waiting-room/default.png",
+    "viewport": "08-expert-service/consultation-journey-summary-entry-waiting-room/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/service-appointment/room"
+    ],
+    "mapped_design_candidates": [
+      "services/preparation",
+      "services/room",
+      "services/room-leave",
+      "common/not-found",
+      "services/state-53"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/consultation/presentation/room_page.dart",
+      "lib/modules/consultation/presentation/user_video_stage.dart",
+      "lib/modules/consultation/presentation/video_stage.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/consultation/consultation_inventory_journey_test.dart",
+    "test_case": "inventory consultation ended summary publication task updates and routes",
+    "metadata": "raw/test/goldens/ui_inventory/consultation-journey-summary-entry-waiting-room-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/consultation-journey-summary-entry-waiting-room-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/consultation-journey-summary-entry-waiting-room-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/appointments/service-appointment/room",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Preparation and passed checks → room before expert completion",
+    "journey": {
+      "source": "test/goldens/ui_inventory/consultation-journey-summary-entry-waiting-room-393.png",
+      "previous_source": null,
+      "route": "/services/appointments/service-appointment/room",
+      "trigger": "Preparation and passed checks → room before expert completion",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories/codecs and LiveKit device checks; isolated HTTP and native method channels, sandbox room, fixed clock/timezone; no real OS permission dialog or remote media",
+      "test": "test/modules/consultation/consultation_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/consultation-journey-technical-before-outcome",
+    "module": "专家服务与咨询",
+    "label": "TI",
+    "state": "consultation-journey-technical-before-outcome",
+    "image": "08-expert-service/consultation-journey-technical-before-outcome/default.png",
+    "viewport": "08-expert-service/consultation-journey-technical-before-outcome/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/service-appointment/room"
+    ],
+    "mapped_design_candidates": [
+      "services/preparation",
+      "services/room",
+      "services/room-leave",
+      "common/not-found",
+      "services/state-53"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/consultation/presentation/room_page.dart",
+      "lib/modules/consultation/presentation/user_video_stage.dart",
+      "lib/modules/consultation/presentation/video_stage.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/consultation/consultation_inventory_journey_test.dart",
+    "test_case": "inventory consultation technical outcome onward routes",
+    "metadata": "raw/test/goldens/ui_inventory/consultation-journey-technical-before-outcome-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/consultation-journey-technical-before-outcome-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/consultation-journey-technical-before-outcome-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/appointments/service-appointment/room",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Passed preflight → consultation before server outcome",
+    "journey": {
+      "source": "test/goldens/ui_inventory/consultation-journey-technical-before-outcome-393.png",
+      "previous_source": null,
+      "route": "/services/appointments/service-appointment/room",
+      "trigger": "Passed preflight → consultation before server outcome",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories/codecs and LiveKit device checks; isolated HTTP and native method channels, sandbox room, fixed clock/timezone; no real OS permission dialog or remote media",
+      "test": "test/modules/consultation/consultation_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/consultation-journey-waiting-room",
+    "module": "专家服务与咨询",
+    "label": "TI",
+    "state": "consultation-journey-waiting-room",
+    "image": "08-expert-service/consultation-journey-waiting-room/default.png",
+    "viewport": "08-expert-service/consultation-journey-waiting-room/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/service-appointment/room"
+    ],
+    "mapped_design_candidates": [
+      "services/preparation",
+      "services/room",
+      "services/room-leave",
+      "common/not-found",
+      "services/state-53"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/consultation/presentation/room_page.dart",
+      "lib/modules/consultation/presentation/user_video_stage.dart",
+      "lib/modules/consultation/presentation/video_stage.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/consultation/consultation_inventory_journey_test.dart",
+    "test_case": "inventory consultation device failure retry consent and room entry",
+    "metadata": "raw/test/goldens/ui_inventory/consultation-journey-waiting-room-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/consultation-journey-waiting-room-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/consultation-journey-waiting-room-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/appointments/service-appointment/room",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Confirm location and enter → sandbox waiting room",
+    "journey": {
+      "source": "test/goldens/ui_inventory/consultation-journey-waiting-room-393.png",
+      "previous_source": "test/goldens/ui_inventory/consultation-journey-video-consent-granted-393.png",
+      "route": "/services/appointments/service-appointment/room",
+      "trigger": "Confirm location and enter → sandbox waiting room",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories/codecs and LiveKit device checks; isolated HTTP and native method channels, sandbox room, fixed clock/timezone; no real OS permission dialog or remote media",
+      "test": "test/modules/consultation/consultation_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/room-leave-failure",
+    "module": "专家服务与咨询",
+    "label": "暂时无法离开咨询室，请再次点击离开房间重试。",
+    "state": "room-leave-failure",
+    "image": "08-expert-service/room-leave-failure/default.png",
+    "viewport": "08-expert-service/room-leave-failure/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/:appointmentId/room"
+    ],
+    "mapped_design_candidates": [
+      "services/preparation",
+      "services/room",
+      "services/room-leave",
+      "services/state-53"
+    ],
+    "production_widget_files": [
+      "lib/modules/consultation/presentation/room_page.dart",
+      "lib/modules/consultation/presentation/user_video_stage.dart",
+      "lib/modules/consultation/presentation/video_stage.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/consultation/room_leave_recovery_test.dart",
+    "test_case": "leave recovery 390.0 / 1.0",
+    "metadata": "raw/test/goldens/product_baseline/room-leave-failure-390-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/product_baseline/room-leave-failure-320-1x.png",
+        "metadata": "raw/test/goldens/product_baseline/room-leave-failure-320-1x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/product_baseline/room-leave-failure-320-2x.png",
+        "metadata": "raw/test/goldens/product_baseline/room-leave-failure-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/product_baseline/room-leave-failure-390-1x.png",
+        "metadata": "raw/test/goldens/product_baseline/room-leave-failure-390-1x.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/product_baseline/room-leave-failure-390-2x.png",
+        "metadata": "raw/test/goldens/product_baseline/room-leave-failure-390-2x.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/product_baseline/room-leave-failure-430-1x.png",
+        "metadata": "raw/test/goldens/product_baseline/room-leave-failure-430-1x.png.json",
+        "width": 430,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/product_baseline/room-leave-failure-430-2x.png",
+        "metadata": "raw/test/goldens/product_baseline/room-leave-failure-430-2x.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "08-expert-service/room-leave-retry-confirmation",
+    "module": "专家服务与咨询",
+    "label": "暂时无法离开咨询室，请再次点击离开房间重试。",
+    "state": "room-leave-retry-confirmation",
+    "image": "08-expert-service/room-leave-retry-confirmation/default.png",
+    "viewport": "08-expert-service/room-leave-retry-confirmation/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/:appointmentId/room"
+    ],
+    "mapped_design_candidates": [
+      "services/preparation",
+      "services/room",
+      "services/room-leave",
+      "services/state-53"
+    ],
+    "production_widget_files": [
+      "lib/modules/consultation/presentation/room_page.dart",
+      "lib/modules/consultation/presentation/user_video_stage.dart",
+      "lib/modules/consultation/presentation/video_stage.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/consultation/room_leave_recovery_test.dart",
+    "test_case": "leave recovery 390.0 / 1.0",
+    "metadata": "raw/test/goldens/product_baseline/room-leave-retry-confirmation-390-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/product_baseline/room-leave-retry-confirmation-320-1x.png",
+        "metadata": "raw/test/goldens/product_baseline/room-leave-retry-confirmation-320-1x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/product_baseline/room-leave-retry-confirmation-320-2x.png",
+        "metadata": "raw/test/goldens/product_baseline/room-leave-retry-confirmation-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/product_baseline/room-leave-retry-confirmation-390-1x.png",
+        "metadata": "raw/test/goldens/product_baseline/room-leave-retry-confirmation-390-1x.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/product_baseline/room-leave-retry-confirmation-390-2x.png",
+        "metadata": "raw/test/goldens/product_baseline/room-leave-retry-confirmation-390-2x.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/product_baseline/room-leave-retry-confirmation-430-1x.png",
+        "metadata": "raw/test/goldens/product_baseline/room-leave-retry-confirmation-430-1x.png.json",
+        "width": 430,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/product_baseline/room-leave-retry-confirmation-430-2x.png",
+        "metadata": "raw/test/goldens/product_baseline/room-leave-retry-confirmation-430-2x.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "08-expert-service/room-waiting",
+    "module": "专家服务与咨询",
+    "label": "TI",
+    "state": "room-waiting",
+    "image": "08-expert-service/room-waiting/default.png",
+    "viewport": "08-expert-service/room-waiting/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/:appointmentId/room"
+    ],
+    "mapped_design_candidates": [
+      "services/preparation",
+      "services/room",
+      "services/room-leave",
+      "services/state-53"
+    ],
+    "production_widget_files": [
+      "lib/modules/consultation/presentation/room_page.dart",
+      "lib/modules/consultation/presentation/user_video_stage.dart",
+      "lib/modules/consultation/presentation/video_stage.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/consultation/room_page_test.dart",
+    "test_case": "waiting room at 390.0 / 1.0",
+    "metadata": "raw/test/goldens/product_baseline/room-waiting-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/product_baseline/room-waiting-320.png",
+        "metadata": "raw/test/goldens/product_baseline/room-waiting-320.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/product_baseline/room-waiting-390.png",
+        "metadata": "raw/test/goldens/product_baseline/room-waiting-390.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/product_baseline/room-waiting-430.png",
+        "metadata": "raw/test/goldens/product_baseline/room-waiting-430.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "08-expert-service/video-camera-off",
+    "module": "专家服务与咨询",
+    "label": "TI",
+    "state": "video-camera-off",
+    "image": "08-expert-service/video-camera-off/default.png",
+    "viewport": "08-expert-service/video-camera-off/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/:appointmentId/room"
+    ],
+    "mapped_design_candidates": [
+      "services/preparation",
+      "services/room",
+      "services/room-leave",
+      "services/state-53"
+    ],
+    "production_widget_files": [
+      "lib/modules/consultation/presentation/room_page.dart",
+      "lib/modules/consultation/presentation/user_video_stage.dart",
+      "lib/modules/consultation/presentation/video_stage.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/consultation/user_video_test.dart",
+    "test_case": "user waiting media controls and leave 390.0 / 1.0",
+    "metadata": "raw/test/goldens/design_system/video-camera-off-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/video-camera-off-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/video-camera-off-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/video-camera-off-320.png",
+        "metadata": "raw/test/goldens/design_system/video-camera-off-320.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/video-camera-off-390.png",
+        "metadata": "raw/test/goldens/design_system/video-camera-off-390.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/video-camera-off-430.png",
+        "metadata": "raw/test/goldens/design_system/video-camera-off-430.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "08-expert-service/video-expert-ready",
+    "module": "专家服务与咨询",
+    "label": "TI",
+    "state": "video-expert-ready",
+    "image": "08-expert-service/video-expert-ready/default.png",
+    "viewport": "08-expert-service/video-expert-ready/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/:appointmentId/room"
+    ],
+    "mapped_design_candidates": [
+      "services/preparation",
+      "services/room",
+      "services/room-leave",
+      "services/state-53"
+    ],
+    "production_widget_files": [
+      "lib/modules/consultation/presentation/room_page.dart",
+      "lib/modules/consultation/presentation/user_video_stage.dart",
+      "lib/modules/consultation/presentation/video_stage.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/consultation/user_video_test.dart",
+    "test_case": "user waiting media controls and leave 390.0 / 1.0",
+    "metadata": "raw/test/goldens/design_system/video-expert-ready-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/video-expert-ready-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/video-expert-ready-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/video-expert-ready-320.png",
+        "metadata": "raw/test/goldens/design_system/video-expert-ready-320.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/video-expert-ready-390.png",
+        "metadata": "raw/test/goldens/design_system/video-expert-ready-390.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/video-expert-ready-430.png",
+        "metadata": "raw/test/goldens/design_system/video-expert-ready-430.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "08-expert-service/video-leave",
+    "module": "专家服务与咨询",
+    "label": "TI",
+    "state": "video-leave",
+    "image": "08-expert-service/video-leave/default.png",
+    "viewport": "08-expert-service/video-leave/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/:appointmentId/room"
+    ],
+    "mapped_design_candidates": [
+      "services/preparation",
+      "services/room",
+      "services/room-leave",
+      "services/state-53"
+    ],
+    "production_widget_files": [
+      "lib/modules/consultation/presentation/room_page.dart",
+      "lib/modules/consultation/presentation/user_video_stage.dart",
+      "lib/modules/consultation/presentation/video_stage.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/consultation/user_video_test.dart",
+    "test_case": "user waiting media controls and leave 390.0 / 1.0",
+    "metadata": "raw/test/goldens/design_system/video-leave-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/video-leave-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/video-leave-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/video-leave-320.png",
+        "metadata": "raw/test/goldens/design_system/video-leave-320.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/video-leave-390.png",
+        "metadata": "raw/test/goldens/design_system/video-leave-390.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/video-leave-430.png",
+        "metadata": "raw/test/goldens/design_system/video-leave-430.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "08-expert-service/video-media-error",
+    "module": "专家服务与咨询",
+    "label": "TI",
+    "state": "video-media-error",
+    "image": "08-expert-service/video-media-error/default.png",
+    "viewport": "08-expert-service/video-media-error/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/:appointmentId/room"
+    ],
+    "mapped_design_candidates": [
+      "services/preparation",
+      "services/room",
+      "services/room-leave",
+      "services/state-53"
+    ],
+    "production_widget_files": [
+      "lib/modules/consultation/presentation/room_page.dart",
+      "lib/modules/consultation/presentation/user_video_stage.dart",
+      "lib/modules/consultation/presentation/video_stage.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/consultation/user_video_test.dart",
+    "test_case": "user waiting media controls and leave 390.0 / 1.0",
+    "metadata": "raw/test/goldens/design_system/video-media-error-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/video-media-error-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/video-media-error-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/video-media-error-320.png",
+        "metadata": "raw/test/goldens/design_system/video-media-error-320.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/video-media-error-390.png",
+        "metadata": "raw/test/goldens/design_system/video-media-error-390.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/video-media-error-430.png",
+        "metadata": "raw/test/goldens/design_system/video-media-error-430.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "08-expert-service/video-reconnecting",
+    "module": "专家服务与咨询",
+    "label": "TI",
+    "state": "video-reconnecting",
+    "image": "08-expert-service/video-reconnecting/default.png",
+    "viewport": "08-expert-service/video-reconnecting/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/:appointmentId/room"
+    ],
+    "mapped_design_candidates": [
+      "services/preparation",
+      "services/room",
+      "services/room-leave",
+      "services/state-53"
+    ],
+    "production_widget_files": [
+      "lib/modules/consultation/presentation/room_page.dart",
+      "lib/modules/consultation/presentation/user_video_stage.dart",
+      "lib/modules/consultation/presentation/video_stage.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/consultation/user_video_test.dart",
+    "test_case": "user waiting media controls and leave 390.0 / 1.0",
+    "metadata": "raw/test/goldens/design_system/video-reconnecting-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/video-reconnecting-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/video-reconnecting-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/video-reconnecting-320.png",
+        "metadata": "raw/test/goldens/design_system/video-reconnecting-320.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/video-reconnecting-390.png",
+        "metadata": "raw/test/goldens/design_system/video-reconnecting-390.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/video-reconnecting-430.png",
+        "metadata": "raw/test/goldens/design_system/video-reconnecting-430.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "08-expert-service/video-waiting",
+    "module": "专家服务与咨询",
+    "label": "TI",
+    "state": "video-waiting",
+    "image": "08-expert-service/video-waiting/default.png",
+    "viewport": "08-expert-service/video-waiting/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/:appointmentId/room"
+    ],
+    "mapped_design_candidates": [
+      "services/preparation",
+      "services/room",
+      "services/room-leave",
+      "services/state-53"
+    ],
+    "production_widget_files": [
+      "lib/modules/consultation/presentation/room_page.dart",
+      "lib/modules/consultation/presentation/user_video_stage.dart",
+      "lib/modules/consultation/presentation/video_stage.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/consultation/user_video_test.dart",
+    "test_case": "user waiting media controls and leave 390.0 / 1.0",
+    "metadata": "raw/test/goldens/design_system/video-waiting-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/video-waiting-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/video-waiting-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/video-waiting-320.png",
+        "metadata": "raw/test/goldens/design_system/video-waiting-320.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/video-waiting-390.png",
+        "metadata": "raw/test/goldens/design_system/video-waiting-390.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/video-waiting-430.png",
+        "metadata": "raw/test/goldens/design_system/video-waiting-430.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  }
+]

@@ -1,0 +1,7 @@
+{
+  "lib/modules/schedule/presentation/schedule_page.dart": "87f06c1ea10cfb6ee6b503f7f709015a761f58965d7715bdb93423df33db20ba",
+  "lib/modules/schedule/presentation/personal_schedule_editor.dart": "bd11ff86a30046974ba188131c6f4ca46d2c59c2977c06386d662f71d6200c7f",
+  "lib/modules/schedule/application/schedule_controller.dart": "d767738a12d7a8fb27dcd0e4889091f5c0096fa0615fd626eb2e2da095600f00",
+  "test/modules/schedule/schedule_page_golden_test.dart": "741032fc9f11192e3cf446823d3374c784e2c02f2d0955e5cf94655e5c0b15fb",
+  "test/modules/schedule/personal_schedule_editor_test.dart": "df868fd49b7ae19f50b83acd0f843aae2ea5972772c4b366c78e7e8887f93ddc"
+}

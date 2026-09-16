@@ -1,0 +1,181 @@
+[
+  {
+    "id": "04-baby/baby-journey-history-sleep-empty",
+    "image": "04-baby/baby-journey-history-sleep-empty/default.png",
+    "observed_route": "/babies/inventory-baby/records",
+    "trigger": "Tap 睡眠 filter → empty category",
+    "extent": "viewport",
+    "sha256": "7f043d7103ea1133cdc201ef04ea54c043b69a6ce1a370edb01551a0e1be7c39",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "04-baby/baby-journey-history-first-page",
+    "image": "04-baby/baby-journey-history-first-page/default.png",
+    "observed_route": "/babies/inventory-baby/records",
+    "trigger": "Baby → monthly feeding history with 51 records, first 50 loaded",
+    "extent": "full-measured-scroll-stitch",
+    "sha256": "19314cbb852b416cbcf2d296fa91c43c506f942e64ce176dfa4ce92dea8d2134",
+    "width": 393,
+    "height": 8940
+  },
+  {
+    "id": "04-baby/baby-journey-history-feeding",
+    "image": "04-baby/baby-journey-history-feeding/default.png",
+    "observed_route": "/babies/inventory-baby/records",
+    "trigger": "Saved home → View all records",
+    "extent": "viewport",
+    "sha256": "f8912d52dc98f9114bb21c388997fb29c69caa27ec3f6bb8d9673a1f95200879",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "04-baby/baby-journey-history-previous-month",
+    "image": "04-baby/baby-journey-history-previous-month/default.png",
+    "observed_route": "/babies/inventory-baby/records",
+    "trigger": "Previous month → August",
+    "extent": "viewport",
+    "sha256": "e730754f4b761ed6a64c0113bd126161e1a93bf7f6c5f4cb5fb1bca3c6798ea0",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "04-baby/baby-journey-history-more-loading",
+    "image": "04-baby/baby-journey-history-more-loading/default.png",
+    "observed_route": "/babies/inventory-baby/records",
+    "trigger": "Retry page load while response pending",
+    "extent": "full-measured-scroll-stitch",
+    "sha256": "4e58c42e6090077a5197c4335e038cd6ff33a734a2f6156d912a46a8da059c68",
+    "width": 393,
+    "height": 8940
+  },
+  {
+    "id": "04-baby/baby-journey-history-more-error",
+    "image": "04-baby/baby-journey-history-more-error/default.png",
+    "observed_route": "/babies/inventory-baby/records",
+    "trigger": "Load more → page failure keeps first page visible",
+    "extent": "full-measured-scroll-stitch",
+    "sha256": "cbd3874c169e634f65061051505e06cff0c04c286d94d2f9080a77d78c0a8312",
+    "width": 393,
+    "height": 9048
+  },
+  {
+    "id": "04-baby/baby-journey-history-deleted",
+    "image": "04-baby/baby-journey-history-deleted/default.png",
+    "observed_route": "/babies/inventory-baby/records",
+    "trigger": "Confirm deletion → empty list with undo",
+    "extent": "viewport",
+    "sha256": "bf75814bfe3b7818356fba4bc9297c7d13358daeec8bcf93c8cd074c98db8383",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "04-baby/baby-journey-history-restored",
+    "image": "04-baby/baby-journey-history-restored/default.png",
+    "observed_route": "/babies/inventory-baby/records",
+    "trigger": "Undo deletion → restored record",
+    "extent": "viewport",
+    "sha256": "65ac55fc78b9d135ef530f494f6275ff4d78a61441deb157594b11b6ba623a04",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "04-baby/baby-journey-feeding-filled",
+    "image": "04-baby/baby-journey-feeding-filled/default.png",
+    "trigger": "inventory Baby feeding save edit delete restore and history filters",
+    "extent": "viewport",
+    "sha256": "617b62dcfef846a79d142f98574ae589716704e62fca7564a21763e7f3de11b9",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "04-baby/baby-journey-sleep-active-editor",
+    "image": "04-baby/baby-journey-sleep-active-editor/default.png",
+    "trigger": "inventory Baby sleep stool knowledge and growth interactions",
+    "extent": "viewport",
+    "sha256": "439796fc597be0f63de7f59c17c96a5ecfb12bf2fa873e105279ece3ec56cdc7",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "04-baby/baby-journey-wet-tab",
+    "image": "04-baby/baby-journey-wet-tab/default.png",
+    "trigger": "inventory Baby sleep stool knowledge and growth interactions",
+    "extent": "viewport",
+    "sha256": "f8015ef5debed12f88321d79aa49d9a65285549673e04a7663cee8b9856ae533",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "04-baby/baby-journey-stool-tab",
+    "image": "04-baby/baby-journey-stool-tab/default.png",
+    "trigger": "inventory Baby sleep stool knowledge and growth interactions",
+    "extent": "full-measured-scroll-stitch",
+    "sha256": "736fe134f7bb2cd9d1ad7b35542d493c8eba298d43fca49f8936df7c157b622f",
+    "width": 393,
+    "height": 1169
+  },
+  {
+    "id": "04-baby/baby-journey-growth-three-values",
+    "image": "04-baby/baby-journey-growth-three-values/default.png",
+    "trigger": "inventory Baby growth batch date validation and undo recovery",
+    "extent": "viewport",
+    "sha256": "50b312e0dae80c3031e5623a17a9934dca961d3e88fbdc53a0536491b275e504",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "04-baby/baby-journey-development-editor",
+    "image": "04-baby/baby-journey-development-editor/default.png",
+    "trigger": "inventory Baby sleep stool knowledge and growth interactions",
+    "extent": "viewport",
+    "sha256": "b7313836dc28135f38513d8db952d88348ef24c3ff532bf6c77d059a673ae9b1",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "04-baby/baby-journey-history-edit",
+    "image": "04-baby/baby-journey-history-edit/default.png",
+    "trigger": "inventory Baby feeding save edit delete restore and history filters",
+    "extent": "viewport",
+    "sha256": "f35a82fe1b9099b6f6ff3df4f5129a5755606b2fb5fa00ff0d53339c77c7811f",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "04-baby/baby-journey-feeding-validation",
+    "image": "04-baby/baby-journey-feeding-validation/default.png",
+    "trigger": "inventory Baby feeding save edit delete restore and history filters",
+    "extent": "viewport",
+    "sha256": "9123f80709a56aaf2e741c773cf90f1b7a8228fff0c06d9f63972cb2645e1c4a",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "04-baby/baby-journey-growth-invalid-value",
+    "image": "04-baby/baby-journey-growth-invalid-value/default.png",
+    "trigger": "inventory Baby growth batch date validation and undo recovery",
+    "extent": "viewport",
+    "sha256": "028bf5d3dfc2b4cf8bd0f499722379243a78a961febfaa1881b0795d5af3ea0b",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "04-baby/baby-journey-record-saving",
+    "image": "04-baby/baby-journey-record-saving/default.png",
+    "trigger": "inventory Baby loading and pending save states",
+    "extent": "viewport",
+    "sha256": "29d4de5baca17182251b4e136477b73af8046f4a3a219bf85c5319362f93f258",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "04-baby/baby-journey-feeding-saved",
+    "image": "04-baby/baby-journey-feeding-saved/default.png",
+    "trigger": "inventory Baby feeding save edit delete restore and history filters",
+    "extent": "full-measured-scroll-stitch",
+    "sha256": "5b17a1e0036b61d4c1aeb9a8d5707c4788d70bc55745b55579e77dd6de71159d",
+    "width": 393,
+    "height": 1841
+  }
+]

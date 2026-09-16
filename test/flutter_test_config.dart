@@ -4,6 +4,8 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'support/ui_inventory_capture.dart';
+
 const _toleranceEnvironmentKey = 'MOMCOZY_GOLDEN_PRECISION_TOLERANCE';
 
 bool get isMomcozyTolerantGoldenComparator =>
@@ -30,6 +32,10 @@ Future<void> testExecutable(FutureOr<void> Function() testMain) async {
       previousComparator.basedir.resolve('momcozy_golden_test.dart'),
       precisionTolerance: precisionTolerance,
     );
+  }
+  final output = Platform.environment['MOMCOZY_UI_INVENTORY_DIR'];
+  if (output != null && output.isNotEmpty) {
+    installUiInventoryCapture(Directory(output));
   }
   await testMain();
 }

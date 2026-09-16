@@ -44,6 +44,12 @@ void main() {
       expect(find.text('今天心里更接近哪一种'), findsOneWidget);
       expect(transport.lastPath, '/v1/mother/diary');
       expect(transport.lastQuery, {'start': '2026-09-08', 'end': '2026-09-08'});
+      router.go('/me/diary?section=body');
+      await tester.pumpAndSettle();
+      expect(find.text('身体与精力'), findsOneWidget);
+      router.go('/me/diary?section=unknown');
+      await tester.pumpAndSettle();
+      expect(find.text('昨夜休息'), findsOneWidget);
     },
   );
   test(

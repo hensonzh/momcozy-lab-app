@@ -1,0 +1,2171 @@
+[
+  {
+    "id": "04-baby/baby-journey-history-privacy",
+    "module": "宝宝",
+    "label": "隐私与数据",
+    "state": "baby-journey-history-privacy",
+    "image": "04-baby/baby-journey-history-privacy/default.png",
+    "viewport": "04-baby/baby-journey-history-privacy/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/privacy"
+    ],
+    "mapped_design_candidates": [
+      "profile/privacy",
+      "common/not-found",
+      "common/loading",
+      "common/empty",
+      "common/error",
+      "services/state-50"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/profile/presentation/privacy_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/product_feedback.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/baby/baby_inventory_journey_test.dart",
+    "test_case": "inventory Baby history mutation failures privacy and return",
+    "metadata": "raw/test/goldens/ui_inventory/baby-journey-history-privacy-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/baby-journey-history-privacy-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/baby-journey-history-privacy-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/privacy",
+    "entry": "Authenticated More → tap Baby bottom navigation",
+    "trigger": "Record data source → Privacy and authorization with no service",
+    "journey": {
+      "source": "test/goldens/ui_inventory/baby-journey-history-privacy-393.png",
+      "previous_source": "test/goldens/ui_inventory/baby-journey-history-restore-retry-393.png",
+      "route": "/privacy",
+      "trigger": "Record data source → Privacy and authorization with no service",
+      "root_entry": "Authenticated More → tap Baby bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/baby/baby_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "07-me/more-current-privacy",
+    "module": "账号与隐私",
+    "label": "隐私与数据",
+    "state": "more-current-privacy",
+    "image": "07-me/more-current-privacy/default.png",
+    "viewport": "07-me/more-current-privacy/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/privacy"
+    ],
+    "mapped_design_candidates": [
+      "profile/privacy",
+      "common/not-found",
+      "services/state-50"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/profile/presentation/privacy_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/profile/more_current_inventory_test.dart",
+    "test_case": "inventory current More routes 393/1x",
+    "metadata": "raw/test/goldens/ui_inventory/more-current-privacy-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/more-current-privacy-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/more-current-privacy-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/more-current-privacy-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/more-current-privacy-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/privacy",
+    "entry": "Authenticated Me → tap More bottom navigation",
+    "trigger": "More privacy → real privacy page",
+    "journey": {
+      "source": "test/goldens/ui_inventory/more-current-privacy-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/more-current-routes-ready-393-1x.png",
+      "route": "/privacy",
+      "trigger": "More privacy → real privacy page",
+      "root_entry": "Authenticated Me → tap More bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production More/account/privacy/service pages and notification coordinator/repositories; isolated HTTP, push gateway and permission platform; real router.go and ScaffoldMessenger callbacks, no native OS dialog or remote push",
+      "test": "test/modules/profile/more_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "07-me/privacy-confirm",
+    "module": "账号与隐私",
+    "label": "隐私与数据",
+    "state": "privacy-confirm",
+    "image": "07-me/privacy-confirm/default.png",
+    "viewport": "07-me/privacy-confirm/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/privacy"
+    ],
+    "mapped_design_candidates": [
+      "profile/privacy",
+      "services/state-50"
+    ],
+    "production_widget_files": [
+      "lib/modules/profile/presentation/privacy_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/profile/privacy_test.dart",
+    "test_case": "privacy scopes, revoke confirmation and notifications 390.0/1.0",
+    "metadata": "raw/test/goldens/design_system/privacy-confirm-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/privacy-confirm-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/privacy-confirm-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/privacy-confirm-320.png",
+        "metadata": "raw/test/goldens/design_system/privacy-confirm-320.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/privacy-confirm-390-2x.png",
+        "metadata": "raw/test/goldens/design_system/privacy-confirm-390-2x.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/privacy-confirm-390.png",
+        "metadata": "raw/test/goldens/design_system/privacy-confirm-390.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/privacy-confirm-430-2x.png",
+        "metadata": "raw/test/goldens/design_system/privacy-confirm-430-2x.png.json",
+        "width": 430,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/privacy-confirm-430.png",
+        "metadata": "raw/test/goldens/design_system/privacy-confirm-430.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "07-me/privacy-empty",
+    "module": "账号与隐私",
+    "label": "隐私与数据",
+    "state": "privacy-empty",
+    "image": "07-me/privacy-empty/default.png",
+    "viewport": "07-me/privacy-empty/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/privacy"
+    ],
+    "mapped_design_candidates": [
+      "profile/privacy",
+      "common/loading",
+      "common/empty",
+      "common/error",
+      "services/state-50"
+    ],
+    "production_widget_files": [
+      "lib/modules/profile/presentation/privacy_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/product_feedback.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/profile/privacy_test.dart",
+    "test_case": "no service and failed read never expose editable fake defaults",
+    "metadata": "raw/test/goldens/design_system/privacy-empty-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/privacy-empty-390.png",
+        "metadata": "raw/test/goldens/design_system/privacy-empty-390.png.json",
+        "width": 390,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "07-me/privacy-journey-conflict-reloaded",
+    "module": "账号与隐私",
+    "label": "隐私与数据",
+    "state": "privacy-journey-conflict-reloaded",
+    "image": "07-me/privacy-journey-conflict-reloaded/default.png",
+    "viewport": "07-me/privacy-journey-conflict-reloaded/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/privacy"
+    ],
+    "mapped_design_candidates": [
+      "profile/privacy",
+      "common/not-found",
+      "services/state-50"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/profile/presentation/privacy_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/profile/privacy_inventory_journey_test.dart",
+    "test_case": "inventory privacy conflict requires reloading before edit",
+    "metadata": "raw/test/goldens/ui_inventory/privacy-journey-conflict-reloaded-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/privacy-journey-conflict-reloaded-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/privacy-journey-conflict-reloaded-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/privacy",
+    "entry": "Authenticated More page",
+    "trigger": "Reload latest consent versions → editing unlocked",
+    "journey": {
+      "source": "test/goldens/ui_inventory/privacy-journey-conflict-reloaded-393.png",
+      "previous_source": "test/goldens/ui_inventory/privacy-journey-version-conflict-393.png",
+      "route": "/privacy",
+      "trigger": "Reload latest consent versions → editing unlocked",
+      "root_entry": "Authenticated More page",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production privacy page/controllers and Care/Intake API repositories; isolated HTTP with versioned per-service consent storage; actual More/privacy/notification routes and notification coordinator, no real user permissions mutated",
+      "test": "test/modules/profile/privacy_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "07-me/privacy-journey-conflict-resaved",
+    "module": "账号与隐私",
+    "label": "隐私与数据",
+    "state": "privacy-journey-conflict-resaved",
+    "image": "07-me/privacy-journey-conflict-resaved/default.png",
+    "viewport": "07-me/privacy-journey-conflict-resaved/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/privacy"
+    ],
+    "mapped_design_candidates": [
+      "profile/privacy",
+      "common/not-found",
+      "services/state-50"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/profile/presentation/privacy_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/profile/privacy_inventory_journey_test.dart",
+    "test_case": "inventory privacy conflict requires reloading before edit",
+    "metadata": "raw/test/goldens/ui_inventory/privacy-journey-conflict-resaved-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/privacy-journey-conflict-resaved-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/privacy-journey-conflict-resaved-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/privacy",
+    "entry": "Authenticated More page",
+    "trigger": "Edit after reload → successful new save",
+    "journey": {
+      "source": "test/goldens/ui_inventory/privacy-journey-conflict-resaved-393.png",
+      "previous_source": "test/goldens/ui_inventory/privacy-journey-conflict-reloaded-393.png",
+      "route": "/privacy",
+      "trigger": "Edit after reload → successful new save",
+      "root_entry": "Authenticated More page",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production privacy page/controllers and Care/Intake API repositories; isolated HTTP with versioned per-service consent storage; actual More/privacy/notification routes and notification coordinator, no real user permissions mutated",
+      "test": "test/modules/profile/privacy_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "07-me/privacy-journey-consent-loading",
+    "module": "账号与隐私",
+    "label": "隐私与数据",
+    "state": "privacy-journey-consent-loading",
+    "image": "07-me/privacy-journey-consent-loading/default.png",
+    "viewport": "07-me/privacy-journey-consent-loading/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/privacy"
+    ],
+    "mapped_design_candidates": [
+      "profile/privacy",
+      "common/not-found",
+      "common/loading",
+      "common/empty",
+      "common/error",
+      "services/state-50"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/profile/presentation/privacy_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/product_feedback.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/profile/privacy_inventory_journey_test.dart",
+    "test_case": "inventory privacy consent read loading error retry and reread",
+    "metadata": "raw/test/goldens/ui_inventory/privacy-journey-consent-loading-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/privacy-journey-consent-loading-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/privacy-journey-consent-loading-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/privacy",
+    "entry": "Authenticated More page",
+    "trigger": "Overview loads → selected consent read pending",
+    "journey": {
+      "source": "test/goldens/ui_inventory/privacy-journey-consent-loading-393.png",
+      "previous_source": null,
+      "route": "/privacy",
+      "trigger": "Overview loads → selected consent read pending",
+      "root_entry": "Authenticated More page",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production privacy page/controllers and Care/Intake API repositories; isolated HTTP with versioned per-service consent storage; actual More/privacy/notification routes and notification coordinator, no real user permissions mutated",
+      "test": "test/modules/profile/privacy_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "07-me/privacy-journey-consent-read-error",
+    "module": "账号与隐私",
+    "label": "隐私与数据",
+    "state": "privacy-journey-consent-read-error",
+    "image": "07-me/privacy-journey-consent-read-error/default.png",
+    "viewport": "07-me/privacy-journey-consent-read-error/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/privacy"
+    ],
+    "mapped_design_candidates": [
+      "profile/privacy",
+      "common/not-found",
+      "common/loading",
+      "common/empty",
+      "common/error",
+      "services/state-50"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/profile/presentation/privacy_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/product_feedback.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/profile/privacy_inventory_journey_test.dart",
+    "test_case": "inventory privacy consent read loading error retry and reread",
+    "metadata": "raw/test/goldens/ui_inventory/privacy-journey-consent-read-error-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/privacy-journey-consent-read-error-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/privacy-journey-consent-read-error-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/privacy",
+    "entry": "Authenticated More page",
+    "trigger": "Consent read fails → retry, no fake unchecked controls",
+    "journey": {
+      "source": "test/goldens/ui_inventory/privacy-journey-consent-read-error-393.png",
+      "previous_source": "test/goldens/ui_inventory/privacy-journey-consent-loading-393.png",
+      "route": "/privacy",
+      "trigger": "Consent read fails → retry, no fake unchecked controls",
+      "root_entry": "Authenticated More page",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production privacy page/controllers and Care/Intake API repositories; isolated HTTP with versioned per-service consent storage; actual More/privacy/notification routes and notification coordinator, no real user permissions mutated",
+      "test": "test/modules/profile/privacy_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "07-me/privacy-journey-consent-read-retried",
+    "module": "账号与隐私",
+    "label": "隐私与数据",
+    "state": "privacy-journey-consent-read-retried",
+    "image": "07-me/privacy-journey-consent-read-retried/default.png",
+    "viewport": "07-me/privacy-journey-consent-read-retried/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/privacy"
+    ],
+    "mapped_design_candidates": [
+      "profile/privacy",
+      "common/not-found",
+      "services/state-50"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/profile/presentation/privacy_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/profile/privacy_inventory_journey_test.dart",
+    "test_case": "inventory privacy consent read loading error retry and reread",
+    "metadata": "raw/test/goldens/ui_inventory/privacy-journey-consent-read-retried-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/privacy-journey-consent-read-retried-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/privacy-journey-consent-read-retried-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/privacy",
+    "entry": "Authenticated More page",
+    "trigger": "Retry consent HTTP → editable existing values",
+    "journey": {
+      "source": "test/goldens/ui_inventory/privacy-journey-consent-read-retried-393.png",
+      "previous_source": "test/goldens/ui_inventory/privacy-journey-consent-read-error-393.png",
+      "route": "/privacy",
+      "trigger": "Retry consent HTTP → editable existing values",
+      "root_entry": "Authenticated More page",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production privacy page/controllers and Care/Intake API repositories; isolated HTTP with versioned per-service consent storage; actual More/privacy/notification routes and notification coordinator, no real user permissions mutated",
+      "test": "test/modules/profile/privacy_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "07-me/privacy-journey-empty-services",
+    "module": "账号与隐私",
+    "label": "隐私与数据",
+    "state": "privacy-journey-empty-services",
+    "image": "07-me/privacy-journey-empty-services/default.png",
+    "viewport": "07-me/privacy-journey-empty-services/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/privacy"
+    ],
+    "mapped_design_candidates": [
+      "profile/privacy",
+      "common/not-found",
+      "common/loading",
+      "common/empty",
+      "common/error",
+      "services/state-50"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/profile/presentation/privacy_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/product_feedback.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/profile/privacy_inventory_journey_test.dart",
+    "test_case": "inventory privacy overview loading error and empty entry",
+    "metadata": "raw/test/goldens/ui_inventory/privacy-journey-empty-services-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/privacy-journey-empty-services-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/privacy-journey-empty-services-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/privacy",
+    "entry": "Authenticated More page",
+    "trigger": "Retry with no owned services → empty state and no editable defaults",
+    "journey": {
+      "source": "test/goldens/ui_inventory/privacy-journey-empty-services-393.png",
+      "previous_source": "test/goldens/ui_inventory/privacy-journey-overview-error-393.png",
+      "route": "/privacy",
+      "trigger": "Retry with no owned services → empty state and no editable defaults",
+      "root_entry": "Authenticated More page",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production privacy page/controllers and Care/Intake API repositories; isolated HTTP with versioned per-service consent storage; actual More/privacy/notification routes and notification coordinator, no real user permissions mutated",
+      "test": "test/modules/profile/privacy_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "07-me/privacy-journey-granted",
+    "module": "账号与隐私",
+    "label": "隐私与数据",
+    "state": "privacy-journey-granted",
+    "image": "07-me/privacy-journey-granted/default.png",
+    "viewport": "07-me/privacy-journey-granted/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/privacy"
+    ],
+    "mapped_design_candidates": [
+      "profile/privacy",
+      "common/not-found",
+      "services/state-50"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/profile/presentation/privacy_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/profile/privacy_inventory_journey_test.dart",
+    "test_case": "inventory privacy grant revoke confirm and notification roundtrip 393.0",
+    "metadata": "raw/test/goldens/ui_inventory/privacy-journey-granted-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/privacy-journey-granted-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/privacy-journey-granted-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/privacy-journey-granted-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/privacy-journey-granted-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/privacy",
+    "entry": "Authenticated More page",
+    "trigger": "Re-enable three permissions → save without revocation confirmation",
+    "journey": {
+      "source": "test/goldens/ui_inventory/privacy-journey-granted-393.png",
+      "previous_source": "test/goldens/ui_inventory/privacy-journey-revoked-393.png",
+      "route": "/privacy",
+      "trigger": "Re-enable three permissions → save without revocation confirmation",
+      "root_entry": "Authenticated More page",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production privacy page/controllers and Care/Intake API repositories; isolated HTTP with versioned per-service consent storage; actual More/privacy/notification routes and notification coordinator, no real user permissions mutated",
+      "test": "test/modules/profile/privacy_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "07-me/privacy-journey-leave-confirm",
+    "module": "账号与隐私",
+    "label": "隐私与数据",
+    "state": "privacy-journey-leave-confirm",
+    "image": "07-me/privacy-journey-leave-confirm/default.png",
+    "viewport": "07-me/privacy-journey-leave-confirm/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/privacy"
+    ],
+    "mapped_design_candidates": [
+      "profile/privacy",
+      "common/not-found",
+      "services/state-50"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/profile/presentation/privacy_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/profile/privacy_inventory_journey_test.dart",
+    "test_case": "inventory privacy grant revoke confirm and notification roundtrip 393.0",
+    "metadata": "raw/test/goldens/ui_inventory/privacy-journey-leave-confirm-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/privacy-journey-leave-confirm-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/privacy-journey-leave-confirm-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/privacy-journey-leave-confirm-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/privacy-journey-leave-confirm-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/privacy",
+    "entry": "Authenticated More page",
+    "trigger": "Back with draft → discard confirmation",
+    "journey": {
+      "source": "test/goldens/ui_inventory/privacy-journey-leave-confirm-393.png",
+      "previous_source": "test/goldens/ui_inventory/privacy-journey-notifications-return-393.png",
+      "route": "/privacy",
+      "trigger": "Back with draft → discard confirmation",
+      "root_entry": "Authenticated More page",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production privacy page/controllers and Care/Intake API repositories; isolated HTTP with versioned per-service consent storage; actual More/privacy/notification routes and notification coordinator, no real user permissions mutated",
+      "test": "test/modules/profile/privacy_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "07-me/privacy-journey-leave-kept",
+    "module": "账号与隐私",
+    "label": "隐私与数据",
+    "state": "privacy-journey-leave-kept",
+    "image": "07-me/privacy-journey-leave-kept/default.png",
+    "viewport": "07-me/privacy-journey-leave-kept/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/privacy"
+    ],
+    "mapped_design_candidates": [
+      "profile/privacy",
+      "common/not-found",
+      "services/state-50"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/profile/presentation/privacy_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/profile/privacy_inventory_journey_test.dart",
+    "test_case": "inventory privacy grant revoke confirm and notification roundtrip 393.0",
+    "metadata": "raw/test/goldens/ui_inventory/privacy-journey-leave-kept-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/privacy-journey-leave-kept-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/privacy-journey-leave-kept-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/privacy-journey-leave-kept-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/privacy-journey-leave-kept-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/privacy",
+    "entry": "Authenticated More page",
+    "trigger": "Continue viewing → draft retained",
+    "journey": {
+      "source": "test/goldens/ui_inventory/privacy-journey-leave-kept-393.png",
+      "previous_source": "test/goldens/ui_inventory/privacy-journey-leave-confirm-393.png",
+      "route": "/privacy",
+      "trigger": "Continue viewing → draft retained",
+      "root_entry": "Authenticated More page",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production privacy page/controllers and Care/Intake API repositories; isolated HTTP with versioned per-service consent storage; actual More/privacy/notification routes and notification coordinator, no real user permissions mutated",
+      "test": "test/modules/profile/privacy_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "07-me/privacy-journey-loaded",
+    "module": "账号与隐私",
+    "label": "隐私与数据",
+    "state": "privacy-journey-loaded",
+    "image": "07-me/privacy-journey-loaded/default.png",
+    "viewport": "07-me/privacy-journey-loaded/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/privacy"
+    ],
+    "mapped_design_candidates": [
+      "profile/privacy",
+      "common/not-found",
+      "services/state-50"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/profile/presentation/privacy_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/profile/privacy_inventory_journey_test.dart",
+    "test_case": "inventory privacy grant revoke confirm and notification roundtrip 393.0",
+    "metadata": "raw/test/goldens/ui_inventory/privacy-journey-loaded-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/privacy-journey-loaded-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/privacy-journey-loaded-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/privacy-journey-loaded-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/privacy-journey-loaded-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/privacy",
+    "entry": "Authenticated More page",
+    "trigger": "More privacy → first service three editable permissions",
+    "journey": {
+      "source": "test/goldens/ui_inventory/privacy-journey-loaded-393.png",
+      "previous_source": null,
+      "route": "/privacy",
+      "trigger": "More privacy → first service three editable permissions",
+      "root_entry": "Authenticated More page",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production privacy page/controllers and Care/Intake API repositories; isolated HTTP with versioned per-service consent storage; actual More/privacy/notification routes and notification coordinator, no real user permissions mutated",
+      "test": "test/modules/profile/privacy_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "07-me/privacy-journey-notifications-return",
+    "module": "账号与隐私",
+    "label": "隐私与数据",
+    "state": "privacy-journey-notifications-return",
+    "image": "07-me/privacy-journey-notifications-return/default.png",
+    "viewport": "07-me/privacy-journey-notifications-return/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/privacy"
+    ],
+    "mapped_design_candidates": [
+      "profile/privacy",
+      "common/not-found",
+      "services/state-50"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/profile/presentation/privacy_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/profile/privacy_inventory_journey_test.dart",
+    "test_case": "inventory privacy grant revoke confirm and notification roundtrip 393.0",
+    "metadata": "raw/test/goldens/ui_inventory/privacy-journey-notifications-return-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/privacy-journey-notifications-return-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/privacy-journey-notifications-return-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/privacy-journey-notifications-return-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/privacy-journey-notifications-return-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/privacy",
+    "entry": "Authenticated More page",
+    "trigger": "Back from notification settings → unsaved privacy draft retained",
+    "journey": {
+      "source": "test/goldens/ui_inventory/privacy-journey-notifications-return-393.png",
+      "previous_source": "test/goldens/ui_inventory/privacy-journey-notification-settings-393.png",
+      "route": "/privacy",
+      "trigger": "Back from notification settings → unsaved privacy draft retained",
+      "root_entry": "Authenticated More page",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production privacy page/controllers and Care/Intake API repositories; isolated HTTP with versioned per-service consent storage; actual More/privacy/notification routes and notification coordinator, no real user permissions mutated",
+      "test": "test/modules/profile/privacy_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "07-me/privacy-journey-optional-dirty",
+    "module": "账号与隐私",
+    "label": "隐私与数据",
+    "state": "privacy-journey-optional-dirty",
+    "image": "07-me/privacy-journey-optional-dirty/default.png",
+    "viewport": "07-me/privacy-journey-optional-dirty/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/privacy"
+    ],
+    "mapped_design_candidates": [
+      "profile/privacy",
+      "common/not-found",
+      "services/state-50"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/profile/presentation/privacy_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/profile/privacy_inventory_journey_test.dart",
+    "test_case": "inventory privacy grant revoke confirm and notification roundtrip 393.0",
+    "metadata": "raw/test/goldens/ui_inventory/privacy-journey-optional-dirty-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/privacy-journey-optional-dirty-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/privacy-journey-optional-dirty-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/privacy-journey-optional-dirty-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/privacy-journey-optional-dirty-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/privacy",
+    "entry": "Authenticated More page",
+    "trigger": "Turn off Cozymate context → unsaved draft",
+    "journey": {
+      "source": "test/goldens/ui_inventory/privacy-journey-optional-dirty-393.png",
+      "previous_source": "test/goldens/ui_inventory/privacy-journey-loaded-393.png",
+      "route": "/privacy",
+      "trigger": "Turn off Cozymate context → unsaved draft",
+      "root_entry": "Authenticated More page",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production privacy page/controllers and Care/Intake API repositories; isolated HTTP with versioned per-service consent storage; actual More/privacy/notification routes and notification coordinator, no real user permissions mutated",
+      "test": "test/modules/profile/privacy_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "07-me/privacy-journey-optional-saved",
+    "module": "账号与隐私",
+    "label": "隐私与数据",
+    "state": "privacy-journey-optional-saved",
+    "image": "07-me/privacy-journey-optional-saved/default.png",
+    "viewport": "07-me/privacy-journey-optional-saved/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/privacy"
+    ],
+    "mapped_design_candidates": [
+      "profile/privacy",
+      "common/not-found",
+      "services/state-50"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/profile/presentation/privacy_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/profile/privacy_inventory_journey_test.dart",
+    "test_case": "inventory privacy grant revoke confirm and notification roundtrip 393.0",
+    "metadata": "raw/test/goldens/ui_inventory/privacy-journey-optional-saved-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/privacy-journey-optional-saved-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/privacy-journey-optional-saved-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/privacy-journey-optional-saved-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/privacy-journey-optional-saved-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/privacy",
+    "entry": "Authenticated More page",
+    "trigger": "Save optional change → versioned HTTP write and saved message",
+    "journey": {
+      "source": "test/goldens/ui_inventory/privacy-journey-optional-saved-393.png",
+      "previous_source": "test/goldens/ui_inventory/privacy-journey-optional-dirty-393.png",
+      "route": "/privacy",
+      "trigger": "Save optional change → versioned HTTP write and saved message",
+      "root_entry": "Authenticated More page",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production privacy page/controllers and Care/Intake API repositories; isolated HTTP with versioned per-service consent storage; actual More/privacy/notification routes and notification coordinator, no real user permissions mutated",
+      "test": "test/modules/profile/privacy_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "07-me/privacy-journey-optional-uncertain",
+    "module": "账号与隐私",
+    "label": "隐私与数据",
+    "state": "privacy-journey-optional-uncertain",
+    "image": "07-me/privacy-journey-optional-uncertain/default.png",
+    "viewport": "07-me/privacy-journey-optional-uncertain/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/privacy"
+    ],
+    "mapped_design_candidates": [
+      "profile/privacy",
+      "common/not-found",
+      "common/loading",
+      "common/empty",
+      "common/error",
+      "services/state-50"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/profile/presentation/privacy_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/product_feedback.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/profile/privacy_inventory_journey_test.dart",
+    "test_case": "inventory privacy consent read loading error retry and reread",
+    "metadata": "raw/test/goldens/ui_inventory/privacy-journey-optional-uncertain-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/privacy-journey-optional-uncertain-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/privacy-journey-optional-uncertain-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/privacy",
+    "entry": "Authenticated More page",
+    "trigger": "Optional write HTTP failure → uncertain state",
+    "journey": {
+      "source": "test/goldens/ui_inventory/privacy-journey-optional-uncertain-393.png",
+      "previous_source": "test/goldens/ui_inventory/privacy-journey-consent-read-retried-393.png",
+      "route": "/privacy",
+      "trigger": "Optional write HTTP failure → uncertain state",
+      "root_entry": "Authenticated More page",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production privacy page/controllers and Care/Intake API repositories; isolated HTTP with versioned per-service consent storage; actual More/privacy/notification routes and notification coordinator, no real user permissions mutated",
+      "test": "test/modules/profile/privacy_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "07-me/privacy-journey-overview-error",
+    "module": "账号与隐私",
+    "label": "隐私与数据",
+    "state": "privacy-journey-overview-error",
+    "image": "07-me/privacy-journey-overview-error/default.png",
+    "viewport": "07-me/privacy-journey-overview-error/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/privacy"
+    ],
+    "mapped_design_candidates": [
+      "profile/privacy",
+      "common/not-found",
+      "common/loading",
+      "common/empty",
+      "common/error",
+      "services/state-50"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/profile/presentation/privacy_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/product_feedback.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/profile/privacy_inventory_journey_test.dart",
+    "test_case": "inventory privacy overview loading error and empty entry",
+    "metadata": "raw/test/goldens/ui_inventory/privacy-journey-overview-error-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/privacy-journey-overview-error-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/privacy-journey-overview-error-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/privacy",
+    "entry": "Authenticated More page",
+    "trigger": "Overview HTTP failure → error and retry",
+    "journey": {
+      "source": "test/goldens/ui_inventory/privacy-journey-overview-error-393.png",
+      "previous_source": "test/goldens/ui_inventory/privacy-journey-overview-loading-393.png",
+      "route": "/privacy",
+      "trigger": "Overview HTTP failure → error and retry",
+      "root_entry": "Authenticated More page",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production privacy page/controllers and Care/Intake API repositories; isolated HTTP with versioned per-service consent storage; actual More/privacy/notification routes and notification coordinator, no real user permissions mutated",
+      "test": "test/modules/profile/privacy_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "07-me/privacy-journey-overview-loading",
+    "module": "账号与隐私",
+    "label": "隐私与数据",
+    "state": "privacy-journey-overview-loading",
+    "image": "07-me/privacy-journey-overview-loading/default.png",
+    "viewport": "07-me/privacy-journey-overview-loading/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/privacy"
+    ],
+    "mapped_design_candidates": [
+      "profile/privacy",
+      "common/not-found",
+      "common/loading",
+      "common/empty",
+      "common/error",
+      "services/state-50"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/profile/presentation/privacy_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/product_feedback.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/profile/privacy_inventory_journey_test.dart",
+    "test_case": "inventory privacy overview loading error and empty entry",
+    "metadata": "raw/test/goldens/ui_inventory/privacy-journey-overview-loading-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/privacy-journey-overview-loading-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/privacy-journey-overview-loading-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/privacy",
+    "entry": "Authenticated More page",
+    "trigger": "Privacy entry → overview HTTP pending",
+    "journey": {
+      "source": "test/goldens/ui_inventory/privacy-journey-overview-loading-393.png",
+      "previous_source": null,
+      "route": "/privacy",
+      "trigger": "Privacy entry → overview HTTP pending",
+      "root_entry": "Authenticated More page",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production privacy page/controllers and Care/Intake API repositories; isolated HTTP with versioned per-service consent storage; actual More/privacy/notification routes and notification coordinator, no real user permissions mutated",
+      "test": "test/modules/profile/privacy_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "07-me/privacy-journey-partial-uncertain",
+    "module": "账号与隐私",
+    "label": "隐私与数据",
+    "state": "privacy-journey-partial-uncertain",
+    "image": "07-me/privacy-journey-partial-uncertain/default.png",
+    "viewport": "07-me/privacy-journey-partial-uncertain/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/privacy"
+    ],
+    "mapped_design_candidates": [
+      "profile/privacy",
+      "common/not-found",
+      "common/loading",
+      "common/empty",
+      "common/error",
+      "services/state-50"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/profile/presentation/privacy_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/product_feedback.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/profile/privacy_inventory_journey_test.dart",
+    "test_case": "inventory privacy pending uncertain retry and partial save 393.0",
+    "metadata": "raw/test/goldens/ui_inventory/privacy-journey-partial-uncertain-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/privacy-journey-partial-uncertain-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/privacy-journey-partial-uncertain-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/privacy-journey-partial-uncertain-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/privacy-journey-partial-uncertain-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/privacy",
+    "entry": "Authenticated More page",
+    "trigger": "Required revocation succeeds; optional write 503 → unresolved change and retry",
+    "journey": {
+      "source": "test/goldens/ui_inventory/privacy-journey-partial-uncertain-393.png",
+      "previous_source": "test/goldens/ui_inventory/privacy-journey-saving-393.png",
+      "route": "/privacy",
+      "trigger": "Required revocation succeeds; optional write 503 → unresolved change and retry",
+      "root_entry": "Authenticated More page",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production privacy page/controllers and Care/Intake API repositories; isolated HTTP with versioned per-service consent storage; actual More/privacy/notification routes and notification coordinator, no real user permissions mutated",
+      "test": "test/modules/profile/privacy_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "07-me/privacy-journey-reentered",
+    "module": "账号与隐私",
+    "label": "隐私与数据",
+    "state": "privacy-journey-reentered",
+    "image": "07-me/privacy-journey-reentered/default.png",
+    "viewport": "07-me/privacy-journey-reentered/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/privacy"
+    ],
+    "mapped_design_candidates": [
+      "profile/privacy",
+      "common/not-found",
+      "services/state-50"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/profile/presentation/privacy_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/profile/privacy_inventory_journey_test.dart",
+    "test_case": "inventory privacy grant revoke confirm and notification roundtrip 393.0",
+    "metadata": "raw/test/goldens/ui_inventory/privacy-journey-reentered-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/privacy-journey-reentered-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/privacy-journey-reentered-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/privacy-journey-reentered-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/privacy-journey-reentered-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/privacy",
+    "entry": "Authenticated More page",
+    "trigger": "Re-enter privacy → persisted server values, discarded draft absent",
+    "journey": {
+      "source": "test/goldens/ui_inventory/privacy-journey-reentered-393.png",
+      "previous_source": "test/goldens/ui_inventory/privacy-journey-leave-discarded-393.png",
+      "route": "/privacy",
+      "trigger": "Re-enter privacy → persisted server values, discarded draft absent",
+      "root_entry": "Authenticated More page",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production privacy page/controllers and Care/Intake API repositories; isolated HTTP with versioned per-service consent storage; actual More/privacy/notification routes and notification coordinator, no real user permissions mutated",
+      "test": "test/modules/profile/privacy_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "07-me/privacy-journey-reread",
+    "module": "账号与隐私",
+    "label": "隐私与数据",
+    "state": "privacy-journey-reread",
+    "image": "07-me/privacy-journey-reread/default.png",
+    "viewport": "07-me/privacy-journey-reread/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/privacy"
+    ],
+    "mapped_design_candidates": [
+      "profile/privacy",
+      "common/not-found",
+      "services/state-50"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/profile/presentation/privacy_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/profile/privacy_inventory_journey_test.dart",
+    "test_case": "inventory privacy consent read loading error retry and reread",
+    "metadata": "raw/test/goldens/ui_inventory/privacy-journey-reread-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/privacy-journey-reread-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/privacy-journey-reread-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/privacy",
+    "entry": "Authenticated More page",
+    "trigger": "Re-read discards unresolved draft; uses stored consent without retrying write",
+    "journey": {
+      "source": "test/goldens/ui_inventory/privacy-journey-reread-393.png",
+      "previous_source": "test/goldens/ui_inventory/privacy-journey-optional-uncertain-393.png",
+      "route": "/privacy",
+      "trigger": "Re-read discards unresolved draft; uses stored consent without retrying write",
+      "root_entry": "Authenticated More page",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production privacy page/controllers and Care/Intake API repositories; isolated HTTP with versioned per-service consent storage; actual More/privacy/notification routes and notification coordinator, no real user permissions mutated",
+      "test": "test/modules/profile/privacy_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "07-me/privacy-journey-revoke-closed",
+    "module": "账号与隐私",
+    "label": "隐私与数据",
+    "state": "privacy-journey-revoke-closed",
+    "image": "07-me/privacy-journey-revoke-closed/default.png",
+    "viewport": "07-me/privacy-journey-revoke-closed/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/privacy"
+    ],
+    "mapped_design_candidates": [
+      "profile/privacy",
+      "common/not-found",
+      "services/state-50"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/profile/presentation/privacy_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/profile/privacy_inventory_journey_test.dart",
+    "test_case": "inventory privacy grant revoke confirm and notification roundtrip 393.0",
+    "metadata": "raw/test/goldens/ui_inventory/privacy-journey-revoke-closed-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/privacy-journey-revoke-closed-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/privacy-journey-revoke-closed-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/privacy-journey-revoke-closed-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/privacy-journey-revoke-closed-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/privacy",
+    "entry": "Authenticated More page",
+    "trigger": "Close confirmation icon → draft remains, no write",
+    "journey": {
+      "source": "test/goldens/ui_inventory/privacy-journey-revoke-closed-393.png",
+      "previous_source": "test/goldens/ui_inventory/privacy-journey-revoke-kept-393.png",
+      "route": "/privacy",
+      "trigger": "Close confirmation icon → draft remains, no write",
+      "root_entry": "Authenticated More page",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production privacy page/controllers and Care/Intake API repositories; isolated HTTP with versioned per-service consent storage; actual More/privacy/notification routes and notification coordinator, no real user permissions mutated",
+      "test": "test/modules/profile/privacy_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "07-me/privacy-journey-revoke-confirm",
+    "module": "账号与隐私",
+    "label": "隐私与数据",
+    "state": "privacy-journey-revoke-confirm",
+    "image": "07-me/privacy-journey-revoke-confirm/default.png",
+    "viewport": "07-me/privacy-journey-revoke-confirm/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/privacy"
+    ],
+    "mapped_design_candidates": [
+      "profile/privacy",
+      "common/not-found",
+      "services/state-50"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/profile/presentation/privacy_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/profile/privacy_inventory_journey_test.dart",
+    "test_case": "inventory privacy grant revoke confirm and notification roundtrip 393.0",
+    "metadata": "raw/test/goldens/ui_inventory/privacy-journey-revoke-confirm-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/privacy-journey-revoke-confirm-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/privacy-journey-revoke-confirm-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/privacy-journey-revoke-confirm-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/privacy-journey-revoke-confirm-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/privacy",
+    "entry": "Authenticated More page",
+    "trigger": "Disable case and video → save requests required-scope confirmation",
+    "journey": {
+      "source": "test/goldens/ui_inventory/privacy-journey-revoke-confirm-393.png",
+      "previous_source": "test/goldens/ui_inventory/privacy-journey-optional-saved-393.png",
+      "route": "/privacy",
+      "trigger": "Disable case and video → save requests required-scope confirmation",
+      "root_entry": "Authenticated More page",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production privacy page/controllers and Care/Intake API repositories; isolated HTTP with versioned per-service consent storage; actual More/privacy/notification routes and notification coordinator, no real user permissions mutated",
+      "test": "test/modules/profile/privacy_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "07-me/privacy-journey-revoke-kept",
+    "module": "账号与隐私",
+    "label": "隐私与数据",
+    "state": "privacy-journey-revoke-kept",
+    "image": "07-me/privacy-journey-revoke-kept/default.png",
+    "viewport": "07-me/privacy-journey-revoke-kept/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/privacy"
+    ],
+    "mapped_design_candidates": [
+      "profile/privacy",
+      "common/not-found",
+      "services/state-50"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/profile/presentation/privacy_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/profile/privacy_inventory_journey_test.dart",
+    "test_case": "inventory privacy grant revoke confirm and notification roundtrip 393.0",
+    "metadata": "raw/test/goldens/ui_inventory/privacy-journey-revoke-kept-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/privacy-journey-revoke-kept-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/privacy-journey-revoke-kept-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/privacy-journey-revoke-kept-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/privacy-journey-revoke-kept-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/privacy",
+    "entry": "Authenticated More page",
+    "trigger": "Keep authorization → dialog closes; toggled draft remains unsaved",
+    "journey": {
+      "source": "test/goldens/ui_inventory/privacy-journey-revoke-kept-393.png",
+      "previous_source": "test/goldens/ui_inventory/privacy-journey-revoke-confirm-393.png",
+      "route": "/privacy",
+      "trigger": "Keep authorization → dialog closes; toggled draft remains unsaved",
+      "root_entry": "Authenticated More page",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production privacy page/controllers and Care/Intake API repositories; isolated HTTP with versioned per-service consent storage; actual More/privacy/notification routes and notification coordinator, no real user permissions mutated",
+      "test": "test/modules/profile/privacy_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "07-me/privacy-journey-revoked",
+    "module": "账号与隐私",
+    "label": "隐私与数据",
+    "state": "privacy-journey-revoked",
+    "image": "07-me/privacy-journey-revoked/default.png",
+    "viewport": "07-me/privacy-journey-revoked/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/privacy"
+    ],
+    "mapped_design_candidates": [
+      "profile/privacy",
+      "common/not-found",
+      "services/state-50"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/profile/presentation/privacy_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/profile/privacy_inventory_journey_test.dart",
+    "test_case": "inventory privacy grant revoke confirm and notification roundtrip 393.0",
+    "metadata": "raw/test/goldens/ui_inventory/privacy-journey-revoked-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/privacy-journey-revoked-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/privacy-journey-revoked-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/privacy-journey-revoked-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/privacy-journey-revoked-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/privacy",
+    "entry": "Authenticated More page",
+    "trigger": "Confirm required revocation → both HTTP writes and saved state",
+    "journey": {
+      "source": "test/goldens/ui_inventory/privacy-journey-revoked-393.png",
+      "previous_source": "test/goldens/ui_inventory/privacy-journey-revoke-closed-393.png",
+      "route": "/privacy",
+      "trigger": "Confirm required revocation → both HTTP writes and saved state",
+      "root_entry": "Authenticated More page",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production privacy page/controllers and Care/Intake API repositories; isolated HTTP with versioned per-service consent storage; actual More/privacy/notification routes and notification coordinator, no real user permissions mutated",
+      "test": "test/modules/profile/privacy_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "07-me/privacy-journey-saving",
+    "module": "账号与隐私",
+    "label": "隐私与数据",
+    "state": "privacy-journey-saving",
+    "image": "07-me/privacy-journey-saving/default.png",
+    "viewport": "07-me/privacy-journey-saving/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/privacy"
+    ],
+    "mapped_design_candidates": [
+      "profile/privacy",
+      "common/not-found",
+      "services/state-50"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/profile/presentation/privacy_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/profile/privacy_inventory_journey_test.dart",
+    "test_case": "inventory privacy pending uncertain retry and partial save 393.0",
+    "metadata": "raw/test/goldens/ui_inventory/privacy-journey-saving-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/privacy-journey-saving-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/privacy-journey-saving-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/privacy-journey-saving-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/privacy-journey-saving-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/privacy",
+    "entry": "Authenticated More page",
+    "trigger": "Confirm revocation → pending HTTP locks back, selector and switches",
+    "journey": {
+      "source": "test/goldens/ui_inventory/privacy-journey-saving-393.png",
+      "previous_source": null,
+      "route": "/privacy",
+      "trigger": "Confirm revocation → pending HTTP locks back, selector and switches",
+      "root_entry": "Authenticated More page",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production privacy page/controllers and Care/Intake API repositories; isolated HTTP with versioned per-service consent storage; actual More/privacy/notification routes and notification coordinator, no real user permissions mutated",
+      "test": "test/modules/profile/privacy_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "07-me/privacy-journey-second-service-saved",
+    "module": "账号与隐私",
+    "label": "隐私与数据",
+    "state": "privacy-journey-second-service-saved",
+    "image": "07-me/privacy-journey-second-service-saved/default.png",
+    "viewport": "07-me/privacy-journey-second-service-saved/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/privacy"
+    ],
+    "mapped_design_candidates": [
+      "profile/privacy",
+      "common/not-found",
+      "services/state-50"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/profile/presentation/privacy_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/profile/privacy_inventory_journey_test.dart",
+    "test_case": "inventory privacy service switch discards correctly 393.0",
+    "metadata": "raw/test/goldens/ui_inventory/privacy-journey-second-service-saved-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/privacy-journey-second-service-saved-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/privacy-journey-second-service-saved-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/privacy-journey-second-service-saved-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/privacy-journey-second-service-saved-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/privacy",
+    "entry": "Authenticated More page",
+    "trigger": "Save second service → first service stays unchanged",
+    "journey": {
+      "source": "test/goldens/ui_inventory/privacy-journey-second-service-saved-393.png",
+      "previous_source": "test/goldens/ui_inventory/privacy-journey-switched-393.png",
+      "route": "/privacy",
+      "trigger": "Save second service → first service stays unchanged",
+      "root_entry": "Authenticated More page",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production privacy page/controllers and Care/Intake API repositories; isolated HTTP with versioned per-service consent storage; actual More/privacy/notification routes and notification coordinator, no real user permissions mutated",
+      "test": "test/modules/profile/privacy_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "07-me/privacy-journey-service-picker",
+    "module": "账号与隐私",
+    "label": "隐私与数据",
+    "state": "privacy-journey-service-picker",
+    "image": "07-me/privacy-journey-service-picker/default.png",
+    "viewport": "07-me/privacy-journey-service-picker/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/privacy"
+    ],
+    "mapped_design_candidates": [
+      "profile/privacy",
+      "common/not-found",
+      "services/state-50"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/profile/presentation/privacy_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/profile/privacy_inventory_journey_test.dart",
+    "test_case": "inventory privacy service switch discards correctly 393.0",
+    "metadata": "raw/test/goldens/ui_inventory/privacy-journey-service-picker-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/privacy-journey-service-picker-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/privacy-journey-service-picker-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/privacy-journey-service-picker-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/privacy-journey-service-picker-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/privacy",
+    "entry": "Authenticated More page",
+    "trigger": "Tap service picker → list of owned services",
+    "journey": {
+      "source": "test/goldens/ui_inventory/privacy-journey-service-picker-393.png",
+      "previous_source": null,
+      "route": "/privacy",
+      "trigger": "Tap service picker → list of owned services",
+      "root_entry": "Authenticated More page",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production privacy page/controllers and Care/Intake API repositories; isolated HTTP with versioned per-service consent storage; actual More/privacy/notification routes and notification coordinator, no real user permissions mutated",
+      "test": "test/modules/profile/privacy_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "07-me/privacy-journey-service-picker-reopened",
+    "module": "账号与隐私",
+    "label": "隐私与数据",
+    "state": "privacy-journey-service-picker-reopened",
+    "image": "07-me/privacy-journey-service-picker-reopened/default.png",
+    "viewport": "07-me/privacy-journey-service-picker-reopened/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/privacy"
+    ],
+    "mapped_design_candidates": [
+      "profile/privacy",
+      "common/not-found",
+      "services/state-50"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/profile/presentation/privacy_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/profile/privacy_inventory_journey_test.dart",
+    "test_case": "inventory privacy service switch discards correctly 393.0",
+    "metadata": "raw/test/goldens/ui_inventory/privacy-journey-service-picker-reopened-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/privacy-journey-service-picker-reopened-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/privacy-journey-service-picker-reopened-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/privacy-journey-service-picker-reopened-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/privacy-journey-service-picker-reopened-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/privacy",
+    "entry": "Authenticated More page",
+    "trigger": "Tap service picker → list of owned services",
+    "journey": {
+      "source": "test/goldens/ui_inventory/privacy-journey-service-picker-reopened-393.png",
+      "previous_source": "test/goldens/ui_inventory/privacy-journey-switch-cancelled-393.png",
+      "route": "/privacy",
+      "trigger": "Tap service picker → list of owned services",
+      "root_entry": "Authenticated More page",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production privacy page/controllers and Care/Intake API repositories; isolated HTTP with versioned per-service consent storage; actual More/privacy/notification routes and notification coordinator, no real user permissions mutated",
+      "test": "test/modules/profile/privacy_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "07-me/privacy-journey-switch-cancelled",
+    "module": "账号与隐私",
+    "label": "隐私与数据",
+    "state": "privacy-journey-switch-cancelled",
+    "image": "07-me/privacy-journey-switch-cancelled/default.png",
+    "viewport": "07-me/privacy-journey-switch-cancelled/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/privacy"
+    ],
+    "mapped_design_candidates": [
+      "profile/privacy",
+      "common/not-found",
+      "services/state-50"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/profile/presentation/privacy_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/profile/privacy_inventory_journey_test.dart",
+    "test_case": "inventory privacy service switch discards correctly 393.0",
+    "metadata": "raw/test/goldens/ui_inventory/privacy-journey-switch-cancelled-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/privacy-journey-switch-cancelled-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/privacy-journey-switch-cancelled-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/privacy-journey-switch-cancelled-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/privacy-journey-switch-cancelled-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/privacy",
+    "entry": "Authenticated More page",
+    "trigger": "Keep draft → picker rolls back to original service",
+    "journey": {
+      "source": "test/goldens/ui_inventory/privacy-journey-switch-cancelled-393.png",
+      "previous_source": "test/goldens/ui_inventory/privacy-journey-switch-confirm-393.png",
+      "route": "/privacy",
+      "trigger": "Keep draft → picker rolls back to original service",
+      "root_entry": "Authenticated More page",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production privacy page/controllers and Care/Intake API repositories; isolated HTTP with versioned per-service consent storage; actual More/privacy/notification routes and notification coordinator, no real user permissions mutated",
+      "test": "test/modules/profile/privacy_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "07-me/privacy-journey-switch-confirm",
+    "module": "账号与隐私",
+    "label": "隐私与数据",
+    "state": "privacy-journey-switch-confirm",
+    "image": "07-me/privacy-journey-switch-confirm/default.png",
+    "viewport": "07-me/privacy-journey-switch-confirm/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/privacy"
+    ],
+    "mapped_design_candidates": [
+      "profile/privacy",
+      "common/not-found",
+      "services/state-50"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/profile/presentation/privacy_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/profile/privacy_inventory_journey_test.dart",
+    "test_case": "inventory privacy service switch discards correctly 393.0",
+    "metadata": "raw/test/goldens/ui_inventory/privacy-journey-switch-confirm-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/privacy-journey-switch-confirm-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/privacy-journey-switch-confirm-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/privacy-journey-switch-confirm-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/privacy-journey-switch-confirm-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/privacy",
+    "entry": "Authenticated More page",
+    "trigger": "Select another service with dirty draft → discard confirmation",
+    "journey": {
+      "source": "test/goldens/ui_inventory/privacy-journey-switch-confirm-393.png",
+      "previous_source": "test/goldens/ui_inventory/privacy-journey-service-picker-393.png",
+      "route": "/privacy",
+      "trigger": "Select another service with dirty draft → discard confirmation",
+      "root_entry": "Authenticated More page",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production privacy page/controllers and Care/Intake API repositories; isolated HTTP with versioned per-service consent storage; actual More/privacy/notification routes and notification coordinator, no real user permissions mutated",
+      "test": "test/modules/profile/privacy_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "07-me/privacy-journey-switched",
+    "module": "账号与隐私",
+    "label": "隐私与数据",
+    "state": "privacy-journey-switched",
+    "image": "07-me/privacy-journey-switched/default.png",
+    "viewport": "07-me/privacy-journey-switched/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/privacy"
+    ],
+    "mapped_design_candidates": [
+      "profile/privacy",
+      "common/not-found",
+      "services/state-50"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/profile/presentation/privacy_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/profile/privacy_inventory_journey_test.dart",
+    "test_case": "inventory privacy service switch discards correctly 393.0",
+    "metadata": "raw/test/goldens/ui_inventory/privacy-journey-switched-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/privacy-journey-switched-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/privacy-journey-switched-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/privacy-journey-switched-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/privacy-journey-switched-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/privacy",
+    "entry": "Authenticated More page",
+    "trigger": "Discard previous draft → second service permissions loaded",
+    "journey": {
+      "source": "test/goldens/ui_inventory/privacy-journey-switched-393.png",
+      "previous_source": "test/goldens/ui_inventory/privacy-journey-service-picker-reopened-393.png",
+      "route": "/privacy",
+      "trigger": "Discard previous draft → second service permissions loaded",
+      "root_entry": "Authenticated More page",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production privacy page/controllers and Care/Intake API repositories; isolated HTTP with versioned per-service consent storage; actual More/privacy/notification routes and notification coordinator, no real user permissions mutated",
+      "test": "test/modules/profile/privacy_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "07-me/privacy-journey-uncertain-leave-confirm",
+    "module": "账号与隐私",
+    "label": "隐私与数据",
+    "state": "privacy-journey-uncertain-leave-confirm",
+    "image": "07-me/privacy-journey-uncertain-leave-confirm/default.png",
+    "viewport": "07-me/privacy-journey-uncertain-leave-confirm/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/privacy"
+    ],
+    "mapped_design_candidates": [
+      "profile/privacy",
+      "common/not-found",
+      "common/loading",
+      "common/empty",
+      "common/error",
+      "services/state-50"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/profile/presentation/privacy_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/product_feedback.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/profile/privacy_inventory_journey_test.dart",
+    "test_case": "inventory privacy pending uncertain retry and partial save 393.0",
+    "metadata": "raw/test/goldens/ui_inventory/privacy-journey-uncertain-leave-confirm-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/privacy-journey-uncertain-leave-confirm-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/privacy-journey-uncertain-leave-confirm-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/privacy-journey-uncertain-leave-confirm-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/privacy-journey-uncertain-leave-confirm-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/privacy",
+    "entry": "Authenticated More page",
+    "trigger": "Back while result uncertain → explanation to re-read on return",
+    "journey": {
+      "source": "test/goldens/ui_inventory/privacy-journey-uncertain-leave-confirm-393.png",
+      "previous_source": "test/goldens/ui_inventory/privacy-journey-partial-uncertain-393.png",
+      "route": "/privacy",
+      "trigger": "Back while result uncertain → explanation to re-read on return",
+      "root_entry": "Authenticated More page",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production privacy page/controllers and Care/Intake API repositories; isolated HTTP with versioned per-service consent storage; actual More/privacy/notification routes and notification coordinator, no real user permissions mutated",
+      "test": "test/modules/profile/privacy_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "07-me/privacy-journey-uncertain-retried",
+    "module": "账号与隐私",
+    "label": "隐私与数据",
+    "state": "privacy-journey-uncertain-retried",
+    "image": "07-me/privacy-journey-uncertain-retried/default.png",
+    "viewport": "07-me/privacy-journey-uncertain-retried/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/privacy"
+    ],
+    "mapped_design_candidates": [
+      "profile/privacy",
+      "common/not-found",
+      "services/state-50"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/profile/presentation/privacy_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/profile/privacy_inventory_journey_test.dart",
+    "test_case": "inventory privacy pending uncertain retry and partial save 393.0",
+    "metadata": "raw/test/goldens/ui_inventory/privacy-journey-uncertain-retried-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/privacy-journey-uncertain-retried-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/privacy-journey-uncertain-retried-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/privacy-journey-uncertain-retried-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/privacy-journey-uncertain-retried-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/privacy",
+    "entry": "Authenticated More page",
+    "trigger": "Retry only unresolved optional write with same version; saved required scope not resent",
+    "journey": {
+      "source": "test/goldens/ui_inventory/privacy-journey-uncertain-retried-393.png",
+      "previous_source": "test/goldens/ui_inventory/privacy-journey-uncertain-leave-confirm-393.png",
+      "route": "/privacy",
+      "trigger": "Retry only unresolved optional write with same version; saved required scope not resent",
+      "root_entry": "Authenticated More page",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production privacy page/controllers and Care/Intake API repositories; isolated HTTP with versioned per-service consent storage; actual More/privacy/notification routes and notification coordinator, no real user permissions mutated",
+      "test": "test/modules/profile/privacy_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "07-me/privacy-journey-version-conflict",
+    "module": "账号与隐私",
+    "label": "隐私与数据",
+    "state": "privacy-journey-version-conflict",
+    "image": "07-me/privacy-journey-version-conflict/default.png",
+    "viewport": "07-me/privacy-journey-version-conflict/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/privacy"
+    ],
+    "mapped_design_candidates": [
+      "profile/privacy",
+      "common/not-found",
+      "common/loading",
+      "common/empty",
+      "common/error",
+      "services/state-50"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/profile/presentation/privacy_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/product_feedback.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/profile/privacy_inventory_journey_test.dart",
+    "test_case": "inventory privacy conflict requires reloading before edit",
+    "metadata": "raw/test/goldens/ui_inventory/privacy-journey-version-conflict-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/privacy-journey-version-conflict-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/privacy-journey-version-conflict-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/privacy",
+    "entry": "Authenticated More page",
+    "trigger": "Consent write 409 → reload required and switches locked",
+    "journey": {
+      "source": "test/goldens/ui_inventory/privacy-journey-version-conflict-393.png",
+      "previous_source": null,
+      "route": "/privacy",
+      "trigger": "Consent write 409 → reload required and switches locked",
+      "root_entry": "Authenticated More page",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production privacy page/controllers and Care/Intake API repositories; isolated HTTP with versioned per-service consent storage; actual More/privacy/notification routes and notification coordinator, no real user permissions mutated",
+      "test": "test/modules/profile/privacy_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "07-me/privacy-offline",
+    "module": "账号与隐私",
+    "label": "隐私与数据",
+    "state": "privacy-offline",
+    "image": "07-me/privacy-offline/default.png",
+    "viewport": "07-me/privacy-offline/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/privacy"
+    ],
+    "mapped_design_candidates": [
+      "profile/privacy",
+      "common/loading",
+      "common/empty",
+      "common/error",
+      "services/state-50"
+    ],
+    "production_widget_files": [
+      "lib/modules/profile/presentation/privacy_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/product_feedback.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/profile/privacy_test.dart",
+    "test_case": "no service and failed read never expose editable fake defaults",
+    "metadata": "raw/test/goldens/design_system/privacy-offline-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/privacy-offline-390.png",
+        "metadata": "raw/test/goldens/design_system/privacy-offline-390.png.json",
+        "width": 390,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "07-me/privacy-saved",
+    "module": "账号与隐私",
+    "label": "隐私与数据",
+    "state": "privacy-saved",
+    "image": "07-me/privacy-saved/default.png",
+    "viewport": "07-me/privacy-saved/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/privacy"
+    ],
+    "mapped_design_candidates": [
+      "profile/privacy",
+      "services/state-50"
+    ],
+    "production_widget_files": [
+      "lib/modules/profile/presentation/privacy_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/profile/privacy_test.dart",
+    "test_case": "privacy scopes, revoke confirmation and notifications 390.0/1.0",
+    "metadata": "raw/test/goldens/design_system/privacy-saved-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/privacy-saved-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/privacy-saved-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/privacy-saved-320.png",
+        "metadata": "raw/test/goldens/design_system/privacy-saved-320.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/privacy-saved-390-2x.png",
+        "metadata": "raw/test/goldens/design_system/privacy-saved-390-2x.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/privacy-saved-390.png",
+        "metadata": "raw/test/goldens/design_system/privacy-saved-390.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/privacy-saved-430-2x.png",
+        "metadata": "raw/test/goldens/design_system/privacy-saved-430-2x.png.json",
+        "width": 430,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/privacy-saved-430.png",
+        "metadata": "raw/test/goldens/design_system/privacy-saved-430.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "07-me/privacy-top",
+    "module": "账号与隐私",
+    "label": "隐私与数据",
+    "state": "privacy-top",
+    "image": "07-me/privacy-top/default.png",
+    "viewport": "07-me/privacy-top/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/privacy"
+    ],
+    "mapped_design_candidates": [
+      "profile/privacy",
+      "services/state-50"
+    ],
+    "production_widget_files": [
+      "lib/modules/profile/presentation/privacy_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/profile/privacy_test.dart",
+    "test_case": "privacy scopes, revoke confirmation and notifications 390.0/1.0",
+    "metadata": "raw/test/goldens/design_system/privacy-top-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/privacy-top-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/privacy-top-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/privacy-top-320.png",
+        "metadata": "raw/test/goldens/design_system/privacy-top-320.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/privacy-top-390-2x.png",
+        "metadata": "raw/test/goldens/design_system/privacy-top-390-2x.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/privacy-top-390.png",
+        "metadata": "raw/test/goldens/design_system/privacy-top-390.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/privacy-top-430-2x.png",
+        "metadata": "raw/test/goldens/design_system/privacy-top-430-2x.png.json",
+        "width": 430,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/privacy-top-430.png",
+        "metadata": "raw/test/goldens/design_system/privacy-top-430.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "07-me/privacy-uncertain",
+    "module": "账号与隐私",
+    "label": "隐私与数据",
+    "state": "privacy-uncertain",
+    "image": "07-me/privacy-uncertain/default.png",
+    "viewport": "07-me/privacy-uncertain/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/privacy"
+    ],
+    "mapped_design_candidates": [
+      "profile/privacy",
+      "common/loading",
+      "common/empty",
+      "common/error",
+      "services/state-50"
+    ],
+    "production_widget_files": [
+      "lib/modules/profile/presentation/privacy_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/product_feedback.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/profile/privacy_test.dart",
+    "test_case": "pending save locks edits and read retry can resolve uncertain result",
+    "metadata": "raw/test/goldens/design_system/privacy-uncertain-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/privacy-uncertain-390.png",
+        "metadata": "raw/test/goldens/design_system/privacy-uncertain-390.png.json",
+        "width": 390,
+        "height": 844
+      }
+    ]
+  }
+]

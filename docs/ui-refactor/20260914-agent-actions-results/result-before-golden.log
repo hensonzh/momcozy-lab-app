@@ -1,0 +1,203 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_result_design_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: result cards 320.0/1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: FlutterError:<Golden "../../goldens/design_system/agent-result-disabled-320-1x.png": Pixel
+test failed, 35.99%, 82922px diff detected.
+          Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/features/agent_hub/failures>
+
+When the exception was thrown, this was the stack:
+#4      verifyAgentResults.show (file:///Users/lute/project/momcozy-lab/app/test/support/agent_result_scenarios.dart:37:5)
+<asynchronous suspension>
+#5      verifyAgentResults (file:///Users/lute/project/momcozy-lab/app/test/support/agent_result_scenarios.dart:78:3)
+<asynchronous suspension>
+#6      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_result_design_test.dart:15:9)
+<asynchronous suspension>
+#7      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#8      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/support/agent_result_scenarios.dart line 37
+The test description was:
+  result cards 320.0/1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +0 -1: result cards 320.0/1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: result cards 320.0/1.0
+  
+00:00 +0 -1: result cards 320.0/2.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: FlutterError:<Golden "../../goldens/design_system/agent-result-disabled-320-2x.png": Pixel
+test failed, 70.86%, 163250px diff detected.
+          Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/features/agent_hub/failures>
+
+When the exception was thrown, this was the stack:
+#4      verifyAgentResults.show (file:///Users/lute/project/momcozy-lab/app/test/support/agent_result_scenarios.dart:37:5)
+<asynchronous suspension>
+#5      verifyAgentResults (file:///Users/lute/project/momcozy-lab/app/test/support/agent_result_scenarios.dart:78:3)
+<asynchronous suspension>
+#6      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_result_design_test.dart:15:9)
+<asynchronous suspension>
+#7      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#8      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/support/agent_result_scenarios.dart line 37
+The test description was:
+  result cards 320.0/2.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +0 -2: result cards 320.0/2.0 [E]
+  Test failed. See exception logs above.
+  The test description was: result cards 320.0/2.0
+  
+00:00 +0 -2: result cards 390.0/1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: FlutterError:<Golden "../../goldens/design_system/agent-result-disabled-390-1x.png": Pixel
+test failed, 31.11%, 87346px diff detected.
+          Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/features/agent_hub/failures>
+
+When the exception was thrown, this was the stack:
+#4      verifyAgentResults.show (file:///Users/lute/project/momcozy-lab/app/test/support/agent_result_scenarios.dart:37:5)
+<asynchronous suspension>
+#5      verifyAgentResults (file:///Users/lute/project/momcozy-lab/app/test/support/agent_result_scenarios.dart:78:3)
+<asynchronous suspension>
+#6      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_result_design_test.dart:15:9)
+<asynchronous suspension>
+#7      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#8      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/support/agent_result_scenarios.dart line 37
+The test description was:
+  result cards 390.0/1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +0 -3: result cards 390.0/1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: result cards 390.0/1.0
+  
+00:00 +0 -3: result cards 390.0/2.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: FlutterError:<Golden "../../goldens/design_system/agent-result-disabled-390-2x.png": Pixel
+test failed, 73.19%, 205520px diff detected.
+          Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/features/agent_hub/failures>
+
+When the exception was thrown, this was the stack:
+#4      verifyAgentResults.show (file:///Users/lute/project/momcozy-lab/app/test/support/agent_result_scenarios.dart:37:5)
+<asynchronous suspension>
+#5      verifyAgentResults (file:///Users/lute/project/momcozy-lab/app/test/support/agent_result_scenarios.dart:78:3)
+<asynchronous suspension>
+#6      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_result_design_test.dart:15:9)
+<asynchronous suspension>
+#7      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#8      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/support/agent_result_scenarios.dart line 37
+The test description was:
+  result cards 390.0/2.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +0 -4: result cards 390.0/2.0 [E]
+  Test failed. See exception logs above.
+  The test description was: result cards 390.0/2.0
+  
+00:00 +0 -4: result cards 430.0/1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: FlutterError:<Golden "../../goldens/design_system/agent-result-disabled-430-1x.png": Pixel
+test failed, 31.26%, 96778px diff detected.
+          Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/features/agent_hub/failures>
+
+When the exception was thrown, this was the stack:
+#4      verifyAgentResults.show (file:///Users/lute/project/momcozy-lab/app/test/support/agent_result_scenarios.dart:37:5)
+<asynchronous suspension>
+#5      verifyAgentResults (file:///Users/lute/project/momcozy-lab/app/test/support/agent_result_scenarios.dart:78:3)
+<asynchronous suspension>
+#6      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_result_design_test.dart:15:9)
+<asynchronous suspension>
+#7      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#8      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/support/agent_result_scenarios.dart line 37
+The test description was:
+  result cards 430.0/1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +0 -5: result cards 430.0/1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: result cards 430.0/1.0
+  
+00:00 +0 -5: result cards 430.0/2.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: FlutterError:<Golden "../../goldens/design_system/agent-result-disabled-430-2x.png": Pixel
+test failed, 74.64%, 231080px diff detected.
+          Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/features/agent_hub/failures>
+
+When the exception was thrown, this was the stack:
+#4      verifyAgentResults.show (file:///Users/lute/project/momcozy-lab/app/test/support/agent_result_scenarios.dart:37:5)
+<asynchronous suspension>
+#5      verifyAgentResults (file:///Users/lute/project/momcozy-lab/app/test/support/agent_result_scenarios.dart:78:3)
+<asynchronous suspension>
+#6      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_result_design_test.dart:15:9)
+<asynchronous suspension>
+#7      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#8      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/support/agent_result_scenarios.dart line 37
+The test description was:
+  result cards 430.0/2.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +0 -6: result cards 430.0/2.0 [E]
+  Test failed. See exception logs above.
+  The test description was: result cards 430.0/2.0
+  
+00:00 +0 -6: (tearDownAll)
+00:01 +0 -6: Some tests failed.
+
+Failing tests:
+  /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_result_design_test.dart: result cards 320.0/1.0
+  /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_result_design_test.dart: result cards 320.0/2.0
+  /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_result_design_test.dart: result cards 390.0/1.0
+  /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_result_design_test.dart: result cards 390.0/2.0
+  ... and 2 more

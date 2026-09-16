@@ -1,0 +1,25 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/modules/services/service_purchase_test.dart
+00:00 +0: purchase states and booking result at 320.0 / 1.0
+00:00 +1: purchase states and booking result at 320.0 / 2.0
+00:01 +2: purchase states and booking result at 390.0 / 1.0
+00:01 +3: purchase states and booking result at 390.0 / 2.0
+00:01 +4: purchase states and booking result at 430.0 / 1.0
+00:01 +5: purchase states and booking result at 430.0 / 2.0
+00:02 +6: Stripe uses order mode, reports launch failure and queries returned benefits
+00:02 +7: pending payment blocks back and uncertain retry keeps original card and outcome
+00:02 +8: cancelled PaymentMode.sandbox purchase has no payment entry
+00:02 +9: cancelled PaymentMode.stripe purchase has no payment entry
+00:02 +10: existing backend stripe catalog and order modes decode
+00:02 +11: failed checkout refresh clears the previous destination
+00:02 +12: paid order without returned benefits only offers result lookup
+00:02 +13: repository posts no price, owner or card data and carries mutation identity
+00:02 +14: eligibility needs acknowledgement, failed order creation retains its key, and duplicate taps create once
+00:02 +15: unconfirmed payment retries original outcome and restores the authoritative purchase
+00:02 +16: purchase confirms region, handles test verification, then exposes a saved service
+00:02 +17: sandbox checkout renders at 320.0 / 1.0
+00:02 +18: sandbox checkout renders at 320.0 / 2.0
+00:02 +19: sandbox checkout renders at 390.0 / 1.0
+00:02 +20: sandbox checkout renders at 390.0 / 2.0
+00:02 +21: sandbox checkout renders at 430.0 / 1.0
+00:02 +22: sandbox checkout renders at 430.0 / 2.0
+00:02 +23: All tests passed!

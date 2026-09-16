@@ -1,0 +1,17 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: onboarding profile forms at 320.0 / 1.0
+00:00 +1: onboarding load failure retries at 320.0 / 1.0
+00:00 +2: onboarding profile forms at 320.0 / 2.0
+00:01 +3: profile short viewport keeps save pending and recovers draft
+00:01 +4: onboarding load failure retries at 320.0 / 2.0
+00:01 +5: onboarding profile forms at 390.0 / 1.0
+00:01 +6: onboarding load failure retries at 390.0 / 1.0
+00:01 +7: onboarding profile forms at 390.0 / 2.0
+00:02 +8: onboarding load failure retries at 390.0 / 2.0
+00:02 +9: onboarding profile forms at 430.0 / 1.0
+00:02 +10: onboarding load failure retries at 430.0 / 1.0
+00:02 +11: onboarding profile forms at 430.0 / 2.0
+00:02 +12: onboarding load failure retries at 430.0 / 2.0
+00:02 +13: (tearDownAll)
+00:02 +13: All tests passed!

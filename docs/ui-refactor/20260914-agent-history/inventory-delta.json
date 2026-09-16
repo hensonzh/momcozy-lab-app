@@ -1,0 +1,18 @@
+{
+  "observed_states": 2685,
+  "added": [
+    "08-expert-service/consultation-journey-current-before-outcome",
+    "08-expert-service/consultation-journey-current-cancelled-outcome",
+    "08-expert-service/consultation-journey-current-completed-outcome",
+    "08-expert-service/consultation-journey-current-no-show-outcome",
+    "08-expert-service/consultation-journey-current-outcome-home",
+    "08-expert-service/consultation-journey-current-outcome-rebook",
+    "08-expert-service/consultation-journey-current-outcome-summary",
+    "08-expert-service/consultation-journey-current-pending-record-outcome",
+    "08-expert-service/consultation-journey-current-safety-outcome",
+    "08-expert-service/consultation-journey-current-technical-outcome"
+  ],
+  "changed": [],
+  "removed": [],
+  "note": "Screenshot state counts are not page counts or completion evidence."
+}

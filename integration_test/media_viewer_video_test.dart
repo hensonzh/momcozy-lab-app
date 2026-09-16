@@ -12,6 +12,7 @@ import 'package:momcozy_flutter_app/shared/design_system/momcozy_design_system.d
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 import 'package:momcozy_flutter_app/features/media/data/product_asset_repository.dart';
 import 'package:video_player/video_player.dart';
+import 'package:path_provider/path_provider.dart';
 
 void main() {
   final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized();
@@ -19,6 +20,14 @@ void main() {
   testWidgets(
     'streams, plays, and opens an authenticated video fullscreen',
     (tester) async {
+      const reduced = bool.fromEnvironment('MOMCOZY_TEST_REDUCED_MOTION');
+      if (reduced) {
+        tester.platformDispatcher.accessibilityFeaturesTestValue =
+            const FakeAccessibilityFeatures(disableAnimations: true);
+        addTearDown(
+          tester.platformDispatcher.clearAccessibilityFeaturesTestValue,
+        );
+      }
       final fixture = await rootBundle.load(MomCozyAssets.agentThinkingAvatar);
       final server = await _VideoFixtureServer.start(
         fixture.buffer.asUint8List(
@@ -50,11 +59,18 @@ void main() {
       await tester.pumpWidget(
         MomCozyFlutterApp(
           apiRuntime: runtime,
-          router: createMomCozyRouter(initialLocation: location),
+          router: createMomCozyRouter(
+            initialLocation: location,
+            agentHubBuilder: (_, _, _, _) =>
+                const Center(child: Text('媒体返回目标')),
+          ),
         ),
       );
       final controller = await _waitForReadyVideo(tester);
 
+      await binding.convertFlutterSurfaceToImage();
+      await tester.pump(const Duration(milliseconds: 300));
+      await _capture(binding, 'native-media-video-ready');
       expect(controller.value.duration, greaterThan(Duration.zero));
       expect(server.authorizationHeaders, isNotEmpty);
       expect(
@@ -68,30 +84,76 @@ void main() {
       await tester.pump(const Duration(milliseconds: 700));
       expect(controller.value.isPlaying, isTrue);
       expect(controller.value.position, greaterThan(Duration.zero));
+      await _capture(binding, 'native-media-video-playing');
+
+      await tester.tap(
+        find.byKey(const ValueKey('product-asset-video-play-pause')),
+      );
+      await tester.pump(const Duration(milliseconds: 200));
+      expect(controller.value.isPlaying, isFalse);
+      await tester.pump(const Duration(milliseconds: 300));
+      await _capture(binding, 'native-media-video');
 
       await tester.tap(
         find.byKey(const ValueKey('product-asset-video-fullscreen')),
       );
+      if (reduced) {
+        await tester.pump();
+        await tester.pump();
+        expect(
+          ModalRoute.of(
+            tester.element(
+              find.byKey(const ValueKey('product-asset-video-immersive')),
+            ),
+          )!.animation!.value,
+          1,
+        );
+      }
       await tester.pumpAndSettle();
       expect(
         find.byKey(const ValueKey('product-asset-video-immersive')),
         findsOneWidget,
       );
 
-      await binding.convertFlutterSurfaceToImage();
       await tester.pump(const Duration(milliseconds: 300));
-      final screenshot = await binding.takeScreenshot('media-video-fullscreen');
+      final screenshot = await _capture(
+        binding,
+        'native-media-video-fullscreen',
+      );
       expect(await _screenshotColorCount(screenshot), greaterThan(8));
 
       await tester.tap(
         find.byKey(const ValueKey('product-asset-video-exit-fullscreen')),
       );
       await tester.pumpAndSettle();
+      expect(controller.value.isPlaying, isFalse);
+      await tester.tap(
+        find.byKey(const ValueKey('product-asset-video-play-pause')),
+      );
+      await tester.pump(const Duration(milliseconds: 300));
+      expect(controller.value.isPlaying, isTrue);
+      await tester.tap(find.byKey(const ValueKey('media-return-button')));
+      await tester.pumpAndSettle();
+      expect(find.byType(VideoPlayer), findsNothing);
+      expect(find.text('媒体返回目标'), findsOneWidget);
       await tester.pumpWidget(const SizedBox.shrink());
       await tester.pump(const Duration(milliseconds: 200));
     },
     timeout: const Timeout(Duration(minutes: 2)),
   );
+}
+
+Future<List<int>> _capture(
+  IntegrationTestWidgetsFlutterBinding binding,
+  String name,
+) async {
+  if (const bool.fromEnvironment('MOMCOZY_TEST_REDUCED_MOTION')) {
+    name = '$name-reduced';
+  }
+  final bytes = await binding.takeScreenshot(name);
+  final directory = await getApplicationDocumentsDirectory();
+  await File('${directory.path}/$name.png').writeAsBytes(bytes);
+  return bytes;
 }
 
 Future<VideoPlayerController> _waitForReadyVideo(WidgetTester tester) async {

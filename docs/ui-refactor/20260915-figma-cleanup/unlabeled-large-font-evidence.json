@@ -1,0 +1,1142 @@
+[
+  {
+    "id": "162:1574",
+    "name": "Service progress / Long plan name",
+    "max": 44,
+    "median": 26,
+    "largeText": [
+      [
+        "0 次已使用 · 剩余 ",
+        28
+      ],
+      [
+        "服务记录",
+        36
+      ],
+      [
+        "服务包已购买",
+        32
+      ],
+      [
+        "7 天支持 · 2 次 ",
+        26
+      ],
+      [
+        "预约咨询",
+        26
+      ]
+    ]
+  },
+  {
+    "id": "180:1108",
+    "name": "Preparation / short-home-loading",
+    "max": 40,
+    "median": 12,
+    "largeText": [
+      [
+        "110 ml",
+        26
+      ],
+      [
+        "70%",
+        26
+      ],
+      [
+        "预约详情",
+        40
+      ],
+      [
+        "正在载入",
+        32
+      ]
+    ]
+  },
+  {
+    "id": "180:1263",
+    "name": "Preparation / short-home-error",
+    "max": 40,
+    "median": 12,
+    "largeText": [
+      [
+        "110 ml",
+        26
+      ],
+      [
+        "70%",
+        26
+      ],
+      [
+        "预约详情",
+        40
+      ],
+      [
+        "网络未连接，请连接后重试",
+        28
+      ]
+    ]
+  },
+  {
+    "id": "184:1108",
+    "name": "Preflight / short-device-ready",
+    "max": 44,
+    "median": 26,
+    "largeText": [
+      [
+        "取消预约",
+        26
+      ],
+      [
+        "检测摄像头与麦克风",
+        40
+      ],
+      [
+        "进入咨询室前，请先确认摄",
+        26
+      ],
+      [
+        "摄像头和麦克风均可用",
+        36
+      ],
+      [
+        "重新检查",
+        26
+      ]
+    ]
+  },
+  {
+    "id": "198:1359",
+    "name": "Consultation outcome / short-no-show-actions",
+    "max": 44,
+    "median": 26,
+    "largeText": [
+      [
+        "我们没能在预约时间与你开",
+        26
+      ],
+      [
+        "重新预约",
+        26
+      ],
+      [
+        "返回妈妈主页",
+        26
+      ],
+      [
+        "9月13日 周日 · 1",
+        40
+      ],
+      [
+        "Test IBCLC",
+        28
+      ]
+    ]
+  },
+  {
+    "id": "225:1768",
+    "name": "Auth / 短屏重置",
+    "max": 48,
+    "median": 26,
+    "largeText": [
+      [
+        "Enter your c",
+        28
+      ],
+      [
+        "••••••••",
+        28
+      ],
+      [
+        "Reset passwo",
+        26
+      ],
+      [
+        "Resend code",
+        26
+      ],
+      [
+        "Back to sign",
+        26
+      ]
+    ]
+  },
+  {
+    "id": "225:1863",
+    "name": "Auth / 邀请码短屏",
+    "max": 48,
+    "median": 28,
+    "largeText": [
+      [
+        "Momcozy",
+        32
+      ],
+      [
+        "欢迎使用",
+        48
+      ],
+      [
+        "使用邀请码继续",
+        26
+      ],
+      [
+        "请输入邀请码",
+        28
+      ],
+      [
+        "邀请码登录",
+        26
+      ]
+    ]
+  },
+  {
+    "id": "230:1372",
+    "name": "Onboarding profile / 短屏基本资料",
+    "max": 48,
+    "median": 26,
+    "largeText": [
+      [
+        "A few basics",
+        48
+      ],
+      [
+        "Your name pe",
+        26
+      ],
+      [
+        "What should ",
+        28
+      ],
+      [
+        "e.g. 32",
+        28
+      ],
+      [
+        "Continue",
+        26
+      ]
+    ]
+  },
+  {
+    "id": "230:1396",
+    "name": "Onboarding profile / 短屏保存失败",
+    "max": 48,
+    "median": 26,
+    "largeText": [
+      [
+        "How was your",
+        48
+      ],
+      [
+        "Delivery met",
+        26
+      ],
+      [
+        "Prefer not t",
+        28
+      ],
+      [
+        "Profile coul",
+        26
+      ],
+      [
+        "Save and con",
+        26
+      ]
+    ]
+  },
+  {
+    "id": "234:1550",
+    "name": "Onboarding avatar / 短屏照片说明",
+    "max": 48,
+    "median": 26,
+    "largeText": [
+      [
+        "Create your ",
+        48
+      ],
+      [
+        "A portrait h",
+        26
+      ],
+      [
+        "Upload a pho",
+        26
+      ],
+      [
+        "Your photo i",
+        26
+      ],
+      [
+        "Use the MomC",
+        26
+      ]
+    ]
+  },
+  {
+    "id": "234:1661",
+    "name": "Onboarding avatar / 短屏候选操作",
+    "max": 48,
+    "median": 26,
+    "largeText": [
+      [
+        "Option 4",
+        26
+      ],
+      [
+        "MomCozy orig",
+        28
+      ],
+      [
+        "Continue wit",
+        26
+      ],
+      [
+        "Continue wit",
+        26
+      ],
+      [
+        "Try another ",
+        26
+      ]
+    ]
+  },
+  {
+    "id": "234:1721",
+    "name": "Onboarding avatar / 更换失败保留原形象",
+    "max": 48,
+    "median": 26,
+    "largeText": [
+      [
+        "Let’s try an",
+        48
+      ],
+      [
+        "A clear, fro",
+        26
+      ],
+      [
+        "Upload a pho",
+        26
+      ],
+      [
+        "Your photo i",
+        26
+      ],
+      [
+        "Keep my curr",
+        26
+      ]
+    ]
+  },
+  {
+    "id": "234:1770",
+    "name": "Onboarding avatar / 短屏任务提示",
+    "max": 28,
+    "median": 28,
+    "largeText": [
+      [
+        "◌  Preparing",
+        28
+      ],
+      [
+        "◌  Creating ",
+        28
+      ],
+      [
+        "✧  Your 4 co",
+        28
+      ],
+      [
+        "↻  We couldn",
+        28
+      ],
+      [
+        "✓  Your digi",
+        28
+      ]
+    ]
+  },
+  {
+    "id": "267:1388",
+    "name": "Cozymate / voice / greeting-error",
+    "max": 44,
+    "median": 28,
+    "largeText": [
+      [
+        "语音暂时无法播放，你可以",
+        26
+      ],
+      [
+        "播放回复",
+        26
+      ],
+      [
+        "奶量分析",
+        26
+      ],
+      [
+        "产后康复评估",
+        26
+      ],
+      [
+        "和 Cozymate 聊",
+        32
+      ]
+    ]
+  },
+  {
+    "id": "267:1428",
+    "name": "Cozymate / voice / stream-error",
+    "max": 44,
+    "median": 26,
+    "largeText": [
+      [
+        "语音暂时无法播放，你可以",
+        26
+      ],
+      [
+        "播放回复",
+        26
+      ],
+      [
+        "奶量分析",
+        26
+      ],
+      [
+        "产后康复评估",
+        26
+      ],
+      [
+        "和 Cozymate 聊",
+        32
+      ]
+    ]
+  },
+  {
+    "id": "267:1478",
+    "name": "Cozymate / voice / reply-error",
+    "max": 44,
+    "median": 32,
+    "largeText": [
+      [
+        "语音暂时无法播放，你可以",
+        26
+      ],
+      [
+        "播放回复",
+        26
+      ],
+      [
+        "奶量分析",
+        26
+      ],
+      [
+        "产后康复评估",
+        26
+      ],
+      [
+        "和 Cozymate 聊",
+        32
+      ]
+    ]
+  },
+  {
+    "id": "267:1527",
+    "name": "Cozymate / voice / off",
+    "max": 44,
+    "median": 32,
+    "largeText": [
+      [
+        "Please read ",
+        32
+      ],
+      [
+        "One observat",
+        32
+      ],
+      [
+        "奶量分析",
+        26
+      ],
+      [
+        "产后康复评估",
+        26
+      ],
+      [
+        "下一条草稿，先不发送。",
+        32
+      ]
+    ]
+  },
+  {
+    "id": "267:1568",
+    "name": "Cozymate / voice / on",
+    "max": 44,
+    "median": 32,
+    "largeText": [
+      [
+        "Please read ",
+        32
+      ],
+      [
+        "One observat",
+        32
+      ],
+      [
+        "奶量分析",
+        26
+      ],
+      [
+        "产后康复评估",
+        26
+      ],
+      [
+        "下一条草稿，先不发送。",
+        32
+      ]
+    ]
+  },
+  {
+    "id": "267:1609",
+    "name": "Cozymate / voice / dismissed",
+    "max": 44,
+    "median": 32,
+    "largeText": [
+      [
+        "嗨，我是 Cozymat",
+        44
+      ],
+      [
+        "你希望我怎么称呼你？今年",
+        28
+      ],
+      [
+        "奶量分析",
+        26
+      ],
+      [
+        "产后康复评估",
+        26
+      ],
+      [
+        "下一条草稿，先不发送。",
+        32
+      ]
+    ]
+  },
+  {
+    "id": "267:1641",
+    "name": "Cozymate / voice / greeting-playing",
+    "max": 44,
+    "median": 32,
+    "largeText": [
+      [
+        "嗨，我是 Cozymat",
+        44
+      ],
+      [
+        "你希望我怎么称呼你？今年",
+        28
+      ],
+      [
+        "奶量分析",
+        26
+      ],
+      [
+        "产后康复评估",
+        26
+      ],
+      [
+        "下一条草稿，先不发送。",
+        32
+      ]
+    ]
+  },
+  {
+    "id": "267:1673",
+    "name": "Cozymate / voice / reply-playing",
+    "max": 44,
+    "median": 32,
+    "largeText": [
+      [
+        "Please read ",
+        32
+      ],
+      [
+        "One observat",
+        32
+      ],
+      [
+        "奶量分析",
+        26
+      ],
+      [
+        "产后康复评估",
+        26
+      ],
+      [
+        "下一条草稿，先不发送。",
+        32
+      ]
+    ]
+  },
+  {
+    "id": "267:1714",
+    "name": "Cozymate / voice / keyboard-error",
+    "max": 44,
+    "median": 32,
+    "largeText": [
+      [
+        "嗨，我是 Cozymat",
+        44
+      ],
+      [
+        "你希望我怎么称呼你？今年",
+        28
+      ],
+      [
+        "语音暂时无法播放，你可以",
+        26
+      ],
+      [
+        "播放回复",
+        26
+      ],
+      [
+        "和 Cozymate 聊",
+        32
+      ]
+    ]
+  },
+  {
+    "id": "267:1978",
+    "name": "Cozymate / voice / attachment-image-error",
+    "max": 44,
+    "median": 28,
+    "largeText": [
+      [
+        "你希望我怎么称呼你？今年",
+        28
+      ],
+      [
+        "奶量分析",
+        26
+      ],
+      [
+        "产后康复评估",
+        26
+      ],
+      [
+        "Keep my draf",
+        32
+      ],
+      [
+        "图片上传失败，请重试。",
+        28
+      ]
+    ]
+  },
+  {
+    "id": "267:2029",
+    "name": "Cozymate / voice / attachment-file-error",
+    "max": 44,
+    "median": 28,
+    "largeText": [
+      [
+        "你希望我怎么称呼你？今年",
+        28
+      ],
+      [
+        "奶量分析",
+        26
+      ],
+      [
+        "产后康复评估",
+        26
+      ],
+      [
+        "Keep my draf",
+        32
+      ],
+      [
+        "文件上传失败，请重试。",
+        28
+      ]
+    ]
+  },
+  {
+    "id": "267:2080",
+    "name": "Cozymate / voice / attachment-too-large",
+    "max": 44,
+    "median": 28,
+    "largeText": [
+      [
+        "你希望我怎么称呼你？今年",
+        28
+      ],
+      [
+        "奶量分析",
+        26
+      ],
+      [
+        "产后康复评估",
+        26
+      ],
+      [
+        "Keep my draf",
+        32
+      ],
+      [
+        "文件不能超过 10MB。",
+        28
+      ]
+    ]
+  },
+  {
+    "id": "267:2123",
+    "name": "Cozymate / voice / attachment-unsupported",
+    "max": 44,
+    "median": 28,
+    "largeText": [
+      [
+        "你希望我怎么称呼你？今年",
+        28
+      ],
+      [
+        "奶量分析",
+        26
+      ],
+      [
+        "产后康复评估",
+        26
+      ],
+      [
+        "Keep my draf",
+        32
+      ],
+      [
+        "暂仅支持 PDF 文件。",
+        28
+      ]
+    ]
+  },
+  {
+    "id": "267:2166",
+    "name": "Cozymate / voice / attachment-cleanup-error",
+    "max": 44,
+    "median": 28,
+    "largeText": [
+      [
+        "奶量分析",
+        26
+      ],
+      [
+        "产后康复评估",
+        26
+      ],
+      [
+        "Care plan an",
+        28
+      ],
+      [
+        "Keep my draf",
+        32
+      ],
+      [
+        "附件清理失败，已保留草稿",
+        28
+      ]
+    ]
+  },
+  {
+    "id": "271:1610",
+    "name": "Cozymate / reading / markdown-top",
+    "max": 44,
+    "median": 32,
+    "largeText": [
+      [
+        "查看排版说明",
+        32
+      ],
+      [
+        "最后一段说明：链接、列表",
+        32
+      ],
+      [
+        "奶量分析",
+        26
+      ],
+      [
+        "产后康复评估",
+        26
+      ],
+      [
+        "和 Cozymate 聊",
+        32
+      ]
+    ]
+  },
+  {
+    "id": "271:1650",
+    "name": "Cozymate / reading / markdown-link",
+    "max": 44,
+    "median": 32,
+    "largeText": [
+      [
+        "查看排版说明",
+        32
+      ],
+      [
+        "最后一段说明：链接、列表",
+        32
+      ],
+      [
+        "奶量分析",
+        26
+      ],
+      [
+        "产后康复评估",
+        26
+      ],
+      [
+        "和 Cozymate 聊",
+        32
+      ]
+    ]
+  },
+  {
+    "id": "271:1690",
+    "name": "Cozymate / reading / image",
+    "max": 44,
+    "median": 32,
+    "largeText": [
+      [
+        "从下方入口继续查看。",
+        28
+      ],
+      [
+        "查看示意图片",
+        26
+      ],
+      [
+        "奶量分析",
+        26
+      ],
+      [
+        "产后康复评估",
+        26
+      ],
+      [
+        "和 Cozymate 聊",
+        32
+      ]
+    ]
+  },
+  {
+    "id": "271:1737",
+    "name": "Cozymate / reading / pdf",
+    "max": 44,
+    "median": 32,
+    "largeText": [
+      [
+        "从下方入口继续查看。",
+        28
+      ],
+      [
+        "阅读资料 PDF",
+        26
+      ],
+      [
+        "奶量分析",
+        26
+      ],
+      [
+        "产后康复评估",
+        26
+      ],
+      [
+        "和 Cozymate 聊",
+        32
+      ]
+    ]
+  },
+  {
+    "id": "271:1784",
+    "name": "Cozymate / reading / video",
+    "max": 44,
+    "median": 32,
+    "largeText": [
+      [
+        "从下方入口继续查看。",
+        28
+      ],
+      [
+        "播放指导视频",
+        26
+      ],
+      [
+        "奶量分析",
+        26
+      ],
+      [
+        "产后康复评估",
+        26
+      ],
+      [
+        "和 Cozymate 聊",
+        32
+      ]
+    ]
+  },
+  {
+    "id": "271:1831",
+    "name": "Cozymate / reading / renew",
+    "max": 44,
+    "median": 32,
+    "largeText": [
+      [
+        "从下方入口继续查看。",
+        28
+      ],
+      [
+        "继续查看支持方案",
+        26
+      ],
+      [
+        "奶量分析",
+        26
+      ],
+      [
+        "产后康复评估",
+        26
+      ],
+      [
+        "和 Cozymate 聊",
+        32
+      ]
+    ]
+  },
+  {
+    "id": "271:1878",
+    "name": "Cozymate / reading / invalid",
+    "max": 44,
+    "median": 32,
+    "largeText": [
+      [
+        "从下方入口继续查看。",
+        28
+      ],
+      [
+        "查看失效资料",
+        26
+      ],
+      [
+        "奶量分析",
+        26
+      ],
+      [
+        "产后康复评估",
+        26
+      ],
+      [
+        "和 Cozymate 聊",
+        32
+      ]
+    ]
+  },
+  {
+    "id": "271:1925",
+    "name": "Cozymate / reading / external",
+    "max": 44,
+    "median": 32,
+    "largeText": [
+      [
+        "从下方入口继续查看。",
+        28
+      ],
+      [
+        "打开参考资料",
+        26
+      ],
+      [
+        "奶量分析",
+        26
+      ],
+      [
+        "产后康复评估",
+        26
+      ],
+      [
+        "和 Cozymate 聊",
+        32
+      ]
+    ]
+  },
+  {
+    "id": "271:1972",
+    "name": "Cozymate / reading / motion-head",
+    "max": 44,
+    "median": 32,
+    "largeText": [
+      [
+        "头颈姿态动态评估",
+        32
+      ],
+      [
+        "开始评估",
+        26
+      ],
+      [
+        "奶量分析",
+        26
+      ],
+      [
+        "产后康复评估",
+        26
+      ],
+      [
+        "和 Cozymate 聊",
+        32
+      ]
+    ]
+  },
+  {
+    "id": "271:2018",
+    "name": "Cozymate / reading / motion-posture",
+    "max": 44,
+    "median": 32,
+    "largeText": [
+      [
+        "体态动态评估",
+        32
+      ],
+      [
+        "开始评估",
+        26
+      ],
+      [
+        "奶量分析",
+        26
+      ],
+      [
+        "产后康复评估",
+        26
+      ],
+      [
+        "和 Cozymate 聊",
+        32
+      ]
+    ]
+  },
+  {
+    "id": "271:2064",
+    "name": "Cozymate / reading / multi",
+    "max": 44,
+    "median": 26,
+    "largeText": [
+      [
+        "查看示意图片",
+        26
+      ],
+      [
+        "继续查看支持方案",
+        26
+      ],
+      [
+        "奶量分析",
+        26
+      ],
+      [
+        "产后康复评估",
+        26
+      ],
+      [
+        "和 Cozymate 聊",
+        32
+      ]
+    ]
+  },
+  {
+    "id": "271:2117",
+    "name": "Cozymate / reading / consult-form",
+    "max": 32,
+    "median": 28,
+    "largeText": [
+      [
+        "□ 我已阅读并同意《隐私",
+        26
+      ],
+      [
+        "咨询资料仅在授权范围内使",
+        28
+      ],
+      [
+        "了解咨询服务",
+        26
+      ],
+      [
+        "喂养记录与支持偏好",
+        32
+      ],
+      [
+        "已预填 1 项 · 点击",
+        28
+      ]
+    ]
+  },
+  {
+    "id": "274:1110",
+    "name": "Agent consult / consent accepted",
+    "max": 32,
+    "median": 28,
+    "largeText": [
+      [
+        "☑ 我已阅读并同意《隐私",
+        26
+      ],
+      [
+        "咨询资料仅在授权范围内使",
+        28
+      ],
+      [
+        "了解咨询服务",
+        26
+      ],
+      [
+        "喂养记录与支持偏好",
+        32
+      ],
+      [
+        "已预填 1 项 · 点击",
+        28
+      ]
+    ]
+  },
+  {
+    "id": "276:1710",
+    "name": "Agent form / Short keyboard",
+    "max": 44,
+    "median": 28,
+    "largeText": [
+      [
+        "2026-09-12  ",
+        32
+      ],
+      [
+        "Your questio",
+        26
+      ],
+      [
+        "What matters",
+        28
+      ],
+      [
+        "Comfort",
+        32
+      ],
+      [
+        "✓ Submit you",
+        26
+      ]
+    ]
+  }
+]

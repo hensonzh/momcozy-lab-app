@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:ui' show SemanticsAction;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
@@ -99,6 +100,21 @@ void main() {
       );
       await tester.pumpAndSettle();
       expect(find.text('早上好，Mia'), findsOneWidget);
+      await tester.scrollUntilVisible(
+        find.text('昨夜休息'),
+        250,
+        scrollable: find.byType(Scrollable).first,
+      );
+      await tester.pumpAndSettle();
+      final semantics = tester.ensureSemantics();
+      expect(
+        tester
+            .getSemantics(find.bySemanticsLabel('昨夜休息，4–5 小时'))
+            .getSemanticsData()
+            .hasAction(SemanticsAction.tap),
+        isTrue,
+      );
+      semantics.dispose();
       expect(find.text('Schedule'), findsOneWidget);
       expect(
         transport.getPaths.any(
@@ -128,51 +144,93 @@ void main() {
   );
 
   for (final width in [320.0, 390.0, 430.0]) {
-    testWidgets('mother home matches the product baseline at $width', (
-      tester,
-    ) async {
-      await loadMomCozyTestFonts();
-      tester.view.physicalSize = Size(width, 844);
-      tester.view.devicePixelRatio = 1;
-      addTearDown(tester.view.resetPhysicalSize);
-      addTearDown(tester.view.resetDevicePixelRatio);
-      final router = createMomCozyRouter();
-      addTearDown(router.dispose);
-      final runtime = MomCozyApiRuntime(
-        jsonTransport: _transport(),
-        now: () => _now,
-        timezoneProvider: () async => 'Asia/Shanghai',
-      );
-      await tester.pumpWidget(
-        MomCozyRuntimeScope(
-          apiRuntime: runtime,
-          child: RepaintBoundary(
-            key: const ValueKey('capture'),
-            child: MaterialApp.router(
-              debugShowCheckedModeBanner: false,
-              theme: momCozyTheme(),
-              routerConfig: router,
+    for (final scale in [1.0, 2.0]) {
+      testWidgets('mother home matches the product baseline at $width / $scale', (
+        tester,
+      ) async {
+        await loadMomCozyTestFonts();
+        tester.view.physicalSize = Size(width, 844);
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+        final router = createMomCozyRouter();
+        addTearDown(router.dispose);
+        final runtime = MomCozyApiRuntime(
+          jsonTransport: _transport(),
+          now: () => _now,
+          timezoneProvider: () async => 'Asia/Shanghai',
+        );
+        await tester.pumpWidget(
+          MomCozyRuntimeScope(
+            apiRuntime: runtime,
+            child: RepaintBoundary(
+              key: const ValueKey('capture'),
+              child: MaterialApp.router(
+                debugShowCheckedModeBanner: false,
+                theme: momCozyTheme(),
+                routerConfig: router,
+                builder: (context, child) => MediaQuery(
+                  data: MediaQuery.of(
+                    context,
+                  ).copyWith(textScaler: TextScaler.linear(scale)),
+                  child: child!,
+                ),
+              ),
             ),
           ),
-        ),
-      );
-      await tester.pumpAndSettle();
-      await tester.runAsync(
-        () => precacheImage(
-          const AssetImage('assets/images/momcozy-agent.png'),
-          tester.element(find.byType(MaterialApp)),
-        ),
-      );
-      await tester.pumpAndSettle();
-      expect(tester.takeException(), isNull);
-      await expectLater(
-        find.byKey(const ValueKey('capture')),
-        matchesGoldenFile(
-          '../../goldens/product_baseline/mother-home-${width.toInt()}.png',
-        ),
-      );
-      await tester.pumpWidget(const SizedBox.shrink());
-    });
+        );
+        await tester.pumpAndSettle();
+        for (final name in ['cozymate_avatar.png', 'expert_group.png']) {
+          await tester.runAsync(
+            () => precacheImage(
+              AssetImage('assets/images/mom_home/$name'),
+              tester.element(find.byType(MaterialApp)),
+            ),
+          );
+        }
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+        if (scale == 1) {
+          await expectLater(
+            find.byKey(const ValueKey('capture')),
+            matchesGoldenFile(
+              '../../goldens/product_baseline/mother-home-${width.toInt()}.png',
+            ),
+          );
+        }
+        await tester.drag(find.byType(ListView).first, const Offset(0, -1200));
+        await tester.pumpAndSettle();
+        await tester.scrollUntilVisible(
+          find.text('让专业的人，陪你把问题解决'),
+          300,
+          scrollable: find.byType(Scrollable).first,
+        );
+        await tester.pumpAndSettle();
+        expect(find.text('专家陪伴计划'), findsOneWidget);
+        expect(find.text('我的陪伴计划'), findsNothing);
+        if (scale == 1) {
+          await expectLater(
+            find.byKey(const ValueKey('capture')),
+            matchesGoldenFile(
+              '../../goldens/product_baseline/mother-home-lower-${width.toInt()}.png',
+            ),
+          );
+        }
+        await tester.scrollUntilVisible(
+          find.text('身体与精力'),
+          -250,
+          scrollable: find.byType(Scrollable).first,
+        );
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('身体与精力'));
+        await tester.pumpAndSettle();
+        expect(find.text('保存今天的记录'), findsOneWidget);
+        await tester.tap(find.byTooltip('关闭记录'));
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+        await tester.pumpWidget(const SizedBox.shrink());
+      });
+    }
   }
 
   testWidgets(
@@ -204,14 +262,19 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      expect(find.text('暂未载入'), findsNWidgets(3));
+      expect(find.text('暂未载入'), findsNWidgets(2));
       expect(find.text('未记录'), findsNothing);
       transport.responsesByPath['/v1/mother/diary'] = {'items': []};
-      await tester.ensureVisible(find.text('重试'));
+      await tester.scrollUntilVisible(
+        find.text('重试'),
+        250,
+        scrollable: find.byType(Scrollable).first,
+      );
+      await tester.pumpAndSettle();
       await tester.tap(find.text('重试'));
       await tester.pumpAndSettle();
       expect(find.text('暂未载入'), findsNothing);
-      expect(find.text('未记录'), findsNWidgets(3));
+      expect(find.text('待记录'), findsNWidgets(2));
       await tester.pumpWidget(const SizedBox.shrink());
     },
   );

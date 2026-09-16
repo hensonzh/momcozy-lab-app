@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../../../shared/design_system/mom_home_tokens.dart';
+import '../../../shared/widgets/mom_settings_widgets.dart';
 import '../../../shared/design_system/momcozy_design_system.dart';
 import '../../../shared/widgets/momcozy_components.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
@@ -9,6 +11,7 @@ import 'package:momcozy_flutter_app/core/auth/momcozy_last_invite_code.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 import 'invite_auth_page.dart';
+import 'auth_login_chrome.dart';
 
 enum _AuthStep { login, register, verify, forgot, reset }
 
@@ -39,8 +42,11 @@ class _MomCozyAuthPageState extends State<MomCozyAuthPage> {
   final _email = TextEditingController();
   final _password = TextEditingController();
   final _code = TextEditingController();
+  final _scroll = ScrollController();
   _AuthStep _step = _AuthStep.login;
   bool _busy = false;
+  bool _showPassword = false;
+  bool _googleFeedback = false;
   String? _message;
   String? _error;
   DateTime? _resendAt;
@@ -50,15 +56,22 @@ class _MomCozyAuthPageState extends State<MomCozyAuthPage> {
     _email.dispose();
     _password.dispose();
     _code.dispose();
+    _scroll.dispose();
     super.dispose();
   }
 
   void _navigate(_AuthStep step, {String? message}) {
+    FocusScope.of(context).unfocus();
     setState(() {
       _step = step;
       _error = null;
       _message = message;
       _code.clear();
+      _showPassword = false;
+      _googleFeedback = false;
+    });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted && _scroll.hasClients) _scroll.jumpTo(0);
     });
   }
 
@@ -88,195 +101,437 @@ class _MomCozyAuthPageState extends State<MomCozyAuthPage> {
       );
     }
     final usesCode = _step == _AuthStep.verify || _step == _AuthStep.reset;
-    return Scaffold(
-      body: MomCozyPageBody(
-        child: Center(
-          child: SingleChildScrollView(
-            padding: MomCozyInsets.page,
-            child: AutofillGroup(
-              child: Form(
-                key: _form,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    const Icon(
-                      Icons.favorite_outline,
-                      size: MomCozyIconSizes.feature,
-                    ),
-                    const SizedBox(height: MomCozySpacing.card),
-                    Text(
-                      _title,
-                      style: Theme.of(context).textTheme.headlineMedium,
-                    ),
-                    const SizedBox(height: MomCozySpacing.content),
-                    if (_step == _AuthStep.login &&
-                        widget.runtimeController.currentSession.status ==
-                            MomCozySessionStatus.expired)
-                      const Text('Your session expired. Please sign in again.'),
-                    if (_message != null)
-                      Text(_message!, key: const ValueKey('auth-success-text')),
-                    if (_error != null)
-                      Text(
-                        _error!,
-                        key: const ValueKey('auth-error-text'),
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.error,
-                        ),
-                      ),
-                    const SizedBox(height: MomCozySpacing.page),
-                    TextFormField(
-                      key: const ValueKey('auth-email-field'),
-                      controller: _email,
-                      enabled: !_busy,
-                      keyboardType: TextInputType.emailAddress,
-                      autofillHints: const [AutofillHints.email],
-                      autocorrect: false,
-                      decoration: const InputDecoration(labelText: 'Email'),
-                      validator: (v) =>
-                          v != null &&
-                              RegExp(
-                                r'^[^\s@]+@[^\s@]+\.[^\s@]+$',
-                              ).hasMatch(v.trim())
-                          ? null
-                          : 'Enter a valid email address.',
-                    ),
-                    if (usesCode) ...[
-                      const SizedBox(height: MomCozySpacing.page),
-                      TextFormField(
-                        key: const ValueKey('auth-code-field'),
-                        controller: _code,
-                        enabled: !_busy,
-                        keyboardType: TextInputType.number,
-                        autofillHints: const [AutofillHints.oneTimeCode],
-                        decoration: const InputDecoration(
-                          labelText: '8-digit email code',
-                        ),
-                        validator: (v) =>
-                            RegExp(r'^\d{8}$').hasMatch(v?.trim() ?? '')
-                            ? null
-                            : 'Enter the 8-digit code from your email.',
-                      ),
-                    ],
-                    if (_step != _AuthStep.forgot) ...[
-                      const SizedBox(height: MomCozySpacing.page),
-                      TextFormField(
-                        key: const ValueKey('auth-password-field'),
-                        controller: _password,
-                        enabled: !_busy,
-                        obscureText: true,
-                        autocorrect: false,
-                        enableSuggestions: false,
-                        autofillHints: [
-                          _step == _AuthStep.login
-                              ? AutofillHints.password
-                              : AutofillHints.newPassword,
-                        ],
-                        decoration: InputDecoration(
-                          labelText: _step == _AuthStep.login
-                              ? 'Password'
-                              : 'Set password',
-                          helperMaxLines: 3,
-                          errorMaxLines: 3,
-                          helperText: _step == _AuthStep.login
-                              ? null
-                              : '8–128 characters, including a letter and a number',
-                        ),
-                        validator: (v) {
-                          if (v == null || v.isEmpty) {
-                            return 'Enter your password.';
-                          }
-                          if (_step != _AuthStep.login &&
-                              (v.length < 8 ||
-                                  v.length > 128 ||
-                                  !RegExp('[A-Za-z]').hasMatch(v) ||
-                                  !RegExp('[0-9]').hasMatch(v))) {
-                            return 'Use 8–128 characters with a letter and a number.';
-                          }
-                          return null;
+    final isLogin = _step == _AuthStep.login;
+    final theme = authLoginTheme(Theme.of(context));
+    return Theme(
+      data: theme,
+      child: Scaffold(
+        body: MomCozyPageBody(
+          maxWidth: MomCozyLayout.maxAppWidth,
+          child: Align(
+            alignment: Alignment.topCenter,
+            child: SingleChildScrollView(
+              controller: _scroll,
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 28),
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+              child: AutofillGroup(
+                child: Form(
+                  key: _form,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      AuthLoginHeader(
+                        title: _title,
+                        compact: !isLogin,
+                        subtitle: switch (_step) {
+                          _AuthStep.login =>
+                            'Care and support, every step of the way.',
+                          _AuthStep.register =>
+                            'A little support, made for you.',
+                          _AuthStep.verify =>
+                            'Enter the code we sent to your email.',
+                          _AuthStep.forgot =>
+                            'We’ll send a code to help you reset your password.',
+                          _AuthStep.reset =>
+                            'Choose a new password for your account.',
                         },
                       ),
-                    ],
-                    if (_step == _AuthStep.login)
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: TextButton(
-                          onPressed: _busy
-                              ? null
-                              : () => _navigate(_AuthStep.forgot),
-                          style: TextButton.styleFrom(
-                            foregroundColor: MomCozyColors.textSecondary,
-                          ),
-                          child: const Text('Forgot password?'),
-                        ),
-                      ),
-                    SizedBox(
-                      height: _step == _AuthStep.login
-                          ? MomCozySpacing.compact
-                          : MomCozySpacing.section,
-                    ),
-                    MomCozyPrimaryButton(
-                      key: const ValueKey('auth-submit-button'),
-                      onPressed: _busy ? null : _submit,
-                      loading: _busy,
-                      child: Text(_submitLabel),
-                    ),
-                    if (_step == _AuthStep.login) ...[
-                      const Padding(
-                        padding: EdgeInsets.symmetric(
-                          vertical: MomCozySpacing.page,
-                        ),
-                        child: Row(
-                          children: [
-                            Expanded(child: Divider()),
-                            Padding(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: MomCozySpacing.content,
-                              ),
-                              child: Text('or'),
-                            ),
-                            Expanded(child: Divider()),
-                          ],
-                        ),
-                      ),
-                      OutlinedButton(
-                        key: const ValueKey('auth-google-button'),
-                        onPressed: _busy ? null : _google,
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: MomCozyColors.textPrimary,
-                        ),
-                        child: const Text('Continue with Google'),
-                      ),
-                      const SizedBox(height: MomCozySpacing.page),
-                      Wrap(
-                        alignment: WrapAlignment.center,
-                        crossAxisAlignment: WrapCrossAlignment.center,
+                      MomSettingsCard(
+                        borderInside: isLogin,
                         children: [
-                          Text(
-                            'New here?',
-                            style: Theme.of(context).textTheme.bodyMedium,
-                          ),
-                          TextButton(
-                            onPressed: _busy
-                                ? null
-                                : () => _navigate(_AuthStep.register),
-                            child: const Text('Create an account'),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              if (_step == _AuthStep.login &&
+                                  widget
+                                          .runtimeController
+                                          .currentSession
+                                          .status ==
+                                      MomCozySessionStatus.expired)
+                                const Padding(
+                                  padding: EdgeInsets.only(bottom: 14),
+                                  child: AuthNotice(
+                                    'Your session expired. Please sign in again.',
+                                  ),
+                                ),
+                              if (_message != null)
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom: 14),
+                                  child: AuthNotice(
+                                    _message!,
+                                    textKey: const ValueKey(
+                                      'auth-success-text',
+                                    ),
+                                  ),
+                                ),
+                              if (_error != null && !_googleFeedback)
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom: 14),
+                                  child: AuthNotice(
+                                    _error!,
+                                    error: true,
+                                    textKey: const ValueKey('auth-error-text'),
+                                  ),
+                                ),
+                              if (_step == _AuthStep.login) ...[
+                                OutlinedButton.icon(
+                                  key: const ValueKey('auth-google-button'),
+                                  onPressed: _busy ? null : _google,
+                                  // Official asset: https://developers.google.com/identity/branding-guidelines
+                                  icon: Image.asset(
+                                    'assets/images/google_sign_in.png',
+                                    width: MomCozyIconSizes.medium,
+                                    height: MomCozyIconSizes.medium,
+                                    excludeFromSemantics: true,
+                                  ),
+                                  label: const Text('Continue with Google'),
+                                  style: OutlinedButton.styleFrom(
+                                    alignment: Alignment.topCenter,
+                                    foregroundColor: authInk,
+                                    backgroundColor: Colors.white,
+                                    minimumSize: const Size.fromHeight(48),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: MomCozySpacing.page,
+                                      vertical: MomCozySpacing.content,
+                                    ),
+                                    textStyle: MomHomeTokens.text(
+                                      14,
+                                      height: 20 / 14,
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(16),
+                                    ),
+                                    side: const BorderSide(color: authBorder),
+                                  ),
+                                ),
+                                if (_error != null && _googleFeedback)
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                      top: MomCozySpacing.compact,
+                                    ),
+                                    child: AuthNotice(
+                                      _error!,
+                                      error: true,
+                                      textKey: const ValueKey(
+                                        'auth-error-text',
+                                      ),
+                                    ),
+                                  ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 14,
+                                  ),
+                                  child: Text(
+                                    'or continue with email',
+                                    style: MomHomeTokens.text(
+                                      12,
+                                      color: authMuted,
+                                      height: 17 / 12,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                              _AuthField(
+                                label: isLogin ? 'Email' : 'Email address',
+                                child: TextFormField(
+                                  key: const ValueKey('auth-email-field'),
+                                  controller: _email,
+                                  enabled: !_busy,
+                                  keyboardType: TextInputType.emailAddress,
+                                  autofillHints: const [AutofillHints.email],
+                                  autocorrect: false,
+                                  textInputAction: TextInputAction.next,
+                                  style: isLogin
+                                      ? MomHomeTokens.text(14, height: 20 / 14)
+                                      : null,
+                                  textAlignVertical: TextAlignVertical.top,
+                                  decoration: InputDecoration(
+                                    hintText: 'you@example.com',
+                                    hintStyle: isLogin
+                                        ? MomHomeTokens.text(
+                                            14,
+                                            color: authMuted,
+                                            height: 20 / 14,
+                                          )
+                                        : null,
+                                    isDense: isLogin,
+                                    constraints: isLogin
+                                        ? const BoxConstraints(minHeight: 48)
+                                        : null,
+                                    // InputDecorator adds a 4px gap beside the editable text.
+                                    contentPadding: isLogin
+                                        ? const EdgeInsets.fromLTRB(
+                                            8,
+                                            12,
+                                            8,
+                                            16,
+                                          )
+                                        : const EdgeInsets.symmetric(
+                                            horizontal: MomCozySpacing.page,
+                                            vertical: MomCozySpacing.content,
+                                          ),
+                                  ),
+                                  validator: (v) =>
+                                      v != null &&
+                                          RegExp(
+                                            r'^[^\s@]+@[^\s@]+\.[^\s@]+$',
+                                          ).hasMatch(v.trim())
+                                      ? null
+                                      : 'Enter a valid email address.',
+                                ),
+                              ),
+                              if (usesCode) ...[
+                                const SizedBox(height: MomCozySpacing.section),
+                                _AuthField(
+                                  label: '8-digit email code',
+                                  child: TextFormField(
+                                    key: const ValueKey('auth-code-field'),
+                                    controller: _code,
+                                    enabled: !_busy,
+                                    keyboardType: TextInputType.number,
+                                    autofillHints: const [
+                                      AutofillHints.oneTimeCode,
+                                    ],
+                                    decoration: const InputDecoration(
+                                      hintText: 'Enter your code',
+                                    ),
+                                    validator: (v) =>
+                                        RegExp(
+                                          r'^\d{8}$',
+                                        ).hasMatch(v?.trim() ?? '')
+                                        ? null
+                                        : 'Enter the 8-digit code from your email.',
+                                  ),
+                                ),
+                              ],
+                              if (_step != _AuthStep.forgot) ...[
+                                SizedBox(
+                                  height: _step == _AuthStep.login
+                                      ? 14
+                                      : MomCozySpacing.section,
+                                ),
+                                _AuthField(
+                                  label: _step == _AuthStep.login
+                                      ? 'Password'
+                                      : 'Set password',
+                                  action: _step == _AuthStep.login
+                                      ? TextButton(
+                                          onPressed: _busy
+                                              ? null
+                                              : () =>
+                                                    _navigate(_AuthStep.forgot),
+                                          style: TextButton.styleFrom(
+                                            foregroundColor: authRose,
+                                            minimumSize: const Size(145, 44),
+                                            tapTargetSize: MaterialTapTargetSize
+                                                .shrinkWrap,
+                                            padding: EdgeInsets.zero,
+                                            textStyle: MomHomeTokens.text(
+                                              13,
+                                              weight: FontWeight.w700,
+                                              height: 18 / 13,
+                                            ),
+                                          ),
+                                          child: const Text('Forgot password?'),
+                                        )
+                                      : null,
+                                  child: TextFormField(
+                                    key: const ValueKey('auth-password-field'),
+                                    controller: _password,
+                                    enabled: !_busy,
+                                    obscureText: !_showPassword,
+                                    autocorrect: false,
+                                    enableSuggestions: false,
+                                    textInputAction: TextInputAction.done,
+                                    style: isLogin
+                                        ? MomHomeTokens.text(
+                                            14,
+                                            height: 20 / 14,
+                                          )
+                                        : null,
+                                    textAlignVertical: TextAlignVertical.top,
+                                    onChanged: isLogin
+                                        ? (_) => setState(() {})
+                                        : null,
+                                    onFieldSubmitted: _busy
+                                        ? null
+                                        : (_) => _submit(),
+                                    autofillHints: [
+                                      _step == _AuthStep.login
+                                          ? AutofillHints.password
+                                          : AutofillHints.newPassword,
+                                    ],
+                                    decoration: InputDecoration(
+                                      hintText: 'Enter your password',
+                                      hintStyle: isLogin
+                                          ? MomHomeTokens.text(
+                                              14,
+                                              color: authMuted,
+                                              height: 20 / 14,
+                                            )
+                                          : null,
+                                      isDense: isLogin,
+                                      constraints: isLogin
+                                          ? const BoxConstraints(minHeight: 48)
+                                          : null,
+                                      contentPadding: isLogin
+                                          ? const EdgeInsets.fromLTRB(
+                                              8,
+                                              12,
+                                              8,
+                                              16,
+                                            )
+                                          : const EdgeInsets.symmetric(
+                                              horizontal: MomCozySpacing.page,
+                                              vertical: MomCozySpacing.content,
+                                            ),
+                                      suffixIcon:
+                                          isLogin && _password.text.isEmpty
+                                          ? null
+                                          : IconButton(
+                                              key: const ValueKey(
+                                                'auth-password-visibility',
+                                              ),
+                                              tooltip: _showPassword
+                                                  ? 'Hide password'
+                                                  : 'Show password',
+                                              onPressed: _busy
+                                                  ? null
+                                                  : () => setState(() {
+                                                      _showPassword =
+                                                          !_showPassword;
+                                                    }),
+                                              icon: Icon(
+                                                _showPassword
+                                                    ? Icons
+                                                          .visibility_off_outlined
+                                                    : Icons.visibility_outlined,
+                                                size: MomCozyIconSizes.medium,
+                                              ),
+                                            ),
+                                      helperMaxLines: 8,
+                                      errorMaxLines: 8,
+                                      helperText: _step == _AuthStep.login
+                                          ? null
+                                          : '8–128 characters, including a letter and a number',
+                                    ),
+                                    validator: (v) {
+                                      if (v == null || v.isEmpty) {
+                                        return 'Enter your password.';
+                                      }
+                                      if (_step != _AuthStep.login &&
+                                          (v.length < 8 ||
+                                              v.length > 128 ||
+                                              !RegExp('[A-Za-z]').hasMatch(v) ||
+                                              !RegExp('[0-9]').hasMatch(v))) {
+                                        return 'Use 8–128 characters with a letter and a number.';
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                ),
+                              ],
+                              SizedBox(
+                                height: isLogin ? 14 : MomCozySpacing.page,
+                              ),
+                              FilledButton(
+                                key: const ValueKey('auth-submit-button'),
+                                onPressed: _busy ? null : _submit,
+                                style: FilledButton.styleFrom(
+                                  minimumSize: Size.fromHeight(
+                                    isLogin ? 44 : 48,
+                                  ),
+                                  tapTargetSize: isLogin
+                                      ? MaterialTapTargetSize.shrinkWrap
+                                      : null,
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 12,
+                                    horizontal: MomCozySpacing.card,
+                                  ),
+                                  backgroundColor: authRose,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                  foregroundColor: MomCozyColors.raised,
+                                  textStyle: MomHomeTokens.text(
+                                    13,
+                                    weight: FontWeight.w700,
+                                    height: 18 / 13,
+                                  ),
+                                ),
+                                child: _busy
+                                    ? const SizedBox.square(
+                                        dimension: MomCozyIconSizes.medium,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                        ),
+                                      )
+                                    : Text(_submitLabel),
+                              ),
+                              if (_step == _AuthStep.login) ...[
+                                const SizedBox(height: 14),
+                                Wrap(
+                                  spacing: 8,
+                                  alignment: WrapAlignment.center,
+                                  crossAxisAlignment: WrapCrossAlignment.center,
+                                  children: [
+                                    SizedBox(
+                                      width: 75,
+                                      child: Text(
+                                        'New here?',
+                                        style: MomHomeTokens.text(
+                                          13,
+                                          height: 18 / 13,
+                                        ),
+                                      ),
+                                    ),
+                                    TextButton(
+                                      onPressed: _busy
+                                          ? null
+                                          : () => _navigate(_AuthStep.register),
+                                      style: TextButton.styleFrom(
+                                        minimumSize: const Size(145, 44),
+                                        tapTargetSize:
+                                            MaterialTapTargetSize.shrinkWrap,
+                                        padding: EdgeInsets.zero,
+                                        foregroundColor: authRose,
+                                        textStyle: MomHomeTokens.text(
+                                          13,
+                                          weight: FontWeight.w700,
+                                          height: 18 / 13,
+                                        ),
+                                      ),
+                                      child: const Text('Create an account'),
+                                    ),
+                                  ],
+                                ),
+                              ] else ...[
+                                if (usesCode)
+                                  TextButton(
+                                    onPressed: _busy ? null : _resend,
+                                    style: TextButton.styleFrom(
+                                      foregroundColor: authRose,
+                                    ),
+                                    child: const Text('Resend code'),
+                                  ),
+                                TextButton(
+                                  onPressed: _busy
+                                      ? null
+                                      : () => _navigate(_AuthStep.login),
+                                  style: TextButton.styleFrom(
+                                    foregroundColor: authRose,
+                                  ),
+                                  child: const Text('Back to sign in'),
+                                ),
+                              ],
+                            ],
                           ),
                         ],
                       ),
-                    ] else ...[
-                      if (usesCode)
-                        TextButton(
-                          onPressed: _busy ? null : _resend,
-                          child: const Text('Resend code'),
-                        ),
-                      TextButton(
-                        onPressed: _busy
-                            ? null
-                            : () => _navigate(_AuthStep.login),
-                        child: const Text('Back to sign in'),
-                      ),
+                      if (isLogin || _step == _AuthStep.register)
+                        const AuthLegalFooter(compact: true),
                     ],
-                  ],
+                  ),
                 ),
               ),
             ),
@@ -286,11 +541,15 @@ class _MomCozyAuthPageState extends State<MomCozyAuthPage> {
     );
   }
 
-  Future<void> _run(Future<void> Function() action) async {
+  Future<void> _run(
+    Future<void> Function() action, {
+    bool googleFeedback = false,
+  }) async {
     if (_busy) return;
     setState(() {
       _busy = true;
       _error = null;
+      _googleFeedback = googleFeedback;
     });
     try {
       await action();
@@ -425,7 +684,7 @@ class _MomCozyAuthPageState extends State<MomCozyAuthPage> {
         deviceId: await widget.authDeviceIdStore.readOrCreateDeviceId(),
       ),
     );
-  });
+  }, googleFeedback: true);
 
   Future<void> _accept(MomCozyAuthTokenResponse tokens) async {
     if (!mounted) return;
@@ -446,6 +705,37 @@ class _MomCozyAuthPageState extends State<MomCozyAuthPage> {
     }
     // Route guards listen to the controller and restore the intended route.
   }
+}
+
+class _AuthField extends StatelessWidget {
+  const _AuthField({required this.label, required this.child, this.action});
+
+  final String label;
+  final Widget child;
+  final Widget? action;
+
+  @override
+  Widget build(BuildContext context) => Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: [
+      Wrap(
+        alignment: WrapAlignment.spaceBetween,
+        crossAxisAlignment: WrapCrossAlignment.center,
+        spacing: MomCozySpacing.compact,
+        children: [
+          ExcludeSemantics(
+            child: Text(
+              label,
+              style: MomHomeTokens.text(12, weight: FontWeight.w700),
+            ),
+          ),
+          ?action,
+        ],
+      ),
+      const SizedBox(height: MomCozySpacing.compact),
+      Semantics(label: label, child: child),
+    ],
+  );
 }
 
 String accountAuthErrorText(Object error) {

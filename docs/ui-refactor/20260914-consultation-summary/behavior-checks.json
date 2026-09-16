@@ -1,0 +1,8 @@
+{
+  "publication_state_and_primary_task_selection": true,
+  "summary_controller_unchanged": true,
+  "lifecycle_and_polling_unchanged": true,
+  "destinations_and_reload_callback_unchanged": true,
+  "default_error_rendering_unchanged": true,
+  "comparison_note": "Whitespace and optional trailing argument commas ignored; state action TextButton changed to OutlinedButton, retaining its onProgress callback."
+}

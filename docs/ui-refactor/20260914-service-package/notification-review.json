@@ -1,0 +1,247 @@
+[
+  {
+    "id": "07-me/notification-permission-current-direct-settings-error",
+    "route": "/notifications/settings",
+    "trigger": "Direct Settings → platform opening error and Snackbar"
+  },
+  {
+    "id": "07-me/notification-permission-current-direct-settings-error-dismissed",
+    "route": "/notifications/settings",
+    "trigger": "Settings error timeout → page and enabled category preserved"
+  },
+  {
+    "id": "07-me/notification-permission-current-direct-settings-retry",
+    "route": "/notifications/settings",
+    "trigger": "Direct Settings retry → platform invoked successfully"
+  },
+  {
+    "id": "07-me/notification-permission-current-education-back-dismissed",
+    "route": "/notifications/settings",
+    "trigger": "Framework back → education dismissed with off feedback"
+  },
+  {
+    "id": "07-me/notification-permission-current-education-barrier-dismissed",
+    "route": "/notifications/settings",
+    "trigger": "Tap outside education → dismissed, preference unchanged and feedback"
+  },
+  {
+    "id": "07-me/notification-permission-current-education-before-back",
+    "route": "/notifications/settings",
+    "trigger": "Enable again → education before back"
+  },
+  {
+    "id": "07-me/notification-permission-current-education-before-denial",
+    "route": "/notifications/settings",
+    "trigger": "Enable again → education before platform denial"
+  },
+  {
+    "id": "07-me/notification-permission-current-education-denied",
+    "route": "/notifications/settings",
+    "trigger": "Continue → simulated native denial, settings off and Snackbar"
+  },
+  {
+    "id": "07-me/notification-permission-current-education-dialog",
+    "route": "/notifications/settings",
+    "trigger": "Enable appointments → pre-permission education"
+  },
+  {
+    "id": "07-me/notification-permission-current-education-feedback-dismissed",
+    "route": "/notifications/settings",
+    "trigger": "Feedback timeout → original settings"
+  },
+  {
+    "id": "07-me/notification-permission-current-education-inbox",
+    "route": "/notifications",
+    "trigger": "More → notification center"
+  },
+  {
+    "id": "07-me/notification-permission-current-education-inbox-return",
+    "route": "/notifications",
+    "trigger": "Settings back → notification center"
+  },
+  {
+    "id": "07-me/notification-permission-current-education-more",
+    "route": "/more",
+    "trigger": "Authenticated More before notifications; scroll More back to top"
+  },
+  {
+    "id": "07-me/notification-permission-current-education-more-return",
+    "route": "/more",
+    "trigger": "Notification center back → More; scroll More back to top"
+  },
+  {
+    "id": "07-me/notification-permission-current-education-not-now",
+    "route": "/notifications/settings",
+    "trigger": "Not now → no native permission request, preference stays off"
+  },
+  {
+    "id": "07-me/notification-permission-current-education-ready",
+    "route": "/notifications/settings",
+    "trigger": "Notification center settings → preferences"
+  },
+  {
+    "id": "07-me/notification-permission-current-education-reopened",
+    "route": "/notifications/settings",
+    "trigger": "Retry enable → education again"
+  },
+  {
+    "id": "07-me/notification-permission-current-offer-settings-dialog",
+    "route": "/notifications/settings",
+    "trigger": "Enable after denial → system-settings explanation"
+  },
+  {
+    "id": "07-me/notification-permission-current-offer-settings-not-now",
+    "route": "/notifications/settings",
+    "trigger": "Not now → do not open system settings, keep preference off"
+  },
+  {
+    "id": "07-me/notification-permission-current-offer-settings-opened",
+    "route": "/notifications/settings",
+    "trigger": "Open settings → fake platform invoked; preference remains off, no OS-window claim"
+  },
+  {
+    "id": "07-me/notification-permission-current-offer-settings-reopened",
+    "route": "/notifications/settings",
+    "trigger": "Retry after denied permission → settings explanation again"
+  },
+  {
+    "id": "07-me/notification-permission-current-permission-restored",
+    "route": "/notifications/settings",
+    "trigger": "Refresh after simulated system authorization → allowed, preference still off"
+  },
+  {
+    "id": "07-me/notification-permission-current-permission-restored-disabled",
+    "route": "/notifications/settings",
+    "trigger": "Disable appointments → false persisted"
+  },
+  {
+    "id": "07-me/notification-permission-current-permission-restored-enabled",
+    "route": "/notifications/settings",
+    "trigger": "Enable after authorization → true persisted without re-request"
+  },
+  {
+    "id": "07-me/notification-permission-current-registration-http-error",
+    "route": "/notifications/settings",
+    "trigger": "Registration 503 → settings error, category values retained"
+  },
+  {
+    "id": "07-me/notification-permission-current-registration-inbox",
+    "route": "/notifications",
+    "trigger": "More → notification center"
+  },
+  {
+    "id": "07-me/notification-permission-current-registration-inbox-return",
+    "route": "/notifications",
+    "trigger": "Settings back → notification center"
+  },
+  {
+    "id": "07-me/notification-permission-current-registration-more",
+    "route": "/more",
+    "trigger": "Authenticated More before notifications; scroll More back to top"
+  },
+  {
+    "id": "07-me/notification-permission-current-registration-more-return",
+    "route": "/more",
+    "trigger": "Notification center back → More; scroll More back to top"
+  },
+  {
+    "id": "07-me/notification-permission-current-registration-null-token",
+    "route": "/notifications/settings",
+    "trigger": "Refresh → SDK returns no token, registration pending"
+  },
+  {
+    "id": "07-me/notification-permission-current-registration-pending",
+    "route": "/notifications/settings",
+    "trigger": "Refresh → server returns token binding pending"
+  },
+  {
+    "id": "07-me/notification-permission-current-registration-pending-enable",
+    "route": "/notifications/settings",
+    "trigger": "Enable while token registration pending → Snackbar, no preference write"
+  },
+  {
+    "id": "07-me/notification-permission-current-registration-ready",
+    "route": "/notifications/settings",
+    "trigger": "Notification center settings → preferences"
+  },
+  {
+    "id": "07-me/notification-permission-current-registration-recovered",
+    "route": "/notifications/settings",
+    "trigger": "Refresh → registration succeeds, error clears"
+  },
+  {
+    "id": "07-me/notification-permission-current-registration-recovered-enabled",
+    "route": "/notifications/settings",
+    "trigger": "Enable after recovery → preference saved true"
+  },
+  {
+    "id": "07-me/notification-permission-current-registration-sdk-unavailable",
+    "route": "/notifications/settings",
+    "trigger": "Refresh → SDK unavailable, in-app inbox remains"
+  },
+  {
+    "id": "07-me/notification-permission-current-registration-server-unavailable",
+    "route": "/notifications/settings",
+    "trigger": "Refresh → server push unavailable, in-app inbox remains"
+  },
+  {
+    "id": "07-me/notification-permission-current-registration-token-error",
+    "route": "/notifications/settings",
+    "trigger": "Refresh → SDK token exception"
+  },
+  {
+    "id": "07-me/notification-permission-current-registration-waiting",
+    "route": "/notifications/settings",
+    "trigger": "Refresh status → installation request pending, categories disabled"
+  },
+  {
+    "id": "07-me/notification-permission-current-request-authorized",
+    "route": "/notifications/settings",
+    "trigger": "Continue → fake platform grants permission, registration and preference save succeed"
+  },
+  {
+    "id": "07-me/notification-permission-current-request-error",
+    "route": "/notifications/settings",
+    "trigger": "Continue → platform request throws, preference remains off with feedback"
+  },
+  {
+    "id": "07-me/notification-permission-current-request-error-dismissed",
+    "route": "/notifications/settings",
+    "trigger": "Request-error feedback timeout → no permission change"
+  },
+  {
+    "id": "07-me/notification-permission-current-request-error-education",
+    "route": "/notifications/settings",
+    "trigger": "Enable → education before platform exception"
+  },
+  {
+    "id": "07-me/notification-permission-current-request-inbox",
+    "route": "/notifications",
+    "trigger": "More → notification center"
+  },
+  {
+    "id": "07-me/notification-permission-current-request-inbox-return",
+    "route": "/notifications",
+    "trigger": "Settings back → notification center"
+  },
+  {
+    "id": "07-me/notification-permission-current-request-more",
+    "route": "/more",
+    "trigger": "Authenticated More before notifications; scroll More back to top"
+  },
+  {
+    "id": "07-me/notification-permission-current-request-more-return",
+    "route": "/more",
+    "trigger": "Notification center back → More; scroll More back to top"
+  },
+  {
+    "id": "07-me/notification-permission-current-request-ready",
+    "route": "/notifications/settings",
+    "trigger": "Notification center settings → preferences"
+  },
+  {
+    "id": "07-me/notification-permission-current-request-retry-education",
+    "route": "/notifications/settings",
+    "trigger": "Retry enable → repeat permission education"
+  }
+]

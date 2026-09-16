@@ -1,0 +1,12 @@
+{
+  "scope": "Current files inspected and privacy suite passed; this is a new verification record, not an inferred historical hash.",
+  "test_log": "privacy-current-tests.log",
+  "passed": 24,
+  "sha256": {
+    "lib/modules/profile/presentation/privacy_page.dart": "79581de5618807bfebfd14c9a85f5b3ec672b5b57fbfc0412575b5db262f6b79",
+    "lib/modules/profile/application/privacy_controller.dart": "b8b803d9dc6a7e5e51c4c3819df3e51b976dfed8e20549864225ca8fd6f3cf9f",
+    "lib/shared/design_system/mom_settings_theme.dart": "c584f5c1ef469a525857bbbfa38c126d579e7b7068bb597c465e01c117665cd7",
+    "test/modules/profile/privacy_test.dart": "2bab25eab72c72609f0261284a3936bbf25946b1194e775ff2dd0989d919cbb4",
+    "test/modules/profile/privacy_redesign_states_test.dart": "fd3703dcb0ca5bd3baa58871bc56c11a925cdea20f692ccdfee2b1444b487381"
+  }
+}

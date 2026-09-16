@@ -1,0 +1,6043 @@
+[
+  [
+    "122:9",
+    "screen/more-default",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "122:105",
+    "screen/more-loading",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "128:68",
+    "screen/account-default",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "128:98",
+    "screen/account-loading",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "128:132",
+    "screen/account-load-error",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "128:149",
+    "screen/account-password-focused",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "128:189",
+    "screen/account-delete-confirm",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "128:227",
+    "screen/account-linked",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "128:359",
+    "screen/account-operation-pending",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "130:68",
+    "screen/account-password-confirm",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "132:68",
+    "screen/account-google-unavailable",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "134:68",
+    "screen/notifications-inbox",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "135:82",
+    "screen/notifications-read",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "135:117",
+    "screen/notifications-empty",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "135:155",
+    "screen/notifications-loading",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "135:194",
+    "screen/notifications-error",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "135:234",
+    "screen/notifications-error-retained",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "135:274",
+    "screen/notification-settings",
+    "FRAME",
+    393,
+    867
+  ],
+  [
+    "136:187",
+    "screen/notification-settings-allowed",
+    "FRAME",
+    393,
+    867
+  ],
+  [
+    "136:249",
+    "screen/notification-settings-denied",
+    "FRAME",
+    393,
+    867
+  ],
+  [
+    "136:311",
+    "screen/notification-settings-provisional",
+    "FRAME",
+    393,
+    867
+  ],
+  [
+    "136:373",
+    "screen/notification-settings-unavailable",
+    "FRAME",
+    393,
+    949
+  ],
+  [
+    "136:420",
+    "screen/notification-settings-loading",
+    "FRAME",
+    393,
+    885
+  ],
+  [
+    "136:468",
+    "screen/notification-settings-preferences-error",
+    "FRAME",
+    393,
+    933
+  ],
+  [
+    "136:497",
+    "screen/notification-settings-push-not-ready",
+    "FRAME",
+    393,
+    933
+  ],
+  [
+    "136:577",
+    "screen/notification-education",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "136:612",
+    "screen/notification-settings-offer",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "136:775",
+    "screen/notifications-pagination",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "136:813",
+    "screen/notifications-archive-pending",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "137:336",
+    "screen/notifications-mark-all-pending",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "137:357",
+    "screen/notifications-pagination-pending",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "142:387",
+    "Privacy / Default",
+    "FRAME",
+    393,
+    1318
+  ],
+  [
+    "142:445",
+    "Privacy / Overview loading",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "142:458",
+    "Privacy / Overview error",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "142:473",
+    "Privacy / Empty services",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "142:487",
+    "Privacy / Requested service missing",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "142:501",
+    "Privacy / Consent loading",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "142:520",
+    "Privacy / Consent read error",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "142:541",
+    "Privacy / Optional dirty",
+    "FRAME",
+    393,
+    1397
+  ],
+  [
+    "142:611",
+    "Privacy / Saved",
+    "FRAME",
+    393,
+    1403
+  ],
+  [
+    "142:681",
+    "Privacy / Saving",
+    "FRAME",
+    393,
+    1389
+  ],
+  [
+    "142:771",
+    "Privacy / Uncertain result",
+    "FRAME",
+    393,
+    1619
+  ],
+  [
+    "142:868",
+    "Privacy / Partial uncertain",
+    "FRAME",
+    393,
+    1619
+  ],
+  [
+    "142:965",
+    "Privacy / Version conflict",
+    "FRAME",
+    393,
+    1567
+  ],
+  [
+    "142:1061",
+    "Privacy / Second service",
+    "FRAME",
+    393,
+    1343
+  ],
+  [
+    "142:1119",
+    "Privacy / Revoked",
+    "FRAME",
+    393,
+    1399
+  ],
+  [
+    "142:1199",
+    "Privacy / Revoke confirmation",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "142:1252",
+    "Privacy / Leave confirmation",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "142:1305",
+    "Privacy / Uncertain leave confirmation",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "142:1358",
+    "Privacy / Service picker",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "142:1403",
+    "Privacy / 320 at 2x text",
+    "FRAME",
+    320,
+    2868
+  ],
+  [
+    "145:553",
+    "Privacy / Long service label at 2x",
+    "FRAME",
+    320,
+    2890
+  ],
+  [
+    "149:565",
+    "Service catalog / Default",
+    "FRAME",
+    393,
+    1559
+  ],
+  [
+    "149:660",
+    "Service catalog / Owned plan",
+    "FRAME",
+    393,
+    1743
+  ],
+  [
+    "149:757",
+    "Service catalog / Pending order",
+    "FRAME",
+    393,
+    1671
+  ],
+  [
+    "149:845",
+    "Service catalog / Empty",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "149:875",
+    "Service catalog / Initial loading",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "149:884",
+    "Service catalog / Initial error",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "149:894",
+    "Service catalog / Refresh failed",
+    "FRAME",
+    393,
+    1685
+  ],
+  [
+    "149:993",
+    "Service catalog / Paused plan",
+    "FRAME",
+    393,
+    1743
+  ],
+  [
+    "149:1401",
+    "Service catalog / Team empty",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "149:1443",
+    "Service catalog / Team populated",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "150:958",
+    "Service catalog / Paid without ongoing service",
+    "FRAME",
+    393,
+    1598
+  ],
+  [
+    "150:1024",
+    "Service catalog / Provisioning plan",
+    "FRAME",
+    393,
+    1743
+  ],
+  [
+    "153:1139",
+    "Service catalog / Team at 2x text",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "156:1108",
+    "Service detail / Feeding confidence",
+    "FRAME",
+    393,
+    983
+  ],
+  [
+    "156:1176",
+    "Service detail / Better breastfeeding",
+    "FRAME",
+    393,
+    963
+  ],
+  [
+    "156:1244",
+    "Service detail / Milk supply",
+    "FRAME",
+    393,
+    963
+  ],
+  [
+    "156:1312",
+    "Service detail / Comfortable feeding",
+    "FRAME",
+    393,
+    983
+  ],
+  [
+    "156:1380",
+    "Service detail / Owned service",
+    "FRAME",
+    393,
+    1239
+  ],
+  [
+    "156:1461",
+    "Service detail / Paused service",
+    "FRAME",
+    393,
+    1239
+  ],
+  [
+    "156:1542",
+    "Service detail / Pending order",
+    "FRAME",
+    393,
+    983
+  ],
+  [
+    "156:1610",
+    "Service detail / Payment unavailable",
+    "FRAME",
+    393,
+    983
+  ],
+  [
+    "156:1678",
+    "Service detail / Loading",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "156:1686",
+    "Service detail / Read error",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "156:1696",
+    "Service detail / Missing package",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "156:1704",
+    "Service detail / Refresh failure",
+    "FRAME",
+    393,
+    1107
+  ],
+  [
+    "156:1776",
+    "Service detail / Opening order",
+    "FRAME",
+    393,
+    983
+  ],
+  [
+    "156:1844",
+    "Service detail / Large text",
+    "FRAME",
+    320,
+    1978
+  ],
+  [
+    "156:1912",
+    "Service detail / Large owned",
+    "FRAME",
+    320,
+    2368
+  ],
+  [
+    "156:1993",
+    "Purchase flow / Eligibility empty",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "156:2082",
+    "Purchase flow / Eligibility ready",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "156:2171",
+    "Purchase flow / Unsupported region",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "156:2262",
+    "Purchase flow / Confirming eligibility",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "156:2351",
+    "Purchase flow / Order creation error",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "156:2445",
+    "Purchase flow / Sandbox form",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "156:2550",
+    "Purchase flow / Invalid card",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "156:2656",
+    "Purchase flow / Payment pending",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "156:2761",
+    "Purchase flow / Declined",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "156:2869",
+    "Purchase flow / Bank verification",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "156:2977",
+    "Purchase flow / Cancelled",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "156:3063",
+    "Purchase flow / Uncertain payment",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "156:3174",
+    "Purchase flow / Reconciling",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "156:3263",
+    "Purchase flow / Paid awaiting benefits",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "156:3350",
+    "Purchase flow / Query failure",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "156:3444",
+    "Purchase flow / Success",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "156:3532",
+    "Purchase flow / Stripe checkout",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "156:3619",
+    "Purchase flow / Stripe preparation",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "156:3706",
+    "Purchase flow / Stripe launch error",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "156:3796",
+    "Purchase flow / Stripe failed",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "156:3886",
+    "Purchase flow / Stripe query conflict",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "156:3978",
+    "Purchase flow / Stripe cancelled",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "158:1108",
+    "Purchase flow / Sandbox form scrolled",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "159:1108",
+    "Purchase flow / Eligibility large",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "159:1197",
+    "Purchase flow / Payment large",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "159:1302",
+    "Purchase flow / Success large",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "162:1108",
+    "Service progress / Current plan",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "162:1139",
+    "Service progress / Full history",
+    "FRAME",
+    393,
+    1476
+  ],
+  [
+    "162:1212",
+    "Service progress / Completed",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "162:1243",
+    "Service progress / Paused",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "162:1272",
+    "Service progress / Preparing",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "162:1301",
+    "Service progress / Cancelled",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "162:1332",
+    "Service progress / Initial loading",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "162:1340",
+    "Service progress / Initial error",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "162:1350",
+    "Service progress / Missing service",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "162:1361",
+    "Service progress / Appointments loading",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "162:1393",
+    "Service progress / Appointments failed",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "162:1428",
+    "Service progress / Consultation in progress",
+    "FRAME",
+    393,
+    1476
+  ],
+  [
+    "162:1501",
+    "Service progress / Large history",
+    "FRAME",
+    320,
+    2560
+  ],
+  [
+    "162:1574",
+    "Service progress / Long plan name",
+    "FRAME",
+    320,
+    1254
+  ],
+  [
+    "162:1605",
+    "Service progress / Completed large",
+    "FRAME",
+    320,
+    1068
+  ],
+  [
+    "162:1636",
+    "Service progress / Latest viewport",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "163:1108",
+    "Service progress / Short large earlier viewport",
+    "FRAME",
+    320,
+    568
+  ],
+  [
+    "165:1108",
+    "Booking / Choose time",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "165:1142",
+    "Booking / Precheck entry",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "165:1155",
+    "Booking / Held collapsed",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "165:1191",
+    "Booking / Confirmed",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "165:1224",
+    "Booking / Consultation active",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "165:1250",
+    "Booking / No sessions",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "165:1261",
+    "Booking / Initial loading",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "165:1271",
+    "Booking / Initial failure",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "165:1283",
+    "Booking / Slots loading",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "165:1313",
+    "Booking / Slots failed",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "165:1345",
+    "Booking / No slots",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "165:1376",
+    "Booking / Hold uncertain",
+    "FRAME",
+    393,
+    901
+  ],
+  [
+    "165:1414",
+    "Booking dialog / Precheck empty",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "165:1449",
+    "Booking dialog / Precheck ready",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "165:1484",
+    "Booking dialog / Unsupported region",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "165:1521",
+    "Booking dialog / Emergency help",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "165:1558",
+    "Booking dialog / Precheck submitting",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "165:1593",
+    "Booking dialog / Precheck failure",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "165:1630",
+    "Booking dialog / Confirm held",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "165:1689",
+    "Booking dialog / Confirm submitting",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "165:1748",
+    "Booking dialog / Confirm uncertain",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "165:1809",
+    "Booking dialog / Hold expired",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "165:1865",
+    "Booking dialog / Cancel appointment",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "165:1921",
+    "Booking dialog / Cancel uncertain",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "165:1981",
+    "Booking / Choose time large",
+    "FRAME",
+    320,
+    1320
+  ],
+  [
+    "165:2015",
+    "Booking / Confirmed large",
+    "FRAME",
+    320,
+    1289
+  ],
+  [
+    "165:2048",
+    "Booking dialog / Cancel pending",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "166:1108",
+    "Booking / Date calendar",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "166:1199",
+    "Booking / Date input validation",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "167:1108",
+    "Booking dialog / Precheck large",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "167:1143",
+    "Booking dialog / Held large",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "167:1202",
+    "Booking dialog / Cancellation large",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "170:1108",
+    "Appointment detail / Confirmed",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "170:1154",
+    "Appointment detail / Intake saved",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "170:1200",
+    "Appointment detail / Consultation active",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "170:1241",
+    "Appointment detail / Completed",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "170:1280",
+    "Appointment detail / Cancelled",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "170:1315",
+    "Appointment detail / Expired",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "170:1350",
+    "Appointment detail / Held",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "170:1389",
+    "Appointment detail / Loading",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "170:1397",
+    "Appointment detail / Unavailable",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "170:1408",
+    "Appointment detail / Confirmed large",
+    "FRAME",
+    320,
+    1261
+  ],
+  [
+    "170:1454",
+    "Appointment detail / Held large",
+    "FRAME",
+    320,
+    866
+  ],
+  [
+    "170:1493",
+    "Appointment detail / Unavailable large",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "173:1108",
+    "Intake / form",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "173:1151",
+    "Intake / unfilled",
+    "FRAME",
+    393,
+    1165
+  ],
+  [
+    "173:1215",
+    "Intake / optional",
+    "FRAME",
+    393,
+    964
+  ],
+  [
+    "173:1262",
+    "Intake / profile",
+    "FRAME",
+    393,
+    1165
+  ],
+  [
+    "173:1326",
+    "Intake / previous-prefill",
+    "FRAME",
+    393,
+    901
+  ],
+  [
+    "173:1371",
+    "Intake / saved-edit",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "173:1414",
+    "Intake / saving",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "173:1457",
+    "Intake / uncertain",
+    "FRAME",
+    393,
+    901
+  ],
+  [
+    "173:1502",
+    "Intake / loading",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "173:1510",
+    "Intake / load-error",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "173:1520",
+    "Intake / large-form",
+    "FRAME",
+    320,
+    1566
+  ],
+  [
+    "173:1566",
+    "Intake / large-profile",
+    "FRAME",
+    320,
+    2476
+  ],
+  [
+    "173:1633",
+    "Intake / consent-info",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "173:1691",
+    "Intake / completed",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "173:1756",
+    "Intake / discard",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "173:1809",
+    "Intake / uncertain-leave",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "174:1108",
+    "Intake / large-consent",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "174:1169",
+    "Intake / large-completed",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "174:1237",
+    "Intake / large-uncertain-leave",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "175:1108",
+    "Intake / region-menu",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "175:1179",
+    "Intake / sex-menu",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "175:1250",
+    "Intake / feeding-menu",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "175:1325",
+    "Intake / birth-calendar",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "175:1446",
+    "Intake / birth-input",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "175:1522",
+    "Intake / unconfirmed",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "175:1533",
+    "Intake / large-unconfirmed",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "178:1108",
+    "Preparation / ready",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "178:1139",
+    "Preparation / early",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "178:1171",
+    "Preparation / expired",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "178:1206",
+    "Preparation / intake-required",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "178:1241",
+    "Preparation / case-consent-required",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "178:1276",
+    "Preparation / video-disabled",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "178:1309",
+    "Preparation / demo-early",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "178:1341",
+    "Preparation / cancel-pending",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "178:1372",
+    "Preparation / active-rejoin",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "178:1401",
+    "Preparation / refresh-error",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "178:1436",
+    "Preparation / home-ready",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "178:1612",
+    "Preparation / home-loading",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "178:1767",
+    "Preparation / home-error",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "178:1923",
+    "Preparation / large-ready",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "178:1954",
+    "Preparation / large-intake",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "178:1989",
+    "Preparation / large-expired",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "178:2024",
+    "Preparation / large-pending",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "178:2055",
+    "Preparation / pending-end",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "178:2088",
+    "Preparation / large-home-error",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "179:1108",
+    "Preparation / large-ready-actions",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "179:1139",
+    "Preparation / large-intake-actions",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "179:1174",
+    "Preparation / large-expired-actions",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "180:1108",
+    "Preparation / short-home-loading",
+    "FRAME",
+    320,
+    568
+  ],
+  [
+    "180:1263",
+    "Preparation / short-home-error",
+    "FRAME",
+    320,
+    568
+  ],
+  [
+    "183:1108",
+    "Preflight / device-checking",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "183:1153",
+    "Preflight / device-ready",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "183:1200",
+    "Preflight / device-done",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "183:1247",
+    "Preflight / device-error",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "183:1294",
+    "Preflight / large-device-error",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "183:1341",
+    "Preflight / large-device-ready",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "183:1388",
+    "Preflight / location-ready",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "183:1433",
+    "Preflight / location-rejected",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "183:1480",
+    "Preflight / location-consent-required",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "183:1529",
+    "Preflight / location-busy",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "183:1574",
+    "Preflight / location-error",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "183:1621",
+    "Preflight / room-preparing",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "183:1667",
+    "Preflight / intake-required",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "183:1716",
+    "Preflight / video-disabled",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "183:1763",
+    "Preflight / early",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "183:1810",
+    "Preflight / expired",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "183:1857",
+    "Preflight / consent-empty",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "183:1900",
+    "Preflight / consent-accepted",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "183:1943",
+    "Preflight / consent-busy",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "183:1986",
+    "Preflight / consent-error",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "183:2031",
+    "Preflight / large-location",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "183:2076",
+    "Preflight / large-consent-required",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "183:2125",
+    "Preflight / large-consent",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "183:2168",
+    "Preflight / large-consent-error",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "183:2213",
+    "Preflight / large-rejected",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "184:1108",
+    "Preflight / short-device-ready",
+    "FRAME",
+    320,
+    568
+  ],
+  [
+    "184:1156",
+    "Preflight / location-menu",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "188:1108",
+    "Live room / waiting",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "188:1146",
+    "Live room / expert-ready",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "188:1184",
+    "Live room / camera-off",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "188:1222",
+    "Live room / reconnecting",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "188:1260",
+    "Live room / media-error",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "188:1304",
+    "Live room / disconnected",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "188:1346",
+    "Live room / leave",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "188:1395",
+    "Live room / leave-failure",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "188:1435",
+    "Live room / large-waiting",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "188:1473",
+    "Live room / large-leave",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "192:1108",
+    "Live room / large-controls",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "192:1163",
+    "Live room / large-media-error",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "192:1222",
+    "Live room / large-disconnected",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "192:1281",
+    "Live room / short-large-leave",
+    "FRAME",
+    320,
+    568
+  ],
+  [
+    "195:1108",
+    "Live room / sandbox",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "198:1108",
+    "Consultation outcome / completed",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "198:1134",
+    "Consultation outcome / pending-record",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "198:1162",
+    "Consultation outcome / technical",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "198:1190",
+    "Consultation outcome / no-show",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "198:1219",
+    "Consultation outcome / safety",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "198:1248",
+    "Consultation outcome / cancelled",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "198:1276",
+    "Consultation outcome / large-technical",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "198:1304",
+    "Consultation outcome / large-completed",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "198:1330",
+    "Consultation outcome / large-safety",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "198:1359",
+    "Consultation outcome / short-no-show-actions",
+    "FRAME",
+    320,
+    568
+  ],
+  [
+    "201:1108",
+    "Consultation summary / published-full",
+    "FRAME",
+    393,
+    1188
+  ],
+  [
+    "201:1159",
+    "Consultation summary / published",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "201:1210",
+    "Consultation summary / service-information",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "201:1272",
+    "Consultation summary / loading",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "201:1286",
+    "Consultation summary / pending",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "201:1302",
+    "Consultation summary / empty",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "201:1317",
+    "Consultation summary / failed",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "201:1332",
+    "Consultation summary / offline",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "201:1347",
+    "Consultation summary / refresh-error",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "201:1402",
+    "Consultation summary / large-published",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "202:1108",
+    "Summary task / pending",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "202:1180",
+    "Summary task / in-progress",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "202:1252",
+    "Summary task / completed",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "202:1324",
+    "Summary task / skipped",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "202:1396",
+    "Summary task / updating",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "202:1469",
+    "Summary task / uncertain",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "202:1546",
+    "Summary task / superseded",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "202:1622",
+    "Summary task / removed",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "202:1681",
+    "Summary task / scheduled",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "202:1754",
+    "Summary task / large-uncertain",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "202:1834",
+    "Consultation summary / large-information",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "202:1896",
+    "Consultation summary / large-pending",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "202:1912",
+    "Consultation summary / no-actions",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "202:1950",
+    "Summary task / short-large-progress",
+    "FRAME",
+    320,
+    568
+  ],
+  [
+    "208:1108",
+    "Continue support / 方案列表",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "208:1176",
+    "Continue support / 已选择方案",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "208:1244",
+    "Continue support / 已有服务",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "208:1313",
+    "Continue support / 待付款订单",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "208:1382",
+    "Continue support / 订单打开失败",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "208:1453",
+    "Continue support / 订单读取中",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "208:1523",
+    "Continue support / 暂未开放购买",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "208:1591",
+    "Continue support / 暂无方案",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "208:1603",
+    "Continue support / 加载失败",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "208:1614",
+    "Continue support / 首次加载",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "208:1625",
+    "Continue support / 大字体",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "208:1693",
+    "Continue support / 短屏已有服务",
+    "FRAME",
+    393,
+    568
+  ],
+  [
+    "208:1762",
+    "Continue support / 完整方案列表",
+    "FRAME",
+    393,
+    1302
+  ],
+  [
+    "208:1830",
+    "Continue support / 购买前确认",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "211:1108",
+    "Consultation entry / 首次加载",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "211:1119",
+    "Consultation entry / 载入失败",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "211:1130",
+    "Consultation entry / 离线",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "211:1141",
+    "Consultation entry / 大字号加载",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "211:1152",
+    "Consultation entry / 短屏大字号错误",
+    "FRAME",
+    320,
+    568
+  ],
+  [
+    "211:1163",
+    "Consultation entry / 妈妈页加载",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "211:1319",
+    "Consultation entry / 妈妈页载入失败",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "211:1475",
+    "Consultation entry / 妈妈页离线",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "211:1631",
+    "Consultation entry / 妈妈页大字号加载",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "211:1787",
+    "Consultation entry / 妈妈页短屏大字号错误",
+    "FRAME",
+    320,
+    568
+  ],
+  [
+    "214:1108",
+    "Schedule / 当天安排",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "214:1243",
+    "Schedule / 空日程",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "214:1347",
+    "Schedule / 照护方案展开",
+    "FRAME",
+    393,
+    1361
+  ],
+  [
+    "214:1489",
+    "Schedule / 服务期",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "214:1626",
+    "Schedule / 多服务筛选",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "214:1763",
+    "Schedule / 任务更新中",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "214:1898",
+    "Schedule / 任务更新失败",
+    "FRAME",
+    393,
+    1262
+  ],
+  [
+    "214:2037",
+    "Schedule / 首次加载",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "214:2045",
+    "Schedule / 离线",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "214:2053",
+    "Schedule / 任务待完成",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "214:2188",
+    "Schedule / 任务进行中",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "214:2323",
+    "Schedule / 任务跳过",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "214:2458",
+    "Schedule / 待确认咨询",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "214:2593",
+    "Schedule / 已完成咨询",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "214:2728",
+    "Schedule / 刷新失败",
+    "FRAME",
+    393,
+    1262
+  ],
+  [
+    "214:2867",
+    "Schedule / 下个月",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "214:2971",
+    "Schedule / 大字号日程",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "214:3106",
+    "Schedule / 短屏大字号",
+    "FRAME",
+    320,
+    568
+  ],
+  [
+    "214:3241",
+    "Schedule editor / 添加",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "214:3370",
+    "Schedule editor / 已填写",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "214:3499",
+    "Schedule editor / 修改",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "214:3628",
+    "Schedule editor / 保存中",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "214:3757",
+    "Schedule editor / 保存结果不确定",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "214:3888",
+    "Schedule editor / 冲突",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "214:4019",
+    "Schedule editor / 校验失败",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "214:4150",
+    "Schedule editor / 删除确认",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "214:4269",
+    "Schedule editor / 大字号短屏编辑",
+    "FRAME",
+    320,
+    568
+  ],
+  [
+    "214:4398",
+    "Schedule editor / 大字号删除",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "216:1108",
+    "Schedule auxiliary / date",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "216:1339",
+    "Schedule auxiliary / dateinput",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "216:1479",
+    "Schedule auxiliary / dateerror",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "216:1620",
+    "Schedule auxiliary / year",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "216:1760",
+    "Schedule auxiliary / time",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "216:1910",
+    "Schedule auxiliary / timeinput",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "216:2054",
+    "Schedule auxiliary / timeerror",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "216:2199",
+    "Schedule auxiliary / discard",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "216:2336",
+    "Schedule auxiliary / uncertain-discard",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "216:2473",
+    "Schedule auxiliary / taskmenu",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "216:2608",
+    "Schedule auxiliary / servicemenu",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "216:2742",
+    "Schedule auxiliary / personalmenu",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "224:1108",
+    "Auth / 登录",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "224:1143",
+    "Auth / 注册",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "224:1167",
+    "Auth / 验证邮箱",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "224:1196",
+    "Auth / 找回密码",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "224:1212",
+    "Auth / 重置密码",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "224:1241",
+    "Auth / 邀请码",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "224:1255",
+    "Auth / 语言选择",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "224:1295",
+    "Auth / 完整登录",
+    "FRAME",
+    393,
+    676
+  ],
+  [
+    "225:1108",
+    "Auth / 登录输入校验",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "225:1145",
+    "Auth / Google 不可用",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "225:1182",
+    "Auth / 登录失败",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "225:1219",
+    "Auth / 请求限流",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "225:1256",
+    "Auth / 登录中",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "225:1291",
+    "Auth / 密码可见",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "225:1326",
+    "Auth / 会话过期",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "225:1363",
+    "Auth / 密码重置完成",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "225:1400",
+    "Auth / 退出登录失败提示",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "225:1437",
+    "Auth / 注册校验",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "225:1463",
+    "Auth / 注册提交中",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "225:1487",
+    "Auth / 验证代码校验",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "225:1515",
+    "Auth / 代码过期",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "225:1544",
+    "Auth / 重发冷却",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "225:1573",
+    "Auth / 重发缺少邮箱",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "225:1602",
+    "Auth / 重发提交中",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "225:1629",
+    "Auth / 邮箱服务不可用",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "225:1647",
+    "Auth / 重置提交中",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "225:1674",
+    "Auth / 大字号登录",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "225:1707",
+    "Auth / 短屏大字号表单",
+    "FRAME",
+    320,
+    568
+  ],
+  [
+    "225:1740",
+    "Auth / 大字号验证码错误",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "225:1768",
+    "Auth / 短屏重置",
+    "FRAME",
+    320,
+    568
+  ],
+  [
+    "225:1795",
+    "Auth / 大字号语言",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "225:1833",
+    "Auth / 邀请码校验",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "225:1849",
+    "Auth / 邀请码提交中",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "225:1863",
+    "Auth / 邀请码短屏",
+    "FRAME",
+    320,
+    568
+  ],
+  [
+    "225:1877",
+    "Auth / 条款打开失败",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "228:1111",
+    "Auth / 账号删除后的登录提示",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "228:1150",
+    "Auth / 更多页退出失败提示",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "230:1108",
+    "Onboarding profile / 基本资料",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "230:1132",
+    "Onboarding profile / 分娩日期",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "230:1152",
+    "Onboarding profile / 分娩信息",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "230:1176",
+    "Onboarding profile / 姓名校验",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "230:1202",
+    "Onboarding profile / 年龄校验",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "230:1228",
+    "Onboarding profile / 日期未选",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "230:1250",
+    "Onboarding profile / 保存失败",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "230:1276",
+    "Onboarding profile / 保存中",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "230:1300",
+    "Onboarding profile / 加载中",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "230:1313",
+    "Onboarding profile / 加载失败",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "230:1328",
+    "Onboarding profile / 大字号基本资料",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "230:1352",
+    "Onboarding profile / 大字号日期",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "230:1372",
+    "Onboarding profile / 短屏基本资料",
+    "FRAME",
+    320,
+    568
+  ],
+  [
+    "230:1396",
+    "Onboarding profile / 短屏保存失败",
+    "FRAME",
+    320,
+    568
+  ],
+  [
+    "230:1422",
+    "Onboarding profile / 大字号保存中",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "230:1446",
+    "Onboarding profile / 分娩方式选择",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "230:1476",
+    "Onboarding profile / 宝宝数量选择",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "234:1108",
+    "Onboarding avatar / 创建形象",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "234:1125",
+    "Onboarding avatar / 照片失败",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "234:1144",
+    "Onboarding avatar / 照片来源",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "234:1168",
+    "Onboarding avatar / 使用原形象确认",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "234:1193",
+    "Onboarding avatar / 上传中",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "234:1210",
+    "Onboarding avatar / 排队中",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "234:1230",
+    "Onboarding avatar / 生成中",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "234:1250",
+    "Onboarding avatar / 准备中",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "234:1270",
+    "Onboarding avatar / 后台生成提示",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "234:1298",
+    "Onboarding avatar / 候选未选择",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "234:1328",
+    "Onboarding avatar / 候选已选",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "234:1358",
+    "Onboarding avatar / 原形象已选",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "234:1388",
+    "Onboarding avatar / 缩略图加载中",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "234:1418",
+    "Onboarding avatar / 缩略图失败",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "234:1448",
+    "Onboarding avatar / 确认失败",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "234:1480",
+    "Onboarding avatar / 确认中",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "234:1510",
+    "Onboarding avatar / 更换形象",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "234:1524",
+    "Onboarding avatar / 形象已启用",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "234:1534",
+    "Onboarding avatar / 大字号创建",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "234:1550",
+    "Onboarding avatar / 短屏照片说明",
+    "FRAME",
+    320,
+    568
+  ],
+  [
+    "234:1566",
+    "Onboarding avatar / 大字号照片来源",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "234:1589",
+    "Onboarding avatar / 大字号默认确认",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "234:1613",
+    "Onboarding avatar / 大字号生成进度",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "234:1633",
+    "Onboarding avatar / 大字号后台提示",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "234:1661",
+    "Onboarding avatar / 短屏候选操作",
+    "FRAME",
+    320,
+    568
+  ],
+  [
+    "234:1691",
+    "Onboarding avatar / 大字号图片失败",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "234:1721",
+    "Onboarding avatar / 更换失败保留原形象",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "234:1736",
+    "Onboarding avatar / 任务提示合集",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "234:1753",
+    "Onboarding avatar / 大字号任务提示",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "234:1770",
+    "Onboarding avatar / 短屏任务提示",
+    "FRAME",
+    320,
+    568
+  ],
+  [
+    "242:1091",
+    "History / list",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "242:1135",
+    "History / list-end",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "242:1162",
+    "History / locked",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "242:1208",
+    "History / switching",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "242:1253",
+    "History / switch-error",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "242:1299",
+    "History / loading",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "242:1311",
+    "History / load-error",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "242:1324",
+    "History / empty",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "242:1334",
+    "History / short large list",
+    "FRAME",
+    320,
+    568
+  ],
+  [
+    "242:1378",
+    "History / short large locked",
+    "FRAME",
+    320,
+    568
+  ],
+  [
+    "242:1424",
+    "History / short large switching",
+    "FRAME",
+    320,
+    568
+  ],
+  [
+    "242:1469",
+    "History / short large switch-error",
+    "FRAME",
+    320,
+    568
+  ],
+  [
+    "242:1515",
+    "History / short large loading",
+    "FRAME",
+    320,
+    568
+  ],
+  [
+    "242:1527",
+    "History / short large empty",
+    "FRAME",
+    320,
+    568
+  ],
+  [
+    "242:1537",
+    "History / short large load-error",
+    "FRAME",
+    320,
+    568
+  ],
+  [
+    "242:1550",
+    "History / short large single",
+    "FRAME",
+    320,
+    568
+  ],
+  [
+    "246:1086",
+    "Cozymate / home",
+    "FRAME",
+    393,
+    766
+  ],
+  [
+    "246:1115",
+    "Cozymate / fallback",
+    "FRAME",
+    393,
+    766
+  ],
+  [
+    "246:1144",
+    "Cozymate / chat",
+    "FRAME",
+    393,
+    766
+  ],
+  [
+    "246:1173",
+    "Cozymate / streaming",
+    "FRAME",
+    393,
+    766
+  ],
+  [
+    "246:1212",
+    "Cozymate / reply",
+    "FRAME",
+    393,
+    766
+  ],
+  [
+    "246:1250",
+    "Cozymate / disconnected-empty",
+    "FRAME",
+    393,
+    766
+  ],
+  [
+    "246:1291",
+    "Cozymate / terminal-error",
+    "FRAME",
+    393,
+    766
+  ],
+  [
+    "246:1330",
+    "Cozymate / disconnected-partial",
+    "FRAME",
+    393,
+    766
+  ],
+  [
+    "246:1372",
+    "Cozymate / resumed",
+    "FRAME",
+    393,
+    766
+  ],
+  [
+    "247:1086",
+    "Cozymate / large home",
+    "FRAME",
+    320,
+    726
+  ],
+  [
+    "247:1118",
+    "Cozymate / large fallback",
+    "FRAME",
+    320,
+    726
+  ],
+  [
+    "247:1150",
+    "Cozymate / large chat",
+    "FRAME",
+    320,
+    726
+  ],
+  [
+    "247:1182",
+    "Cozymate / large streaming",
+    "FRAME",
+    320,
+    726
+  ],
+  [
+    "247:1218",
+    "Cozymate / large reply",
+    "FRAME",
+    320,
+    726
+  ],
+  [
+    "247:1253",
+    "Cozymate / large disconnected-empty",
+    "FRAME",
+    320,
+    726
+  ],
+  [
+    "247:1290",
+    "Cozymate / large terminal-error",
+    "FRAME",
+    320,
+    726
+  ],
+  [
+    "247:1325",
+    "Cozymate / large disconnected-partial",
+    "FRAME",
+    320,
+    726
+  ],
+  [
+    "247:1363",
+    "Cozymate / large resumed",
+    "FRAME",
+    320,
+    726
+  ],
+  [
+    "250:1086",
+    "Cozymate / large latest-message control",
+    "FRAME",
+    320,
+    726
+  ],
+  [
+    "259:1097",
+    "Cozymate attachments / menu",
+    "FRAME",
+    393,
+    568
+  ],
+  [
+    "259:1130",
+    "Cozymate attachments / pending-image",
+    "FRAME",
+    393,
+    568
+  ],
+  [
+    "259:1162",
+    "Cozymate attachments / pending-file",
+    "FRAME",
+    393,
+    568
+  ],
+  [
+    "259:1194",
+    "Cozymate attachments / uploading",
+    "FRAME",
+    393,
+    568
+  ],
+  [
+    "259:1226",
+    "Cozymate attachments / sent-files",
+    "FRAME",
+    393,
+    568
+  ],
+  [
+    "259:1253",
+    "Cozymate attachments / user-menu",
+    "FRAME",
+    393,
+    568
+  ],
+  [
+    "259:1270",
+    "Cozymate attachments / assistant-menu",
+    "FRAME",
+    393,
+    568
+  ],
+  [
+    "259:1287",
+    "Cozymate attachments / retry-menu",
+    "FRAME",
+    393,
+    568
+  ],
+  [
+    "259:1308",
+    "Cozymate attachments / copy-success",
+    "FRAME",
+    393,
+    568
+  ],
+  [
+    "259:1322",
+    "Cozymate attachments / copy-failed",
+    "FRAME",
+    393,
+    568
+  ],
+  [
+    "259:1336",
+    "Cozymate attachments / menu large",
+    "FRAME",
+    320,
+    568
+  ],
+  [
+    "259:1370",
+    "Cozymate attachments / pending-image large",
+    "FRAME",
+    320,
+    568
+  ],
+  [
+    "259:1405",
+    "Cozymate attachments / pending-file large",
+    "FRAME",
+    320,
+    568
+  ],
+  [
+    "259:1440",
+    "Cozymate attachments / uploading large",
+    "FRAME",
+    320,
+    568
+  ],
+  [
+    "259:1475",
+    "Cozymate attachments / sent-files large",
+    "FRAME",
+    320,
+    568
+  ],
+  [
+    "259:1502",
+    "Cozymate attachments / user-menu large",
+    "FRAME",
+    320,
+    568
+  ],
+  [
+    "259:1519",
+    "Cozymate attachments / assistant-menu large",
+    "FRAME",
+    320,
+    568
+  ],
+  [
+    "259:1536",
+    "Cozymate attachments / retry-menu large",
+    "FRAME",
+    320,
+    568
+  ],
+  [
+    "259:1557",
+    "Cozymate attachments / copy-success large",
+    "FRAME",
+    320,
+    568
+  ],
+  [
+    "259:1571",
+    "Cozymate attachments / copy-failed large",
+    "FRAME",
+    320,
+    568
+  ],
+  [
+    "262:1086",
+    "Cozymate attachments / sent-image",
+    "FRAME",
+    393,
+    568
+  ],
+  [
+    "262:1115",
+    "Cozymate attachments / sent-image large",
+    "FRAME",
+    320,
+    568
+  ],
+  [
+    "265:1086",
+    "Media viewer / image-loaded",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "265:1095",
+    "Media viewer / image-zoomed",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "265:1104",
+    "Media viewer / image-panned",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "265:1113",
+    "Media viewer / image-loading",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "265:1125",
+    "Media viewer / image-error",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "265:1140",
+    "Media viewer / image-unavailable",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "265:1153",
+    "Media viewer / pdf-loading",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "265:1165",
+    "Media viewer / pdf-error",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "265:1180",
+    "Media viewer / pdf-unavailable",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "265:1193",
+    "Media viewer / missing",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "265:1207",
+    "Media viewer / video-unavailable",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "265:1220",
+    "Media viewer / attachment-loaded",
+    "FRAME",
+    393,
+    568
+  ],
+  [
+    "265:1229",
+    "Media viewer / attachment-error",
+    "FRAME",
+    393,
+    568
+  ],
+  [
+    "265:1244",
+    "Media viewer / attachment-unavailable",
+    "FRAME",
+    393,
+    568
+  ],
+  [
+    "265:1257",
+    "Media viewer / attachment-loading",
+    "FRAME",
+    393,
+    568
+  ],
+  [
+    "265:1269",
+    "Media viewer / image-loaded large",
+    "FRAME",
+    320,
+    568
+  ],
+  [
+    "265:1278",
+    "Media viewer / image-zoomed large",
+    "FRAME",
+    320,
+    568
+  ],
+  [
+    "265:1287",
+    "Media viewer / image-panned large",
+    "FRAME",
+    320,
+    568
+  ],
+  [
+    "265:1296",
+    "Media viewer / image-loading large",
+    "FRAME",
+    320,
+    568
+  ],
+  [
+    "265:1308",
+    "Media viewer / image-error large",
+    "FRAME",
+    320,
+    568
+  ],
+  [
+    "265:1323",
+    "Media viewer / image-unavailable large",
+    "FRAME",
+    320,
+    568
+  ],
+  [
+    "265:1336",
+    "Media viewer / pdf-loading large",
+    "FRAME",
+    320,
+    568
+  ],
+  [
+    "265:1348",
+    "Media viewer / pdf-error large",
+    "FRAME",
+    320,
+    568
+  ],
+  [
+    "265:1363",
+    "Media viewer / pdf-unavailable large",
+    "FRAME",
+    320,
+    568
+  ],
+  [
+    "265:1376",
+    "Media viewer / missing large",
+    "FRAME",
+    320,
+    568
+  ],
+  [
+    "265:1390",
+    "Media viewer / video-unavailable large",
+    "FRAME",
+    320,
+    568
+  ],
+  [
+    "265:1403",
+    "Media viewer / attachment-loaded large",
+    "FRAME",
+    320,
+    568
+  ],
+  [
+    "265:1412",
+    "Media viewer / attachment-error large",
+    "FRAME",
+    320,
+    568
+  ],
+  [
+    "265:1427",
+    "Media viewer / attachment-unavailable large",
+    "FRAME",
+    320,
+    568
+  ],
+  [
+    "265:1440",
+    "Media viewer / attachment-loading large",
+    "FRAME",
+    320,
+    568
+  ],
+  [
+    "267:1086",
+    "Cozymate / voice / greeting-error",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "267:1123",
+    "Cozymate / voice / stream-error",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "267:1170",
+    "Cozymate / voice / reply-error",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "267:1216",
+    "Cozymate / voice / off",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "267:1254",
+    "Cozymate / voice / on",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "267:1292",
+    "Cozymate / voice / dismissed",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "267:1321",
+    "Cozymate / voice / greeting-playing",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "267:1350",
+    "Cozymate / voice / reply-playing",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "267:1388",
+    "Cozymate / voice / greeting-error",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "267:1428",
+    "Cozymate / voice / stream-error",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "267:1478",
+    "Cozymate / voice / reply-error",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "267:1527",
+    "Cozymate / voice / off",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "267:1568",
+    "Cozymate / voice / on",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "267:1609",
+    "Cozymate / voice / dismissed",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "267:1641",
+    "Cozymate / voice / greeting-playing",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "267:1673",
+    "Cozymate / voice / reply-playing",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "267:1714",
+    "Cozymate / voice / keyboard-error",
+    "FRAME",
+    320,
+    544
+  ],
+  [
+    "267:1754",
+    "Cozymate / voice / attachment-image-error",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "267:1802",
+    "Cozymate / voice / attachment-file-error",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "267:1850",
+    "Cozymate / voice / attachment-too-large",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "267:1890",
+    "Cozymate / voice / attachment-unsupported",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "267:1930",
+    "Cozymate / voice / attachment-cleanup-error",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "267:1978",
+    "Cozymate / voice / attachment-image-error",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "267:2029",
+    "Cozymate / voice / attachment-file-error",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "267:2080",
+    "Cozymate / voice / attachment-too-large",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "267:2123",
+    "Cozymate / voice / attachment-unsupported",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "267:2166",
+    "Cozymate / voice / attachment-cleanup-error",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "271:1086",
+    "Cozymate / reading / markdown-top",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "271:1123",
+    "Cozymate / reading / markdown-link",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "271:1160",
+    "Cozymate / reading / image",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "271:1204",
+    "Cozymate / reading / pdf",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "271:1248",
+    "Cozymate / reading / video",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "271:1292",
+    "Cozymate / reading / renew",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "271:1336",
+    "Cozymate / reading / invalid",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "271:1380",
+    "Cozymate / reading / external",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "271:1424",
+    "Cozymate / reading / motion-head",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "271:1467",
+    "Cozymate / reading / motion-posture",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "271:1510",
+    "Cozymate / reading / multi",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "271:1560",
+    "Cozymate / reading / consult-form",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "271:1610",
+    "Cozymate / reading / markdown-top",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "271:1650",
+    "Cozymate / reading / markdown-link",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "271:1690",
+    "Cozymate / reading / image",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "271:1737",
+    "Cozymate / reading / pdf",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "271:1784",
+    "Cozymate / reading / video",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "271:1831",
+    "Cozymate / reading / renew",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "271:1878",
+    "Cozymate / reading / invalid",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "271:1925",
+    "Cozymate / reading / external",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "271:1972",
+    "Cozymate / reading / motion-head",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "271:2018",
+    "Cozymate / reading / motion-posture",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "271:2064",
+    "Cozymate / reading / multi",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "271:2117",
+    "Cozymate / reading / consult-form",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "274:1086",
+    "Agent consult / consent accepted",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "274:1110",
+    "Agent consult / consent accepted",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "276:1086",
+    "Agent form / English / top",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "276:1136",
+    "Agent form / English / choices",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "276:1188",
+    "Agent form / English / validation",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "276:1241",
+    "Agent form / English / failed",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "276:1296",
+    "Agent form / English / pending",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "276:1348",
+    "Agent form / English / readonly",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "276:1398",
+    "Agent form / Large / top",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "276:1448",
+    "Agent form / Large / choices",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "276:1500",
+    "Agent form / Large / validation",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "276:1553",
+    "Agent form / Large / failed",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "276:1608",
+    "Agent form / Large / pending",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "276:1660",
+    "Agent form / Large / readonly",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "276:1710",
+    "Agent form / Short keyboard",
+    "FRAME",
+    320,
+    568
+  ],
+  [
+    "276:1760",
+    "Agent form / 恢复支持 / top",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "276:1807",
+    "Agent form / 恢复支持 / choices",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "276:1856",
+    "Agent form / 恢复支持 / validation",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "276:1906",
+    "Agent form / 恢复支持 / pending",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "276:1955",
+    "Agent form / 恢复支持 / readonly",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "276:2002",
+    "Agent form / 售后支持 / top",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "276:2030",
+    "Agent form / 售后支持 / failed",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "276:2061",
+    "Agent form / 售后支持 / pending",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "276:2089",
+    "Agent form / 售后支持 / readonly",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "276:2115",
+    "Agent form / 恢复支持 / large / top",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "276:2162",
+    "Agent form / 恢复支持 / large / choices",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "276:2211",
+    "Agent form / 恢复支持 / large / validation",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "276:2261",
+    "Agent form / 恢复支持 / large / pending",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "276:2310",
+    "Agent form / 恢复支持 / large / readonly",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "277:1086",
+    "Agent form / 恢复支持 / dropdown",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "277:1138",
+    "Agent form / 恢复支持 / date-picker",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "277:1199",
+    "Agent form / 恢复支持 / date-selected",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "277:1260",
+    "Agent form / 恢复支持 / large date input",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "280:1086",
+    "Agent form / 售后支持 / large / top",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "280:1114",
+    "Agent form / 售后支持 / large / failed",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "280:1145",
+    "Agent form / 售后支持 / large / pending",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "280:1173",
+    "Agent form / 售后支持 / large / readonly",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "282:1086",
+    "Agent form / 喂养记录与支持偏好 / 1x",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "282:1125",
+    "Agent form / 喂养记录与支持偏好 / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "283:1086",
+    "Agent form / 恢复支持 / draft return 1x",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "283:1135",
+    "Agent form / 恢复支持 / draft return 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "284:1086",
+    "Agent action / confirmation_required / 1x",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "284:1139",
+    "Agent action / confirming / 1x",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "284:1187",
+    "Agent action / rejecting / 1x",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "284:1235",
+    "Agent action / applied / 1x",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "284:1283",
+    "Agent action / rejected / 1x",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "284:1331",
+    "Agent action / failed / 1x",
+    "FRAME",
+    393,
+    844
+  ],
+  [
+    "284:1379",
+    "Agent action / confirmation_required / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "284:1435",
+    "Agent action / confirming / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "284:1486",
+    "Agent action / rejecting / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "284:1537",
+    "Agent action / applied / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "284:1588",
+    "Agent action / rejected / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "284:1639",
+    "Agent action / failed / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "284:1690",
+    "Agent action / confirmation_required / 2x / bottom",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "285:1086",
+    "Agent result review / summary / 1x",
+    "FRAME",
+    393,
+    720
+  ],
+  [
+    "285:1104",
+    "Agent result review / disabled / 1x",
+    "FRAME",
+    393,
+    720
+  ],
+  [
+    "285:1122",
+    "Agent result review / consult / 1x",
+    "FRAME",
+    393,
+    720
+  ],
+  [
+    "285:1142",
+    "Agent result review / consent-accepted / 1x",
+    "FRAME",
+    393,
+    720
+  ],
+  [
+    "285:1162",
+    "Agent result review / motion / 1x",
+    "FRAME",
+    393,
+    720
+  ],
+  [
+    "285:1175",
+    "Agent result review / unsupported / 1x",
+    "FRAME",
+    393,
+    720
+  ],
+  [
+    "285:1187",
+    "Agent result review / milk / 1x",
+    "FRAME",
+    393,
+    720
+  ],
+  [
+    "285:1205",
+    "Agent result review / summary / 2x",
+    "FRAME",
+    320,
+    720
+  ],
+  [
+    "285:1223",
+    "Agent result review / disabled / 2x",
+    "FRAME",
+    320,
+    720
+  ],
+  [
+    "285:1241",
+    "Agent result review / consult / 2x",
+    "FRAME",
+    320,
+    720
+  ],
+  [
+    "285:1261",
+    "Agent result review / consent-accepted / 2x",
+    "FRAME",
+    320,
+    720
+  ],
+  [
+    "285:1281",
+    "Agent result review / motion / 2x",
+    "FRAME",
+    320,
+    720
+  ],
+  [
+    "285:1294",
+    "Agent result review / unsupported / 2x",
+    "FRAME",
+    320,
+    720
+  ],
+  [
+    "285:1306",
+    "Agent result review / milk / 2x",
+    "FRAME",
+    320,
+    720
+  ],
+  [
+    "289:1132",
+    "Agent result review / milk-top / 2x",
+    "FRAME",
+    320,
+    720
+  ],
+  [
+    "291:1086",
+    "MomCozy PDF / page-1 / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "291:1117",
+    "MomCozy PDF / page-2 / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "291:1148",
+    "MomCozy PDF / zoom / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "291:1179",
+    "MomCozy PDF / opening / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "291:1210",
+    "MomCozy PDF / page-1 / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "291:1241",
+    "MomCozy PDF / page-2 / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "291:1272",
+    "MomCozy PDF / zoom / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "291:1303",
+    "MomCozy PDF / opening / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "291:1334",
+    "MomCozy video / ready / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "291:1360",
+    "MomCozy video / playing / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "291:1386",
+    "MomCozy video / paused / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "291:1412",
+    "MomCozy video / seek-mute / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "291:1438",
+    "MomCozy video / fullscreen / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "291:1460",
+    "MomCozy video / loading / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "291:1472",
+    "MomCozy video / error / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "291:1485",
+    "MomCozy video / interrupted / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "291:1495",
+    "MomCozy video / ready / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "291:1521",
+    "MomCozy video / playing / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "291:1547",
+    "MomCozy video / seek-mute / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "291:1573",
+    "MomCozy video / fullscreen / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "291:1595",
+    "MomCozy video / loading / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "291:1607",
+    "MomCozy video / error / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "291:1620",
+    "MomCozy video / interrupted / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "293:1098",
+    "MomCozy video / ready / 2x / landscape",
+    "FRAME",
+    844,
+    390
+  ],
+  [
+    "293:1124",
+    "MomCozy video / fullscreen / 2x / landscape",
+    "FRAME",
+    844,
+    390
+  ],
+  [
+    "293:1146",
+    "MomCozy video / ready / 2x / short",
+    "FRAME",
+    320,
+    568
+  ],
+  [
+    "293:1172",
+    "MomCozy video / fullscreen / 2x / short",
+    "FRAME",
+    320,
+    568
+  ],
+  [
+    "293:1194",
+    "MomCozy video / error / 2x / short",
+    "FRAME",
+    320,
+    568
+  ],
+  [
+    "296:1086",
+    "MomCozy Lactation / overview / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "296:1151",
+    "MomCozy Lactation / 30-days / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "296:1214",
+    "MomCozy Lactation / empty / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "296:1261",
+    "MomCozy Lactation / saved / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "296:1328",
+    "MomCozy Lactation / deleted / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "296:1379",
+    "MomCozy Lactation / restore-error / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "296:1448",
+    "MomCozy Lactation / conflict / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "296:1517",
+    "MomCozy Lactation / long-note / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "296:1583",
+    "MomCozy Lactation / read-error / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "296:1594",
+    "MomCozy Lactation / loading / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "296:1603",
+    "MomCozy Lactation / overview / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "296:1668",
+    "MomCozy Lactation / 30-days / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "296:1731",
+    "MomCozy Lactation / empty / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "296:1778",
+    "MomCozy Lactation / saved / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "296:1845",
+    "MomCozy Lactation / deleted / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "296:1896",
+    "MomCozy Lactation / restore-error / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "296:1965",
+    "MomCozy Lactation / long-note / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "296:2031",
+    "MomCozy Lactation / read-error / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "296:2042",
+    "MomCozy Lactation / form pump / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "296:2076",
+    "MomCozy Lactation / form nurse / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "296:2110",
+    "MomCozy Lactation / form optional / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "296:2159",
+    "MomCozy Lactation / form editing / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "296:2208",
+    "MomCozy Lactation / form pending / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "296:2257",
+    "MomCozy Lactation / form uncertain / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "296:2309",
+    "MomCozy Lactation / form validation / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "296:2345",
+    "MomCozy Lactation / form long-note / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "296:2394",
+    "MomCozy Lactation / form pump / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "296:2428",
+    "MomCozy Lactation / form nurse / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "296:2462",
+    "MomCozy Lactation / form optional / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "296:2511",
+    "MomCozy Lactation / form editing / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "296:2560",
+    "MomCozy Lactation / form pending / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "296:2609",
+    "MomCozy Lactation / form uncertain / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "296:2661",
+    "MomCozy Lactation / form validation / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "296:2697",
+    "MomCozy Lactation / form long-note / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "297:1086",
+    "MomCozy Lactation / leave / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "297:1129",
+    "MomCozy Lactation / leave-uncertain / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "297:1172",
+    "MomCozy Lactation / dial-hour / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "297:1233",
+    "MomCozy Lactation / dial-minute / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "297:1294",
+    "MomCozy Lactation / time-input / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "297:1342",
+    "MomCozy Lactation / time-invalid / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "297:1391",
+    "MomCozy Lactation / time-am / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "297:1439",
+    "MomCozy Lactation / leave / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "297:1482",
+    "MomCozy Lactation / leave-uncertain / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "297:1525",
+    "MomCozy Lactation / time-input / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "297:1578",
+    "MomCozy Lactation / time-invalid / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "302:1150",
+    "MomCozy Lactation / narrow time input / 1x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "302:1228",
+    "MomCozy Lactation / narrow time invalid / 1x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "305:1086",
+    "MomCozy Lactation / form conflict / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "305:1140",
+    "MomCozy Lactation / form conflict / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "306:1086",
+    "MomCozy Diary / rest empty / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "306:1156",
+    "MomCozy Diary / rest selected / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "306:1226",
+    "MomCozy Diary / rest optional / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "306:1353",
+    "MomCozy Diary / body empty / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "306:1425",
+    "MomCozy Diary / body dependent / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "306:1517",
+    "MomCozy Diary / body optional / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "306:1629",
+    "MomCozy Diary / mood empty / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "306:1716",
+    "MomCozy Diary / mood multiple / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "306:1803",
+    "MomCozy Diary / rest empty / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "306:1882",
+    "MomCozy Diary / rest selected / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "306:1961",
+    "MomCozy Diary / rest optional / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "306:2107",
+    "MomCozy Diary / body empty / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "306:2186",
+    "MomCozy Diary / body dependent / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "306:2289",
+    "MomCozy Diary / body optional / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "306:2416",
+    "MomCozy Diary / mood empty / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "306:2513",
+    "MomCozy Diary / mood multiple / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "308:1086",
+    "MomCozy Diary / body validation / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "308:1160",
+    "MomCozy Diary / body save-error / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "308:1235",
+    "MomCozy Diary / body conflict / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "308:1312",
+    "MomCozy Diary / body saving / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "308:1384",
+    "MomCozy Diary / body saved / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "308:1457",
+    "MomCozy Diary / body read-error / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "308:1479",
+    "MomCozy Diary / body loading / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "308:1499",
+    "MomCozy Diary / body note / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "308:1571",
+    "MomCozy Diary / body long-note / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "308:1643",
+    "MomCozy Diary / body validation / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "308:1724",
+    "MomCozy Diary / body save-error / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "308:1806",
+    "MomCozy Diary / body conflict / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "308:1890",
+    "MomCozy Diary / body saving / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "308:1969",
+    "MomCozy Diary / body saved / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "308:2049",
+    "MomCozy Diary / body read-error / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "308:2071",
+    "MomCozy Diary / body loading / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "308:2091",
+    "MomCozy Diary / body note / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "308:2170",
+    "MomCozy Diary / body long-note / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "308:2249",
+    "MomCozy Diary / mood exclusive / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "308:2336",
+    "MomCozy Diary / mood exclusive / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "308:2433",
+    "MomCozy Diary / mood quick-low / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "308:2520",
+    "MomCozy Diary / mood quick-low / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "308:2617",
+    "MomCozy Diary / mood quick-unclear / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "308:2704",
+    "MomCozy Diary / mood quick-unclear / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "308:2801",
+    "MomCozy Diary / mood cleared / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "308:2888",
+    "MomCozy Diary / mood cleared / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "308:2985",
+    "MomCozy Diary / body keyboard / 1x",
+    "FRAME",
+    390,
+    460
+  ],
+  [
+    "308:3057",
+    "MomCozy Diary / body keyboard / 2x",
+    "FRAME",
+    320,
+    308
+  ],
+  [
+    "309:1086",
+    "MomCozy Diary / discard confirmation / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "309:1094",
+    "MomCozy Diary / discard confirmation / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "317:1086",
+    "Baby profile / new / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "317:1120",
+    "Baby profile / existing / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "317:1156",
+    "Baby profile / cleared / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "317:1190",
+    "Baby profile / feeding-menu / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "317:1237",
+    "Baby profile / validation / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "317:1275",
+    "Baby profile / conflict / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "317:1316",
+    "Baby profile / forbidden / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "317:1355",
+    "Baby profile / unavailable / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "317:1394",
+    "Baby profile / pending / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "317:1430",
+    "Baby profile / uncertain / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "317:1470",
+    "Baby profile / long-name / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "317:1506",
+    "Baby profile / new / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "317:1540",
+    "Baby profile / existing / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "317:1576",
+    "Baby profile / cleared / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "317:1610",
+    "Baby profile / feeding-menu / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "317:1657",
+    "Baby profile / validation / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "317:1695",
+    "Baby profile / conflict / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "317:1736",
+    "Baby profile / forbidden / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "317:1775",
+    "Baby profile / unavailable / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "317:1814",
+    "Baby profile / pending / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "317:1850",
+    "Baby profile / uncertain / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "317:1890",
+    "Baby profile / long-name / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "317:1926",
+    "Baby profile / existing / 2x / end",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "317:1962",
+    "Baby profile / new / 2x / end",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "317:1996",
+    "Baby profile / existing / 2x",
+    "FRAME",
+    320,
+    368
+  ],
+  [
+    "317:2032",
+    "Baby profile / conflict / 2x / end",
+    "FRAME",
+    320,
+    368
+  ],
+  [
+    "326:1086",
+    "Baby home / recorded / 1x",
+    "FRAME",
+    390,
+    1752
+  ],
+  [
+    "326:1236",
+    "Baby home / recorded / 2x",
+    "FRAME",
+    320,
+    3610
+  ],
+  [
+    "327:1086",
+    "Baby home / empty / 1x",
+    "FRAME",
+    390,
+    1751
+  ],
+  [
+    "327:1232",
+    "Baby home / empty / 2x",
+    "FRAME",
+    320,
+    3493
+  ],
+  [
+    "327:1378",
+    "Baby home / loading / 1x",
+    "FRAME",
+    390,
+    1610
+  ],
+  [
+    "327:1505",
+    "Baby home / loading / 2x",
+    "FRAME",
+    320,
+    3040
+  ],
+  [
+    "327:1632",
+    "Baby home / error / 1x",
+    "FRAME",
+    390,
+    1855
+  ],
+  [
+    "327:1772",
+    "Baby home / error / 2x",
+    "FRAME",
+    320,
+    3495
+  ],
+  [
+    "327:1912",
+    "Baby home / missing / 1x",
+    "FRAME",
+    390,
+    1635
+  ],
+  [
+    "327:2041",
+    "Baby home / missing / 2x",
+    "FRAME",
+    320,
+    3118
+  ],
+  [
+    "327:2170",
+    "Baby home / active / 1x",
+    "FRAME",
+    390,
+    1746
+  ],
+  [
+    "327:2320",
+    "Baby home / active / 2x",
+    "FRAME",
+    320,
+    3577
+  ],
+  [
+    "327:2470",
+    "Baby home / no-profile / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "327:2515",
+    "Baby home / no-profile / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "327:2560",
+    "Baby home / switcher / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "327:2576",
+    "Baby home / switcher / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "327:2592",
+    "Baby home / knowledge / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "327:2612",
+    "Baby home / knowledge / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "327:2632",
+    "Baby home / saved / 1x",
+    "FRAME",
+    390,
+    585
+  ],
+  [
+    "327:2687",
+    "Baby home / saved / 2x",
+    "FRAME",
+    320,
+    776
+  ],
+  [
+    "327:2742",
+    "Baby home / undone / 1x",
+    "FRAME",
+    390,
+    533
+  ],
+  [
+    "327:2795",
+    "Baby home / undone / 2x",
+    "FRAME",
+    320,
+    673
+  ],
+  [
+    "327:2848",
+    "Baby home / undo-error / 1x",
+    "FRAME",
+    390,
+    585
+  ],
+  [
+    "327:2903",
+    "Baby home / undo-error / 2x",
+    "FRAME",
+    320,
+    776
+  ],
+  [
+    "327:2958",
+    "Baby home / long-name / 1x",
+    "FRAME",
+    390,
+    1929
+  ],
+  [
+    "327:3104",
+    "Baby home / long-name / 2x",
+    "FRAME",
+    320,
+    5102
+  ],
+  [
+    "327:3250",
+    "Baby home / growth selection / 身长",
+    "FRAME",
+    390,
+    389
+  ],
+  [
+    "327:3282",
+    "Baby home / growth selection / 头围",
+    "FRAME",
+    390,
+    389
+  ],
+  [
+    "329:1086",
+    "Baby records / list / 1x",
+    "FRAME",
+    390,
+    972
+  ],
+  [
+    "329:1141",
+    "Baby records / list / 2x",
+    "FRAME",
+    320,
+    1361
+  ],
+  [
+    "329:1199",
+    "Baby editor / feeding / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "329:1232",
+    "Baby editor / stool / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "330:1086",
+    "Baby records / empty / 1x",
+    "FRAME",
+    390,
+    590
+  ],
+  [
+    "330:1117",
+    "Baby records / month / 1x",
+    "FRAME",
+    390,
+    590
+  ],
+  [
+    "330:1148",
+    "Baby records / loading / 1x",
+    "FRAME",
+    390,
+    972
+  ],
+  [
+    "330:1203",
+    "Baby records / error / 1x",
+    "FRAME",
+    390,
+    1090
+  ],
+  [
+    "330:1262",
+    "Baby records / deleted / 1x",
+    "FRAME",
+    390,
+    708
+  ],
+  [
+    "330:1297",
+    "Baby records / source / 1x",
+    "FRAME",
+    390,
+    1080
+  ],
+  [
+    "330:1355",
+    "Baby editor / nursing / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "330:1396",
+    "Baby editor / sleep / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "330:1430",
+    "Baby editor / sleep-active / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "330:1454",
+    "Baby editor / wet / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "330:1488",
+    "Baby editor / stool / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "330:1563",
+    "Baby editor / growth / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "330:1595",
+    "Baby editor / development / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "330:1638",
+    "Baby editor / edit / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "330:1671",
+    "Baby editor / validation / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "330:1701",
+    "Baby editor / saving / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "330:1734",
+    "Baby editor / uncertain / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "330:1769",
+    "Baby editor / error / 1x",
+    "FRAME",
+    390,
+    844
+  ],
+  [
+    "330:1804",
+    "Baby editor / feeding / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "330:1839",
+    "Baby editor / development / 2x",
+    "FRAME",
+    320,
+    844
+  ],
+  [
+    "331:1231",
+    "Baby editor / stool / 1x / full scroll reference",
+    "FRAME",
+    390,
+    1077
+  ],
+  [
+    "331:1306",
+    "Baby editor / stool / 2x / full scroll reference",
+    "FRAME",
+    320,
+    2754
+  ],
+  [
+    "331:1395",
+    "Baby editor / feeding / 2x / full scroll reference",
+    "FRAME",
+    320,
+    1235
+  ],
+  [
+    "331:1430",
+    "Baby editor / development / 2x / full scroll reference",
+    "FRAME",
+    320,
+    1606
+  ],
+  [
+    "336:1086",
+    "Special / Not found / 1x",
+    "FRAME",
+    390,
+    568
+  ],
+  [
+    "336:1096",
+    "Special / Not found / 2x",
+    "FRAME",
+    320,
+    568
+  ],
+  [
+    "336:1106",
+    "Special / Motion guide / 1x",
+    "FRAME",
+    390,
+    720
+  ],
+  [
+    "336:1118",
+    "Special / Motion failure / 1x",
+    "FRAME",
+    390,
+    720
+  ],
+  [
+    "336:1138",
+    "Special / Motion guide / 2x",
+    "FRAME",
+    320,
+    320
+  ],
+  [
+    "336:1150",
+    "Special / Motion failure / 2x",
+    "FRAME",
+    320,
+    320
+  ],
+  [
+    "336:1170",
+    "Special / Motion failure / 2x / full failure scroll reference",
+    "FRAME",
+    320,
+    720
+  ],
+  [
+    "19:2",
+    "screen/mom-home",
+    "FRAME",
+    393,
+    898
+  ],
+  [
+    "88:2",
+    "screen/mom-home-initial",
+    "FRAME",
+    393,
+    898
+  ],
+  [
+    "88:111",
+    "screen/mom-home-data",
+    "FRAME",
+    393,
+    1168
+  ]
+]

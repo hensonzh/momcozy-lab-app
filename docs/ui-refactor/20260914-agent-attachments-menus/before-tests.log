@@ -1,0 +1,17 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_test.dart
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_previews_test.dart: empty thumbnail stops loading and preserves original access
+00:00 +1: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_test.dart: history message copies its own complete text
+00:00 +2: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_previews_test.dart: image read failure sync recovers using authenticated original
+00:00 +3: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_previews_test.dart: image read failure sync recovers using authenticated original
+00:00 +4: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_previews_test.dart: image read failure sync recovers using authenticated original
+00:00 +5: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_previews_test.dart: image read failure sync recovers using authenticated original
+00:00 +6: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_previews_test.dart: image read failure sync recovers using authenticated original
+00:00 +7: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_previews_test.dart: image read failure sync recovers using authenticated original
+00:00 +8: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_message_menu_test.dart: changing the message invalidates an open menu action
+00:00 +9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_previews_test.dart: image read failure async recovers using authenticated original
+00:00 +10: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_previews_test.dart: image read failure async recovers using authenticated original
+00:00 +11: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_previews_test.dart: image read failure corrupt recovers using authenticated original
+00:00 +12: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_previews_test.dart: image read failure local-with-remote recovers using authenticated original
+00:01 +13: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_previews_test.dart: closing a pending original never reopens the image
+00:01 +14: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_image_previews_test.dart: history image loads its authenticated thumbnail by file id
+00:01 +15: All tests passed!

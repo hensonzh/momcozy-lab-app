@@ -1,0 +1,439 @@
+[
+  {
+    "kind": "page",
+    "owner_id": "baby-home",
+    "state": "无宝宝",
+    "retired_figma_nodes": [
+      "327:2515"
+    ],
+    "current_direct_references": [
+      "327:2470"
+    ],
+    "reason": "User-requested Figma cleanup on 2026-09-15; historical design and test evidence retained. Large-type boards are retired, not proof that the underlying App state was removed."
+  },
+  {
+    "kind": "page",
+    "owner_id": "baby-home",
+    "state": "有宝宝",
+    "retired_figma_nodes": [
+      "327:1232"
+    ],
+    "current_direct_references": [
+      "327:1086"
+    ],
+    "reason": "User-requested Figma cleanup on 2026-09-15; historical design and test evidence retained. Large-type boards are retired, not proof that the underlying App state was removed."
+  },
+  {
+    "kind": "page",
+    "owner_id": "baby-home",
+    "state": "有记录",
+    "retired_figma_nodes": [
+      "326:1236"
+    ],
+    "current_direct_references": [
+      "326:1086"
+    ],
+    "reason": "User-requested Figma cleanup on 2026-09-15; historical design and test evidence retained. Large-type boards are retired, not proof that the underlying App state was removed."
+  },
+  {
+    "kind": "page",
+    "owner_id": "baby-home",
+    "state": "加载",
+    "retired_figma_nodes": [
+      "327:1505"
+    ],
+    "current_direct_references": [
+      "327:1378"
+    ],
+    "reason": "User-requested Figma cleanup on 2026-09-15; historical design and test evidence retained. Large-type boards are retired, not proof that the underlying App state was removed."
+  },
+  {
+    "kind": "page",
+    "owner_id": "baby-home",
+    "state": "局部错误",
+    "retired_figma_nodes": [
+      "327:1772"
+    ],
+    "current_direct_references": [
+      "327:1632"
+    ],
+    "reason": "User-requested Figma cleanup on 2026-09-15; historical design and test evidence retained. Large-type boards are retired, not proof that the underlying App state was removed."
+  },
+  {
+    "kind": "page",
+    "owner_id": "baby-home",
+    "state": "生长曲线切换",
+    "retired_figma_nodes": [
+      "326:1236"
+    ],
+    "current_direct_references": [
+      "326:1086"
+    ],
+    "reason": "User-requested Figma cleanup on 2026-09-15; historical design and test evidence retained. Large-type boards are retired, not proof that the underlying App state was removed."
+  },
+  {
+    "kind": "page",
+    "owner_id": "service-progress",
+    "state": "最近与更早",
+    "retired_figma_nodes": [
+      "163:1108"
+    ],
+    "current_direct_references": [
+      "162:1139",
+      "162:1636"
+    ],
+    "reason": "User-requested Figma cleanup on 2026-09-15; historical design and test evidence retained. Large-type boards are retired, not proof that the underlying App state was removed."
+  },
+  {
+    "kind": "page",
+    "owner_id": "booking",
+    "state": "已确认",
+    "retired_figma_nodes": [
+      "165:2015"
+    ],
+    "current_direct_references": [
+      "165:1191"
+    ],
+    "reason": "User-requested Figma cleanup on 2026-09-15; historical design and test evidence retained. Large-type boards are retired, not proof that the underlying App state was removed."
+  },
+  {
+    "kind": "page",
+    "owner_id": "appointment",
+    "state": "held",
+    "retired_figma_nodes": [
+      "170:1454"
+    ],
+    "current_direct_references": [
+      "170:1350"
+    ],
+    "reason": "User-requested Figma cleanup on 2026-09-15; historical design and test evidence retained. Large-type boards are retired, not proof that the underlying App state was removed."
+  },
+  {
+    "kind": "page",
+    "owner_id": "appointment",
+    "state": "错误",
+    "retired_figma_nodes": [
+      "170:1493"
+    ],
+    "current_direct_references": [
+      "170:1397"
+    ],
+    "reason": "User-requested Figma cleanup on 2026-09-15; historical design and test evidence retained. Large-type boards are retired, not proof that the underlying App state was removed."
+  },
+  {
+    "kind": "page",
+    "owner_id": "intake",
+    "state": "基础信息",
+    "retired_figma_nodes": [
+      "173:1566"
+    ],
+    "current_direct_references": [
+      "173:1262"
+    ],
+    "reason": "User-requested Figma cleanup on 2026-09-15; historical design and test evidence retained. Large-type boards are retired, not proof that the underlying App state was removed."
+  },
+  {
+    "kind": "page",
+    "owner_id": "intake",
+    "state": "授权",
+    "retired_figma_nodes": [
+      "174:1108"
+    ],
+    "current_direct_references": [
+      "173:1633"
+    ],
+    "reason": "User-requested Figma cleanup on 2026-09-15; historical design and test evidence retained. Large-type boards are retired, not proof that the underlying App state was removed."
+  },
+  {
+    "kind": "page",
+    "owner_id": "intake",
+    "state": "已保存",
+    "retired_figma_nodes": [
+      "174:1169"
+    ],
+    "current_direct_references": [
+      "173:1691"
+    ],
+    "reason": "User-requested Figma cleanup on 2026-09-15; historical design and test evidence retained. Large-type boards are retired, not proof that the underlying App state was removed."
+  },
+  {
+    "kind": "page",
+    "owner_id": "media",
+    "state": "视频",
+    "retired_figma_nodes": [
+      "291:1386"
+    ],
+    "current_direct_references": [
+      "291:1334",
+      "291:1360",
+      "291:1412"
+    ],
+    "reason": "User-requested Figma cleanup on 2026-09-15; historical design and test evidence retained. Large-type boards are retired, not proof that the underlying App state was removed."
+  },
+  {
+    "kind": "page",
+    "owner_id": "video-fullscreen",
+    "state": "暂停",
+    "retired_figma_nodes": [
+      "291:1386"
+    ],
+    "current_direct_references": [
+      "291:1438",
+      "291:1334"
+    ],
+    "reason": "User-requested Figma cleanup on 2026-09-15; historical design and test evidence retained. Large-type boards are retired, not proof that the underlying App state was removed."
+  },
+  {
+    "kind": "page",
+    "owner_id": "onboarding",
+    "state": "基本资料",
+    "retired_figma_nodes": [
+      "230:1328"
+    ],
+    "current_direct_references": [
+      "230:1108"
+    ],
+    "reason": "User-requested Figma cleanup on 2026-09-15; historical design and test evidence retained. Large-type boards are retired, not proof that the underlying App state was removed."
+  },
+  {
+    "kind": "page",
+    "owner_id": "onboarding",
+    "state": "分娩资料",
+    "retired_figma_nodes": [
+      "230:1352"
+    ],
+    "current_direct_references": [
+      "230:1132"
+    ],
+    "reason": "User-requested Figma cleanup on 2026-09-15; historical design and test evidence retained. Large-type boards are retired, not proof that the underlying App state was removed."
+  },
+  {
+    "kind": "page",
+    "owner_id": "avatar-create",
+    "state": "默认选择",
+    "retired_figma_nodes": [
+      "234:1534"
+    ],
+    "current_direct_references": [
+      "234:1108"
+    ],
+    "reason": "User-requested Figma cleanup on 2026-09-15; historical design and test evidence retained. Large-type boards are retired, not proof that the underlying App state was removed."
+  },
+  {
+    "kind": "page",
+    "owner_id": "avatar-create",
+    "state": "照片",
+    "retired_figma_nodes": [
+      "234:1566"
+    ],
+    "current_direct_references": [
+      "234:1144"
+    ],
+    "reason": "User-requested Figma cleanup on 2026-09-15; historical design and test evidence retained. Large-type boards are retired, not proof that the underlying App state was removed."
+  },
+  {
+    "kind": "page",
+    "owner_id": "avatar-create",
+    "state": "失败",
+    "retired_figma_nodes": [
+      "234:1721"
+    ],
+    "current_direct_references": [
+      "234:1125",
+      "234:1418"
+    ],
+    "reason": "User-requested Figma cleanup on 2026-09-15; historical design and test evidence retained. Large-type boards are retired, not proof that the underlying App state was removed."
+  },
+  {
+    "kind": "page",
+    "owner_id": "avatar-review",
+    "state": "默认确认",
+    "retired_figma_nodes": [
+      "234:1589"
+    ],
+    "current_direct_references": [
+      "234:1168"
+    ],
+    "reason": "User-requested Figma cleanup on 2026-09-15; historical design and test evidence retained. Large-type boards are retired, not proof that the underlying App state was removed."
+  },
+  {
+    "kind": "page",
+    "owner_id": "avatar-review",
+    "state": "激活中",
+    "retired_figma_nodes": [
+      "234:1661"
+    ],
+    "current_direct_references": [
+      "234:1480"
+    ],
+    "reason": "User-requested Figma cleanup on 2026-09-15; historical design and test evidence retained. Large-type boards are retired, not proof that the underlying App state was removed."
+  },
+  {
+    "kind": "page",
+    "owner_id": "avatar-review",
+    "state": "失败",
+    "retired_figma_nodes": [
+      "234:1691"
+    ],
+    "current_direct_references": [
+      "234:1448"
+    ],
+    "reason": "User-requested Figma cleanup on 2026-09-15; historical design and test evidence retained. Large-type boards are retired, not proof that the underlying App state was removed."
+  },
+  {
+    "kind": "overlay",
+    "owner_id": "baby-switcher",
+    "state": "列表",
+    "retired_figma_nodes": [
+      "327:2576"
+    ],
+    "current_direct_references": [
+      "327:2560"
+    ],
+    "reason": "User-requested Figma cleanup on 2026-09-15; historical design and test evidence retained. Large-type boards are retired, not proof that the underlying App state was removed."
+  },
+  {
+    "kind": "overlay",
+    "owner_id": "baby-switcher",
+    "state": "当前选择",
+    "retired_figma_nodes": [
+      "327:2576"
+    ],
+    "current_direct_references": [
+      "327:2560"
+    ],
+    "reason": "User-requested Figma cleanup on 2026-09-15; historical design and test evidence retained. Large-type boards are retired, not proof that the underlying App state was removed."
+  },
+  {
+    "kind": "overlay",
+    "owner_id": "baby-switcher",
+    "state": "取消",
+    "retired_figma_nodes": [
+      "327:2576"
+    ],
+    "current_direct_references": [
+      "327:2560"
+    ],
+    "reason": "User-requested Figma cleanup on 2026-09-15; historical design and test evidence retained. Large-type boards are retired, not proof that the underlying App state was removed."
+  },
+  {
+    "kind": "overlay",
+    "owner_id": "provider-team",
+    "state": "团队",
+    "retired_figma_nodes": [
+      "153:1139"
+    ],
+    "current_direct_references": [
+      "149:1443"
+    ],
+    "reason": "User-requested Figma cleanup on 2026-09-15; historical design and test evidence retained. Large-type boards are retired, not proof that the underlying App state was removed."
+  },
+  {
+    "kind": "overlay",
+    "owner_id": "purchase",
+    "state": "成功",
+    "retired_figma_nodes": [
+      "159:1302"
+    ],
+    "current_direct_references": [
+      "156:3444"
+    ],
+    "reason": "User-requested Figma cleanup on 2026-09-15; historical design and test evidence retained. Large-type boards are retired, not proof that the underlying App state was removed."
+  },
+  {
+    "kind": "overlay",
+    "owner_id": "appointment-cancel",
+    "state": "确认",
+    "retired_figma_nodes": [
+      "167:1202"
+    ],
+    "current_direct_references": [
+      "165:1865"
+    ],
+    "reason": "User-requested Figma cleanup on 2026-09-15; historical design and test evidence retained. Large-type boards are retired, not proof that the underlying App state was removed."
+  },
+  {
+    "kind": "overlay",
+    "owner_id": "intake-consent",
+    "state": "说明",
+    "retired_figma_nodes": [
+      "174:1108"
+    ],
+    "current_direct_references": [
+      "173:1633"
+    ],
+    "reason": "User-requested Figma cleanup on 2026-09-15; historical design and test evidence retained. Large-type boards are retired, not proof that the underlying App state was removed."
+  },
+  {
+    "kind": "overlay",
+    "owner_id": "intake-saved",
+    "state": "保存成功",
+    "retired_figma_nodes": [
+      "174:1169"
+    ],
+    "current_direct_references": [
+      "173:1691"
+    ],
+    "reason": "User-requested Figma cleanup on 2026-09-15; historical design and test evidence retained. Large-type boards are retired, not proof that the underlying App state was removed."
+  },
+  {
+    "kind": "overlay",
+    "owner_id": "auth-language",
+    "state": "语言列表",
+    "retired_figma_nodes": [
+      "225:1795"
+    ],
+    "current_direct_references": [
+      "224:1255"
+    ],
+    "reason": "User-requested Figma cleanup on 2026-09-15; historical design and test evidence retained. Large-type boards are retired, not proof that the underlying App state was removed."
+  },
+  {
+    "kind": "overlay",
+    "owner_id": "avatar-dialogs",
+    "state": "照片来源",
+    "retired_figma_nodes": [
+      "234:1566"
+    ],
+    "current_direct_references": [
+      "234:1144"
+    ],
+    "reason": "User-requested Figma cleanup on 2026-09-15; historical design and test evidence retained. Large-type boards are retired, not proof that the underlying App state was removed."
+  },
+  {
+    "kind": "overlay",
+    "owner_id": "avatar-dialogs",
+    "state": "默认确认",
+    "retired_figma_nodes": [
+      "234:1589"
+    ],
+    "current_direct_references": [
+      "234:1168"
+    ],
+    "reason": "User-requested Figma cleanup on 2026-09-15; historical design and test evidence retained. Large-type boards are retired, not proof that the underlying App state was removed."
+  },
+  {
+    "kind": "overlay",
+    "owner_id": "avatar-dialogs",
+    "state": "生成交接（等待／进入 App）",
+    "retired_figma_nodes": [
+      "234:1633"
+    ],
+    "current_direct_references": [
+      "234:1270"
+    ],
+    "reason": "User-requested Figma cleanup on 2026-09-15; historical design and test evidence retained. Large-type boards are retired, not proof that the underlying App state was removed."
+  },
+  {
+    "kind": "overlay",
+    "owner_id": "avatar-dialogs",
+    "state": "生成完成",
+    "retired_figma_nodes": [
+      "234:1753"
+    ],
+    "current_direct_references": [
+      "234:1736"
+    ],
+    "reason": "User-requested Figma cleanup on 2026-09-15; historical design and test evidence retained. Large-type boards are retired, not proof that the underlying App state was removed."
+  }
+]

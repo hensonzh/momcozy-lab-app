@@ -1,0 +1,7 @@
+{
+  "lib/app/momcozy_app.dart": "19ee287166d09efecb8a9babd37cd4e4a4a4bae2f107856a1c6ec40c210523eb",
+  "lib/features/motion_assessment/presentation/motion_assessment_page.dart": "6f7ddf076aac516b62381a0f932480d4d3e0f4f5d70a1af95c83e6a7e778f2b9",
+  "lib/features/motion_assessment/presentation/motion_assessment_controller.dart": "57b43e288688d153a09d2c9a0d80da825fa1a98921e168d2594ed6ebd96509df",
+  "test/app/not_found_design_test.dart": "118310bd6ae1f4c940c8ae83d77f35bdd8135cd3147922d61c72be0b89a6b85d",
+  "test/features/motion_assessment/presentation/motion_assessment_controller_test.dart": "4193d23b8ab7cd6e01149582120b45734f4faaf487b3ad03066f5049de82b7ff"
+}

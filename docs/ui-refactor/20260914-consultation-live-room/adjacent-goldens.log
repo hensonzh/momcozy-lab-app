@@ -1,0 +1,28 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/modules/consultation/room_page_test.dart
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/modules/consultation/home_consultation_dialog_test.dart: (setUpAll)
+00:00 +1: /Users/lute/project/momcozy-lab/app/test/modules/consultation/home_consultation_dialog_test.dart: (setUpAll)
+00:00 +1: /Users/lute/project/momcozy-lab/app/test/modules/consultation/room_page_test.dart: consultation preparation at 320.0 / 1.0
+00:00 +2: /Users/lute/project/momcozy-lab/app/test/modules/consultation/home_consultation_dialog_test.dart: loading can close safely and errors retry in the same overlay
+00:00 +3: /Users/lute/project/momcozy-lab/app/test/modules/consultation/room_page_test.dart: waiting room at 320.0 / 1.0
+00:00 +4: /Users/lute/project/momcozy-lab/app/test/modules/consultation/home_consultation_dialog_test.dart: intake navigation dismisses nested preflight and home overlay together
+00:00 +5: /Users/lute/project/momcozy-lab/app/test/modules/consultation/home_consultation_dialog_test.dart: intake navigation dismisses nested preflight and home overlay together
+00:00 +6: /Users/lute/project/momcozy-lab/app/test/modules/consultation/room_page_test.dart: waiting room at 320.0 / 2.0
+00:00 +7: /Users/lute/project/momcozy-lab/app/test/modules/consultation/home_consultation_dialog_test.dart: short enlarged home preparation can retry loading failure and close
+00:00 +8: /Users/lute/project/momcozy-lab/app/test/modules/consultation/room_page_test.dart: consultation preparation at 390.0 / 1.0
+00:00 +9: /Users/lute/project/momcozy-lab/app/test/modules/consultation/home_consultation_dialog_test.dart: home preparation closes, cancels and enters through existing checks 320.0/1.0
+00:00 +10: /Users/lute/project/momcozy-lab/app/test/modules/consultation/home_consultation_dialog_test.dart: home preparation closes, cancels and enters through existing checks 320.0/1.0
+00:00 +11: /Users/lute/project/momcozy-lab/app/test/modules/consultation/home_consultation_dialog_test.dart: home preparation closes, cancels and enters through existing checks 320.0/1.0
+00:00 +12: /Users/lute/project/momcozy-lab/app/test/modules/consultation/home_consultation_dialog_test.dart: home preparation closes, cancels and enters through existing checks 320.0/1.0
+00:00 +13: /Users/lute/project/momcozy-lab/app/test/modules/consultation/home_consultation_dialog_test.dart: home preparation closes, cancels and enters through existing checks 320.0/1.0
+00:01 +14: /Users/lute/project/momcozy-lab/app/test/modules/consultation/home_consultation_dialog_test.dart: home preparation closes, cancels and enters through existing checks 320.0/1.0
+00:01 +15: /Users/lute/project/momcozy-lab/app/test/modules/consultation/home_consultation_dialog_test.dart: home preparation closes, cancels and enters through existing checks 320.0/1.0
+00:01 +16: /Users/lute/project/momcozy-lab/app/test/modules/consultation/home_consultation_dialog_test.dart: home preparation closes, cancels and enters through existing checks 320.0/1.0
+00:01 +17: /Users/lute/project/momcozy-lab/app/test/modules/consultation/room_page_test.dart: leaving a room asks for confirmation and keeps the consultation open
+00:01 +18: /Users/lute/project/momcozy-lab/app/test/modules/consultation/home_consultation_dialog_test.dart: home preparation closes, cancels and enters through existing checks 320.0/2.0
+00:01 +19: /Users/lute/project/momcozy-lab/app/test/modules/consultation/home_consultation_dialog_test.dart: home preparation closes, cancels and enters through existing checks 320.0/2.0
+00:01 +20: /Users/lute/project/momcozy-lab/app/test/modules/consultation/home_consultation_dialog_test.dart: home preparation closes, cancels and enters through existing checks 390.0/1.0
+00:01 +21: /Users/lute/project/momcozy-lab/app/test/modules/consultation/home_consultation_dialog_test.dart: home preparation closes, cancels and enters through existing checks 390.0/2.0
+00:01 +22: /Users/lute/project/momcozy-lab/app/test/modules/consultation/home_consultation_dialog_test.dart: home preparation closes, cancels and enters through existing checks 430.0/1.0
+00:02 +23: /Users/lute/project/momcozy-lab/app/test/modules/consultation/home_consultation_dialog_test.dart: home preparation closes, cancels and enters through existing checks 430.0/2.0
+00:02 +24: /Users/lute/project/momcozy-lab/app/test/modules/consultation/home_consultation_dialog_test.dart: (tearDownAll)
+00:02 +24: All tests passed!

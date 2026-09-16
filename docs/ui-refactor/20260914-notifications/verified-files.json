@@ -1,0 +1,9 @@
+{
+  "lib/features/notifications/presentation/notifications_page.dart": "d5aac8f47bed55917886a8ec0c8eb363e066832a8a7634186518ee89d785dc34",
+  "lib/features/notifications/presentation/notification_settings_page.dart": "18f3d4f67a8cb09aefafc036f887317201cef8be6c6ee5db602a75e3669522ad",
+  "lib/features/notifications/presentation/notification_permission_dialogs.dart": "49c420065d2df840182fd518d5611798cdcdc06d182324af0840731bfc87b42d",
+  "lib/shared/widgets/mom_settings_widgets.dart": "baab234aa8fa573a8215a103730e333ac5f4bcd447db1a9b3e3daf0b0a58bcfc",
+  "lib/shared/design_system/mom_settings_theme.dart": "c584f5c1ef469a525857bbbfa38c126d579e7b7068bb597c465e01c117665cd7",
+  "lib/features/auth/presentation/account_page.dart": "44a45439a1f4d0cb6b4e7c485d1d198874361ba9e1decc43ce98cb566c2e441c",
+  "test/features/notifications/notification_redesign_states_test.dart": "7f52f8d49688a66124afdf4c6191b0509f7c8c7517b6d4e01e58621f0c2b6874"
+}

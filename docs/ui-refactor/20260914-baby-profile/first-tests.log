@@ -1,0 +1,20 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart
+lib/modules/baby/presentation/baby_profile_editor.dart:323:33: Error: No named parameter with the name 'momStyle'.
+                                momStyle: true,
+                                ^^^^^^^^
+lib/shared/widgets/product_feedback.dart:9:9: Context: Found this candidate, but the arguments don't match.
+  const ProductErrorView({
+        ^^^^^^^^^^^^^^^^
+00:00 +0 -1: loading /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart [E]
+  Failed to load "/Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart":
+  Compilation failed for testPath=/Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart: lib/modules/baby/presentation/baby_profile_editor.dart:323:33: Error: No named parameter with the name 'momStyle'.
+                                  momStyle: true,
+                                  ^^^^^^^^
+  lib/shared/widgets/product_feedback.dart:9:9: Context: Found this candidate, but the arguments don't match.
+    const ProductErrorView({
+          ^^^^^^^^^^^^^^^^
+  .
+00:00 +0 -1: Some tests failed.
+
+Failing tests:
+  /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart: loading /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../../../shared/widgets/mom_settings_widgets.dart';
+import 'package:momcozy_flutter_app/shared/design_system/momcozy_motion.dart';
 
 Future<bool> explainNotifications(BuildContext context) => _dialog(
   context,
@@ -20,20 +22,16 @@ Future<bool> _dialog(
 ) async =>
     await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
-        scrollable: true,
-        title: Text(title),
+      animationStyle: MomCozyMotion.animationStyle(context),
+      builder: (context) => MomSettingsDialog(
+        title: title,
         content: Text(message),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Not now'),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: Text(confirm),
-          ),
-        ],
+        cancelLabel: 'Not now',
+        onCancel: () => Navigator.pop(context, false),
+        primaryAction: FilledButton(
+          onPressed: () => Navigator.pop(context, true),
+          child: Text(confirm, textAlign: TextAlign.center),
+        ),
       ),
     ) ??
     false;

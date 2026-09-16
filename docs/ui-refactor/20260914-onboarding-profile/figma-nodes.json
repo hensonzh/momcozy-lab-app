@@ -1,0 +1,138 @@
+[
+  {
+    "id": "230:1108",
+    "name": "Onboarding profile / 基本资料",
+    "x": 80,
+    "y": 100100,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "230:1132",
+    "name": "Onboarding profile / 分娩日期",
+    "x": 520,
+    "y": 100100,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "230:1152",
+    "name": "Onboarding profile / 分娩信息",
+    "x": 960,
+    "y": 100100,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "230:1176",
+    "name": "Onboarding profile / 姓名校验",
+    "x": 1400,
+    "y": 100100,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "230:1202",
+    "name": "Onboarding profile / 年龄校验",
+    "x": 1840,
+    "y": 100100,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "230:1228",
+    "name": "Onboarding profile / 日期未选",
+    "x": 2280,
+    "y": 100100,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "230:1250",
+    "name": "Onboarding profile / 保存失败",
+    "x": 2720,
+    "y": 100100,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "230:1276",
+    "name": "Onboarding profile / 保存中",
+    "x": 3160,
+    "y": 100100,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "230:1300",
+    "name": "Onboarding profile / 加载中",
+    "x": 3600,
+    "y": 100100,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "230:1313",
+    "name": "Onboarding profile / 加载失败",
+    "x": 80,
+    "y": 101500,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "230:1328",
+    "name": "Onboarding profile / 大字号基本资料",
+    "x": 520,
+    "y": 101500,
+    "width": 320,
+    "height": 844
+  },
+  {
+    "id": "230:1352",
+    "name": "Onboarding profile / 大字号日期",
+    "x": 960,
+    "y": 101500,
+    "width": 320,
+    "height": 844
+  },
+  {
+    "id": "230:1372",
+    "name": "Onboarding profile / 短屏基本资料",
+    "x": 1400,
+    "y": 101500,
+    "width": 320,
+    "height": 568
+  },
+  {
+    "id": "230:1396",
+    "name": "Onboarding profile / 短屏保存失败",
+    "x": 1840,
+    "y": 101500,
+    "width": 320,
+    "height": 568
+  },
+  {
+    "id": "230:1422",
+    "name": "Onboarding profile / 大字号保存中",
+    "x": 2280,
+    "y": 101500,
+    "width": 320,
+    "height": 844
+  },
+  {
+    "id": "230:1446",
+    "name": "Onboarding profile / 分娩方式选择",
+    "x": 2720,
+    "y": 101500,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "230:1476",
+    "name": "Onboarding profile / 宝宝数量选择",
+    "x": 3160,
+    "y": 101500,
+    "width": 393,
+    "height": 844
+  }
+]

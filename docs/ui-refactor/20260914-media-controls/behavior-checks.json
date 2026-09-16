@@ -1,0 +1,8 @@
+{
+  "Video initialization authorization refresh retries lifecycle and fullscreen routing unchanged": true,
+  "Video canvas aspect ratio and landscape rotation logic unchanged": true,
+  "Play pause replay and command exception behavior unchanged": true,
+  "Seek bounds and controller commands preserved": true,
+  "Media route PDF loader gestures and pager unchanged except document background token": true,
+  "PDF previous next and zoom availability unchanged": true
+}

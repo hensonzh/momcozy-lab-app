@@ -1,0 +1,84 @@
+{
+  "notificationFigmaInitial": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"screen\":\"134:68\",\"body\":\"134:74\",\"summary\":\"134:83\"}"
+      }
+    ]
+  },
+  "notificationCard": [
+    {
+      "type": "text",
+      "text": "{\"component\":\"134:88\",\"instance\":\"134:103\",\"height\":232,\"properties\":{\"unread\":\"unread#134:0\",\"title\":\"title#134:1\",\"body\":\"body#134:2\"}}"
+    }
+  ],
+  "notificationsStates": {
+    "content": [
+      {
+        "type": "text",
+        "text": "[{\"kind\":\"read\",\"id\":\"135:82\"},{\"kind\":\"empty\",\"id\":\"135:117\"},{\"kind\":\"loading\",\"id\":\"135:155\"},{\"kind\":\"error\",\"id\":\"135:194\"},{\"kind\":\"error-retained\",\"id\":\"135:234\"}]"
+      }
+    ]
+  },
+  "notificationSettingsInitial": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"screen\":\"135:274\",\"body\":\"135:280\",\"permission\":\"135:281\",\"preferences\":\"135:287\"}"
+      }
+    ]
+  },
+  "notificationPreferenceComponent": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"set\":\"136:153\",\"props\":{\"title#136:8\":{\"type\":\"TEXT\",\"defaultValue\":\"Appointments\"},\"subtitle#136:11\":{\"type\":\"TEXT\",\"defaultValue\":\"Background delivery unavailable\"},\"selected\":{\"type\":\"VARIANT\",\"defaultValue\":\"On\",\"variantOptions\":[\"On\",\"Off\"]}},\"on\":\"136:141\",\"off\":\"136:147\"}"
+      }
+    ]
+  },
+  "notificationSettingsContent": [
+    {
+      "type": "text",
+      "text": "{\"height\":867}"
+    }
+  ],
+  "notificationPermissionStates": {
+    "content": [
+      {
+        "type": "text",
+        "text": "[{\"kind\":\"allowed\",\"id\":\"136:187\"},{\"kind\":\"denied\",\"id\":\"136:249\"},{\"kind\":\"provisional\",\"id\":\"136:311\"},{\"kind\":\"unavailable\",\"id\":\"136:373\"},{\"kind\":\"loading\",\"id\":\"136:420\"}]"
+      }
+    ]
+  },
+  "notificationSettingsErrors": {
+    "content": [
+      {
+        "type": "text",
+        "text": "[{\"kind\":\"preferences-error\",\"id\":\"136:468\"},{\"kind\":\"push-not-ready\",\"id\":\"136:497\"},{\"kind\":\"no-coordinator\",\"id\":\"136:548\"}]"
+      }
+    ]
+  },
+  "notificationDialogs": {
+    "content": [
+      {
+        "type": "text",
+        "text": "[{\"kind\":\"education\",\"id\":\"136:577\",\"dialog\":\"136:605\"},{\"kind\":\"settings-offer\",\"id\":\"136:612\",\"dialog\":\"136:640\"}]"
+      }
+    ]
+  },
+  "notificationExtraStates": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"paging\":\"136:775\",\"busy\":\"136:813\",\"large\":\"136:864\",\"largeHeight\":1138}"
+      }
+    ]
+  },
+  "notificationSettingsLarge": [
+    {
+      "type": "text",
+      "text": "{\"id\":\"136:929\",\"height\":1478}"
+    }
+  ]
+}

@@ -1,0 +1,182 @@
+[
+  {
+    "id": "265:1086",
+    "name": "Media viewer / image-loaded",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "265:1095",
+    "name": "Media viewer / image-zoomed",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "265:1104",
+    "name": "Media viewer / image-panned",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "265:1113",
+    "name": "Media viewer / image-loading",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "265:1125",
+    "name": "Media viewer / image-error",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "265:1140",
+    "name": "Media viewer / image-unavailable",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "265:1153",
+    "name": "Media viewer / pdf-loading",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "265:1165",
+    "name": "Media viewer / pdf-error",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "265:1180",
+    "name": "Media viewer / pdf-unavailable",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "265:1193",
+    "name": "Media viewer / missing",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "265:1207",
+    "name": "Media viewer / video-unavailable",
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "265:1220",
+    "name": "Media viewer / attachment-loaded",
+    "width": 393,
+    "height": 568
+  },
+  {
+    "id": "265:1229",
+    "name": "Media viewer / attachment-error",
+    "width": 393,
+    "height": 568
+  },
+  {
+    "id": "265:1244",
+    "name": "Media viewer / attachment-unavailable",
+    "width": 393,
+    "height": 568
+  },
+  {
+    "id": "265:1257",
+    "name": "Media viewer / attachment-loading",
+    "width": 393,
+    "height": 568
+  },
+  {
+    "id": "265:1269",
+    "name": "Media viewer / image-loaded large",
+    "width": 320,
+    "height": 568
+  },
+  {
+    "id": "265:1278",
+    "name": "Media viewer / image-zoomed large",
+    "width": 320,
+    "height": 568
+  },
+  {
+    "id": "265:1287",
+    "name": "Media viewer / image-panned large",
+    "width": 320,
+    "height": 568
+  },
+  {
+    "id": "265:1296",
+    "name": "Media viewer / image-loading large",
+    "width": 320,
+    "height": 568
+  },
+  {
+    "id": "265:1308",
+    "name": "Media viewer / image-error large",
+    "width": 320,
+    "height": 568
+  },
+  {
+    "id": "265:1323",
+    "name": "Media viewer / image-unavailable large",
+    "width": 320,
+    "height": 568
+  },
+  {
+    "id": "265:1336",
+    "name": "Media viewer / pdf-loading large",
+    "width": 320,
+    "height": 568
+  },
+  {
+    "id": "265:1348",
+    "name": "Media viewer / pdf-error large",
+    "width": 320,
+    "height": 568
+  },
+  {
+    "id": "265:1363",
+    "name": "Media viewer / pdf-unavailable large",
+    "width": 320,
+    "height": 568
+  },
+  {
+    "id": "265:1376",
+    "name": "Media viewer / missing large",
+    "width": 320,
+    "height": 568
+  },
+  {
+    "id": "265:1390",
+    "name": "Media viewer / video-unavailable large",
+    "width": 320,
+    "height": 568
+  },
+  {
+    "id": "265:1403",
+    "name": "Media viewer / attachment-loaded large",
+    "width": 320,
+    "height": 568
+  },
+  {
+    "id": "265:1412",
+    "name": "Media viewer / attachment-error large",
+    "width": 320,
+    "height": 568
+  },
+  {
+    "id": "265:1427",
+    "name": "Media viewer / attachment-unavailable large",
+    "width": 320,
+    "height": 568
+  },
+  {
+    "id": "265:1440",
+    "name": "Media viewer / attachment-loading large",
+    "width": 320,
+    "height": 568
+  }
+]

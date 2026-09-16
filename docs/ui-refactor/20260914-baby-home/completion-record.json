@@ -1,0 +1,24 @@
+{
+  "recorded_at": "2026-09-14T10:57:22.926098+00:00",
+  "status": "implemented_widget_verified",
+  "canonical_page": "baby-home",
+  "canonical_page_states_verified": 6,
+  "source_entries_reused": 129,
+  "source_files_verified": 734,
+  "figma_frames_verified": 28,
+  "app_images_reviewed": 60,
+  "joint_tests_passed": 182,
+  "final_affected_tests_passed": 30,
+  "final_affected_tests_overlap_joint": true,
+  "static_analysis": "9 files, no issues",
+  "production_files_changed_this_slice": [
+    "lib/modules/baby/presentation/baby_home_page.dart",
+    "lib/modules/baby/presentation/baby_overview_cards.dart",
+    "lib/modules/baby/presentation/baby_growth_curve.dart",
+    "lib/modules/baby/presentation/baby_saved_feedback.dart",
+    "lib/shared/widgets/knowledge_banner.dart"
+  ],
+  "controller_unchanged": true,
+  "remaining": "baby-records and shared editor; existing not-found/motion review; global finite state reconciliation",
+  "goal_status": "active"
+}

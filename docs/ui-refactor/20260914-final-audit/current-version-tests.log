@@ -1,0 +1,156 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/app/notification_conversation_route_test.dart
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/app/notification_conversation_route_test.dart: (setUpAll)
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/app/notification_conversation_route_test.dart: notification conversation opens and keeps drafts scoped to its runtime and thread 393.0 / 1.0
+00:01 +1: /Users/lute/project/momcozy-lab/app/test/app/notification_conversation_route_test.dart: notification conversation opens and keeps drafts scoped to its runtime and thread 320.0 / 2.0
+00:01 +2: /Users/lute/project/momcozy-lab/app/test/app/notification_conversation_route_test.dart: (tearDownAll)
+00:01 +2: loading /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_markdown_design_test.dart
+00:02 +2: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_markdown_design_test.dart: (setUpAll)
+00:02 +2: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_markdown_design_test.dart: markdown reading 320.0/1.0
+00:02 +3: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_markdown_design_test.dart: markdown reading 320.0/2.0
+00:02 +4: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_markdown_design_test.dart: markdown reading 390.0/1.0
+00:02 +5: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_markdown_design_test.dart: markdown reading 390.0/2.0
+00:02 +6: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_markdown_design_test.dart: markdown reading 430.0/1.0
+00:02 +7: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_markdown_design_test.dart: markdown reading 430.0/2.0
+00:02 +8: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_markdown_design_test.dart: (tearDownAll)
+00:02 +8: loading /Users/lute/project/momcozy-lab/app/test/modules/consultation/room_leave_recovery_test.dart
+00:03 +8: /Users/lute/project/momcozy-lab/app/test/modules/consultation/room_leave_recovery_test.dart: (setUpAll)
+00:03 +8: /Users/lute/project/momcozy-lab/app/test/modules/consultation/room_leave_recovery_test.dart: inventory leave pending then returns
+00:03 +9: /Users/lute/project/momcozy-lab/app/test/modules/consultation/room_leave_recovery_test.dart: late disconnect failure cannot restore a disposed connection
+00:03 +10: /Users/lute/project/momcozy-lab/app/test/modules/consultation/room_leave_recovery_test.dart: disconnect failure preserves connection for retry and leave report
+00:03 +11: /Users/lute/project/momcozy-lab/app/test/modules/consultation/room_leave_recovery_test.dart: leave recovery 320.0 / 1.0
+00:04 +12: /Users/lute/project/momcozy-lab/app/test/modules/consultation/room_leave_recovery_test.dart: leave recovery 320.0 / 2.0
+00:04 +13: /Users/lute/project/momcozy-lab/app/test/modules/consultation/room_leave_recovery_test.dart: leave recovery 390.0 / 1.0
+00:04 +14: /Users/lute/project/momcozy-lab/app/test/modules/consultation/room_leave_recovery_test.dart: leave recovery 390.0 / 2.0
+00:04 +15: /Users/lute/project/momcozy-lab/app/test/modules/consultation/room_leave_recovery_test.dart: leave recovery 430.0 / 1.0
+00:04 +16: /Users/lute/project/momcozy-lab/app/test/modules/consultation/room_leave_recovery_test.dart: leave recovery 430.0 / 2.0
+00:04 +17: /Users/lute/project/momcozy-lab/app/test/modules/consultation/room_leave_recovery_test.dart: (tearDownAll)
+00:04 +17: loading /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart
+00:05 +17: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: reduced motion opens fullscreen fully without elapsed animation
+00:05 +18: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: video long duration, controls and fullscreen 320.0 / 1.0
+00:06 +19: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: video long duration, controls and fullscreen 320.0 / 2.0
+00:06 +20: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: video long duration, controls and fullscreen 390.0 / 1.0
+00:06 +21: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: video long duration, controls and fullscreen 390.0 / 2.0
+00:06 +22: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: video long duration, controls and fullscreen 430.0 / 1.0
+00:06 +23: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: video long duration, controls and fullscreen 430.0 / 2.0
+00:07 +24: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: video short and landscape accessible controls Size(320.0, 568.0)
+00:07 +25: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: video short and landscape accessible controls Size(844.0, 390.0)
+00:07 +26: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: fake platform supports a successful controller lifecycle
+00:07 +27: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: fake platform supports a failed controller lifecycle
+00:07 +28: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: streams authenticated video and exposes playback controls
+00:07 +29: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: refreshes authorization once after initialization failure
+00:07 +30: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: shows a retry that rebuilds the failed video controller
+00:07 +31: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: fullscreen interruption returns to a retryable player
+00:07 +32: /Users/lute/project/momcozy-lab/app/test/features/media/product_asset_video_player_test.dart: turns a runtime playback failure into a retryable state
+00:07 +33: loading /Users/lute/project/momcozy-lab/app/test/modules/services/service_renew_test.dart
+00:07 +33: /Users/lute/project/momcozy-lab/app/test/modules/services/service_renew_test.dart: renew selection opens existing eligibility flow 320.0/1.0
+00:08 +34: /Users/lute/project/momcozy-lab/app/test/modules/services/service_renew_test.dart: renew selection opens existing eligibility flow 320.0/2.0
+00:08 +35: /Users/lute/project/momcozy-lab/app/test/modules/services/service_renew_test.dart: renew selection opens existing eligibility flow 390.0/1.0
+00:08 +36: /Users/lute/project/momcozy-lab/app/test/modules/services/service_renew_test.dart: renew selection opens existing eligibility flow 390.0/2.0
+00:09 +37: /Users/lute/project/momcozy-lab/app/test/modules/services/service_renew_test.dart: renew selection opens existing eligibility flow 430.0/1.0
+00:09 +38: /Users/lute/project/momcozy-lab/app/test/modules/services/service_renew_test.dart: renew selection opens existing eligibility flow 430.0/2.0
+00:09 +39: /Users/lute/project/momcozy-lab/app/test/modules/services/service_renew_test.dart: renew pays through existing controller and opens new booking
+00:09 +40: /Users/lute/project/momcozy-lab/app/test/modules/services/service_renew_test.dart: pending order reopens without new purchase; retry locks duplicate taps
+00:09 +41: /Users/lute/project/momcozy-lab/app/test/modules/services/service_renew_test.dart: ongoing service navigates without making a new order
+00:09 +42: /Users/lute/project/momcozy-lab/app/test/modules/services/service_renew_test.dart: disabled purchase, empty catalog, offline retry are explicit
+00:09 +43: /Users/lute/project/momcozy-lab/app/test/modules/services/service_renew_test.dart: short large catalog loads, scrolls and returns without ordering
+00:10 +44: /Users/lute/project/momcozy-lab/app/test/modules/services/service_renew_test.dart: owned service remains reachable with purchase disabled CareEpisodeStatus.paused
+00:10 +45: /Users/lute/project/momcozy-lab/app/test/modules/services/service_renew_test.dart: owned service remains reachable with purchase disabled CareEpisodeStatus.provisioningPending
+00:10 +46: /Users/lute/project/momcozy-lab/app/test/modules/services/service_renew_test.dart: refresh prevents selection until current catalog is ready
+00:10 +47: loading /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart
+00:10 +47: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: (setUpAll)
+00:10 +47: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: email entry and registration at 320.0 / 1.0
+00:11 +48: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: reset form with keyboard at 320.0 / 1.0
+00:11 +49: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: invite entry with short keyboard viewport at 320.0 / 1.0
+00:11 +50: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: account and confirmations at 320.0 / 1.0
+00:11 +51: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: email entry and registration at 320.0 / 2.0
+00:12 +52: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: reset form with keyboard at 320.0 / 2.0
+00:12 +53: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: invite entry with short keyboard viewport at 320.0 / 2.0
+00:12 +54: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: account and confirmations at 320.0 / 2.0
+00:12 +55: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: email entry and registration at 390.0 / 1.0
+00:12 +56: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: reset form with keyboard at 390.0 / 1.0
+00:12 +57: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: invite entry with short keyboard viewport at 390.0 / 1.0
+00:12 +58: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: account and confirmations at 390.0 / 1.0
+00:12 +59: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: email entry and registration at 390.0 / 2.0
+00:12 +60: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: reset form with keyboard at 390.0 / 2.0
+00:13 +61: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: invite entry with short keyboard viewport at 390.0 / 2.0
+00:13 +62: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: account and confirmations at 390.0 / 2.0
+00:13 +63: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: email entry and registration at 430.0 / 1.0
+00:13 +64: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: reset form with keyboard at 430.0 / 1.0
+00:13 +65: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: invite entry with short keyboard viewport at 430.0 / 1.0
+00:13 +66: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: account and confirmations at 430.0 / 1.0
+00:13 +67: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: email entry and registration at 430.0 / 2.0
+00:13 +68: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: reset form with keyboard at 430.0 / 2.0
+00:13 +69: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: invite entry with short keyboard viewport at 430.0 / 2.0
+00:14 +70: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: account and confirmations at 430.0 / 2.0
+00:14 +71: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_design_test.dart: (tearDownAll)
+00:14 +71: loading /Users/lute/project/momcozy-lab/app/test/features/auth/auth_redesign_states_test.dart
+00:14 +71: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_redesign_states_test.dart: (setUpAll)
+00:14 +71: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_redesign_states_test.dart: short large login locks pending request then retries retained fields
+00:15 +72: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_redesign_states_test.dart: short large verification rejects invalid code and preserves cooldown and expired state
+00:15 +73: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_redesign_states_test.dart: short large resend keeps missing email guard and disables actions while pending
+00:15 +74: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_redesign_states_test.dart: short large Google pending and failure leaves email recovery available
+00:15 +75: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_redesign_states_test.dart: session persistence failure revokes issued token and keeps retry form
+00:15 +76: /Users/lute/project/momcozy-lab/app/test/features/auth/auth_redesign_states_test.dart: (tearDownAll)
+00:15 +76: loading /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart
+00:16 +76: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: (setUpAll)
+00:16 +76: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding profile forms at 320.0 / 1.0
+00:17 +77: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding load failure retries at 320.0 / 1.0
+00:17 +78: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: avatar task banners at 320.0 / 1.0
+00:17 +79: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: avatar photo failure and default confirmation at 320.0 / 1.0
+00:17 +80: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding avatar required at 320.0 / 1.0
+00:17 +81: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding avatar generating at 320.0 / 1.0
+00:17 +82: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding avatar review at 320.0 / 1.0
+00:17 +83: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding avatar failed at 320.0 / 1.0
+00:17 +84: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding profile forms at 320.0 / 2.0
+00:17 +85: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: profile short viewport keeps save pending and recovers draft
+00:18 +86: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: avatar short screen retries thumbnail and locks confirmation
+00:18 +87: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding load failure retries at 320.0 / 2.0
+00:18 +88: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: avatar task banners at 320.0 / 2.0
+00:18 +89: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: avatar photo failure and default confirmation at 320.0 / 2.0
+00:18 +90: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding avatar required at 320.0 / 2.0
+00:18 +91: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding avatar generating at 320.0 / 2.0
+00:18 +92: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding avatar review at 320.0 / 2.0
+00:18 +93: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding avatar failed at 320.0 / 2.0
+00:18 +94: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding profile forms at 390.0 / 1.0
+00:18 +95: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding load failure retries at 390.0 / 1.0
+00:19 +96: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: avatar task banners at 390.0 / 1.0
+00:19 +97: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: avatar photo failure and default confirmation at 390.0 / 1.0
+00:19 +98: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding avatar required at 390.0 / 1.0
+00:19 +99: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding avatar generating at 390.0 / 1.0
+00:19 +100: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding avatar review at 390.0 / 1.0
+00:19 +101: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding avatar failed at 390.0 / 1.0
+00:19 +102: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding profile forms at 390.0 / 2.0
+00:19 +103: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding load failure retries at 390.0 / 2.0
+00:19 +104: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: avatar task banners at 390.0 / 2.0
+00:19 +105: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: avatar photo failure and default confirmation at 390.0 / 2.0
+00:19 +106: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding avatar required at 390.0 / 2.0
+00:19 +107: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding avatar generating at 390.0 / 2.0
+00:19 +108: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding avatar review at 390.0 / 2.0
+00:20 +109: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding avatar failed at 390.0 / 2.0
+00:20 +110: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding profile forms at 430.0 / 1.0
+00:20 +111: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding load failure retries at 430.0 / 1.0
+00:20 +112: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: avatar task banners at 430.0 / 1.0
+00:20 +113: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: avatar photo failure and default confirmation at 430.0 / 1.0
+00:20 +114: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding avatar required at 430.0 / 1.0
+00:20 +115: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding avatar generating at 430.0 / 1.0
+00:20 +116: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding avatar review at 430.0 / 1.0
+00:20 +117: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding avatar failed at 430.0 / 1.0
+00:20 +118: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding profile forms at 430.0 / 2.0
+00:20 +119: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding load failure retries at 430.0 / 2.0
+00:20 +120: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: avatar task banners at 430.0 / 2.0
+00:20 +121: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: avatar photo failure and default confirmation at 430.0 / 2.0
+00:21 +122: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding avatar required at 430.0 / 2.0
+00:21 +123: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding avatar generating at 430.0 / 2.0
+00:21 +124: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding avatar review at 430.0 / 2.0
+00:21 +125: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: onboarding avatar failed at 430.0 / 2.0
+00:21 +126: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_design_test.dart: (tearDownAll)
+00:21 +126: loading /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_reading_test.dart
+00:21 +126: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_reading_test.dart: (setUpAll)
+00:21 +126: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_reading_test.dart: onboarding reading 320.0/1.0
+00:22 +127: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_reading_test.dart: onboarding reading 320.0/2.0
+00:22 +128: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_reading_test.dart: onboarding reading 390.0/1.0
+00:22 +129: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_reading_test.dart: onboarding reading 390.0/2.0
+00:22 +130: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_reading_test.dart: onboarding reading 430.0/1.0
+00:23 +131: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_reading_test.dart: onboarding reading 430.0/2.0
+00:23 +132: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_reading_test.dart: (tearDownAll)
+00:23 +132: All tests passed!

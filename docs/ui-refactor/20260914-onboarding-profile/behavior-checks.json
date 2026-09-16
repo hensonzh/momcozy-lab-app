@@ -1,0 +1,10 @@
+{
+  "profile_navigation": true,
+  "name_age_validation_and_draft": true,
+  "delivery_required": true,
+  "profile_submission_and_confirmation": true,
+  "avatar_lifecycle_upload_selection_navigation": true,
+  "avatar_headers_and_generation": true,
+  "avatar_candidates_and_thumbnails": true,
+  "date_range_and_selection": true
+}

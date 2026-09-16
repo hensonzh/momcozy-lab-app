@@ -22,9 +22,13 @@ class FakeVideoInitialization {
 class FakeVideoPlayerPlatform extends VideoPlayerPlatform {
   FakeVideoPlayerPlatform({
     List<FakeVideoInitialization> initializations = const [],
+    this.initializationFor,
   }) : _initializations = List.of(initializations);
 
   final List<FakeVideoInitialization> _initializations;
+
+  /// Select failures by source when a journey also plays avatar animations.
+  final FakeVideoInitialization Function(DataSource)? initializationFor;
   final List<DataSource> createdSources = [];
   final List<int> playedIds = [];
   final List<int> pausedIds = [];
@@ -50,9 +54,11 @@ class FakeVideoPlayerPlatform extends VideoPlayerPlatform {
     final playerId = _nextPlayerId++;
     createdSources.add(dataSource);
     _positions[playerId] = Duration.zero;
-    final initialization = _initializations.isEmpty
-        ? const FakeVideoInitialization.success()
-        : _initializations.removeAt(0);
+    final initialization =
+        initializationFor?.call(dataSource) ??
+        (_initializations.isEmpty
+            ? const FakeVideoInitialization.success()
+            : _initializations.removeAt(0));
     late final StreamController<VideoEvent> events;
     events = StreamController<VideoEvent>.broadcast(
       onListen: () {

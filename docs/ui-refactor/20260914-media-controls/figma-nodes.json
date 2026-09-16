@@ -1,0 +1,122 @@
+[
+  {
+    "id": "291:1086",
+    "name": "MomCozy PDF / page-1 / 1x"
+  },
+  {
+    "id": "291:1117",
+    "name": "MomCozy PDF / page-2 / 1x"
+  },
+  {
+    "id": "291:1148",
+    "name": "MomCozy PDF / zoom / 1x"
+  },
+  {
+    "id": "291:1179",
+    "name": "MomCozy PDF / opening / 1x"
+  },
+  {
+    "id": "291:1210",
+    "name": "MomCozy PDF / page-1 / 2x"
+  },
+  {
+    "id": "291:1241",
+    "name": "MomCozy PDF / page-2 / 2x"
+  },
+  {
+    "id": "291:1272",
+    "name": "MomCozy PDF / zoom / 2x"
+  },
+  {
+    "id": "291:1303",
+    "name": "MomCozy PDF / opening / 2x"
+  },
+  {
+    "id": "291:1334",
+    "name": "MomCozy video / ready / 1x"
+  },
+  {
+    "id": "291:1360",
+    "name": "MomCozy video / playing / 1x"
+  },
+  {
+    "id": "291:1386",
+    "name": "MomCozy video / paused / 1x"
+  },
+  {
+    "id": "291:1412",
+    "name": "MomCozy video / seek-mute / 1x"
+  },
+  {
+    "id": "291:1438",
+    "name": "MomCozy video / fullscreen / 1x"
+  },
+  {
+    "id": "291:1460",
+    "name": "MomCozy video / loading / 1x"
+  },
+  {
+    "id": "291:1472",
+    "name": "MomCozy video / error / 1x"
+  },
+  {
+    "id": "291:1485",
+    "name": "MomCozy video / interrupted / 1x"
+  },
+  {
+    "id": "291:1495",
+    "name": "MomCozy video / ready / 2x"
+  },
+  {
+    "id": "291:1521",
+    "name": "MomCozy video / playing / 2x"
+  },
+  {
+    "id": "291:1547",
+    "name": "MomCozy video / seek-mute / 2x"
+  },
+  {
+    "id": "291:1573",
+    "name": "MomCozy video / fullscreen / 2x"
+  },
+  {
+    "id": "291:1595",
+    "name": "MomCozy video / loading / 2x"
+  },
+  {
+    "id": "291:1607",
+    "name": "MomCozy video / error / 2x"
+  },
+  {
+    "id": "291:1620",
+    "name": "MomCozy video / interrupted / 2x"
+  },
+  {
+    "id": "293:1098",
+    "name": "MomCozy video / ready / 2x / landscape"
+  },
+  {
+    "id": "293:1124",
+    "name": "MomCozy video / fullscreen / 2x / landscape"
+  },
+  {
+    "id": "293:1146",
+    "name": "MomCozy video / ready / 2x / short"
+  },
+  {
+    "id": "293:1172",
+    "name": "MomCozy video / fullscreen / 2x / short"
+  },
+  {
+    "id": "293:1194",
+    "name": "MomCozy video / error / 2x / short"
+  },
+  {
+    "id": "293:1224",
+    "name": "MomCozy/PdfDocumentToolbar"
+  },
+  {
+    "id": "293:1241",
+    "name": "MomCozy/VideoControls"
+  }
+]

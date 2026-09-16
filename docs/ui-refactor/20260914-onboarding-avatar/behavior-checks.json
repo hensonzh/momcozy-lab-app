@@ -1,0 +1,15 @@
+{
+  "profile_steps_and_submission": true,
+  "avatar_phase_priority": true,
+  "photo_validation_and_upload": true,
+  "avatar_return_navigation": true,
+  "selection_confirmation_and_activation": true,
+  "candidate_image_readiness": true,
+  "thumbnail_loader_retry_epoch": true,
+  "source_selection_return": true,
+  "default_confirmation_guard": true,
+  "handoff_dismiss_and_return": true,
+  "banner_controller_listener_and_haptics": true,
+  "banner_status_copy_actions": true,
+  "banner_live_semantics": true
+}

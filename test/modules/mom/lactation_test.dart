@@ -64,7 +64,7 @@ void main() {
   test(
     'uncertain save retries the same payload and key, blocks duplicate taps, and undo uses receipt',
     () async {
-      final repository = _Repository();
+      final repository = LactationFixture();
       final controller = _controller(repository);
       addTearDown(controller.dispose);
       await controller.load();
@@ -126,7 +126,7 @@ void main() {
   testWidgets(
     'single record editor saves a real observation, then delete and undo change the list',
     (tester) async {
-      final repository = _Repository();
+      final repository = LactationFixture();
       final controller = _controller(repository);
       addTearDown(controller.dispose);
       await tester.pumpWidget(
@@ -158,9 +158,7 @@ void main() {
         scrollable: find.byType(Scrollable).first,
       );
       await tester.pumpAndSettle();
-      await tester.tap(menu);
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('删除'));
+      await tester.tap(find.byKey(const ValueKey('lactation-delete-created')));
       await tester.pumpAndSettle();
       expect(controller.records, hasLength(1));
       await tester.ensureVisible(find.text('撤销'));
@@ -172,6 +170,85 @@ void main() {
   );
 
   for (final width in [320.0, 390.0, 430.0]) {
+    for (final scale in [1.0, 2.0]) {
+      testWidgets(
+        'lactation modal switches to nursing and saves at $width / $scale',
+        (tester) async {
+          await loadMomCozyTestFonts();
+          tester.view.physicalSize = Size(width, 844);
+          tester.view.devicePixelRatio = 1;
+          addTearDown(tester.view.resetPhysicalSize);
+          addTearDown(tester.view.resetDevicePixelRatio);
+          final repository = LactationFixture();
+          await tester.pumpWidget(
+            MaterialApp(
+              theme: momCozyTheme(),
+              debugShowCheckedModeBanner: false,
+              builder: (context, child) => MediaQuery(
+                data: MediaQuery.of(
+                  context,
+                ).copyWith(textScaler: TextScaler.linear(scale)),
+                child: child!,
+              ),
+              home: Builder(
+                builder: (context) => Scaffold(
+                  body: TextButton(
+                    onPressed: () => showLactationPanel(
+                      context,
+                      repository: repository,
+                      ownerUserId: 'mom',
+                      date: date,
+                      now: () => now,
+                      create: true,
+                    ),
+                    child: const Text('记录'),
+                  ),
+                ),
+              ),
+            ),
+          );
+          await tester.tap(find.text('记录'));
+          await tester.pumpAndSettle();
+          expect(tester.takeException(), isNull);
+          if (scale == 1) {
+            await expectLater(
+              find.byType(MaterialApp),
+              matchesGoldenFile(
+                '../../goldens/design_system/lactation-dialog-pump-${width.toInt()}.png',
+              ),
+            );
+          }
+          await tester.tap(find.text('亲喂'));
+          await tester.pumpAndSettle();
+          expect(find.text('左侧时长'), findsOneWidget);
+          if (scale == 1) {
+            await expectLater(
+              find.byType(MaterialApp),
+              matchesGoldenFile(
+                '../../goldens/design_system/lactation-dialog-nurse-${width.toInt()}.png',
+              ),
+            );
+          }
+          tester.view.viewInsets = const FakeViewPadding(bottom: 300);
+          addTearDown(tester.view.resetViewInsets);
+          await tester.ensureVisible(
+            find.byKey(const ValueKey('lactation-measurement-nurse')),
+          );
+          await tester.enterText(
+            find.byKey(const ValueKey('lactation-measurement-nurse')),
+            '12',
+          );
+          await tester.pumpAndSettle();
+          await tester.tap(find.text('保存这次记录'));
+          await tester.pumpAndSettle();
+          final saved = repository.records.last.observation;
+          expect(saved, isA<NursingObservation>());
+          expect((saved as NursingObservation).durationMinutes, 12);
+          expect(tester.takeException(), isNull);
+          await tester.pumpWidget(const SizedBox());
+        },
+      );
+    }
     for (final entry in [false, true]) {
       for (final scale in [1.0, 2.0]) {
         testWidgets(
@@ -182,7 +259,7 @@ void main() {
             tester.view.devicePixelRatio = 1;
             addTearDown(tester.view.resetPhysicalSize);
             addTearDown(tester.view.resetDevicePixelRatio);
-            final controller = _controller(_Repository());
+            final controller = _controller(LactationFixture());
             addTearDown(controller.dispose);
             await tester.pumpWidget(
               MaterialApp(
@@ -241,18 +318,20 @@ void main() {
   }
 }
 
-LactationController _controller(_Repository repository) => LactationController(
-  repository: repository,
-  ownerUserId: 'mom',
-  date: date,
-  now: () => now,
-  mutationKey: () => 'request-key',
-);
+LactationController _controller(LactationFixture repository) =>
+    LactationController(
+      repository: repository,
+      ownerUserId: 'mom',
+      date: date,
+      now: () => now,
+      mutationKey: () => 'request-key',
+    );
 
-class _Repository implements LactationRepository {
+class LactationFixture implements LactationRepository {
   List<LactationRecord> records = [sample];
   final keys = <String>[];
   Future<LactationRecord>? nextCreate;
+  ProductFailure? createFailure;
   LactationRecord? deleted;
   int? restoreVersion;
   @override
@@ -264,6 +343,7 @@ class _Repository implements LactationRepository {
     required String idempotencyKey,
   }) async {
     keys.add(idempotencyKey);
+    if (createFailure != null) throw createFailure!;
     if (nextCreate != null) return nextCreate!;
     final result = LactationRecord(
       id: 'created',

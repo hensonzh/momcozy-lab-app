@@ -1,0 +1,174 @@
+[
+  {
+    "frames": [
+      {
+        "id": "134:68",
+        "name": "screen/notifications-inbox",
+        "width": 393,
+        "height": 844
+      },
+      {
+        "id": "135:82",
+        "name": "screen/notifications-read",
+        "width": 393,
+        "height": 844
+      },
+      {
+        "id": "135:117",
+        "name": "screen/notifications-empty",
+        "width": 393,
+        "height": 844
+      },
+      {
+        "id": "135:155",
+        "name": "screen/notifications-loading",
+        "width": 393,
+        "height": 844
+      },
+      {
+        "id": "135:194",
+        "name": "screen/notifications-error",
+        "width": 393,
+        "height": 844
+      },
+      {
+        "id": "135:234",
+        "name": "screen/notifications-error-retained",
+        "width": 393,
+        "height": 844
+      },
+      {
+        "id": "135:274",
+        "name": "screen/notification-settings",
+        "width": 393,
+        "height": 867
+      },
+      {
+        "id": "136:187",
+        "name": "screen/notification-settings-allowed",
+        "width": 393,
+        "height": 867
+      },
+      {
+        "id": "136:249",
+        "name": "screen/notification-settings-denied",
+        "width": 393,
+        "height": 867
+      },
+      {
+        "id": "136:311",
+        "name": "screen/notification-settings-provisional",
+        "width": 393,
+        "height": 867
+      },
+      {
+        "id": "136:373",
+        "name": "screen/notification-settings-unavailable",
+        "width": 393,
+        "height": 949
+      },
+      {
+        "id": "136:420",
+        "name": "screen/notification-settings-loading",
+        "width": 393,
+        "height": 885
+      },
+      {
+        "id": "136:468",
+        "name": "screen/notification-settings-preferences-error",
+        "width": 393,
+        "height": 933
+      },
+      {
+        "id": "136:497",
+        "name": "screen/notification-settings-push-not-ready",
+        "width": 393,
+        "height": 933
+      },
+      {
+        "id": "136:548",
+        "name": "screen/notification-settings-no-coordinator",
+        "width": 393,
+        "height": 844
+      },
+      {
+        "id": "136:577",
+        "name": "screen/notification-education",
+        "width": 393,
+        "height": 844
+      },
+      {
+        "id": "136:612",
+        "name": "screen/notification-settings-offer",
+        "width": 393,
+        "height": 844
+      },
+      {
+        "id": "136:775",
+        "name": "screen/notifications-pagination",
+        "width": 393,
+        "height": 844
+      },
+      {
+        "id": "136:813",
+        "name": "screen/notifications-archive-pending",
+        "width": 393,
+        "height": 844
+      },
+      {
+        "id": "136:864",
+        "name": "screen/notifications-large-text",
+        "width": 320,
+        "height": 1138
+      },
+      {
+        "id": "136:929",
+        "name": "screen/notification-settings-large-text",
+        "width": 320,
+        "height": 2046
+      },
+      {
+        "id": "137:336",
+        "name": "screen/notifications-mark-all-pending",
+        "width": 393,
+        "height": 844
+      },
+      {
+        "id": "137:357",
+        "name": "screen/notifications-pagination-pending",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "components": [
+      {
+        "id": "122:2",
+        "name": "MomCozy/SettingsRow"
+      },
+      {
+        "id": "122:41",
+        "name": "MomCozy/ExpertSupport"
+      },
+      {
+        "id": "134:88",
+        "name": "MomCozy/NotificationCard"
+      },
+      {
+        "id": "136:153",
+        "name": "MomCozy/PreferenceRow"
+      },
+      {
+        "id": "136:141",
+        "name": "selected=On"
+      },
+      {
+        "id": "136:147",
+        "name": "selected=Off"
+      }
+    ],
+    "families": [
+      "Noto Sans SC"
+    ],
+    "neutralBindings": 26
+  }
+]

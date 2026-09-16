@@ -4,6 +4,8 @@ import '../../../domain/care/consultation_room.dart';
 import '../../../services/consultations/consultation_media.dart';
 import '../../../services/consultations/livekit_consultation_media.dart';
 import '../../../shared/design_system/momcozy_design_system.dart';
+import '../../../shared/design_system/mom_home_tokens.dart';
+import 'user_video_stage.dart';
 
 class ConsultationVideoStage extends StatelessWidget {
   const ConsultationVideoStage({
@@ -57,6 +59,16 @@ class ConsultationVideoStage extends StatelessWidget {
         _ => ('等待 $otherName 进入', '你已在咨询室中，可以保持此页开启'),
       },
     };
+    if (data.viewerRole == ConsultationRole.mom) {
+      return UserConsultationVideoStage(
+        data: data,
+        media: media,
+        title: title,
+        detail: detail,
+        localVideo: localVideo,
+        remoteVideo: remoteVideo,
+      );
+    }
     return Semantics(
       label: '咨询视频画面',
       child: Container(
@@ -192,9 +204,11 @@ class ConsultationMediaControls extends StatelessWidget {
     super.key,
     required this.media,
     required this.onLeave,
+    this.compact = false,
   });
   final ConsultationMedia media;
   final VoidCallback onLeave;
+  final bool compact;
   @override
   Widget build(BuildContext context) {
     final enabled =
@@ -209,6 +223,7 @@ class ConsultationMediaControls extends StatelessWidget {
             label: media.microphoneOn ? '麦克风' : '已静音',
             icon: media.microphoneOn ? Icons.mic_none : Icons.mic_off_outlined,
             selected: media.microphoneOn,
+            compact: compact,
             onTap: enabled ? media.toggleMicrophone : null,
           ),
         ),
@@ -220,6 +235,8 @@ class ConsultationMediaControls extends StatelessWidget {
                 ? Icons.videocam_outlined
                 : Icons.videocam_off_outlined,
             selected: media.cameraOn,
+            compact: compact,
+            camera: true,
             onTap: enabled ? media.toggleCamera : null,
           ),
         ),
@@ -229,6 +246,7 @@ class ConsultationMediaControls extends StatelessWidget {
             label: '离开房间',
             icon: Icons.logout_rounded,
             danger: true,
+            compact: compact,
             onTap: onLeave,
           ),
         ),
@@ -244,50 +262,122 @@ class _Control extends StatelessWidget {
     this.onTap,
     this.selected = false,
     this.danger = false,
+    this.compact = false,
+    this.camera = false,
   });
   final String label;
   final IconData icon;
   final VoidCallback? onTap;
   final bool selected, danger;
+  final bool compact, camera;
   @override
-  Widget build(BuildContext context) => Semantics(
-    button: true,
-    selected: selected,
-    child: Material(
-      color: danger ? MomCozyColors.roseSoft : MomCozyColors.muted,
-      borderRadius: BorderRadius.circular(MomCozyRadii.control),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(MomCozyRadii.control),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(
-            vertical: MomCozySpacing.content,
-            horizontal: MomCozySpacing.compact,
-          ),
-          child: Column(
-            children: [
-              Icon(
-                icon,
-                size: MomCozyIconSizes.standard,
-                color: danger
-                    ? MomCozyColors.danger
-                    : (onTap == null
-                          ? MomCozyColors.mutedForeground
-                          : MomCozyColors.care),
-              ),
-              const SizedBox(height: MomCozySpacing.compact),
-              Text(
-                label,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: MomCozyTypography.captionSize,
-                  fontWeight: FontWeight.w600,
-                  color: danger
-                      ? MomCozyColors.danger
-                      : MomCozyColors.foreground,
+  Widget build(BuildContext context) => compact
+      ? _momControl()
+      : Semantics(
+          button: true,
+          enabled: onTap != null,
+          selected: selected,
+          child: Material(
+            color: compact && danger
+                ? MomCozyColors.serviceTeamSurface
+                : danger
+                ? MomCozyColors.roseSoft
+                : MomCozyColors.muted,
+            borderRadius: BorderRadius.circular(MomCozyRadii.control),
+            child: InkWell(
+              onTap: onTap,
+              borderRadius: BorderRadius.circular(MomCozyRadii.control),
+              child: Padding(
+                padding: EdgeInsets.symmetric(
+                  vertical: compact ? 6 : MomCozySpacing.content,
+                  horizontal: MomCozySpacing.compact,
+                ),
+                child: Column(
+                  children: [
+                    if (compact)
+                      Container(
+                        width: 30,
+                        height: 30,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: camera
+                              ? MomCozyColors.blueSoft
+                              : MomCozyColors.careSoft,
+                        ),
+                        child: Icon(
+                          icon,
+                          size: 16,
+                          color: onTap == null
+                              ? MomCozyColors.mutedForeground
+                              : camera
+                              ? MomCozyColors.blue
+                              : MomCozyColors.care,
+                        ),
+                      )
+                    else
+                      Icon(
+                        icon,
+                        size: MomCozyIconSizes.standard,
+                        color: danger
+                            ? MomCozyColors.danger
+                            : (onTap == null
+                                  ? MomCozyColors.mutedForeground
+                                  : MomCozyColors.care),
+                      ),
+                    SizedBox(height: compact ? 5 : MomCozySpacing.compact),
+                    Text(
+                      label,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: compact ? 10 : MomCozyTypography.captionSize,
+                        fontWeight: FontWeight.w600,
+                        color: compact && danger
+                            ? MomCozyColors.serviceTeamInk
+                            : danger
+                            ? MomCozyColors.danger
+                            : MomCozyColors.foreground,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ],
+            ),
+          ),
+        );
+
+  Widget _momControl() => Semantics(
+    button: true,
+    enabled: onTap != null,
+    selected: selected,
+    child: Opacity(
+      opacity: onTap == null ? .45 : 1,
+      child: Material(
+        color: danger
+            ? MomCozyColors.roseSoft
+            : camera
+            ? MomCozyColors.agentLavender
+            : MomHomeTokens.mint,
+        borderRadius: BorderRadius.circular(16),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(16),
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Column(
+              children: [
+                Icon(
+                  icon,
+                  size: 24,
+                  color: danger ? MomHomeTokens.rose : MomHomeTokens.teal,
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  label,
+                  textAlign: TextAlign.center,
+                  style: MomHomeTokens.text(12, weight: FontWeight.w700),
+                ),
+              ],
+            ),
           ),
         ),
       ),

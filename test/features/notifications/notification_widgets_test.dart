@@ -101,8 +101,12 @@ void main() {
       );
       await tester.pumpAndSettle();
       expect(find.text('Off in system settings'), findsOneWidget);
+      await tester.scrollUntilVisible(find.text('Marketing'), 200);
+      await tester.pumpAndSettle();
       expect(find.text('Marketing'), findsOneWidget);
       expect(platform.requests, 0);
+      await tester.scrollUntilVisible(find.text('Settings'), -200);
+      await tester.pumpAndSettle();
       await tester.tap(find.text('Settings'));
       await tester.pumpAndSettle();
       expect(platform.settings, 1);

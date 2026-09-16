@@ -1,0 +1,6 @@
+{
+  "lib/features/agent_hub/agent_hub_page.dart": "c3a6784442db5d9ee2653e9426d7f713499d1408c3b81059194950e2ba338e6e",
+  "lib/features/agent_hub/presentation/agent_voice_notice.dart": "9ac42384e4a905d39b19f618fb0cdf687f46a45de9ce9ae2a65caa03e9394dd6",
+  "test/features/agent_hub/agent_voice_design_test.dart": "f6dc326a69708efed4cbff435b46f966fd5556eecd459e07aac4c3b882bad9b5",
+  "test/features/agent_hub/agent_attachment_notice_design_test.dart": "0b0d8043ab2cd2fd8c0fbf349c6163b4103644afe7b801b54c1b926acd5020c8"
+}

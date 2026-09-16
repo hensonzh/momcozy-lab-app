@@ -29,6 +29,52 @@ class BabyHomeController extends ChangeNotifier {
       const ResourceState.loading();
   ResourceState<List<BabyGrowthRecord>> growthCurve =
       const ResourceState.loading();
+  BabySavedFeedback? savedFeedback;
+
+  void showSaved(List<BabyRecord> records, {required bool allowUndo}) {
+    if (_disposed ||
+        records.isEmpty ||
+        records.any((r) => r.babyId != baby?.id)) {
+      return;
+    }
+    savedFeedback = BabySavedFeedback(records, allowUndo: allowUndo);
+    notifyListeners();
+  }
+
+  void dismissSaved() {
+    if (savedFeedback?.busy == true || _disposed) return;
+    savedFeedback = null;
+    notifyListeners();
+  }
+
+  Future<void> undoSaved() async {
+    final feedback = savedFeedback;
+    if (_disposed || feedback == null || !feedback.canUndo) return;
+    feedback.busy = true;
+    feedback.failure = null;
+    notifyListeners();
+    try {
+      while (feedback.pending.isNotEmpty) {
+        final record = feedback.pending.first;
+        await recordRepository.delete(
+          record.id,
+          babyId: record.babyId,
+          expectedVersion: record.version,
+        );
+        feedback.pending.removeAt(0);
+      }
+      feedback.undone = true;
+    } catch (error) {
+      feedback.failure = _failure(error);
+    } finally {
+      feedback.busy = false;
+      if (!_disposed && identical(savedFeedback, feedback)) {
+        notifyListeners();
+        await refreshRecords();
+      }
+    }
+  }
+
   BabyProfile? get baby =>
       profiles.value?.where((value) => value.id == _selectedId).firstOrNull;
   BabyDaySummary? get summary {
@@ -68,6 +114,7 @@ class BabyHomeController extends ChangeNotifier {
       if (!values.any((value) => value.id == _selectedId)) {
         _selectedId = values.firstOrNull?.id;
       }
+      if (savedFeedback?.babyId != baby?.id) savedFeedback = null;
       notifyListeners();
       await _loadRecords(generation);
     } catch (error) {
@@ -84,6 +131,7 @@ class BabyHomeController extends ChangeNotifier {
       return;
     }
     _selectedId = id;
+    savedFeedback = null;
     final generation = ++_generation;
     _clearRecords();
     notifyListeners();
@@ -219,5 +267,37 @@ class BabyHomeController extends ChangeNotifier {
     _disposed = true;
     _generation++;
     super.dispose();
+  }
+}
+
+/// Feedback belongs to exactly the newly saved records and their versions.
+class BabySavedFeedback {
+  BabySavedFeedback(List<BabyRecord> records, {required this.allowUndo})
+    : records = List.unmodifiable(records),
+      pending = List.of(records);
+  final List<BabyRecord> records, pending;
+  final bool allowUndo;
+  bool busy = false, undone = false;
+  ProductFailure? failure;
+  String get babyId => records.first.babyId;
+  bool get retryable =>
+      failure == null ||
+      failure!.kind == ProductFailureKind.offline ||
+      failure!.kind == ProductFailureKind.unavailable;
+  bool get canUndo => allowUndo && !busy && !undone && retryable;
+  String get message {
+    if (busy) return '正在撤销这次记录…';
+    if (failure != null) {
+      return retryable ? '撤销结果尚未确认，请重试确认。' : '记录已发生变化或暂时无法撤销，请到全部记录中核对。';
+    }
+    if (undone) return '已撤销这次记录。';
+    return switch (records.first.recordKind) {
+      BabyRecordKind.feeding => '这次喂养的时间和已填写数值已记下。',
+      BabyRecordKind.diaper => '这次换尿布的情况已记下。',
+      BabyRecordKind.sleep => '这段睡眠已记好。',
+      BabyRecordKind.growth =>
+        records.length > 1 ? '这次填写的生长测量已一起保存。' : '这次生长测量已保存。',
+      BabyRecordKind.development => '具体行为和观察日期已记下。',
+    };
   }
 }

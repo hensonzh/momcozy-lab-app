@@ -1,0 +1,46 @@
+{
+  "accountInitial": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"screen\":\"128:68\",\"body\":\"128:74\",\"hero\":\"128:76\",\"tags\":\"128:79\"}"
+      }
+    ]
+  },
+  "accountContent": [
+    {
+      "type": "text",
+      "text": "{\"methods\":\"128:85\",\"signout\":\"128:91\",\"danger\":\"128:93\",\"bodyHeight\":626}"
+    }
+  ],
+  "accountLoadStates": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"loading\":\"128:98\",\"error\":\"128:132\",\"heroHeight\":139}"
+      }
+    ]
+  },
+  "accountDialogs": {
+    "content": [
+      {
+        "type": "text",
+        "text": "[{\"screen\":\"128:149\",\"dialog\":\"128:180\",\"height\":275},{\"screen\":\"128:189\",\"dialog\":\"128:220\",\"height\":272}]"
+      }
+    ]
+  },
+  "accountExtraStates": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"linked\":\"128:227\",\"operationFailed\":\"128:262\",\"disabled\":\"128:294\"}"
+      }
+    ]
+  },
+  "accountResponsive": [
+    {
+      "type": "text",
+      "text": "{\"large\":\"128:329\",\"largeHeight\":1585,\"busy\":\"128:359\"}"
+    }
+  ]
+}

@@ -1,0 +1,2121 @@
+[
+  {
+    "id": "08-expert-service/consultation-journey-current-live-active",
+    "module": "专家服务与咨询",
+    "label": "TI",
+    "state": "consultation-journey-current-live-active",
+    "image": "08-expert-service/consultation-journey-current-live-active/default.png",
+    "viewport": "08-expert-service/consultation-journey-current-live-active/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/service-appointment/room"
+    ],
+    "mapped_design_candidates": [
+      "services/preparation",
+      "services/room",
+      "services/room-leave",
+      "common/not-found",
+      "services/state-53"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/consultation/presentation/room_page.dart",
+      "lib/modules/consultation/presentation/user_video_stage.dart",
+      "lib/modules/consultation/presentation/video_stage.dart",
+      "lib/modules/services/presentation/mom_appointment_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/consultation/consultation_inventory_journey_test.dart",
+    "test_case": "inventory consultation current live leave route",
+    "metadata": "raw/test/goldens/ui_inventory/consultation-journey-current-live-active-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/consultation-journey-current-live-active-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/consultation-journey-current-live-active-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/appointments/service-appointment/room",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Stay and close confirmation both retain the room; expert joins → active consultation",
+    "journey": {
+      "source": "test/goldens/ui_inventory/consultation-journey-current-live-active-393.png",
+      "previous_source": "test/goldens/ui_inventory/consultation-journey-current-live-leave-confirmation-393.png",
+      "route": "/services/appointments/service-appointment/room",
+      "trigger": "Stay and close confirmation both retain the room; expert joins → active consultation",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories/codecs and LiveKit device checks; isolated HTTP and native method channels, sandbox room, fixed clock/timezone; no real OS permission dialog or remote media",
+      "test": "test/modules/consultation/consultation_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/consultation-journey-current-live-leave-confirmation",
+    "module": "专家服务与咨询",
+    "label": "TI",
+    "state": "consultation-journey-current-live-leave-confirmation",
+    "image": "08-expert-service/consultation-journey-current-live-leave-confirmation/default.png",
+    "viewport": "08-expert-service/consultation-journey-current-live-leave-confirmation/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/service-appointment/room"
+    ],
+    "mapped_design_candidates": [
+      "services/preparation",
+      "services/room",
+      "services/room-leave",
+      "common/not-found",
+      "services/state-53"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/consultation/presentation/room_page.dart",
+      "lib/modules/consultation/presentation/user_video_stage.dart",
+      "lib/modules/consultation/presentation/video_stage.dart",
+      "lib/modules/services/presentation/mom_appointment_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/consultation/consultation_inventory_journey_test.dart",
+    "test_case": "inventory consultation current live leave route",
+    "metadata": "raw/test/goldens/ui_inventory/consultation-journey-current-live-leave-confirmation-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/consultation-journey-current-live-leave-confirmation-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/consultation-journey-current-live-leave-confirmation-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/appointments/service-appointment/room",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Me → service → booking → preparation → passed checks → room → Leave",
+    "journey": {
+      "source": "test/goldens/ui_inventory/consultation-journey-current-live-leave-confirmation-393.png",
+      "previous_source": null,
+      "route": "/services/appointments/service-appointment/room",
+      "trigger": "Me → service → booking → preparation → passed checks → room → Leave",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories/codecs and LiveKit device checks; isolated HTTP and native method channels, sandbox room, fixed clock/timezone; no real OS permission dialog or remote media",
+      "test": "test/modules/consultation/consultation_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/consultation-journey-current-live-left-booking",
+    "module": "专家服务与咨询",
+    "label": "咨询中 · IBCLC 咨询",
+    "state": "consultation-journey-current-live-left-booking",
+    "image": "08-expert-service/consultation-journey-current-live-left-booking/default.png",
+    "viewport": "08-expert-service/consultation-journey-current-live-left-booking/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode/booking"
+    ],
+    "mapped_design_candidates": [
+      "services/booking",
+      "common/not-found",
+      "services/state-32",
+      "services/state-33",
+      "services/state-34",
+      "services/state-35",
+      "services/state-36",
+      "services/state-37"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/booking_page.dart",
+      "lib/modules/services/presentation/mom_appointment_widgets.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/consultation/consultation_inventory_journey_test.dart",
+    "test_case": "inventory consultation current live leave route",
+    "metadata": "raw/test/goldens/ui_inventory/consultation-journey-current-live-left-booking-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/consultation-journey-current-live-left-booking-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/consultation-journey-current-live-left-booking-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode/booking",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Temporary leave → booking with ongoing consultation; re-entry remains available",
+    "journey": {
+      "source": "test/goldens/ui_inventory/consultation-journey-current-live-left-booking-393.png",
+      "previous_source": "test/goldens/ui_inventory/consultation-journey-current-live-active-393.png",
+      "route": "/services/episodes/service-episode/booking",
+      "trigger": "Temporary leave → booking with ongoing consultation; re-entry remains available",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories/codecs and LiveKit device checks; isolated HTTP and native method channels, sandbox room, fixed clock/timezone; no real OS permission dialog or remote media",
+      "test": "test/modules/consultation/consultation_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/consultation-journey-current-live-reentry-preparation",
+    "module": "专家服务与咨询",
+    "label": "预约详情",
+    "state": "consultation-journey-current-live-reentry-preparation",
+    "image": "08-expert-service/consultation-journey-current-live-reentry-preparation/default.png",
+    "viewport": "08-expert-service/consultation-journey-current-live-reentry-preparation/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/service-appointment/room"
+    ],
+    "mapped_design_candidates": [
+      "services/preparation",
+      "services/room",
+      "services/room-leave",
+      "common/not-found",
+      "services/state-53"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/consultation/presentation/consultation_preparation.dart",
+      "lib/modules/consultation/presentation/room_page.dart",
+      "lib/modules/services/presentation/mom_appointment_widgets.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/consultation/consultation_inventory_journey_test.dart",
+    "test_case": "inventory consultation current live leave route",
+    "metadata": "raw/test/goldens/ui_inventory/consultation-journey-current-live-reentry-preparation-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/consultation-journey-current-live-reentry-preparation-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/consultation-journey-current-live-reentry-preparation-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/appointments/service-appointment/room",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Booking → return to consultation → preparation offers re-entry",
+    "journey": {
+      "source": "test/goldens/ui_inventory/consultation-journey-current-live-reentry-preparation-393.png",
+      "previous_source": "test/goldens/ui_inventory/consultation-journey-current-live-left-booking-393.png",
+      "route": "/services/appointments/service-appointment/room",
+      "trigger": "Booking → return to consultation → preparation offers re-entry",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories/codecs and LiveKit device checks; isolated HTTP and native method channels, sandbox room, fixed clock/timezone; no real OS permission dialog or remote media",
+      "test": "test/modules/consultation/consultation_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/consultation-journey-current-summary-full-plan",
+    "module": "专家服务与咨询",
+    "label": "日程",
+    "state": "consultation-journey-current-summary-full-plan",
+    "image": "08-expert-service/consultation-journey-current-summary-full-plan/default.png",
+    "viewport": "08-expert-service/consultation-journey-current-summary-full-plan/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/schedule"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "schedule/home",
+      "schedule/create",
+      "schedule/edit",
+      "schedule/task",
+      "common/not-found",
+      "common/loading",
+      "common/empty",
+      "common/error"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/features/app_pages/momcozy_feature_pages.dart",
+      "lib/modules/schedule/presentation/schedule_page.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/product_feedback.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/consultation/consultation_inventory_journey_test.dart",
+    "test_case": "inventory consultation current summary publication task updates and routes",
+    "metadata": "raw/test/goldens/ui_inventory/consultation-journey-current-summary-full-plan-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/consultation-journey-current-summary-full-plan-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/consultation-journey-current-summary-full-plan-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/schedule",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Summary → full action plan opens Schedule",
+    "journey": {
+      "source": "test/goldens/ui_inventory/consultation-journey-current-summary-full-plan-393.png",
+      "previous_source": "test/goldens/ui_inventory/consultation-journey-current-summary-task-return-393.png",
+      "route": "/schedule",
+      "trigger": "Summary → full action plan opens Schedule",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories/codecs and LiveKit device checks; isolated HTTP and native method channels, sandbox room, fixed clock/timezone; no real OS permission dialog or remote media",
+      "test": "test/modules/consultation/consultation_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/consultation-journey-current-summary-published",
+    "module": "专家服务与咨询",
+    "label": "TI",
+    "state": "consultation-journey-current-summary-published",
+    "image": "08-expert-service/consultation-journey-current-summary-published/default.png",
+    "viewport": "08-expert-service/consultation-journey-current-summary-published/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/service-appointment/summary"
+    ],
+    "mapped_design_candidates": [
+      "services/summary",
+      "services/summary-task",
+      "common/not-found"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/consultation_summary_content.dart",
+      "lib/modules/services/presentation/consultation_summary_page.dart",
+      "lib/modules/services/presentation/mom_appointment_widgets.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/consultation/consultation_inventory_journey_test.dart",
+    "test_case": "inventory consultation current summary publication task updates and routes",
+    "metadata": "raw/test/goldens/ui_inventory/consultation-journey-current-summary-published-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/consultation-journey-current-summary-published-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/consultation-journey-current-summary-published-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/appointments/service-appointment/summary",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Periodic pending-summary refresh receives published plan",
+    "journey": {
+      "source": "test/goldens/ui_inventory/consultation-journey-current-summary-published-393.png",
+      "previous_source": "test/goldens/ui_inventory/consultation-journey-current-outcome-summary-393.png",
+      "route": "/services/appointments/service-appointment/summary",
+      "trigger": "Periodic pending-summary refresh receives published plan",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories/codecs and LiveKit device checks; isolated HTTP and native method channels, sandbox room, fixed clock/timezone; no real OS permission dialog or remote media",
+      "test": "test/modules/consultation/consultation_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/consultation-journey-current-summary-service-information",
+    "module": "专家服务与咨询",
+    "label": "TI",
+    "state": "consultation-journey-current-summary-service-information",
+    "image": "08-expert-service/consultation-journey-current-summary-service-information/default.png",
+    "viewport": "08-expert-service/consultation-journey-current-summary-service-information/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/service-appointment/summary"
+    ],
+    "mapped_design_candidates": [
+      "services/summary",
+      "services/summary-task",
+      "common/not-found"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/consultation_summary_content.dart",
+      "lib/modules/services/presentation/consultation_summary_page.dart",
+      "lib/modules/services/presentation/mom_appointment_widgets.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/consultation/consultation_inventory_journey_test.dart",
+    "test_case": "inventory consultation current summary publication task updates and routes",
+    "metadata": "raw/test/goldens/ui_inventory/consultation-journey-current-summary-service-information-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/consultation-journey-current-summary-service-information-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/consultation-journey-current-summary-service-information-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/appointments/service-appointment/summary",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Expand consultation and service information → progress entry",
+    "journey": {
+      "source": "test/goldens/ui_inventory/consultation-journey-current-summary-service-information-393.png",
+      "previous_source": "test/goldens/ui_inventory/consultation-journey-current-summary-full-plan-393.png",
+      "route": "/services/appointments/service-appointment/summary",
+      "trigger": "Expand consultation and service information → progress entry",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories/codecs and LiveKit device checks; isolated HTTP and native method channels, sandbox room, fixed clock/timezone; no real OS permission dialog or remote media",
+      "test": "test/modules/consultation/consultation_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/consultation-journey-current-summary-task-detail",
+    "module": "专家服务与咨询",
+    "label": "TI",
+    "state": "consultation-journey-current-summary-task-detail",
+    "image": "08-expert-service/consultation-journey-current-summary-task-detail/default.png",
+    "viewport": "08-expert-service/consultation-journey-current-summary-task-detail/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/service-appointment/summary"
+    ],
+    "mapped_design_candidates": [
+      "services/summary",
+      "services/summary-task",
+      "common/not-found"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/consultation_summary_content.dart",
+      "lib/modules/services/presentation/consultation_summary_page.dart",
+      "lib/modules/services/presentation/mom_appointment_widgets.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/consultation/consultation_inventory_journey_test.dart",
+    "test_case": "inventory consultation current summary publication task updates and routes",
+    "metadata": "raw/test/goldens/ui_inventory/consultation-journey-current-summary-task-detail-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/consultation-journey-current-summary-task-detail-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/consultation-journey-current-summary-task-detail-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/appointments/service-appointment/summary",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Published task → action detail and progress choices",
+    "journey": {
+      "source": "test/goldens/ui_inventory/consultation-journey-current-summary-task-detail-393.png",
+      "previous_source": "test/goldens/ui_inventory/consultation-journey-current-summary-published-393.png",
+      "route": "/services/appointments/service-appointment/summary",
+      "trigger": "Published task → action detail and progress choices",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories/codecs and LiveKit device checks; isolated HTTP and native method channels, sandbox room, fixed clock/timezone; no real OS permission dialog or remote media",
+      "test": "test/modules/consultation/consultation_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/consultation-journey-current-summary-task-in-progress",
+    "module": "专家服务与咨询",
+    "label": "TI",
+    "state": "consultation-journey-current-summary-task-in-progress",
+    "image": "08-expert-service/consultation-journey-current-summary-task-in-progress/default.png",
+    "viewport": "08-expert-service/consultation-journey-current-summary-task-in-progress/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/service-appointment/summary"
+    ],
+    "mapped_design_candidates": [
+      "services/summary",
+      "services/summary-task",
+      "common/not-found"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/consultation_summary_content.dart",
+      "lib/modules/services/presentation/consultation_summary_page.dart",
+      "lib/modules/services/presentation/mom_appointment_widgets.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/consultation/consultation_inventory_journey_test.dart",
+    "test_case": "inventory consultation current summary publication task updates and routes",
+    "metadata": "raw/test/goldens/ui_inventory/consultation-journey-current-summary-task-in-progress-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/consultation-journey-current-summary-task-in-progress-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/consultation-journey-current-summary-task-in-progress-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/appointments/service-appointment/summary",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Set task progress → persisted in-progress state",
+    "journey": {
+      "source": "test/goldens/ui_inventory/consultation-journey-current-summary-task-in-progress-393.png",
+      "previous_source": "test/goldens/ui_inventory/consultation-journey-current-summary-task-detail-393.png",
+      "route": "/services/appointments/service-appointment/summary",
+      "trigger": "Set task progress → persisted in-progress state",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories/codecs and LiveKit device checks; isolated HTTP and native method channels, sandbox room, fixed clock/timezone; no real OS permission dialog or remote media",
+      "test": "test/modules/consultation/consultation_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/consultation-journey-current-summary-task-recovered",
+    "module": "专家服务与咨询",
+    "label": "TI",
+    "state": "consultation-journey-current-summary-task-recovered",
+    "image": "08-expert-service/consultation-journey-current-summary-task-recovered/default.png",
+    "viewport": "08-expert-service/consultation-journey-current-summary-task-recovered/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/service-appointment/summary"
+    ],
+    "mapped_design_candidates": [
+      "services/summary",
+      "services/summary-task",
+      "common/not-found"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/consultation_summary_content.dart",
+      "lib/modules/services/presentation/consultation_summary_page.dart",
+      "lib/modules/services/presentation/mom_appointment_widgets.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/consultation/consultation_inventory_journey_test.dart",
+    "test_case": "inventory consultation current summary publication task updates and routes",
+    "metadata": "raw/test/goldens/ui_inventory/consultation-journey-current-summary-task-recovered-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/consultation-journey-current-summary-task-recovered-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/consultation-journey-current-summary-task-recovered-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/appointments/service-appointment/summary",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Retry original progress update → completed state",
+    "journey": {
+      "source": "test/goldens/ui_inventory/consultation-journey-current-summary-task-recovered-393.png",
+      "previous_source": "test/goldens/ui_inventory/consultation-journey-current-summary-task-uncertain-393.png",
+      "route": "/services/appointments/service-appointment/summary",
+      "trigger": "Retry original progress update → completed state",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories/codecs and LiveKit device checks; isolated HTTP and native method channels, sandbox room, fixed clock/timezone; no real OS permission dialog or remote media",
+      "test": "test/modules/consultation/consultation_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/consultation-journey-current-summary-task-return",
+    "module": "专家服务与咨询",
+    "label": "TI",
+    "state": "consultation-journey-current-summary-task-return",
+    "image": "08-expert-service/consultation-journey-current-summary-task-return/default.png",
+    "viewport": "08-expert-service/consultation-journey-current-summary-task-return/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/service-appointment/summary"
+    ],
+    "mapped_design_candidates": [
+      "services/summary",
+      "services/summary-task",
+      "common/not-found"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/consultation_summary_content.dart",
+      "lib/modules/services/presentation/consultation_summary_page.dart",
+      "lib/modules/services/presentation/mom_appointment_widgets.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/consultation/consultation_inventory_journey_test.dart",
+    "test_case": "inventory consultation current summary publication task updates and routes",
+    "metadata": "raw/test/goldens/ui_inventory/consultation-journey-current-summary-task-return-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/consultation-journey-current-summary-task-return-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/consultation-journey-current-summary-task-return-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/appointments/service-appointment/summary",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Close task detail → updated summary",
+    "journey": {
+      "source": "test/goldens/ui_inventory/consultation-journey-current-summary-task-return-393.png",
+      "previous_source": "test/goldens/ui_inventory/consultation-journey-current-summary-task-skipped-393.png",
+      "route": "/services/appointments/service-appointment/summary",
+      "trigger": "Close task detail → updated summary",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories/codecs and LiveKit device checks; isolated HTTP and native method channels, sandbox room, fixed clock/timezone; no real OS permission dialog or remote media",
+      "test": "test/modules/consultation/consultation_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/consultation-journey-current-summary-task-skipped",
+    "module": "专家服务与咨询",
+    "label": "TI",
+    "state": "consultation-journey-current-summary-task-skipped",
+    "image": "08-expert-service/consultation-journey-current-summary-task-skipped/default.png",
+    "viewport": "08-expert-service/consultation-journey-current-summary-task-skipped/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/service-appointment/summary"
+    ],
+    "mapped_design_candidates": [
+      "services/summary",
+      "services/summary-task",
+      "common/not-found"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/consultation_summary_content.dart",
+      "lib/modules/services/presentation/consultation_summary_page.dart",
+      "lib/modules/services/presentation/mom_appointment_widgets.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/consultation/consultation_inventory_journey_test.dart",
+    "test_case": "inventory consultation current summary publication task updates and routes",
+    "metadata": "raw/test/goldens/ui_inventory/consultation-journey-current-summary-task-skipped-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/consultation-journey-current-summary-task-skipped-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/consultation-journey-current-summary-task-skipped-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/appointments/service-appointment/summary",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Change completed task to skipped → explicit progress state",
+    "journey": {
+      "source": "test/goldens/ui_inventory/consultation-journey-current-summary-task-skipped-393.png",
+      "previous_source": "test/goldens/ui_inventory/consultation-journey-current-summary-task-recovered-393.png",
+      "route": "/services/appointments/service-appointment/summary",
+      "trigger": "Change completed task to skipped → explicit progress state",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories/codecs and LiveKit device checks; isolated HTTP and native method channels, sandbox room, fixed clock/timezone; no real OS permission dialog or remote media",
+      "test": "test/modules/consultation/consultation_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/consultation-journey-current-summary-task-uncertain",
+    "module": "专家服务与咨询",
+    "label": "暂时无法载入，请稍后重试",
+    "state": "consultation-journey-current-summary-task-uncertain",
+    "image": "08-expert-service/consultation-journey-current-summary-task-uncertain/default.png",
+    "viewport": "08-expert-service/consultation-journey-current-summary-task-uncertain/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/service-appointment/summary"
+    ],
+    "mapped_design_candidates": [
+      "services/summary",
+      "services/summary-task",
+      "common/not-found",
+      "common/loading",
+      "common/empty",
+      "common/error"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/consultation_summary_content.dart",
+      "lib/modules/services/presentation/consultation_summary_page.dart",
+      "lib/modules/services/presentation/mom_appointment_widgets.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/product_feedback.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/consultation/consultation_inventory_journey_test.dart",
+    "test_case": "inventory consultation current summary publication task updates and routes",
+    "metadata": "raw/test/goldens/ui_inventory/consultation-journey-current-summary-task-uncertain-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/consultation-journey-current-summary-task-uncertain-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/consultation-journey-current-summary-task-uncertain-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/appointments/service-appointment/summary",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Task update unavailable → previous progress retained, retry required",
+    "journey": {
+      "source": "test/goldens/ui_inventory/consultation-journey-current-summary-task-uncertain-393.png",
+      "previous_source": "test/goldens/ui_inventory/consultation-journey-current-summary-task-in-progress-393.png",
+      "route": "/services/appointments/service-appointment/summary",
+      "trigger": "Task update unavailable → previous progress retained, retry required",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories/codecs and LiveKit device checks; isolated HTTP and native method channels, sandbox room, fixed clock/timezone; no real OS permission dialog or remote media",
+      "test": "test/modules/consultation/consultation_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/consultation-journey-current-summary-to-progress",
+    "module": "专家服务与咨询",
+    "label": "↑ 查看更早记录",
+    "state": "consultation-journey-current-summary-to-progress",
+    "image": "08-expert-service/consultation-journey-current-summary-to-progress/default.png",
+    "viewport": "08-expert-service/consultation-journey-current-summary-to-progress/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode"
+    ],
+    "mapped_design_candidates": [
+      "services/progress",
+      "common/not-found"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_progress_page.dart",
+      "lib/modules/services/presentation/service_timeline.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/mom_timeline_event.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/consultation/consultation_inventory_journey_test.dart",
+    "test_case": "inventory consultation current summary publication task updates and routes",
+    "metadata": "raw/test/goldens/ui_inventory/consultation-journey-current-summary-to-progress-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/consultation-journey-current-summary-to-progress-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/consultation-journey-current-summary-to-progress-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Summary service progress → episode timeline",
+    "journey": {
+      "source": "test/goldens/ui_inventory/consultation-journey-current-summary-to-progress-393.png",
+      "previous_source": "test/goldens/ui_inventory/consultation-journey-current-summary-service-information-393.png",
+      "route": "/services/episodes/service-episode",
+      "trigger": "Summary service progress → episode timeline",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories/codecs and LiveKit device checks; isolated HTTP and native method channels, sandbox room, fixed clock/timezone; no real OS permission dialog or remote media",
+      "test": "test/modules/consultation/consultation_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/room-leave-failure",
+    "module": "专家服务与咨询",
+    "label": "暂时无法离开咨询室，请再次点击离开房间重试。",
+    "state": "room-leave-failure",
+    "image": "08-expert-service/room-leave-failure/default.png",
+    "viewport": "08-expert-service/room-leave-failure/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/:appointmentId/room"
+    ],
+    "mapped_design_candidates": [
+      "services/preparation",
+      "services/room",
+      "services/room-leave",
+      "services/state-53"
+    ],
+    "production_widget_files": [
+      "lib/modules/consultation/presentation/room_page.dart",
+      "lib/modules/consultation/presentation/user_video_stage.dart",
+      "lib/modules/consultation/presentation/video_stage.dart",
+      "lib/modules/services/presentation/mom_appointment_widgets.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/consultation/room_leave_recovery_test.dart",
+    "test_case": "leave recovery 390.0 / 1.0",
+    "metadata": "raw/test/goldens/product_baseline/room-leave-failure-390-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/product_baseline/room-leave-failure-320-1x.png",
+        "metadata": "raw/test/goldens/product_baseline/room-leave-failure-320-1x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/product_baseline/room-leave-failure-320-2x.png",
+        "metadata": "raw/test/goldens/product_baseline/room-leave-failure-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/product_baseline/room-leave-failure-390-1x.png",
+        "metadata": "raw/test/goldens/product_baseline/room-leave-failure-390-1x.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/product_baseline/room-leave-failure-390-2x.png",
+        "metadata": "raw/test/goldens/product_baseline/room-leave-failure-390-2x.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/product_baseline/room-leave-failure-430-1x.png",
+        "metadata": "raw/test/goldens/product_baseline/room-leave-failure-430-1x.png.json",
+        "width": 430,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/product_baseline/room-leave-failure-430-2x.png",
+        "metadata": "raw/test/goldens/product_baseline/room-leave-failure-430-2x.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "08-expert-service/room-leave-retry-confirmation",
+    "module": "专家服务与咨询",
+    "label": "暂时无法离开咨询室，请再次点击离开房间重试。",
+    "state": "room-leave-retry-confirmation",
+    "image": "08-expert-service/room-leave-retry-confirmation/default.png",
+    "viewport": "08-expert-service/room-leave-retry-confirmation/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/:appointmentId/room"
+    ],
+    "mapped_design_candidates": [
+      "services/preparation",
+      "services/room",
+      "services/room-leave",
+      "services/state-53"
+    ],
+    "production_widget_files": [
+      "lib/modules/consultation/presentation/room_page.dart",
+      "lib/modules/consultation/presentation/user_video_stage.dart",
+      "lib/modules/consultation/presentation/video_stage.dart",
+      "lib/modules/services/presentation/mom_appointment_widgets.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/consultation/room_leave_recovery_test.dart",
+    "test_case": "leave recovery 390.0 / 1.0",
+    "metadata": "raw/test/goldens/product_baseline/room-leave-retry-confirmation-390-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/product_baseline/room-leave-retry-confirmation-320-1x.png",
+        "metadata": "raw/test/goldens/product_baseline/room-leave-retry-confirmation-320-1x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/product_baseline/room-leave-retry-confirmation-320-2x.png",
+        "metadata": "raw/test/goldens/product_baseline/room-leave-retry-confirmation-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/product_baseline/room-leave-retry-confirmation-390-1x.png",
+        "metadata": "raw/test/goldens/product_baseline/room-leave-retry-confirmation-390-1x.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/product_baseline/room-leave-retry-confirmation-390-2x.png",
+        "metadata": "raw/test/goldens/product_baseline/room-leave-retry-confirmation-390-2x.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/product_baseline/room-leave-retry-confirmation-430-1x.png",
+        "metadata": "raw/test/goldens/product_baseline/room-leave-retry-confirmation-430-1x.png.json",
+        "width": 430,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/product_baseline/room-leave-retry-confirmation-430-2x.png",
+        "metadata": "raw/test/goldens/product_baseline/room-leave-retry-confirmation-430-2x.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "08-expert-service/summary-empty",
+    "module": "专家服务与咨询",
+    "label": "还没有可查看的总结",
+    "state": "summary-empty",
+    "image": "08-expert-service/summary-empty/default.png",
+    "viewport": "08-expert-service/summary-empty/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/:appointmentId/summary"
+    ],
+    "mapped_design_candidates": [
+      "services/summary",
+      "services/summary-task"
+    ],
+    "production_widget_files": [
+      "lib/modules/services/presentation/consultation_summary_content.dart",
+      "lib/modules/services/presentation/consultation_summary_page.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/services/consultation_summary_test.dart",
+    "test_case": "summary content task and destinations 390.0 / 1.0",
+    "metadata": "raw/test/goldens/design_system/summary-empty-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/summary-empty-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/summary-empty-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/summary-empty-320.png",
+        "metadata": "raw/test/goldens/design_system/summary-empty-320.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/summary-empty-390.png",
+        "metadata": "raw/test/goldens/design_system/summary-empty-390.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/summary-empty-430.png",
+        "metadata": "raw/test/goldens/design_system/summary-empty-430.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "08-expert-service/summary-failed-320-2x-short",
+    "module": "专家服务与咨询",
+    "label": "本次咨询未完成",
+    "state": "summary-failed-320-2x-short",
+    "image": "08-expert-service/summary-failed-320-2x-short/default.png",
+    "viewport": "08-expert-service/summary-failed-320-2x-short/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/:appointmentId/summary"
+    ],
+    "mapped_design_candidates": [
+      "services/summary",
+      "services/summary-task"
+    ],
+    "production_widget_files": [
+      "lib/modules/services/presentation/consultation_summary_content.dart",
+      "lib/modules/services/presentation/consultation_summary_page.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/services/consultation_summary_test.dart",
+    "test_case": "empty action list and unsuccessful consultation keep appropriate destinations",
+    "metadata": "raw/test/goldens/design_system/summary-failed-320-2x-short.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/summary-failed-320-2x-short.png",
+        "metadata": "raw/test/goldens/design_system/summary-failed-320-2x-short.png.json",
+        "width": 320,
+        "height": 568
+      }
+    ]
+  },
+  {
+    "id": "08-expert-service/summary-loading",
+    "module": "专家服务与咨询",
+    "label": "正在读取本次咨询总结",
+    "state": "summary-loading",
+    "image": "08-expert-service/summary-loading/default.png",
+    "viewport": "08-expert-service/summary-loading/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/:appointmentId/summary"
+    ],
+    "mapped_design_candidates": [
+      "services/summary",
+      "services/summary-task"
+    ],
+    "production_widget_files": [
+      "lib/modules/services/presentation/consultation_summary_content.dart",
+      "lib/modules/services/presentation/consultation_summary_page.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/services/consultation_summary_test.dart",
+    "test_case": "loading finishes into pending and refreshed publication",
+    "metadata": "raw/test/goldens/design_system/summary-loading-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/summary-loading-390.png",
+        "metadata": "raw/test/goldens/design_system/summary-loading-390.png.json",
+        "width": 390,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "08-expert-service/summary-metadata",
+    "module": "专家服务与咨询",
+    "label": "TI",
+    "state": "summary-metadata",
+    "image": "08-expert-service/summary-metadata/default.png",
+    "viewport": "08-expert-service/summary-metadata/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/:appointmentId/summary"
+    ],
+    "mapped_design_candidates": [
+      "services/summary",
+      "services/summary-task"
+    ],
+    "production_widget_files": [
+      "lib/modules/services/presentation/consultation_summary_content.dart",
+      "lib/modules/services/presentation/consultation_summary_page.dart",
+      "lib/modules/services/presentation/mom_appointment_widgets.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/services/consultation_summary_test.dart",
+    "test_case": "summary content task and destinations 390.0 / 1.0",
+    "metadata": "raw/test/goldens/design_system/summary-metadata-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/summary-metadata-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/summary-metadata-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/summary-metadata-320.png",
+        "metadata": "raw/test/goldens/design_system/summary-metadata-320.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/summary-metadata-390.png",
+        "metadata": "raw/test/goldens/design_system/summary-metadata-390.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/summary-metadata-430.png",
+        "metadata": "raw/test/goldens/design_system/summary-metadata-430.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "08-expert-service/summary-no-actions-information-320-2x-short",
+    "module": "专家服务与咨询",
+    "label": "TI",
+    "state": "summary-no-actions-information-320-2x-short",
+    "image": "08-expert-service/summary-no-actions-information-320-2x-short/default.png",
+    "viewport": "08-expert-service/summary-no-actions-information-320-2x-short/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/:appointmentId/summary"
+    ],
+    "mapped_design_candidates": [
+      "services/summary",
+      "services/summary-task"
+    ],
+    "production_widget_files": [
+      "lib/modules/services/presentation/consultation_summary_content.dart",
+      "lib/modules/services/presentation/consultation_summary_page.dart",
+      "lib/modules/services/presentation/mom_appointment_widgets.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/services/consultation_summary_test.dart",
+    "test_case": "empty action list and unsuccessful consultation keep appropriate destinations",
+    "metadata": "raw/test/goldens/design_system/summary-no-actions-information-320-2x-short.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/summary-no-actions-information-320-2x-short.png",
+        "metadata": "raw/test/goldens/design_system/summary-no-actions-information-320-2x-short.png.json",
+        "width": 320,
+        "height": 568
+      }
+    ]
+  },
+  {
+    "id": "08-expert-service/summary-offline",
+    "module": "专家服务与咨询",
+    "label": "暂时无法读取总结",
+    "state": "summary-offline",
+    "image": "08-expert-service/summary-offline/default.png",
+    "viewport": "08-expert-service/summary-offline/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/:appointmentId/summary"
+    ],
+    "mapped_design_candidates": [
+      "services/summary",
+      "services/summary-task"
+    ],
+    "production_widget_files": [
+      "lib/modules/services/presentation/consultation_summary_content.dart",
+      "lib/modules/services/presentation/consultation_summary_page.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/services/consultation_summary_test.dart",
+    "test_case": "summary content task and destinations 390.0 / 1.0",
+    "metadata": "raw/test/goldens/design_system/summary-offline-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/summary-offline-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/summary-offline-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/summary-offline-320.png",
+        "metadata": "raw/test/goldens/design_system/summary-offline-320.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/summary-offline-390.png",
+        "metadata": "raw/test/goldens/design_system/summary-offline-390.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/summary-offline-430.png",
+        "metadata": "raw/test/goldens/design_system/summary-offline-430.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "08-expert-service/summary-pending",
+    "module": "专家服务与咨询",
+    "label": "总结整理中",
+    "state": "summary-pending",
+    "image": "08-expert-service/summary-pending/default.png",
+    "viewport": "08-expert-service/summary-pending/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/:appointmentId/summary"
+    ],
+    "mapped_design_candidates": [
+      "services/summary",
+      "services/summary-task"
+    ],
+    "production_widget_files": [
+      "lib/modules/services/presentation/consultation_summary_content.dart",
+      "lib/modules/services/presentation/consultation_summary_page.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/services/consultation_summary_test.dart",
+    "test_case": "summary content task and destinations 390.0 / 1.0",
+    "metadata": "raw/test/goldens/design_system/summary-pending-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/summary-pending-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/summary-pending-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/summary-pending-320.png",
+        "metadata": "raw/test/goldens/design_system/summary-pending-320.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/summary-pending-390.png",
+        "metadata": "raw/test/goldens/design_system/summary-pending-390.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/summary-pending-430.png",
+        "metadata": "raw/test/goldens/design_system/summary-pending-430.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "08-expert-service/summary-published",
+    "module": "专家服务与咨询",
+    "label": "TI",
+    "state": "summary-published",
+    "image": "08-expert-service/summary-published/default.png",
+    "viewport": "08-expert-service/summary-published/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/:appointmentId/summary"
+    ],
+    "mapped_design_candidates": [
+      "services/summary",
+      "services/summary-task"
+    ],
+    "production_widget_files": [
+      "lib/modules/services/presentation/consultation_summary_content.dart",
+      "lib/modules/services/presentation/consultation_summary_page.dart",
+      "lib/modules/services/presentation/mom_appointment_widgets.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/services/consultation_summary_test.dart",
+    "test_case": "summary content task and destinations 390.0 / 1.0",
+    "metadata": "raw/test/goldens/design_system/summary-published-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/summary-published-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/summary-published-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/summary-published-320.png",
+        "metadata": "raw/test/goldens/design_system/summary-published-320.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/summary-published-390.png",
+        "metadata": "raw/test/goldens/design_system/summary-published-390.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/summary-published-430.png",
+        "metadata": "raw/test/goldens/design_system/summary-published-430.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "08-expert-service/summary-refresh-error",
+    "module": "专家服务与咨询",
+    "label": "网络未连接，请连接后重试",
+    "state": "summary-refresh-error",
+    "image": "08-expert-service/summary-refresh-error/default.png",
+    "viewport": "08-expert-service/summary-refresh-error/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/:appointmentId/summary"
+    ],
+    "mapped_design_candidates": [
+      "services/summary",
+      "services/summary-task",
+      "common/loading",
+      "common/empty",
+      "common/error"
+    ],
+    "production_widget_files": [
+      "lib/modules/services/presentation/consultation_summary_content.dart",
+      "lib/modules/services/presentation/consultation_summary_page.dart",
+      "lib/modules/services/presentation/mom_appointment_widgets.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/product_feedback.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/services/consultation_summary_test.dart",
+    "test_case": "refresh failure retains publication and reloads without a task mutation",
+    "metadata": "raw/test/goldens/design_system/summary-refresh-error-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/summary-refresh-error-390.png",
+        "metadata": "raw/test/goldens/design_system/summary-refresh-error-390.png.json",
+        "width": 390,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "08-expert-service/summary-removed-action",
+    "module": "专家服务与咨询",
+    "label": "TI",
+    "state": "summary-removed-action",
+    "image": "08-expert-service/summary-removed-action/default.png",
+    "viewport": "08-expert-service/summary-removed-action/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/:appointmentId/summary"
+    ],
+    "mapped_design_candidates": [
+      "services/summary",
+      "services/summary-task"
+    ],
+    "production_widget_files": [
+      "lib/modules/services/presentation/consultation_summary_content.dart",
+      "lib/modules/services/presentation/consultation_summary_page.dart",
+      "lib/modules/services/presentation/mom_appointment_widgets.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/services/consultation_summary_test.dart",
+    "test_case": "superseded action removed by reload remains safely closable at large text",
+    "metadata": "raw/test/goldens/design_system/summary-removed-action-320-2x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/summary-removed-action-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/summary-removed-action-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "08-expert-service/summary-short-progress-320-2x-short",
+    "module": "专家服务与咨询",
+    "label": "TI",
+    "state": "summary-short-progress-320-2x-short",
+    "image": "08-expert-service/summary-short-progress-320-2x-short/default.png",
+    "viewport": "08-expert-service/summary-short-progress-320-2x-short/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/:appointmentId/summary"
+    ],
+    "mapped_design_candidates": [
+      "services/summary",
+      "services/summary-task"
+    ],
+    "production_widget_files": [
+      "lib/modules/services/presentation/consultation_summary_content.dart",
+      "lib/modules/services/presentation/consultation_summary_page.dart",
+      "lib/modules/services/presentation/mom_appointment_widgets.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/services/consultation_summary_test.dart",
+    "test_case": "short large task keeps pending updates locked and retryable",
+    "metadata": "raw/test/goldens/design_system/summary-short-progress-320-2x-short.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/summary-short-progress-320-2x-short.png",
+        "metadata": "raw/test/goldens/design_system/summary-short-progress-320-2x-short.png.json",
+        "width": 320,
+        "height": 568
+      }
+    ]
+  },
+  {
+    "id": "08-expert-service/summary-short-uncertain-320-2x-short",
+    "module": "专家服务与咨询",
+    "label": "TI",
+    "state": "summary-short-uncertain-320-2x-short",
+    "image": "08-expert-service/summary-short-uncertain-320-2x-short/default.png",
+    "viewport": "08-expert-service/summary-short-uncertain-320-2x-short/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/:appointmentId/summary"
+    ],
+    "mapped_design_candidates": [
+      "services/summary",
+      "services/summary-task",
+      "common/loading",
+      "common/empty",
+      "common/error"
+    ],
+    "production_widget_files": [
+      "lib/modules/services/presentation/consultation_summary_content.dart",
+      "lib/modules/services/presentation/consultation_summary_page.dart",
+      "lib/modules/services/presentation/mom_appointment_widgets.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/product_feedback.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/services/consultation_summary_test.dart",
+    "test_case": "short large task keeps pending updates locked and retryable",
+    "metadata": "raw/test/goldens/design_system/summary-short-uncertain-320-2x-short.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/summary-short-uncertain-320-2x-short.png",
+        "metadata": "raw/test/goldens/design_system/summary-short-uncertain-320-2x-short.png.json",
+        "width": 320,
+        "height": 568
+      }
+    ]
+  },
+  {
+    "id": "08-expert-service/summary-short-updating-320-2x-short",
+    "module": "专家服务与咨询",
+    "label": "TI",
+    "state": "summary-short-updating-320-2x-short",
+    "image": "08-expert-service/summary-short-updating-320-2x-short/default.png",
+    "viewport": "08-expert-service/summary-short-updating-320-2x-short/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/:appointmentId/summary"
+    ],
+    "mapped_design_candidates": [
+      "services/summary",
+      "services/summary-task"
+    ],
+    "production_widget_files": [
+      "lib/modules/services/presentation/consultation_summary_content.dart",
+      "lib/modules/services/presentation/consultation_summary_page.dart",
+      "lib/modules/services/presentation/mom_appointment_widgets.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/services/consultation_summary_test.dart",
+    "test_case": "short large task keeps pending updates locked and retryable",
+    "metadata": "raw/test/goldens/design_system/summary-short-updating-320-2x-short.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/summary-short-updating-320-2x-short.png",
+        "metadata": "raw/test/goldens/design_system/summary-short-updating-320-2x-short.png.json",
+        "width": 320,
+        "height": 568
+      }
+    ]
+  },
+  {
+    "id": "08-expert-service/summary-superseded",
+    "module": "专家服务与咨询",
+    "label": "TI",
+    "state": "summary-superseded",
+    "image": "08-expert-service/summary-superseded/default.png",
+    "viewport": "08-expert-service/summary-superseded/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/:appointmentId/summary"
+    ],
+    "mapped_design_candidates": [
+      "services/summary",
+      "services/summary-task",
+      "common/loading",
+      "common/empty",
+      "common/error"
+    ],
+    "production_widget_files": [
+      "lib/modules/services/presentation/consultation_summary_content.dart",
+      "lib/modules/services/presentation/consultation_summary_page.dart",
+      "lib/modules/services/presentation/mom_appointment_widgets.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/product_feedback.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/services/consultation_summary_test.dart",
+    "test_case": "superseded action removed by reload remains safely closable at large text",
+    "metadata": "raw/test/goldens/design_system/summary-superseded-320-2x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/summary-superseded-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/summary-superseded-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "08-expert-service/summary-task",
+    "module": "专家服务与咨询",
+    "label": "TI",
+    "state": "summary-task",
+    "image": "08-expert-service/summary-task/default.png",
+    "viewport": "08-expert-service/summary-task/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/:appointmentId/summary"
+    ],
+    "mapped_design_candidates": [
+      "services/summary",
+      "services/summary-task"
+    ],
+    "production_widget_files": [
+      "lib/modules/services/presentation/consultation_summary_content.dart",
+      "lib/modules/services/presentation/consultation_summary_page.dart",
+      "lib/modules/services/presentation/mom_appointment_widgets.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/services/consultation_summary_test.dart",
+    "test_case": "summary content task and destinations 390.0 / 1.0",
+    "metadata": "raw/test/goldens/design_system/summary-task-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/summary-task-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/summary-task-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/summary-task-320.png",
+        "metadata": "raw/test/goldens/design_system/summary-task-320.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/summary-task-390.png",
+        "metadata": "raw/test/goldens/design_system/summary-task-390.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/summary-task-430.png",
+        "metadata": "raw/test/goldens/design_system/summary-task-430.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "08-expert-service/summary-uncertain",
+    "module": "专家服务与咨询",
+    "label": "TI",
+    "state": "summary-uncertain",
+    "image": "08-expert-service/summary-uncertain/default.png",
+    "viewport": "08-expert-service/summary-uncertain/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/:appointmentId/summary"
+    ],
+    "mapped_design_candidates": [
+      "services/summary",
+      "services/summary-task",
+      "common/loading",
+      "common/empty",
+      "common/error"
+    ],
+    "production_widget_files": [
+      "lib/modules/services/presentation/consultation_summary_content.dart",
+      "lib/modules/services/presentation/consultation_summary_page.dart",
+      "lib/modules/services/presentation/mom_appointment_widgets.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/product_feedback.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/services/consultation_summary_test.dart",
+    "test_case": "task uncertainty retries original version and locks competing updates",
+    "metadata": "raw/test/goldens/design_system/summary-uncertain-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/summary-uncertain-390.png",
+        "metadata": "raw/test/goldens/design_system/summary-uncertain-390.png.json",
+        "width": 390,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "08-expert-service/video-camera-off",
+    "module": "专家服务与咨询",
+    "label": "TI",
+    "state": "video-camera-off",
+    "image": "08-expert-service/video-camera-off/default.png",
+    "viewport": "08-expert-service/video-camera-off/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/:appointmentId/room"
+    ],
+    "mapped_design_candidates": [
+      "services/preparation",
+      "services/room",
+      "services/room-leave",
+      "services/state-53"
+    ],
+    "production_widget_files": [
+      "lib/modules/consultation/presentation/room_page.dart",
+      "lib/modules/consultation/presentation/user_video_stage.dart",
+      "lib/modules/consultation/presentation/video_stage.dart",
+      "lib/modules/services/presentation/mom_appointment_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/consultation/user_video_test.dart",
+    "test_case": "user waiting media controls and leave 390.0 x 844.0 / 1.0",
+    "metadata": "raw/test/goldens/design_system/video-camera-off-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/video-camera-off-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/video-camera-off-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/video-camera-off-320.png",
+        "metadata": "raw/test/goldens/design_system/video-camera-off-320.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/video-camera-off-390.png",
+        "metadata": "raw/test/goldens/design_system/video-camera-off-390.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/video-camera-off-430.png",
+        "metadata": "raw/test/goldens/design_system/video-camera-off-430.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "08-expert-service/video-controls",
+    "module": "专家服务与咨询",
+    "label": "TI",
+    "state": "video-controls",
+    "image": "08-expert-service/video-controls/default.png",
+    "viewport": "08-expert-service/video-controls/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/:appointmentId/room"
+    ],
+    "mapped_design_candidates": [
+      "services/preparation",
+      "services/room",
+      "services/room-leave",
+      "services/state-53"
+    ],
+    "production_widget_files": [
+      "lib/modules/consultation/presentation/room_page.dart",
+      "lib/modules/consultation/presentation/user_video_stage.dart",
+      "lib/modules/consultation/presentation/video_stage.dart",
+      "lib/modules/services/presentation/mom_appointment_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/consultation/user_video_test.dart",
+    "test_case": "user waiting media controls and leave 390.0 x 844.0 / 1.0",
+    "metadata": "raw/test/goldens/design_system/video-controls-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/video-controls-390.png",
+        "metadata": "raw/test/goldens/design_system/video-controls-390.png.json",
+        "width": 390,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "08-expert-service/video-disconnected",
+    "module": "专家服务与咨询",
+    "label": "TI",
+    "state": "video-disconnected",
+    "image": "08-expert-service/video-disconnected/default.png",
+    "viewport": "08-expert-service/video-disconnected/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/:appointmentId/room"
+    ],
+    "mapped_design_candidates": [
+      "services/preparation",
+      "services/room",
+      "services/room-leave",
+      "services/state-53"
+    ],
+    "production_widget_files": [
+      "lib/modules/consultation/presentation/room_page.dart",
+      "lib/modules/consultation/presentation/user_video_stage.dart",
+      "lib/modules/consultation/presentation/video_stage.dart",
+      "lib/modules/services/presentation/mom_appointment_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/consultation/user_video_test.dart",
+    "test_case": "user waiting media controls and leave 390.0 x 844.0 / 1.0",
+    "metadata": "raw/test/goldens/design_system/video-disconnected-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/video-disconnected-390.png",
+        "metadata": "raw/test/goldens/design_system/video-disconnected-390.png.json",
+        "width": 390,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "08-expert-service/video-disconnected-actions",
+    "module": "专家服务与咨询",
+    "label": "TI",
+    "state": "video-disconnected-actions",
+    "image": "08-expert-service/video-disconnected-actions/default.png",
+    "viewport": "08-expert-service/video-disconnected-actions/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/:appointmentId/room"
+    ],
+    "mapped_design_candidates": [
+      "services/preparation",
+      "services/room",
+      "services/room-leave",
+      "services/state-53"
+    ],
+    "production_widget_files": [
+      "lib/modules/consultation/presentation/room_page.dart",
+      "lib/modules/consultation/presentation/user_video_stage.dart",
+      "lib/modules/consultation/presentation/video_stage.dart",
+      "lib/modules/services/presentation/mom_appointment_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/consultation/user_video_test.dart",
+    "test_case": "user waiting media controls and leave 390.0 x 844.0 / 1.0",
+    "metadata": "raw/test/goldens/design_system/video-disconnected-actions-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/video-disconnected-actions-390.png",
+        "metadata": "raw/test/goldens/design_system/video-disconnected-actions-390.png.json",
+        "width": 390,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "08-expert-service/video-expert-ready",
+    "module": "专家服务与咨询",
+    "label": "TI",
+    "state": "video-expert-ready",
+    "image": "08-expert-service/video-expert-ready/default.png",
+    "viewport": "08-expert-service/video-expert-ready/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/:appointmentId/room"
+    ],
+    "mapped_design_candidates": [
+      "services/preparation",
+      "services/room",
+      "services/room-leave",
+      "services/state-53"
+    ],
+    "production_widget_files": [
+      "lib/modules/consultation/presentation/room_page.dart",
+      "lib/modules/consultation/presentation/user_video_stage.dart",
+      "lib/modules/consultation/presentation/video_stage.dart",
+      "lib/modules/services/presentation/mom_appointment_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/consultation/user_video_test.dart",
+    "test_case": "user waiting media controls and leave 390.0 x 844.0 / 1.0",
+    "metadata": "raw/test/goldens/design_system/video-expert-ready-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/video-expert-ready-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/video-expert-ready-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/video-expert-ready-320.png",
+        "metadata": "raw/test/goldens/design_system/video-expert-ready-320.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/video-expert-ready-390.png",
+        "metadata": "raw/test/goldens/design_system/video-expert-ready-390.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/video-expert-ready-430.png",
+        "metadata": "raw/test/goldens/design_system/video-expert-ready-430.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "08-expert-service/video-leave",
+    "module": "专家服务与咨询",
+    "label": "TI",
+    "state": "video-leave",
+    "image": "08-expert-service/video-leave/default.png",
+    "viewport": "08-expert-service/video-leave/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/:appointmentId/room"
+    ],
+    "mapped_design_candidates": [
+      "services/preparation",
+      "services/room",
+      "services/room-leave",
+      "services/state-53"
+    ],
+    "production_widget_files": [
+      "lib/modules/consultation/presentation/room_page.dart",
+      "lib/modules/consultation/presentation/user_video_stage.dart",
+      "lib/modules/consultation/presentation/video_stage.dart",
+      "lib/modules/services/presentation/mom_appointment_widgets.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/consultation/user_video_test.dart",
+    "test_case": "user waiting media controls and leave 390.0 x 844.0 / 1.0",
+    "metadata": "raw/test/goldens/design_system/video-leave-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/video-leave-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/video-leave-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/video-leave-320.png",
+        "metadata": "raw/test/goldens/design_system/video-leave-320.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/video-leave-390.png",
+        "metadata": "raw/test/goldens/design_system/video-leave-390.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/video-leave-430.png",
+        "metadata": "raw/test/goldens/design_system/video-leave-430.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "08-expert-service/video-media-audio-enabled",
+    "module": "专家服务与咨询",
+    "label": "TI",
+    "state": "video-media-audio-enabled",
+    "image": "08-expert-service/video-media-audio-enabled/default.png",
+    "viewport": "08-expert-service/video-media-audio-enabled/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/:appointmentId/room"
+    ],
+    "mapped_design_candidates": [
+      "services/preparation",
+      "services/room",
+      "services/room-leave",
+      "services/state-53"
+    ],
+    "production_widget_files": [
+      "lib/modules/consultation/presentation/room_page.dart",
+      "lib/modules/consultation/presentation/user_video_stage.dart",
+      "lib/modules/consultation/presentation/video_stage.dart",
+      "lib/modules/services/presentation/mom_appointment_widgets.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/consultation/user_video_test.dart",
+    "test_case": "user waiting media controls and leave 390.0 x 844.0 / 1.0",
+    "metadata": "raw/test/goldens/design_system/video-media-audio-enabled-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/video-media-audio-enabled-390.png",
+        "metadata": "raw/test/goldens/design_system/video-media-audio-enabled-390.png.json",
+        "width": 390,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "08-expert-service/video-media-error",
+    "module": "专家服务与咨询",
+    "label": "TI",
+    "state": "video-media-error",
+    "image": "08-expert-service/video-media-error/default.png",
+    "viewport": "08-expert-service/video-media-error/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/:appointmentId/room"
+    ],
+    "mapped_design_candidates": [
+      "services/preparation",
+      "services/room",
+      "services/room-leave",
+      "services/state-53"
+    ],
+    "production_widget_files": [
+      "lib/modules/consultation/presentation/room_page.dart",
+      "lib/modules/consultation/presentation/user_video_stage.dart",
+      "lib/modules/consultation/presentation/video_stage.dart",
+      "lib/modules/services/presentation/mom_appointment_widgets.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/consultation/user_video_test.dart",
+    "test_case": "user waiting media controls and leave 390.0 x 844.0 / 1.0",
+    "metadata": "raw/test/goldens/design_system/video-media-error-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/video-media-error-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/video-media-error-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/video-media-error-320.png",
+        "metadata": "raw/test/goldens/design_system/video-media-error-320.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/video-media-error-390.png",
+        "metadata": "raw/test/goldens/design_system/video-media-error-390.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/video-media-error-430.png",
+        "metadata": "raw/test/goldens/design_system/video-media-error-430.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "08-expert-service/video-reconnecting",
+    "module": "专家服务与咨询",
+    "label": "TI",
+    "state": "video-reconnecting",
+    "image": "08-expert-service/video-reconnecting/default.png",
+    "viewport": "08-expert-service/video-reconnecting/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/:appointmentId/room"
+    ],
+    "mapped_design_candidates": [
+      "services/preparation",
+      "services/room",
+      "services/room-leave",
+      "services/state-53"
+    ],
+    "production_widget_files": [
+      "lib/modules/consultation/presentation/room_page.dart",
+      "lib/modules/consultation/presentation/user_video_stage.dart",
+      "lib/modules/consultation/presentation/video_stage.dart",
+      "lib/modules/services/presentation/mom_appointment_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/consultation/user_video_test.dart",
+    "test_case": "user waiting media controls and leave 390.0 x 844.0 / 1.0",
+    "metadata": "raw/test/goldens/design_system/video-reconnecting-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/video-reconnecting-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/video-reconnecting-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/video-reconnecting-320.png",
+        "metadata": "raw/test/goldens/design_system/video-reconnecting-320.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/video-reconnecting-390.png",
+        "metadata": "raw/test/goldens/design_system/video-reconnecting-390.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/video-reconnecting-430.png",
+        "metadata": "raw/test/goldens/design_system/video-reconnecting-430.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "08-expert-service/video-waiting",
+    "module": "专家服务与咨询",
+    "label": "TI",
+    "state": "video-waiting",
+    "image": "08-expert-service/video-waiting/default.png",
+    "viewport": "08-expert-service/video-waiting/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/:appointmentId/room"
+    ],
+    "mapped_design_candidates": [
+      "services/preparation",
+      "services/room",
+      "services/room-leave",
+      "services/state-53"
+    ],
+    "production_widget_files": [
+      "lib/modules/consultation/presentation/room_page.dart",
+      "lib/modules/consultation/presentation/user_video_stage.dart",
+      "lib/modules/consultation/presentation/video_stage.dart",
+      "lib/modules/services/presentation/mom_appointment_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/consultation/user_video_test.dart",
+    "test_case": "user waiting media controls and leave 390.0 x 844.0 / 1.0",
+    "metadata": "raw/test/goldens/design_system/video-waiting-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/video-waiting-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/video-waiting-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/video-waiting-320.png",
+        "metadata": "raw/test/goldens/design_system/video-waiting-320.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/video-waiting-390.png",
+        "metadata": "raw/test/goldens/design_system/video-waiting-390.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/video-waiting-430.png",
+        "metadata": "raw/test/goldens/design_system/video-waiting-430.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  }
+]

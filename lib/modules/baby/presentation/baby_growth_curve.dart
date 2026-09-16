@@ -6,8 +6,10 @@ import '../../../domain/baby/growth_reference.dart';
 import '../../../domain/shared/local_date.dart';
 import '../../../domain/shared/resource_state.dart';
 import '../../../shared/design_system/momcozy_design_system.dart';
+import '../../../shared/design_system/mom_home_tokens.dart';
 import '../../../shared/widgets/product_feedback.dart';
 import 'baby_labels.dart';
+import '../../../shared/widgets/mom_companion_widgets.dart';
 
 class BabyGrowthCurve extends StatelessWidget {
   const BabyGrowthCurve({
@@ -47,150 +49,150 @@ class BabyGrowthCurve extends StatelessWidget {
             return date == 0 ? a.id.compareTo(b.id) : date;
           });
     final unit = metric == GrowthMetric.weight ? 'kg' : 'cm';
-    return Container(
-      padding: const EdgeInsets.fromLTRB(10, 11, 10, 9),
-      decoration: BoxDecoration(
-        color: MomCozyColors.card,
-        border: Border.all(color: MomCozyColors.border),
-        borderRadius: BorderRadius.circular(MomCozyRadii.card),
+    final metricButtons = <Widget>[
+      for (final value in GrowthMetric.values)
+        Semantics(
+          selected: value == metric,
+          child: TextButton(
+            style: TextButton.styleFrom(
+              foregroundColor: value == metric
+                  ? MomHomeTokens.teal
+                  : MomHomeTokens.rose,
+              backgroundColor: value == metric
+                  ? MomHomeTokens.mint
+                  : Colors.transparent,
+              minimumSize: const Size(44, 44),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(14),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              textStyle: const TextStyle(
+                fontFamily: 'NotoSansSCHome',
+                fontFamilyFallback: MomCozyTypography.fontFamilyFallback,
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            onPressed: () => onMetricChanged(value),
+            child: Text(growthMetricLabel(value)),
+          ),
+        ),
+    ];
+    return MomHomeSurface(
+      gradient: const LinearGradient(
+        colors: [MomHomeTokens.surface, MomHomeTokens.surface],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Wrap(
-            alignment: WrapAlignment.spaceBetween,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            spacing: 10,
-            runSpacing: 6,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+      border: MomHomeTokens.border,
+      backgroundDecoration: MomCardDecoration.chart,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              '生长趋势',
+              style: MomHomeTokens.text(16, weight: FontWeight.w700),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              '出生至 6 月 · ${babySexLabel(baby.sex)} · $unit',
+              style: MomHomeTokens.text(12, color: MomHomeTokens.secondary),
+            ),
+            const SizedBox(height: 12),
+            Container(
+              decoration: BoxDecoration(
+                color: MomHomeTokens.neutralSurface,
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: Row(
                 children: [
-                  const Text(
-                    '生长趋势',
-                    style: TextStyle(
-                      fontSize: MomCozyTypography.secondarySize,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  Text(
-                    '出生至 6 月 · ${babySexLabel(baby.sex)} · $unit',
-                    style: const TextStyle(
-                      fontSize: MomCozyTypography.microSize,
-                      color: MomCozyColors.mutedForeground,
-                    ),
-                  ),
+                  for (final button in metricButtons) Expanded(child: button),
                 ],
               ),
-              Wrap(
-                spacing: 2,
-                runSpacing: 2,
-                children: [
-                  for (final value in GrowthMetric.values)
-                    Semantics(
-                      selected: value == metric,
-                      child: TextButton(
-                        style: TextButton.styleFrom(
-                          foregroundColor: value == metric
-                              ? MomCozyColors.care
-                              : MomCozyColors.mutedForeground,
-                          backgroundColor: value == metric
-                              ? MomCozyColors.careSoft
-                              : Colors.transparent,
-                          minimumSize: const Size(44, 44),
-                          padding: const EdgeInsets.symmetric(horizontal: 8),
-                          textStyle: const TextStyle(
-                            fontFamily: MomCozyTypography.bodyFontFamily,
-                            fontFamilyFallback:
-                                MomCozyTypography.fontFamilyFallback,
-                            fontSize: MomCozyTypography.microSize,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        onPressed: () => onMetricChanged(value),
-                        child: Text(growthMetricLabel(value)),
+            ),
+            if (references.isEmpty)
+              Container(
+                margin: const EdgeInsets.only(top: 14),
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: MomHomeTokens.background,
+                  borderRadius: BorderRadius.circular(MomCozyRadii.control),
+                ),
+                child: Column(
+                  children: [
+                    const Text(
+                      '补充出生日期和出生记录性别后，才能显示对应的生长参考范围。',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: MomCozyTypography.captionSize),
+                    ),
+                    TextButton(
+                      onPressed: onEditProfile,
+                      child: const Text('完善资料'),
+                    ),
+                  ],
+                ),
+              )
+            else if (records.failure != null)
+              ProductErrorView(
+                useMomStyle: true,
+                failure: records.failure!,
+                onRetry: onRetry,
+              )
+            else if (records.loading)
+              const Padding(
+                padding: EdgeInsets.all(28),
+                child: Center(child: CircularProgressIndicator()),
+              )
+            else ...[
+              const SizedBox(height: 8),
+              Semantics(
+                label:
+                    '${baby.name}的${growthMetricLabel(metric)}记录，出生至六个月。${visible.isEmpty ? '这段时间还没有测量记录。' : visible.map((record) => '${record.recordedOn}：${babyNumber(record.value)} $unit').join('；')}。浅绿色为 WHO 同龄参考范围。',
+                child: ExcludeSemantics(
+                  child: SizedBox(
+                    height:
+                        145 *
+                        MediaQuery.textScalerOf(context).scale(1).clamp(1, 2),
+                    child: CustomPaint(
+                      painter: _GrowthPainter(
+                        birth: birth!,
+                        metric: metric,
+                        records: visible,
+                        references: references,
+                        textScaler: MediaQuery.textScalerOf(context),
+                        scale: GrowthChartScale.forRecords(metric, visible),
                       ),
                     ),
-                ],
-              ),
-            ],
-          ),
-          if (references.isEmpty)
-            Container(
-              margin: const EdgeInsets.only(top: 8),
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: MomCozyColors.secondary,
-                borderRadius: BorderRadius.circular(MomCozyRadii.control),
-              ),
-              child: Column(
-                children: [
-                  const Text(
-                    '补充出生日期和出生记录性别后，才能显示对应的生长参考范围。',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: MomCozyTypography.captionSize),
                   ),
-                  TextButton(
-                    onPressed: onEditProfile,
-                    child: const Text('完善资料'),
-                  ),
-                ],
+                ),
               ),
-            )
-          else if (records.failure != null)
-            ProductErrorView(failure: records.failure!, onRetry: onRetry)
-          else if (records.loading)
-            const Padding(
-              padding: EdgeInsets.all(28),
-              child: Center(child: CircularProgressIndicator()),
-            )
-          else ...[
-            const SizedBox(height: 8),
-            Semantics(
-              label:
-                  '${baby.name}的${growthMetricLabel(metric)}记录，出生至六个月。${visible.isEmpty ? '这段时间还没有测量记录。' : visible.map((record) => '${record.recordedOn}：${babyNumber(record.value)} $unit').join('；')}。浅绿色为 WHO 同龄参考范围。',
-              child: ExcludeSemantics(
-                child: SizedBox(
-                  height:
-                      145 *
-                      MediaQuery.textScalerOf(context).scale(1).clamp(1, 2),
-                  child: CustomPaint(
-                    painter: _GrowthPainter(
-                      birth: birth!,
-                      metric: metric,
-                      records: visible,
-                      references: references,
-                      textScaler: MediaQuery.textScalerOf(context),
-                      scale: GrowthChartScale.forRecords(metric, visible),
+              if (visible.isEmpty)
+                const Padding(
+                  padding: EdgeInsets.only(bottom: 8),
+                  child: Text(
+                    '出生至六个月还没有测量记录。',
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: MomHomeTokens.secondary,
                     ),
                   ),
                 ),
-              ),
-            ),
-            if (visible.isEmpty)
-              const Padding(
-                padding: EdgeInsets.only(bottom: 8),
-                child: Text(
-                  '出生至六个月还没有测量记录。',
-                  style: TextStyle(
-                    fontSize: MomCozyTypography.labelSize,
-                    color: MomCozyColors.mutedForeground,
-                  ),
+            ],
+            if (references.isNotEmpty) ...[
+              const SizedBox(height: 8),
+              const Divider(height: 1, color: MomHomeTokens.border),
+              const SizedBox(height: 8),
+              Text(
+                '${visible.isEmpty ? '记录后会显示${baby.name}的变化' : '深色线是${baby.name}的记录'}，浅绿色为 WHO 同龄参考范围。适合观察长期变化，不能根据单次测量下结论。',
+                style: const TextStyle(
+                  fontSize: 13,
+                  color: MomHomeTokens.secondary,
+                  height: 1.7,
                 ),
               ),
+            ],
           ],
-          const SizedBox(height: 8),
-          const Divider(height: 1, color: MomCozyColors.border),
-          const SizedBox(height: 8),
-          Text(
-            '深色线是${baby.name}的记录，浅绿色为 WHO 同龄参考范围。适合观察长期变化，不能根据单次测量下结论。',
-            style: const TextStyle(
-              fontSize: MomCozyTypography.microSize,
-              color: MomCozyColors.mutedForeground,
-              height: 1.5,
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -237,8 +239,8 @@ class _GrowthPainter extends CustomPainter {
           text: value,
           style: TextStyle(
             fontSize: font,
-            color: MomCozyColors.mutedForeground,
-            fontFamily: MomCozyTypography.bodyFontFamily,
+            color: MomHomeTokens.secondary,
+            fontFamily: 'NotoSansSCHome',
             fontFamilyFallback: MomCozyTypography.fontFamilyFallback,
           ),
         ),
@@ -263,7 +265,7 @@ class _GrowthPainter extends CustomPainter {
       canvas.drawLine(
         Offset(plot.left, y(value)),
         Offset(plot.right, y(value)),
-        Paint()..color = MomCozyColors.border,
+        Paint()..color = MomHomeTokens.border,
       );
       label(
         value.toStringAsFixed(1),
@@ -300,10 +302,10 @@ class _GrowthPainter extends CustomPainter {
     band.close();
     canvas.drawPath(
       band,
-      Paint()..color = MomCozyColors.careSoft.withValues(alpha: .78),
+      Paint()..color = MomHomeTokens.mint.withValues(alpha: .78),
     );
     final boundary = Paint()
-      ..color = MomCozyColors.border
+      ..color = MomHomeTokens.border
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1;
     for (final path in [lower, upper]) {
@@ -331,13 +333,13 @@ class _GrowthPainter extends CustomPainter {
     canvas.drawPath(
       actual,
       Paint()
-        ..color = MomCozyColors.foreground
+        ..color = MomHomeTokens.ink
         ..style = PaintingStyle.stroke
         ..strokeWidth = 2.2,
     );
     for (final point in points) {
-      canvas.drawCircle(point, 5, Paint()..color = MomCozyColors.card);
-      canvas.drawCircle(point, 3.5, Paint()..color = MomCozyColors.foreground);
+      canvas.drawCircle(point, 5, Paint()..color = MomHomeTokens.surface);
+      canvas.drawCircle(point, 3.5, Paint()..color = MomHomeTokens.ink);
     }
   }
 

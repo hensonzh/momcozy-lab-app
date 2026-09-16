@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'auth_login_chrome.dart';
+import '../../../shared/widgets/mom_settings_widgets.dart';
 
 import 'package:flutter/material.dart';
 import '../../../shared/design_system/momcozy_design_system.dart';
@@ -49,54 +51,65 @@ class _MomCozyInviteAuthPageState extends State<MomCozyInviteAuthPage> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Scaffold(
-      body: MomCozyPageBody(
-        child: Center(
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: MomCozyInsets.page,
+    return Theme(
+      data: authLoginTheme(Theme.of(context)),
+      child: Scaffold(
+        body: MomCozyPageBody(
+          maxWidth: MomCozyLayout.maxAppWidth,
+          child: Align(
+            alignment: Alignment.topCenter,
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 28),
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
               child: Column(
-                mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Icon(
-                    Icons.lock_outline_rounded,
-                    size: MomCozyIconSizes.feature,
-                    color: theme.colorScheme.primary,
+                  const AuthLoginHeader(
+                    title: '欢迎使用',
+                    subtitle: '使用邀请码继续',
+                    compact: true,
                   ),
-                  if (_errorText != null) ...[
-                    const SizedBox(height: MomCozySpacing.card),
-                    Text(
-                      _errorText!,
-                      key: const ValueKey('auth-error-text'),
-                      style: TextStyle(color: theme.colorScheme.error),
-                    ),
-                  ],
-                  const SizedBox(height: MomCozySpacing.card),
-                  TextField(
-                    key: const ValueKey('auth-invite-code-field'),
-                    controller: _inviteCodeController,
-                    focusNode: _inviteCodeFocusNode,
-                    enabled: !_submitting,
-                    textInputAction: TextInputAction.done,
-                    textCapitalization: TextCapitalization.characters,
-                    autocorrect: false,
-                    enableSuggestions: false,
-                    decoration: InputDecoration(
-                      labelText: '邀请码',
-                      hintText: '请输入邀请码',
-                      floatingLabelBehavior: FloatingLabelBehavior.always,
-                      prefixIcon: const Icon(Icons.key_rounded),
-                    ),
-                    onSubmitted: (_) => _submitInvite(),
-                  ),
-                  const SizedBox(height: MomCozySpacing.card),
-                  MomCozyPrimaryButton(
-                    key: const ValueKey('auth-invite-login-button'),
-                    onPressed: _submitting ? null : _submitInvite,
-                    loading: _submitting,
-                    child: const Text('邀请码登录'),
+                  MomSettingsCard(
+                    children: [
+                      if (_errorText != null)
+                        AuthNotice(
+                          _errorText!,
+                          error: true,
+                          textKey: const ValueKey('auth-error-text'),
+                        ),
+                      TextField(
+                        key: const ValueKey('auth-invite-code-field'),
+                        controller: _inviteCodeController,
+                        focusNode: _inviteCodeFocusNode,
+                        enabled: !_submitting,
+                        textInputAction: TextInputAction.done,
+                        textCapitalization: TextCapitalization.characters,
+                        autocorrect: false,
+                        enableSuggestions: false,
+                        decoration: InputDecoration(
+                          labelText: '邀请码',
+                          hintText: '请输入邀请码',
+                          floatingLabelBehavior: FloatingLabelBehavior.always,
+                          prefixIcon: const Icon(Icons.key_rounded),
+                        ),
+                        onSubmitted: (_) => _submitInvite(),
+                      ),
+                      FilledButton(
+                        key: const ValueKey('auth-invite-login-button'),
+                        onPressed: _submitting ? null : _submitInvite,
+                        style: FilledButton.styleFrom(
+                          minimumSize: const Size.fromHeight(48),
+                        ),
+                        child: _submitting
+                            ? const SizedBox.square(
+                                dimension: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : const Text('邀请码登录'),
+                      ),
+                    ],
                   ),
                 ],
               ),

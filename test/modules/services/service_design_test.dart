@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -15,12 +16,117 @@ import 'package:momcozy_flutter_app/modules/services/presentation/appointment_de
 import 'package:momcozy_flutter_app/services/consultations/intake_codec.dart';
 import 'package:momcozy_flutter_app/services/care/care_codec.dart';
 import 'package:momcozy_flutter_app/shared/design_system/momcozy_theme.dart';
+import 'package:momcozy_flutter_app/shared/design_system/mom_home_tokens.dart';
 import '../../support/momcozy_test_fonts.dart';
 
 void main() {
   setUpAll(loadMomCozyTestFonts);
+  testWidgets('home keeps booking disabled until appointment status is known', (
+    tester,
+  ) async {
+    final pending = Completer<BookingContext>();
+    final appointments = _HomeAppointments(pending: pending.future);
+    final care = _Repository(active: true);
+    await tester.pumpWidget(
+      _host(
+        Scaffold(
+          body: SingleChildScrollView(
+            child: ExpertSupportSection(
+              repository: care,
+              appointmentRepository: appointments,
+              now: () => DateTime.utc(2026, 9, 8, 15, 30),
+              onCatalog: () async {},
+              onProgress: (_) async {},
+              onBook: (_) async {},
+            ),
+          ),
+        ),
+        1,
+      ),
+    );
+    await tester.pump();
+    await tester.pump();
+    expect(find.text('正在读取预约…'), findsOneWidget);
+    expect(
+      tester
+          .widget<FilledButton>(find.widgetWithText(FilledButton, '预约咨询'))
+          .onPressed,
+      isNull,
+    );
+    pending.completeError(StateError('offline'));
+    await tester.pumpAndSettle();
+    expect(find.text('预约暂时未载入，可在服务进度中查看'), findsOneWidget);
+    expect(
+      tester
+          .widget<FilledButton>(find.widgetWithText(FilledButton, '预约咨询'))
+          .onPressed,
+      isNull,
+    );
+    await tester.pumpWidget(const SizedBox());
+  });
   for (final width in [320.0, 390.0, 430.0]) {
     for (final scale in [1.0, 2.0]) {
+      testWidgets(
+        'home displays and opens confirmed appointment at $width / $scale',
+        (tester) async {
+          tester.view.physicalSize = Size(width, 844);
+          tester.view.devicePixelRatio = 1;
+          addTearDown(tester.view.resetPhysicalSize);
+          addTearDown(tester.view.resetDevicePixelRatio);
+          CareAppointment? opened;
+          var booked = false;
+          await tester.pumpWidget(
+            _host(
+              Scaffold(
+                body: SingleChildScrollView(
+                  child: ExpertSupportSection(
+                    repository: _Repository(active: true),
+                    appointmentRepository: _HomeAppointments(),
+                    now: () => DateTime.utc(2026, 9, 8, 15, 30),
+                    onCatalog: () async {},
+                    onProgress: (_) async {},
+                    onBook: (_) async {
+                      booked = true;
+                    },
+                    onAppointment: (value) async {
+                      opened = value;
+                    },
+                  ),
+                ),
+              ),
+              scale,
+            ),
+          );
+          await tester.pumpAndSettle();
+          // Asset decoding runs outside fake time; settle it before the golden.
+          await tester.runAsync(
+            () => precacheImage(
+              const AssetImage(MomHomeAssets.experts),
+              tester.element(find.byType(ExpertSupportSection)),
+            ),
+          );
+          await tester.pumpAndSettle();
+          expect(find.text('Test IBCLC'), findsOneWidget);
+          expect(find.text('00:30:00'), findsOneWidget);
+          expect(find.text('预约咨询'), findsNothing);
+          expect(tester.takeException(), isNull);
+          if (scale == 1) {
+            await expectLater(
+              find.byType(MaterialApp),
+              matchesGoldenFile(
+                '../../goldens/design_system/expert-appointment-${width.toInt()}.png',
+              ),
+            );
+          }
+          await tester.ensureVisible(find.text('查看预约'));
+          await tester.tap(find.text('查看预约'));
+          await tester.pumpAndSettle();
+          expect(opened?.id, _Appointments().value.id);
+          expect(booked, isFalse);
+          await tester.pumpWidget(const SizedBox());
+        },
+      );
+
       testWidgets('appointment detail at $width / $scale', (tester) async {
         tester.view.physicalSize = Size(width, 844);
         tester.view.devicePixelRatio = 1;
@@ -70,8 +176,8 @@ void main() {
           );
         }
         for (final entry in {
-          'Appointment preparation': 'intake',
-          'Consultation room': 'room',
+          (appointment.intakeVersion > 0 ? '查看信息采集表' : '填写信息采集表'): 'intake',
+          '咨询前准备': 'room',
         }.entries) {
           await tester.scrollUntilVisible(find.text(entry.key), 240);
           await tester.pumpAndSettle();
@@ -139,6 +245,79 @@ void main() {
           },
         );
       }
+      testWidgets('catalog owned and pending actions at $width / $scale', (
+        tester,
+      ) async {
+        tester.view.physicalSize = Size(width, 844);
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+        for (final pending in [false, true]) {
+          final repo = _Repository(
+            active: !pending,
+            pending: pending,
+            withProviders: true,
+          );
+          ServicePackage? selected;
+          await tester.pumpWidget(
+            _host(
+              ServiceCatalogPage(
+                key: ValueKey(pending),
+                repository: repo,
+                onSelect: (value) => selected = value,
+                onBack: () {},
+              ),
+              scale,
+            ),
+          );
+          await tester.pumpAndSettle();
+          final action = find.text(pending ? '继续付款' : '查看我的服务');
+          // Large text makes the service summary taller than one viewport.
+          // Exercise the same scrolling path as a user before tapping it.
+          for (
+            var i = 0;
+            i < 20 && action.hitTestable().evaluate().isEmpty;
+            i++
+          ) {
+            await tester.drag(find.byType(ListView), const Offset(0, -240));
+            await tester.pumpAndSettle();
+          }
+          await tester.ensureVisible(action);
+          await tester.pumpAndSettle();
+          await tester.tap(action);
+          expect(selected?.id, 'feeding-confidence');
+          if (!pending && scale == 1) {
+            await expectLater(
+              find.byType(MaterialApp),
+              matchesGoldenFile(
+                '../../goldens/design_system/services-owned-${width.toInt()}.png',
+              ),
+            );
+          }
+          await tester.scrollUntilVisible(
+            find.text('了解团队'),
+            -250,
+            scrollable: find.byType(Scrollable).first,
+          );
+          await tester.pumpAndSettle();
+          await tester.tap(find.text('了解团队'));
+          await tester.pumpAndSettle();
+          expect(find.text('Test IBCLC'), findsOneWidget);
+          expect(find.text('English · 中文'), findsOneWidget);
+          expect(tester.takeException(), isNull);
+          if (!pending && scale == 1) {
+            await expectLater(
+              find.byType(MaterialApp),
+              matchesGoldenFile(
+                '../../goldens/design_system/service-team-populated-${width.toInt()}.png',
+              ),
+            );
+          }
+          await tester.tap(find.text('关闭'));
+          await tester.pumpAndSettle();
+          expect(find.text('Test IBCLC'), findsNothing);
+        }
+      });
       testWidgets('service catalog at $width / $scale', (tester) async {
         tester.view.physicalSize = Size(width, 844);
         tester.view.devicePixelRatio = 1;
@@ -167,10 +346,19 @@ void main() {
             ),
           );
         }
-        await tester.tap(find.text('IBCLC 专家团队'));
+        await tester.tap(find.text('了解团队'));
         await tester.pumpAndSettle();
         expect(tester.takeException(), isNull);
-        expect(find.text('认识专家团队'), findsOneWidget);
+        expect(find.text('IBCLC 专家团队'), findsOneWidget);
+        if (scale == 1) {
+          await expectLater(
+            find.byType(MaterialApp),
+            matchesGoldenFile(
+              '../../goldens/design_system/service-team-${width.toInt()}.png',
+            ),
+          );
+        }
+
         await tester.tap(find.text('关闭'));
         await tester.pumpAndSettle();
         final choose = find.text('查看方案 →').first;
@@ -178,7 +366,7 @@ void main() {
         await tester.pumpAndSettle();
         await tester.tap(choose);
         expect(selected?.id, repository.data.packages.first.id);
-        await tester.tap(find.byType(BackButton));
+        await tester.tap(find.text('返回'));
         expect(back, isTrue);
       });
       testWidgets('active expert support at $width / $scale', (tester) async {
@@ -246,9 +434,13 @@ Widget _host(Widget child, double scale) => MaterialApp(
 );
 
 class _Repository extends Fake implements CareRepository {
-  _Repository({this.active = false});
-  final bool active;
-  final data = readServiceCatalog(
+  _Repository({
+    this.active = false,
+    this.pending = false,
+    this.withProviders = false,
+  });
+  final bool active, pending, withProviders;
+  final _data = readServiceCatalog(
     Map<String, Object?>.from(
       jsonDecode(
             File(
@@ -258,16 +450,34 @@ class _Repository extends Fake implements CareRepository {
           as Map,
     ),
   );
+  ServiceCatalog get data => ServiceCatalog(
+    packages: _data.packages,
+    providers: withProviders
+        ? const [
+            CareProvider(
+              id: 'provider',
+              displayName: 'Test IBCLC',
+              timezone: 'America/Los_Angeles',
+              regions: ['CA'],
+              languages: ['English', '中文'],
+              bio: '支持含乳调整与喂养节奏，结合连续记录提供跟进。',
+              sandbox: true,
+            ),
+          ]
+        : _data.providers,
+    availableRegions: _data.availableRegions,
+    paymentMode: _data.paymentMode,
+  );
   @override
   Future<ServiceCatalog> catalog() async => data;
   @override
-  Future<CareOverview> overview() async => active
+  Future<CareOverview> overview() async => active || pending
       ? CareOverview(
           orders: [
             CareOrder(
               id: 'order',
               packageId: 'feeding-confidence',
-              status: CareOrderStatus.paid,
+              status: pending ? CareOrderStatus.pending : CareOrderStatus.paid,
               priceMinor: 21900,
               currency: 'USD',
               durationDays: 7,
@@ -279,18 +489,20 @@ class _Repository extends Fake implements CareRepository {
               updatedAt: DateTime(2026, 9, 8, 10),
             ),
           ],
-          episodes: const [
-            CareEpisode(
-              id: 'episode',
-              orderId: 'order',
-              packageId: 'feeding-confidence',
-              status: CareEpisodeStatus.active,
-              stage: CareStage.preparation,
-              totalSessions: 2,
-              remainingSessions: 2,
-              version: 1,
-            ),
-          ],
+          episodes: pending
+              ? const []
+              : const [
+                  CareEpisode(
+                    id: 'episode',
+                    orderId: 'order',
+                    packageId: 'feeding-confidence',
+                    status: CareEpisodeStatus.active,
+                    stage: CareStage.preparation,
+                    totalSessions: 2,
+                    remainingSessions: 2,
+                    version: 1,
+                  ),
+                ],
         )
       : const CareOverview(orders: [], episodes: []);
 }
@@ -308,4 +520,18 @@ class _Appointments extends Fake implements AppointmentRepository {
   ).appointment;
   @override
   Future<CareAppointment> read(String appointmentId) async => value;
+}
+
+class _HomeAppointments extends Fake implements AppointmentRepository {
+  _HomeAppointments({this.pending});
+  final Future<BookingContext>? pending;
+  @override
+  Future<BookingContext> context(String episodeId) async =>
+      pending ??
+      BookingContext(
+        episode: (await _Repository(active: true).overview()).episodes.first,
+        providers: const [],
+        appointments: [_Appointments().value],
+        serverTime: DateTime.utc(2026, 9, 8, 15, 30),
+      );
 }

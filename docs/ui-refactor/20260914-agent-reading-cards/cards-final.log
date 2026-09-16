@@ -1,0 +1,10 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_me_design_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: Agent cards and dialog at 320.0 / 1.0
+00:00 +1: Agent cards and dialog at 320.0 / 2.0
+00:00 +2: Agent cards and dialog at 390.0 / 1.0
+00:00 +3: Agent cards and dialog at 390.0 / 2.0
+00:00 +4: Agent cards and dialog at 430.0 / 1.0
+00:01 +5: Agent cards and dialog at 430.0 / 2.0
+00:01 +6: (tearDownAll)
+00:01 +6: All tests passed!

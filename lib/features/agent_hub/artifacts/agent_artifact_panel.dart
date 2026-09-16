@@ -1,15 +1,10 @@
-import 'dart:ui' as ui;
-
+import 'cards/agent_result_card.dart';
+import 'package:momcozy_flutter_app/shared/design_system/mom_home_tokens.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:momcozy_flutter_app/shared/widgets/momcozy_components.dart';
-import 'package:momcozy_flutter_app/shared/design_system/momcozy_design_system.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_model.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_card_export.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/cards/agent_artifact_card_registry.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/artifacts/forms/agent_artifact_form_dialog.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/data/card_export.dart';
 
 class AgentArtifactPanel extends StatelessWidget {
   const AgentArtifactPanel({
@@ -20,7 +15,6 @@ class AgentArtifactPanel extends StatelessWidget {
     this.formSubmissionsListenable,
     this.formPresentationSession,
     this.autoPresentForms = false,
-    this.cardExportService = const PlatformAgentCardExportService(),
   });
 
   final List<AgentArtifactCardView> cards;
@@ -30,7 +24,6 @@ class AgentArtifactPanel extends StatelessWidget {
   formSubmissionsListenable;
   final AgentArtifactFormPresentationSession? formPresentationSession;
   final bool autoPresentForms;
-  final AgentCardExportService cardExportService;
 
   @override
   Widget build(BuildContext context) {
@@ -48,20 +41,6 @@ class AgentArtifactPanel extends StatelessWidget {
 
   Widget _buildCard(AgentArtifactCardView card) {
     if (card.isForm) return _buildForm(card);
-    if (_isExportableSpecializedCard(card)) {
-      return _AgentExportableArtifactCard(
-        key: ValueKey('agent-card-export-wrapper-${card.id}'),
-        card: card,
-        exportService: cardExportService,
-        builder: (exportControl) =>
-            _specializedArtifactCard(
-              card: card,
-              onAction: onAction,
-              exportControl: exportControl,
-            ) ??
-            _AgentArtifactGenericCard(card: card, onAction: onAction),
-      );
-    }
     return _specializedArtifactCard(card: card, onAction: onAction) ??
         _AgentArtifactGenericCard(card: card, onAction: onAction);
   }
@@ -103,86 +82,40 @@ class _AgentArtifactGenericCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
-
-    return MomCozySurface(
+    return AgentResultCard(
       key: ValueKey('agent-artifact-card-${card.id}'),
-      padding: EdgeInsets.zero,
-      child: Padding(
-        padding: MomCozyInsets.compactCard,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Icon(
-                  Icons.dashboard_customize_outlined,
-                  size: 18,
-                  color: colorScheme.primary,
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    card.title,
-                    style: textTheme.titleSmall?.copyWith(
-                      color: MomCozyColors.foreground,
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
-                ),
-                if (card.statusLabel != null) ...[
-                  const SizedBox(width: 8),
-                  Text(
-                    card.statusLabel!,
-                    style: textTheme.labelSmall?.copyWith(
-                      color: colorScheme.primary,
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
-                ],
-              ],
-            ),
-            if (card.content != null) ...[
-              const SizedBox(height: 8),
-              Text(
-                card.content!,
-                style: textTheme.bodySmall?.copyWith(
-                  height: 1.35,
-                  color: MomCozyColors.mutedForeground,
-                ),
-              ),
-            ],
-            for (final row in card.rows) ...[
-              const SizedBox(height: 8),
-              Text(
-                row,
-                style: textTheme.bodySmall?.copyWith(
-                  height: 1.35,
-                  color: MomCozyColors.mutedForeground,
-                ),
-              ),
-            ],
-            if (card.actions.isNotEmpty) ...[
-              const SizedBox(height: 10),
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: [
-                  for (var index = 0; index < card.actions.length; index++)
-                    OutlinedButton.icon(
-                      key: ValueKey('agent-artifact-action-${card.id}-$index'),
-                      onPressed: () => onAction?.call(card.actions[index]),
-                      icon: Icon(card.actions[index].icon),
-                      label: Text(card.actions[index].label),
-                    ),
-                ],
-              ),
-            ],
-          ],
-        ),
+      title: card.title,
+      status: card.statusLabel,
+      icon: const Icon(
+        Icons.dashboard_customize_outlined,
+        size: 22,
+        color: MomHomeTokens.teal,
       ),
+      children: [
+        if (card.content?.isNotEmpty == true)
+          Text(card.content!, style: agentResultBodyStyle),
+        for (final row in card.rows)
+          Padding(
+            padding: const EdgeInsets.only(top: 8),
+            child: Text(row, style: agentResultBodyStyle),
+          ),
+        if (card.actions.isNotEmpty) ...[
+          if (card.content?.isNotEmpty == true || card.rows.isNotEmpty)
+            const SizedBox(height: 12),
+          for (var index = 0; index < card.actions.length; index++) ...[
+            if (index > 0) const SizedBox(height: 8),
+            FilledButton.icon(
+              key: ValueKey('agent-artifact-action-${card.id}-$index'),
+              style: agentResultButtonStyle(),
+              onPressed: onAction == null
+                  ? null
+                  : () => onAction!(card.actions[index]),
+              icon: Icon(card.actions[index].icon, size: 18),
+              label: Text(card.actions[index].label),
+            ),
+          ],
+        ],
+      ],
     );
   }
 }
@@ -190,7 +123,6 @@ class _AgentArtifactGenericCard extends StatelessWidget {
 Widget? _specializedArtifactCard({
   required AgentArtifactCardView card,
   ValueChanged<AgentArtifactActionView>? onAction,
-  Widget? exportControl,
 }) {
   final registeredCard = AgentArtifactCardRegistry.build(
     card: card,
@@ -206,111 +138,6 @@ Widget? _specializedArtifactCard({
   };
 }
 
-bool _isExportableSpecializedCard(AgentArtifactCardView card) {
-  return switch (card.presentationKind) {
-    _ => false,
-  };
-}
-
-typedef _ExportableArtifactCardBuilder = Widget Function(Widget? exportControl);
-
-class _AgentExportableArtifactCard extends StatefulWidget {
-  const _AgentExportableArtifactCard({
-    super.key,
-    required this.card,
-    required this.exportService,
-    required this.builder,
-  });
-
-  final AgentArtifactCardView card;
-  final AgentCardExportService exportService;
-  final _ExportableArtifactCardBuilder builder;
-
-  @override
-  State<_AgentExportableArtifactCard> createState() =>
-      _AgentExportableArtifactCardState();
-}
-
-class _AgentExportableArtifactCardState
-    extends State<_AgentExportableArtifactCard> {
-  final GlobalKey _captureBoundaryKey = GlobalKey();
-  bool _busy = false;
-  bool _hideExportControl = false;
-
-  @override
-  Widget build(BuildContext context) {
-    final exportControl = _hideExportControl
-        ? null
-        : OutlinedButton.icon(
-            key: ValueKey('agent-card-export-${widget.card.id}'),
-            onPressed: _busy ? null : _export,
-            icon: _busy
-                ? const SizedBox.square(
-                    dimension: 16,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                : const Icon(Icons.download_rounded, size: 18),
-            label: Text(_busy ? '保存中' : '保存图片'),
-          );
-
-    return RepaintBoundary(
-      key: _captureBoundaryKey,
-      child: ColoredBox(
-        color: MomCozyColors.card,
-        child: widget.builder(exportControl),
-      ),
-    );
-  }
-
-  Future<void> _export() async {
-    if (_busy) return;
-    setState(() {
-      _busy = true;
-      _hideExportControl = true;
-    });
-    try {
-      await precacheImage(const AssetImage(MomCozyAssets.momcozyLogo), context);
-      await WidgetsBinding.instance.endOfFrame;
-      if (!mounted) return;
-      final boundary = _captureBoundaryKey.currentContext?.findRenderObject();
-      if (boundary is! RenderRepaintBoundary) return;
-      final pixelRatio = MediaQuery.devicePixelRatioOf(
-        context,
-      ).clamp(2.0, 3.0).toDouble();
-      final image = await boundary.toImage(pixelRatio: pixelRatio);
-      try {
-        final data = await image.toByteData(format: ui.ImageByteFormat.png);
-        if (data == null) return;
-        if (mounted) {
-          setState(() => _hideExportControl = false);
-        }
-        await widget.exportService.sharePng(
-          bytes: data.buffer.asUint8List(
-            data.offsetInBytes,
-            data.lengthInBytes,
-          ),
-          filename: buildAgentCardExportFilename(
-            cardType:
-                widget.card.cardType ?? widget.card.artifactType ?? 'card',
-            now: DateTime.now(),
-          ),
-        );
-      } finally {
-        image.dispose();
-      }
-    } catch (_) {
-      // Export failures stay internal so the conversation remains uninterrupted.
-    } finally {
-      if (mounted) {
-        setState(() {
-          _busy = false;
-          _hideExportControl = false;
-        });
-      }
-    }
-  }
-}
-
 class _AgentUnsupportedArtifactCard extends StatelessWidget {
   const _AgentUnsupportedArtifactCard({required this.card});
 
@@ -318,45 +145,15 @@ class _AgentUnsupportedArtifactCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    return MomCozySurface(
+    return AgentResultCard(
       key: ValueKey('agent-artifact-unsupported-${card.id}'),
-      padding: EdgeInsets.zero,
-      child: Padding(
-        padding: MomCozyInsets.compactCard,
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Icon(
-              Icons.info_outline_rounded,
-              size: 20,
-              color: MomCozyColors.mutedForeground,
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    card.title,
-                    style: textTheme.titleSmall?.copyWith(
-                      color: MomCozyColors.foreground,
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    '当前 App 暂不支持此内容版本（${card.schemaVersion}）。',
-                    style: textTheme.bodySmall?.copyWith(
-                      color: MomCozyColors.mutedForeground,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
+      title: card.title,
+      icon: const Icon(
+        Icons.info_outline_rounded,
+        size: 22,
+        color: MomHomeTokens.secondary,
       ),
+      description: '此内容暂时无法显示。你可以继续对话。',
     );
   }
 }

@@ -11,7 +11,8 @@ class MomCozySpacing {
   static const card = 20.0;
   static const spacious = 32.0;
 
-  // Roles extracted from the current Me home/editor, not another spacing grid.
+  // Shared roles from the approved product design; page-specific overrides
+  // are documented in docs/ui-reference/common/design-system.md.
   static const pageGutter = 8.0;
   static const statusGap = 10.0;
   static const headingGap = 14.0;
@@ -26,6 +27,7 @@ class MomCozyInsets {
     MomCozySpacing.pageGutter,
     MomCozySpacing.homeBottom,
   );
+  static const home = EdgeInsets.fromLTRB(8, 27, 8, 32);
   static const card = EdgeInsets.all(MomCozySpacing.card);
   static const compactCard = EdgeInsets.all(MomCozySpacing.page);
   static const field = EdgeInsets.symmetric(
@@ -54,8 +56,54 @@ class MomCozyTapTargets {
 }
 
 class MomCozyColors {
+  // Service timeline: src/styles/me-service-progress.css.
+  static const timelineBackground = Color(0xfffcfaf7);
+  static const timelineSurface = Color(0xfffffefd);
+  static const timelineBorder = Color(0xffe2e2dd);
+  static const timelineLine = Color(0xffd7dedd);
+  static const timelineAccent = Color(0xff456c79);
+  static const timelineLatestBorder = Color(0xff7ea0a7);
+  static const timelineMuted = Color(0xff777b76);
   const MomCozyColors._();
 
+  // Cozymate palette from the approved me-agent.css reference.
+  static const diaryHeader = Color(0xff3b2c23);
+  static const diaryInk = Color(0xff49392f);
+  static const diaryMuted = Color(0xff826f5e);
+  static const diaryBright = Color(0xfffff8f1);
+  static const diaryMeta = Color(0xffd1c1b3);
+  static const diarySelection = Color(0xffeadbcc);
+  static const diarySelectionBorder = Color(0xff9d8471);
+  static const recordChoiceSurface = Color(0xfff1e7dd);
+  static const recordChoiceBackground = Color(0xfffbf7f2);
+  static const serviceTeamSurface = Color(0xfff7fbfb);
+  static const summaryIntroStart = Color(0xfff2e7e3);
+  static const summaryIntroEnd = Color(0xfffbf5f3);
+  static const summaryTitle = Color(0xff5e4b50);
+  static const summaryFocusBorder = Color(0xffdfc1c5);
+  static const serviceTeamBorder = Color(0xffc8dde0);
+  static const serviceTeamInk = Color(0xff456573);
+  static const servicePurchasedSurface = Color(0xffedf7f2);
+  static const servicePurchasedEnd = Color(0xfff7fbf9);
+  static const servicePurchasedBorder = Color(0xffc7dfd4);
+  static const servicePurchasedInk = Color(0xff426d5e);
+  static const servicePeriodSurface = Color(0xffdfeee8);
+  static const servicePeriodBorder = Color(0xffa9cdbf);
+  static const servicePeriodInk = Color(0xff315e50);
+  static const agentInk = Color(0xff352d40);
+  static const agentAccent = Color(0xff9464cc);
+  static const agentSoft = Color(0xfff0e7fa);
+  static const agentTextMuted = Color(0xff7c7087);
+  static const agentStrong = Color(0xff7943b5);
+  static const agentMuted = Color(0xff887991);
+  static const agentSurface = Color(0xfffcf9fc);
+  static const agentSuggestionSurface = Color(0xfffffcff);
+  static const agentLavender = Color(0xfff6effa);
+  static const agentGlow = Color(0xffe6d2f8);
+  static const agentPeach = Color(0xfffbe9e3);
+  static const agentBubble = Color(0xf0fffcff);
+  static const agentControl = Color(0xffeee7f4);
+  static const agentBorder = Color(0xffe0d2ee);
   static const background = Color(0xfffaf7f3);
   static const transparentBackground = Color(0x00faf7f3);
   static const foreground = Color(0xff302a29);
@@ -71,12 +119,18 @@ class MomCozyColors {
   static const warm = Color(0xffdca47a);
   static const care = Color(0xff4d846f);
   static const careSoft = Color(0xffe6f1ec);
+  static const deviceReadySurface = Color(0xfff7fbf9);
+  static const deviceReadyBorder = Color(0xffc6ddd3);
+  static const deviceErrorSurface = Color(0xfffff9f8);
+  static const deviceErrorBorder = Color(0xffe5c2c1);
   static const amber = Color(0xffa7783a);
   static const amberSoft = Color(0xfff6eddc);
   static const violet = Color(0xff8752c7);
   static const violetSoft = Color(0xfff3ebf9);
   static const blue = Color(0xff587d9c);
   static const blueSoft = Color(0xffe8f0f6);
+  static const recordValidationSurface = Color(0xfffbe6e6);
+  static const recordValidationInk = Color(0xff923f3f);
   static const danger = Color(0xffb44b4f);
   static const appBackground = Color(0xfff5f1ed);
   static const badge = Color(0xffb44b4f);
@@ -86,7 +140,32 @@ class MomCozyColors {
   static const textTertiary = Color(0xff857167);
   static const iconPrimary = Color(0xff685647);
   static const iconSecondary = mutedForeground;
-  static const navigationInactive = Color(0xff93818e);
+  static const navigationInactive = Color(0xff8e8089);
+  static const navigationSurface = Color(0xfffffcff);
+  static const navigationBorder = Color(0xffeae0f1);
+  static const navigationSelected = Color(0xfff1e8fb);
+  static const navigationAvatar = Color(0xfff0e7f6);
+  static const navigationAvatarRing = Color(0xffe8d8f7);
+  static const navigationAvatarSelectedRing = Color(0xffbf9de1);
+  static const expertDialogBarrier = Color(0x55202b31);
+  static const expertAccent = Color(0xff416874);
+  static const expertPreviewSurface = Color(0xfff4f9f9);
+  static const expertPreviewBorder = Color(0xffc8dde0);
+  static const expertSurface = Color(0xfffdfdfc);
+  static const expertBorder = Color(0xffdde1e1);
+  static const expertInk = Color(0xff303536);
+  static const expertMuted = Color(0xff777c7d);
+  static const expertSoft = Color(0xffedf1f1);
+  static const expertCountdownSurface = Color(0xfff0f0ee);
+  static const warmFormSurface = Color(0xfff8f3ed);
+  static const warmFormField = Color(0xfffffaf6);
+  static const warmFormBorder = Color(0xffe4d6c8);
+  static const warmFormSelected = Color(0xff614735);
+  static const warmFormTab = Color(0xffece2d7);
+  static const warmMetricSurface = Color(0xfff1e9df);
+  static const warmQuietSurface = Color(0xfff1e8de);
+  static const warmBadge = Color(0xffefe6dc);
+  static const warmIcon = Color(0xff8b7563);
   static const statusText = Color(0xff3b322b);
   static const statusSecondary = Color(0xff60544b);
   static const statusTertiary = Color(0xff817167);
@@ -150,6 +229,7 @@ class MomCozyRadii {
   const MomCozyRadii._();
 
   static const card = 18.0;
+  static const compactCard = 14.0;
   static const control = 12.0;
   static const pill = 999.0;
   static const featured = 22.0;
@@ -157,7 +237,7 @@ class MomCozyRadii {
   static const sheet = featured;
   static const badge = 8.0;
   static const thumbnail = 8.0;
-  static const navigation = 15.0;
+  static const navigation = 14.0;
 }
 
 class MomCozyBorders {
@@ -179,9 +259,8 @@ class MomCozyLayout {
   const MomCozyLayout._();
 
   static const maxAppWidth = 440.0;
-  static const bottomNavHeight = 84.0;
-  static const bottomNavChromeHeight = 66.0;
-  static const bottomNavCenterSize = 60.0;
+  static const bottomNavHeight = 78.0;
+  static const bottomNavCenterSize = 42.0;
   static const buttonHeight = 44.0;
   static const primaryButtonHeight = 48.0;
   static const headerHeight = 56.0;
@@ -214,7 +293,8 @@ class MomCozyTypography {
   static const fontFamily = bodyFontFamily;
   static const fontFamilyFallback = ['NotoSansSC', 'PingFang SC', 'Arial'];
 
-  // Me titles/labels inherit these metrics from its body text.
+  // Retained for workbench and explicit local component styles. User App
+  // heading metrics are set separately by momCozyTheme.
   static const lineHeight = 1.43;
   static const letterSpacing = 0.25;
 
@@ -230,6 +310,28 @@ class MomCozyTypography {
   static const pageTitleSize = 26.0;
   static const metricSize = 34.0;
   static const heroMetricSize = 54.0;
+
+  static const navigationLabel = TextStyle(
+    fontSize: labelSize,
+    height: 14 / 11,
+    letterSpacing: 0,
+    fontWeight: FontWeight.w500,
+  );
+
+  static const homeGreeting = TextStyle(
+    fontFamily: displayFontFamily,
+    fontSize: pageTitleSize,
+    fontWeight: FontWeight.w700,
+    height: 1.1,
+    letterSpacing: -1.04,
+  );
+  static const homeStage = TextStyle(
+    fontSize: secondarySize,
+    fontWeight: FontWeight.w600,
+    height: 18 / 13,
+    letterSpacing: -.325,
+    color: Color(0xff806d6a),
+  );
 
   static const pageTitle = TextStyle(
     fontSize: pageTitleSize,
@@ -297,6 +399,24 @@ class MomCozyShadows {
       blurRadius: 22,
       spreadRadius: -14,
       offset: Offset(0, 8),
+    ),
+  ];
+
+  static const navigation = [
+    BoxShadow(color: Color(0x0679548b), blurRadius: 20, offset: Offset(0, -4)),
+  ];
+
+  static List<BoxShadow> navigationAvatar({required bool selected}) => [
+    BoxShadow(
+      color: selected
+          ? MomCozyColors.navigationAvatarSelectedRing
+          : MomCozyColors.navigationAvatarRing,
+      spreadRadius: 2,
+    ),
+    BoxShadow(
+      color: selected ? const Color(0x268752c7) : const Color(0x1a8752c7),
+      blurRadius: selected ? 14 : 12,
+      offset: const Offset(0, 3),
     ),
   ];
 

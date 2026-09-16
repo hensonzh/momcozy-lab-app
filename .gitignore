@@ -1,6 +1,10 @@
 # Logs and reports
 logs/
 *.log
+# Reviewed verification logs referenced by the UI evidence documents.
+!docs/app-ui-inventory/**/*.log
+!docs/ui-refactor/**/*.log
+!docs/ui-reference/**/*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*

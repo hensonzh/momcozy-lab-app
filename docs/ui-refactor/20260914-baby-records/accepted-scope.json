@@ -1,0 +1,435 @@
+{
+  "page": {
+    "page_id": "baby-records",
+    "name": "宝宝记录历史",
+    "scope": "default",
+    "routes": [
+      "/babies/:babyId/records"
+    ],
+    "state_count": 6,
+    "inventory_page": "../app-ui-inventory/00-overview/pages/baby-records.md",
+    "refactor_status": "implemented_widget_verified",
+    "existing_scopes": [
+      "/babies/:babyId/records"
+    ],
+    "reports": [
+      "20260914-baby-records/HANDOFF.md"
+    ],
+    "final_catalog_state_audit": "six_explicit_page_states_verified",
+    "states": [
+      {
+        "state": "空",
+        "evidence": [
+          {
+            "id": "04-baby/baby-journey-history-sleep-empty",
+            "image": "04-baby/baby-journey-history-sleep-empty/default.png",
+            "observed_route": "/babies/inventory-baby/records",
+            "trigger": "Tap 睡眠 filter → empty category",
+            "extent": "viewport"
+          }
+        ],
+        "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained",
+        "refactor_acceptance": "implemented_widget_verified",
+        "refactor_evidence": {
+          "report": "20260914-baby-records/HANDOFF.md",
+          "figma_nodes": [
+            "330:1086"
+          ],
+          "widget_test": "test/modules/baby/baby_records_redesign_test.dart",
+          "test_name": "record redesign keeps paging recovery and filters",
+          "app_image": "test/goldens/design_system/baby-records-current-empty-390-1x.png"
+        }
+      },
+      {
+        "state": "列表",
+        "evidence": [
+          {
+            "id": "04-baby/baby-journey-history-first-page",
+            "image": "04-baby/baby-journey-history-first-page/default.png",
+            "observed_route": "/babies/inventory-baby/records",
+            "trigger": "Baby → monthly feeding history with 51 records, first 50 loaded",
+            "extent": "full-measured-scroll-stitch"
+          }
+        ],
+        "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained",
+        "refactor_acceptance": "implemented_widget_verified",
+        "refactor_evidence": {
+          "report": "20260914-baby-records/HANDOFF.md",
+          "figma_nodes": [
+            "329:1086"
+          ],
+          "widget_test": "test/modules/baby/baby_records_redesign_test.dart",
+          "test_name": "record redesign keeps paging recovery and filters",
+          "app_image": "test/goldens/design_system/baby-records-current-list-390-1x.png"
+        }
+      },
+      {
+        "state": "种类和日期切换",
+        "evidence": [
+          {
+            "id": "04-baby/baby-journey-history-feeding",
+            "image": "04-baby/baby-journey-history-feeding/default.png",
+            "observed_route": "/babies/inventory-baby/records",
+            "trigger": "Saved home → View all records",
+            "extent": "viewport"
+          },
+          {
+            "id": "04-baby/baby-journey-history-previous-month",
+            "image": "04-baby/baby-journey-history-previous-month/default.png",
+            "observed_route": "/babies/inventory-baby/records",
+            "trigger": "Previous month → August",
+            "extent": "viewport"
+          }
+        ],
+        "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained",
+        "refactor_acceptance": "implemented_widget_verified",
+        "refactor_evidence": {
+          "report": "20260914-baby-records/HANDOFF.md",
+          "figma_nodes": [
+            "330:1117"
+          ],
+          "widget_test": "test/modules/baby/baby_records_redesign_test.dart",
+          "test_name": "record redesign keeps paging recovery and filters",
+          "app_image": "test/goldens/design_system/baby-records-current-month-390-1x.png"
+        }
+      },
+      {
+        "state": "加载",
+        "evidence": [
+          {
+            "id": "04-baby/baby-journey-history-more-loading",
+            "image": "04-baby/baby-journey-history-more-loading/default.png",
+            "observed_route": "/babies/inventory-baby/records",
+            "trigger": "Retry page load while response pending",
+            "extent": "full-measured-scroll-stitch"
+          }
+        ],
+        "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained",
+        "refactor_acceptance": "implemented_widget_verified",
+        "refactor_evidence": {
+          "report": "20260914-baby-records/HANDOFF.md",
+          "figma_nodes": [
+            "330:1148"
+          ],
+          "widget_test": "test/modules/baby/baby_records_redesign_test.dart",
+          "test_name": "record redesign keeps paging recovery and filters",
+          "app_image": "test/goldens/design_system/baby-records-current-page-loading-390-1x.png"
+        }
+      },
+      {
+        "state": "错误",
+        "evidence": [
+          {
+            "id": "04-baby/baby-journey-history-more-error",
+            "image": "04-baby/baby-journey-history-more-error/default.png",
+            "observed_route": "/babies/inventory-baby/records",
+            "trigger": "Load more → page failure keeps first page visible",
+            "extent": "full-measured-scroll-stitch"
+          }
+        ],
+        "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained",
+        "refactor_acceptance": "implemented_widget_verified",
+        "refactor_evidence": {
+          "report": "20260914-baby-records/HANDOFF.md",
+          "figma_nodes": [
+            "330:1203"
+          ],
+          "widget_test": "test/modules/baby/baby_records_redesign_test.dart",
+          "test_name": "record redesign keeps paging recovery and filters",
+          "app_image": "test/goldens/design_system/baby-records-current-page-error-390-1x.png"
+        }
+      },
+      {
+        "state": "删除与撤销",
+        "evidence": [
+          {
+            "id": "04-baby/baby-journey-history-deleted",
+            "image": "04-baby/baby-journey-history-deleted/default.png",
+            "observed_route": "/babies/inventory-baby/records",
+            "trigger": "Confirm deletion → empty list with undo",
+            "extent": "viewport"
+          },
+          {
+            "id": "04-baby/baby-journey-history-restored",
+            "image": "04-baby/baby-journey-history-restored/default.png",
+            "observed_route": "/babies/inventory-baby/records",
+            "trigger": "Undo deletion → restored record",
+            "extent": "viewport"
+          }
+        ],
+        "acceptance": "STATE_TO_EXISTING_EVIDENCE_MAPPED; source and interaction limits retained",
+        "refactor_acceptance": "implemented_widget_verified",
+        "refactor_evidence": {
+          "report": "20260914-baby-records/HANDOFF.md",
+          "figma_nodes": [
+            "330:1262"
+          ],
+          "widget_test": "test/modules/baby/baby_pages_test.dart",
+          "test_name": "history edits and restores the same baby record"
+        }
+      }
+    ],
+    "overlays": [
+      "baby-record",
+      "baby-saved"
+    ]
+  },
+  "record_editor": {
+    "overlay_id": "baby-record",
+    "name": "宝宝记录弹窗",
+    "owners": [
+      "baby-home",
+      "baby-records"
+    ],
+    "refactor_status": "implemented_widget_verified",
+    "states": [
+      {
+        "overlay": "baby-record",
+        "state": "喂养",
+        "evidence": [
+          {
+            "id": "04-baby/baby-journey-feeding-filled",
+            "image": "04-baby/baby-journey-feeding-filled/default.png",
+            "trigger": "inventory Baby feeding save edit delete restore and history filters",
+            "extent": "viewport"
+          }
+        ],
+        "report": "BABY-JOURNEYS.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "implemented_widget_verified",
+        "refactor_evidence": {
+          "report": "20260914-baby-records/HANDOFF.md",
+          "figma_nodes": [
+            "329:1199",
+            "330:1355"
+          ],
+          "widget_tests": [
+            "test/modules/baby/baby_pages_test.dart",
+            "test/modules/baby/baby_editor_states_test.dart",
+            "test/modules/baby/baby_save_feedback_test.dart"
+          ],
+          "image_manifest": "20260914-baby-records/app-artifacts.json"
+        }
+      },
+      {
+        "overlay": "baby-record",
+        "state": "睡眠",
+        "evidence": [
+          {
+            "id": "04-baby/baby-journey-sleep-active-editor",
+            "image": "04-baby/baby-journey-sleep-active-editor/default.png",
+            "trigger": "inventory Baby sleep stool knowledge and growth interactions",
+            "extent": "viewport"
+          }
+        ],
+        "report": "BABY-JOURNEYS.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "implemented_widget_verified",
+        "refactor_evidence": {
+          "report": "20260914-baby-records/HANDOFF.md",
+          "figma_nodes": [
+            "330:1396",
+            "330:1430"
+          ],
+          "widget_tests": [
+            "test/modules/baby/baby_pages_test.dart",
+            "test/modules/baby/baby_editor_states_test.dart",
+            "test/modules/baby/baby_save_feedback_test.dart"
+          ],
+          "image_manifest": "20260914-baby-records/app-artifacts.json"
+        }
+      },
+      {
+        "overlay": "baby-record",
+        "state": "尿布",
+        "evidence": [
+          {
+            "id": "04-baby/baby-journey-wet-tab",
+            "image": "04-baby/baby-journey-wet-tab/default.png",
+            "trigger": "inventory Baby sleep stool knowledge and growth interactions",
+            "extent": "viewport"
+          },
+          {
+            "id": "04-baby/baby-journey-stool-tab",
+            "image": "04-baby/baby-journey-stool-tab/default.png",
+            "trigger": "inventory Baby sleep stool knowledge and growth interactions",
+            "extent": "full-measured-scroll-stitch"
+          }
+        ],
+        "report": "BABY-JOURNEYS.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "implemented_widget_verified",
+        "refactor_evidence": {
+          "report": "20260914-baby-records/HANDOFF.md",
+          "figma_nodes": [
+            "330:1454",
+            "330:1488"
+          ],
+          "widget_tests": [
+            "test/modules/baby/baby_pages_test.dart",
+            "test/modules/baby/baby_editor_states_test.dart",
+            "test/modules/baby/baby_save_feedback_test.dart"
+          ],
+          "image_manifest": "20260914-baby-records/app-artifacts.json"
+        }
+      },
+      {
+        "overlay": "baby-record",
+        "state": "生长",
+        "evidence": [
+          {
+            "id": "04-baby/baby-journey-growth-three-values",
+            "image": "04-baby/baby-journey-growth-three-values/default.png",
+            "trigger": "inventory Baby growth batch date validation and undo recovery",
+            "extent": "viewport"
+          }
+        ],
+        "report": "BABY-JOURNEYS.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "implemented_widget_verified",
+        "refactor_evidence": {
+          "report": "20260914-baby-records/HANDOFF.md",
+          "figma_nodes": [
+            "330:1563"
+          ],
+          "widget_tests": [
+            "test/modules/baby/baby_pages_test.dart",
+            "test/modules/baby/baby_editor_states_test.dart",
+            "test/modules/baby/baby_save_feedback_test.dart"
+          ],
+          "image_manifest": "20260914-baby-records/app-artifacts.json"
+        }
+      },
+      {
+        "overlay": "baby-record",
+        "state": "发育",
+        "evidence": [
+          {
+            "id": "04-baby/baby-journey-development-editor",
+            "image": "04-baby/baby-journey-development-editor/default.png",
+            "trigger": "inventory Baby sleep stool knowledge and growth interactions",
+            "extent": "viewport"
+          }
+        ],
+        "report": "BABY-JOURNEYS.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "implemented_widget_verified",
+        "refactor_evidence": {
+          "report": "20260914-baby-records/HANDOFF.md",
+          "figma_nodes": [
+            "330:1595"
+          ],
+          "widget_tests": [
+            "test/modules/baby/baby_pages_test.dart",
+            "test/modules/baby/baby_editor_states_test.dart",
+            "test/modules/baby/baby_save_feedback_test.dart"
+          ],
+          "image_manifest": "20260914-baby-records/app-artifacts.json"
+        }
+      },
+      {
+        "overlay": "baby-record",
+        "state": "编辑",
+        "evidence": [
+          {
+            "id": "04-baby/baby-journey-history-edit",
+            "image": "04-baby/baby-journey-history-edit/default.png",
+            "trigger": "inventory Baby feeding save edit delete restore and history filters",
+            "extent": "viewport"
+          }
+        ],
+        "report": "BABY-JOURNEYS.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "implemented_widget_verified",
+        "refactor_evidence": {
+          "report": "20260914-baby-records/HANDOFF.md",
+          "figma_nodes": [
+            "330:1638"
+          ],
+          "widget_tests": [
+            "test/modules/baby/baby_pages_test.dart",
+            "test/modules/baby/baby_editor_states_test.dart",
+            "test/modules/baby/baby_save_feedback_test.dart"
+          ],
+          "image_manifest": "20260914-baby-records/app-artifacts.json"
+        }
+      },
+      {
+        "overlay": "baby-record",
+        "state": "校验",
+        "evidence": [
+          {
+            "id": "04-baby/baby-journey-feeding-validation",
+            "image": "04-baby/baby-journey-feeding-validation/default.png",
+            "trigger": "inventory Baby feeding save edit delete restore and history filters",
+            "extent": "viewport"
+          },
+          {
+            "id": "04-baby/baby-journey-growth-invalid-value",
+            "image": "04-baby/baby-journey-growth-invalid-value/default.png",
+            "trigger": "inventory Baby growth batch date validation and undo recovery",
+            "extent": "viewport"
+          }
+        ],
+        "report": "BABY-JOURNEYS.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "implemented_widget_verified",
+        "refactor_evidence": {
+          "report": "20260914-baby-records/HANDOFF.md",
+          "figma_nodes": [
+            "330:1671"
+          ],
+          "widget_tests": [
+            "test/modules/baby/baby_pages_test.dart",
+            "test/modules/baby/baby_editor_states_test.dart",
+            "test/modules/baby/baby_save_feedback_test.dart"
+          ],
+          "image_manifest": "20260914-baby-records/app-artifacts.json"
+        }
+      },
+      {
+        "overlay": "baby-record",
+        "state": "保存",
+        "evidence": [
+          {
+            "id": "04-baby/baby-journey-record-saving",
+            "image": "04-baby/baby-journey-record-saving/default.png",
+            "trigger": "inventory Baby loading and pending save states",
+            "extent": "viewport"
+          },
+          {
+            "id": "04-baby/baby-journey-feeding-saved",
+            "image": "04-baby/baby-journey-feeding-saved/default.png",
+            "trigger": "inventory Baby feeding save edit delete restore and history filters",
+            "extent": "full-measured-scroll-stitch"
+          }
+        ],
+        "report": "BABY-JOURNEYS.md",
+        "status": "MAPPED_EXISTING_RENDERED_EVIDENCE; interaction and version scope retained",
+        "refactor_acceptance": "implemented_widget_verified",
+        "refactor_evidence": {
+          "report": "20260914-baby-records/HANDOFF.md",
+          "figma_nodes": [
+            "330:1701",
+            "330:1734"
+          ],
+          "widget_tests": [
+            "test/modules/baby/baby_pages_test.dart",
+            "test/modules/baby/baby_editor_states_test.dart",
+            "test/modules/baby/baby_save_feedback_test.dart"
+          ],
+          "image_manifest": "20260914-baby-records/app-artifacts.json"
+        }
+      }
+    ],
+    "refactor_report": "20260914-baby-records/HANDOFF.md",
+    "verified_owners": [
+      "baby-home",
+      "baby-records"
+    ]
+  },
+  "input_status": "Session A complete; existing evidence only",
+  "goal_status": "active",
+  "implementation_started": true,
+  "implementation_status": "implemented_widget_verified"
+}

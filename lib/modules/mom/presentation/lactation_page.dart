@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../shared/design_system/mom_home_tokens.dart';
 import '../../../shared/widgets/momcozy_components.dart';
 import '../../../domain/lactation/lactation_record.dart';
 import '../../../domain/shared/local_date.dart';
@@ -40,6 +41,7 @@ class _LactationPageState extends State<LactationPage> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
+    backgroundColor: MomHomeTokens.background,
     body: MomCozyPageBody(
       child: LactationPanel(
         controller: controller,

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'momcozy_design_system.dart';
+import 'momcozy_text_roles.dart';
 
-ThemeData momCozyTheme() {
+ThemeData momCozyTheme({bool isWorkbench = false}) {
   final colorScheme = const ColorScheme.light(
     primary: MomCozyColors.primary,
     onPrimary: MomCozyColors.background,
@@ -33,30 +34,8 @@ ThemeData momCozyTheme() {
     scaffoldBackgroundColor: MomCozyColors.background,
     fontFamily: MomCozyTypography.fontFamily,
     fontFamilyFallback: MomCozyTypography.fontFamilyFallback,
-    textTheme: Typography.blackCupertino
-        .merge(
-          const TextTheme(
-            headlineLarge: MomCozyTypography.pageTitle,
-            headlineMedium: MomCozyTypography.pageTitle,
-            headlineSmall: MomCozyTypography.heading,
-            titleLarge: MomCozyTypography.sectionTitle,
-            titleMedium: MomCozyTypography.title,
-            titleSmall: TextStyle(
-              fontSize: MomCozyTypography.bodySize,
-              fontWeight: FontWeight.w600,
-            ),
-            bodyLarge: TextStyle(fontSize: MomCozyTypography.bodyLargeSize),
-            bodyMedium: MomCozyTypography.body,
-            bodySmall: TextStyle(fontSize: MomCozyTypography.captionSize),
-            labelSmall: MomCozyTypography.label,
-          ),
-        )
-        .apply(
-          bodyColor: MomCozyColors.foreground,
-          displayColor: MomCozyColors.foreground,
-          fontFamily: MomCozyTypography.fontFamily,
-          fontFamilyFallback: MomCozyTypography.fontFamilyFallback,
-        ),
+    textTheme: _textTheme(isWorkbench),
+    extensions: [if (!isWorkbench) const MomCozyTextRoles()],
     dividerTheme: const DividerThemeData(
       color: MomCozyColors.border,
       thickness: 1,
@@ -66,7 +45,7 @@ ThemeData momCozyTheme() {
       color: MomCozyColors.iconPrimary,
       size: MomCozyIconSizes.standard,
     ),
-    appBarTheme: const AppBarThemeData(
+    appBarTheme: AppBarThemeData(
       backgroundColor: MomCozyColors.background,
       foregroundColor: MomCozyColors.foreground,
       surfaceTintColor: Colors.transparent,
@@ -75,9 +54,13 @@ ThemeData momCozyTheme() {
       centerTitle: false,
       toolbarHeight: MomCozyLayout.headerHeight,
       titleTextStyle: TextStyle(
-        fontFamily: MomCozyTypography.fontFamily,
+        fontFamily: isWorkbench
+            ? MomCozyTypography.fontFamily
+            : MomCozyTypography.displayFontFamily,
         fontFamilyFallback: MomCozyTypography.fontFamilyFallback,
-        fontSize: MomCozyTypography.headingSize,
+        fontSize: isWorkbench ? MomCozyTypography.headingSize : 21,
+        height: isWorkbench ? null : 1.2,
+        letterSpacing: isWorkbench ? null : -.525,
         fontWeight: FontWeight.w700,
         color: MomCozyColors.foreground,
       ),
@@ -89,10 +72,14 @@ ThemeData momCozyTheme() {
         borderRadius: BorderRadius.circular(MomCozyRadii.dialog),
       ),
       insetPadding: const EdgeInsets.all(MomCozySpacing.content),
-      titleTextStyle: const TextStyle(
-        fontFamily: MomCozyTypography.fontFamily,
+      titleTextStyle: TextStyle(
+        fontFamily: isWorkbench
+            ? MomCozyTypography.fontFamily
+            : MomCozyTypography.displayFontFamily,
         fontFamilyFallback: MomCozyTypography.fontFamilyFallback,
-        fontSize: MomCozyTypography.headingSize,
+        fontSize: isWorkbench ? MomCozyTypography.headingSize : 21,
+        height: isWorkbench ? null : 1.2,
+        letterSpacing: isWorkbench ? null : -.525,
         fontWeight: FontWeight.w700,
         color: MomCozyColors.foreground,
       ),
@@ -318,5 +305,54 @@ ThemeData momCozyTheme() {
         ),
       ),
     ),
+  );
+}
+
+TextTheme _textTheme(bool isWorkbench) {
+  final base = Typography.blackCupertino
+      .merge(
+        const TextTheme(
+          headlineLarge: MomCozyTypography.pageTitle,
+          headlineMedium: MomCozyTypography.pageTitle,
+          headlineSmall: MomCozyTypography.heading,
+          titleLarge: MomCozyTypography.sectionTitle,
+          titleMedium: MomCozyTypography.title,
+          titleSmall: TextStyle(
+            fontSize: MomCozyTypography.bodySize,
+            fontWeight: FontWeight.w600,
+          ),
+          bodyLarge: TextStyle(fontSize: MomCozyTypography.bodyLargeSize),
+          bodyMedium: MomCozyTypography.body,
+          bodySmall: TextStyle(fontSize: MomCozyTypography.captionSize),
+          labelSmall: MomCozyTypography.label,
+        ),
+      )
+      .apply(
+        bodyColor: MomCozyColors.foreground,
+        displayColor: MomCozyColors.foreground,
+        fontFamily: MomCozyTypography.fontFamily,
+        fontFamilyFallback: MomCozyTypography.fontFamilyFallback,
+      );
+  if (isWorkbench) return base;
+  // styles.css h1/h2/h3 and the approved 16-18px section-heading range.
+  TextStyle heading(
+    TextStyle style,
+    double size,
+    double height,
+    double spacing,
+  ) => style.copyWith(
+    fontFamily: MomCozyTypography.displayFontFamily,
+    fontWeight: FontWeight.w700,
+    fontSize: size,
+    height: height,
+    letterSpacing: spacing,
+  );
+  return base.copyWith(
+    headlineLarge: heading(base.headlineLarge!, 28, 1.1, -1.12),
+    headlineMedium: heading(base.headlineMedium!, 28, 1.1, -1.12),
+    headlineSmall: heading(base.headlineSmall!, 21, 1.2, -.525),
+    titleLarge: heading(base.titleLarge!, 18, 1.2, -.45),
+    // Material dropdowns also use titleMedium for input values. Keep these
+    // control roles in the body family; feature headings have explicit styles.
   );
 }

@@ -1,0 +1,50 @@
+[
+  {
+    "baseline": "test/goldens/design_system/agent-markdown-top-320-1x.png",
+    "old_sha256": "be88a9378f293372077f9dbde88cccf432de303f1cdb239d632ed65d04a90b14",
+    "new_sha256": "1f6489e21bf1206d7148dd99013c457daefd6bc5c9875507545531a0b7c28f32",
+    "diff_bbox": [
+      18,
+      104,
+      179,
+      815
+    ],
+    "reason": "Existing MomCozy avatar now decoded before capture; old baseline had empty placeholders"
+  },
+  {
+    "baseline": "test/goldens/design_system/agent-chat-320.png",
+    "old_sha256": "99cb47a253a4723ecaeffeff12ab2ebdfc2caa413ee88b6b80295693e33d818d",
+    "new_sha256": "01f99155dc770bf789bd3f889ebf638cc04e866845266db4e53e3fc41701bb85",
+    "diff_bbox": [
+      76,
+      183,
+      124,
+      292
+    ],
+    "reason": "Existing Markdown strong NotoSansSCHome bold style and text-colored list markers; old transcript baseline predates reading redesign"
+  },
+  {
+    "baseline": "test/goldens/design_system/agent-chat-390.png",
+    "old_sha256": "ba0a4278237fe0c76034e5aa8d42d824ba1b01fb71df7bb91279e3bd3afd9572",
+    "new_sha256": "dfbef5567aa97da254a09627c944c82b83853a1a0d11a7b32f5af3db0ca0270f",
+    "diff_bbox": [
+      83,
+      160,
+      131,
+      243
+    ],
+    "reason": "Existing Markdown strong NotoSansSCHome bold style and text-colored list markers; old transcript baseline predates reading redesign"
+  },
+  {
+    "baseline": "test/goldens/design_system/agent-chat-430.png",
+    "old_sha256": "0f7a6987e9405b62ace055e4316bd0c30a89bc315c22f29c5daedc8571f16544",
+    "new_sha256": "4ee5ac2b1f2cc2edb098e89dc6e1e3cda384fb2bfce2be4fa11b233b629218b4",
+    "diff_bbox": [
+      83,
+      160,
+      131,
+      243
+    ],
+    "reason": "Existing Markdown strong NotoSansSCHome bold style and text-colored list markers; old transcript baseline predates reading redesign"
+  }
+]

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/features/media/data/product_asset_repository.dart';
@@ -24,105 +25,259 @@ void main() {
     VideoPlayerPlatform.instance = previousPlatform;
   });
 
+  testWidgets(
+    'reduced motion opens fullscreen fully without elapsed animation',
+    (tester) async {
+      tester.platformDispatcher.accessibilityFeaturesTestValue =
+          const FakeAccessibilityFeatures(disableAnimations: true);
+      addTearDown(
+        tester.platformDispatcher.clearAccessibilityFeaturesTestValue,
+      );
+      await tester.pumpWidget(_host(_repository()));
+      await _pumpUntilFound(
+        tester,
+        find.byKey(const ValueKey('product-asset-video-player')),
+      );
+      await tester.tap(
+        find.byKey(const ValueKey('product-asset-video-fullscreen')),
+      );
+      await tester.pump();
+      await tester.pump();
+      final fullscreen = find.byKey(
+        const ValueKey('product-asset-video-immersive'),
+      );
+      expect(fullscreen, findsOneWidget);
+      expect(ModalRoute.of(tester.element(fullscreen))!.animation!.value, 1);
+      await tester.tap(
+        find.byKey(const ValueKey('product-asset-video-exit-fullscreen')).first,
+      );
+      await tester.pump();
+      await tester.pump();
+      expect(fullscreen, findsNothing);
+      expect(videoPlatform.createdSources, hasLength(1));
+      await tester.pumpWidget(const SizedBox());
+    },
+  );
+
   for (final width in [320.0, 390.0, 430.0]) {
     for (final scale in [1.0, 2.0]) {
-      testWidgets(
-        'video long duration, controls and fullscreen $width / $scale',
-        (tester) async {
-          await loadMomCozyTestFonts();
-          tester.view.physicalSize = Size(width, 844);
-          tester.view.devicePixelRatio = 1;
-          addTearDown(tester.view.resetPhysicalSize);
-          addTearDown(tester.view.resetDevicePixelRatio);
-          videoPlatform = FakeVideoPlayerPlatform(
-            initializations: [
-              const FakeVideoInitialization.success(
-                duration: Duration(hours: 12, minutes: 34, seconds: 56),
-              ),
-            ],
-          );
-          VideoPlayerPlatform.instance = videoPlatform;
-          await tester.pumpWidget(
-            MaterialApp(
-              debugShowCheckedModeBanner: false,
-              theme: momCozyTheme(),
-              builder: (context, child) => MediaQuery(
-                data: MediaQuery.of(
-                  context,
-                ).copyWith(textScaler: TextScaler.linear(scale)),
-                child: child!,
-              ),
-              home: Scaffold(
-                body: ProductAssetVideoPlayer(
-                  reference: ProductAssetReference.tryParse(
-                    '/v1/assets/asset-video?kind=video',
-                  )!,
-                  repository: _repository(),
-                ),
+      testWidgets('video long duration, controls and fullscreen $width / $scale', (
+        tester,
+      ) async {
+        await loadMomCozyTestFonts();
+        tester.view.physicalSize = Size(width, 844);
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+        final deferredPlatform = _DeferredVideoPlatform();
+        videoPlatform = deferredPlatform;
+        VideoPlayerPlatform.instance = videoPlatform;
+        await tester.pumpWidget(
+          MaterialApp(
+            debugShowCheckedModeBanner: false,
+            theme: momCozyTheme(),
+            builder: (context, child) => MediaQuery(
+              data: MediaQuery.of(
+                context,
+              ).copyWith(textScaler: TextScaler.linear(scale)),
+              child: child!,
+            ),
+            home: Scaffold(
+              body: ProductAssetVideoPlayer(
+                reference: ProductAssetReference.tryParse(
+                  '/v1/assets/asset-video?kind=video',
+                )!,
+                repository: _repository(),
               ),
             ),
+          ),
+        );
+        expect(
+          find.byKey(const ValueKey('product-asset-video-loading')),
+          findsOneWidget,
+        );
+        await _captureVideo(tester, 'loading', width, scale);
+        deferredPlatform.ready.complete();
+        await _pumpUntilFound(
+          tester,
+          find.byKey(const ValueKey('product-asset-video-player')),
+        );
+        expect(tester.takeException(), isNull);
+        expect(find.byTooltip('全屏播放'), findsOneWidget);
+        expect(find.text('全屏播放'), findsNothing);
+        for (final key in ['play-pause', 'volume', 'fullscreen']) {
+          final size = tester.getSize(
+            find.byKey(ValueKey('product-asset-video-$key')),
           );
-          await _pumpUntilFound(
-            tester,
-            find.byKey(const ValueKey('product-asset-video-player')),
+          expect(size.width, greaterThanOrEqualTo(44));
+          expect(size.height, greaterThanOrEqualTo(44));
+        }
+        final canvas = tester.getRect(find.byType(VideoPlayer));
+        final progress = tester.getRect(
+          find.byKey(const ValueKey('product-asset-video-progress')),
+        );
+        expect(canvas.bottom, lessThanOrEqualTo(progress.top));
+        {
+          await expectLater(
+            find.byType(MaterialApp),
+            matchesGoldenFile(
+              '../../goldens/design_system/media-video-${width.toInt()}${scale == 2 ? '-2x' : ''}.png',
+            ),
           );
-          expect(tester.takeException(), isNull);
-          if (scale == 1) {
-            await expectLater(
-              find.byType(MaterialApp),
-              matchesGoldenFile(
-                '../../goldens/design_system/media-video-${width.toInt()}.png',
-              ),
-            );
-          }
+        }
+        await tester.tap(
+          find.byKey(const ValueKey('product-asset-video-play-pause')),
+        );
+        await tester.pump();
+        expect(videoPlatform.playedIds, [1]);
+        await _captureVideo(tester, 'playing', width, scale);
+        await tester.tap(
+          find.byKey(const ValueKey('product-asset-video-play-pause')),
+        );
+        await tester.pump();
+        expect(videoPlatform.pausedIds, contains(1));
+        await _captureVideo(tester, 'paused', width, scale);
+        await tester.tap(
+          find.byKey(const ValueKey('product-asset-video-progress')),
+        );
+        await tester.pump();
+        expect(videoPlatform.seekCommands, isNotEmpty);
+        await tester.tap(
+          find.byKey(const ValueKey('product-asset-video-volume')),
+        );
+        await tester.pump();
+        expect(videoPlatform.volumeCommands, contains((1, 0.0)));
+        await _captureVideo(tester, 'seek-mute', width, scale);
+        await tester.tap(
+          find.byKey(const ValueKey('product-asset-video-fullscreen')),
+        );
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+        {
+          await expectLater(
+            find.byType(MaterialApp),
+            matchesGoldenFile(
+              '../../goldens/design_system/media-fullscreen-${width.toInt()}${scale == 2 ? '-2x' : ''}.png',
+            ),
+          );
+        }
+        if (width == 390 && scale == 1) {
           await tester.tap(
-            find.byKey(const ValueKey('product-asset-video-play-pause')),
+            find.byKey(const ValueKey('product-asset-video-play-pause')).last,
           );
           await tester.pump();
-          expect(videoPlatform.playedIds, [1]);
+          await expectLater(
+            find.byType(MaterialApp),
+            matchesGoldenFile(
+              '../../goldens/ui_inventory/media-fullscreen-playing-390.png',
+            ),
+          );
           await tester.tap(
-            find.byKey(const ValueKey('product-asset-video-play-pause')),
+            find.byKey(const ValueKey('product-asset-video-play-pause')).last,
           );
           await tester.pump();
           expect(videoPlatform.pausedIds, contains(1));
-          await tester.tap(
-            find.byKey(const ValueKey('product-asset-video-progress')),
-          );
-          await tester.pump();
-          expect(videoPlatform.seekCommands, isNotEmpty);
-          await tester.tap(
-            find.byKey(const ValueKey('product-asset-video-volume')),
-          );
-          await tester.pump();
-          expect(videoPlatform.volumeCommands, contains((1, 0.0)));
-          await tester.tap(
-            find.byKey(const ValueKey('product-asset-video-fullscreen')),
-          );
-          await tester.pumpAndSettle();
-          expect(tester.takeException(), isNull);
-          if (scale == 1) {
-            await expectLater(
-              find.byType(MaterialApp),
-              matchesGoldenFile(
-                '../../goldens/design_system/media-fullscreen-${width.toInt()}.png',
-              ),
-            );
-          }
-          await tester.tap(
-            find
-                .byKey(const ValueKey('product-asset-video-exit-fullscreen'))
-                .first,
-          );
-          await tester.pumpAndSettle();
-          expect(
-            find.byKey(const ValueKey('product-asset-video-immersive')),
-            findsNothing,
-          );
-          await tester.pumpWidget(const SizedBox());
-          await _pumpUntil(tester, () => videoPlatform.disposedIds.contains(1));
-        },
-      );
+        }
+        await tester.tap(
+          find
+              .byKey(const ValueKey('product-asset-video-exit-fullscreen'))
+              .first,
+        );
+        await tester.pumpAndSettle();
+        expect(
+          find.byKey(const ValueKey('product-asset-video-immersive')),
+          findsNothing,
+        );
+        await _captureVideo(tester, 'returned', width, scale);
+        await tester.tap(
+          find.byKey(const ValueKey('product-asset-video-fullscreen')),
+        );
+        await tester.pumpAndSettle();
+        videoPlatform.emitError(1, StateError('stream interrupted'));
+        await tester.pumpAndSettle();
+        expect(find.text('视频播放中断'), findsOneWidget);
+        await _captureVideo(tester, 'interrupted', width, scale);
+        await tester.tap(find.text('返回播放页'));
+        await tester.pumpAndSettle();
+        expect(
+          find.byKey(const ValueKey('product-asset-video-immersive')),
+          findsNothing,
+        );
+        await _captureVideo(tester, 'error', width, scale);
+        await tester.tap(
+          find.byKey(const ValueKey('product-asset-video-retry')),
+        );
+        await _pumpUntilFound(
+          tester,
+          find.byKey(const ValueKey('product-asset-video-player')),
+        );
+        expect(videoPlatform.createdSources, hasLength(2));
+        await _captureVideo(tester, 'recovered', width, scale);
+        expect(tester.takeException(), isNull);
+        await tester.pumpWidget(const SizedBox());
+        await _pumpUntil(tester, () => videoPlatform.disposedIds.contains(2));
+      });
     }
+  }
+
+  for (final size in [const Size(320, 568), const Size(844, 390)]) {
+    testWidgets('video short and landscape accessible controls $size', (
+      tester,
+    ) async {
+      await loadMomCozyTestFonts();
+      tester.view.physicalSize = size;
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      await tester.pumpWidget(
+        MaterialApp(
+          debugShowCheckedModeBanner: false,
+          theme: momCozyTheme(),
+          builder: (context, child) => MediaQuery(
+            data: MediaQuery.of(
+              context,
+            ).copyWith(textScaler: const TextScaler.linear(2)),
+            child: child!,
+          ),
+          home: Scaffold(
+            body: ProductAssetVideoPlayer(
+              reference: ProductAssetReference.tryParse(
+                '/v1/assets/asset-video?kind=video',
+              )!,
+              repository: _repository(),
+            ),
+          ),
+        ),
+      );
+      await _pumpUntilFound(
+        tester,
+        find.byKey(const ValueKey('product-asset-video-player')),
+      );
+      final suffix = size.width > size.height ? 'landscape' : 'short';
+      await _captureVideo(tester, suffix, size.width, 2);
+      await tester.tap(
+        find.byKey(const ValueKey('product-asset-video-fullscreen')),
+      );
+      await tester.pumpAndSettle();
+      await _captureVideo(tester, '$suffix-fullscreen', size.width, 2);
+      videoPlatform.emitError(1, StateError('short screen failure'));
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(find.text('返回播放页'));
+      await tester.tap(find.text('返回播放页'));
+      await tester.pumpAndSettle();
+      final retry = find.byKey(const ValueKey('product-asset-video-retry'));
+      await tester.ensureVisible(retry);
+      await _captureVideo(tester, '$suffix-error', size.width, 2);
+      await tester.tap(retry);
+      await _pumpUntilFound(
+        tester,
+        find.byKey(const ValueKey('product-asset-video-player')),
+      );
+      expect(videoPlatform.createdSources, hasLength(2));
+      expect(tester.takeException(), isNull);
+      await tester.pumpWidget(const SizedBox());
+      await _pumpUntil(tester, () => videoPlatform.disposedIds.contains(2));
+    });
   }
 
   test('fake platform supports a successful controller lifecycle', () async {
@@ -283,6 +438,32 @@ void main() {
     expect(videoPlatform.disposedIds, containsAll([1, 2]));
   });
 
+  testWidgets('fullscreen interruption returns to a retryable player', (
+    tester,
+  ) async {
+    await tester.pumpWidget(_host(_repository()));
+    await _pumpUntilFound(
+      tester,
+      find.byKey(const ValueKey('product-asset-video-player')),
+    );
+    await tester.tap(
+      find.byKey(const ValueKey('product-asset-video-fullscreen')),
+    );
+    await tester.pumpAndSettle();
+    videoPlatform.emitError(1, StateError('stream interrupted'));
+    await tester.pumpAndSettle();
+    expect(find.text('视频播放中断'), findsOneWidget);
+    await tester.tap(find.text('返回播放页'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('product-asset-video-retry')));
+    await _pumpUntilFound(
+      tester,
+      find.byKey(const ValueKey('product-asset-video-player')),
+    );
+    expect(videoPlatform.createdSources, hasLength(2));
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('turns a runtime playback failure into a retryable state', (
     tester,
   ) async {
@@ -375,4 +556,36 @@ class _UnusedConnector implements ProductAssetHttpConnector {
     required Map<String, String> headers,
     required int maxBytes,
   }) => throw UnsupportedError('Video must use a streaming network request.');
+}
+
+Future<void> _captureVideo(
+  WidgetTester tester,
+  String state,
+  double width,
+  double scale,
+) async {
+  expect(tester.takeException(), isNull);
+  await expectLater(
+    find.byType(MaterialApp),
+    matchesGoldenFile(
+      '../../goldens/design_system/media-video-$state-${width.toInt()}${scale == 2 ? '-2x' : ''}.png',
+    ),
+  );
+}
+
+class _DeferredVideoPlatform extends FakeVideoPlayerPlatform {
+  _DeferredVideoPlatform()
+    : super(
+        initializations: [
+          const FakeVideoInitialization.success(
+            duration: Duration(hours: 12, minutes: 34, seconds: 56),
+          ),
+        ],
+      );
+  final ready = Completer<void>();
+  @override
+  Stream<VideoEvent> videoEventsFor(int playerId) async* {
+    await ready.future;
+    yield* super.videoEventsFor(playerId);
+  }
 }

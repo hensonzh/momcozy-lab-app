@@ -55,6 +55,7 @@ final babyModuleRoutes = <GoRoute>[
                 )
                 .firstOrNull ??
             BabyRecordKind.feeding,
+        onPrivacy: () => context.push('/privacy'),
         onBack: () => context.canPop() ? context.pop() : context.go('/baby'),
       );
     },

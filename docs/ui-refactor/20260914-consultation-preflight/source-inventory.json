@@ -1,0 +1,1858 @@
+[
+  {
+    "id": "08-expert-service/consultation-journey-device-checking",
+    "module": "专家服务与咨询",
+    "label": "预约详情",
+    "state": "consultation-journey-device-checking",
+    "image": "08-expert-service/consultation-journey-device-checking/default.png",
+    "viewport": "08-expert-service/consultation-journey-device-checking/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/service-appointment/room"
+    ],
+    "mapped_design_candidates": [
+      "services/preparation",
+      "services/device-check",
+      "services/room",
+      "services/room-leave",
+      "common/not-found",
+      "services/state-44",
+      "services/state-45",
+      "services/state-46",
+      "services/state-53"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/consultation/presentation/consultation_preparation.dart",
+      "lib/modules/consultation/presentation/device_check_dialog.dart",
+      "lib/modules/consultation/presentation/room_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/consultation/consultation_inventory_journey_test.dart",
+    "test_case": "inventory consultation device failure retry consent and room entry",
+    "metadata": "raw/test/goldens/ui_inventory/consultation-journey-device-checking-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/consultation-journey-device-checking-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/consultation-journey-device-checking-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/appointments/service-appointment/room",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Device probe pending → permission check in progress",
+    "journey": {
+      "source": "test/goldens/ui_inventory/consultation-journey-device-checking-393.png",
+      "previous_source": "test/goldens/ui_inventory/consultation-journey-preparation-ready-393.png",
+      "route": "/services/appointments/service-appointment/room",
+      "trigger": "Device probe pending → permission check in progress",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories/codecs and LiveKit device checks; isolated HTTP and native method channels, sandbox room, fixed clock/timezone; no real OS permission dialog or remote media",
+      "test": "test/modules/consultation/consultation_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/consultation-journey-device-denied",
+    "module": "专家服务与咨询",
+    "label": "预约详情",
+    "state": "consultation-journey-device-denied",
+    "image": "08-expert-service/consultation-journey-device-denied/default.png",
+    "viewport": "08-expert-service/consultation-journey-device-denied/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/service-appointment/room"
+    ],
+    "mapped_design_candidates": [
+      "services/preparation",
+      "services/device-check",
+      "services/room",
+      "services/room-leave",
+      "common/not-found",
+      "services/state-44",
+      "services/state-45",
+      "services/state-46",
+      "services/state-53"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/consultation/presentation/consultation_preparation.dart",
+      "lib/modules/consultation/presentation/device_check_dialog.dart",
+      "lib/modules/consultation/presentation/room_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/consultation/consultation_inventory_journey_test.dart",
+    "test_case": "inventory consultation device failure retry consent and room entry",
+    "metadata": "raw/test/goldens/ui_inventory/consultation-journey-device-denied-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/consultation-journey-device-denied-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/consultation-journey-device-denied-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/appointments/service-appointment/room",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Start consultation → device API denial shown in check dialog",
+    "journey": {
+      "source": "test/goldens/ui_inventory/consultation-journey-device-denied-393.png",
+      "previous_source": "test/goldens/ui_inventory/consultation-journey-device-checking-393.png",
+      "route": "/services/appointments/service-appointment/room",
+      "trigger": "Start consultation → device API denial shown in check dialog",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories/codecs and LiveKit device checks; isolated HTTP and native method channels, sandbox room, fixed clock/timezone; no real OS permission dialog or remote media",
+      "test": "test/modules/consultation/consultation_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/consultation-journey-device-recovered",
+    "module": "专家服务与咨询",
+    "label": "预约详情",
+    "state": "consultation-journey-device-recovered",
+    "image": "08-expert-service/consultation-journey-device-recovered/default.png",
+    "viewport": "08-expert-service/consultation-journey-device-recovered/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/service-appointment/room"
+    ],
+    "mapped_design_candidates": [
+      "services/preparation",
+      "services/device-check",
+      "services/room",
+      "services/room-leave",
+      "common/not-found",
+      "services/state-44",
+      "services/state-45",
+      "services/state-46",
+      "services/state-53"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/consultation/presentation/consultation_preparation.dart",
+      "lib/modules/consultation/presentation/device_check_dialog.dart",
+      "lib/modules/consultation/presentation/room_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/consultation/consultation_inventory_journey_test.dart",
+    "test_case": "inventory consultation device failure retry consent and room entry",
+    "metadata": "raw/test/goldens/ui_inventory/consultation-journey-device-recovered-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/consultation-journey-device-recovered-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/consultation-journey-device-recovered-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/appointments/service-appointment/room",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Retry device APIs after permission recovery → ready",
+    "journey": {
+      "source": "test/goldens/ui_inventory/consultation-journey-device-recovered-393.png",
+      "previous_source": "test/goldens/ui_inventory/consultation-journey-device-denied-393.png",
+      "route": "/services/appointments/service-appointment/room",
+      "trigger": "Retry device APIs after permission recovery → ready",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories/codecs and LiveKit device checks; isolated HTTP and native method channels, sandbox room, fixed clock/timezone; no real OS permission dialog or remote media",
+      "test": "test/modules/consultation/consultation_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/consultation-journey-join-request-error",
+    "module": "专家服务与咨询",
+    "label": "预约详情",
+    "state": "consultation-journey-join-request-error",
+    "image": "08-expert-service/consultation-journey-join-request-error/default.png",
+    "viewport": "08-expert-service/consultation-journey-join-request-error/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/service-appointment/room"
+    ],
+    "mapped_design_candidates": [
+      "services/preparation",
+      "services/video-consent",
+      "services/room",
+      "services/room-leave",
+      "common/not-found",
+      "services/state-47",
+      "services/state-48",
+      "services/state-49",
+      "services/state-53"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/consultation/presentation/consultation_preparation.dart",
+      "lib/modules/consultation/presentation/consultation_start_dialog.dart",
+      "lib/modules/consultation/presentation/room_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/consultation/consultation_inventory_journey_test.dart",
+    "test_case": "inventory consultation preflight rejection and retry boundaries",
+    "metadata": "raw/test/goldens/ui_inventory/consultation-journey-join-request-error-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/consultation-journey-join-request-error-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/consultation-journey-join-request-error-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/appointments/service-appointment/room",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Location passes and room prepares; join unavailable → awaiting recovery",
+    "journey": {
+      "source": "test/goldens/ui_inventory/consultation-journey-join-request-error-393.png",
+      "previous_source": "test/goldens/ui_inventory/consultation-journey-location-request-error-393.png",
+      "route": "/services/appointments/service-appointment/room",
+      "trigger": "Location passes and room prepares; join unavailable → awaiting recovery",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories/codecs and LiveKit device checks; isolated HTTP and native method channels, sandbox room, fixed clock/timezone; no real OS permission dialog or remote media",
+      "test": "test/modules/consultation/consultation_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/consultation-journey-location-options",
+    "module": "专家服务与咨询",
+    "label": "预约详情",
+    "state": "consultation-journey-location-options",
+    "image": "08-expert-service/consultation-journey-location-options/default.png",
+    "viewport": "08-expert-service/consultation-journey-location-options/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/service-appointment/room"
+    ],
+    "mapped_design_candidates": [
+      "services/preparation",
+      "services/video-consent",
+      "services/room",
+      "services/room-leave",
+      "common/not-found",
+      "services/state-47",
+      "services/state-48",
+      "services/state-49",
+      "services/state-53"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/consultation/presentation/consultation_preparation.dart",
+      "lib/modules/consultation/presentation/consultation_start_dialog.dart",
+      "lib/modules/consultation/presentation/room_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/consultation/consultation_inventory_journey_test.dart",
+    "test_case": "inventory consultation preflight rejection and retry boundaries",
+    "metadata": "raw/test/goldens/ui_inventory/consultation-journey-location-options-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/consultation-journey-location-options-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/consultation-journey-location-options-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/appointments/service-appointment/room",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Open current state selector → supported choices",
+    "journey": {
+      "source": "test/goldens/ui_inventory/consultation-journey-location-options-393.png",
+      "previous_source": "test/goldens/ui_inventory/consultation-journey-video-consent-retry-393.png",
+      "route": "/services/appointments/service-appointment/room",
+      "trigger": "Open current state selector → supported choices",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories/codecs and LiveKit device checks; isolated HTTP and native method channels, sandbox room, fixed clock/timezone; no real OS permission dialog or remote media",
+      "test": "test/modules/consultation/consultation_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/consultation-journey-location-rejected",
+    "module": "专家服务与咨询",
+    "label": "预约详情",
+    "state": "consultation-journey-location-rejected",
+    "image": "08-expert-service/consultation-journey-location-rejected/default.png",
+    "viewport": "08-expert-service/consultation-journey-location-rejected/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/service-appointment/room"
+    ],
+    "mapped_design_candidates": [
+      "services/preparation",
+      "services/video-consent",
+      "services/room",
+      "services/room-leave",
+      "common/not-found",
+      "services/state-47",
+      "services/state-48",
+      "services/state-49",
+      "services/state-53"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/consultation/presentation/consultation_preparation.dart",
+      "lib/modules/consultation/presentation/consultation_start_dialog.dart",
+      "lib/modules/consultation/presentation/room_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/consultation/consultation_inventory_journey_test.dart",
+    "test_case": "inventory consultation preflight rejection and retry boundaries",
+    "metadata": "raw/test/goldens/ui_inventory/consultation-journey-location-rejected-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/consultation-journey-location-rejected-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/consultation-journey-location-rejected-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/appointments/service-appointment/room",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Confirm unsupported current location → server blocks entry",
+    "journey": {
+      "source": "test/goldens/ui_inventory/consultation-journey-location-rejected-393.png",
+      "previous_source": "test/goldens/ui_inventory/consultation-journey-location-selected-393.png",
+      "route": "/services/appointments/service-appointment/room",
+      "trigger": "Confirm unsupported current location → server blocks entry",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories/codecs and LiveKit device checks; isolated HTTP and native method channels, sandbox room, fixed clock/timezone; no real OS permission dialog or remote media",
+      "test": "test/modules/consultation/consultation_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/consultation-journey-location-request-error",
+    "module": "专家服务与咨询",
+    "label": "预约详情",
+    "state": "consultation-journey-location-request-error",
+    "image": "08-expert-service/consultation-journey-location-request-error/default.png",
+    "viewport": "08-expert-service/consultation-journey-location-request-error/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/service-appointment/room"
+    ],
+    "mapped_design_candidates": [
+      "services/preparation",
+      "services/video-consent",
+      "services/room",
+      "services/room-leave",
+      "common/not-found",
+      "services/state-47",
+      "services/state-48",
+      "services/state-49",
+      "services/state-53"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/consultation/presentation/consultation_preparation.dart",
+      "lib/modules/consultation/presentation/consultation_start_dialog.dart",
+      "lib/modules/consultation/presentation/room_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/consultation/consultation_inventory_journey_test.dart",
+    "test_case": "inventory consultation preflight rejection and retry boundaries",
+    "metadata": "raw/test/goldens/ui_inventory/consultation-journey-location-request-error-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/consultation-journey-location-request-error-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/consultation-journey-location-request-error-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/appointments/service-appointment/room",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Correct location then confirm → network failure, no room join",
+    "journey": {
+      "source": "test/goldens/ui_inventory/consultation-journey-location-request-error-393.png",
+      "previous_source": "test/goldens/ui_inventory/consultation-journey-location-rejected-393.png",
+      "route": "/services/appointments/service-appointment/room",
+      "trigger": "Correct location then confirm → network failure, no room join",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories/codecs and LiveKit device checks; isolated HTTP and native method channels, sandbox room, fixed clock/timezone; no real OS permission dialog or remote media",
+      "test": "test/modules/consultation/consultation_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/consultation-journey-location-selected",
+    "module": "专家服务与咨询",
+    "label": "预约详情",
+    "state": "consultation-journey-location-selected",
+    "image": "08-expert-service/consultation-journey-location-selected/default.png",
+    "viewport": "08-expert-service/consultation-journey-location-selected/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/service-appointment/room"
+    ],
+    "mapped_design_candidates": [
+      "services/preparation",
+      "services/video-consent",
+      "services/room",
+      "services/room-leave",
+      "common/not-found",
+      "services/state-47",
+      "services/state-48",
+      "services/state-49",
+      "services/state-53"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/consultation/presentation/consultation_preparation.dart",
+      "lib/modules/consultation/presentation/consultation_start_dialog.dart",
+      "lib/modules/consultation/presentation/room_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/consultation/consultation_inventory_journey_test.dart",
+    "test_case": "inventory consultation preflight rejection and retry boundaries",
+    "metadata": "raw/test/goldens/ui_inventory/consultation-journey-location-selected-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/consultation-journey-location-selected-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/consultation-journey-location-selected-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/appointments/service-appointment/room",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Choose New York → current location draft changes",
+    "journey": {
+      "source": "test/goldens/ui_inventory/consultation-journey-location-selected-393.png",
+      "previous_source": "test/goldens/ui_inventory/consultation-journey-location-options-393.png",
+      "route": "/services/appointments/service-appointment/room",
+      "trigger": "Choose New York → current location draft changes",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories/codecs and LiveKit device checks; isolated HTTP and native method channels, sandbox room, fixed clock/timezone; no real OS permission dialog or remote media",
+      "test": "test/modules/consultation/consultation_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/consultation-journey-start-confirmation",
+    "module": "专家服务与咨询",
+    "label": "预约详情",
+    "state": "consultation-journey-start-confirmation",
+    "image": "08-expert-service/consultation-journey-start-confirmation/default.png",
+    "viewport": "08-expert-service/consultation-journey-start-confirmation/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/service-appointment/room"
+    ],
+    "mapped_design_candidates": [
+      "services/preparation",
+      "services/video-consent",
+      "services/room",
+      "services/room-leave",
+      "common/not-found",
+      "services/state-47",
+      "services/state-48",
+      "services/state-49",
+      "services/state-53"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/consultation/presentation/consultation_preparation.dart",
+      "lib/modules/consultation/presentation/consultation_start_dialog.dart",
+      "lib/modules/consultation/presentation/room_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/consultation/consultation_inventory_journey_test.dart",
+    "test_case": "inventory consultation device failure retry consent and room entry",
+    "metadata": "raw/test/goldens/ui_inventory/consultation-journey-start-confirmation-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/consultation-journey-start-confirmation-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/consultation-journey-start-confirmation-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/appointments/service-appointment/room",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Device check success → location and missing video consent",
+    "journey": {
+      "source": "test/goldens/ui_inventory/consultation-journey-start-confirmation-393.png",
+      "previous_source": "test/goldens/ui_inventory/consultation-journey-device-recovered-393.png",
+      "route": "/services/appointments/service-appointment/room",
+      "trigger": "Device check success → location and missing video consent",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories/codecs and LiveKit device checks; isolated HTTP and native method channels, sandbox room, fixed clock/timezone; no real OS permission dialog or remote media",
+      "test": "test/modules/consultation/consultation_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/consultation-journey-video-consent",
+    "module": "专家服务与咨询",
+    "label": "预约详情",
+    "state": "consultation-journey-video-consent",
+    "image": "08-expert-service/consultation-journey-video-consent/default.png",
+    "viewport": "08-expert-service/consultation-journey-video-consent/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/service-appointment/room"
+    ],
+    "mapped_design_candidates": [
+      "services/preparation",
+      "services/video-consent",
+      "services/room",
+      "services/room-leave",
+      "common/not-found",
+      "services/state-47",
+      "services/state-48",
+      "services/state-49",
+      "services/state-53"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/consultation/presentation/consultation_preparation.dart",
+      "lib/modules/consultation/presentation/consultation_start_dialog.dart",
+      "lib/modules/consultation/presentation/room_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/consultation/consultation_inventory_journey_test.dart",
+    "test_case": "inventory consultation device failure retry consent and room entry",
+    "metadata": "raw/test/goldens/ui_inventory/consultation-journey-video-consent-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/consultation-journey-video-consent-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/consultation-journey-video-consent-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/appointments/service-appointment/room",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Video authorization CTA → explicit episode consent dialog",
+    "journey": {
+      "source": "test/goldens/ui_inventory/consultation-journey-video-consent-393.png",
+      "previous_source": "test/goldens/ui_inventory/consultation-journey-start-confirmation-393.png",
+      "route": "/services/appointments/service-appointment/room",
+      "trigger": "Video authorization CTA → explicit episode consent dialog",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories/codecs and LiveKit device checks; isolated HTTP and native method channels, sandbox room, fixed clock/timezone; no real OS permission dialog or remote media",
+      "test": "test/modules/consultation/consultation_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/consultation-journey-video-consent-dismissed",
+    "module": "专家服务与咨询",
+    "label": "预约详情",
+    "state": "consultation-journey-video-consent-dismissed",
+    "image": "08-expert-service/consultation-journey-video-consent-dismissed/default.png",
+    "viewport": "08-expert-service/consultation-journey-video-consent-dismissed/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/service-appointment/room"
+    ],
+    "mapped_design_candidates": [
+      "services/preparation",
+      "services/video-consent",
+      "services/room",
+      "services/room-leave",
+      "common/not-found",
+      "services/state-47",
+      "services/state-48",
+      "services/state-49",
+      "services/state-53"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/consultation/presentation/consultation_preparation.dart",
+      "lib/modules/consultation/presentation/consultation_start_dialog.dart",
+      "lib/modules/consultation/presentation/room_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/consultation/consultation_inventory_journey_test.dart",
+    "test_case": "inventory consultation loading failed read and closed preflight",
+    "metadata": "raw/test/goldens/ui_inventory/consultation-journey-video-consent-dismissed-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/consultation-journey-video-consent-dismissed-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/consultation-journey-video-consent-dismissed-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/appointments/service-appointment/room",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Close consent without granting → preflight still requires consent",
+    "journey": {
+      "source": "test/goldens/ui_inventory/consultation-journey-video-consent-dismissed-393.png",
+      "previous_source": "test/goldens/ui_inventory/consultation-journey-device-check-dismissed-393.png",
+      "route": "/services/appointments/service-appointment/room",
+      "trigger": "Close consent without granting → preflight still requires consent",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories/codecs and LiveKit device checks; isolated HTTP and native method channels, sandbox room, fixed clock/timezone; no real OS permission dialog or remote media",
+      "test": "test/modules/consultation/consultation_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/consultation-journey-video-consent-error",
+    "module": "专家服务与咨询",
+    "label": "预约详情",
+    "state": "consultation-journey-video-consent-error",
+    "image": "08-expert-service/consultation-journey-video-consent-error/default.png",
+    "viewport": "08-expert-service/consultation-journey-video-consent-error/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/service-appointment/room"
+    ],
+    "mapped_design_candidates": [
+      "services/preparation",
+      "services/video-consent",
+      "services/room",
+      "services/room-leave",
+      "common/not-found",
+      "services/state-47",
+      "services/state-48",
+      "services/state-49",
+      "services/state-53"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/consultation/presentation/consultation_preparation.dart",
+      "lib/modules/consultation/presentation/consultation_start_dialog.dart",
+      "lib/modules/consultation/presentation/room_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/consultation/consultation_inventory_journey_test.dart",
+    "test_case": "inventory consultation preflight rejection and retry boundaries",
+    "metadata": "raw/test/goldens/ui_inventory/consultation-journey-video-consent-error-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/consultation-journey-video-consent-error-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/consultation-journey-video-consent-error-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/appointments/service-appointment/room",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Submit episode video consent → request unavailable; dialog remains open",
+    "journey": {
+      "source": "test/goldens/ui_inventory/consultation-journey-video-consent-error-393.png",
+      "previous_source": null,
+      "route": "/services/appointments/service-appointment/room",
+      "trigger": "Submit episode video consent → request unavailable; dialog remains open",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories/codecs and LiveKit device checks; isolated HTTP and native method channels, sandbox room, fixed clock/timezone; no real OS permission dialog or remote media",
+      "test": "test/modules/consultation/consultation_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/consultation-journey-video-consent-granted",
+    "module": "专家服务与咨询",
+    "label": "预约详情",
+    "state": "consultation-journey-video-consent-granted",
+    "image": "08-expert-service/consultation-journey-video-consent-granted/default.png",
+    "viewport": "08-expert-service/consultation-journey-video-consent-granted/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/service-appointment/room"
+    ],
+    "mapped_design_candidates": [
+      "services/preparation",
+      "services/video-consent",
+      "services/room",
+      "services/room-leave",
+      "common/not-found",
+      "services/state-47",
+      "services/state-48",
+      "services/state-49",
+      "services/state-53"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/consultation/presentation/consultation_preparation.dart",
+      "lib/modules/consultation/presentation/consultation_start_dialog.dart",
+      "lib/modules/consultation/presentation/room_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/consultation/consultation_inventory_journey_test.dart",
+    "test_case": "inventory consultation device failure retry consent and room entry",
+    "metadata": "raw/test/goldens/ui_inventory/consultation-journey-video-consent-granted-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/consultation-journey-video-consent-granted-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/consultation-journey-video-consent-granted-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/appointments/service-appointment/room",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Submit video consent → actual start confirmation restored",
+    "journey": {
+      "source": "test/goldens/ui_inventory/consultation-journey-video-consent-granted-393.png",
+      "previous_source": "test/goldens/ui_inventory/consultation-journey-video-consent-selected-393.png",
+      "route": "/services/appointments/service-appointment/room",
+      "trigger": "Submit video consent → actual start confirmation restored",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories/codecs and LiveKit device checks; isolated HTTP and native method channels, sandbox room, fixed clock/timezone; no real OS permission dialog or remote media",
+      "test": "test/modules/consultation/consultation_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/consultation-journey-video-consent-retry",
+    "module": "专家服务与咨询",
+    "label": "预约详情",
+    "state": "consultation-journey-video-consent-retry",
+    "image": "08-expert-service/consultation-journey-video-consent-retry/default.png",
+    "viewport": "08-expert-service/consultation-journey-video-consent-retry/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/service-appointment/room"
+    ],
+    "mapped_design_candidates": [
+      "services/preparation",
+      "services/video-consent",
+      "services/room",
+      "services/room-leave",
+      "common/not-found",
+      "services/state-47",
+      "services/state-48",
+      "services/state-49",
+      "services/state-53"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/consultation/presentation/consultation_preparation.dart",
+      "lib/modules/consultation/presentation/consultation_start_dialog.dart",
+      "lib/modules/consultation/presentation/room_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/consultation/consultation_inventory_journey_test.dart",
+    "test_case": "inventory consultation preflight rejection and retry boundaries",
+    "metadata": "raw/test/goldens/ui_inventory/consultation-journey-video-consent-retry-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/consultation-journey-video-consent-retry-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/consultation-journey-video-consent-retry-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/appointments/service-appointment/room",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Retry consent → grant stored, return to preflight",
+    "journey": {
+      "source": "test/goldens/ui_inventory/consultation-journey-video-consent-retry-393.png",
+      "previous_source": "test/goldens/ui_inventory/consultation-journey-video-consent-error-393.png",
+      "route": "/services/appointments/service-appointment/room",
+      "trigger": "Retry consent → grant stored, return to preflight",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories/codecs and LiveKit device checks; isolated HTTP and native method channels, sandbox room, fixed clock/timezone; no real OS permission dialog or remote media",
+      "test": "test/modules/consultation/consultation_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/consultation-journey-video-consent-selected",
+    "module": "专家服务与咨询",
+    "label": "预约详情",
+    "state": "consultation-journey-video-consent-selected",
+    "image": "08-expert-service/consultation-journey-video-consent-selected/default.png",
+    "viewport": "08-expert-service/consultation-journey-video-consent-selected/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/service-appointment/room"
+    ],
+    "mapped_design_candidates": [
+      "services/preparation",
+      "services/video-consent",
+      "services/room",
+      "services/room-leave",
+      "common/not-found",
+      "services/state-47",
+      "services/state-48",
+      "services/state-49",
+      "services/state-53"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/consultation/presentation/consultation_preparation.dart",
+      "lib/modules/consultation/presentation/consultation_start_dialog.dart",
+      "lib/modules/consultation/presentation/room_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/consultation/consultation_inventory_journey_test.dart",
+    "test_case": "inventory consultation device failure retry consent and room entry",
+    "metadata": "raw/test/goldens/ui_inventory/consultation-journey-video-consent-selected-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/consultation-journey-video-consent-selected-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/consultation-journey-video-consent-selected-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/appointments/service-appointment/room",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Consent checked → confirmation enabled, no grant before submit",
+    "journey": {
+      "source": "test/goldens/ui_inventory/consultation-journey-video-consent-selected-393.png",
+      "previous_source": "test/goldens/ui_inventory/consultation-journey-video-consent-393.png",
+      "route": "/services/appointments/service-appointment/room",
+      "trigger": "Consent checked → confirmation enabled, no grant before submit",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories/codecs and LiveKit device checks; isolated HTTP and native method channels, sandbox room, fixed clock/timezone; no real OS permission dialog or remote media",
+      "test": "test/modules/consultation/consultation_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/device-checking",
+    "module": "专家服务与咨询",
+    "label": "检查设备",
+    "state": "device-checking",
+    "image": "08-expert-service/device-checking/default.png",
+    "viewport": "08-expert-service/device-checking/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/:appointmentId/room"
+    ],
+    "mapped_design_candidates": [
+      "services/device-check",
+      "services/state-44",
+      "services/state-45",
+      "services/state-46"
+    ],
+    "production_widget_files": [
+      "lib/modules/consultation/presentation/device_check_dialog.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/consultation/device_check_design_test.dart",
+    "test_case": "device check pending partial failure retry ready 390.0 / 1.0",
+    "metadata": "raw/test/goldens/design_system/device-checking-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/device-checking-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/device-checking-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/device-checking-320.png",
+        "metadata": "raw/test/goldens/design_system/device-checking-320.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/device-checking-390.png",
+        "metadata": "raw/test/goldens/design_system/device-checking-390.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/device-checking-430.png",
+        "metadata": "raw/test/goldens/design_system/device-checking-430.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "08-expert-service/device-continue",
+    "module": "专家服务与咨询",
+    "label": "检查设备",
+    "state": "device-continue",
+    "image": "08-expert-service/device-continue/default.png",
+    "viewport": "08-expert-service/device-continue/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/:appointmentId/room"
+    ],
+    "mapped_design_candidates": [
+      "services/device-check",
+      "services/state-44",
+      "services/state-45",
+      "services/state-46"
+    ],
+    "production_widget_files": [
+      "lib/modules/consultation/presentation/device_check_dialog.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/consultation/device_check_design_test.dart",
+    "test_case": "preflight continues only after readiness and an explicit tap",
+    "metadata": "raw/test/goldens/design_system/device-continue-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/device-continue-390.png",
+        "metadata": "raw/test/goldens/design_system/device-continue-390.png.json",
+        "width": 390,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "08-expert-service/device-error",
+    "module": "专家服务与咨询",
+    "label": "检查设备",
+    "state": "device-error",
+    "image": "08-expert-service/device-error/default.png",
+    "viewport": "08-expert-service/device-error/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/:appointmentId/room"
+    ],
+    "mapped_design_candidates": [
+      "services/device-check",
+      "services/state-44",
+      "services/state-45",
+      "services/state-46"
+    ],
+    "production_widget_files": [
+      "lib/modules/consultation/presentation/device_check_dialog.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/consultation/device_check_design_test.dart",
+    "test_case": "device check pending partial failure retry ready 390.0 / 1.0",
+    "metadata": "raw/test/goldens/design_system/device-error-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/device-error-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/device-error-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/device-error-320.png",
+        "metadata": "raw/test/goldens/design_system/device-error-320.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/device-error-390.png",
+        "metadata": "raw/test/goldens/design_system/device-error-390.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/device-error-430.png",
+        "metadata": "raw/test/goldens/design_system/device-error-430.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "08-expert-service/device-ready",
+    "module": "专家服务与咨询",
+    "label": "检查设备",
+    "state": "device-ready",
+    "image": "08-expert-service/device-ready/default.png",
+    "viewport": "08-expert-service/device-ready/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/:appointmentId/room"
+    ],
+    "mapped_design_candidates": [
+      "services/device-check",
+      "services/state-44",
+      "services/state-45",
+      "services/state-46"
+    ],
+    "production_widget_files": [
+      "lib/modules/consultation/presentation/device_check_dialog.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/consultation/device_check_design_test.dart",
+    "test_case": "device check pending partial failure retry ready 390.0 / 1.0",
+    "metadata": "raw/test/goldens/design_system/device-ready-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/device-ready-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/device-ready-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/device-ready-320.png",
+        "metadata": "raw/test/goldens/design_system/device-ready-320.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/device-ready-390.png",
+        "metadata": "raw/test/goldens/design_system/device-ready-390.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/device-ready-430.png",
+        "metadata": "raw/test/goldens/design_system/device-ready-430.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "08-expert-service/preflight-consent",
+    "module": "专家服务与咨询",
+    "label": "预约详情",
+    "state": "preflight-consent",
+    "image": "08-expert-service/preflight-consent/default.png",
+    "viewport": "08-expert-service/preflight-consent/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/:appointmentId/room"
+    ],
+    "mapped_design_candidates": [
+      "services/preparation",
+      "services/video-consent",
+      "services/room",
+      "services/room-leave",
+      "services/state-47",
+      "services/state-48",
+      "services/state-49",
+      "services/state-53"
+    ],
+    "production_widget_files": [
+      "lib/modules/consultation/presentation/consultation_preparation.dart",
+      "lib/modules/consultation/presentation/consultation_start_dialog.dart",
+      "lib/modules/consultation/presentation/room_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/consultation/consultation_start_test.dart",
+    "test_case": "device consent region and enter 390.0 / 1.0",
+    "metadata": "raw/test/goldens/design_system/preflight-consent-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/preflight-consent-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/preflight-consent-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/preflight-consent-320.png",
+        "metadata": "raw/test/goldens/design_system/preflight-consent-320.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/preflight-consent-390.png",
+        "metadata": "raw/test/goldens/design_system/preflight-consent-390.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/preflight-consent-430.png",
+        "metadata": "raw/test/goldens/design_system/preflight-consent-430.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "08-expert-service/preflight-consent-offline",
+    "module": "专家服务与咨询",
+    "label": "预约详情",
+    "state": "preflight-consent-offline",
+    "image": "08-expert-service/preflight-consent-offline/default.png",
+    "viewport": "08-expert-service/preflight-consent-offline/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/:appointmentId/room"
+    ],
+    "mapped_design_candidates": [
+      "services/preparation",
+      "services/video-consent",
+      "services/room",
+      "services/room-leave",
+      "services/state-47",
+      "services/state-48",
+      "services/state-49",
+      "services/state-53"
+    ],
+    "production_widget_files": [
+      "lib/modules/consultation/presentation/consultation_preparation.dart",
+      "lib/modules/consultation/presentation/consultation_start_dialog.dart",
+      "lib/modules/consultation/presentation/room_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/consultation/consultation_start_test.dart",
+    "test_case": "consent retry preserves video scope and original version",
+    "metadata": "raw/test/goldens/design_system/preflight-consent-offline-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/preflight-consent-offline-390.png",
+        "metadata": "raw/test/goldens/design_system/preflight-consent-offline-390.png.json",
+        "width": 390,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "08-expert-service/preflight-consent-required",
+    "module": "专家服务与咨询",
+    "label": "预约详情",
+    "state": "preflight-consent-required",
+    "image": "08-expert-service/preflight-consent-required/default.png",
+    "viewport": "08-expert-service/preflight-consent-required/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/:appointmentId/room"
+    ],
+    "mapped_design_candidates": [
+      "services/preparation",
+      "services/video-consent",
+      "services/room",
+      "services/room-leave",
+      "services/state-47",
+      "services/state-48",
+      "services/state-49",
+      "services/state-53"
+    ],
+    "production_widget_files": [
+      "lib/modules/consultation/presentation/consultation_preparation.dart",
+      "lib/modules/consultation/presentation/consultation_start_dialog.dart",
+      "lib/modules/consultation/presentation/room_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/consultation/consultation_start_test.dart",
+    "test_case": "device consent region and enter 390.0 / 1.0",
+    "metadata": "raw/test/goldens/design_system/preflight-consent-required-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/preflight-consent-required-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/preflight-consent-required-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/preflight-consent-required-320.png",
+        "metadata": "raw/test/goldens/design_system/preflight-consent-required-320.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/preflight-consent-required-390.png",
+        "metadata": "raw/test/goldens/design_system/preflight-consent-required-390.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/preflight-consent-required-430.png",
+        "metadata": "raw/test/goldens/design_system/preflight-consent-required-430.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "08-expert-service/preflight-offline",
+    "module": "专家服务与咨询",
+    "label": "预约详情",
+    "state": "preflight-offline",
+    "image": "08-expert-service/preflight-offline/default.png",
+    "viewport": "08-expert-service/preflight-offline/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/:appointmentId/room"
+    ],
+    "mapped_design_candidates": [
+      "services/preparation",
+      "services/video-consent",
+      "services/room",
+      "services/room-leave",
+      "services/state-47",
+      "services/state-48",
+      "services/state-49",
+      "services/state-53"
+    ],
+    "production_widget_files": [
+      "lib/modules/consultation/presentation/consultation_preparation.dart",
+      "lib/modules/consultation/presentation/consultation_start_dialog.dart",
+      "lib/modules/consultation/presentation/room_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/consultation/consultation_start_test.dart",
+    "test_case": "location network failure retries without joining prematurely",
+    "metadata": "raw/test/goldens/design_system/preflight-offline-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/preflight-offline-390.png",
+        "metadata": "raw/test/goldens/design_system/preflight-offline-390.png.json",
+        "width": 390,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "08-expert-service/preflight-preparing",
+    "module": "专家服务与咨询",
+    "label": "预约详情",
+    "state": "preflight-preparing",
+    "image": "08-expert-service/preflight-preparing/default.png",
+    "viewport": "08-expert-service/preflight-preparing/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/:appointmentId/room"
+    ],
+    "mapped_design_candidates": [
+      "services/preparation",
+      "services/video-consent",
+      "services/room",
+      "services/room-leave",
+      "services/state-47",
+      "services/state-48",
+      "services/state-49",
+      "services/state-53"
+    ],
+    "production_widget_files": [
+      "lib/modules/consultation/presentation/consultation_preparation.dart",
+      "lib/modules/consultation/presentation/consultation_start_dialog.dart",
+      "lib/modules/consultation/presentation/room_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/consultation/consultation_start_test.dart",
+    "test_case": "closing a preparing room cancels pending automatic join",
+    "metadata": "raw/test/goldens/design_system/preflight-preparing-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/preflight-preparing-390.png",
+        "metadata": "raw/test/goldens/design_system/preflight-preparing-390.png.json",
+        "width": 390,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "08-expert-service/preflight-ready",
+    "module": "专家服务与咨询",
+    "label": "预约详情",
+    "state": "preflight-ready",
+    "image": "08-expert-service/preflight-ready/default.png",
+    "viewport": "08-expert-service/preflight-ready/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/:appointmentId/room"
+    ],
+    "mapped_design_candidates": [
+      "services/preparation",
+      "services/video-consent",
+      "services/room",
+      "services/room-leave",
+      "services/state-47",
+      "services/state-48",
+      "services/state-49",
+      "services/state-53"
+    ],
+    "production_widget_files": [
+      "lib/modules/consultation/presentation/consultation_preparation.dart",
+      "lib/modules/consultation/presentation/consultation_start_dialog.dart",
+      "lib/modules/consultation/presentation/room_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/consultation/consultation_start_test.dart",
+    "test_case": "device consent region and enter 390.0 / 1.0",
+    "metadata": "raw/test/goldens/design_system/preflight-ready-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/preflight-ready-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/preflight-ready-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/preflight-ready-320.png",
+        "metadata": "raw/test/goldens/design_system/preflight-ready-320.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/preflight-ready-390.png",
+        "metadata": "raw/test/goldens/design_system/preflight-ready-390.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/preflight-ready-430.png",
+        "metadata": "raw/test/goldens/design_system/preflight-ready-430.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "08-expert-service/preflight-region-blocked",
+    "module": "专家服务与咨询",
+    "label": "预约详情",
+    "state": "preflight-region-blocked",
+    "image": "08-expert-service/preflight-region-blocked/default.png",
+    "viewport": "08-expert-service/preflight-region-blocked/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/:appointmentId/room"
+    ],
+    "mapped_design_candidates": [
+      "services/preparation",
+      "services/video-consent",
+      "services/room",
+      "services/room-leave",
+      "services/state-47",
+      "services/state-48",
+      "services/state-49",
+      "services/state-53"
+    ],
+    "production_widget_files": [
+      "lib/modules/consultation/presentation/consultation_preparation.dart",
+      "lib/modules/consultation/presentation/consultation_start_dialog.dart",
+      "lib/modules/consultation/presentation/room_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/consultation/consultation_start_test.dart",
+    "test_case": "device consent region and enter 390.0 / 1.0",
+    "metadata": "raw/test/goldens/design_system/preflight-region-blocked-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/preflight-region-blocked-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/preflight-region-blocked-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/preflight-region-blocked-320.png",
+        "metadata": "raw/test/goldens/design_system/preflight-region-blocked-320.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/preflight-region-blocked-390.png",
+        "metadata": "raw/test/goldens/design_system/preflight-region-blocked-390.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/preflight-region-blocked-430.png",
+        "metadata": "raw/test/goldens/design_system/preflight-region-blocked-430.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "08-expert-service/preflight-short-blocked-footer",
+    "module": "专家服务与咨询",
+    "label": "预约详情",
+    "state": "preflight-short-blocked-footer",
+    "image": "08-expert-service/preflight-short-blocked-footer/default.png",
+    "viewport": "08-expert-service/preflight-short-blocked-footer/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/:appointmentId/room"
+    ],
+    "mapped_design_candidates": [
+      "services/preparation",
+      "services/video-consent",
+      "services/room",
+      "services/room-leave",
+      "services/state-47",
+      "services/state-48",
+      "services/state-49",
+      "services/state-53"
+    ],
+    "production_widget_files": [
+      "lib/modules/consultation/presentation/consultation_preparation.dart",
+      "lib/modules/consultation/presentation/consultation_start_dialog.dart",
+      "lib/modules/consultation/presentation/room_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/consultation/consultation_start_test.dart",
+    "test_case": "short screen enlarged text keeps consent and region reachable",
+    "metadata": "raw/test/goldens/design_system/preflight-short-blocked-footer-320-2x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/preflight-short-blocked-footer-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/preflight-short-blocked-footer-320-2x.png.json",
+        "width": 320,
+        "height": 568
+      }
+    ]
+  },
+  {
+    "id": "08-expert-service/room-device",
+    "module": "专家服务与咨询",
+    "label": "设备检查",
+    "state": "room-device",
+    "image": "08-expert-service/room-device/default.png",
+    "viewport": "08-expert-service/room-device/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/:appointmentId/room"
+    ],
+    "mapped_design_candidates": [
+      "services/device-check",
+      "services/state-44",
+      "services/state-45",
+      "services/state-46"
+    ],
+    "production_widget_files": [
+      "lib/modules/consultation/presentation/device_check_dialog.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/consultation/room_design_test.dart",
+    "test_case": "device check states 390.0 / 1.0",
+    "metadata": "raw/test/goldens/design_system/room-device-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/room-device-320.png",
+        "metadata": "raw/test/goldens/design_system/room-device-320.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/room-device-390.png",
+        "metadata": "raw/test/goldens/design_system/room-device-390.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/room-device-430.png",
+        "metadata": "raw/test/goldens/design_system/room-device-430.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "08-expert-service/room-device-error",
+    "module": "专家服务与咨询",
+    "label": "设备检查",
+    "state": "room-device-error",
+    "image": "08-expert-service/room-device-error/default.png",
+    "viewport": "08-expert-service/room-device-error/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/:appointmentId/room"
+    ],
+    "mapped_design_candidates": [
+      "services/device-check",
+      "services/state-44",
+      "services/state-45",
+      "services/state-46"
+    ],
+    "production_widget_files": [
+      "lib/modules/consultation/presentation/device_check_dialog.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/consultation/room_design_test.dart",
+    "test_case": "device check states 390.0 / 1.0",
+    "metadata": "raw/test/goldens/design_system/room-device-error-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/room-device-error-320.png",
+        "metadata": "raw/test/goldens/design_system/room-device-error-320.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/room-device-error-390.png",
+        "metadata": "raw/test/goldens/design_system/room-device-error-390.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/room-device-error-430.png",
+        "metadata": "raw/test/goldens/design_system/room-device-error-430.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "08-expert-service/room-location",
+    "module": "专家服务与咨询",
+    "label": "预约详情",
+    "state": "room-location",
+    "image": "08-expert-service/room-location/default.png",
+    "viewport": "08-expert-service/room-location/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/:appointmentId/room"
+    ],
+    "mapped_design_candidates": [
+      "services/preparation",
+      "services/video-consent",
+      "services/room",
+      "services/room-leave",
+      "services/state-47",
+      "services/state-48",
+      "services/state-49",
+      "services/state-53"
+    ],
+    "production_widget_files": [
+      "lib/modules/consultation/presentation/consultation_preparation.dart",
+      "lib/modules/consultation/presentation/consultation_start_dialog.dart",
+      "lib/modules/consultation/presentation/room_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/modules/consultation/room_design_test.dart",
+    "test_case": "room location and consent 390.0 / 1.0",
+    "metadata": "raw/test/goldens/design_system/room-location-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/room-location-320.png",
+        "metadata": "raw/test/goldens/design_system/room-location-320.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/room-location-390.png",
+        "metadata": "raw/test/goldens/design_system/room-location-390.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/room-location-430.png",
+        "metadata": "raw/test/goldens/design_system/room-location-430.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "03-mom/native-device-checking",
+    "module": "妈妈",
+    "label": "首次检测请求中",
+    "state": "首次检测请求中",
+    "image": "03-mom/native-device-checking/default.png",
+    "viewport": "native/consultation-devices/native-device-checking.png",
+    "extent": "native-viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/me"
+    ],
+    "mapped_design_candidates": [],
+    "production_widget_files": [
+      "lib/modules/consultation/presentation/device_check_dialog.dart"
+    ],
+    "evidence_kind": "Android-native-normal-route-with-isolated-consultation-data",
+    "normal_entry_verified": true,
+    "test": "integration_test/consultation_native_device_test.dart",
+    "test_case": "Start consultation → device checking before native permission response",
+    "metadata": "native/device-manifest.json",
+    "variants": [],
+    "journey": {
+      "from": "03-mom/native-device-appointment",
+      "to": "03-mom/native-device-checking",
+      "source": "native/consultation-devices/native-device-checking.png",
+      "root_entry": "More → Me → View appointment → Start consultation → actual native device permission",
+      "route": "/me",
+      "trigger": "Start consultation → device checking before native permission response",
+      "evidence": "实际 App More → Me → 查看预约 → 开始咨询；实际点击 Android 摄像头/麦克风拒绝与允许按钮，生产 LiveKit 本地音视频轨道检测；回到 App 断言失败、成功、再次检查、咨询确认及返回。",
+      "test": "integration_test/consultation_native_device_test.dart",
+      "metadata": "native/device-manifest.json"
+    },
+    "verified_route": "/me",
+    "entry": "More → Me → View appointment → Start consultation → actual native device permission",
+    "trigger": "Start consultation → device checking before native permission response"
+  },
+  {
+    "id": "03-mom/native-device-denied",
+    "module": "妈妈",
+    "label": "拒绝摄像头及麦克风后的检测失败",
+    "state": "拒绝摄像头及麦克风后的检测失败",
+    "image": "03-mom/native-device-denied/default.png",
+    "viewport": "native/consultation-devices/native-device-denied.png",
+    "extent": "native-viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/me"
+    ],
+    "mapped_design_candidates": [],
+    "production_widget_files": [
+      "lib/modules/consultation/presentation/device_check_dialog.dart"
+    ],
+    "evidence_kind": "Android-native-normal-route-with-isolated-consultation-data",
+    "normal_entry_verified": true,
+    "test": "integration_test/consultation_native_device_test.dart",
+    "test_case": "Deny camera and microphone → actual device errors",
+    "metadata": "native/device-manifest.json",
+    "variants": [],
+    "journey": {
+      "from": "10-global-modals/native-device-deny-microphone",
+      "to": "03-mom/native-device-denied",
+      "source": "native/consultation-devices/native-device-denied.png",
+      "root_entry": "More → Me → View appointment → Start consultation → actual native device permission",
+      "route": "/me",
+      "trigger": "Deny camera and microphone → actual device errors",
+      "evidence": "实际 App More → Me → 查看预约 → 开始咨询；实际点击 Android 摄像头/麦克风拒绝与允许按钮，生产 LiveKit 本地音视频轨道检测；回到 App 断言失败、成功、再次检查、咨询确认及返回。",
+      "test": "integration_test/consultation_native_device_test.dart",
+      "metadata": "native/device-manifest.json"
+    },
+    "verified_route": "/me",
+    "entry": "More → Me → View appointment → Start consultation → actual native device permission",
+    "trigger": "Deny camera and microphone → actual device errors"
+  },
+  {
+    "id": "03-mom/native-device-retry-checking",
+    "module": "妈妈",
+    "label": "重新申请设备权限",
+    "state": "重新申请设备权限",
+    "image": "03-mom/native-device-retry-checking/default.png",
+    "viewport": "native/consultation-devices/native-device-retry-checking.png",
+    "extent": "native-viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/me"
+    ],
+    "mapped_design_candidates": [],
+    "production_widget_files": [
+      "lib/modules/consultation/presentation/device_check_dialog.dart"
+    ],
+    "evidence_kind": "Android-native-normal-route-with-isolated-consultation-data",
+    "normal_entry_verified": true,
+    "test": "integration_test/consultation_native_device_test.dart",
+    "test_case": "Retry device check → requesting permissions again",
+    "metadata": "native/device-manifest.json",
+    "variants": [],
+    "journey": {
+      "from": "03-mom/native-device-denied",
+      "to": "03-mom/native-device-retry-checking",
+      "source": "native/consultation-devices/native-device-retry-checking.png",
+      "root_entry": "More → Me → View appointment → Start consultation → actual native device permission",
+      "route": "/me",
+      "trigger": "Retry device check → requesting permissions again",
+      "evidence": "实际 App More → Me → 查看预约 → 开始咨询；实际点击 Android 摄像头/麦克风拒绝与允许按钮，生产 LiveKit 本地音视频轨道检测；回到 App 断言失败、成功、再次检查、咨询确认及返回。",
+      "test": "integration_test/consultation_native_device_test.dart",
+      "metadata": "native/device-manifest.json"
+    },
+    "verified_route": "/me",
+    "entry": "More → Me → View appointment → Start consultation → actual native device permission",
+    "trigger": "Retry device check → requesting permissions again"
+  },
+  {
+    "id": "03-mom/native-device-ready",
+    "module": "妈妈",
+    "label": "允许后设备检测成功",
+    "state": "允许后设备检测成功",
+    "image": "03-mom/native-device-ready/default.png",
+    "viewport": "native/consultation-devices/native-device-ready.png",
+    "extent": "native-viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/me"
+    ],
+    "mapped_design_candidates": [],
+    "production_widget_files": [
+      "lib/modules/consultation/presentation/device_check_dialog.dart"
+    ],
+    "evidence_kind": "Android-native-normal-route-with-isolated-consultation-data",
+    "normal_entry_verified": true,
+    "test": "integration_test/consultation_native_device_test.dart",
+    "test_case": "Allow camera and microphone → actual local tracks created and released",
+    "metadata": "native/device-manifest.json",
+    "variants": [],
+    "journey": {
+      "from": "10-global-modals/native-device-allow-microphone",
+      "to": "03-mom/native-device-ready",
+      "source": "native/consultation-devices/native-device-ready.png",
+      "root_entry": "More → Me → View appointment → Start consultation → actual native device permission",
+      "route": "/me",
+      "trigger": "Allow camera and microphone → actual local tracks created and released",
+      "evidence": "实际 App More → Me → 查看预约 → 开始咨询；实际点击 Android 摄像头/麦克风拒绝与允许按钮，生产 LiveKit 本地音视频轨道检测；回到 App 断言失败、成功、再次检查、咨询确认及返回。",
+      "test": "integration_test/consultation_native_device_test.dart",
+      "metadata": "native/device-manifest.json"
+    },
+    "verified_route": "/me",
+    "entry": "More → Me → View appointment → Start consultation → actual native device permission",
+    "trigger": "Allow camera and microphone → actual local tracks created and released"
+  },
+  {
+    "id": "03-mom/native-device-rechecked",
+    "module": "妈妈",
+    "label": "已授权设备再次检测成功",
+    "state": "已授权设备再次检测成功",
+    "image": "03-mom/native-device-rechecked/default.png",
+    "viewport": "native/consultation-devices/native-device-rechecked.png",
+    "extent": "native-viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/me"
+    ],
+    "mapped_design_candidates": [],
+    "production_widget_files": [
+      "lib/modules/consultation/presentation/device_check_dialog.dart"
+    ],
+    "evidence_kind": "Android-native-normal-route-with-isolated-consultation-data",
+    "normal_entry_verified": true,
+    "test": "integration_test/consultation_native_device_test.dart",
+    "test_case": "Recheck with granted permissions → ready without system prompt",
+    "metadata": "native/device-manifest.json",
+    "variants": [],
+    "journey": {
+      "from": "03-mom/native-device-ready",
+      "to": "03-mom/native-device-rechecked",
+      "source": "native/consultation-devices/native-device-rechecked.png",
+      "root_entry": "More → Me → View appointment → Start consultation → actual native device permission",
+      "route": "/me",
+      "trigger": "Recheck with granted permissions → ready without system prompt",
+      "evidence": "实际 App More → Me → 查看预约 → 开始咨询；实际点击 Android 摄像头/麦克风拒绝与允许按钮，生产 LiveKit 本地音视频轨道检测；回到 App 断言失败、成功、再次检查、咨询确认及返回。",
+      "test": "integration_test/consultation_native_device_test.dart",
+      "metadata": "native/device-manifest.json"
+    },
+    "verified_route": "/me",
+    "entry": "More → Me → View appointment → Start consultation → actual native device permission",
+    "trigger": "Recheck with granted permissions → ready without system prompt"
+  },
+  {
+    "id": "03-mom/native-device-start-confirm",
+    "module": "妈妈",
+    "label": "设备检测后开始咨询确认",
+    "state": "设备检测后开始咨询确认",
+    "image": "03-mom/native-device-start-confirm/default.png",
+    "viewport": "native/consultation-devices/native-device-start-confirm.png",
+    "extent": "native-viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/me"
+    ],
+    "mapped_design_candidates": [],
+    "production_widget_files": [
+      "lib/modules/consultation/presentation/consultation_start_dialog.dart"
+    ],
+    "evidence_kind": "Android-native-normal-route-with-isolated-consultation-data",
+    "normal_entry_verified": true,
+    "test": "integration_test/consultation_native_device_test.dart",
+    "test_case": "Device check continue → actual consultation confirmation, no room join",
+    "metadata": "native/device-manifest.json",
+    "variants": [],
+    "journey": {
+      "from": "03-mom/native-device-rechecked",
+      "to": "03-mom/native-device-start-confirm",
+      "source": "native/consultation-devices/native-device-start-confirm.png",
+      "root_entry": "More → Me → View appointment → Start consultation → actual native device permission",
+      "route": "/me",
+      "trigger": "Device check continue → actual consultation confirmation, no room join",
+      "evidence": "实际 App More → Me → 查看预约 → 开始咨询；实际点击 Android 摄像头/麦克风拒绝与允许按钮，生产 LiveKit 本地音视频轨道检测；回到 App 断言失败、成功、再次检查、咨询确认及返回。",
+      "test": "integration_test/consultation_native_device_test.dart",
+      "metadata": "native/device-manifest.json"
+    },
+    "verified_route": "/me",
+    "entry": "More → Me → View appointment → Start consultation → actual native device permission",
+    "trigger": "Device check continue → actual consultation confirmation, no room join"
+  }
+]

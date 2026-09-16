@@ -1,0 +1,15 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/modules/services/consultation_summary_test.dart
+00:00 +0: summary content task and destinations 320.0 / 1.0
+00:00 +1: summary content task and destinations 320.0 / 2.0
+00:00 +2: summary content task and destinations 390.0 / 1.0
+00:01 +3: summary content task and destinations 390.0 / 2.0
+00:01 +4: summary content task and destinations 430.0 / 1.0
+00:01 +5: summary content task and destinations 430.0 / 2.0
+00:01 +6: task uncertainty retries original version and locks competing updates
+00:01 +7: loading finishes into pending and refreshed publication
+00:02 +8: superseded plan reloads before accepting another task update
+00:02 +9: short large task keeps pending updates locked and retryable
+00:02 +10: superseded action removed by reload remains safely closable at large text
+00:02 +11: refresh failure retains publication and reloads without a task mutation
+00:02 +12: empty action list and unsuccessful consultation keep appropriate destinations
+00:02 +13: All tests passed!

@@ -1,0 +1,10 @@
+{
+  "observed_states": 2367,
+  "added": [],
+  "changed": [
+    "08-expert-service/service-current-owned-booking",
+    "08-expert-service/service-current-paused-booking"
+  ],
+  "removed": [],
+  "note": "Screenshot state counts are not page counts or completion evidence."
+}

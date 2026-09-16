@@ -1,0 +1,154 @@
+[
+  {
+    "id": "246:1086",
+    "name": "Cozymate / home",
+    "width": 393,
+    "height": 766,
+    "x": 80,
+    "y": 114000
+  },
+  {
+    "id": "246:1115",
+    "name": "Cozymate / fallback",
+    "width": 393,
+    "height": 766,
+    "x": 510,
+    "y": 114000
+  },
+  {
+    "id": "246:1144",
+    "name": "Cozymate / chat",
+    "width": 393,
+    "height": 766,
+    "x": 940,
+    "y": 114000
+  },
+  {
+    "id": "246:1173",
+    "name": "Cozymate / streaming",
+    "width": 393,
+    "height": 766,
+    "x": 1370,
+    "y": 114000
+  },
+  {
+    "id": "246:1212",
+    "name": "Cozymate / reply",
+    "width": 393,
+    "height": 766,
+    "x": 1800,
+    "y": 114000
+  },
+  {
+    "id": "246:1250",
+    "name": "Cozymate / disconnected-empty",
+    "width": 393,
+    "height": 766,
+    "x": 2230,
+    "y": 114000
+  },
+  {
+    "id": "246:1291",
+    "name": "Cozymate / terminal-error",
+    "width": 393,
+    "height": 766,
+    "x": 2660,
+    "y": 114000
+  },
+  {
+    "id": "246:1330",
+    "name": "Cozymate / disconnected-partial",
+    "width": 393,
+    "height": 766,
+    "x": 3090,
+    "y": 114000
+  },
+  {
+    "id": "246:1372",
+    "name": "Cozymate / resumed",
+    "width": 393,
+    "height": 766,
+    "x": 3520,
+    "y": 114000
+  },
+  {
+    "id": "247:1086",
+    "name": "Cozymate / large home",
+    "width": 320,
+    "height": 726,
+    "x": 80,
+    "y": 115200
+  },
+  {
+    "id": "247:1118",
+    "name": "Cozymate / large fallback",
+    "width": 320,
+    "height": 726,
+    "x": 450,
+    "y": 115200
+  },
+  {
+    "id": "247:1150",
+    "name": "Cozymate / large chat",
+    "width": 320,
+    "height": 726,
+    "x": 820,
+    "y": 115200
+  },
+  {
+    "id": "247:1182",
+    "name": "Cozymate / large streaming",
+    "width": 320,
+    "height": 726,
+    "x": 1190,
+    "y": 115200
+  },
+  {
+    "id": "247:1218",
+    "name": "Cozymate / large reply",
+    "width": 320,
+    "height": 726,
+    "x": 1560,
+    "y": 115200
+  },
+  {
+    "id": "247:1253",
+    "name": "Cozymate / large disconnected-empty",
+    "width": 320,
+    "height": 726,
+    "x": 1930,
+    "y": 115200
+  },
+  {
+    "id": "247:1290",
+    "name": "Cozymate / large terminal-error",
+    "width": 320,
+    "height": 726,
+    "x": 2300,
+    "y": 115200
+  },
+  {
+    "id": "247:1325",
+    "name": "Cozymate / large disconnected-partial",
+    "width": 320,
+    "height": 726,
+    "x": 2670,
+    "y": 115200
+  },
+  {
+    "id": "247:1363",
+    "name": "Cozymate / large resumed",
+    "width": 320,
+    "height": 726,
+    "x": 3040,
+    "y": 115200
+  },
+  {
+    "id": "250:1086",
+    "name": "Cozymate / large latest-message control",
+    "width": 320,
+    "height": 726,
+    "x": 80,
+    "y": 116400
+  }
+]

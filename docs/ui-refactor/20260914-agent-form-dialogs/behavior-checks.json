@@ -1,0 +1,8 @@
+{
+  "Form submit validation serialization drafts merging and error reveal unchanged": true,
+  "Field grouping and default value decoding unchanged": true,
+  "Date picker preserves bounds and stored format; only scoped theme added": true,
+  "Entry auto-open timer draft session notifier submission and rendering unchanged": true,
+  "Dialog submit pop and error-scroll callbacks unchanged": true,
+  "Responsive footer stacking logic unchanged": true
+}

@@ -1,0 +1,33 @@
+{
+  "observed_states": 2743,
+  "added": [
+    "01-auth/onboarding-avatar-short-confirm-busy",
+    "01-auth/onboarding-avatar-short-confirm-error",
+    "01-auth/onboarding-avatar-short-image-error",
+    "01-auth/onboarding-short-busy",
+    "01-auth/onboarding-short-date-input",
+    "01-auth/onboarding-short-error"
+  ],
+  "changed": [
+    "01-auth/auth-invite",
+    "01-auth/auth-invite-validation",
+    "01-auth/onboarding-banners",
+    "01-auth/onboarding-basics",
+    "01-auth/onboarding-birth",
+    "01-auth/onboarding-birth-error",
+    "01-auth/onboarding-default-confirm",
+    "01-auth/onboarding-delivery",
+    "01-auth/onboarding-failed",
+    "01-auth/onboarding-failed-source",
+    "01-auth/onboarding-generating",
+    "01-auth/onboarding-load-error",
+    "01-auth/onboarding-loading",
+    "01-auth/onboarding-photo-error",
+    "01-auth/onboarding-required",
+    "01-auth/onboarding-required-source",
+    "01-auth/onboarding-review",
+    "01-auth/onboarding-review-footer",
+    "01-auth/onboarding-review-selected"
+  ],
+  "removed": []
+}

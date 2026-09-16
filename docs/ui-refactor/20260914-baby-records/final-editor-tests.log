@@ -1,0 +1,30 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: wet keeps its primary action visible at 320.0/1.0
+00:00 +1: nursing keeps its primary action visible at 320.0/1.0
+00:00 +2: sleep-start keeps its primary action visible at 320.0/1.0
+00:00 +3: sleep-active keeps its primary action visible at 320.0/1.0
+00:00 +4: wet keeps its primary action visible at 320.0/2.0
+00:00 +5: nursing keeps its primary action visible at 320.0/2.0
+00:00 +6: sleep-start keeps its primary action visible at 320.0/2.0
+00:00 +7: sleep-active keeps its primary action visible at 320.0/2.0
+00:01 +8: wet keeps its primary action visible at 390.0/1.0
+00:01 +9: nursing keeps its primary action visible at 390.0/1.0
+00:01 +10: sleep-start keeps its primary action visible at 390.0/1.0
+00:01 +11: sleep-active keeps its primary action visible at 390.0/1.0
+00:01 +12: wet keeps its primary action visible at 390.0/2.0
+00:01 +13: nursing keeps its primary action visible at 390.0/2.0
+00:01 +14: sleep-start keeps its primary action visible at 390.0/2.0
+00:01 +15: sleep-active keeps its primary action visible at 390.0/2.0
+00:01 +16: wet keeps its primary action visible at 430.0/1.0
+00:01 +17: nursing keeps its primary action visible at 430.0/1.0
+00:01 +18: sleep-start keeps its primary action visible at 430.0/1.0
+00:01 +19: sleep-active keeps its primary action visible at 430.0/1.0
+00:01 +20: wet keeps its primary action visible at 430.0/2.0
+00:01 +21: nursing keeps its primary action visible at 430.0/2.0
+00:01 +22: sleep-start keeps its primary action visible at 430.0/2.0
+00:01 +23: sleep-active keeps its primary action visible at 430.0/2.0
+00:01 +24: growth validation and pending save preserve the entered value
+00:01 +25: collapsed notes preserve the draft and uncertain save retries once
+00:01 +26: (tearDownAll)
+00:01 +26: All tests passed!

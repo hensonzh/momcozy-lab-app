@@ -1,0 +1,17 @@
+{
+  "checks": {
+    "entry_unchanged_except_optional_theme_and_format": true,
+    "close_unchanged_except_optional_theme_and_format": true,
+    "date_unchanged_except_optional_theme_and_format": true,
+    "save_unchanged_except_optional_theme_and_format": true,
+    "reload_unchanged_except_optional_theme_and_format": true,
+    "dispose_unchanged_except_optional_theme_and_format": true,
+    "controller_byte_identical": true
+  },
+  "controller_sha256": "5e54cbd284745305ab6e47255943dfe59e8e6e8e07e3c7cabac24b4d0e1d7371",
+  "comparison": "Whitespace and trailing commas normalized; only optional Mom theme arguments removed. UI field guard behavior is separately covered by the tests.",
+  "tests": [
+    "joint-final-tests.log",
+    "settled-final-tests.log"
+  ]
+}

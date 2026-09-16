@@ -1,0 +1,2028 @@
+[
+  {
+    "id": "07-me/more-current-both-unavailable-mom",
+    "module": "账号与隐私",
+    "label": "下午好",
+    "state": "more-current-both-unavailable-mom",
+    "image": "07-me/more-current-both-unavailable-mom/default.png",
+    "viewport": "07-me/more-current-both-unavailable-mom/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/me"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "mom/home",
+      "mom/record-picker",
+      "mom/other-functions",
+      "common/not-found",
+      "mom/state-01",
+      "mom/state-11",
+      "mom/state-31",
+      "mom/state-38",
+      "mom/state-43"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/modules/mom/presentation/mom_home_sections.dart",
+      "lib/modules/mom/presentation/mother_home_page.dart",
+      "lib/modules/services/presentation/expert_support_section.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/profile/more_current_inventory_test.dart",
+    "test_case": "inventory current More both-unavailable 393/1x",
+    "metadata": "raw/test/goldens/ui_inventory/more-current-both-unavailable-mom-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/more-current-both-unavailable-mom-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/more-current-both-unavailable-mom-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/more-current-both-unavailable-mom-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/more-current-both-unavailable-mom-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/me",
+    "entry": "Authenticated Me → tap More bottom navigation",
+    "trigger": "Authenticated Me before More navigation",
+    "journey": {
+      "source": "test/goldens/ui_inventory/more-current-both-unavailable-mom-393-1x.png",
+      "previous_source": null,
+      "route": "/me",
+      "trigger": "Authenticated Me before More navigation",
+      "root_entry": "Authenticated Me → tap More bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production More/account/privacy/service pages and notification coordinator/repositories; isolated HTTP, push gateway and permission platform; real router.go and ScaffoldMessenger callbacks, no native OS dialog or remote push",
+      "test": "test/modules/profile/more_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "07-me/more-current-email-unavailable-mom",
+    "module": "账号与隐私",
+    "label": "下午好",
+    "state": "more-current-email-unavailable-mom",
+    "image": "07-me/more-current-email-unavailable-mom/default.png",
+    "viewport": "07-me/more-current-email-unavailable-mom/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/me"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "mom/home",
+      "mom/record-picker",
+      "mom/other-functions",
+      "common/not-found",
+      "mom/state-01",
+      "mom/state-11",
+      "mom/state-31",
+      "mom/state-38",
+      "mom/state-43"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/modules/mom/presentation/mom_home_sections.dart",
+      "lib/modules/mom/presentation/mother_home_page.dart",
+      "lib/modules/services/presentation/expert_support_section.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/profile/more_current_inventory_test.dart",
+    "test_case": "inventory current More email-unavailable 393/1x",
+    "metadata": "raw/test/goldens/ui_inventory/more-current-email-unavailable-mom-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/more-current-email-unavailable-mom-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/more-current-email-unavailable-mom-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/more-current-email-unavailable-mom-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/more-current-email-unavailable-mom-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/me",
+    "entry": "Authenticated Me → tap More bottom navigation",
+    "trigger": "Authenticated Me before More navigation",
+    "journey": {
+      "source": "test/goldens/ui_inventory/more-current-email-unavailable-mom-393-1x.png",
+      "previous_source": null,
+      "route": "/me",
+      "trigger": "Authenticated Me before More navigation",
+      "root_entry": "Authenticated Me → tap More bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production More/account/privacy/service pages and notification coordinator/repositories; isolated HTTP, push gateway and permission platform; real router.go and ScaffoldMessenger callbacks, no native OS dialog or remote push",
+      "test": "test/modules/profile/more_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "07-me/more-current-logout-error-mom",
+    "module": "账号与隐私",
+    "label": "下午好",
+    "state": "more-current-logout-error-mom",
+    "image": "07-me/more-current-logout-error-mom/default.png",
+    "viewport": "07-me/more-current-logout-error-mom/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/me"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "mom/home",
+      "mom/record-picker",
+      "mom/other-functions",
+      "common/not-found",
+      "mom/state-01",
+      "mom/state-11",
+      "mom/state-31",
+      "mom/state-38",
+      "mom/state-43"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/modules/mom/presentation/mom_home_sections.dart",
+      "lib/modules/mom/presentation/mother_home_page.dart",
+      "lib/modules/services/presentation/expert_support_section.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/profile/more_current_inventory_test.dart",
+    "test_case": "inventory current More remote signout error 393/1x",
+    "metadata": "raw/test/goldens/ui_inventory/more-current-logout-error-mom-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/more-current-logout-error-mom-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/more-current-logout-error-mom-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/more-current-logout-error-mom-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/more-current-logout-error-mom-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/me",
+    "entry": "Authenticated Me → tap More bottom navigation",
+    "trigger": "Authenticated Me before More navigation",
+    "journey": {
+      "source": "test/goldens/ui_inventory/more-current-logout-error-mom-393-1x.png",
+      "previous_source": null,
+      "route": "/me",
+      "trigger": "Authenticated Me before More navigation",
+      "root_entry": "Authenticated Me → tap More bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production More/account/privacy/service pages and notification coordinator/repositories; isolated HTTP, push gateway and permission platform; real router.go and ScaffoldMessenger callbacks, no native OS dialog or remote push",
+      "test": "test/modules/profile/more_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "07-me/more-current-long-mom",
+    "module": "账号与隐私",
+    "label": "下午好",
+    "state": "more-current-long-mom",
+    "image": "07-me/more-current-long-mom/default.png",
+    "viewport": "07-me/more-current-long-mom/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/me"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "mom/home",
+      "mom/record-picker",
+      "mom/other-functions",
+      "common/not-found",
+      "mom/state-01",
+      "mom/state-11",
+      "mom/state-31",
+      "mom/state-38",
+      "mom/state-43"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/modules/mom/presentation/mom_home_sections.dart",
+      "lib/modules/mom/presentation/mother_home_page.dart",
+      "lib/modules/services/presentation/expert_support_section.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/profile/more_current_inventory_test.dart",
+    "test_case": "inventory current More long 393/1x",
+    "metadata": "raw/test/goldens/ui_inventory/more-current-long-mom-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/more-current-long-mom-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/more-current-long-mom-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/more-current-long-mom-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/more-current-long-mom-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/me",
+    "entry": "Authenticated Me → tap More bottom navigation",
+    "trigger": "Authenticated Me before More navigation",
+    "journey": {
+      "source": "test/goldens/ui_inventory/more-current-long-mom-393-1x.png",
+      "previous_source": null,
+      "route": "/me",
+      "trigger": "Authenticated Me before More navigation",
+      "root_entry": "Authenticated Me → tap More bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production More/account/privacy/service pages and notification coordinator/repositories; isolated HTTP, push gateway and permission platform; real router.go and ScaffoldMessenger callbacks, no native OS dialog or remote push",
+      "test": "test/modules/profile/more_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "07-me/more-current-name-unavailable-mom",
+    "module": "账号与隐私",
+    "label": "下午好",
+    "state": "more-current-name-unavailable-mom",
+    "image": "07-me/more-current-name-unavailable-mom/default.png",
+    "viewport": "07-me/more-current-name-unavailable-mom/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/me"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "mom/home",
+      "mom/record-picker",
+      "mom/other-functions",
+      "common/not-found",
+      "mom/state-01",
+      "mom/state-11",
+      "mom/state-31",
+      "mom/state-38",
+      "mom/state-43"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/modules/mom/presentation/mom_home_sections.dart",
+      "lib/modules/mom/presentation/mother_home_page.dart",
+      "lib/modules/services/presentation/expert_support_section.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/profile/more_current_inventory_test.dart",
+    "test_case": "inventory current More name-unavailable 393/1x",
+    "metadata": "raw/test/goldens/ui_inventory/more-current-name-unavailable-mom-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/more-current-name-unavailable-mom-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/more-current-name-unavailable-mom-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/more-current-name-unavailable-mom-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/more-current-name-unavailable-mom-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/me",
+    "entry": "Authenticated Me → tap More bottom navigation",
+    "trigger": "Authenticated Me before More navigation",
+    "journey": {
+      "source": "test/goldens/ui_inventory/more-current-name-unavailable-mom-393-1x.png",
+      "previous_source": null,
+      "route": "/me",
+      "trigger": "Authenticated Me before More navigation",
+      "root_entry": "Authenticated Me → tap More bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production More/account/privacy/service pages and notification coordinator/repositories; isolated HTTP, push gateway and permission platform; real router.go and ScaffoldMessenger callbacks, no native OS dialog or remote push",
+      "test": "test/modules/profile/more_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "07-me/more-current-pending-mom",
+    "module": "账号与隐私",
+    "label": "下午好",
+    "state": "more-current-pending-mom",
+    "image": "07-me/more-current-pending-mom/default.png",
+    "viewport": "07-me/more-current-pending-mom/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/me"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "mom/home",
+      "mom/record-picker",
+      "mom/other-functions",
+      "common/not-found",
+      "mom/state-01",
+      "mom/state-11",
+      "mom/state-31",
+      "mom/state-38",
+      "mom/state-43"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/modules/mom/presentation/mom_home_sections.dart",
+      "lib/modules/mom/presentation/mother_home_page.dart",
+      "lib/modules/services/presentation/expert_support_section.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/profile/more_current_inventory_test.dart",
+    "test_case": "inventory current More pending 393/1x",
+    "metadata": "raw/test/goldens/ui_inventory/more-current-pending-mom-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/more-current-pending-mom-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/more-current-pending-mom-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/more-current-pending-mom-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/more-current-pending-mom-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/me",
+    "entry": "Authenticated Me → tap More bottom navigation",
+    "trigger": "Authenticated Me before More navigation",
+    "journey": {
+      "source": "test/goldens/ui_inventory/more-current-pending-mom-393-1x.png",
+      "previous_source": null,
+      "route": "/me",
+      "trigger": "Authenticated Me before More navigation",
+      "root_entry": "Authenticated Me → tap More bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production More/account/privacy/service pages and notification coordinator/repositories; isolated HTTP, push gateway and permission platform; real router.go and ScaffoldMessenger callbacks, no native OS dialog or remote push",
+      "test": "test/modules/profile/more_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "07-me/more-current-routes-mom",
+    "module": "账号与隐私",
+    "label": "下午好",
+    "state": "more-current-routes-mom",
+    "image": "07-me/more-current-routes-mom/default.png",
+    "viewport": "07-me/more-current-routes-mom/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/me"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "mom/home",
+      "mom/record-picker",
+      "mom/other-functions",
+      "common/not-found",
+      "mom/state-01",
+      "mom/state-11",
+      "mom/state-31",
+      "mom/state-38",
+      "mom/state-43"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/modules/mom/presentation/mom_home_sections.dart",
+      "lib/modules/mom/presentation/mother_home_page.dart",
+      "lib/modules/services/presentation/expert_support_section.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/profile/more_current_inventory_test.dart",
+    "test_case": "inventory current More routes 393/1x",
+    "metadata": "raw/test/goldens/ui_inventory/more-current-routes-mom-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/more-current-routes-mom-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/more-current-routes-mom-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/more-current-routes-mom-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/more-current-routes-mom-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/me",
+    "entry": "Authenticated Me → tap More bottom navigation",
+    "trigger": "Authenticated Me before More navigation",
+    "journey": {
+      "source": "test/goldens/ui_inventory/more-current-routes-mom-393-1x.png",
+      "previous_source": null,
+      "route": "/me",
+      "trigger": "Authenticated Me before More navigation",
+      "root_entry": "Authenticated Me → tap More bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production More/account/privacy/service pages and notification coordinator/repositories; isolated HTTP, push gateway and permission platform; real router.go and ScaffoldMessenger callbacks, no native OS dialog or remote push",
+      "test": "test/modules/profile/more_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "07-me/account-current-delete-mom",
+    "module": "账号与隐私",
+    "label": "下午好",
+    "state": "account-current-delete-mom",
+    "image": "07-me/account-current-delete-mom/default.png",
+    "viewport": "07-me/account-current-delete-mom/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/me"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "mom/home",
+      "mom/record-picker",
+      "mom/other-functions",
+      "common/not-found",
+      "mom/state-01",
+      "mom/state-11",
+      "mom/state-31",
+      "mom/state-38",
+      "mom/state-43"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/modules/mom/presentation/mom_home_sections.dart",
+      "lib/modules/mom/presentation/mother_home_page.dart",
+      "lib/modules/services/presentation/expert_support_section.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/profile/account_current_inventory_test.dart",
+    "test_case": "inventory current Account delete recovery success false",
+    "metadata": "raw/test/goldens/ui_inventory/account-current-delete-mom-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/account-current-delete-mom-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/account-current-delete-mom-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/account-current-delete-mom-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/account-current-delete-mom-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/me",
+    "entry": "Authenticated Me → tap More bottom navigation",
+    "trigger": "Authenticated Me before More navigation",
+    "journey": {
+      "source": "test/goldens/ui_inventory/account-current-delete-mom-393-1x.png",
+      "previous_source": null,
+      "route": "/me",
+      "trigger": "Authenticated Me before More navigation",
+      "root_entry": "Authenticated Me → tap More bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production More/account/privacy/service pages and notification coordinator/repositories; isolated HTTP, push gateway and permission platform; real router.go and ScaffoldMessenger callbacks, no native OS dialog or remote push",
+      "test": "test/modules/profile/account_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "07-me/account-current-disabled-empty-mom",
+    "module": "账号与隐私",
+    "label": "下午好",
+    "state": "account-current-disabled-empty-mom",
+    "image": "07-me/account-current-disabled-empty-mom/default.png",
+    "viewport": "07-me/account-current-disabled-empty-mom/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/me"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "mom/home",
+      "mom/record-picker",
+      "mom/other-functions",
+      "common/not-found",
+      "mom/state-01",
+      "mom/state-11",
+      "mom/state-31",
+      "mom/state-38",
+      "mom/state-43"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/modules/mom/presentation/mom_home_sections.dart",
+      "lib/modules/mom/presentation/mother_home_page.dart",
+      "lib/modules/services/presentation/expert_support_section.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/profile/account_current_inventory_test.dart",
+    "test_case": "inventory current Account profile disabled-empty false",
+    "metadata": "raw/test/goldens/ui_inventory/account-current-disabled-empty-mom-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/account-current-disabled-empty-mom-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/account-current-disabled-empty-mom-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/account-current-disabled-empty-mom-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/account-current-disabled-empty-mom-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/me",
+    "entry": "Authenticated Me → tap More bottom navigation",
+    "trigger": "Authenticated Me before More navigation",
+    "journey": {
+      "source": "test/goldens/ui_inventory/account-current-disabled-empty-mom-393-1x.png",
+      "previous_source": null,
+      "route": "/me",
+      "trigger": "Authenticated Me before More navigation",
+      "root_entry": "Authenticated Me → tap More bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production More/account/privacy/service pages and notification coordinator/repositories; isolated HTTP, push gateway and permission platform; real router.go and ScaffoldMessenger callbacks, no native OS dialog or remote push",
+      "test": "test/modules/profile/account_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "07-me/account-current-google-only-mom",
+    "module": "账号与隐私",
+    "label": "下午好",
+    "state": "account-current-google-only-mom",
+    "image": "07-me/account-current-google-only-mom/default.png",
+    "viewport": "07-me/account-current-google-only-mom/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/me"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "mom/home",
+      "mom/record-picker",
+      "mom/other-functions",
+      "common/not-found",
+      "mom/state-01",
+      "mom/state-11",
+      "mom/state-31",
+      "mom/state-38",
+      "mom/state-43"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/modules/mom/presentation/mom_home_sections.dart",
+      "lib/modules/mom/presentation/mother_home_page.dart",
+      "lib/modules/services/presentation/expert_support_section.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/profile/account_current_inventory_test.dart",
+    "test_case": "inventory current Account profile google-only false",
+    "metadata": "raw/test/goldens/ui_inventory/account-current-google-only-mom-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/account-current-google-only-mom-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/account-current-google-only-mom-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/account-current-google-only-mom-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/account-current-google-only-mom-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/me",
+    "entry": "Authenticated Me → tap More bottom navigation",
+    "trigger": "Authenticated Me before More navigation",
+    "journey": {
+      "source": "test/goldens/ui_inventory/account-current-google-only-mom-393-1x.png",
+      "previous_source": null,
+      "route": "/me",
+      "trigger": "Authenticated Me before More navigation",
+      "root_entry": "Authenticated Me → tap More bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production More/account/privacy/service pages and notification coordinator/repositories; isolated HTTP, push gateway and permission platform; real router.go and ScaffoldMessenger callbacks, no native OS dialog or remote push",
+      "test": "test/modules/profile/account_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "07-me/account-current-logout-error-mom",
+    "module": "账号与隐私",
+    "label": "下午好",
+    "state": "account-current-logout-error-mom",
+    "image": "07-me/account-current-logout-error-mom/default.png",
+    "viewport": "07-me/account-current-logout-error-mom/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/me"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "mom/home",
+      "mom/record-picker",
+      "mom/other-functions",
+      "common/not-found",
+      "mom/state-01",
+      "mom/state-11",
+      "mom/state-31",
+      "mom/state-38",
+      "mom/state-43"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/modules/mom/presentation/mom_home_sections.dart",
+      "lib/modules/mom/presentation/mother_home_page.dart",
+      "lib/modules/services/presentation/expert_support_section.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/profile/account_current_inventory_test.dart",
+    "test_case": "inventory current Account logout true false",
+    "metadata": "raw/test/goldens/ui_inventory/account-current-logout-error-mom-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/account-current-logout-error-mom-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/account-current-logout-error-mom-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/account-current-logout-error-mom-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/account-current-logout-error-mom-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/me",
+    "entry": "Authenticated Me → tap More bottom navigation",
+    "trigger": "Authenticated Me before More navigation",
+    "journey": {
+      "source": "test/goldens/ui_inventory/account-current-logout-error-mom-393-1x.png",
+      "previous_source": null,
+      "route": "/me",
+      "trigger": "Authenticated Me before More navigation",
+      "root_entry": "Authenticated Me → tap More bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production More/account/privacy/service pages and notification coordinator/repositories; isolated HTTP, push gateway and permission platform; real router.go and ScaffoldMessenger callbacks, no native OS dialog or remote push",
+      "test": "test/modules/profile/account_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "07-me/account-current-logout-success-mom",
+    "module": "账号与隐私",
+    "label": "下午好",
+    "state": "account-current-logout-success-mom",
+    "image": "07-me/account-current-logout-success-mom/default.png",
+    "viewport": "07-me/account-current-logout-success-mom/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/me"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "mom/home",
+      "mom/record-picker",
+      "mom/other-functions",
+      "common/not-found",
+      "mom/state-01",
+      "mom/state-11",
+      "mom/state-31",
+      "mom/state-38",
+      "mom/state-43"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/modules/mom/presentation/mom_home_sections.dart",
+      "lib/modules/mom/presentation/mother_home_page.dart",
+      "lib/modules/services/presentation/expert_support_section.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/profile/account_current_inventory_test.dart",
+    "test_case": "inventory current Account logout false false",
+    "metadata": "raw/test/goldens/ui_inventory/account-current-logout-success-mom-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/account-current-logout-success-mom-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/account-current-logout-success-mom-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/account-current-logout-success-mom-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/account-current-logout-success-mom-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/me",
+    "entry": "Authenticated Me → tap More bottom navigation",
+    "trigger": "Authenticated Me before More navigation",
+    "journey": {
+      "source": "test/goldens/ui_inventory/account-current-logout-success-mom-393-1x.png",
+      "previous_source": null,
+      "route": "/me",
+      "trigger": "Authenticated Me before More navigation",
+      "root_entry": "Authenticated Me → tap More bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production More/account/privacy/service pages and notification coordinator/repositories; isolated HTTP, push gateway and permission platform; real router.go and ScaffoldMessenger callbacks, no native OS dialog or remote push",
+      "test": "test/modules/profile/account_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "07-me/account-current-long-pending-other-mom",
+    "module": "账号与隐私",
+    "label": "下午好",
+    "state": "account-current-long-pending-other-mom",
+    "image": "07-me/account-current-long-pending-other-mom/default.png",
+    "viewport": "07-me/account-current-long-pending-other-mom/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/me"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "mom/home",
+      "mom/record-picker",
+      "mom/other-functions",
+      "common/not-found",
+      "mom/state-01",
+      "mom/state-11",
+      "mom/state-31",
+      "mom/state-38",
+      "mom/state-43"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/modules/mom/presentation/mom_home_sections.dart",
+      "lib/modules/mom/presentation/mother_home_page.dart",
+      "lib/modules/services/presentation/expert_support_section.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/profile/account_current_inventory_test.dart",
+    "test_case": "inventory current Account profile long-pending-other false",
+    "metadata": "raw/test/goldens/ui_inventory/account-current-long-pending-other-mom-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/account-current-long-pending-other-mom-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/account-current-long-pending-other-mom-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/account-current-long-pending-other-mom-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/account-current-long-pending-other-mom-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/me",
+    "entry": "Authenticated Me → tap More bottom navigation",
+    "trigger": "Authenticated Me before More navigation",
+    "journey": {
+      "source": "test/goldens/ui_inventory/account-current-long-pending-other-mom-393-1x.png",
+      "previous_source": null,
+      "route": "/me",
+      "trigger": "Authenticated Me before More navigation",
+      "root_entry": "Authenticated Me → tap More bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production More/account/privacy/service pages and notification coordinator/repositories; isolated HTTP, push gateway and permission platform; real router.go and ScaffoldMessenger callbacks, no native OS dialog or remote push",
+      "test": "test/modules/profile/account_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "07-me/account-current-password-mom",
+    "module": "账号与隐私",
+    "label": "下午好",
+    "state": "account-current-password-mom",
+    "image": "07-me/account-current-password-mom/default.png",
+    "viewport": "07-me/account-current-password-mom/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/me"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "mom/home",
+      "mom/record-picker",
+      "mom/other-functions",
+      "common/not-found",
+      "mom/state-01",
+      "mom/state-11",
+      "mom/state-31",
+      "mom/state-38",
+      "mom/state-43"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/modules/mom/presentation/mom_home_sections.dart",
+      "lib/modules/mom/presentation/mother_home_page.dart",
+      "lib/modules/services/presentation/expert_support_section.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/profile/account_current_inventory_test.dart",
+    "test_case": "inventory current Account Google local unavailable false",
+    "metadata": "raw/test/goldens/ui_inventory/account-current-password-mom-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/account-current-password-mom-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/account-current-password-mom-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/account-current-password-mom-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/account-current-password-mom-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/me",
+    "entry": "Authenticated Me → tap More bottom navigation",
+    "trigger": "Authenticated Me before More navigation",
+    "journey": {
+      "source": "test/goldens/ui_inventory/account-current-password-mom-393-1x.png",
+      "previous_source": null,
+      "route": "/me",
+      "trigger": "Authenticated Me before More navigation",
+      "root_entry": "Authenticated Me → tap More bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production More/account/privacy/service pages and notification coordinator/repositories; isolated HTTP, push gateway and permission platform; real router.go and ScaffoldMessenger callbacks, no native OS dialog or remote push",
+      "test": "test/modules/profile/account_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "07-me/account-current-read-mom",
+    "module": "账号与隐私",
+    "label": "下午好",
+    "state": "account-current-read-mom",
+    "image": "07-me/account-current-read-mom/default.png",
+    "viewport": "07-me/account-current-read-mom/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/me"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "mom/home",
+      "mom/record-picker",
+      "mom/other-functions",
+      "common/not-found",
+      "mom/state-01",
+      "mom/state-11",
+      "mom/state-31",
+      "mom/state-38",
+      "mom/state-43"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/modules/mom/presentation/mom_home_sections.dart",
+      "lib/modules/mom/presentation/mother_home_page.dart",
+      "lib/modules/services/presentation/expert_support_section.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/profile/account_current_inventory_test.dart",
+    "test_case": "inventory current Account read recovery false",
+    "metadata": "raw/test/goldens/ui_inventory/account-current-read-mom-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/account-current-read-mom-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/account-current-read-mom-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/account-current-read-mom-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/account-current-read-mom-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/me",
+    "entry": "Authenticated Me → tap More bottom navigation",
+    "trigger": "Authenticated Me",
+    "journey": {
+      "source": "test/goldens/ui_inventory/account-current-read-mom-393-1x.png",
+      "previous_source": null,
+      "route": "/me",
+      "trigger": "Authenticated Me",
+      "root_entry": "Authenticated Me → tap More bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production More/account/privacy/service pages and notification coordinator/repositories; isolated HTTP, push gateway and permission platform; real router.go and ScaffoldMessenger callbacks, no native OS dialog or remote push",
+      "test": "test/modules/profile/account_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "07-me/notification-navigation-current-conversation-opened",
+    "module": "账号与隐私",
+    "label": "notification-navigation-current-conversation-opened",
+    "state": "notification-navigation-current-conversation-opened",
+    "image": "07-me/notification-navigation-current-conversation-opened/default.png",
+    "viewport": "07-me/notification-navigation-current-conversation-opened/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/?conversationId=22222222-2222-4222-8222-222222222222"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "common/not-found"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/notifications/notification_navigation_current_inventory_test.dart",
+    "test_case": "notification safe target conversation false",
+    "metadata": "raw/test/goldens/ui_inventory/notification-navigation-current-conversation-opened-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/notification-navigation-current-conversation-opened-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/notification-navigation-current-conversation-opened-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/notification-navigation-current-conversation-opened-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/notification-navigation-current-conversation-opened-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/?conversationId=22222222-2222-4222-8222-222222222222",
+    "entry": "Authenticated More page",
+    "trigger": "Tap notification → conversation route throws Expando string-key ArgumentError and renders ErrorWidget; item is read",
+    "journey": {
+      "source": "test/goldens/ui_inventory/notification-navigation-current-conversation-opened-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/notification-navigation-current-conversation-inbox-393-1x.png",
+      "route": "/?conversationId=22222222-2222-4222-8222-222222222222",
+      "trigger": "Tap notification → conversation route throws Expando string-key ArgumentError and renders ErrorWidget; item is read",
+      "root_entry": "Authenticated More page",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production notification coordinator/repository/controller; isolated HTTP, push gateway and permission platform; real router.go and ScaffoldMessenger callbacks, no native OS dialog or remote push",
+      "test": "test/features/notifications/notification_navigation_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "07-me/notification-navigation-current-episode-home-return",
+    "module": "账号与隐私",
+    "label": "下午好，Mia",
+    "state": "notification-navigation-current-episode-home-return",
+    "image": "07-me/notification-navigation-current-episode-home-return/default.png",
+    "viewport": "07-me/notification-navigation-current-episode-home-return/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/me"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "mom/home",
+      "mom/record-picker",
+      "mom/other-functions",
+      "common/not-found",
+      "mom/state-01",
+      "mom/state-11",
+      "mom/state-31",
+      "mom/state-38",
+      "mom/state-43"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/modules/mom/presentation/mom_home_sections.dart",
+      "lib/modules/mom/presentation/mother_home_page.dart",
+      "lib/modules/services/presentation/expert_support_section.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/notifications/notification_navigation_current_inventory_test.dart",
+    "test_case": "notification safe target episode false",
+    "metadata": "raw/test/goldens/ui_inventory/notification-navigation-current-episode-home-return-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/notification-navigation-current-episode-home-return-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/notification-navigation-current-episode-home-return-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/notification-navigation-current-episode-home-return-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/notification-navigation-current-episode-home-return-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/me",
+    "entry": "Authenticated More page",
+    "trigger": "Target Back/Close → mother home (notification route was replaced)",
+    "journey": {
+      "source": "test/goldens/ui_inventory/notification-navigation-current-episode-home-return-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/notification-navigation-current-episode-opened-393-1x.png",
+      "route": "/me",
+      "trigger": "Target Back/Close → mother home (notification route was replaced)",
+      "root_entry": "Authenticated More page",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production notification coordinator/repository/controller; isolated HTTP, push gateway and permission platform; real router.go and ScaffoldMessenger callbacks, no native OS dialog or remote push",
+      "test": "test/features/notifications/notification_navigation_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "07-me/notification-navigation-current-intake-home-return",
+    "module": "账号与隐私",
+    "label": "下午好，Mia",
+    "state": "notification-navigation-current-intake-home-return",
+    "image": "07-me/notification-navigation-current-intake-home-return/default.png",
+    "viewport": "07-me/notification-navigation-current-intake-home-return/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/me"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "mom/home",
+      "mom/record-picker",
+      "mom/other-functions",
+      "common/not-found",
+      "mom/state-01",
+      "mom/state-11",
+      "mom/state-31",
+      "mom/state-38",
+      "mom/state-43"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/modules/mom/presentation/mom_home_sections.dart",
+      "lib/modules/mom/presentation/mother_home_page.dart",
+      "lib/modules/services/presentation/expert_support_section.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/notifications/notification_navigation_current_inventory_test.dart",
+    "test_case": "notification safe target intake false",
+    "metadata": "raw/test/goldens/ui_inventory/notification-navigation-current-intake-home-return-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/notification-navigation-current-intake-home-return-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/notification-navigation-current-intake-home-return-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/notification-navigation-current-intake-home-return-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/notification-navigation-current-intake-home-return-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/me",
+    "entry": "Authenticated More page",
+    "trigger": "Target Back/Close → mother home (notification route was replaced)",
+    "journey": {
+      "source": "test/goldens/ui_inventory/notification-navigation-current-intake-home-return-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/notification-navigation-current-intake-opened-393-1x.png",
+      "route": "/me",
+      "trigger": "Target Back/Close → mother home (notification route was replaced)",
+      "root_entry": "Authenticated More page",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production notification coordinator/repository/controller; isolated HTTP, push gateway and permission platform; real router.go and ScaffoldMessenger callbacks, no native OS dialog or remote push",
+      "test": "test/features/notifications/notification_navigation_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "07-me/notification-navigation-current-room-home-return",
+    "module": "账号与隐私",
+    "label": "下午好，Mia",
+    "state": "notification-navigation-current-room-home-return",
+    "image": "07-me/notification-navigation-current-room-home-return/default.png",
+    "viewport": "07-me/notification-navigation-current-room-home-return/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/me"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "mom/home",
+      "mom/record-picker",
+      "mom/other-functions",
+      "common/not-found",
+      "mom/state-01",
+      "mom/state-11",
+      "mom/state-31",
+      "mom/state-38",
+      "mom/state-43"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/modules/mom/presentation/mom_home_sections.dart",
+      "lib/modules/mom/presentation/mother_home_page.dart",
+      "lib/modules/services/presentation/expert_support_section.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/notifications/notification_navigation_current_inventory_test.dart",
+    "test_case": "notification safe target room false",
+    "metadata": "raw/test/goldens/ui_inventory/notification-navigation-current-room-home-return-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/notification-navigation-current-room-home-return-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/notification-navigation-current-room-home-return-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/notification-navigation-current-room-home-return-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/notification-navigation-current-room-home-return-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/me",
+    "entry": "Authenticated More page",
+    "trigger": "Target Back/Close → mother home (notification route was replaced)",
+    "journey": {
+      "source": "test/goldens/ui_inventory/notification-navigation-current-room-home-return-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/notification-navigation-current-room-opened-393-1x.png",
+      "route": "/me",
+      "trigger": "Target Back/Close → mother home (notification route was replaced)",
+      "root_entry": "Authenticated More page",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production notification coordinator/repository/controller; isolated HTTP, push gateway and permission platform; real router.go and ScaffoldMessenger callbacks, no native OS dialog or remote push",
+      "test": "test/features/notifications/notification_navigation_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "07-me/notification-navigation-current-room-opened",
+    "module": "账号与隐私",
+    "label": "预约详情",
+    "state": "notification-navigation-current-room-opened",
+    "image": "07-me/notification-navigation-current-room-opened/default.png",
+    "viewport": "07-me/notification-navigation-current-room-opened/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/11111111-1111-4111-8111-111111111111/room"
+    ],
+    "mapped_design_candidates": [
+      "services/preparation",
+      "services/room",
+      "services/room-leave",
+      "common/not-found",
+      "services/state-53"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/consultation/presentation/consultation_preparation.dart",
+      "lib/modules/consultation/presentation/room_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/product_flow_dialog.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/notifications/notification_navigation_current_inventory_test.dart",
+    "test_case": "notification safe target room false",
+    "metadata": "raw/test/goldens/ui_inventory/notification-navigation-current-room-opened-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/notification-navigation-current-room-opened-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/notification-navigation-current-room-opened-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/notification-navigation-current-room-opened-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/notification-navigation-current-room-opened-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/appointments/11111111-1111-4111-8111-111111111111/room",
+    "entry": "Authenticated More page",
+    "trigger": "Tap notification → validated room target, notification marked read",
+    "journey": {
+      "source": "test/goldens/ui_inventory/notification-navigation-current-room-opened-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/notification-navigation-current-room-inbox-393-1x.png",
+      "route": "/services/appointments/11111111-1111-4111-8111-111111111111/room",
+      "trigger": "Tap notification → validated room target, notification marked read",
+      "root_entry": "Authenticated More page",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production notification coordinator/repository/controller; isolated HTTP, push gateway and permission platform; real router.go and ScaffoldMessenger callbacks, no native OS dialog or remote push",
+      "test": "test/features/notifications/notification_navigation_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "07-me/notification-navigation-current-summary-home-return",
+    "module": "账号与隐私",
+    "label": "下午好，Mia",
+    "state": "notification-navigation-current-summary-home-return",
+    "image": "07-me/notification-navigation-current-summary-home-return/default.png",
+    "viewport": "07-me/notification-navigation-current-summary-home-return/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/me"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "mom/home",
+      "mom/record-picker",
+      "mom/other-functions",
+      "common/not-found",
+      "mom/state-01",
+      "mom/state-11",
+      "mom/state-31",
+      "mom/state-38",
+      "mom/state-43"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/modules/mom/presentation/mom_home_sections.dart",
+      "lib/modules/mom/presentation/mother_home_page.dart",
+      "lib/modules/services/presentation/expert_support_section.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/notifications/notification_navigation_current_inventory_test.dart",
+    "test_case": "notification safe target summary false",
+    "metadata": "raw/test/goldens/ui_inventory/notification-navigation-current-summary-home-return-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/notification-navigation-current-summary-home-return-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/notification-navigation-current-summary-home-return-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/notification-navigation-current-summary-home-return-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/notification-navigation-current-summary-home-return-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/me",
+    "entry": "Authenticated More page",
+    "trigger": "Target Back/Close → mother home (notification route was replaced)",
+    "journey": {
+      "source": "test/goldens/ui_inventory/notification-navigation-current-summary-home-return-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/notification-navigation-current-summary-opened-393-1x.png",
+      "route": "/me",
+      "trigger": "Target Back/Close → mother home (notification route was replaced)",
+      "root_entry": "Authenticated More page",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production notification coordinator/repository/controller; isolated HTTP, push gateway and permission platform; real router.go and ScaffoldMessenger callbacks, no native OS dialog or remote push",
+      "test": "test/features/notifications/notification_navigation_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-current-catalog-home-return",
+    "module": "专家服务与咨询",
+    "label": "下午好，Mia",
+    "state": "service-current-catalog-home-return",
+    "image": "08-expert-service/service-current-catalog-home-return/default.png",
+    "viewport": "08-expert-service/service-current-catalog-home-return/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/me"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "mom/home",
+      "mom/record-picker",
+      "mom/other-functions",
+      "common/not-found",
+      "mom/state-01",
+      "mom/state-11",
+      "mom/state-31",
+      "mom/state-38",
+      "mom/state-43"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/modules/mom/presentation/mom_home_sections.dart",
+      "lib/modules/mom/presentation/mother_home_page.dart",
+      "lib/modules/services/presentation/expert_support_section.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_current_inventory_test.dart",
+    "test_case": "current service catalog all package and team entries false",
+    "metadata": "raw/test/goldens/ui_inventory/service-current-catalog-home-return-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-current-catalog-home-return-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-current-catalog-home-return-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/service-current-catalog-home-return-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-current-catalog-home-return-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/me",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Catalog Back → mother home",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-current-catalog-home-return-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/service-current-catalog-all-return-393-1x.png",
+      "route": "/me",
+      "trigger": "Catalog Back → mother home",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-current-catalog-recovery-home",
+    "module": "专家服务与咨询",
+    "label": "下午好，Mia",
+    "state": "service-current-catalog-recovery-home",
+    "image": "08-expert-service/service-current-catalog-recovery-home/default.png",
+    "viewport": "08-expert-service/service-current-catalog-recovery-home/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/me"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "mom/home",
+      "mom/record-picker",
+      "mom/other-functions",
+      "common/not-found",
+      "mom/state-01",
+      "mom/state-11",
+      "mom/state-31",
+      "mom/state-38",
+      "mom/state-43"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/modules/mom/presentation/mom_home_sections.dart",
+      "lib/modules/mom/presentation/mother_home_page.dart",
+      "lib/modules/services/presentation/expert_support_section.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_current_inventory_test.dart",
+    "test_case": "current catalog loading empty errors and refresh false",
+    "metadata": "raw/test/goldens/ui_inventory/service-current-catalog-recovery-home-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-current-catalog-recovery-home-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-current-catalog-recovery-home-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/service-current-catalog-recovery-home-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-current-catalog-recovery-home-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/me",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Authenticated More → Me before service entry",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-current-catalog-recovery-home-393-1x.png",
+      "previous_source": null,
+      "route": "/me",
+      "trigger": "Authenticated More → Me before service entry",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-current-catalog-recovery-home-return",
+    "module": "专家服务与咨询",
+    "label": "下午好，Mia",
+    "state": "service-current-catalog-recovery-home-return",
+    "image": "08-expert-service/service-current-catalog-recovery-home-return/default.png",
+    "viewport": "08-expert-service/service-current-catalog-recovery-home-return/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/me"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "mom/home",
+      "mom/record-picker",
+      "mom/other-functions",
+      "common/not-found",
+      "mom/state-01",
+      "mom/state-11",
+      "mom/state-31",
+      "mom/state-38",
+      "mom/state-43"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/modules/mom/presentation/mom_home_sections.dart",
+      "lib/modules/mom/presentation/mother_home_page.dart",
+      "lib/modules/services/presentation/expert_support_section.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_current_inventory_test.dart",
+    "test_case": "current catalog loading empty errors and refresh false",
+    "metadata": "raw/test/goldens/ui_inventory/service-current-catalog-recovery-home-return-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-current-catalog-recovery-home-return-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-current-catalog-recovery-home-return-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/service-current-catalog-recovery-home-return-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-current-catalog-recovery-home-return-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/me",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Catalog recovery Back → home",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-current-catalog-recovery-home-return-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/service-current-catalog-refresh-recovered-393-1x.png",
+      "route": "/me",
+      "trigger": "Catalog recovery Back → home",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-current-discovery-home",
+    "module": "专家服务与咨询",
+    "label": "下午好，Mia",
+    "state": "service-current-discovery-home",
+    "image": "08-expert-service/service-current-discovery-home/default.png",
+    "viewport": "08-expert-service/service-current-discovery-home/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/me"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "mom/home",
+      "mom/record-picker",
+      "mom/other-functions",
+      "common/not-found",
+      "mom/state-01",
+      "mom/state-11",
+      "mom/state-31",
+      "mom/state-38",
+      "mom/state-43"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/modules/mom/presentation/mom_home_sections.dart",
+      "lib/modules/mom/presentation/mother_home_page.dart",
+      "lib/modules/services/presentation/expert_support_section.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_current_inventory_test.dart",
+    "test_case": "current service catalog all package and team entries false",
+    "metadata": "raw/test/goldens/ui_inventory/service-current-discovery-home-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-current-discovery-home-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-current-discovery-home-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/service-current-discovery-home-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-current-discovery-home-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/me",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Authenticated More → Me before service entry",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-current-discovery-home-393-1x.png",
+      "previous_source": null,
+      "route": "/me",
+      "trigger": "Authenticated More → Me before service entry",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-current-owned-home",
+    "module": "专家服务与咨询",
+    "label": "下午好，Mia",
+    "state": "service-current-owned-home",
+    "image": "08-expert-service/service-current-owned-home/default.png",
+    "viewport": "08-expert-service/service-current-owned-home/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/me"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "mom/home",
+      "mom/record-picker",
+      "mom/other-functions",
+      "common/not-found",
+      "mom/state-01",
+      "mom/state-11",
+      "mom/state-31",
+      "mom/state-38",
+      "mom/state-43"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/modules/mom/presentation/mom_home_sections.dart",
+      "lib/modules/mom/presentation/mother_home_page.dart",
+      "lib/modules/services/presentation/expert_support_section.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_current_inventory_test.dart",
+    "test_case": "current owned service progress and booking entries false",
+    "metadata": "raw/test/goldens/ui_inventory/service-current-owned-home-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-current-owned-home-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-current-owned-home-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/service-current-owned-home-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-current-owned-home-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/me",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Authenticated More → Me before service entry",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-current-owned-home-393-1x.png",
+      "previous_source": null,
+      "route": "/me",
+      "trigger": "Authenticated More → Me before service entry",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-current-owned-home-return",
+    "module": "专家服务与咨询",
+    "label": "下午好，Mia",
+    "state": "service-current-owned-home-return",
+    "image": "08-expert-service/service-current-owned-home-return/default.png",
+    "viewport": "08-expert-service/service-current-owned-home-return/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/me"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "mom/home",
+      "mom/record-picker",
+      "mom/other-functions",
+      "common/not-found",
+      "mom/state-01",
+      "mom/state-11",
+      "mom/state-31",
+      "mom/state-38",
+      "mom/state-43"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/modules/mom/presentation/mom_home_sections.dart",
+      "lib/modules/mom/presentation/mother_home_page.dart",
+      "lib/modules/services/presentation/expert_support_section.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_current_inventory_test.dart",
+    "test_case": "current owned service progress and booking entries false",
+    "metadata": "raw/test/goldens/ui_inventory/service-current-owned-home-return-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-current-owned-home-return-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-current-owned-home-return-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/service-current-owned-home-return-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-current-owned-home-return-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/me",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Return through package and catalog → home",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-current-owned-home-return-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/service-current-paused-booking-393-1x.png",
+      "route": "/me",
+      "trigger": "Return through package and catalog → home",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-current-package-recovery-home",
+    "module": "专家服务与咨询",
+    "label": "下午好，Mia",
+    "state": "service-current-package-recovery-home",
+    "image": "08-expert-service/service-current-package-recovery-home/default.png",
+    "viewport": "08-expert-service/service-current-package-recovery-home/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/me"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "mom/home",
+      "mom/record-picker",
+      "mom/other-functions",
+      "common/not-found",
+      "mom/state-01",
+      "mom/state-11",
+      "mom/state-31",
+      "mom/state-38",
+      "mom/state-43"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/modules/mom/presentation/mom_home_sections.dart",
+      "lib/modules/mom/presentation/mother_home_page.dart",
+      "lib/modules/services/presentation/expert_support_section.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_current_inventory_test.dart",
+    "test_case": "current package loading missing recovery disabled payment false",
+    "metadata": "raw/test/goldens/ui_inventory/service-current-package-recovery-home-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-current-package-recovery-home-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-current-package-recovery-home-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/service-current-package-recovery-home-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-current-package-recovery-home-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/me",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Authenticated More → Me before service entry",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-current-package-recovery-home-393-1x.png",
+      "previous_source": null,
+      "route": "/me",
+      "trigger": "Authenticated More → Me before service entry",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-current-package-recovery-home-return",
+    "module": "专家服务与咨询",
+    "label": "下午好，Mia",
+    "state": "service-current-package-recovery-home-return",
+    "image": "08-expert-service/service-current-package-recovery-home-return/default.png",
+    "viewport": "08-expert-service/service-current-package-recovery-home-return/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/me"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "mom/home",
+      "mom/record-picker",
+      "mom/other-functions",
+      "common/not-found",
+      "mom/state-01",
+      "mom/state-11",
+      "mom/state-31",
+      "mom/state-38",
+      "mom/state-43"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/modules/mom/presentation/mom_home_sections.dart",
+      "lib/modules/mom/presentation/mother_home_page.dart",
+      "lib/modules/services/presentation/expert_support_section.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_current_inventory_test.dart",
+    "test_case": "current package loading missing recovery disabled payment false",
+    "metadata": "raw/test/goldens/ui_inventory/service-current-package-recovery-home-return-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-current-package-recovery-home-return-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-current-package-recovery-home-return-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/service-current-package-recovery-home-return-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-current-package-recovery-home-return-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/me",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Package and catalog Back → home",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-current-package-recovery-home-return-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/service-current-package-purchase-disabled-393-1x.png",
+      "route": "/me",
+      "trigger": "Package and catalog Back → home",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-current-pending-home",
+    "module": "专家服务与咨询",
+    "label": "下午好，Mia",
+    "state": "service-current-pending-home",
+    "image": "08-expert-service/service-current-pending-home/default.png",
+    "viewport": "08-expert-service/service-current-pending-home/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/me"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "mom/home",
+      "mom/record-picker",
+      "mom/other-functions",
+      "common/not-found",
+      "mom/state-01",
+      "mom/state-11",
+      "mom/state-31",
+      "mom/state-38",
+      "mom/state-43"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/modules/mom/presentation/mom_home_sections.dart",
+      "lib/modules/mom/presentation/mother_home_page.dart",
+      "lib/modules/services/presentation/expert_support_section.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_current_inventory_test.dart",
+    "test_case": "current pending service order open failure and resume false",
+    "metadata": "raw/test/goldens/ui_inventory/service-current-pending-home-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-current-pending-home-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-current-pending-home-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/service-current-pending-home-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-current-pending-home-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/me",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Authenticated More → Me before service entry",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-current-pending-home-393-1x.png",
+      "previous_source": null,
+      "route": "/me",
+      "trigger": "Authenticated More → Me before service entry",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-current-pending-home-return",
+    "module": "专家服务与咨询",
+    "label": "下午好，Mia",
+    "state": "service-current-pending-home-return",
+    "image": "08-expert-service/service-current-pending-home-return/default.png",
+    "viewport": "08-expert-service/service-current-pending-home-return/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/me"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "mom/home",
+      "mom/record-picker",
+      "mom/other-functions",
+      "common/not-found",
+      "mom/state-01",
+      "mom/state-11",
+      "mom/state-31",
+      "mom/state-38",
+      "mom/state-43"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/modules/mom/presentation/mom_home_sections.dart",
+      "lib/modules/mom/presentation/mother_home_page.dart",
+      "lib/modules/services/presentation/expert_support_section.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_current_inventory_test.dart",
+    "test_case": "current pending service order open failure and resume false",
+    "metadata": "raw/test/goldens/ui_inventory/service-current-pending-home-return-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-current-pending-home-return-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-current-pending-home-return-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/service-current-pending-home-return-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-current-pending-home-return-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/me",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Catalog Back → home",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-current-pending-home-return-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/service-current-pending-catalog-return-393-1x.png",
+      "route": "/me",
+      "trigger": "Catalog Back → home",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_current_inventory_test.dart"
+    }
+  }
+]

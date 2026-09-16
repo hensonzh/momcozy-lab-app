@@ -1,0 +1,114 @@
+[
+  {
+    "id": "208:1108",
+    "name": "Continue support / 方案列表",
+    "x": 80,
+    "y": 75200,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "208:1176",
+    "name": "Continue support / 已选择方案",
+    "x": 520,
+    "y": 75200,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "208:1244",
+    "name": "Continue support / 已有服务",
+    "x": 960,
+    "y": 75200,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "208:1313",
+    "name": "Continue support / 待付款订单",
+    "x": 1400,
+    "y": 75200,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "208:1382",
+    "name": "Continue support / 订单打开失败",
+    "x": 1840,
+    "y": 75200,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "208:1453",
+    "name": "Continue support / 订单读取中",
+    "x": 2280,
+    "y": 75200,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "208:1523",
+    "name": "Continue support / 暂未开放购买",
+    "x": 80,
+    "y": 76500,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "208:1591",
+    "name": "Continue support / 暂无方案",
+    "x": 520,
+    "y": 76500,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "208:1603",
+    "name": "Continue support / 加载失败",
+    "x": 960,
+    "y": 76500,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "208:1614",
+    "name": "Continue support / 首次加载",
+    "x": 1400,
+    "y": 76500,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "208:1625",
+    "name": "Continue support / 大字体",
+    "x": 1840,
+    "y": 76500,
+    "width": 320,
+    "height": 844
+  },
+  {
+    "id": "208:1693",
+    "name": "Continue support / 短屏已有服务",
+    "x": 2280,
+    "y": 76500,
+    "width": 393,
+    "height": 568
+  },
+  {
+    "id": "208:1762",
+    "name": "Continue support / 完整方案列表",
+    "x": 2720,
+    "y": 76500,
+    "width": 393,
+    "height": 1302
+  },
+  {
+    "id": "208:1830",
+    "name": "Continue support / 购买前确认",
+    "x": 80,
+    "y": 79000,
+    "width": 393,
+    "height": 844
+  }
+]

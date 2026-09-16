@@ -1,0 +1,138 @@
+[
+  {
+    "id": "242:1086",
+    "name": "MomCozy/ConversationRow",
+    "width": 328,
+    "height": 1,
+    "x": 80,
+    "y": 110500
+  },
+  {
+    "id": "242:1091",
+    "name": "History / list",
+    "width": 393,
+    "height": 844,
+    "x": 80,
+    "y": 111200
+  },
+  {
+    "id": "242:1135",
+    "name": "History / list-end",
+    "width": 393,
+    "height": 844,
+    "x": 510,
+    "y": 111200
+  },
+  {
+    "id": "242:1162",
+    "name": "History / locked",
+    "width": 393,
+    "height": 844,
+    "x": 940,
+    "y": 111200
+  },
+  {
+    "id": "242:1208",
+    "name": "History / switching",
+    "width": 393,
+    "height": 844,
+    "x": 1370,
+    "y": 111200
+  },
+  {
+    "id": "242:1253",
+    "name": "History / switch-error",
+    "width": 393,
+    "height": 844,
+    "x": 1800,
+    "y": 111200
+  },
+  {
+    "id": "242:1299",
+    "name": "History / loading",
+    "width": 393,
+    "height": 844,
+    "x": 2230,
+    "y": 111200
+  },
+  {
+    "id": "242:1311",
+    "name": "History / load-error",
+    "width": 393,
+    "height": 844,
+    "x": 2660,
+    "y": 111200
+  },
+  {
+    "id": "242:1324",
+    "name": "History / empty",
+    "width": 393,
+    "height": 844,
+    "x": 3090,
+    "y": 111200
+  },
+  {
+    "id": "242:1334",
+    "name": "History / short large list",
+    "width": 320,
+    "height": 568,
+    "x": 80,
+    "y": 112600
+  },
+  {
+    "id": "242:1378",
+    "name": "History / short large locked",
+    "width": 320,
+    "height": 568,
+    "x": 460,
+    "y": 112600
+  },
+  {
+    "id": "242:1424",
+    "name": "History / short large switching",
+    "width": 320,
+    "height": 568,
+    "x": 840,
+    "y": 112600
+  },
+  {
+    "id": "242:1469",
+    "name": "History / short large switch-error",
+    "width": 320,
+    "height": 568,
+    "x": 1220,
+    "y": 112600
+  },
+  {
+    "id": "242:1515",
+    "name": "History / short large loading",
+    "width": 320,
+    "height": 568,
+    "x": 1600,
+    "y": 112600
+  },
+  {
+    "id": "242:1527",
+    "name": "History / short large empty",
+    "width": 320,
+    "height": 568,
+    "x": 1980,
+    "y": 112600
+  },
+  {
+    "id": "242:1537",
+    "name": "History / short large load-error",
+    "width": 320,
+    "height": 568,
+    "x": 2360,
+    "y": 112600
+  },
+  {
+    "id": "242:1550",
+    "name": "History / short large single",
+    "width": 320,
+    "height": 568,
+    "x": 2740,
+    "y": 112600
+  }
+]

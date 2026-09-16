@@ -1,0 +1,233 @@
+Waiting for another flutter command to release the startup lock...
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: form state rejects duplicate and completed submissions
+00:00 +1: form states 320.0/1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: FlutterError:<Golden "../../goldens/design_system/agent-form-entry-320-1x.png": Pixel test
+failed, 9.99%, 26978px diff detected.
+          Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/features/agent_hub/failures>
+
+When the exception was thrown, this was the stack:
+#4      verifyAgentForm.tap (file:///Users/lute/project/momcozy-lab/app/test/support/agent_form_scenarios.dart:56:5)
+<asynchronous suspension>
+#5      verifyAgentForm (file:///Users/lute/project/momcozy-lab/app/test/support/agent_form_scenarios.dart:63:3)
+<asynchronous suspension>
+#6      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart:52:9)
+<asynchronous suspension>
+#7      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#8      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/support/agent_form_scenarios.dart line 56
+The test description was:
+  form states 320.0/1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +1 -1: form states 320.0/1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: form states 320.0/1.0
+  
+00:00 +1 -1: form states 320.0/2.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: FlutterError:<Golden "../../goldens/design_system/agent-form-entry-320-2x.png": Pixel test
+failed, 24.26%, 65534px diff detected.
+          Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/features/agent_hub/failures>
+
+When the exception was thrown, this was the stack:
+#4      verifyAgentForm.tap (file:///Users/lute/project/momcozy-lab/app/test/support/agent_form_scenarios.dart:56:5)
+<asynchronous suspension>
+#5      verifyAgentForm (file:///Users/lute/project/momcozy-lab/app/test/support/agent_form_scenarios.dart:63:3)
+<asynchronous suspension>
+#6      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart:52:9)
+<asynchronous suspension>
+#7      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#8      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/support/agent_form_scenarios.dart line 56
+The test description was:
+  form states 320.0/2.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +1 -2: form states 320.0/2.0 [E]
+  Test failed. See exception logs above.
+  The test description was: form states 320.0/2.0
+  
+00:00 +1 -2: form states 390.0/1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: FlutterError:<Golden "../../goldens/design_system/agent-form-entry-390-1x.png": Pixel test
+failed, 10.49%, 34538px diff detected.
+          Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/features/agent_hub/failures>
+
+When the exception was thrown, this was the stack:
+#4      verifyAgentForm.tap (file:///Users/lute/project/momcozy-lab/app/test/support/agent_form_scenarios.dart:56:5)
+<asynchronous suspension>
+#5      verifyAgentForm (file:///Users/lute/project/momcozy-lab/app/test/support/agent_form_scenarios.dart:63:3)
+<asynchronous suspension>
+#6      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart:52:9)
+<asynchronous suspension>
+#7      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#8      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/support/agent_form_scenarios.dart line 56
+The test description was:
+  form states 390.0/1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +1 -3: form states 390.0/1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: form states 390.0/1.0
+  
+00:00 +1 -3: form states 390.0/2.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: FlutterError:<Golden "../../goldens/design_system/agent-form-entry-390-2x.png": Pixel test
+failed, 21.06%, 69314px diff detected.
+          Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/features/agent_hub/failures>
+
+When the exception was thrown, this was the stack:
+#4      verifyAgentForm.tap (file:///Users/lute/project/momcozy-lab/app/test/support/agent_form_scenarios.dart:56:5)
+<asynchronous suspension>
+#5      verifyAgentForm (file:///Users/lute/project/momcozy-lab/app/test/support/agent_form_scenarios.dart:63:3)
+<asynchronous suspension>
+#6      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart:52:9)
+<asynchronous suspension>
+#7      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#8      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/support/agent_form_scenarios.dart line 56
+The test description was:
+  form states 390.0/2.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +1 -4: form states 390.0/2.0 [E]
+  Test failed. See exception logs above.
+  The test description was: form states 390.0/2.0
+  
+00:01 +1 -4: form states 430.0/1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: FlutterError:<Golden "../../goldens/design_system/agent-form-entry-430-1x.png": Pixel test
+failed, 10.71%, 38858px diff detected.
+          Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/features/agent_hub/failures>
+
+When the exception was thrown, this was the stack:
+#4      verifyAgentForm.tap (file:///Users/lute/project/momcozy-lab/app/test/support/agent_form_scenarios.dart:56:5)
+<asynchronous suspension>
+#5      verifyAgentForm (file:///Users/lute/project/momcozy-lab/app/test/support/agent_form_scenarios.dart:63:3)
+<asynchronous suspension>
+#6      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart:52:9)
+<asynchronous suspension>
+#7      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#8      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/support/agent_form_scenarios.dart line 56
+The test description was:
+  form states 430.0/1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +1 -5: form states 430.0/1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: form states 430.0/1.0
+  
+00:01 +1 -5: form states 430.0/2.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: FlutterError:<Golden "../../goldens/design_system/agent-form-entry-430-2x.png": Pixel test
+failed, 21.48%, 77954px diff detected.
+          Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/features/agent_hub/failures>
+
+When the exception was thrown, this was the stack:
+#4      verifyAgentForm.tap (file:///Users/lute/project/momcozy-lab/app/test/support/agent_form_scenarios.dart:56:5)
+<asynchronous suspension>
+#5      verifyAgentForm (file:///Users/lute/project/momcozy-lab/app/test/support/agent_form_scenarios.dart:63:3)
+<asynchronous suspension>
+#6      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart:52:9)
+<asynchronous suspension>
+#7      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#8      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/support/agent_form_scenarios.dart line 56
+The test description was:
+  form states 430.0/2.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +1 -6: form states 430.0/2.0 [E]
+  Test failed. See exception logs above.
+  The test description was: form states 430.0/2.0
+  
+00:01 +1 -6: short screen keyboard leaves form content and actions reachable
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: FlutterError:<Golden "../../goldens/design_system/agent-form-short-keyboard.png": Pixel
+test failed, 50.83%, 92388px diff detected.
+          Failure feedback can be found at
+/Users/lute/project/momcozy-lab/app/test/features/agent_hub/failures>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart:134:7)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart line 134
+The test description was:
+  short screen keyboard leaves form content and actions reachable
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +1 -7: short screen keyboard leaves form content and actions reachable [E]
+  Test failed. See exception logs above.
+  The test description was: short screen keyboard leaves form content and actions reachable
+  
+00:01 +1 -7: (tearDownAll)
+00:01 +1 -7: Some tests failed.
+
+Failing tests:
+  /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: form states 320.0/1.0
+  /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: form states 320.0/2.0
+  /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: form states 390.0/1.0
+  /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_form_design_test.dart: form states 390.0/2.0
+  ... and 3 more

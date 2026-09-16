@@ -1,0 +1,172 @@
+[
+  {
+    "id": "05-agent/agent-markdown-top",
+    "figma_nodes": [
+      "271:1086",
+      "271:1610"
+    ],
+    "note": "Screenshot-backed card or reading state redesigned; component checks preserve actions and content."
+  },
+  {
+    "id": "05-agent/agent-markdown-link",
+    "figma_nodes": [
+      "271:1123",
+      "271:1650"
+    ],
+    "note": "Screenshot-backed card or reading state redesigned; component checks preserve actions and content."
+  },
+  {
+    "id": "05-agent/agent-cards",
+    "figma_nodes": [
+      "271:1560",
+      "271:2117",
+      "274:1086",
+      "274:1110"
+    ],
+    "note": "Consult card and form entry surface redesigned. Full form dialog remains a later design scope; existing dialog submission checks pass."
+  },
+  {
+    "id": "05-agent/agent-entry-journey-external-card",
+    "figma_nodes": [
+      "271:1380",
+      "271:1925"
+    ],
+    "note": "Screenshot-backed card or reading state redesigned; component checks preserve actions and content."
+  },
+  {
+    "id": "05-agent/agent-entry-journey-forward_head-card",
+    "figma_nodes": [
+      "271:1424",
+      "271:1972"
+    ],
+    "note": "Screenshot-backed card or reading state redesigned; component checks preserve actions and content."
+  },
+  {
+    "id": "05-agent/agent-entry-journey-posture_screen-card",
+    "figma_nodes": [
+      "271:1467",
+      "271:2018"
+    ],
+    "note": "Screenshot-backed card or reading state redesigned; component checks preserve actions and content."
+  },
+  {
+    "id": "05-agent/agent-resource-journey-image-card",
+    "figma_nodes": [
+      "271:1160",
+      "271:1690"
+    ],
+    "note": "Screenshot-backed card or reading state redesigned; component checks preserve actions and content."
+  },
+  {
+    "id": "05-agent/agent-resource-journey-image-return",
+    "figma_nodes": [
+      "271:1160",
+      "271:1690"
+    ],
+    "note": "Screenshot-backed card or reading state redesigned; component checks preserve actions and content."
+  },
+  {
+    "id": "05-agent/agent-resource-journey-pdf-card",
+    "figma_nodes": [
+      "271:1204",
+      "271:1737"
+    ],
+    "note": "Screenshot-backed card or reading state redesigned; component checks preserve actions and content."
+  },
+  {
+    "id": "05-agent/agent-resource-journey-pdf-pending-return",
+    "figma_nodes": [
+      "271:1204",
+      "271:1737"
+    ],
+    "note": "Screenshot-backed card or reading state redesigned; component checks preserve actions and content."
+  },
+  {
+    "id": "05-agent/agent-resource-journey-invalid-card",
+    "figma_nodes": [
+      "271:1336",
+      "271:1878"
+    ],
+    "note": "Screenshot-backed card or reading state redesigned; component checks preserve actions and content."
+  },
+  {
+    "id": "05-agent/agent-resource-journey-invalid-no-navigation",
+    "figma_nodes": [
+      "271:1336",
+      "271:1878"
+    ],
+    "note": "Screenshot-backed card or reading state redesigned; component checks preserve actions and content."
+  },
+  {
+    "id": "05-agent/agent-resource-journey-renew-card",
+    "figma_nodes": [
+      "271:1292",
+      "271:1831"
+    ],
+    "note": "Screenshot-backed card or reading state redesigned; component checks preserve actions and content."
+  },
+  {
+    "id": "05-agent/agent-resource-journey-renew-card-return",
+    "figma_nodes": [
+      "271:1292",
+      "271:1831"
+    ],
+    "note": "Screenshot-backed card or reading state redesigned; component checks preserve actions and content."
+  },
+  {
+    "id": "05-agent/agent-resource-journey-video-card",
+    "figma_nodes": [
+      "271:1248",
+      "271:1784"
+    ],
+    "note": "Screenshot-backed card or reading state redesigned; component checks preserve actions and content."
+  },
+  {
+    "id": "05-agent/agent-resource-journey-video-return",
+    "figma_nodes": [
+      "271:1248",
+      "271:1784"
+    ],
+    "note": "Screenshot-backed card or reading state redesigned; component checks preserve actions and content."
+  },
+  {
+    "id": "05-agent/native-resource-card",
+    "figma_nodes": [
+      "271:1510",
+      "271:2064"
+    ],
+    "note": "Existing native capture supplies the multi-action source. Current verification uses the real AgentHubPage widget; no new native build or capture."
+  },
+  {
+    "id": "05-agent/native-resource-image-return",
+    "figma_nodes": [
+      "271:1510",
+      "271:2064"
+    ],
+    "note": "Existing native capture supplies the multi-action source. Current verification uses the real AgentHubPage widget; no new native build or capture."
+  },
+  {
+    "id": "05-agent/native-resource-pdf-return",
+    "figma_nodes": [
+      "271:1510",
+      "271:2064"
+    ],
+    "note": "Existing native capture supplies the multi-action source. Current verification uses the real AgentHubPage widget; no new native build or capture."
+  },
+  {
+    "id": "05-agent/native-resource-renew-return",
+    "figma_nodes": [
+      "271:1510",
+      "271:2064"
+    ],
+    "note": "Existing native capture supplies the multi-action source. Current verification uses the real AgentHubPage widget; no new native build or capture."
+  },
+  {
+    "id": "05-agent/native-resource-video-return",
+    "figma_nodes": [
+      "271:1510",
+      "271:2064"
+    ],
+    "note": "Existing native capture supplies the multi-action source. Current verification uses the real AgentHubPage widget; no new native build or capture."
+  }
+]

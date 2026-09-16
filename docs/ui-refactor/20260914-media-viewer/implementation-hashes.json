@@ -1,0 +1,7 @@
+{
+  "lib/features/media/presentation/media_viewer_header.dart": "3b0851ca19afdf2995a8d9dd5135c2051bc9c39e1c26b3d76c6fef092db620e3",
+  "lib/features/media/presentation/media_viewer_feedback.dart": "d8e6782d3d213b2ad0a0ae6b319becde2b4d10bc3d16dbd356064b1abe6a58ab",
+  "lib/features/media/presentation/media_viewer_page.dart": "904e88d01850acb2a6413d068e35e47ceec72b55407a8a2601714ddbc5584af5",
+  "lib/features/media/presentation/product_asset_image.dart": "0188614166549815a3fae2f780fdba902f2ebab17918683642c8dbd6eaa585b1",
+  "test/features/media/media_design_test.dart": "e99d932ce72a87dac489a7eb70010999447bc3ee6f010a5eadf033cd15214222"
+}

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/features/notifications/domain/momcozy_notification.dart';
 import 'package:momcozy_flutter_app/features/notifications/presentation/notification_coordinator.dart';
@@ -71,7 +72,16 @@ void main() {
             controller: controller,
             onBack: () => back++,
             onSettings: () => settings++,
+            now: () => DateTime.utc(2026, 9, 12, 2),
           ),
+        );
+        expect(
+          tester
+              .renderObject<RenderParagraph>(find.text(repository.item.body))
+              .text
+              .style!
+              .height,
+          1.55,
         );
         await capture(tester, 'inbox');
         repository.fail = true;
@@ -82,6 +92,7 @@ void main() {
         await tap(tester, find.text('Retry'));
         await tap(tester, find.text('Your appointment has been confirmed'));
         expect(controller.state.unreadCount, 0);
+        await capture(tester, 'read');
         await tap(
           tester,
           find.byKey(const ValueKey('notification-archive-one')),
@@ -129,6 +140,19 @@ void main() {
         await tap(tester, find.text('Not now'));
         expect(platform.requests, 0);
         await tester.scrollUntilVisible(find.text('Refresh status'), 250);
+        for (final copy in [
+          'Not enabled. Service preferences do not opt you into marketing.',
+          'Only future reminders you previously enabled can resume when permission is restored. Past reminders are not sent later.',
+        ]) {
+          expect(
+            tester
+                .renderObject<RenderParagraph>(find.text(copy))
+                .text
+                .style!
+                .height,
+            1.55,
+          );
+        }
         await tap(tester, find.text('Refresh status'));
         expect(platform.requests, 0);
       });
@@ -140,6 +164,7 @@ class _Inbox extends FakeRepository {
   bool fail = false, archived = false, read = false;
   MomCozyNotification get item => MomCozyNotification(
     id: 'one',
+    createdAt: DateTime.utc(2026, 9, 12, 1, 30),
     type: 'appointment_created',
     title: 'Your appointment has been confirmed',
     body:

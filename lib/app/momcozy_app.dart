@@ -9,11 +9,15 @@ import 'mom_module_routes.dart';
 import 'baby_module_routes.dart';
 import 'mom_bottom_navigation.dart';
 import '../shared/widgets/momcozy_components.dart';
+import '../shared/design_system/mom_home_tokens.dart';
+import '../shared/design_system/mom_settings_theme.dart';
+import '../shared/widgets/mom_settings_widgets.dart';
 import 'package:momcozy_flutter_app/shared/design_system/momcozy_theme.dart';
 import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:momcozy_flutter_app/shared/design_system/momcozy_motion.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
@@ -128,18 +132,42 @@ class _MomCozyFlutterAppState extends State<MomCozyFlutterApp>
   late final bool _ownsRouteIntentPlatform = widget.routeIntentPlatform == null;
   StreamSubscription<PendingNativeRoute>? _activeRouteSub;
   final _messengerKey = GlobalKey<ScaffoldMessengerState>();
-  late final NotificationCoordinator? _notifications = widget.notificationCoordinator ??
-      (_runtimeController.runtime.supportsSessionAutoRefresh ? NotificationCoordinator(
-        permission: NotificationPermissionController(const NativeNotificationPlatform()),
-        gateway: FirebasePushMessaging(), store: SecureNotificationInstallationStore(),
-        platformName: Platform.isIOS ? 'ios' : 'android',
-        onNavigate: (route) { if (mounted) _router.go(route); },
-        onMessage: (message) { if (mounted) _messengerKey.currentState?.showSnackBar(SnackBar(content: Text(message))); },
-        onForeground: (intent) {
-          if (mounted) _messengerKey.currentState?.showSnackBar(SnackBar(content: const Text('You have a new Momcozy update.'), action: SnackBarAction(label: 'View', onPressed: () => unawaited(_notifications?.openPush(intent)))));
-        },
-      ) : null);
-
+  late final NotificationCoordinator? _notifications =
+      widget.notificationCoordinator ??
+      (_runtimeController.runtime.supportsSessionAutoRefresh
+          ? NotificationCoordinator(
+              permission: NotificationPermissionController(
+                const NativeNotificationPlatform(),
+              ),
+              gateway: FirebasePushMessaging(),
+              store: SecureNotificationInstallationStore(),
+              platformName: Platform.isIOS ? 'ios' : 'android',
+              onNavigate: (route) {
+                if (mounted) _router.go(route);
+              },
+              onMessage: (message) {
+                if (mounted) {
+                  _messengerKey.currentState?.showSnackBar(
+                    SnackBar(content: Text(message)),
+                  );
+                }
+              },
+              onForeground: (intent) {
+                if (mounted) {
+                  _messengerKey.currentState?.showSnackBar(
+                    SnackBar(
+                      content: const Text('You have a new Momcozy update.'),
+                      action: SnackBarAction(
+                        label: 'View',
+                        onPressed: () =>
+                            unawaited(_notifications?.openPush(intent)),
+                      ),
+                    ),
+                  );
+                }
+              },
+            )
+          : null);
 
   @override
   void initState() {
@@ -182,10 +210,16 @@ class _MomCozyFlutterAppState extends State<MomCozyFlutterApp>
   void _handleRuntimeChanged() {
     final session = _runtimeController.currentSession;
     final repository = _runtimeController.runtime.notificationsRepository;
-    unawaited(_notifications?.setAccount(
-      key: session.isAuthenticated ? '${session.userId}:${_runtimeController.sessionGeneration}' : null,
-      inboxRepository: repository, deliveryRepository: repository, locale: session.locale,
-    ));
+    unawaited(
+      _notifications?.setAccount(
+        key: session.isAuthenticated
+            ? '${session.userId}:${_runtimeController.sessionGeneration}'
+            : null,
+        inboxRepository: repository,
+        deliveryRepository: repository,
+        locale: session.locale,
+      ),
+    );
   }
 
   Future<void> _consumePendingNativeRoute() async {
@@ -214,7 +248,9 @@ class _MomCozyFlutterAppState extends State<MomCozyFlutterApp>
       builder: (context, child) {
         return MomCozyRuntimeScope(
           apiRuntime: _runtimeController.runtime,
-          child: _notifications == null ? child! : NotificationScope(coordinator: _notifications, child: child!),
+          child: _notifications == null
+              ? child!
+              : NotificationScope(coordinator: _notifications, child: child!),
         );
       },
       child: MaterialApp.router(
@@ -223,7 +259,9 @@ class _MomCozyFlutterAppState extends State<MomCozyFlutterApp>
         locale: const Locale('zh', 'CN'),
         supportedLocales: const [Locale('zh', 'CN')],
         localizationsDelegates: GlobalMaterialLocalizations.delegates,
-        theme: momCozyTheme(),
+        theme: momCozyTheme().copyWith(
+          pageTransitionsTheme: momCozyPageTransitionsTheme,
+        ),
         routerConfig: _router,
         debugShowCheckedModeBanner: false,
       ),
@@ -293,7 +331,13 @@ GoRouter createMomCozyRouter({
     },
     routes: [
       if (runtimeController != null)
-        GoRoute(path: '/account', builder: (context, state) => MomCozyAccountPage(runtimeController: runtimeController, sessionStore: sessionStore)),
+        GoRoute(
+          path: '/account',
+          builder: (context, state) => MomCozyAccountPage(
+            runtimeController: runtimeController,
+            sessionStore: sessionStore,
+          ),
+        ),
       if (runtimeController != null)
         GoRoute(
           path: '/login',
@@ -364,6 +408,11 @@ GoRouter createMomCozyRouter({
                   runtimeController != null &&
                       !capabilities.isRouteEnabled(route.path)
                   ? _BackendCapabilityUnavailablePage(route: route)
+                  // The shell keeps one Agent Hub alive across tab changes.
+                  // Keep its nested Navigator mounted without creating a
+                  // second chat page for this route.
+                  : route.path == '/'
+                  ? const SizedBox.shrink()
                   : MomCozyRoutePage(
                       route: route,
                       uri: state.uri,
@@ -384,7 +433,7 @@ GoRouter createMomCozyRouter({
     errorBuilder: (context, state) {
       return const MomCozyRouteShell(
         location: '/404',
-        child: MomCozyRoutePage(route: notFoundRoute),
+        child: MomCozyNotFoundPage(),
       );
     },
   );
@@ -560,7 +609,7 @@ class _MomCozyRouteShellState extends State<MomCozyRouteShell> {
   @override
   Widget build(BuildContext context) {
     final location = widget.location;
-    final hideNavigation = _routesWithoutBottomNavigation.contains(location);
+    final hideNavigation = !_primaryNavigationRoutes.contains(location);
     final content = _buildContent(context);
 
     return Scaffold(
@@ -579,9 +628,7 @@ class _MomCozyRouteShellState extends State<MomCozyRouteShell> {
                   onOpen: () => unawaited(_openAvatarTask(context)),
                 ),
               ),
-            Expanded(
-              child: MomCozyPageBody(safeArea: false, child: content),
-            ),
+            Expanded(child: MomCozyPageBody(safeArea: false, child: content)),
           ],
         ),
       ),
@@ -638,7 +685,15 @@ class _MomCozyRouteShellState extends State<MomCozyRouteShell> {
             child: TickerMode(enabled: isAgentRoute, child: agentHub),
           ),
         ),
-        if (!isAgentRoute) Positioned.fill(child: widget.child),
+        Positioned.fill(
+          child: Offstage(
+            offstage: isAgentRoute,
+            child: ExcludeFocus(
+              excluding: isAgentRoute,
+              child: TickerMode(enabled: !isAgentRoute, child: widget.child),
+            ),
+          ),
+        ),
       ],
     );
   }
@@ -697,6 +752,23 @@ class MomCozyRoutePage extends StatelessWidget {
   }
 }
 
+// AgentHubPage caches by object identity. Keep conversation keys stable across
+// route rebuilds, while allowing all keys to be collected with their runtime.
+final _conversationInteractionKeys = Expando<Map<String, Object>>(
+  'momcozy-conversation-interaction-keys',
+);
+
+Object _conversationInteractionKey(
+  MomCozyApiRuntime runtime,
+  String conversationId,
+) {
+  final keys = _conversationInteractionKeys[runtime] ??= <String, Object>{};
+  return keys.putIfAbsent(
+    '${runtime.currentSession.userId}:$conversationId',
+    Object.new,
+  );
+}
+
 Widget _buildDefaultAgentHubPage(
   BuildContext context,
   Uri? uri,
@@ -714,12 +786,16 @@ Widget _buildDefaultAgentHubPage(
 
   final targetConversationId = uri?.queryParameters['conversationId'];
   return AgentHubPage(
-    key: ValueKey('agent-hub-${runtime.currentSession.userId}${targetConversationId == null ? '' : '-$targetConversationId'}'),
-    initialConversationId: targetConversationId,
-    stateCacheKey: targetConversationId == null ? runtime : '${runtime.currentSession.userId}:$targetConversationId',
-    interactionStateStore: targetConversationId != null ? null : createSessionAgentHubInteractionStateStore(
-      runtime.currentSession,
+    key: ValueKey(
+      'agent-hub-${runtime.currentSession.userId}${targetConversationId == null ? '' : '-$targetConversationId'}',
     ),
+    initialConversationId: targetConversationId,
+    stateCacheKey: targetConversationId == null
+        ? runtime
+        : _conversationInteractionKey(runtime, targetConversationId),
+    interactionStateStore: targetConversationId != null
+        ? null
+        : createSessionAgentHubInteractionStateStore(runtime.currentSession),
     runner: createSessionAgentHubRunner(
       runtime.session,
       accessTokenProvider: currentAccessToken,
@@ -740,7 +816,8 @@ Widget _buildDefaultAgentHubPage(
       accessTokenProvider: currentAccessToken,
       onUnauthorized: runtime.agentStreamUnauthorizedHandler,
     ),
-    conversationRepository: conversationHistoryEnabled || targetConversationId != null
+    conversationRepository:
+        conversationHistoryEnabled || targetConversationId != null
         ? runtime.agentConversationRepository
         : null,
     greetingProfileLoader:
@@ -821,6 +898,67 @@ bool _agentAutoSendFromRoute(Uri? uri, Object? extra) {
   return queryAutoSend == 'true' || queryAutoSend == '1';
 }
 
+class MomCozyNotFoundPage extends StatelessWidget {
+  const MomCozyNotFoundPage({super.key});
+
+  @override
+  Widget build(BuildContext context) => Theme(
+    data: momSettingsTheme(Theme.of(context)),
+    child: LayoutBuilder(
+      builder: (context, constraints) => SingleChildScrollView(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(minHeight: constraints.maxHeight),
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 440),
+                child: MomSettingsCard(
+                  padding: const EdgeInsets.all(24),
+                  children: [
+                    Center(
+                      child: Container(
+                        width: 64,
+                        height: 64,
+                        decoration: BoxDecoration(
+                          color: MomHomeTokens.mint,
+                          borderRadius: BorderRadius.circular(22),
+                        ),
+                        child: const Icon(
+                          Icons.search_off_outlined,
+                          size: 32,
+                          color: MomHomeTokens.teal,
+                        ),
+                      ),
+                    ),
+                    Text(
+                      '页面未找到',
+                      textAlign: TextAlign.center,
+                      style: MomHomeTokens.text(22, weight: FontWeight.w700),
+                    ),
+                    Text(
+                      '这个页面可能已移动，或链接已失效。',
+                      textAlign: TextAlign.center,
+                      style: MomHomeTokens.text(
+                        14,
+                        color: MomHomeTokens.secondary,
+                      ),
+                    ),
+                    FilledButton(
+                      onPressed: () => context.go('/me'),
+                      child: const Text('返回首页'),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
+}
+
 class MomCozyRouteConfig {
   const MomCozyRouteConfig({
     required this.path,
@@ -842,7 +980,7 @@ class MomCozyRouteConfig {
 const notFoundRoute = MomCozyRouteConfig(
   path: '/404',
   title: '页面未找到',
-  summary: '该入口不在当前 Flutter route map 中。',
+  summary: '这个页面可能已移动，或链接已失效。',
   icon: Icons.search_off_rounded,
   accent: Color(0xff7f6a75),
   priority: 'P2',
@@ -907,7 +1045,7 @@ const momCozyRoutes = [
   ),
 ];
 
-const _routesWithoutBottomNavigation = {'/media-viewer'};
+const _primaryNavigationRoutes = {'/me', '/baby', '/', '/schedule', '/more'};
 
 Future<void> dispatchAgentArtifactAction(
   BuildContext context,

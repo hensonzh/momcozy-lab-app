@@ -1,0 +1,27 @@
+{
+  "basis": "Current verification, not a retroactive claim that unarchived files match a historical version.",
+  "logs": [
+    "records-shared-current-tests.log",
+    "changed-image-current-tests.log"
+  ],
+  "files": {
+    "lib/modules/baby/application/baby_profile_controller.dart": "5e54cbd284745305ab6e47255943dfe59e8e6e8e07e3c7cabac24b4d0e1d7371",
+    "lib/modules/baby/presentation/baby_profile_editor.dart": "a77c108f595dddce3e1abc1209ea411ea3909ea5f36a152077d0b216ca4be4c7",
+    "lib/modules/mom/application/mom_home_view_data.dart": "659721f5d1dd5b7d2588747712f60422a5578d5308f49eb4e54e21a3dac23ec3",
+    "lib/modules/mom/application/mother_diary_controller.dart": "3b61d7ed5b97704246cb42cb36f345e097dd44c16e5608e573ee370cbb9d6c22",
+    "lib/modules/mom/presentation/mom_home_sections.dart": "884f5cd02a0ec1e9df1225da58c381baad7ca1fadc8ce805bbda0534f1b7431a",
+    "lib/modules/mom/presentation/mother_diary_editor.dart": "9dca6b697cb17ed7b07a87812f5cdb33d84b66e92c95b8969accc781ecc7b804",
+    "lib/modules/mom/presentation/mother_diary_page.dart": "b15c9694966232c9fce590dd6e7eae5710dac92aa3e7a7dce87691f450c7578a",
+    "lib/shared/design_system/mom_home_tokens.dart": "9a29742884083678da9dff00c0d5a95da969a899f13e5f6fc2e1ab34232fa3d1",
+    "lib/shared/widgets/choice_field.dart": "36bde977475aae1f6fbf92e6441d683adbde64b8f00b7b889d51dd4984bb3fd5",
+    "lib/shared/widgets/mom_companion_widgets.dart": "93c5cc4e022ac56ee5ca31dc5208f6c3a8df03d08e39ace0d761b101e04571ab",
+    "test/features/agent_hub/agent_me_design_test.dart": "e8fbe436e75d589844844c5d4229561d0ab212e310764a6e3a521ae3974970fb",
+    "test/modules/baby/baby_knowledge_and_summary_test.dart": "76c733e3a4df7d434d4fe33a83021e19e2c9579ea17715d13744c8f7b7ebc887",
+    "test/modules/baby/baby_profile_redesign_test.dart": "c2e49c8f2e57c9f4ead16830f3fe52647779ee8361f1663d7621ca22efcd8c06",
+    "test/modules/baby/baby_switcher_design_test.dart": "6c4e330b01b319a583e25b33caf6f0c6c4fa40c3832153adb3f9830ed70b15a5",
+    "test/modules/mom/mom_home_handoff_test.dart": "e8c0eb1b5b0f96367f203244a4cbdc9a1eeeba92c1c9638244421d601cb9a36a",
+    "test/modules/mom/mother_diary_page_test.dart": "9b6d25f0c1c10a441eed078a7cddcfcec351cc1bd72a50e68829ba84cc2aef18",
+    "test/modules/mom/mother_diary_redesign_test.dart": "47cc313913a5b9075158a32478d9ea92a8e3542d9434a9cb069e093b57ebcc58",
+    "test/shared/knowledge_article_design_test.dart": "9062188943bfad35b922789f93028baf12e920581da5fddaac6543673734d923"
+  }
+}

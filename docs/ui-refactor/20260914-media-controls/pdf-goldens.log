@@ -1,0 +1,22 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/native/media_pdf_design_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: native PDF preview, scroll and zoom 320.0 / 1.0
+PdfDocument initial load: PdfDocumentRefKey(local-pdf) (202 ms)
+PdfViewer: Loaded page 2 of 2 in 73 ms
+00:02 +1: native PDF preview, scroll and zoom 320.0 / 2.0
+PdfDocument initial load: PdfDocumentRefKey(local-pdf) (107 ms)
+PdfViewer: Loaded page 2 of 2 in 20 ms
+00:03 +2: native PDF preview, scroll and zoom 390.0 / 1.0
+PdfDocument initial load: PdfDocumentRefKey(local-pdf) (104 ms)
+PdfViewer: Loaded page 2 of 2 in 12 ms
+00:05 +3: native PDF preview, scroll and zoom 390.0 / 2.0
+PdfDocument initial load: PdfDocumentRefKey(local-pdf) (101 ms)
+PdfViewer: Loaded page 2 of 2 in 12 ms
+00:06 +4: native PDF preview, scroll and zoom 430.0 / 1.0
+PdfDocument initial load: PdfDocumentRefKey(local-pdf) (105 ms)
+PdfViewer: Loaded page 2 of 2 in 17 ms
+00:08 +5: native PDF preview, scroll and zoom 430.0 / 2.0
+PdfDocument initial load: PdfDocumentRefKey(local-pdf) (102 ms)
+PdfViewer: Loaded page 2 of 2 in 22 ms
+00:09 +6: (tearDownAll)
+00:09 +6: All tests passed!

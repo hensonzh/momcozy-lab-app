@@ -1,0 +1,500 @@
+[
+  {
+    "id": "07-me/notification-navigation-current-conversation-final-more",
+    "route": "/more",
+    "trigger": "Notification center back → More; scroll More back to top",
+    "report": "20260914-more/HANDOFF.md"
+  },
+  {
+    "id": "07-me/notification-navigation-current-conversation-inbox",
+    "route": "/notifications",
+    "trigger": "Notification center before conversation target",
+    "report": "20260914-notifications/HANDOFF.md"
+  },
+  {
+    "id": "07-me/notification-navigation-current-conversation-inbox-return",
+    "route": "/notifications",
+    "trigger": "Target return → notification center with read item",
+    "report": "20260914-notifications/HANDOFF.md"
+  },
+  {
+    "id": "07-me/notification-navigation-current-conversation-more",
+    "route": "/more",
+    "trigger": "Authenticated More before notifications; scroll More back to top",
+    "report": "20260914-more/HANDOFF.md"
+  },
+  {
+    "id": "07-me/notification-navigation-current-conversation-more-return",
+    "route": "/more",
+    "trigger": "Conversation More tab → no unread badge; scroll More back to top",
+    "report": "20260914-more/HANDOFF.md"
+  },
+  {
+    "id": "07-me/notification-navigation-current-episode-final-more",
+    "route": "/more",
+    "trigger": "Notification center back → More; scroll More back to top",
+    "report": "20260914-more/HANDOFF.md"
+  },
+  {
+    "id": "07-me/notification-navigation-current-episode-inbox",
+    "route": "/notifications",
+    "trigger": "Notification center before episode target",
+    "report": "20260914-notifications/HANDOFF.md"
+  },
+  {
+    "id": "07-me/notification-navigation-current-episode-inbox-return",
+    "route": "/notifications",
+    "trigger": "Target return → notification center with read item",
+    "report": "20260914-notifications/HANDOFF.md"
+  },
+  {
+    "id": "07-me/notification-navigation-current-episode-more",
+    "route": "/more",
+    "trigger": "Authenticated More before notifications; scroll More back to top",
+    "report": "20260914-more/HANDOFF.md"
+  },
+  {
+    "id": "07-me/notification-navigation-current-episode-more-return",
+    "route": "/more",
+    "trigger": "Mother home More tab → updated unread badge; scroll More back to top",
+    "report": "20260914-more/HANDOFF.md"
+  },
+  {
+    "id": "07-me/notification-navigation-current-intake-final-more",
+    "route": "/more",
+    "trigger": "Notification center back → More; scroll More back to top",
+    "report": "20260914-more/HANDOFF.md"
+  },
+  {
+    "id": "07-me/notification-navigation-current-intake-inbox",
+    "route": "/notifications",
+    "trigger": "Notification center before intake target",
+    "report": "20260914-notifications/HANDOFF.md"
+  },
+  {
+    "id": "07-me/notification-navigation-current-intake-inbox-return",
+    "route": "/notifications",
+    "trigger": "Target return → notification center with read item",
+    "report": "20260914-notifications/HANDOFF.md"
+  },
+  {
+    "id": "07-me/notification-navigation-current-intake-more",
+    "route": "/more",
+    "trigger": "Authenticated More before notifications; scroll More back to top",
+    "report": "20260914-more/HANDOFF.md"
+  },
+  {
+    "id": "07-me/notification-navigation-current-intake-more-return",
+    "route": "/more",
+    "trigger": "Mother home More tab → updated unread badge; scroll More back to top",
+    "report": "20260914-more/HANDOFF.md"
+  },
+  {
+    "id": "07-me/notification-navigation-current-rejection-403",
+    "route": "/notifications",
+    "trigger": "Open notification returns 403 → retained unread item and open-error Snackbar",
+    "report": "20260914-notifications/HANDOFF.md"
+  },
+  {
+    "id": "07-me/notification-navigation-current-rejection-403-dismissed",
+    "route": "/notifications",
+    "trigger": "Open-error feedback timeout → retained notification center",
+    "report": "20260914-notifications/HANDOFF.md"
+  },
+  {
+    "id": "07-me/notification-navigation-current-rejection-404",
+    "route": "/notifications",
+    "trigger": "Open notification returns 404 → retained unread item and open-error Snackbar",
+    "report": "20260914-notifications/HANDOFF.md"
+  },
+  {
+    "id": "07-me/notification-navigation-current-rejection-404-dismissed",
+    "route": "/notifications",
+    "trigger": "Open-error feedback timeout → retained notification center",
+    "report": "20260914-notifications/HANDOFF.md"
+  },
+  {
+    "id": "07-me/notification-navigation-current-rejection-inbox",
+    "route": "/notifications",
+    "trigger": "Three unread updates before route validation",
+    "report": "20260914-notifications/HANDOFF.md"
+  },
+  {
+    "id": "07-me/notification-navigation-current-rejection-more-return",
+    "route": "/more",
+    "trigger": "Notification center back → More; scroll More back to top",
+    "report": "20260914-more/HANDOFF.md"
+  },
+  {
+    "id": "07-me/notification-navigation-current-rejection-recovered-inbox",
+    "route": "/notifications",
+    "trigger": "Appointment return → unread count updated",
+    "report": "20260914-notifications/HANDOFF.md"
+  },
+  {
+    "id": "07-me/notification-navigation-current-rejection-unsafe-route",
+    "route": "/notifications",
+    "trigger": "Server target outside allowed notification routes → no navigation, unavailable Snackbar",
+    "report": "20260914-notifications/HANDOFF.md"
+  },
+  {
+    "id": "07-me/notification-navigation-current-rejections-more",
+    "route": "/more",
+    "trigger": "Authenticated More before notifications; scroll More back to top",
+    "report": "20260914-more/HANDOFF.md"
+  },
+  {
+    "id": "07-me/notification-navigation-current-room-final-more",
+    "route": "/more",
+    "trigger": "Notification center back → More; scroll More back to top",
+    "report": "20260914-more/HANDOFF.md"
+  },
+  {
+    "id": "07-me/notification-navigation-current-room-inbox",
+    "route": "/notifications",
+    "trigger": "Notification center before room target",
+    "report": "20260914-notifications/HANDOFF.md"
+  },
+  {
+    "id": "07-me/notification-navigation-current-room-inbox-return",
+    "route": "/notifications",
+    "trigger": "Target return → notification center with read item",
+    "report": "20260914-notifications/HANDOFF.md"
+  },
+  {
+    "id": "07-me/notification-navigation-current-room-more",
+    "route": "/more",
+    "trigger": "Authenticated More before notifications; scroll More back to top",
+    "report": "20260914-more/HANDOFF.md"
+  },
+  {
+    "id": "07-me/notification-navigation-current-room-more-return",
+    "route": "/more",
+    "trigger": "Mother home More tab → updated unread badge; scroll More back to top",
+    "report": "20260914-more/HANDOFF.md"
+  },
+  {
+    "id": "07-me/notification-navigation-current-summary-final-more",
+    "route": "/more",
+    "trigger": "Notification center back → More; scroll More back to top",
+    "report": "20260914-more/HANDOFF.md"
+  },
+  {
+    "id": "07-me/notification-navigation-current-summary-inbox",
+    "route": "/notifications",
+    "trigger": "Notification center before summary target",
+    "report": "20260914-notifications/HANDOFF.md"
+  },
+  {
+    "id": "07-me/notification-navigation-current-summary-inbox-return",
+    "route": "/notifications",
+    "trigger": "Target return → notification center with read item",
+    "report": "20260914-notifications/HANDOFF.md"
+  },
+  {
+    "id": "07-me/notification-navigation-current-summary-more",
+    "route": "/more",
+    "trigger": "Authenticated More before notifications; scroll More back to top",
+    "report": "20260914-more/HANDOFF.md"
+  },
+  {
+    "id": "07-me/notification-navigation-current-summary-more-return",
+    "route": "/more",
+    "trigger": "Mother home More tab → updated unread badge; scroll More back to top",
+    "report": "20260914-more/HANDOFF.md"
+  },
+  {
+    "id": "08-expert-service/service-current-catalog",
+    "route": "/services",
+    "trigger": "Home expert plan → current catalog",
+    "report": "20260914-service-catalog/HANDOFF.md"
+  },
+  {
+    "id": "08-expert-service/service-current-catalog-all-return",
+    "route": "/services",
+    "trigger": "Four package Back paths → catalog",
+    "report": "20260914-service-catalog/HANDOFF.md"
+  },
+  {
+    "id": "08-expert-service/service-current-catalog-empty",
+    "route": "/services",
+    "trigger": "Retry → no available packages",
+    "report": "20260914-service-catalog/HANDOFF.md"
+  },
+  {
+    "id": "08-expert-service/service-current-catalog-error",
+    "route": "/services",
+    "trigger": "Catalog 503 → retry",
+    "report": "20260914-service-catalog/HANDOFF.md"
+  },
+  {
+    "id": "08-expert-service/service-current-catalog-loading",
+    "route": "/services",
+    "trigger": "Enter catalog with GET pending",
+    "report": "20260914-service-catalog/HANDOFF.md"
+  },
+  {
+    "id": "08-expert-service/service-current-catalog-refresh-error",
+    "route": "/services",
+    "trigger": "Refresh 503 → retained catalog and retry",
+    "report": "20260914-service-catalog/HANDOFF.md"
+  },
+  {
+    "id": "08-expert-service/service-current-catalog-refresh-filled",
+    "route": "/services",
+    "trigger": "Pull refresh after catalog restored → available packages",
+    "report": "20260914-service-catalog/HANDOFF.md"
+  },
+  {
+    "id": "08-expert-service/service-current-catalog-refresh-pending",
+    "route": "/services",
+    "trigger": "Pull refresh pending → retained catalog with progress",
+    "report": "20260914-service-catalog/HANDOFF.md"
+  },
+  {
+    "id": "08-expert-service/service-current-catalog-refresh-recovered",
+    "route": "/services",
+    "trigger": "Retry refresh → error removed and catalog restored",
+    "report": "20260914-service-catalog/HANDOFF.md"
+  },
+  {
+    "id": "08-expert-service/service-current-catalog-team",
+    "route": "/services",
+    "trigger": "Catalog team action → provider dialog",
+    "report": "20260914-service-catalog/HANDOFF.md"
+  },
+  {
+    "id": "08-expert-service/service-current-catalog-team-back-dismissed",
+    "route": "/services",
+    "trigger": "Team Flutter back → catalog",
+    "report": "20260914-service-catalog/HANDOFF.md"
+  },
+  {
+    "id": "08-expert-service/service-current-catalog-team-barrier-dismissed",
+    "route": "/services",
+    "trigger": "Team outside tap → catalog",
+    "report": "20260914-service-catalog/HANDOFF.md"
+  },
+  {
+    "id": "08-expert-service/service-current-catalog-team-closed",
+    "route": "/services",
+    "trigger": "Team Close → catalog",
+    "report": "20260914-service-catalog/HANDOFF.md"
+  },
+  {
+    "id": "08-expert-service/service-current-catalog-team-empty",
+    "route": "/services",
+    "trigger": "Empty catalog team → no available experts",
+    "report": "20260914-service-catalog/HANDOFF.md"
+  },
+  {
+    "id": "08-expert-service/service-current-owned-booking-return",
+    "route": "/services/feeding-confidence",
+    "trigger": "Booking cancel/back → owned package",
+    "report": "20260914-service-package/HANDOFF.md"
+  },
+  {
+    "id": "08-expert-service/service-current-owned-catalog",
+    "route": "/services",
+    "trigger": "Owned service grouped above available packages",
+    "report": "20260914-service-catalog/HANDOFF.md"
+  },
+  {
+    "id": "08-expert-service/service-current-owned-package",
+    "route": "/services/feeding-confidence",
+    "trigger": "Owned package → expert identity, remaining sessions, progress and booking",
+    "report": "20260914-service-package/HANDOFF.md"
+  },
+  {
+    "id": "08-expert-service/service-current-owned-progress",
+    "route": "/services/episodes/service-episode",
+    "trigger": "Package progress action → actual service timeline",
+    "report": "20260914-service-progress/HANDOFF.md"
+  },
+  {
+    "id": "08-expert-service/service-current-owned-progress-return",
+    "route": "/services/feeding-confidence",
+    "trigger": "Timeline Back → owned package",
+    "report": "20260914-service-package/HANDOFF.md"
+  },
+  {
+    "id": "08-expert-service/service-current-package-better-breastfeeding",
+    "route": "/services/better-breastfeeding",
+    "trigger": "Catalog 亲喂改善 → current package",
+    "report": "20260914-service-package/HANDOFF.md"
+  },
+  {
+    "id": "08-expert-service/service-current-package-buy-better-breastfeeding",
+    "route": "/services/better-breastfeeding",
+    "trigger": "Package purchase → eligibility flow",
+    "report": "20260914-service-package/HANDOFF.md"
+  },
+  {
+    "id": "08-expert-service/service-current-package-buy-cancel-better-breastfeeding",
+    "route": "/services/better-breastfeeding",
+    "trigger": "Close before submitting eligibility → package",
+    "report": "20260914-service-package/HANDOFF.md"
+  },
+  {
+    "id": "08-expert-service/service-current-package-buy-cancel-comfortable-feeding",
+    "route": "/services/comfortable-feeding",
+    "trigger": "Close before submitting eligibility → package",
+    "report": "20260914-service-package/HANDOFF.md"
+  },
+  {
+    "id": "08-expert-service/service-current-package-buy-cancel-feeding-confidence",
+    "route": "/services/feeding-confidence",
+    "trigger": "Close before submitting eligibility → package",
+    "report": "20260914-service-package/HANDOFF.md"
+  },
+  {
+    "id": "08-expert-service/service-current-package-buy-cancel-milk-supply-care",
+    "route": "/services/milk-supply-care",
+    "trigger": "Close before submitting eligibility → package",
+    "report": "20260914-service-package/HANDOFF.md"
+  },
+  {
+    "id": "08-expert-service/service-current-package-buy-comfortable-feeding",
+    "route": "/services/comfortable-feeding",
+    "trigger": "Package purchase → eligibility flow",
+    "report": "20260914-service-package/HANDOFF.md"
+  },
+  {
+    "id": "08-expert-service/service-current-package-buy-feeding-confidence",
+    "route": "/services/feeding-confidence",
+    "trigger": "Package purchase → eligibility flow",
+    "report": "20260914-service-package/HANDOFF.md"
+  },
+  {
+    "id": "08-expert-service/service-current-package-buy-milk-supply-care",
+    "route": "/services/milk-supply-care",
+    "trigger": "Package purchase → eligibility flow",
+    "report": "20260914-service-package/HANDOFF.md"
+  },
+  {
+    "id": "08-expert-service/service-current-package-comfortable-feeding",
+    "route": "/services/comfortable-feeding",
+    "trigger": "Catalog 舒适哺乳支持 → current package",
+    "report": "20260914-service-package/HANDOFF.md"
+  },
+  {
+    "id": "08-expert-service/service-current-package-error",
+    "route": "/services/feeding-confidence",
+    "trigger": "Package catalog GET 503 → retry",
+    "report": "20260914-service-package/HANDOFF.md"
+  },
+  {
+    "id": "08-expert-service/service-current-package-feeding-confidence",
+    "route": "/services/feeding-confidence",
+    "trigger": "Catalog 喂养安心 → current package",
+    "report": "20260914-service-package/HANDOFF.md"
+  },
+  {
+    "id": "08-expert-service/service-current-package-loading",
+    "route": "/services/feeding-confidence",
+    "trigger": "Select package with GET pending",
+    "report": "20260914-service-package/HANDOFF.md"
+  },
+  {
+    "id": "08-expert-service/service-current-package-milk-supply-care",
+    "route": "/services/milk-supply-care",
+    "trigger": "Catalog 奶量管理 → current package",
+    "report": "20260914-service-package/HANDOFF.md"
+  },
+  {
+    "id": "08-expert-service/service-current-package-missing",
+    "route": "/services/feeding-confidence",
+    "trigger": "Retry returns removed package → unavailable page",
+    "report": "20260914-service-package/HANDOFF.md"
+  },
+  {
+    "id": "08-expert-service/service-current-package-purchase-disabled",
+    "route": "/services/feeding-confidence",
+    "trigger": "Reenter package when payment disabled",
+    "report": "20260914-service-package/HANDOFF.md"
+  },
+  {
+    "id": "08-expert-service/service-current-package-recovery-catalog",
+    "route": "/services",
+    "trigger": "Catalog before opening package",
+    "report": "20260914-service-catalog/HANDOFF.md"
+  },
+  {
+    "id": "08-expert-service/service-current-package-team-better-breastfeeding",
+    "route": "/services/better-breastfeeding",
+    "trigger": "Package learn team → provider dialog",
+    "report": "20260914-service-package/HANDOFF.md"
+  },
+  {
+    "id": "08-expert-service/service-current-package-team-comfortable-feeding",
+    "route": "/services/comfortable-feeding",
+    "trigger": "Package learn team → provider dialog",
+    "report": "20260914-service-package/HANDOFF.md"
+  },
+  {
+    "id": "08-expert-service/service-current-package-team-feeding-confidence",
+    "route": "/services/feeding-confidence",
+    "trigger": "Package learn team → provider dialog",
+    "report": "20260914-service-package/HANDOFF.md"
+  },
+  {
+    "id": "08-expert-service/service-current-package-team-milk-supply-care",
+    "route": "/services/milk-supply-care",
+    "trigger": "Package learn team → provider dialog",
+    "report": "20260914-service-package/HANDOFF.md"
+  },
+  {
+    "id": "08-expert-service/service-current-paused-package",
+    "route": "/services/feeding-confidence",
+    "trigger": "Reenter paused zero-session plan → existing package state",
+    "report": "20260914-service-package/HANDOFF.md"
+  },
+  {
+    "id": "08-expert-service/service-current-pending-catalog",
+    "route": "/services",
+    "trigger": "Pending order grouped before available packages",
+    "report": "20260914-service-catalog/HANDOFF.md"
+  },
+  {
+    "id": "08-expert-service/service-current-pending-catalog-return",
+    "route": "/services",
+    "trigger": "Pending package Back → catalog",
+    "report": "20260914-service-catalog/HANDOFF.md"
+  },
+  {
+    "id": "08-expert-service/service-current-pending-order-closed",
+    "route": "/services/feeding-confidence",
+    "trigger": "Close payment form without paying → order remains resumable",
+    "report": "20260914-service-package/HANDOFF.md"
+  },
+  {
+    "id": "08-expert-service/service-current-pending-order-error",
+    "route": "/services/feeding-confidence",
+    "trigger": "Existing order GET 503 → package Snackbar",
+    "report": "20260914-service-package/HANDOFF.md"
+  },
+  {
+    "id": "08-expert-service/service-current-pending-order-error-dismissed",
+    "route": "/services/feeding-confidence",
+    "trigger": "Open order feedback timeout → resume available",
+    "report": "20260914-service-package/HANDOFF.md"
+  },
+  {
+    "id": "08-expert-service/service-current-pending-order-opening",
+    "route": "/services/feeding-confidence",
+    "trigger": "Resume existing order with GET pending → opening label",
+    "report": "20260914-service-package/HANDOFF.md"
+  },
+  {
+    "id": "08-expert-service/service-current-pending-order-resumed",
+    "route": "/services/feeding-confidence",
+    "trigger": "Retry existing order → sandbox card form",
+    "report": "20260914-service-package/HANDOFF.md"
+  },
+  {
+    "id": "08-expert-service/service-current-pending-package",
+    "route": "/services/feeding-confidence",
+    "trigger": "Pending order → package resume footer",
+    "report": "20260914-service-package/HANDOFF.md"
+  }
+]

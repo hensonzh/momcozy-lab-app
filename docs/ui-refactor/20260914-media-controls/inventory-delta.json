@@ -1,0 +1,34 @@
+{
+  "observed_states": 2788,
+  "added": [
+    "01-auth/auth-invite-device-error",
+    "01-auth/auth-invite-storage-error",
+    "01-auth/auth-invite-submit-pending",
+    "01-auth/onboarding-generation-handoff",
+    "01-auth/onboarding-request-error",
+    "01-auth/onboarding-upload-pending",
+    "05-agent/agent-attachment-notice-cleanup-error",
+    "05-agent/agent-attachment-notice-file-error",
+    "05-agent/agent-attachment-notice-image-error",
+    "05-agent/agent-attachment-notice-too-large",
+    "05-agent/agent-attachment-notice-unsupported",
+    "05-agent/agent-cards-ready",
+    "05-agent/agent-resource-actions",
+    "05-agent/agent-resource-top",
+    "05-agent/agent-voice-greeting-playing",
+    "05-agent/agent-voice-greeting-replaying"
+  ],
+  "changed": [
+    "05-agent/agent-cards",
+    "05-agent/agent-form",
+    "05-agent/agent-markdown-link",
+    "05-agent/agent-markdown-top",
+    "05-agent/agent-voice-dismissed",
+    "05-agent/agent-voice-greeting-error",
+    "05-agent/agent-voice-off",
+    "05-agent/agent-voice-on",
+    "05-agent/agent-voice-reply-error",
+    "05-agent/agent-voice-stream-error"
+  ],
+  "removed": []
+}

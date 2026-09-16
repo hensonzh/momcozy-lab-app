@@ -1,0 +1,2400 @@
+[
+  {
+    "id": "05-agent/agent-result-consent-accepted",
+    "module": "Cozymate",
+    "label": "Feeding support",
+    "state": "agent-result-consent-accepted",
+    "image": "05-agent/agent-result-consent-accepted/default.png",
+    "viewport": "05-agent/agent-result-consent-accepted/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [
+      "agent/structured-card"
+    ],
+    "production_widget_files": [
+      "lib/features/agent_hub/artifacts/agent_artifact_panel.dart",
+      "lib/features/agent_hub/artifacts/cards/agent_artifact_card_registry.dart",
+      "lib/features/agent_hub/artifacts/cards/agent_result_card.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/features/agent_hub/agent_result_design_test.dart",
+    "test_case": "result cards 390.0/1.0",
+    "metadata": "raw/test/goldens/design_system/agent-result-consent-accepted-390-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/agent-result-consent-accepted-320-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-result-consent-accepted-320-1x.png.json",
+        "width": 320,
+        "height": 720
+      },
+      {
+        "source": "test/goldens/design_system/agent-result-consent-accepted-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-result-consent-accepted-320-2x.png.json",
+        "width": 320,
+        "height": 720
+      },
+      {
+        "source": "test/goldens/design_system/agent-result-consent-accepted-390-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-result-consent-accepted-390-1x.png.json",
+        "width": 390,
+        "height": 720
+      },
+      {
+        "source": "test/goldens/design_system/agent-result-consent-accepted-390-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-result-consent-accepted-390-2x.png.json",
+        "width": 390,
+        "height": 720
+      },
+      {
+        "source": "test/goldens/design_system/agent-result-consent-accepted-430-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-result-consent-accepted-430-1x.png.json",
+        "width": 430,
+        "height": 720
+      },
+      {
+        "source": "test/goldens/design_system/agent-result-consent-accepted-430-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-result-consent-accepted-430-2x.png.json",
+        "width": 430,
+        "height": 720
+      }
+    ]
+  },
+  {
+    "id": "05-agent/agent-result-consult",
+    "module": "Cozymate",
+    "label": "Feeding support",
+    "state": "agent-result-consult",
+    "image": "05-agent/agent-result-consult/default.png",
+    "viewport": "05-agent/agent-result-consult/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [
+      "agent/structured-card"
+    ],
+    "production_widget_files": [
+      "lib/features/agent_hub/artifacts/agent_artifact_panel.dart",
+      "lib/features/agent_hub/artifacts/cards/agent_artifact_card_registry.dart",
+      "lib/features/agent_hub/artifacts/cards/agent_result_card.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/features/agent_hub/agent_result_design_test.dart",
+    "test_case": "result cards 390.0/1.0",
+    "metadata": "raw/test/goldens/design_system/agent-result-consult-390-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/agent-result-consult-320-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-result-consult-320-1x.png.json",
+        "width": 320,
+        "height": 720
+      },
+      {
+        "source": "test/goldens/design_system/agent-result-consult-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-result-consult-320-2x.png.json",
+        "width": 320,
+        "height": 720
+      },
+      {
+        "source": "test/goldens/design_system/agent-result-consult-390-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-result-consult-390-1x.png.json",
+        "width": 390,
+        "height": 720
+      },
+      {
+        "source": "test/goldens/design_system/agent-result-consult-390-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-result-consult-390-2x.png.json",
+        "width": 390,
+        "height": 720
+      },
+      {
+        "source": "test/goldens/design_system/agent-result-consult-430-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-result-consult-430-1x.png.json",
+        "width": 430,
+        "height": 720
+      },
+      {
+        "source": "test/goldens/design_system/agent-result-consult-430-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-result-consult-430-2x.png.json",
+        "width": 430,
+        "height": 720
+      }
+    ]
+  },
+  {
+    "id": "05-agent/agent-result-disabled",
+    "module": "Cozymate",
+    "label": "Your feeding notes and next steps",
+    "state": "agent-result-disabled",
+    "image": "05-agent/agent-result-disabled/default.png",
+    "viewport": "05-agent/agent-result-disabled/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [
+      "agent/structured-card"
+    ],
+    "production_widget_files": [
+      "lib/features/agent_hub/artifacts/agent_artifact_panel.dart",
+      "lib/features/agent_hub/artifacts/cards/agent_result_card.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/features/agent_hub/agent_result_design_test.dart",
+    "test_case": "result cards 390.0/1.0",
+    "metadata": "raw/test/goldens/design_system/agent-result-disabled-390-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/agent-result-disabled-320-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-result-disabled-320-1x.png.json",
+        "width": 320,
+        "height": 720
+      },
+      {
+        "source": "test/goldens/design_system/agent-result-disabled-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-result-disabled-320-2x.png.json",
+        "width": 320,
+        "height": 720
+      },
+      {
+        "source": "test/goldens/design_system/agent-result-disabled-390-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-result-disabled-390-1x.png.json",
+        "width": 390,
+        "height": 720
+      },
+      {
+        "source": "test/goldens/design_system/agent-result-disabled-390-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-result-disabled-390-2x.png.json",
+        "width": 390,
+        "height": 720
+      },
+      {
+        "source": "test/goldens/design_system/agent-result-disabled-430-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-result-disabled-430-1x.png.json",
+        "width": 430,
+        "height": 720
+      },
+      {
+        "source": "test/goldens/design_system/agent-result-disabled-430-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-result-disabled-430-2x.png.json",
+        "width": 430,
+        "height": 720
+      }
+    ]
+  },
+  {
+    "id": "05-agent/agent-result-motion",
+    "module": "Cozymate",
+    "label": "Posture assessment",
+    "state": "agent-result-motion",
+    "image": "05-agent/agent-result-motion/default.png",
+    "viewport": "05-agent/agent-result-motion/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [
+      "agent/structured-card"
+    ],
+    "production_widget_files": [
+      "lib/features/agent_hub/artifacts/agent_artifact_panel.dart",
+      "lib/features/agent_hub/artifacts/cards/agent_artifact_card_registry.dart",
+      "lib/features/agent_hub/artifacts/cards/agent_result_card.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/features/agent_hub/agent_result_design_test.dart",
+    "test_case": "result cards 390.0/1.0",
+    "metadata": "raw/test/goldens/design_system/agent-result-motion-390-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/agent-result-motion-320-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-result-motion-320-1x.png.json",
+        "width": 320,
+        "height": 720
+      },
+      {
+        "source": "test/goldens/design_system/agent-result-motion-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-result-motion-320-2x.png.json",
+        "width": 320,
+        "height": 720
+      },
+      {
+        "source": "test/goldens/design_system/agent-result-motion-390-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-result-motion-390-1x.png.json",
+        "width": 390,
+        "height": 720
+      },
+      {
+        "source": "test/goldens/design_system/agent-result-motion-390-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-result-motion-390-2x.png.json",
+        "width": 390,
+        "height": 720
+      },
+      {
+        "source": "test/goldens/design_system/agent-result-motion-430-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-result-motion-430-1x.png.json",
+        "width": 430,
+        "height": 720
+      },
+      {
+        "source": "test/goldens/design_system/agent-result-motion-430-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-result-motion-430-2x.png.json",
+        "width": 430,
+        "height": 720
+      }
+    ]
+  },
+  {
+    "id": "05-agent/agent-result-summary",
+    "module": "Cozymate",
+    "label": "Your feeding notes and next steps",
+    "state": "agent-result-summary",
+    "image": "05-agent/agent-result-summary/default.png",
+    "viewport": "05-agent/agent-result-summary/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [
+      "agent/structured-card"
+    ],
+    "production_widget_files": [
+      "lib/features/agent_hub/artifacts/agent_artifact_panel.dart",
+      "lib/features/agent_hub/artifacts/cards/agent_result_card.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/features/agent_hub/agent_result_design_test.dart",
+    "test_case": "result cards 390.0/1.0",
+    "metadata": "raw/test/goldens/design_system/agent-result-summary-390-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/agent-result-summary-320-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-result-summary-320-1x.png.json",
+        "width": 320,
+        "height": 720
+      },
+      {
+        "source": "test/goldens/design_system/agent-result-summary-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-result-summary-320-2x.png.json",
+        "width": 320,
+        "height": 720
+      },
+      {
+        "source": "test/goldens/design_system/agent-result-summary-390-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-result-summary-390-1x.png.json",
+        "width": 390,
+        "height": 720
+      },
+      {
+        "source": "test/goldens/design_system/agent-result-summary-390-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-result-summary-390-2x.png.json",
+        "width": 390,
+        "height": 720
+      },
+      {
+        "source": "test/goldens/design_system/agent-result-summary-430-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-result-summary-430-1x.png.json",
+        "width": 430,
+        "height": 720
+      },
+      {
+        "source": "test/goldens/design_system/agent-result-summary-430-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-result-summary-430-2x.png.json",
+        "width": 430,
+        "height": 720
+      }
+    ]
+  },
+  {
+    "id": "05-agent/agent-result-unsupported",
+    "module": "Cozymate",
+    "label": "A shared result",
+    "state": "agent-result-unsupported",
+    "image": "05-agent/agent-result-unsupported/default.png",
+    "viewport": "05-agent/agent-result-unsupported/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [
+      "agent/structured-card"
+    ],
+    "production_widget_files": [
+      "lib/features/agent_hub/artifacts/agent_artifact_panel.dart",
+      "lib/features/agent_hub/artifacts/cards/agent_result_card.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/features/agent_hub/agent_result_design_test.dart",
+    "test_case": "result cards 390.0/1.0",
+    "metadata": "raw/test/goldens/design_system/agent-result-unsupported-390-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/agent-result-unsupported-320-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-result-unsupported-320-1x.png.json",
+        "width": 320,
+        "height": 720
+      },
+      {
+        "source": "test/goldens/design_system/agent-result-unsupported-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-result-unsupported-320-2x.png.json",
+        "width": 320,
+        "height": 720
+      },
+      {
+        "source": "test/goldens/design_system/agent-result-unsupported-390-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-result-unsupported-390-1x.png.json",
+        "width": 390,
+        "height": 720
+      },
+      {
+        "source": "test/goldens/design_system/agent-result-unsupported-390-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-result-unsupported-390-2x.png.json",
+        "width": 390,
+        "height": 720
+      },
+      {
+        "source": "test/goldens/design_system/agent-result-unsupported-430-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-result-unsupported-430-1x.png.json",
+        "width": 430,
+        "height": 720
+      },
+      {
+        "source": "test/goldens/design_system/agent-result-unsupported-430-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-result-unsupported-430-2x.png.json",
+        "width": 430,
+        "height": 720
+      }
+    ]
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-confirm-failure-away",
+    "module": "Cozymate",
+    "label": "M",
+    "state": "agent-workflow-journey-confirm-failure-away",
+    "image": "05-agent/agent-workflow-journey-confirm-failure-away/default.png",
+    "viewport": "05-agent/agent-workflow-journey-confirm-failure-away/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/more"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "profile/more",
+      "common/not-found"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/modules/profile/presentation/more_page.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/agent_hub/agent_workflow_inventory_journey_test.dart",
+    "test_case": "inventory workflow action false failure true",
+    "metadata": "raw/test/goldens/ui_inventory/agent-workflow-journey-confirm-failure-away-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/agent-workflow-journey-confirm-failure-away-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-workflow-journey-confirm-failure-away-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/more",
+    "entry": "Authenticated More → tap Cozymate bottom navigation",
+    "trigger": "More tab after action result",
+    "journey": {
+      "source": "test/goldens/ui_inventory/agent-workflow-journey-confirm-failure-away-393.png",
+      "previous_source": "test/goldens/ui_inventory/agent-workflow-journey-confirm-failure-result-393.png",
+      "route": "/more",
+      "trigger": "More tab after action result",
+      "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage via public agentHubBuilder; production SSE parser, runner with default retries, cancel client and profile repository; isolated SSE/control/ticket HTTP and voice dependencies; production action client and support ticket repository. History disabled as in default local build; no remote model request.",
+      "test": "test/features/agent_hub/agent_workflow_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-confirm-failure-pending",
+    "module": "Cozymate",
+    "label": "嗨 Mia，  /  / 今天想聊点什么呢？  /  / 把你现在最关心的事情告诉我就好，我会陪你一起梳理。",
+    "state": "agent-workflow-journey-confirm-failure-pending",
+    "image": "05-agent/agent-workflow-journey-confirm-failure-pending/default.png",
+    "viewport": "05-agent/agent-workflow-journey-confirm-failure-pending/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "agent/home",
+      "agent/attachments",
+      "agent/message-menu",
+      "agent/voice",
+      "common/not-found",
+      "agent/state-03",
+      "agent/12-agent-error",
+      "agent/12b-agent-conversation"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/features/agent_hub/agent_hub_page.dart",
+      "lib/features/agent_hub/presentation/agent_message_menu.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/agent_hub/agent_workflow_inventory_journey_test.dart",
+    "test_case": "inventory workflow action false failure true",
+    "metadata": "raw/test/goldens/ui_inventory/agent-workflow-journey-confirm-failure-pending-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/agent-workflow-journey-confirm-failure-pending-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-workflow-journey-confirm-failure-pending-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/",
+    "entry": "Authenticated More → tap Cozymate bottom navigation",
+    "trigger": "Tap action confirm → HTTP pending",
+    "journey": {
+      "source": "test/goldens/ui_inventory/agent-workflow-journey-confirm-failure-pending-393.png",
+      "previous_source": "test/goldens/ui_inventory/agent-workflow-journey-confirm-failure-preview-393.png",
+      "route": "/",
+      "trigger": "Tap action confirm → HTTP pending",
+      "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage via public agentHubBuilder; production SSE parser, runner with default retries, cancel client and profile repository; isolated SSE/control/ticket HTTP and voice dependencies; production action client and support ticket repository. History disabled as in default local build; no remote model request.",
+      "test": "test/features/agent_hub/agent_workflow_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-confirm-failure-preview",
+    "module": "Cozymate",
+    "label": "嗨 Mia，  /  / 今天想聊点什么呢？  /  / 把你现在最关心的事情告诉我就好，我会陪你一起梳理。",
+    "state": "agent-workflow-journey-confirm-failure-preview",
+    "image": "05-agent/agent-workflow-journey-confirm-failure-preview/default.png",
+    "viewport": "05-agent/agent-workflow-journey-confirm-failure-preview/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "agent/home",
+      "agent/attachments",
+      "agent/message-menu",
+      "agent/voice",
+      "common/not-found",
+      "agent/state-03",
+      "agent/12-agent-error",
+      "agent/12b-agent-conversation"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/features/agent_hub/agent_hub_page.dart",
+      "lib/features/agent_hub/presentation/agent_message_menu.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/agent_hub/agent_workflow_inventory_journey_test.dart",
+    "test_case": "inventory workflow action false failure true",
+    "metadata": "raw/test/goldens/ui_inventory/agent-workflow-journey-confirm-failure-preview-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/agent-workflow-journey-confirm-failure-preview-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-workflow-journey-confirm-failure-preview-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/",
+    "entry": "Authenticated More → tap Cozymate bottom navigation",
+    "trigger": "Receive authoritative action preview → controls available",
+    "journey": {
+      "source": "test/goldens/ui_inventory/agent-workflow-journey-confirm-failure-preview-393.png",
+      "previous_source": null,
+      "route": "/",
+      "trigger": "Receive authoritative action preview → controls available",
+      "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage via public agentHubBuilder; production SSE parser, runner with default retries, cancel client and profile repository; isolated SSE/control/ticket HTTP and voice dependencies; production action client and support ticket repository. History disabled as in default local build; no remote model request.",
+      "test": "test/features/agent_hub/agent_workflow_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-confirm-failure-result",
+    "module": "Cozymate",
+    "label": "嗨 Mia，  /  / 今天想聊点什么呢？  /  / 把你现在最关心的事情告诉我就好，我会陪你一起梳理。",
+    "state": "agent-workflow-journey-confirm-failure-result",
+    "image": "05-agent/agent-workflow-journey-confirm-failure-result/default.png",
+    "viewport": "05-agent/agent-workflow-journey-confirm-failure-result/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "agent/home",
+      "agent/attachments",
+      "agent/message-menu",
+      "agent/voice",
+      "common/not-found",
+      "agent/state-03",
+      "agent/12-agent-error",
+      "agent/12b-agent-conversation"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/features/agent_hub/agent_hub_page.dart",
+      "lib/features/agent_hub/presentation/agent_message_menu.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/agent_hub/agent_workflow_inventory_journey_test.dart",
+    "test_case": "inventory workflow action false failure true",
+    "metadata": "raw/test/goldens/ui_inventory/agent-workflow-journey-confirm-failure-result-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/agent-workflow-journey-confirm-failure-result-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-workflow-journey-confirm-failure-result-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/",
+    "entry": "Authenticated More → tap Cozymate bottom navigation",
+    "trigger": "HTTP 503 → failed action; confirm/reject controls disappear, no retry entry",
+    "journey": {
+      "source": "test/goldens/ui_inventory/agent-workflow-journey-confirm-failure-result-393.png",
+      "previous_source": "test/goldens/ui_inventory/agent-workflow-journey-confirm-failure-pending-393.png",
+      "route": "/",
+      "trigger": "HTTP 503 → failed action; confirm/reject controls disappear, no retry entry",
+      "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage via public agentHubBuilder; production SSE parser, runner with default retries, cancel client and profile repository; isolated SSE/control/ticket HTTP and voice dependencies; production action client and support ticket repository. History disabled as in default local build; no remote model request.",
+      "test": "test/features/agent_hub/agent_workflow_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-confirm-failure-return",
+    "module": "Cozymate",
+    "label": "嗨 Mia，  /  / 今天想聊点什么呢？  /  / 把你现在最关心的事情告诉我就好，我会陪你一起梳理。",
+    "state": "agent-workflow-journey-confirm-failure-return",
+    "image": "05-agent/agent-workflow-journey-confirm-failure-return/default.png",
+    "viewport": "05-agent/agent-workflow-journey-confirm-failure-return/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "agent/home",
+      "agent/attachments",
+      "agent/message-menu",
+      "agent/voice",
+      "common/not-found",
+      "agent/state-03",
+      "agent/12-agent-error",
+      "agent/12b-agent-conversation"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/features/agent_hub/agent_hub_page.dart",
+      "lib/features/agent_hub/presentation/agent_message_menu.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/agent_hub/agent_workflow_inventory_journey_test.dart",
+    "test_case": "inventory workflow action false failure true",
+    "metadata": "raw/test/goldens/ui_inventory/agent-workflow-journey-confirm-failure-return-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/agent-workflow-journey-confirm-failure-return-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-workflow-journey-confirm-failure-return-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/",
+    "entry": "Authenticated More → tap Cozymate bottom navigation",
+    "trigger": "Return to Cozymate → action result retained",
+    "journey": {
+      "source": "test/goldens/ui_inventory/agent-workflow-journey-confirm-failure-return-393.png",
+      "previous_source": "test/goldens/ui_inventory/agent-workflow-journey-confirm-failure-away-393.png",
+      "route": "/",
+      "trigger": "Return to Cozymate → action result retained",
+      "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage via public agentHubBuilder; production SSE parser, runner with default retries, cancel client and profile repository; isolated SSE/control/ticket HTTP and voice dependencies; production action client and support ticket repository. History disabled as in default local build; no remote model request.",
+      "test": "test/features/agent_hub/agent_workflow_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-confirm-success-away",
+    "module": "Cozymate",
+    "label": "M",
+    "state": "agent-workflow-journey-confirm-success-away",
+    "image": "05-agent/agent-workflow-journey-confirm-success-away/default.png",
+    "viewport": "05-agent/agent-workflow-journey-confirm-success-away/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/more"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "profile/more",
+      "common/not-found"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/modules/profile/presentation/more_page.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/agent_hub/agent_workflow_inventory_journey_test.dart",
+    "test_case": "inventory workflow action false failure false",
+    "metadata": "raw/test/goldens/ui_inventory/agent-workflow-journey-confirm-success-away-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/agent-workflow-journey-confirm-success-away-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-workflow-journey-confirm-success-away-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/more",
+    "entry": "Authenticated More → tap Cozymate bottom navigation",
+    "trigger": "More tab after action result",
+    "journey": {
+      "source": "test/goldens/ui_inventory/agent-workflow-journey-confirm-success-away-393.png",
+      "previous_source": "test/goldens/ui_inventory/agent-workflow-journey-confirm-success-result-393.png",
+      "route": "/more",
+      "trigger": "More tab after action result",
+      "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage via public agentHubBuilder; production SSE parser, runner with default retries, cancel client and profile repository; isolated SSE/control/ticket HTTP and voice dependencies; production action client and support ticket repository. History disabled as in default local build; no remote model request.",
+      "test": "test/features/agent_hub/agent_workflow_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-confirm-success-pending",
+    "module": "Cozymate",
+    "label": "嗨 Mia，  /  / 今天想聊点什么呢？  /  / 把你现在最关心的事情告诉我就好，我会陪你一起梳理。",
+    "state": "agent-workflow-journey-confirm-success-pending",
+    "image": "05-agent/agent-workflow-journey-confirm-success-pending/default.png",
+    "viewport": "05-agent/agent-workflow-journey-confirm-success-pending/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "agent/home",
+      "agent/attachments",
+      "agent/message-menu",
+      "agent/voice",
+      "common/not-found",
+      "agent/state-03",
+      "agent/12-agent-error",
+      "agent/12b-agent-conversation"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/features/agent_hub/agent_hub_page.dart",
+      "lib/features/agent_hub/presentation/agent_message_menu.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/agent_hub/agent_workflow_inventory_journey_test.dart",
+    "test_case": "inventory workflow action false failure false",
+    "metadata": "raw/test/goldens/ui_inventory/agent-workflow-journey-confirm-success-pending-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/agent-workflow-journey-confirm-success-pending-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-workflow-journey-confirm-success-pending-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/",
+    "entry": "Authenticated More → tap Cozymate bottom navigation",
+    "trigger": "Tap action confirm → HTTP pending",
+    "journey": {
+      "source": "test/goldens/ui_inventory/agent-workflow-journey-confirm-success-pending-393.png",
+      "previous_source": "test/goldens/ui_inventory/agent-workflow-journey-confirm-success-preview-393.png",
+      "route": "/",
+      "trigger": "Tap action confirm → HTTP pending",
+      "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage via public agentHubBuilder; production SSE parser, runner with default retries, cancel client and profile repository; isolated SSE/control/ticket HTTP and voice dependencies; production action client and support ticket repository. History disabled as in default local build; no remote model request.",
+      "test": "test/features/agent_hub/agent_workflow_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-confirm-success-preview",
+    "module": "Cozymate",
+    "label": "嗨 Mia，  /  / 今天想聊点什么呢？  /  / 把你现在最关心的事情告诉我就好，我会陪你一起梳理。",
+    "state": "agent-workflow-journey-confirm-success-preview",
+    "image": "05-agent/agent-workflow-journey-confirm-success-preview/default.png",
+    "viewport": "05-agent/agent-workflow-journey-confirm-success-preview/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "agent/home",
+      "agent/attachments",
+      "agent/message-menu",
+      "agent/voice",
+      "common/not-found",
+      "agent/state-03",
+      "agent/12-agent-error",
+      "agent/12b-agent-conversation"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/features/agent_hub/agent_hub_page.dart",
+      "lib/features/agent_hub/presentation/agent_message_menu.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/agent_hub/agent_workflow_inventory_journey_test.dart",
+    "test_case": "inventory workflow action false failure false",
+    "metadata": "raw/test/goldens/ui_inventory/agent-workflow-journey-confirm-success-preview-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/agent-workflow-journey-confirm-success-preview-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-workflow-journey-confirm-success-preview-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/",
+    "entry": "Authenticated More → tap Cozymate bottom navigation",
+    "trigger": "Receive authoritative action preview → controls available",
+    "journey": {
+      "source": "test/goldens/ui_inventory/agent-workflow-journey-confirm-success-preview-393.png",
+      "previous_source": null,
+      "route": "/",
+      "trigger": "Receive authoritative action preview → controls available",
+      "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage via public agentHubBuilder; production SSE parser, runner with default retries, cancel client and profile repository; isolated SSE/control/ticket HTTP and voice dependencies; production action client and support ticket repository. History disabled as in default local build; no remote model request.",
+      "test": "test/features/agent_hub/agent_workflow_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-confirm-success-result",
+    "module": "Cozymate",
+    "label": "嗨 Mia，  /  / 今天想聊点什么呢？  /  / 把你现在最关心的事情告诉我就好，我会陪你一起梳理。",
+    "state": "agent-workflow-journey-confirm-success-result",
+    "image": "05-agent/agent-workflow-journey-confirm-success-result/default.png",
+    "viewport": "05-agent/agent-workflow-journey-confirm-success-result/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "agent/home",
+      "agent/attachments",
+      "agent/message-menu",
+      "agent/voice",
+      "common/not-found",
+      "agent/state-03",
+      "agent/12-agent-error",
+      "agent/12b-agent-conversation"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/features/agent_hub/agent_hub_page.dart",
+      "lib/features/agent_hub/presentation/agent_message_menu.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/agent_hub/agent_workflow_inventory_journey_test.dart",
+    "test_case": "inventory workflow action false failure false",
+    "metadata": "raw/test/goldens/ui_inventory/agent-workflow-journey-confirm-success-result-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/agent-workflow-journey-confirm-success-result-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-workflow-journey-confirm-success-result-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/",
+    "entry": "Authenticated More → tap Cozymate bottom navigation",
+    "trigger": "HTTP 200 → authoritative applied state",
+    "journey": {
+      "source": "test/goldens/ui_inventory/agent-workflow-journey-confirm-success-result-393.png",
+      "previous_source": "test/goldens/ui_inventory/agent-workflow-journey-confirm-success-pending-393.png",
+      "route": "/",
+      "trigger": "HTTP 200 → authoritative applied state",
+      "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage via public agentHubBuilder; production SSE parser, runner with default retries, cancel client and profile repository; isolated SSE/control/ticket HTTP and voice dependencies; production action client and support ticket repository. History disabled as in default local build; no remote model request.",
+      "test": "test/features/agent_hub/agent_workflow_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-confirm-success-return",
+    "module": "Cozymate",
+    "label": "嗨 Mia，  /  / 今天想聊点什么呢？  /  / 把你现在最关心的事情告诉我就好，我会陪你一起梳理。",
+    "state": "agent-workflow-journey-confirm-success-return",
+    "image": "05-agent/agent-workflow-journey-confirm-success-return/default.png",
+    "viewport": "05-agent/agent-workflow-journey-confirm-success-return/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "agent/home",
+      "agent/attachments",
+      "agent/message-menu",
+      "agent/voice",
+      "common/not-found",
+      "agent/state-03",
+      "agent/12-agent-error",
+      "agent/12b-agent-conversation"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/features/agent_hub/agent_hub_page.dart",
+      "lib/features/agent_hub/presentation/agent_message_menu.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/agent_hub/agent_workflow_inventory_journey_test.dart",
+    "test_case": "inventory workflow action false failure false",
+    "metadata": "raw/test/goldens/ui_inventory/agent-workflow-journey-confirm-success-return-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/agent-workflow-journey-confirm-success-return-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-workflow-journey-confirm-success-return-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/",
+    "entry": "Authenticated More → tap Cozymate bottom navigation",
+    "trigger": "Return to Cozymate → action result retained",
+    "journey": {
+      "source": "test/goldens/ui_inventory/agent-workflow-journey-confirm-success-return-393.png",
+      "previous_source": "test/goldens/ui_inventory/agent-workflow-journey-confirm-success-away-393.png",
+      "route": "/",
+      "trigger": "Return to Cozymate → action result retained",
+      "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage via public agentHubBuilder; production SSE parser, runner with default retries, cancel client and profile repository; isolated SSE/control/ticket HTTP and voice dependencies; production action client and support ticket repository. History disabled as in default local build; no remote model request.",
+      "test": "test/features/agent_hub/agent_workflow_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-diary-history",
+    "module": "Cozymate",
+    "label": "昨夜休息",
+    "state": "agent-workflow-journey-diary-history",
+    "image": "05-agent/agent-workflow-journey-diary-history/default.png",
+    "viewport": "05-agent/agent-workflow-journey-diary-history/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/me/diary"
+    ],
+    "mapped_design_candidates": [
+      "mom/diary-rest",
+      "mom/diary-body",
+      "mom/diary-mood",
+      "mom/diary-history",
+      "common/not-found",
+      "mom/state-04",
+      "mom/state-05",
+      "mom/state-06",
+      "mom/state-07",
+      "mom/state-08",
+      "mom/state-09",
+      "mom/state-10"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/mom/presentation/diary_fields.dart",
+      "lib/modules/mom/presentation/mother_diary_editor.dart",
+      "lib/modules/mom/presentation/mother_diary_page.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/agent_hub/agent_workflow_inventory_journey_test.dart",
+    "test_case": "inventory workflow milk shortcut artifact routes and latest button",
+    "metadata": "raw/test/goldens/ui_inventory/agent-workflow-journey-diary-history-320-2x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/agent-workflow-journey-diary-history-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-workflow-journey-diary-history-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      }
+    ],
+    "verified_route": "/me/diary",
+    "entry": "Authenticated More → tap Cozymate bottom navigation",
+    "trigger": "Tap artifact link → actual mother diary",
+    "journey": {
+      "source": "test/goldens/ui_inventory/agent-workflow-journey-diary-history-320-2x.png",
+      "previous_source": "test/goldens/ui_inventory/agent-workflow-journey-milk-return-320-2x.png",
+      "route": "/me/diary",
+      "trigger": "Tap artifact link → actual mother diary",
+      "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage via public agentHubBuilder; production SSE parser, runner with default retries, cancel client and profile repository; isolated SSE/control/ticket HTTP and voice dependencies; production action client and support ticket repository. History disabled as in default local build; no remote model request.",
+      "test": "test/features/agent_hub/agent_workflow_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-diary-return",
+    "module": "Cozymate",
+    "label": "嗨 Mia，  /  / 今天想聊点什么呢？  /  / 把你现在最关心的事情告诉我就好，我会陪你一起梳理。",
+    "state": "agent-workflow-journey-diary-return",
+    "image": "05-agent/agent-workflow-journey-diary-return/default.png",
+    "viewport": "05-agent/agent-workflow-journey-diary-return/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "agent/home",
+      "agent/attachments",
+      "agent/message-menu",
+      "agent/voice",
+      "common/not-found",
+      "agent/state-03",
+      "agent/12-agent-error",
+      "agent/12b-agent-conversation"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/features/agent_hub/agent_hub_page.dart",
+      "lib/features/agent_hub/presentation/agent_message_menu.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/agent_hub/agent_workflow_inventory_journey_test.dart",
+    "test_case": "inventory workflow milk shortcut artifact routes and latest button",
+    "metadata": "raw/test/goldens/ui_inventory/agent-workflow-journey-diary-return-320-2x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/agent-workflow-journey-diary-return-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-workflow-journey-diary-return-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      }
+    ],
+    "verified_route": "/",
+    "entry": "Authenticated More → tap Cozymate bottom navigation",
+    "trigger": "Cozymate tab → original conversation retained",
+    "journey": {
+      "source": "test/goldens/ui_inventory/agent-workflow-journey-diary-return-320-2x.png",
+      "previous_source": "test/goldens/ui_inventory/agent-workflow-journey-diary-history-320-2x.png",
+      "route": "/",
+      "trigger": "Cozymate tab → original conversation retained",
+      "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage via public agentHubBuilder; production SSE parser, runner with default retries, cancel client and profile repository; isolated SSE/control/ticket HTTP and voice dependencies; production action client and support ticket repository. History disabled as in default local build; no remote model request.",
+      "test": "test/features/agent_hub/agent_workflow_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-latest-off-bottom",
+    "module": "Cozymate",
+    "label": "嗨 Mia，  /  / 今天想聊点什么呢？  /  / 把你现在最关心的事情告诉我就好，我会陪你一起梳理。",
+    "state": "agent-workflow-journey-latest-off-bottom",
+    "image": "05-agent/agent-workflow-journey-latest-off-bottom/default.png",
+    "viewport": "05-agent/agent-workflow-journey-latest-off-bottom/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "agent/home",
+      "agent/attachments",
+      "agent/message-menu",
+      "agent/voice",
+      "common/not-found",
+      "agent/state-03",
+      "agent/12-agent-error",
+      "agent/12b-agent-conversation"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/features/agent_hub/agent_hub_page.dart",
+      "lib/features/agent_hub/presentation/agent_message_menu.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/agent_hub/agent_workflow_inventory_journey_test.dart",
+    "test_case": "inventory workflow milk shortcut artifact routes and latest button",
+    "metadata": "raw/test/goldens/ui_inventory/agent-workflow-journey-latest-off-bottom-320-2x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/agent-workflow-journey-latest-off-bottom-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-workflow-journey-latest-off-bottom-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      }
+    ],
+    "verified_route": "/",
+    "entry": "Authenticated More → tap Cozymate bottom navigation",
+    "trigger": "Scroll towards earlier messages → latest-message button appears",
+    "journey": {
+      "source": "test/goldens/ui_inventory/agent-workflow-journey-latest-off-bottom-320-2x.png",
+      "previous_source": "test/goldens/ui_inventory/agent-workflow-journey-milk-result-320-2x.png",
+      "route": "/",
+      "trigger": "Scroll towards earlier messages → latest-message button appears",
+      "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage via public agentHubBuilder; production SSE parser, runner with default retries, cancel client and profile repository; isolated SSE/control/ticket HTTP and voice dependencies; production action client and support ticket repository. History disabled as in default local build; no remote model request.",
+      "test": "test/features/agent_hub/agent_workflow_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-latest-returned",
+    "module": "Cozymate",
+    "label": "可以从记录详情了解变化。",
+    "state": "agent-workflow-journey-latest-returned",
+    "image": "05-agent/agent-workflow-journey-latest-returned/default.png",
+    "viewport": "05-agent/agent-workflow-journey-latest-returned/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "agent/home",
+      "agent/attachments",
+      "agent/message-menu",
+      "agent/structured-card",
+      "agent/voice",
+      "common/not-found",
+      "agent/state-03",
+      "agent/12-agent-error",
+      "agent/12b-agent-conversation"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/features/agent_hub/agent_hub_page.dart",
+      "lib/features/agent_hub/artifacts/agent_artifact_panel.dart",
+      "lib/features/agent_hub/artifacts/cards/agent_result_card.dart",
+      "lib/features/agent_hub/presentation/agent_message_menu.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/agent_hub/agent_workflow_inventory_journey_test.dart",
+    "test_case": "inventory workflow milk shortcut artifact routes and latest button",
+    "metadata": "raw/test/goldens/ui_inventory/agent-workflow-journey-latest-returned-320-2x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/agent-workflow-journey-latest-returned-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-workflow-journey-latest-returned-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      }
+    ],
+    "verified_route": "/",
+    "entry": "Authenticated More → tap Cozymate bottom navigation",
+    "trigger": "Tap latest-message button → scroll to newest response",
+    "journey": {
+      "source": "test/goldens/ui_inventory/agent-workflow-journey-latest-returned-320-2x.png",
+      "previous_source": "test/goldens/ui_inventory/agent-workflow-journey-latest-off-bottom-320-2x.png",
+      "route": "/",
+      "trigger": "Tap latest-message button → scroll to newest response",
+      "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage via public agentHubBuilder; production SSE parser, runner with default retries, cancel client and profile repository; isolated SSE/control/ticket HTTP and voice dependencies; production action client and support ticket repository. History disabled as in default local build; no remote model request.",
+      "test": "test/features/agent_hub/agent_workflow_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-milk-history",
+    "module": "Cozymate",
+    "label": "今日泌乳",
+    "state": "agent-workflow-journey-milk-history",
+    "image": "05-agent/agent-workflow-journey-milk-history/default.png",
+    "viewport": "05-agent/agent-workflow-journey-milk-history/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/me/lactation"
+    ],
+    "mapped_design_candidates": [
+      "mom/lactation",
+      "mom/lactation-edit",
+      "common/not-found",
+      "mom/state-12",
+      "mom/state-13",
+      "mom/state-14",
+      "mom/state-15",
+      "mom/state-16",
+      "mom/state-17",
+      "mom/state-18",
+      "mom/state-19"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/mom/presentation/lactation_chart.dart",
+      "lib/modules/mom/presentation/lactation_page.dart",
+      "lib/modules/mom/presentation/lactation_panel.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/agent_hub/agent_workflow_inventory_journey_test.dart",
+    "test_case": "inventory workflow milk shortcut artifact routes and latest button",
+    "metadata": "raw/test/goldens/ui_inventory/agent-workflow-journey-milk-history-320-2x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/agent-workflow-journey-milk-history-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-workflow-journey-milk-history-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      }
+    ],
+    "verified_route": "/me/lactation",
+    "entry": "Authenticated More → tap Cozymate bottom navigation",
+    "trigger": "Tap artifact link → actual lactation history",
+    "journey": {
+      "source": "test/goldens/ui_inventory/agent-workflow-journey-milk-history-320-2x.png",
+      "previous_source": "test/goldens/ui_inventory/agent-workflow-journey-latest-returned-320-2x.png",
+      "route": "/me/lactation",
+      "trigger": "Tap artifact link → actual lactation history",
+      "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage via public agentHubBuilder; production SSE parser, runner with default retries, cancel client and profile repository; isolated SSE/control/ticket HTTP and voice dependencies; production action client and support ticket repository. History disabled as in default local build; no remote model request.",
+      "test": "test/features/agent_hub/agent_workflow_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-milk-request",
+    "module": "Cozymate",
+    "label": "帮我分析最近的奶量记录，告诉我可以先关注哪些变化。",
+    "state": "agent-workflow-journey-milk-request",
+    "image": "05-agent/agent-workflow-journey-milk-request/default.png",
+    "viewport": "05-agent/agent-workflow-journey-milk-request/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "agent/home",
+      "agent/attachments",
+      "agent/message-menu",
+      "agent/voice",
+      "common/not-found",
+      "agent/state-03",
+      "agent/12-agent-error",
+      "agent/12b-agent-conversation"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/features/agent_hub/agent_hub_page.dart",
+      "lib/features/agent_hub/presentation/agent_message_menu.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/agent_hub/agent_workflow_inventory_journey_test.dart",
+    "test_case": "inventory workflow milk shortcut artifact routes and latest button",
+    "metadata": "raw/test/goldens/ui_inventory/agent-workflow-journey-milk-request-320-2x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/agent-workflow-journey-milk-request-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-workflow-journey-milk-request-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      }
+    ],
+    "verified_route": "/",
+    "entry": "Authenticated More → tap Cozymate bottom navigation",
+    "trigger": "Tap milk analysis shortcut → preset question sent",
+    "journey": {
+      "source": "test/goldens/ui_inventory/agent-workflow-journey-milk-request-320-2x.png",
+      "previous_source": null,
+      "route": "/",
+      "trigger": "Tap milk analysis shortcut → preset question sent",
+      "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage via public agentHubBuilder; production SSE parser, runner with default retries, cancel client and profile repository; isolated SSE/control/ticket HTTP and voice dependencies; production action client and support ticket repository. History disabled as in default local build; no remote model request.",
+      "test": "test/features/agent_hub/agent_workflow_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-milk-result",
+    "module": "Cozymate",
+    "label": "可以从记录详情了解变化。",
+    "state": "agent-workflow-journey-milk-result",
+    "image": "05-agent/agent-workflow-journey-milk-result/default.png",
+    "viewport": "05-agent/agent-workflow-journey-milk-result/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "agent/home",
+      "agent/attachments",
+      "agent/message-menu",
+      "agent/structured-card",
+      "agent/voice",
+      "common/not-found",
+      "agent/state-03",
+      "agent/12-agent-error",
+      "agent/12b-agent-conversation"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/features/agent_hub/agent_hub_page.dart",
+      "lib/features/agent_hub/artifacts/agent_artifact_panel.dart",
+      "lib/features/agent_hub/artifacts/cards/agent_result_card.dart",
+      "lib/features/agent_hub/presentation/agent_message_menu.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/agent_hub/agent_workflow_inventory_journey_test.dart",
+    "test_case": "inventory workflow milk shortcut artifact routes and latest button",
+    "metadata": "raw/test/goldens/ui_inventory/agent-workflow-journey-milk-result-320-2x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/agent-workflow-journey-milk-result-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-workflow-journey-milk-result-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      }
+    ],
+    "verified_route": "/",
+    "entry": "Authenticated More → tap Cozymate bottom navigation",
+    "trigger": "Response completes → actionable record card",
+    "journey": {
+      "source": "test/goldens/ui_inventory/agent-workflow-journey-milk-result-320-2x.png",
+      "previous_source": "test/goldens/ui_inventory/agent-workflow-journey-milk-request-320-2x.png",
+      "route": "/",
+      "trigger": "Response completes → actionable record card",
+      "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage via public agentHubBuilder; production SSE parser, runner with default retries, cancel client and profile repository; isolated SSE/control/ticket HTTP and voice dependencies; production action client and support ticket repository. History disabled as in default local build; no remote model request.",
+      "test": "test/features/agent_hub/agent_workflow_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-milk-return",
+    "module": "Cozymate",
+    "label": "嗨 Mia，  /  / 今天想聊点什么呢？  /  / 把你现在最关心的事情告诉我就好，我会陪你一起梳理。",
+    "state": "agent-workflow-journey-milk-return",
+    "image": "05-agent/agent-workflow-journey-milk-return/default.png",
+    "viewport": "05-agent/agent-workflow-journey-milk-return/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "agent/home",
+      "agent/attachments",
+      "agent/message-menu",
+      "agent/voice",
+      "common/not-found",
+      "agent/state-03",
+      "agent/12-agent-error",
+      "agent/12b-agent-conversation"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/features/agent_hub/agent_hub_page.dart",
+      "lib/features/agent_hub/presentation/agent_message_menu.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/agent_hub/agent_workflow_inventory_journey_test.dart",
+    "test_case": "inventory workflow milk shortcut artifact routes and latest button",
+    "metadata": "raw/test/goldens/ui_inventory/agent-workflow-journey-milk-return-320-2x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/agent-workflow-journey-milk-return-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-workflow-journey-milk-return-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      }
+    ],
+    "verified_route": "/",
+    "entry": "Authenticated More → tap Cozymate bottom navigation",
+    "trigger": "Cozymate tab → original response and artifact retained",
+    "journey": {
+      "source": "test/goldens/ui_inventory/agent-workflow-journey-milk-return-320-2x.png",
+      "previous_source": "test/goldens/ui_inventory/agent-workflow-journey-milk-history-320-2x.png",
+      "route": "/",
+      "trigger": "Cozymate tab → original response and artifact retained",
+      "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage via public agentHubBuilder; production SSE parser, runner with default retries, cancel client and profile repository; isolated SSE/control/ticket HTTP and voice dependencies; production action client and support ticket repository. History disabled as in default local build; no remote model request.",
+      "test": "test/features/agent_hub/agent_workflow_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-reject-failure-away",
+    "module": "Cozymate",
+    "label": "M",
+    "state": "agent-workflow-journey-reject-failure-away",
+    "image": "05-agent/agent-workflow-journey-reject-failure-away/default.png",
+    "viewport": "05-agent/agent-workflow-journey-reject-failure-away/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/more"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "profile/more",
+      "common/not-found"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/modules/profile/presentation/more_page.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/agent_hub/agent_workflow_inventory_journey_test.dart",
+    "test_case": "inventory workflow action true failure true",
+    "metadata": "raw/test/goldens/ui_inventory/agent-workflow-journey-reject-failure-away-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/agent-workflow-journey-reject-failure-away-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-workflow-journey-reject-failure-away-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/more",
+    "entry": "Authenticated More → tap Cozymate bottom navigation",
+    "trigger": "More tab after action result",
+    "journey": {
+      "source": "test/goldens/ui_inventory/agent-workflow-journey-reject-failure-away-393.png",
+      "previous_source": "test/goldens/ui_inventory/agent-workflow-journey-reject-failure-result-393.png",
+      "route": "/more",
+      "trigger": "More tab after action result",
+      "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage via public agentHubBuilder; production SSE parser, runner with default retries, cancel client and profile repository; isolated SSE/control/ticket HTTP and voice dependencies; production action client and support ticket repository. History disabled as in default local build; no remote model request.",
+      "test": "test/features/agent_hub/agent_workflow_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-reject-failure-pending",
+    "module": "Cozymate",
+    "label": "嗨 Mia，  /  / 今天想聊点什么呢？  /  / 把你现在最关心的事情告诉我就好，我会陪你一起梳理。",
+    "state": "agent-workflow-journey-reject-failure-pending",
+    "image": "05-agent/agent-workflow-journey-reject-failure-pending/default.png",
+    "viewport": "05-agent/agent-workflow-journey-reject-failure-pending/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "agent/home",
+      "agent/attachments",
+      "agent/message-menu",
+      "agent/voice",
+      "common/not-found",
+      "agent/state-03",
+      "agent/12-agent-error",
+      "agent/12b-agent-conversation"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/features/agent_hub/agent_hub_page.dart",
+      "lib/features/agent_hub/presentation/agent_message_menu.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/agent_hub/agent_workflow_inventory_journey_test.dart",
+    "test_case": "inventory workflow action true failure true",
+    "metadata": "raw/test/goldens/ui_inventory/agent-workflow-journey-reject-failure-pending-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/agent-workflow-journey-reject-failure-pending-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-workflow-journey-reject-failure-pending-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/",
+    "entry": "Authenticated More → tap Cozymate bottom navigation",
+    "trigger": "Tap action reject → HTTP pending",
+    "journey": {
+      "source": "test/goldens/ui_inventory/agent-workflow-journey-reject-failure-pending-393.png",
+      "previous_source": "test/goldens/ui_inventory/agent-workflow-journey-reject-failure-preview-393.png",
+      "route": "/",
+      "trigger": "Tap action reject → HTTP pending",
+      "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage via public agentHubBuilder; production SSE parser, runner with default retries, cancel client and profile repository; isolated SSE/control/ticket HTTP and voice dependencies; production action client and support ticket repository. History disabled as in default local build; no remote model request.",
+      "test": "test/features/agent_hub/agent_workflow_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-reject-failure-preview",
+    "module": "Cozymate",
+    "label": "嗨 Mia，  /  / 今天想聊点什么呢？  /  / 把你现在最关心的事情告诉我就好，我会陪你一起梳理。",
+    "state": "agent-workflow-journey-reject-failure-preview",
+    "image": "05-agent/agent-workflow-journey-reject-failure-preview/default.png",
+    "viewport": "05-agent/agent-workflow-journey-reject-failure-preview/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "agent/home",
+      "agent/attachments",
+      "agent/message-menu",
+      "agent/voice",
+      "common/not-found",
+      "agent/state-03",
+      "agent/12-agent-error",
+      "agent/12b-agent-conversation"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/features/agent_hub/agent_hub_page.dart",
+      "lib/features/agent_hub/presentation/agent_message_menu.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/agent_hub/agent_workflow_inventory_journey_test.dart",
+    "test_case": "inventory workflow action true failure true",
+    "metadata": "raw/test/goldens/ui_inventory/agent-workflow-journey-reject-failure-preview-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/agent-workflow-journey-reject-failure-preview-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-workflow-journey-reject-failure-preview-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/",
+    "entry": "Authenticated More → tap Cozymate bottom navigation",
+    "trigger": "Receive authoritative action preview → controls available",
+    "journey": {
+      "source": "test/goldens/ui_inventory/agent-workflow-journey-reject-failure-preview-393.png",
+      "previous_source": null,
+      "route": "/",
+      "trigger": "Receive authoritative action preview → controls available",
+      "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage via public agentHubBuilder; production SSE parser, runner with default retries, cancel client and profile repository; isolated SSE/control/ticket HTTP and voice dependencies; production action client and support ticket repository. History disabled as in default local build; no remote model request.",
+      "test": "test/features/agent_hub/agent_workflow_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-reject-failure-result",
+    "module": "Cozymate",
+    "label": "嗨 Mia，  /  / 今天想聊点什么呢？  /  / 把你现在最关心的事情告诉我就好，我会陪你一起梳理。",
+    "state": "agent-workflow-journey-reject-failure-result",
+    "image": "05-agent/agent-workflow-journey-reject-failure-result/default.png",
+    "viewport": "05-agent/agent-workflow-journey-reject-failure-result/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "agent/home",
+      "agent/attachments",
+      "agent/message-menu",
+      "agent/voice",
+      "common/not-found",
+      "agent/state-03",
+      "agent/12-agent-error",
+      "agent/12b-agent-conversation"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/features/agent_hub/agent_hub_page.dart",
+      "lib/features/agent_hub/presentation/agent_message_menu.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/agent_hub/agent_workflow_inventory_journey_test.dart",
+    "test_case": "inventory workflow action true failure true",
+    "metadata": "raw/test/goldens/ui_inventory/agent-workflow-journey-reject-failure-result-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/agent-workflow-journey-reject-failure-result-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-workflow-journey-reject-failure-result-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/",
+    "entry": "Authenticated More → tap Cozymate bottom navigation",
+    "trigger": "HTTP 503 → failed action; confirm/reject controls disappear, no retry entry",
+    "journey": {
+      "source": "test/goldens/ui_inventory/agent-workflow-journey-reject-failure-result-393.png",
+      "previous_source": "test/goldens/ui_inventory/agent-workflow-journey-reject-failure-pending-393.png",
+      "route": "/",
+      "trigger": "HTTP 503 → failed action; confirm/reject controls disappear, no retry entry",
+      "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage via public agentHubBuilder; production SSE parser, runner with default retries, cancel client and profile repository; isolated SSE/control/ticket HTTP and voice dependencies; production action client and support ticket repository. History disabled as in default local build; no remote model request.",
+      "test": "test/features/agent_hub/agent_workflow_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-reject-failure-return",
+    "module": "Cozymate",
+    "label": "嗨 Mia，  /  / 今天想聊点什么呢？  /  / 把你现在最关心的事情告诉我就好，我会陪你一起梳理。",
+    "state": "agent-workflow-journey-reject-failure-return",
+    "image": "05-agent/agent-workflow-journey-reject-failure-return/default.png",
+    "viewport": "05-agent/agent-workflow-journey-reject-failure-return/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "agent/home",
+      "agent/attachments",
+      "agent/message-menu",
+      "agent/voice",
+      "common/not-found",
+      "agent/state-03",
+      "agent/12-agent-error",
+      "agent/12b-agent-conversation"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/features/agent_hub/agent_hub_page.dart",
+      "lib/features/agent_hub/presentation/agent_message_menu.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/agent_hub/agent_workflow_inventory_journey_test.dart",
+    "test_case": "inventory workflow action true failure true",
+    "metadata": "raw/test/goldens/ui_inventory/agent-workflow-journey-reject-failure-return-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/agent-workflow-journey-reject-failure-return-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-workflow-journey-reject-failure-return-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/",
+    "entry": "Authenticated More → tap Cozymate bottom navigation",
+    "trigger": "Return to Cozymate → action result retained",
+    "journey": {
+      "source": "test/goldens/ui_inventory/agent-workflow-journey-reject-failure-return-393.png",
+      "previous_source": "test/goldens/ui_inventory/agent-workflow-journey-reject-failure-away-393.png",
+      "route": "/",
+      "trigger": "Return to Cozymate → action result retained",
+      "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage via public agentHubBuilder; production SSE parser, runner with default retries, cancel client and profile repository; isolated SSE/control/ticket HTTP and voice dependencies; production action client and support ticket repository. History disabled as in default local build; no remote model request.",
+      "test": "test/features/agent_hub/agent_workflow_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-reject-success-away",
+    "module": "Cozymate",
+    "label": "M",
+    "state": "agent-workflow-journey-reject-success-away",
+    "image": "05-agent/agent-workflow-journey-reject-success-away/default.png",
+    "viewport": "05-agent/agent-workflow-journey-reject-success-away/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/more"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "profile/more",
+      "common/not-found"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/modules/profile/presentation/more_page.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/agent_hub/agent_workflow_inventory_journey_test.dart",
+    "test_case": "inventory workflow action true failure false",
+    "metadata": "raw/test/goldens/ui_inventory/agent-workflow-journey-reject-success-away-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/agent-workflow-journey-reject-success-away-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-workflow-journey-reject-success-away-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/more",
+    "entry": "Authenticated More → tap Cozymate bottom navigation",
+    "trigger": "More tab after action result",
+    "journey": {
+      "source": "test/goldens/ui_inventory/agent-workflow-journey-reject-success-away-393.png",
+      "previous_source": "test/goldens/ui_inventory/agent-workflow-journey-reject-success-result-393.png",
+      "route": "/more",
+      "trigger": "More tab after action result",
+      "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage via public agentHubBuilder; production SSE parser, runner with default retries, cancel client and profile repository; isolated SSE/control/ticket HTTP and voice dependencies; production action client and support ticket repository. History disabled as in default local build; no remote model request.",
+      "test": "test/features/agent_hub/agent_workflow_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-reject-success-pending",
+    "module": "Cozymate",
+    "label": "嗨 Mia，  /  / 今天想聊点什么呢？  /  / 把你现在最关心的事情告诉我就好，我会陪你一起梳理。",
+    "state": "agent-workflow-journey-reject-success-pending",
+    "image": "05-agent/agent-workflow-journey-reject-success-pending/default.png",
+    "viewport": "05-agent/agent-workflow-journey-reject-success-pending/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "agent/home",
+      "agent/attachments",
+      "agent/message-menu",
+      "agent/voice",
+      "common/not-found",
+      "agent/state-03",
+      "agent/12-agent-error",
+      "agent/12b-agent-conversation"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/features/agent_hub/agent_hub_page.dart",
+      "lib/features/agent_hub/presentation/agent_message_menu.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/agent_hub/agent_workflow_inventory_journey_test.dart",
+    "test_case": "inventory workflow action true failure false",
+    "metadata": "raw/test/goldens/ui_inventory/agent-workflow-journey-reject-success-pending-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/agent-workflow-journey-reject-success-pending-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-workflow-journey-reject-success-pending-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/",
+    "entry": "Authenticated More → tap Cozymate bottom navigation",
+    "trigger": "Tap action reject → HTTP pending",
+    "journey": {
+      "source": "test/goldens/ui_inventory/agent-workflow-journey-reject-success-pending-393.png",
+      "previous_source": "test/goldens/ui_inventory/agent-workflow-journey-reject-success-preview-393.png",
+      "route": "/",
+      "trigger": "Tap action reject → HTTP pending",
+      "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage via public agentHubBuilder; production SSE parser, runner with default retries, cancel client and profile repository; isolated SSE/control/ticket HTTP and voice dependencies; production action client and support ticket repository. History disabled as in default local build; no remote model request.",
+      "test": "test/features/agent_hub/agent_workflow_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-reject-success-preview",
+    "module": "Cozymate",
+    "label": "嗨 Mia，  /  / 今天想聊点什么呢？  /  / 把你现在最关心的事情告诉我就好，我会陪你一起梳理。",
+    "state": "agent-workflow-journey-reject-success-preview",
+    "image": "05-agent/agent-workflow-journey-reject-success-preview/default.png",
+    "viewport": "05-agent/agent-workflow-journey-reject-success-preview/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "agent/home",
+      "agent/attachments",
+      "agent/message-menu",
+      "agent/voice",
+      "common/not-found",
+      "agent/state-03",
+      "agent/12-agent-error",
+      "agent/12b-agent-conversation"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/features/agent_hub/agent_hub_page.dart",
+      "lib/features/agent_hub/presentation/agent_message_menu.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/agent_hub/agent_workflow_inventory_journey_test.dart",
+    "test_case": "inventory workflow action true failure false",
+    "metadata": "raw/test/goldens/ui_inventory/agent-workflow-journey-reject-success-preview-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/agent-workflow-journey-reject-success-preview-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-workflow-journey-reject-success-preview-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/",
+    "entry": "Authenticated More → tap Cozymate bottom navigation",
+    "trigger": "Receive authoritative action preview → controls available",
+    "journey": {
+      "source": "test/goldens/ui_inventory/agent-workflow-journey-reject-success-preview-393.png",
+      "previous_source": null,
+      "route": "/",
+      "trigger": "Receive authoritative action preview → controls available",
+      "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage via public agentHubBuilder; production SSE parser, runner with default retries, cancel client and profile repository; isolated SSE/control/ticket HTTP and voice dependencies; production action client and support ticket repository. History disabled as in default local build; no remote model request.",
+      "test": "test/features/agent_hub/agent_workflow_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-reject-success-result",
+    "module": "Cozymate",
+    "label": "嗨 Mia，  /  / 今天想聊点什么呢？  /  / 把你现在最关心的事情告诉我就好，我会陪你一起梳理。",
+    "state": "agent-workflow-journey-reject-success-result",
+    "image": "05-agent/agent-workflow-journey-reject-success-result/default.png",
+    "viewport": "05-agent/agent-workflow-journey-reject-success-result/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "agent/home",
+      "agent/attachments",
+      "agent/message-menu",
+      "agent/voice",
+      "common/not-found",
+      "agent/state-03",
+      "agent/12-agent-error",
+      "agent/12b-agent-conversation"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/features/agent_hub/agent_hub_page.dart",
+      "lib/features/agent_hub/presentation/agent_message_menu.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/agent_hub/agent_workflow_inventory_journey_test.dart",
+    "test_case": "inventory workflow action true failure false",
+    "metadata": "raw/test/goldens/ui_inventory/agent-workflow-journey-reject-success-result-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/agent-workflow-journey-reject-success-result-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-workflow-journey-reject-success-result-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/",
+    "entry": "Authenticated More → tap Cozymate bottom navigation",
+    "trigger": "HTTP 200 → authoritative rejected state",
+    "journey": {
+      "source": "test/goldens/ui_inventory/agent-workflow-journey-reject-success-result-393.png",
+      "previous_source": "test/goldens/ui_inventory/agent-workflow-journey-reject-success-pending-393.png",
+      "route": "/",
+      "trigger": "HTTP 200 → authoritative rejected state",
+      "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage via public agentHubBuilder; production SSE parser, runner with default retries, cancel client and profile repository; isolated SSE/control/ticket HTTP and voice dependencies; production action client and support ticket repository. History disabled as in default local build; no remote model request.",
+      "test": "test/features/agent_hub/agent_workflow_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-reject-success-return",
+    "module": "Cozymate",
+    "label": "嗨 Mia，  /  / 今天想聊点什么呢？  /  / 把你现在最关心的事情告诉我就好，我会陪你一起梳理。",
+    "state": "agent-workflow-journey-reject-success-return",
+    "image": "05-agent/agent-workflow-journey-reject-success-return/default.png",
+    "viewport": "05-agent/agent-workflow-journey-reject-success-return/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "agent/home",
+      "agent/attachments",
+      "agent/message-menu",
+      "agent/voice",
+      "common/not-found",
+      "agent/state-03",
+      "agent/12-agent-error",
+      "agent/12b-agent-conversation"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/features/agent_hub/agent_hub_page.dart",
+      "lib/features/agent_hub/presentation/agent_message_menu.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/agent_hub/agent_workflow_inventory_journey_test.dart",
+    "test_case": "inventory workflow action true failure false",
+    "metadata": "raw/test/goldens/ui_inventory/agent-workflow-journey-reject-success-return-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/agent-workflow-journey-reject-success-return-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-workflow-journey-reject-success-return-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/",
+    "entry": "Authenticated More → tap Cozymate bottom navigation",
+    "trigger": "Return to Cozymate → action result retained",
+    "journey": {
+      "source": "test/goldens/ui_inventory/agent-workflow-journey-reject-success-return-393.png",
+      "previous_source": "test/goldens/ui_inventory/agent-workflow-journey-reject-success-away-393.png",
+      "route": "/",
+      "trigger": "Return to Cozymate → action result retained",
+      "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage via public agentHubBuilder; production SSE parser, runner with default retries, cancel client and profile repository; isolated SSE/control/ticket HTTP and voice dependencies; production action client and support ticket repository. History disabled as in default local build; no remote model request.",
+      "test": "test/features/agent_hub/agent_workflow_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-retry-intake-accepted",
+    "module": "Cozymate",
+    "label": "我想做一次产后身体恢复评估，请先从最重要的问题开始问我。",
+    "state": "agent-workflow-journey-retry-intake-accepted",
+    "image": "05-agent/agent-workflow-journey-retry-intake-accepted/default.png",
+    "viewport": "05-agent/agent-workflow-journey-retry-intake-accepted/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "agent/home",
+      "agent/attachments",
+      "agent/message-menu",
+      "agent/structured-card",
+      "agent/form",
+      "agent/voice",
+      "common/not-found",
+      "agent/state-03",
+      "agent/12-agent-error",
+      "agent/12b-agent-conversation"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/features/agent_hub/agent_hub_page.dart",
+      "lib/features/agent_hub/artifacts/agent_artifact_panel.dart",
+      "lib/features/agent_hub/artifacts/cards/agent_result_card.dart",
+      "lib/features/agent_hub/artifacts/forms/agent_artifact_form_dialog.dart",
+      "lib/features/agent_hub/presentation/agent_message_menu.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/agent_hub/agent_workflow_inventory_journey_test.dart",
+    "test_case": "inventory workflow intake transport failure and retry",
+    "metadata": "raw/test/goldens/ui_inventory/agent-workflow-journey-retry-intake-accepted-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/agent-workflow-journey-retry-intake-accepted-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-workflow-journey-retry-intake-accepted-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/",
+    "entry": "Authenticated More → tap Cozymate bottom navigation",
+    "trigger": "Retried run accepted → form closes",
+    "journey": {
+      "source": "test/goldens/ui_inventory/agent-workflow-journey-retry-intake-accepted-393.png",
+      "previous_source": "test/goldens/ui_inventory/agent-workflow-journey-retry-intake-pending-393.png",
+      "route": "/",
+      "trigger": "Retried run accepted → form closes",
+      "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage via public agentHubBuilder; production SSE parser, runner with default retries, cancel client and profile repository; isolated SSE/control/ticket HTTP and voice dependencies; production action client and support ticket repository. History disabled as in default local build; no remote model request.",
+      "test": "test/features/agent_hub/agent_workflow_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-retry-intake-auto-loading",
+    "module": "Cozymate",
+    "label": "嗨 Mia，  /  / 今天想聊点什么呢？  /  / 把你现在最关心的事情告诉我就好，我会陪你一起梳理。",
+    "state": "agent-workflow-journey-retry-intake-auto-loading",
+    "image": "05-agent/agent-workflow-journey-retry-intake-auto-loading/default.png",
+    "viewport": "05-agent/agent-workflow-journey-retry-intake-auto-loading/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "agent/home",
+      "agent/attachments",
+      "agent/message-menu",
+      "agent/structured-card",
+      "agent/form",
+      "agent/voice",
+      "common/not-found",
+      "agent/state-03",
+      "agent/12-agent-error",
+      "agent/12b-agent-conversation"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/features/agent_hub/agent_hub_page.dart",
+      "lib/features/agent_hub/artifacts/agent_artifact_panel.dart",
+      "lib/features/agent_hub/artifacts/cards/agent_result_card.dart",
+      "lib/features/agent_hub/artifacts/forms/agent_artifact_form_dialog.dart",
+      "lib/features/agent_hub/presentation/agent_message_menu.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/agent_hub/agent_workflow_inventory_journey_test.dart",
+    "test_case": "inventory workflow intake transport failure and retry",
+    "metadata": "raw/test/goldens/ui_inventory/agent-workflow-journey-retry-intake-auto-loading-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/agent-workflow-journey-retry-intake-auto-loading-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-workflow-journey-retry-intake-auto-loading-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/",
+    "entry": "Authenticated More → tap Cozymate bottom navigation",
+    "trigger": "Assistant completes → live form entry waiting to auto-open",
+    "journey": {
+      "source": "test/goldens/ui_inventory/agent-workflow-journey-retry-intake-auto-loading-393.png",
+      "previous_source": "test/goldens/ui_inventory/agent-workflow-journey-retry-intake-request-393.png",
+      "route": "/",
+      "trigger": "Assistant completes → live form entry waiting to auto-open",
+      "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage via public agentHubBuilder; production SSE parser, runner with default retries, cancel client and profile repository; isolated SSE/control/ticket HTTP and voice dependencies; production action client and support ticket repository. History disabled as in default local build; no remote model request.",
+      "test": "test/features/agent_hub/agent_workflow_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-retry-intake-auto-open",
+    "module": "Cozymate",
+    "label": "嗨 Mia，  /  / 今天想聊点什么呢？  /  / 把你现在最关心的事情告诉我就好，我会陪你一起梳理。",
+    "state": "agent-workflow-journey-retry-intake-auto-open",
+    "image": "05-agent/agent-workflow-journey-retry-intake-auto-open/default.png",
+    "viewport": "05-agent/agent-workflow-journey-retry-intake-auto-open/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "agent/home",
+      "agent/attachments",
+      "agent/message-menu",
+      "agent/structured-card",
+      "agent/form",
+      "agent/voice",
+      "common/not-found",
+      "agent/state-03",
+      "agent/12-agent-error",
+      "agent/12b-agent-conversation"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/features/agent_hub/agent_hub_page.dart",
+      "lib/features/agent_hub/artifacts/agent_artifact_panel.dart",
+      "lib/features/agent_hub/artifacts/cards/agent_result_card.dart",
+      "lib/features/agent_hub/artifacts/forms/agent_artifact_form.dart",
+      "lib/features/agent_hub/artifacts/forms/agent_artifact_form_dialog.dart",
+      "lib/features/agent_hub/presentation/agent_message_menu.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/agent_hub/agent_workflow_inventory_journey_test.dart",
+    "test_case": "inventory workflow intake transport failure and retry",
+    "metadata": "raw/test/goldens/ui_inventory/agent-workflow-journey-retry-intake-auto-open-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/agent-workflow-journey-retry-intake-auto-open-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-workflow-journey-retry-intake-auto-open-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/",
+    "entry": "Authenticated More → tap Cozymate bottom navigation",
+    "trigger": "Production one-second presentation timer → form dialog",
+    "journey": {
+      "source": "test/goldens/ui_inventory/agent-workflow-journey-retry-intake-auto-open-393.png",
+      "previous_source": "test/goldens/ui_inventory/agent-workflow-journey-retry-intake-auto-loading-393.png",
+      "route": "/",
+      "trigger": "Production one-second presentation timer → form dialog",
+      "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage via public agentHubBuilder; production SSE parser, runner with default retries, cancel client and profile repository; isolated SSE/control/ticket HTTP and voice dependencies; production action client and support ticket repository. History disabled as in default local build; no remote model request.",
+      "test": "test/features/agent_hub/agent_workflow_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-retry-intake-completed",
+    "module": "Cozymate",
+    "label": "我想做一次产后身体恢复评估，请先从最重要的问题开始问我。",
+    "state": "agent-workflow-journey-retry-intake-completed",
+    "image": "05-agent/agent-workflow-journey-retry-intake-completed/default.png",
+    "viewport": "05-agent/agent-workflow-journey-retry-intake-completed/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "agent/home",
+      "agent/attachments",
+      "agent/message-menu",
+      "agent/structured-card",
+      "agent/form",
+      "agent/voice",
+      "common/not-found",
+      "agent/state-03",
+      "agent/12-agent-error",
+      "agent/12b-agent-conversation"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/features/agent_hub/agent_hub_page.dart",
+      "lib/features/agent_hub/artifacts/agent_artifact_panel.dart",
+      "lib/features/agent_hub/artifacts/cards/agent_result_card.dart",
+      "lib/features/agent_hub/artifacts/forms/agent_artifact_form_dialog.dart",
+      "lib/features/agent_hub/presentation/agent_message_menu.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/agent_hub/agent_workflow_inventory_journey_test.dart",
+    "test_case": "inventory workflow intake transport failure and retry",
+    "metadata": "raw/test/goldens/ui_inventory/agent-workflow-journey-retry-intake-completed-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/agent-workflow-journey-retry-intake-completed-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-workflow-journey-retry-intake-completed-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/",
+    "entry": "Authenticated More → tap Cozymate bottom navigation",
+    "trigger": "Retried response completes",
+    "journey": {
+      "source": "test/goldens/ui_inventory/agent-workflow-journey-retry-intake-completed-393.png",
+      "previous_source": "test/goldens/ui_inventory/agent-workflow-journey-retry-intake-accepted-393.png",
+      "route": "/",
+      "trigger": "Retried response completes",
+      "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage via public agentHubBuilder; production SSE parser, runner with default retries, cancel client and profile repository; isolated SSE/control/ticket HTTP and voice dependencies; production action client and support ticket repository. History disabled as in default local build; no remote model request.",
+      "test": "test/features/agent_hub/agent_workflow_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-retry-intake-failed",
+    "module": "Cozymate",
+    "label": "嗨 Mia，  /  / 今天想聊点什么呢？  /  / 把你现在最关心的事情告诉我就好，我会陪你一起梳理。",
+    "state": "agent-workflow-journey-retry-intake-failed",
+    "image": "05-agent/agent-workflow-journey-retry-intake-failed/default.png",
+    "viewport": "05-agent/agent-workflow-journey-retry-intake-failed/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "agent/home",
+      "agent/attachments",
+      "agent/message-menu",
+      "agent/structured-card",
+      "agent/form",
+      "agent/voice",
+      "common/not-found",
+      "agent/state-03",
+      "agent/12-agent-error",
+      "agent/12b-agent-conversation"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/features/agent_hub/agent_hub_page.dart",
+      "lib/features/agent_hub/artifacts/agent_artifact_panel.dart",
+      "lib/features/agent_hub/artifacts/cards/agent_result_card.dart",
+      "lib/features/agent_hub/artifacts/forms/agent_artifact_form.dart",
+      "lib/features/agent_hub/artifacts/forms/agent_artifact_form_dialog.dart",
+      "lib/features/agent_hub/presentation/agent_message_menu.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/agent_hub/agent_workflow_inventory_journey_test.dart",
+    "test_case": "inventory workflow intake transport failure and retry",
+    "metadata": "raw/test/goldens/ui_inventory/agent-workflow-journey-retry-intake-failed-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/agent-workflow-journey-retry-intake-failed-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-workflow-journey-retry-intake-failed-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/",
+    "entry": "Authenticated More → tap Cozymate bottom navigation",
+    "trigger": "Three SSE retries exhausted before acceptance → editable form failure",
+    "journey": {
+      "source": "test/goldens/ui_inventory/agent-workflow-journey-retry-intake-failed-393.png",
+      "previous_source": "test/goldens/ui_inventory/agent-workflow-journey-retry-intake-auto-open-393.png",
+      "route": "/",
+      "trigger": "Three SSE retries exhausted before acceptance → editable form failure",
+      "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage via public agentHubBuilder; production SSE parser, runner with default retries, cancel client and profile repository; isolated SSE/control/ticket HTTP and voice dependencies; production action client and support ticket repository. History disabled as in default local build; no remote model request.",
+      "test": "test/features/agent_hub/agent_workflow_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-retry-intake-pending",
+    "module": "Cozymate",
+    "label": "我想做一次产后身体恢复评估，请先从最重要的问题开始问我。",
+    "state": "agent-workflow-journey-retry-intake-pending",
+    "image": "05-agent/agent-workflow-journey-retry-intake-pending/default.png",
+    "viewport": "05-agent/agent-workflow-journey-retry-intake-pending/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "agent/home",
+      "agent/attachments",
+      "agent/message-menu",
+      "agent/structured-card",
+      "agent/form",
+      "agent/voice",
+      "common/not-found",
+      "agent/state-03",
+      "agent/12-agent-error",
+      "agent/12b-agent-conversation"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/features/agent_hub/agent_hub_page.dart",
+      "lib/features/agent_hub/artifacts/agent_artifact_panel.dart",
+      "lib/features/agent_hub/artifacts/cards/agent_result_card.dart",
+      "lib/features/agent_hub/artifacts/forms/agent_artifact_form.dart",
+      "lib/features/agent_hub/artifacts/forms/agent_artifact_form_dialog.dart",
+      "lib/features/agent_hub/presentation/agent_message_menu.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/agent_hub/agent_workflow_inventory_journey_test.dart",
+    "test_case": "inventory workflow intake transport failure and retry",
+    "metadata": "raw/test/goldens/ui_inventory/agent-workflow-journey-retry-intake-pending-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/agent-workflow-journey-retry-intake-pending-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-workflow-journey-retry-intake-pending-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/",
+    "entry": "Authenticated More → tap Cozymate bottom navigation",
+    "trigger": "Retry form → same data and idempotency key",
+    "journey": {
+      "source": "test/goldens/ui_inventory/agent-workflow-journey-retry-intake-pending-393.png",
+      "previous_source": "test/goldens/ui_inventory/agent-workflow-journey-retry-intake-failed-393.png",
+      "route": "/",
+      "trigger": "Retry form → same data and idempotency key",
+      "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage via public agentHubBuilder; production SSE parser, runner with default retries, cancel client and profile repository; isolated SSE/control/ticket HTTP and voice dependencies; production action client and support ticket repository. History disabled as in default local build; no remote model request.",
+      "test": "test/features/agent_hub/agent_workflow_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "05-agent/agent-workflow-journey-retry-intake-request",
+    "module": "Cozymate",
+    "label": "嗨 Mia，  /  / 今天想聊点什么呢？  /  / 把你现在最关心的事情告诉我就好，我会陪你一起梳理。",
+    "state": "agent-workflow-journey-retry-intake-request",
+    "image": "05-agent/agent-workflow-journey-retry-intake-request/default.png",
+    "viewport": "05-agent/agent-workflow-journey-retry-intake-request/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "agent/home",
+      "agent/attachments",
+      "agent/message-menu",
+      "agent/voice",
+      "common/not-found",
+      "agent/state-03",
+      "agent/12-agent-error",
+      "agent/12b-agent-conversation"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/features/agent_hub/agent_hub_page.dart",
+      "lib/features/agent_hub/presentation/agent_message_menu.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/agent_hub/agent_workflow_inventory_journey_test.dart",
+    "test_case": "inventory workflow intake transport failure and retry",
+    "metadata": "raw/test/goldens/ui_inventory/agent-workflow-journey-retry-intake-request-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/agent-workflow-journey-retry-intake-request-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/agent-workflow-journey-retry-intake-request-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/",
+    "entry": "Authenticated More → tap Cozymate bottom navigation",
+    "trigger": "Tap recovery assessment shortcut → actual preset request sent",
+    "journey": {
+      "source": "test/goldens/ui_inventory/agent-workflow-journey-retry-intake-request-393.png",
+      "previous_source": null,
+      "route": "/",
+      "trigger": "Tap recovery assessment shortcut → actual preset request sent",
+      "root_entry": "Authenticated More → tap Cozymate bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter/AgentHubPage via public agentHubBuilder; production SSE parser, runner with default retries, cancel client and profile repository; isolated SSE/control/ticket HTTP and voice dependencies; production action client and support ticket repository. History disabled as in default local build; no remote model request.",
+      "test": "test/features/agent_hub/agent_workflow_inventory_journey_test.dart"
+    }
+  }
+]

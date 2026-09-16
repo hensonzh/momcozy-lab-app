@@ -5,8 +5,74 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_run_state.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_page.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_conversation.dart';
+import 'package:momcozy_flutter_app/features/agent_hub/presentation/agent_conversation_panel.dart';
 
 void main() {
+  testWidgets('current conversation closes while switching is locked', (
+    tester,
+  ) async {
+    final repository = _FakeConversationRepository();
+    await tester.pumpWidget(
+      _host(
+        repository,
+        state: const AgentStreamRunState(
+          phase: AgentStreamRunPhase.streaming,
+          threadId: 'thread-new',
+          runId: 'running',
+        ),
+      ),
+    );
+    await tester.pump(const Duration(milliseconds: 50));
+    await tester.tap(
+      find.byKey(const ValueKey('agent-conversation-history-button')),
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+    await tester.tap(
+      find.byKey(const ValueKey('agent-conversation-thread-new')),
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(
+      find.byKey(const ValueKey('agent-conversation-panel')),
+      findsNothing,
+    );
+    expect(repository.loadedThreadIds, isEmpty);
+    await tester.pumpWidget(const SizedBox());
+  });
+  testWidgets('dismissal invalidates a pending switch exactly once', (
+    tester,
+  ) async {
+    var dismissals = 0;
+    final canSwitch = ValueNotifier(true);
+    addTearDown(canSwitch.dispose);
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Builder(
+          builder: (context) => Scaffold(
+            body: TextButton(
+              onPressed: () => showAgentConversationPanel(
+                context: context,
+                repository: _FakeConversationRepository(),
+                activeThreadId: null,
+                canSwitchListenable: canSwitch,
+                onSelected: (_) async => false,
+                onDismissed: () => dismissals++,
+              ),
+              child: const Text('Open history'),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.tap(find.text('Open history'));
+    await tester.pumpAndSettle();
+    await tester.tap(
+      find.byKey(const ValueKey('agent-conversation-close-button')),
+    );
+    await tester.pumpAndSettle();
+    expect(dismissals, 1);
+  });
   testWidgets('opens a flat partial-width conversation panel', (tester) async {
     final repository = _FakeConversationRepository();
     await tester.pumpWidget(_host(repository));

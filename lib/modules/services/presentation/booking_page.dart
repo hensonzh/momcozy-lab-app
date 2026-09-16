@@ -3,6 +3,8 @@ import '../../../features/notifications/presentation/notification_scope.dart';
 import '../../../features/notifications/presentation/notification_permission_dialogs.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:momcozy_flutter_app/shared/widgets/date_time_picker.dart';
+import 'package:momcozy_flutter_app/shared/design_system/momcozy_motion.dart';
 import '../../../shared/widgets/momcozy_components.dart';
 import '../../../domain/care/appointment.dart';
 import '../../../domain/shared/local_date.dart';
@@ -10,7 +12,13 @@ import '../../../shared/design_system/momcozy_design_system.dart';
 import '../../../shared/widgets/product_feedback.dart';
 import '../../../shared/zoned_time.dart';
 import '../application/booking_controller.dart';
-import 'appointment_summary.dart';
+import 'mom_appointment_widgets.dart';
+import '../../../shared/widgets/mom_settings_widgets.dart';
+import '../../../shared/design_system/mom_home_tokens.dart';
+import '../../../shared/design_system/mom_settings_theme.dart';
+import 'appointment_cancel_dialog.dart';
+import 'booking_flow_dialogs.dart';
+import 'service_flow_theme.dart';
 
 class BookingPage extends StatefulWidget {
   const BookingPage({
@@ -39,7 +47,7 @@ class _BookingPageState extends State<BookingPage> with WidgetsBindingObserver {
     now: widget.now,
   );
   Timer? _timer;
-  bool _wantsReminder = false;
+  bool _wantsReminder = false, _flowOpen = false;
   @override
   void initState() {
     super.initState();
@@ -48,7 +56,7 @@ class _BookingPageState extends State<BookingPage> with WidgetsBindingObserver {
       const Duration(seconds: 1),
       (_) => controller.tick(),
     );
-    unawaited(controller.load());
+    unawaited(_load());
   }
 
   @override
@@ -61,7 +69,7 @@ class _BookingPageState extends State<BookingPage> with WidgetsBindingObserver {
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) unawaited(controller.load());
+    if (state == AppLifecycleState.resumed) unawaited(_load());
   }
 
   @override
@@ -72,133 +80,175 @@ class _BookingPageState extends State<BookingPage> with WidgetsBindingObserver {
       final confirmed =
           current?.status == AppointmentStatus.confirmed ||
           current?.status == AppointmentStatus.inProgress;
-      return Scaffold(
-        appBar: AppBar(
-          leading: BackButton(onPressed: widget.onBack),
-          title: Text(confirmed ? '预约详情' : '选择时间'),
-          actions: [
-            IconButton(
-              tooltip: '刷新预约',
-              onPressed: controller.busy ? null : controller.load,
-              icon: const Icon(Icons.refresh),
+      return Theme(
+        data: momSettingsTheme(Theme.of(context)),
+        child: Scaffold(
+          appBar: AppBar(
+            toolbarHeight: MediaQuery.textScalerOf(context).scale(1) > 1.3
+                ? 96
+                : 56,
+            leadingWidth: MediaQuery.textScalerOf(context).scale(1) > 1.4
+                ? 88
+                : 64,
+            centerTitle: false,
+            leading: TextButton(
+              onPressed: controller.busy ? null : widget.onBack,
+              child: const Text('返回'),
             ),
-          ],
+            title: Text(confirmed ? '预约详情' : '选择时间'),
+            actions: [
+              IconButton(
+                tooltip: '刷新预约',
+                onPressed: controller.busy ? null : _load,
+                icon: const Icon(Icons.refresh),
+              ),
+            ],
+          ),
+          body: ClipRect(
+            child: MomCozyPageBody(child: _body(current, confirmed)),
+          ),
         ),
-        body: MomCozyPageBody(child: _body(current, confirmed)),
       );
     },
   );
 
   Widget _body(CareAppointment? current, bool confirmed) {
     if (controller.loading && controller.data == null) {
-      return const ProductLoadingView();
+      return SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: MomSettingsCard(
+          children: [
+            Text(
+              '正在加载预约…',
+              style: MomHomeTokens.text(16, weight: FontWeight.w700),
+            ),
+            const LinearProgressIndicator(),
+          ],
+        ),
+      );
     }
     if (controller.loadFailure case final failure?) {
-      return ProductErrorView(failure: failure, onRetry: controller.load);
+      return SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: ProductErrorView(failure: failure, onRetry: _load),
+      );
     }
     final data = controller.data;
     if (data == null) return const SizedBox.shrink();
     return RefreshIndicator(
-      onRefresh: controller.load,
+      onRefresh: _load,
       child: ListView(
-        padding: MomCozyInsets.page,
+        padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
         children: [
           if (controller.failure != null || controller.message != null)
             _failure(),
           if (controller.unresolvedMutation) ...[
             const Text(
               '正在核对上次提交结果，请重试以恢复预约。',
-              style: TextStyle(color: MomCozyColors.mutedForeground),
+              style: TextStyle(color: MomHomeTokens.secondary),
             ),
             const SizedBox(height: MomCozySpacing.compact),
             FilledButton(
-              onPressed: controller.busy ? null : controller.retry,
+              onPressed: controller.busy ? null : _retry,
               child: Text(controller.busy ? '正在确认…' : '重试上次提交'),
             ),
             const SizedBox(height: MomCozySpacing.card),
           ],
-          if (current != null) ...[
-            AppointmentSummary(
+          if (current?.status == AppointmentStatus.held) ...[
+            _picker(),
+            const SizedBox(height: 16),
+            for (final slot
+                in controller.availability?.slots ??
+                    [
+                      AppointmentSlot(
+                        startsAt: current!.startsAt,
+                        endsAt: current.endsAt,
+                        available: true,
+                      ),
+                    ])
+              _slot(slot),
+            TextButton(
+              onPressed: controller.busy ? null : _reviewHold,
+              child: const Text('查看所选时间'),
+            ),
+          ] else if (current != null) ...[
+            MomAppointmentSummary(
               appointment: current,
-              title: confirmed ? '已确认的咨询' : '所选时间已暂时保留',
+              title: current.status == AppointmentStatus.inProgress
+                  ? '咨询中 · IBCLC 咨询'
+                  : confirmed
+                  ? '已确认 · IBCLC 咨询'
+                  : '所选时间已暂时保留',
+              action: current.status == AppointmentStatus.confirmed
+                  ? OutlinedButton(
+                      onPressed: controller.canEdit ? _cancel : null,
+                      style: ServiceFlowTheme.cancellationStyle(
+                        context,
+                        tinted: true,
+                      ),
+                      child: const Text('取消预约'),
+                    )
+                  : null,
             ),
             const SizedBox(height: MomCozySpacing.card),
-            if (current.status == AppointmentStatus.confirmed)
-              AppointmentReminderTile(
-                key: ValueKey('${current.id}-${current.version}'),
-                appointmentId: current.id,
-              ),
-            if (current.status == AppointmentStatus.held) ...[
-              CheckboxListTile(
-                contentPadding: EdgeInsets.zero,
-                title: const Text('Remind me 15 minutes before'),
-                subtitle: const Text(
-                  'We’ll check notification permission before enabling your reminder.',
+            MomSettingsCard(
+              children: [
+                Text(
+                  '咨询前准备',
+                  style: MomHomeTokens.text(18, weight: FontWeight.w700),
                 ),
-                value: _wantsReminder,
-                onChanged: controller.canEdit
-                    ? (value) => setState(() => _wantsReminder = value ?? false)
-                    : null,
-              ),
-              Text(
-                '请在 ${_remaining(current)} 内确认',
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  color: MomCozyColors.mutedForeground,
-                  fontSize: MomCozyTypography.captionSize,
+                const Text(
+                  '咨询前请完成信息采集表，让专家了解这次最想解决的问题。',
+                  style: TextStyle(height: 1.6),
                 ),
-              ),
-              const SizedBox(height: MomCozySpacing.content),
-              FilledButton(
-                onPressed: controller.canEdit ? _confirm : null,
-                child: Text(controller.busy ? '正在确认…' : '确认预约'),
-              ),
-              TextButton(
-                onPressed: controller.canEdit ? controller.cancel : null,
-                child: const Text('重新选择'),
-              ),
-            ] else ...[
-              const Text(
-                '咨询前请完成信息采集表，让专家了解这次最想解决的问题。',
-                style: TextStyle(height: 1.6),
-              ),
-              const SizedBox(height: MomCozySpacing.page),
-              FilledButton(
-                onPressed: controller.canEdit
-                    ? () => _openIntake(current)
-                    : null,
-                child: Text(current.intakeVersion > 0 ? '查看信息采集表' : '填写信息采集表'),
-              ),
-              if (widget.onConsultation != null) ...[
-                const SizedBox(height: MomCozySpacing.content),
-                OutlinedButton.icon(
+                FilledButton(
                   onPressed: controller.canEdit
-                      ? () async {
-                          await widget.onConsultation!(current);
-                          await controller.load();
-                        }
+                      ? () => _openIntake(current)
                       : null,
-                  icon: const Icon(Icons.videocam_outlined),
-                  label: Text(
-                    current.status == AppointmentStatus.inProgress
-                        ? '返回咨询室'
-                        : '咨询前准备',
+                  child: Text(
+                    current.intakeVersion > 0 ? '查看信息采集表' : '填写信息采集表',
                   ),
+                ),
+                if (widget.onConsultation != null) ...[
+                  OutlinedButton.icon(
+                    onPressed: controller.canEdit
+                        ? () async {
+                            await widget.onConsultation!(current);
+                            await controller.load();
+                          }
+                        : null,
+                    icon: const Icon(Icons.videocam_outlined),
+                    label: Text(
+                      current.status == AppointmentStatus.inProgress
+                          ? '返回咨询室'
+                          : '咨询前准备',
+                    ),
+                  ),
+                ],
+              ],
+            ),
+            const SizedBox(height: 14),
+            if (current.status == AppointmentStatus.confirmed)
+              MomSettingsCard(
+                children: [
+                  AppointmentReminderTile(
+                    key: ValueKey('${current.id}-${current.version}'),
+                    appointmentId: current.id,
+                  ),
+                ],
+              ),
+          ] else if (!data.episode.canBook)
+            MomSettingsCard(
+              children: [
+                Text(
+                  '当前没有可用的咨询次数',
+                  style: MomHomeTokens.text(18, weight: FontWeight.w700),
+                ),
+                Text(
+                  '可在服务进度中查看已完成的咨询。',
+                  style: MomHomeTokens.text(13, color: MomHomeTokens.secondary),
                 ),
               ],
-              if (current.status == AppointmentStatus.confirmed)
-                TextButton(
-                  onPressed: controller.canEdit ? _cancel : null,
-                  child: const Text(
-                    '取消预约',
-                    style: TextStyle(color: MomCozyColors.danger),
-                  ),
-                ),
-            ],
-          ] else if (!data.episode.canBook)
-            const ProductEmptyView(
-              title: '当前没有可用的咨询次数',
-              description: '可在服务进度中查看已完成的咨询。',
             )
           else if (!controller.precheckReady)
             _precheck()
@@ -210,17 +260,14 @@ class _BookingPageState extends State<BookingPage> with WidgetsBindingObserver {
                 const Expanded(
                   child: Text(
                     '可选时间',
-                    style: TextStyle(
-                      fontSize: MomCozyTypography.sectionSize,
-                      fontWeight: FontWeight.w700,
-                    ),
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
                   ),
                 ),
                 Text(
                   '${controller.availability?.slots.length ?? 0} 个时段',
                   style: const TextStyle(
-                    fontSize: MomCozyTypography.captionSize,
-                    color: MomCozyColors.mutedForeground,
+                    fontSize: 11,
+                    color: MomHomeTokens.secondary,
                   ),
                 ),
               ],
@@ -236,9 +283,20 @@ class _BookingPageState extends State<BookingPage> with WidgetsBindingObserver {
             else if (controller.availabilityFailure case final failure?)
               ProductErrorView(failure: failure, onRetry: controller.loadSlots)
             else if (controller.availability?.slots.isEmpty ?? true)
-              const ProductEmptyView(
-                title: '暂无可选时间',
-                description: '请尝试其他日期或专家。',
+              MomSettingsCard(
+                children: [
+                  Text(
+                    '暂无可选时间',
+                    style: MomHomeTokens.text(16, weight: FontWeight.w700),
+                  ),
+                  Text(
+                    '请尝试其他日期或专家。',
+                    style: MomHomeTokens.text(
+                      13,
+                      color: MomHomeTokens.secondary,
+                    ),
+                  ),
+                ],
               )
             else
               for (final slot in controller.availability!.slots) _slot(slot),
@@ -278,231 +336,242 @@ class _BookingPageState extends State<BookingPage> with WidgetsBindingObserver {
           ),
         );
 
-  Widget _precheck() => MomCozySurface(
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          '预约前确认',
-          style: TextStyle(
-            fontSize: MomCozyTypography.headingSize,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        const SizedBox(height: MomCozySpacing.section),
-        DropdownButtonFormField<String>(
-          initialValue: controller.region,
-          isExpanded: true,
-          decoration: const InputDecoration(labelText: '当前所在州'),
-          items: const [
-            DropdownMenuItem(value: 'CA', child: Text('California (CA)')),
-            DropdownMenuItem(value: 'NY', child: Text('New York (NY)')),
-            DropdownMenuItem(value: 'TX', child: Text('Texas (TX)')),
-          ],
-          onChanged: controller.canEdit ? controller.setRegion : null,
-        ),
-        const SizedBox(height: MomCozySpacing.section),
-        const Text('服务适用性', style: TextStyle(fontWeight: FontWeight.w700)),
-        CheckboxListTile(
-          contentPadding: EdgeInsets.zero,
-          controlAffinity: ListTileControlAffinity.leading,
-          title: const Text('我需要的是哺乳或喂养相关的 IBCLC 咨询'),
-          value: controller.serviceSuitable,
-          onChanged: controller.canEdit
-              ? (value) => controller.setSuitable(value ?? false)
-              : null,
-        ),
-        const SizedBox(height: MomCozySpacing.page),
-        const Text('紧急风险判断', style: TextStyle(fontWeight: FontWeight.w700)),
-        const SizedBox(height: MomCozySpacing.compact),
-        const Text(
-          '如妈妈或宝宝出现呼吸困难、无法唤醒、大量出血等情况，应先寻求紧急医疗帮助。',
-          style: TextStyle(
-            color: MomCozyColors.mutedForeground,
-            fontSize: MomCozyTypography.secondarySize,
-            height: 1.6,
-          ),
-        ),
-        RadioGroup<EmergencyStatus>(
-          groupValue: controller.emergencyStatus,
-          onChanged: controller.setEmergency,
-          child: Column(
-            children: [
-              RadioListTile(
-                value: EmergencyStatus.clear,
-                enabled: controller.canEdit,
-                contentPadding: EdgeInsets.zero,
-                title: const Text('目前没有上述紧急情况'),
-              ),
-              RadioListTile(
-                value: EmergencyStatus.needsHelp,
-                enabled: controller.canEdit,
-                contentPadding: EdgeInsets.zero,
-                title: const Text('有，或我不确定'),
-              ),
-            ],
-          ),
-        ),
-        if (controller.emergencyStatus == EmergencyStatus.needsHelp)
-          const Padding(
-            padding: EdgeInsets.only(bottom: 16),
-            child: Text(
-              '请先联系当地急救服务。IBCLC 预约不能替代紧急医疗。',
-              style: TextStyle(color: MomCozyColors.danger),
-            ),
-          ),
-        const SizedBox(height: MomCozySpacing.page),
-        SizedBox(
-          width: double.infinity,
-          child: FilledButton(
-            onPressed: controller.canPrecheck ? controller.precheck : null,
-            child: Text(controller.busy ? '正在确认…' : '继续选择时间'),
-          ),
-        ),
-      ],
-    ),
+  Widget _precheck() => MomSettingsCard(
+    gradient: MomHomeTokens.milk,
+    children: [
+      Text('先做个预约前确认', style: MomHomeTokens.text(22, weight: FontWeight.w700)),
+      Text(
+        '确认所在州、服务适用性与紧急风险。',
+        style: MomHomeTokens.text(13, color: MomHomeTokens.secondary),
+      ),
+      FilledButton(
+        onPressed: controller.canEdit ? _reviewPrecheck : null,
+        child: const Text('开始确认'),
+      ),
+    ],
   );
 
-  Widget _picker() => MomCozySurface(
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          '日期',
-          style: TextStyle(
-            color: MomCozyColors.mutedForeground,
-            fontSize: MomCozyTypography.captionSize,
-          ),
-        ),
-        const SizedBox(height: 6),
-        OutlinedButton.icon(
-          onPressed: controller.canChoose ? _selectDate : null,
-          icon: const Icon(Icons.calendar_today_outlined, size: 18),
-          label: Text(controller.date.toString()),
-        ),
-        const SizedBox(height: MomCozySpacing.card),
-        DropdownButtonFormField<String>(
-          key: ValueKey(controller.providerId),
-          initialValue: controller.providerId,
-          isExpanded: true,
-          decoration: const InputDecoration(labelText: '选择专家'),
-          items: controller.providers
-              .map(
-                (provider) => DropdownMenuItem(
-                  value: provider.id,
-                  child: Text(provider.displayName),
-                ),
-              )
-              .toList(),
-          onChanged: controller.canChoose ? controller.selectProvider : null,
-        ),
-        if (controller.provider case final provider?) ...[
-          const SizedBox(height: MomCozySpacing.headingGap),
-          const Text(
-            'IBCLC · 哺乳顾问',
-            style: TextStyle(
-              fontWeight: FontWeight.w600,
-              fontSize: MomCozyTypography.secondarySize,
+  Widget _picker() => Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: [
+      MomSettingsCard(
+        color: MomHomeTokens.mint,
+        children: [
+          Text('选择专家', style: MomHomeTokens.text(18, weight: FontWeight.w700)),
+          if (controller.provider case final provider?)
+            MomServiceExpertIdentity(
+              name: provider.displayName,
+              label: '可预约专家',
+              bio: provider.bio,
             ),
+          DropdownButtonFormField<String>(
+            key: ValueKey(controller.providerId),
+            initialValue: controller.providerId,
+            isExpanded: true,
+            itemHeight: null,
+            style: MomHomeTokens.text(13),
+            items: controller.providers
+                .map(
+                  (p) =>
+                      DropdownMenuItem(value: p.id, child: Text(p.displayName)),
+                )
+                .toList(),
+            onChanged: controller.canChoose ? controller.selectProvider : null,
           ),
-          if (provider.bio.isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.only(top: 6),
-              child: Text(
-                provider.bio,
-                style: const TextStyle(
-                  fontSize: MomCozyTypography.captionSize,
-                  color: MomCozyColors.mutedForeground,
-                ),
-              ),
+          if (controller.provider case final provider?)
+            Text(
+              '以下时间均为 ${provider.timezone}',
+              style: MomHomeTokens.text(11, color: MomHomeTokens.secondary),
             ),
-          const SizedBox(height: MomCozySpacing.statusGap),
-          Text(
-            '以下时间均为 ${provider.timezone}',
-            style: const TextStyle(
-              fontSize: MomCozyTypography.labelSize,
-              color: MomCozyColors.mutedForeground,
-            ),
-          ),
         ],
-      ],
-    ),
+      ),
+      const SizedBox(height: 14),
+      MomSettingsCard(
+        children: [
+          Text(
+            '日期',
+            style: MomHomeTokens.text(
+              12,
+              weight: FontWeight.w700,
+              color: MomHomeTokens.secondary,
+            ),
+          ),
+          OutlinedButton(
+            onPressed: controller.canChoose ? _selectDate : null,
+            child: Row(
+              children: [
+                Expanded(child: Text(controller.date.toString())),
+                const SizedBox(width: 8),
+                const Icon(Icons.calendar_today_outlined, size: 18),
+              ],
+            ),
+          ),
+          if (controller.date case final date?)
+            Text(
+              '${date == controller.today ? '今天 · ' : ''}${['周一', '周二', '周三', '周四', '周五', '周六', '周日'][DateTime(date.year, date.month, date.day).weekday - 1]}',
+              style: MomHomeTokens.text(11, color: MomHomeTokens.secondary),
+            ),
+        ],
+      ),
+    ],
   );
 
-  Widget _slot(AppointmentSlot slot) => Padding(
-    padding: const EdgeInsets.only(bottom: 10),
-    child: Material(
-      color: slot.available ? MomCozyColors.raised : MomCozyColors.secondary,
-      borderRadius: BorderRadius.circular(MomCozyRadii.card),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(MomCozyRadii.card),
-        onTap: controller.canChoose && slot.available
-            ? () => controller.hold(slot)
-            : null,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
-          decoration: BoxDecoration(
-            border: Border.all(color: MomCozyColors.border),
-            borderRadius: BorderRadius.circular(MomCozyRadii.card),
-          ),
-          child: Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      zonedRange(
-                        slot.startsAt,
-                        slot.endsAt,
-                        controller.provider!.timezone,
+  Widget _slot(AppointmentSlot slot) {
+    final current = controller.activeAppointment;
+    final selected =
+        current?.status == AppointmentStatus.held &&
+        current?.startsAt == slot.startsAt;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Material(
+        color: selected
+            ? MomCozyColors.roseSoft
+            : slot.available
+            ? MomHomeTokens.surface
+            : MomHomeTokens.neutralSurface,
+        borderRadius: BorderRadius.circular(MomHomeTokens.cardRadius),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(MomHomeTokens.cardRadius),
+          onTap: selected
+              ? _reviewHold
+              : controller.canChoose && slot.available
+              ? () => _hold(slot)
+              : null,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            decoration: BoxDecoration(
+              border: Border.all(color: MomHomeTokens.border),
+              borderRadius: BorderRadius.circular(MomHomeTokens.cardRadius),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        zonedRange(
+                          slot.startsAt,
+                          slot.endsAt,
+                          controller.provider?.timezone ??
+                              current?.timezone ??
+                              'UTC',
+                        ),
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                          color: slot.available
+                              ? MomHomeTokens.ink
+                              : MomHomeTokens.secondary,
+                        ),
                       ),
-                      style: TextStyle(
-                        fontSize: MomCozyTypography.bodyLargeSize,
-                        fontWeight: FontWeight.w600,
-                        color: slot.available
-                            ? MomCozyColors.foreground
-                            : MomCozyColors.mutedForeground,
+                      const SizedBox(height: MomCozySpacing.xs),
+                      Text(
+                        '${slot.duration.inMinutes} 分钟${slot.available ? '' : ' · 已占用'}',
+                        style: const TextStyle(
+                          color: MomHomeTokens.secondary,
+                          fontSize: 11,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: MomCozySpacing.xs),
-                    Text(
-                      '${slot.duration.inMinutes} 分钟${slot.available ? '' : ' · 已占用'}',
-                      style: const TextStyle(
-                        color: MomCozyColors.mutedForeground,
-                        fontSize: MomCozyTypography.captionSize,
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              const SizedBox(width: MomCozySpacing.statusGap),
-              Icon(
-                slot.available ? Icons.radio_button_unchecked : Icons.block,
-                color: MomCozyColors.mutedForeground,
-                size: 22,
-              ),
-            ],
+                const SizedBox(width: MomCozySpacing.statusGap),
+                Icon(
+                  selected
+                      ? Icons.check_circle
+                      : slot.available
+                      ? Icons.radio_button_unchecked
+                      : Icons.block,
+                  color: MomHomeTokens.secondary,
+                  size: 22,
+                ),
+              ],
+            ),
           ),
         ),
       ),
-    ),
-  );
+    );
+  }
 
-  String _remaining(CareAppointment appointment) {
-    final seconds = appointment.holdExpiresAt
-        .difference(controller.now)
-        .inSeconds
-        .clamp(0, 600);
-    return '${seconds ~/ 60}:${(seconds % 60).toString().padLeft(2, '0')}';
+  Future<void> _load() async {
+    await controller.load();
+    if (!mounted || _flowOpen || controller.loadFailure != null) return;
+    if (controller.activeAppointment?.status == AppointmentStatus.held) {
+      await _reviewHold();
+    } else if (controller.activeAppointment == null &&
+        (controller.data?.episode.canBook ?? false) &&
+        !controller.precheckReady) {
+      await _reviewPrecheck();
+    }
+  }
+
+  Future<void> _reviewPrecheck() async {
+    if (_flowOpen || !mounted) return;
+    _flowOpen = true;
+    try {
+      await showDialog<bool>(
+        context: context,
+        animationStyle: MomCozyMotion.animationStyle(context),
+        barrierDismissible: false,
+        builder: (_) => BookingPrecheckDialog(controller: controller),
+      );
+    } finally {
+      _flowOpen = false;
+    }
+  }
+
+  Future<void> _reviewHold() async {
+    final appointment = controller.activeAppointment;
+    if (_flowOpen ||
+        !mounted ||
+        appointment?.status != AppointmentStatus.held) {
+      return;
+    }
+    _flowOpen = true;
+    bool? confirmed;
+    try {
+      confirmed = await showDialog<bool>(
+        context: context,
+        animationStyle: MomCozyMotion.animationStyle(context),
+        barrierDismissible: false,
+        builder: (_) => StatefulBuilder(
+          builder: (context, update) => BookingSelectionDialog(
+            controller: controller,
+            appointment: appointment!,
+            reminder: _wantsReminder,
+            onReminderChanged: (v) => update(() => _wantsReminder = v),
+          ),
+        ),
+      );
+    } finally {
+      _flowOpen = false;
+    }
+    if (confirmed == true && mounted) await _afterConfirmed();
+  }
+
+  Future<void> _hold(AppointmentSlot slot) async {
+    await controller.hold(slot);
+    if (mounted) await _reviewHold();
+  }
+
+  Future<void> _retry() async {
+    await controller.retry();
+    if (!mounted) return;
+    if (controller.activeAppointment?.status == AppointmentStatus.confirmed) {
+      await _afterConfirmed();
+    } else {
+      await _reviewHold();
+    }
   }
 
   Future<void> _selectDate() async {
     final today = controller.today,
         selected = controller.date ?? today,
         end = today.addDays(90);
-    final value = await showDatePicker(
+    final value = await showMomCozyDatePicker(
       context: context,
+      theme: momSettingsTheme(Theme.of(context)),
       initialDate: DateTime(selected.year, selected.month, selected.day),
       firstDate: DateTime(today.year, today.month, today.day),
       lastDate: DateTime(end.year, end.month, end.day),
@@ -512,8 +581,7 @@ class _BookingPageState extends State<BookingPage> with WidgetsBindingObserver {
     }
   }
 
-  Future<void> _confirm() async {
-    await controller.confirm();
+  Future<void> _afterConfirmed() async {
     if (!mounted) return;
     final appointment = controller.activeAppointment;
     if (appointment?.status == AppointmentStatus.confirmed) {
@@ -547,26 +615,20 @@ class _BookingPageState extends State<BookingPage> with WidgetsBindingObserver {
   }
 
   Future<void> _cancel() async {
-    final cancel = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('取消预约'),
-        content: const Text('取消后，该时段将释放。重新预约时需要再次确认信息采集表，已填写内容会保留。'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('保留预约'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text(
-              '确认取消',
-              style: TextStyle(color: MomCozyColors.danger),
-            ),
-          ),
-        ],
-      ),
+    final appointment = controller.activeAppointment;
+    if (_flowOpen || appointment?.status != AppointmentStatus.confirmed) return;
+    _flowOpen = true;
+    final cancelled = await showAppointmentCancellation(
+      context,
+      repository: widget.repository,
+      appointment: appointment!,
     );
-    if (cancel == true && mounted) await controller.cancel();
+    _flowOpen = false;
+    if (!mounted) return;
+    if (cancelled != null) {
+      widget.onBack();
+    } else {
+      await controller.load();
+    }
   }
 }

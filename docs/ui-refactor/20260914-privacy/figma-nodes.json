@@ -1,0 +1,29 @@
+{
+  "file_key": "ePIoJkiMiXiug9ibpcgRbl",
+  "page": "0:1",
+  "frames": {
+    "Default": "142:387",
+    "Overview loading": "142:445",
+    "Overview error": "142:458",
+    "Empty services": "142:473",
+    "Requested service missing": "142:487",
+    "Consent loading": "142:501",
+    "Consent read error": "142:520",
+    "Optional dirty": "142:541",
+    "Saved": "142:611",
+    "Saving": "142:681",
+    "Uncertain result": "142:771",
+    "Partial uncertain": "142:868",
+    "Version conflict": "142:965",
+    "Second service": "142:1061",
+    "Revoked": "142:1119",
+    "Revoke confirmation": "142:1199",
+    "Leave confirmation": "142:1252",
+    "Uncertain leave confirmation": "142:1305",
+    "Service picker": "142:1358",
+    "320 at 2x text": "142:1403",
+    "Long service label at 2x": "145:553"
+  },
+  "consent_component": "142:377",
+  "handoff": "145:548"
+}

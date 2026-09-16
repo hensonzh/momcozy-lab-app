@@ -1,0 +1,345 @@
+[
+  {
+    "number": 1,
+    "id": "08-expert-service/consultation-journey-current-before-outcome",
+    "image": "08-expert-service/consultation-journey-current-before-outcome/default.png",
+    "trigger": "Me → expert plan → my service → booking → preparation → device check → confirm entry",
+    "route": "/services/appointments/service-appointment/room"
+  },
+  {
+    "number": 2,
+    "id": "08-expert-service/consultation-journey-current-cancelled-outcome",
+    "image": "08-expert-service/consultation-journey-current-cancelled-outcome/default.png",
+    "trigger": "Me → service → booking → preparation → device check → enter; server cancelled → result",
+    "route": "/services/appointments/service-appointment/room"
+  },
+  {
+    "number": 3,
+    "id": "08-expert-service/consultation-journey-current-completed-outcome",
+    "image": "08-expert-service/consultation-journey-current-completed-outcome/default.png",
+    "trigger": "Me → service → booking → preparation → device check → enter; server completed → result",
+    "route": "/services/appointments/service-appointment/room"
+  },
+  {
+    "number": 4,
+    "id": "08-expert-service/consultation-journey-current-live-active",
+    "image": "08-expert-service/consultation-journey-current-live-active/default.png",
+    "trigger": "Stay and close confirmation both retain the room; expert joins → active consultation",
+    "route": "/services/appointments/service-appointment/room"
+  },
+  {
+    "number": 5,
+    "id": "08-expert-service/consultation-journey-current-live-leave-confirmation",
+    "image": "08-expert-service/consultation-journey-current-live-leave-confirmation/default.png",
+    "trigger": "Me → service → booking → preparation → passed checks → room → Leave",
+    "route": "/services/appointments/service-appointment/room"
+  },
+  {
+    "number": 6,
+    "id": "08-expert-service/consultation-journey-current-live-left-booking",
+    "image": "08-expert-service/consultation-journey-current-live-left-booking/default.png",
+    "trigger": "Temporary leave → booking with ongoing consultation; re-entry remains available",
+    "route": "/services/episodes/service-episode/booking"
+  },
+  {
+    "number": 7,
+    "id": "08-expert-service/consultation-journey-current-live-reentry-preparation",
+    "image": "08-expert-service/consultation-journey-current-live-reentry-preparation/default.png",
+    "trigger": "Booking → return to consultation → preparation offers re-entry",
+    "route": "/services/appointments/service-appointment/room"
+  },
+  {
+    "number": 8,
+    "id": "08-expert-service/consultation-journey-current-no-show-outcome",
+    "image": "08-expert-service/consultation-journey-current-no-show-outcome/default.png",
+    "trigger": "Me → service → booking → preparation without joining; attendance deadline passes → no-show result",
+    "route": "/services/appointments/service-appointment/room"
+  },
+  {
+    "number": 9,
+    "id": "08-expert-service/consultation-journey-current-outcome-home",
+    "image": "08-expert-service/consultation-journey-current-outcome-home/default.png",
+    "trigger": "Outcome → 返回妈妈主页; shared destination for equivalent outcome CTAs",
+    "route": "/me"
+  },
+  {
+    "number": 10,
+    "id": "08-expert-service/consultation-journey-current-outcome-rebook",
+    "image": "08-expert-service/consultation-journey-current-outcome-rebook/default.png",
+    "trigger": "Outcome → 重新预约; shared destination for equivalent outcome CTAs",
+    "route": "/services/episodes/service-episode/booking"
+  },
+  {
+    "number": 11,
+    "id": "08-expert-service/consultation-journey-current-outcome-summary",
+    "image": "08-expert-service/consultation-journey-current-outcome-summary/default.png",
+    "trigger": "Outcome → 查看咨询总结; shared destination for equivalent outcome CTAs",
+    "route": "/services/appointments/service-appointment/summary"
+  },
+  {
+    "number": 12,
+    "id": "08-expert-service/consultation-journey-current-pending-record-outcome",
+    "image": "08-expert-service/consultation-journey-current-pending-record-outcome/default.png",
+    "trigger": "Me → service → booking → preparation → device check → enter; server pending-record → result",
+    "route": "/services/appointments/service-appointment/room"
+  },
+  {
+    "number": 13,
+    "id": "08-expert-service/consultation-journey-current-safety-outcome",
+    "image": "08-expert-service/consultation-journey-current-safety-outcome/default.png",
+    "trigger": "Me → service → booking → preparation → device check → enter; server safety_escalation → result",
+    "route": "/services/appointments/service-appointment/room"
+  },
+  {
+    "number": 14,
+    "id": "08-expert-service/consultation-journey-current-summary-full-plan",
+    "image": "08-expert-service/consultation-journey-current-summary-full-plan/default.png",
+    "trigger": "Summary → full action plan opens Schedule",
+    "route": "/schedule"
+  },
+  {
+    "number": 15,
+    "id": "08-expert-service/consultation-journey-current-summary-published",
+    "image": "08-expert-service/consultation-journey-current-summary-published/default.png",
+    "trigger": "Periodic pending-summary refresh receives published plan",
+    "route": "/services/appointments/service-appointment/summary"
+  },
+  {
+    "number": 16,
+    "id": "08-expert-service/consultation-journey-current-summary-service-information",
+    "image": "08-expert-service/consultation-journey-current-summary-service-information/default.png",
+    "trigger": "Expand consultation and service information → progress entry",
+    "route": "/services/appointments/service-appointment/summary"
+  },
+  {
+    "number": 17,
+    "id": "08-expert-service/consultation-journey-current-summary-task-detail",
+    "image": "08-expert-service/consultation-journey-current-summary-task-detail/default.png",
+    "trigger": "Published task → action detail and progress choices",
+    "route": "/services/appointments/service-appointment/summary"
+  },
+  {
+    "number": 18,
+    "id": "08-expert-service/consultation-journey-current-summary-task-in-progress",
+    "image": "08-expert-service/consultation-journey-current-summary-task-in-progress/default.png",
+    "trigger": "Set task progress → persisted in-progress state",
+    "route": "/services/appointments/service-appointment/summary"
+  },
+  {
+    "number": 19,
+    "id": "08-expert-service/consultation-journey-current-summary-task-recovered",
+    "image": "08-expert-service/consultation-journey-current-summary-task-recovered/default.png",
+    "trigger": "Retry original progress update → completed state",
+    "route": "/services/appointments/service-appointment/summary"
+  },
+  {
+    "number": 20,
+    "id": "08-expert-service/consultation-journey-current-summary-task-skipped",
+    "image": "08-expert-service/consultation-journey-current-summary-task-skipped/default.png",
+    "trigger": "Change completed task to skipped → explicit progress state",
+    "route": "/services/appointments/service-appointment/summary"
+  },
+  {
+    "number": 21,
+    "id": "08-expert-service/consultation-journey-current-summary-task-uncertain",
+    "image": "08-expert-service/consultation-journey-current-summary-task-uncertain/default.png",
+    "trigger": "Task update unavailable → previous progress retained, retry required",
+    "route": "/services/appointments/service-appointment/summary"
+  },
+  {
+    "number": 22,
+    "id": "08-expert-service/consultation-journey-current-summary-to-progress",
+    "image": "08-expert-service/consultation-journey-current-summary-to-progress/default.png",
+    "trigger": "Summary service progress → episode timeline",
+    "route": "/services/episodes/service-episode"
+  },
+  {
+    "number": 23,
+    "id": "08-expert-service/consultation-journey-current-technical-outcome",
+    "image": "08-expert-service/consultation-journey-current-technical-outcome/default.png",
+    "trigger": "Me → service → booking → preparation → device check → enter; server technical_failure → result",
+    "route": "/services/appointments/service-appointment/room"
+  },
+  {
+    "number": 24,
+    "id": "08-expert-service/room-leave-failure",
+    "image": "08-expert-service/room-leave-failure/default.png",
+    "trigger": null,
+    "route": null
+  },
+  {
+    "number": 25,
+    "id": "08-expert-service/room-leave-retry-confirmation",
+    "image": "08-expert-service/room-leave-retry-confirmation/default.png",
+    "trigger": null,
+    "route": null
+  },
+  {
+    "number": 26,
+    "id": "08-expert-service/summary-empty",
+    "image": "08-expert-service/summary-empty/default.png",
+    "trigger": null,
+    "route": null
+  },
+  {
+    "number": 27,
+    "id": "08-expert-service/summary-failed-320-2x-short",
+    "image": "08-expert-service/summary-failed-320-2x-short/default.png",
+    "trigger": null,
+    "route": null
+  },
+  {
+    "number": 28,
+    "id": "08-expert-service/summary-loading",
+    "image": "08-expert-service/summary-loading/default.png",
+    "trigger": null,
+    "route": null
+  },
+  {
+    "number": 29,
+    "id": "08-expert-service/summary-metadata",
+    "image": "08-expert-service/summary-metadata/default.png",
+    "trigger": null,
+    "route": null
+  },
+  {
+    "number": 30,
+    "id": "08-expert-service/summary-no-actions-information-320-2x-short",
+    "image": "08-expert-service/summary-no-actions-information-320-2x-short/default.png",
+    "trigger": null,
+    "route": null
+  },
+  {
+    "number": 31,
+    "id": "08-expert-service/summary-offline",
+    "image": "08-expert-service/summary-offline/default.png",
+    "trigger": null,
+    "route": null
+  },
+  {
+    "number": 32,
+    "id": "08-expert-service/summary-pending",
+    "image": "08-expert-service/summary-pending/default.png",
+    "trigger": null,
+    "route": null
+  },
+  {
+    "number": 33,
+    "id": "08-expert-service/summary-published",
+    "image": "08-expert-service/summary-published/default.png",
+    "trigger": null,
+    "route": null
+  },
+  {
+    "number": 34,
+    "id": "08-expert-service/summary-refresh-error",
+    "image": "08-expert-service/summary-refresh-error/default.png",
+    "trigger": null,
+    "route": null
+  },
+  {
+    "number": 35,
+    "id": "08-expert-service/summary-removed-action",
+    "image": "08-expert-service/summary-removed-action/default.png",
+    "trigger": null,
+    "route": null
+  },
+  {
+    "number": 36,
+    "id": "08-expert-service/summary-short-progress-320-2x-short",
+    "image": "08-expert-service/summary-short-progress-320-2x-short/default.png",
+    "trigger": null,
+    "route": null
+  },
+  {
+    "number": 37,
+    "id": "08-expert-service/summary-short-uncertain-320-2x-short",
+    "image": "08-expert-service/summary-short-uncertain-320-2x-short/default.png",
+    "trigger": null,
+    "route": null
+  },
+  {
+    "number": 38,
+    "id": "08-expert-service/summary-short-updating-320-2x-short",
+    "image": "08-expert-service/summary-short-updating-320-2x-short/default.png",
+    "trigger": null,
+    "route": null
+  },
+  {
+    "number": 39,
+    "id": "08-expert-service/summary-superseded",
+    "image": "08-expert-service/summary-superseded/default.png",
+    "trigger": null,
+    "route": null
+  },
+  {
+    "number": 40,
+    "id": "08-expert-service/summary-task",
+    "image": "08-expert-service/summary-task/default.png",
+    "trigger": null,
+    "route": null
+  },
+  {
+    "number": 41,
+    "id": "08-expert-service/summary-uncertain",
+    "image": "08-expert-service/summary-uncertain/default.png",
+    "trigger": null,
+    "route": null
+  },
+  {
+    "number": 42,
+    "id": "08-expert-service/video-camera-off",
+    "image": "08-expert-service/video-camera-off/default.png",
+    "trigger": null,
+    "route": null
+  },
+  {
+    "number": 43,
+    "id": "08-expert-service/video-controls",
+    "image": "08-expert-service/video-controls/default.png",
+    "trigger": null,
+    "route": null
+  },
+  {
+    "number": 44,
+    "id": "08-expert-service/video-disconnected",
+    "image": "08-expert-service/video-disconnected/default.png",
+    "trigger": null,
+    "route": null
+  },
+  {
+    "number": 45,
+    "id": "08-expert-service/video-expert-ready",
+    "image": "08-expert-service/video-expert-ready/default.png",
+    "trigger": null,
+    "route": null
+  },
+  {
+    "number": 46,
+    "id": "08-expert-service/video-leave",
+    "image": "08-expert-service/video-leave/default.png",
+    "trigger": null,
+    "route": null
+  },
+  {
+    "number": 47,
+    "id": "08-expert-service/video-media-audio-enabled",
+    "image": "08-expert-service/video-media-audio-enabled/default.png",
+    "trigger": null,
+    "route": null
+  },
+  {
+    "number": 48,
+    "id": "08-expert-service/video-media-error",
+    "image": "08-expert-service/video-media-error/default.png",
+    "trigger": null,
+    "route": null
+  },
+  {
+    "number": 49,
+    "id": "08-expert-service/video-reconnecting",
+    "image": "08-expert-service/video-reconnecting/default.png",
+    "trigger": null,
+    "route": null
+  }
+]

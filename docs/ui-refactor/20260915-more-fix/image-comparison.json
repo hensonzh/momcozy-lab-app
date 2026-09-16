@@ -1,0 +1,35 @@
+{
+  "note": "Raw rendered image differences, not an implementation completion percentage. Includes font rasterization, baseline rounding and gradient quantization. Default geometry is separately asserted in more_figma_alignment_test.dart.",
+  "comparisons": [
+    {
+      "state": "default",
+      "reference": "docs/ui-refactor/20260915-more-review/figma-default.png",
+      "size": [
+        393,
+        844
+      ],
+      "before_mean_absolute_channel_difference_out_of_255": 7.5664,
+      "after_mean_absolute_channel_difference_out_of_255": 1.8491
+    },
+    {
+      "state": "loading",
+      "reference": "docs/ui-refactor/20260915-more-review/figma-loading.png",
+      "size": [
+        393,
+        844
+      ],
+      "before_mean_absolute_channel_difference_out_of_255": 7.4697,
+      "after_mean_absolute_channel_difference_out_of_255": 1.8195
+    },
+    {
+      "state": "logout-error",
+      "reference": "docs/ui-refactor/20260915-more-review/figma-logout-error.png",
+      "size": [
+        393,
+        844
+      ],
+      "before_mean_absolute_channel_difference_out_of_255": 15.9923,
+      "after_mean_absolute_channel_difference_out_of_255": 1.9393
+    }
+  ]
+}

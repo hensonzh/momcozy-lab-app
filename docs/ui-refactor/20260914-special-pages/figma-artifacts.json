@@ -1,0 +1,44 @@
+[
+  {
+    "path": "docs/ui-refactor/20260914-special-pages/figma/336-1086.png",
+    "width": 390,
+    "height": 568,
+    "sha256": "b7e2cbdd345b178b9809fb5c8dfab97b9c7c38e44a1e6fae7d676db6f93b547d"
+  },
+  {
+    "path": "docs/ui-refactor/20260914-special-pages/figma/336-1096.png",
+    "width": 320,
+    "height": 568,
+    "sha256": "0399f771fa91a0071c6b5cad80fe6e46f49d483d7a2bccdad8f46dfe5957f154"
+  },
+  {
+    "path": "docs/ui-refactor/20260914-special-pages/figma/336-1106.png",
+    "width": 390,
+    "height": 720,
+    "sha256": "97124253694ac2c6e19bd650b942631feb52686c19ef1ea92a7d37a5fe45b17a"
+  },
+  {
+    "path": "docs/ui-refactor/20260914-special-pages/figma/336-1118.png",
+    "width": 390,
+    "height": 720,
+    "sha256": "ed98be5e1d66b5cf385b7375a5351f7c9b10f77863dbb45c9aba56594fcf53cf"
+  },
+  {
+    "path": "docs/ui-refactor/20260914-special-pages/figma/336-1138.png",
+    "width": 320,
+    "height": 320,
+    "sha256": "b940bf3d369ece6358716282972c96472801e5197f7853b0fdefd5b24910d93e"
+  },
+  {
+    "path": "docs/ui-refactor/20260914-special-pages/figma/336-1150.png",
+    "width": 320,
+    "height": 320,
+    "sha256": "3ab13ed845a4979bf5927759f5f1006b8dd5bb0904ea23663d06228e2fd72f6a"
+  },
+  {
+    "path": "docs/ui-refactor/20260914-special-pages/figma/336-1170.png",
+    "width": 320,
+    "height": 720,
+    "sha256": "ba2d0c3992402627278df7b00bae93c20beecc82c2b6ef5b1d3e8b7e5faf1868"
+  }
+]

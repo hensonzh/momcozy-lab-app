@@ -79,10 +79,20 @@ final class ServiceEligibility {
 abstract interface class CareRepository {
   Future<ServiceCatalog> catalog();
   Future<CareOverview> overview();
-  Future<ServiceEligibility> checkEligibility({required String packageId, required String region});
-  Future<Purchase> createOrder({required String eligibilityId, required String idempotencyKey});
+  Future<ServiceEligibility> checkEligibility({
+    required String packageId,
+    required String region,
+  });
+  Future<Purchase> createOrder({
+    required String eligibilityId,
+    required String idempotencyKey,
+  });
   Future<Purchase> purchase(String orderId);
-  Future<Purchase> sandboxPayment(String orderId, {required int expectedVersion, required SandboxPaymentOutcome outcome});
+  Future<Purchase> sandboxPayment(
+    String orderId, {
+    required int expectedVersion,
+    required SandboxPaymentOutcome outcome,
+  });
 }
 
 abstract interface class StripeCheckoutRepository {

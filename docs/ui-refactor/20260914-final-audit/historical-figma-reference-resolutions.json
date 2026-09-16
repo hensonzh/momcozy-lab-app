@@ -1,0 +1,72 @@
+[
+  {
+    "historical_id": "122:185",
+    "current_family_node": "122:9",
+    "archives": [
+      "20260914-more/figma-unavailable.png",
+      "20260914-more/figma-state.json"
+    ],
+    "rationale": "More 不可用/禁用变体保留归档，当前使用同一身份/设置行框架。",
+    "classification": "historical_design_retained_current_family_referenced; no deleted node recreated"
+  },
+  {
+    "historical_id": "124:68",
+    "current_family_node": "122:9",
+    "archives": [
+      "20260914-more/figma-responsive-account.png",
+      "20260914-more/figma-state.json"
+    ],
+    "rationale": "响应式身份组件设计保留 PNG 与创建记录，当前主画板复用该规则。",
+    "classification": "historical_design_retained_current_family_referenced; no deleted node recreated"
+  },
+  {
+    "historical_id": "128:262",
+    "current_family_node": "132:68",
+    "archives": [
+      "20260914-account/figma-qa.json",
+      "20260914-account/figma-state.json"
+    ],
+    "rationale": "操作失败历史变体；当前 Google 错误画板展示相同页内错误模式，删除实际文案由对应测试证明。",
+    "classification": "historical_design_retained_current_family_referenced; no deleted node recreated"
+  },
+  {
+    "historical_id": "128:294",
+    "current_family_node": "128:68",
+    "archives": [
+      "20260914-account/figma-qa.json",
+      "20260914-account/figma-state.json"
+    ],
+    "rationale": "无登录方式和禁用状态复用当前账号结构，原创建/审计记录保留。",
+    "classification": "historical_design_retained_current_family_referenced; no deleted node recreated"
+  },
+  {
+    "historical_id": "128:329",
+    "current_family_node": "128:68",
+    "archives": [
+      "20260914-account/figma-qa.json",
+      "20260914-account/figma-state.json"
+    ],
+    "rationale": "长账号与大字号历史画板记录保留；当前版长身份/底部基线验证换行及可达性。",
+    "classification": "historical_design_retained_current_family_referenced; no deleted node recreated"
+  },
+  {
+    "historical_id": "130:109",
+    "current_family_node": "130:68",
+    "archives": [
+      "20260914-account/figma-keyboard.png",
+      "20260914-account/figma-qa.json"
+    ],
+    "rationale": "键盘和大字号历史设计有导出；当前密码确认画板保留，平台 inset 由 Widget 验证。",
+    "classification": "historical_design_retained_current_family_referenced; no deleted node recreated"
+  },
+  {
+    "historical_id": "136:548",
+    "current_family_node": "136:373",
+    "archives": [
+      "20260914-notifications/figma-qa.json",
+      "20260914-notifications/figma-state.json"
+    ],
+    "rationale": "无协调器历史变体保留记录；当前不可用框架与原 null coordinator 分支一致。",
+    "classification": "historical_design_retained_current_family_referenced; no deleted node recreated"
+  }
+]

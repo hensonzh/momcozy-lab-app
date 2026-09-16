@@ -1,0 +1,43 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_controller_test.dart
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_api_repository_test.dart: requests an idempotent cloud reset for the current release
+00:00 +1: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_controller_test.dart: authenticated new user is held at the onboarding gate
+00:00 +2: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_controller_test.dart: authenticated new user is held at the onboarding gate
+00:00 +3: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_controller_test.dart: authenticated new user is held at the onboarding gate
+00:00 +4: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_api_repository_test.dart: serializes one shared postpartum delivery and infant set
+00:00 +5: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_controller_test.dart: grandfathered or completed user passes the onboarding gate
+00:00 +6: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_api_repository_test.dart: uploads portrait to dedicated endpoint before generation
+00:00 +7: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_controller_test.dart: avatar review allows app entry before one of four candidates is confirmed
+00:00 +8: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_controller_test.dart: avatar review allows app entry before one of four candidates is confirmed
+00:00 +9: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_controller_test.dart: avatar review allows app entry before one of four candidates is confirmed
+00:00 +10: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_api_repository_test.dart: dismisses a pending replacement without changing the active avatar
+00:00 +11: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_controller_test.dart: silent avatar refresh failure does not send the user back to onboarding
+00:02 +12: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_release_reset_test.dart: pending release reset runs before onboarding state is loaded
+00:02 +13: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_release_reset_test.dart: cloud reset failure blocks onboarding state and app entry
+00:02 +14: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_release_reset_test.dart: completed onboarding marks the current release for that user
+00:02 +15: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_release_reset_test.dart: accepted avatar generation marks onboarding release complete
+00:02 +16: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_release_reset_test.dart: local completion marker failure does not revoke cloud app entry
+00:02 +17: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_handoff_test.dart: accepted avatar task explains the wait before entering the app
+00:02 +18: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_handoff_test.dart: accepted avatar task explains the wait before entering the app
+00:02 +19: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_handoff_test.dart: accepted avatar task explains the wait before entering the app
+00:02 +20: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_handoff_test.dart: accepted avatar task explains the wait before entering the app
+00:02 +21: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_handoff_test.dart: accepted avatar task explains the wait before entering the app
+00:02 +22: /Users/lute/project/momcozy-lab/app/test/shared/date_time_picker_test.dart: large 12-hour picker preserves midnight and noon
+00:02 +23: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_capability_gate_test.dart: default app startup bypasses the unsupported onboarding gate
+00:02 +24: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_capability_gate_test.dart: default app startup bypasses the unsupported onboarding gate
+00:03 +25: /Users/lute/project/momcozy-lab/app/test/shared/date_time_picker_test.dart: large picker bounds, locale and time validation en_US
+00:03 +26: /Users/lute/project/momcozy-lab/app/test/shared/date_time_picker_test.dart: large picker bounds, locale and time validation en_US
+00:03 +27: /Users/lute/project/momcozy-lab/app/test/shared/date_time_picker_test.dart: large picker bounds, locale and time validation en_US
+00:03 +28: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_route_test.dart: postpartum path collects delivery and one shared infant set
+00:03 +29: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_route_test.dart: postpartum path collects delivery and one shared infant set
+00:03 +30: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_route_test.dart: postpartum path collects delivery and one shared infant set
+00:03 +31: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_capability_gate_test.dart: disabled onboarding sends /avatar/review safely home after login
+00:03 +32: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_capability_gate_test.dart: disabled onboarding sends /avatar/review safely home after login
+00:03 +33: /Users/lute/project/momcozy-lab/app/test/shared/date_time_picker_test.dart: date and time dialogs settle without elapsed motion
+00:03 +34: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_route_test.dart: avatar review offers four generated choices and MomCozy original
+00:03 +35: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_route_test.dart: avatar review offers four generated choices and MomCozy original
+00:03 +36: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_capability_gate_test.dart: default /me requests no missing Product resource path
+00:03 +37: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_route_test.dart: app shell shows a restorable avatar task and opens review
+00:03 +38: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_route_test.dart: app shell shows a restorable avatar task and opens review
+00:03 +39: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_route_test.dart: app shell shows a restorable avatar task and opens review
+00:03 +40: /Users/lute/project/momcozy-lab/app/test/features/onboarding/onboarding_route_test.dart: completed user can open a fresh avatar creation flow
+00:03 +41: All tests passed!

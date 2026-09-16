@@ -67,7 +67,7 @@ void main() {
               onPressed: () => showAgentConversationPanel(
                 context: context,
                 repository: _Conversations(),
-                  activeThreadId: null,
+                activeThreadId: null,
                 canSwitchListenable: canSwitch,
                 onSelected: (id) async {
                   selected = id;
@@ -90,9 +90,7 @@ void main() {
           '../../goldens/design_system/agent-history-${width.toInt()}.png',
         ),
       );
-      await tester.tap(
-        find.byKey(const ValueKey('agent-conversation-one')),
-      );
+      await tester.tap(find.byKey(const ValueKey('agent-conversation-one')));
       await tester.pumpAndSettle();
       expect(selected, 'one');
       expect(
@@ -134,11 +132,11 @@ void main() {
         await tester.pumpAndSettle();
         await _loadImages(tester);
         expect(tester.takeException(), isNull);
-        if (scale == 1) {
+        {
           await expectLater(
             find.byType(MaterialApp),
             matchesGoldenFile(
-              '../../goldens/design_system/agent-cards-${width.toInt()}.png',
+              '../../goldens/design_system/agent-cards-${width.toInt()}${scale == 2 ? "-2x" : ""}.png',
             ),
           );
         }
@@ -152,6 +150,13 @@ void main() {
           const ValueKey('agent-ibclc-open-design-consult'),
         );
         await tester.ensureVisible(open);
+        await tester.pumpAndSettle();
+        await expectLater(
+          find.byType(MaterialApp),
+          matchesGoldenFile(
+            '../../goldens/design_system/agent-cards-ready-${width.toInt()}-${scale.toInt()}x.png',
+          ),
+        );
         await tester.tap(open);
         expect(action?.routePath, '/services');
         final entry = find.byKey(
@@ -188,6 +193,40 @@ void main() {
         await tester.pumpAndSettle();
         expect(action?.value, contains('需要帮助安排喂养记录'));
         expect(find.byType(AgentArtifactFormDialog), findsNothing);
+        await tester.pumpWidget(const SizedBox());
+      });
+    }
+    for (final scale in [1.0, 2.0]) {
+      testWidgets('Agent home and keyboard at $width / $scale', (tester) async {
+        tester.view.physicalSize = Size(width, 844);
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+        await tester.pumpWidget(_host(const AgentHubPage(), scale: scale));
+        await tester.pumpAndSettle();
+        await _loadImages(tester);
+        expect(tester.takeException(), isNull);
+        if (scale == 1) {
+          await expectLater(
+            find.byType(MaterialApp),
+            matchesGoldenFile(
+              '../../goldens/design_system/agent-home-${width.toInt()}.png',
+            ),
+          );
+        }
+        tester.view.viewInsets = const FakeViewPadding(bottom: 300);
+        addTearDown(tester.view.resetViewInsets);
+        await tester.pumpAndSettle();
+        await tester.enterText(
+          find.byKey(const ValueKey('agent-composer-input')),
+          '想聊聊今天的喂养情况',
+        );
+        await tester.pump();
+        expect(tester.takeException(), isNull);
+        final input = tester.getRect(
+          find.byKey(const ValueKey('agent-composer-input')),
+        );
+        expect(input.bottom, lessThanOrEqualTo(544));
         await tester.pumpWidget(const SizedBox());
       });
     }

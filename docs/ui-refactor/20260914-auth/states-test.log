@@ -1,0 +1,135 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/features/auth/auth_redesign_states_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: short large login locks pending request then retries retained fields
+00:00 +1: short large verification rejects invalid code and preserves cooldown and expired state
+
+Warning: A call to tap() with finder "Found 1 widget with key [<'auth-submit-button'>]: [
+  FilledButton-[<'auth-submit-button'>](style: ButtonStyle#6fa1b(textStyle: WidgetStatePropertyAll(TextStyle(inherit: true, color: Color(alpha: 1.0000, red: 0.1686, green: 0.1569, blue: 0.1490, colorSpace: ColorSpace.sRGB), family: NotoSansSCHome, familyFallback: [NotoSansSC, PingFang SC, Arial], size: 13.0, weight: 700, letterSpacing: 0.0, height: 1.4x)), backgroundColor: WidgetStateMapper<Color?>({WidgetState.disabled: null, WidgetState.any: Color(alpha: 1.0000, red: 0.7098, green: 0.3098, blue: 0.4706, colorSpace: ColorSpace.sRGB)}), foregroundColor: WidgetStateMapper<Color?>({WidgetState.disabled: null, WidgetState.any: Color(alpha: 1.0000, red: 1.0000, green: 0.9961, blue: 0.9882, colorSpace: ColorSpace.sRGB)}), overlayColor: WidgetStateMapper<Color?>({WidgetState.pressed: Color(alpha: 0.1020, red: 1.0000, green: 0.9961, blue: 0.9882, colorSpace: ColorSpace.sRGB), WidgetState.hovered: Color(alpha: 0.0784, red: 1.0000, green: 0.9961, blue: 0.9882, colorSpace: ColorSpace.sRGB), WidgetState.focused: Color(alpha: 0.1020, red: 1.0000, green: 0.9961, blue: 0.9882, colorSpace: ColorSpace.sRGB)}), padding: WidgetStatePropertyAll(EdgeInsets(20.0, 12.0, 20.0, 12.0)), minimumSize: WidgetStatePropertyAll(Size(Infinity, 48.0)), shape: WidgetStatePropertyAll(RoundedRectangleBorder(BorderSide(width: 0.0, style: none), BorderRadius.circular(16.0))), mouseCursor: WidgetStateMapper<MouseCursor?>({WidgetState.disabled: null, WidgetState.any: null})), dependencies: [IconTheme, InheritedCupertinoTheme, MediaQuery, _InheritedTheme, _LocalizationsScope-[GlobalKey#7bf93], _ScrollableScope], state: _ButtonStyleState#695af),
+]" derived an Offset (Offset(160.0, 355.0)) that would not hit test on the specified widget.
+Maybe the widget is actually off-screen, or another widget is obscuring it, or the widget cannot receive pointer events.
+The finder corresponds to this RenderBox: RenderSemanticsAnnotations#92ede relayoutBoundary=up31
+The hit test result at that offset is: HitTestResult(RenderPointerListener#637ae@Offset(160.0, 355.0), RenderSemanticsGestureHandler#f64d1@Offset(160.0, 355.0), RenderPointerListener#822b7@Offset(160.0, 355.0), _RenderScrollSemantics#86d5a@Offset(160.0, 355.0), RenderClipRect#4a8b9@Offset(160.0, 355.0), RenderPositionedBox#b245f@Offset(160.0, 355.0), RenderPadding#8834a@Offset(160.0, 355.0), RenderConstrainedBox#28acd@Offset(160.0, 355.0), RenderConstrainedBox#c6808@Offset(160.0, 355.0), RenderPositionedBox#06255@Offset(160.0, 355.0), RenderPadding#fd4e8@Offset(160.0, 355.0), RenderCustomMultiChildLayoutBox#dd902@Offset(160.0, 355.0), _RenderInkFeatures#e4992@Offset(160.0, 355.0), RenderPhysicalModel#fb02c@Offset(160.0, 355.0), RenderSemanticsAnnotations#86efb@Offset(160.0, 355.0), RenderRepaintBoundary#34bf8@Offset(160.0, 355.0), RenderIgnorePointer#8275f@Offset(160.0, 355.0), RenderAnimatedOpacity#0f64b@Offset(160.0, 355.0), RenderAnimatedOpacity#9e5f9@Offset(160.0, 355.0), _RenderColoredBox#33db5@Offset(160.0, 355.0), RenderAnimatedOpacity#91d2a@Offset(160.0, 355.0), RenderIgnorePointer#0b59c@Offset(160.0, 355.0), RenderAnimatedOpacity#b6664@Offset(160.0, 355.0), RenderRepaintBoundary#9e9ed@Offset(160.0, 355.0), RenderSemanticsAnnotations#8bb21@Offset(160.0, 355.0), RenderOffstage#a9691@Offset(160.0, 355.0), RenderSemanticsAnnotations#327d0@Offset(160.0, 355.0), _RenderTheater#c173a@Offset(160.0, 355.0), RenderAbsorbPointer#a722d@Offset(160.0, 355.0), RenderPointerListener#84b35@Offset(160.0, 355.0), RenderSemanticsAnnotations#d9343@Offset(160.0, 355.0), RenderSemanticsAnnotations#0564c@Offset(160.0, 355.0), RenderSemanticsAnnotations#a8871@Offset(160.0, 355.0), RenderSemanticsAnnotations#7dd43@Offset(160.0, 355.0), RenderTapRegionSurface#4ec46@Offset(160.0, 355.0), RenderSemanticsAnnotations#3b25f@Offset(160.0, 355.0), RenderSemanticsAnnotations#eee94@Offset(160.0, 355.0), HitTestEntry<HitTestTarget>#47080(_ReusableRenderView#a3e9b), HitTestEntry<HitTestTarget>#2189e(<AutomatedTestWidgetsFlutterBinding>))
+#0      WidgetController._getElementPoint (package:flutter_test/src/controller.dart:2165:25)
+#1      WidgetController.getCenter (package:flutter_test/src/controller.dart:1947:12)
+#2      WidgetController.tap (package:flutter_test/src/controller.dart:1080:7)
+#3      main.tap (file:///Users/lute/project/momcozy-lab/app/test/features/auth/auth_redesign_states_test.dart:118:13)
+<asynchronous suspension>
+#4      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/auth/auth_redesign_states_test.dart:199:7)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+#7      StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)
+<asynchronous suspension>
+To silence this warning, pass "warnIfMissed: false" to "tap()".
+To make this warning fatal, set WidgetController.hitTestWarningShouldBeFatal to true.
+
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following StateError was thrown running a test:
+Bad state: No element
+
+When the exception was thrown, this was the stack:
+#0      Iterable.single (dart:core/iterable.dart:694:25)
+#1      WidgetController.element (package:flutter_test/src/controller.dart:888:30)
+#2      WidgetController.ensureVisible (package:flutter_test/src/controller.dart:2389:32)
+#3      main.capture (file:///Users/lute/project/momcozy-lab/app/test/features/auth/auth_redesign_states_test.dart:138:13)
+#4      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/auth/auth_redesign_states_test.dart:201:13)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  short large verification rejects invalid code and preserves cooldown and expired state
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +1 -1: short large verification rejects invalid code and preserves cooldown and expired state [E]
+  Test failed. See exception logs above.
+  The test description was: short large verification rejects invalid code and preserves cooldown and expired state
+  
+00:00 +1 -1: short large resend keeps missing email guard and disables actions while pending
+
+Warning: A call to tap() with finder "Found 1 widget with text "Resend code": [
+  Text("Resend code", dependencies: [DefaultSelectionStyle, DefaultTextStyle, MediaQuery, _ScrollableScope]),
+]" derived an Offset (Offset(160.0, 433.0)) that would not hit test on the specified widget.
+Maybe the widget is actually off-screen, or another widget is obscuring it, or the widget cannot receive pointer events.
+The finder corresponds to this RenderBox: RenderParagraph#e795e relayoutBoundary=up43
+The hit test result at that offset is: HitTestResult(RenderPointerListener#4105c@Offset(160.0, 433.0), RenderSemanticsGestureHandler#c90c7@Offset(160.0, 433.0), RenderPointerListener#ed051@Offset(160.0, 433.0), _RenderScrollSemantics#c028e@Offset(160.0, 433.0), RenderClipRect#c0620@Offset(160.0, 433.0), RenderPositionedBox#88072@Offset(160.0, 433.0), RenderPadding#dba95@Offset(160.0, 433.0), RenderConstrainedBox#568e3@Offset(160.0, 433.0), RenderConstrainedBox#2b929@Offset(160.0, 433.0), RenderPositionedBox#97531@Offset(160.0, 433.0), RenderPadding#2995f@Offset(160.0, 433.0), RenderCustomMultiChildLayoutBox#f8f8c@Offset(160.0, 433.0), _RenderInkFeatures#72764@Offset(160.0, 433.0), RenderPhysicalModel#110ea@Offset(160.0, 433.0), RenderSemanticsAnnotations#58d4b@Offset(160.0, 433.0), RenderRepaintBoundary#8fb96@Offset(160.0, 433.0), RenderIgnorePointer#59839@Offset(160.0, 433.0), RenderAnimatedOpacity#95745@Offset(160.0, 433.0), RenderAnimatedOpacity#9506f@Offset(160.0, 433.0), _RenderColoredBox#4f2da@Offset(160.0, 433.0), RenderAnimatedOpacity#8fbf2@Offset(160.0, 433.0), RenderIgnorePointer#e5bb7@Offset(160.0, 433.0), RenderAnimatedOpacity#32782@Offset(160.0, 433.0), RenderRepaintBoundary#08ba2@Offset(160.0, 433.0), RenderSemanticsAnnotations#a7d98@Offset(160.0, 433.0), RenderOffstage#c4c21@Offset(160.0, 433.0), RenderSemanticsAnnotations#23c3b@Offset(160.0, 433.0), _RenderTheater#8e9cb@Offset(160.0, 433.0), RenderAbsorbPointer#73f27@Offset(160.0, 433.0), RenderPointerListener#e16ec@Offset(160.0, 433.0), RenderSemanticsAnnotations#0dc26@Offset(160.0, 433.0), RenderSemanticsAnnotations#27239@Offset(160.0, 433.0), RenderSemanticsAnnotations#b6e1c@Offset(160.0, 433.0), RenderSemanticsAnnotations#b4cd3@Offset(160.0, 433.0), RenderTapRegionSurface#3b2b8@Offset(160.0, 433.0), RenderSemanticsAnnotations#df47a@Offset(160.0, 433.0), RenderSemanticsAnnotations#e7b90@Offset(160.0, 433.0), HitTestEntry<HitTestTarget>#42a08(_ReusableRenderView#a3e9b), HitTestEntry<HitTestTarget>#33b7a(<AutomatedTestWidgetsFlutterBinding>))
+#0      WidgetController._getElementPoint (package:flutter_test/src/controller.dart:2165:25)
+#1      WidgetController.getCenter (package:flutter_test/src/controller.dart:1947:12)
+#2      WidgetController.tap (package:flutter_test/src/controller.dart:1080:7)
+#3      main.tap (file:///Users/lute/project/momcozy-lab/app/test/features/auth/auth_redesign_states_test.dart:118:13)
+<asynchronous suspension>
+#4      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/auth/auth_redesign_states_test.dart:235:7)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+#7      StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)
+<asynchronous suspension>
+To silence this warning, pass "warnIfMissed: false" to "tap()".
+To make this warning fatal, set WidgetController.hitTestWarningShouldBeFatal to true.
+
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: exactly one matching candidate
+  Actual: _TextWidgetFinder:<Found 0 widgets with text "Enter your email first.": []>
+   Which: means none were found but one was expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/auth/auth_redesign_states_test.dart:237:7)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/features/auth/auth_redesign_states_test.dart line 237
+The test description was:
+  short large resend keeps missing email guard and disables actions while pending
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +1 -2: short large resend keeps missing email guard and disables actions while pending [E]
+  Test failed. See exception logs above.
+  The test description was: short large resend keeps missing email guard and disables actions while pending
+  
+00:00 +1 -2: short large Google pending and failure leaves email recovery available
+00:01 +2 -2: session persistence failure revokes issued token and keeps retry form
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: ['/v1/auth/login', '/v1/auth/logout']
+  Actual: ['/v1/auth/login', '/v1/auth/logout-session']
+   Which: at location [1] is '/v1/auth/logout-session' instead of '/v1/auth/logout'
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/lute/project/momcozy-lab/app/test/features/auth/auth_redesign_states_test.dart:291:7)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/lute/project/momcozy-lab/app/test/features/auth/auth_redesign_states_test.dart line 291
+The test description was:
+  session persistence failure revokes issued token and keeps retry form
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +2 -3: session persistence failure revokes issued token and keeps retry form [E]
+  Test failed. See exception logs above.
+  The test description was: session persistence failure revokes issued token and keeps retry form
+  
+00:01 +2 -3: (tearDownAll)
+00:01 +2 -3: Some tests failed.
+
+Failing tests:
+  /Users/lute/project/momcozy-lab/app/test/features/auth/auth_redesign_states_test.dart: session persistence failure revokes issued token and keeps retry form
+  /Users/lute/project/momcozy-lab/app/test/features/auth/auth_redesign_states_test.dart: short large resend keeps missing email guard and disables actions while pending
+  /Users/lute/project/momcozy-lab/app/test/features/auth/auth_redesign_states_test.dart: short large verification rejects invalid code and preserves cooldown and expired state

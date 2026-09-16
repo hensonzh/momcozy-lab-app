@@ -1,0 +1,187 @@
+[
+  {
+    "id": "284:1086",
+    "name": "Agent action / confirmation_required / 1x",
+    "state": "confirmation_required",
+    "scale": 1,
+    "bottom": false
+  },
+  {
+    "id": "284:1139",
+    "name": "Agent action / confirming / 1x",
+    "state": "confirming",
+    "scale": 1,
+    "bottom": false
+  },
+  {
+    "id": "284:1187",
+    "name": "Agent action / rejecting / 1x",
+    "state": "rejecting",
+    "scale": 1,
+    "bottom": false
+  },
+  {
+    "id": "284:1235",
+    "name": "Agent action / applied / 1x",
+    "state": "applied",
+    "scale": 1,
+    "bottom": false
+  },
+  {
+    "id": "284:1283",
+    "name": "Agent action / rejected / 1x",
+    "state": "rejected",
+    "scale": 1,
+    "bottom": false
+  },
+  {
+    "id": "284:1331",
+    "name": "Agent action / failed / 1x",
+    "state": "failed",
+    "scale": 1,
+    "bottom": false
+  },
+  {
+    "id": "284:1379",
+    "name": "Agent action / confirmation_required / 2x",
+    "state": "confirmation_required",
+    "scale": 2,
+    "bottom": false
+  },
+  {
+    "id": "284:1435",
+    "name": "Agent action / confirming / 2x",
+    "state": "confirming",
+    "scale": 2,
+    "bottom": false
+  },
+  {
+    "id": "284:1486",
+    "name": "Agent action / rejecting / 2x",
+    "state": "rejecting",
+    "scale": 2,
+    "bottom": false
+  },
+  {
+    "id": "284:1537",
+    "name": "Agent action / applied / 2x",
+    "state": "applied",
+    "scale": 2,
+    "bottom": false
+  },
+  {
+    "id": "284:1588",
+    "name": "Agent action / rejected / 2x",
+    "state": "rejected",
+    "scale": 2,
+    "bottom": false
+  },
+  {
+    "id": "284:1639",
+    "name": "Agent action / failed / 2x",
+    "state": "failed",
+    "scale": 2,
+    "bottom": false
+  },
+  {
+    "id": "284:1690",
+    "name": "Agent action / confirmation_required / 2x / bottom",
+    "state": "confirmation_required",
+    "scale": 2,
+    "bottom": true
+  },
+  {
+    "id": "285:1086",
+    "name": "Agent result review / summary / 1x",
+    "state": "summary",
+    "scale": 1
+  },
+  {
+    "id": "285:1104",
+    "name": "Agent result review / disabled / 1x",
+    "state": "disabled",
+    "scale": 1
+  },
+  {
+    "id": "285:1122",
+    "name": "Agent result review / consult / 1x",
+    "state": "consult",
+    "scale": 1
+  },
+  {
+    "id": "285:1142",
+    "name": "Agent result review / consent-accepted / 1x",
+    "state": "consent-accepted",
+    "scale": 1
+  },
+  {
+    "id": "285:1162",
+    "name": "Agent result review / motion / 1x",
+    "state": "motion",
+    "scale": 1
+  },
+  {
+    "id": "285:1175",
+    "name": "Agent result review / unsupported / 1x",
+    "state": "unsupported",
+    "scale": 1
+  },
+  {
+    "id": "285:1187",
+    "name": "Agent result review / milk / 1x",
+    "state": "milk",
+    "scale": 1
+  },
+  {
+    "id": "285:1205",
+    "name": "Agent result review / summary / 2x",
+    "state": "summary",
+    "scale": 2
+  },
+  {
+    "id": "285:1223",
+    "name": "Agent result review / disabled / 2x",
+    "state": "disabled",
+    "scale": 2
+  },
+  {
+    "id": "285:1241",
+    "name": "Agent result review / consult / 2x",
+    "state": "consult",
+    "scale": 2
+  },
+  {
+    "id": "285:1261",
+    "name": "Agent result review / consent-accepted / 2x",
+    "state": "consent-accepted",
+    "scale": 2
+  },
+  {
+    "id": "285:1281",
+    "name": "Agent result review / motion / 2x",
+    "state": "motion",
+    "scale": 2
+  },
+  {
+    "id": "285:1294",
+    "name": "Agent result review / unsupported / 2x",
+    "state": "unsupported",
+    "scale": 2
+  },
+  {
+    "id": "285:1306",
+    "name": "Agent result review / milk / 2x",
+    "state": "milk",
+    "scale": 2
+  },
+  {
+    "id": "286:1109",
+    "name": "MomCozy/ActionReviewCard"
+  },
+  {
+    "id": "289:1132",
+    "name": "Agent result review / milk-top / 2x",
+    "state": "milk-top",
+    "scale": 2
+  }
+]

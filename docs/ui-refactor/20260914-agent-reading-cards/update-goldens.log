@@ -1,0 +1,17 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_markdown_design_test.dart
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_me_design_test.dart: (setUpAll)
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_markdown_design_test.dart: (setUpAll)
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_me_design_test.dart: Agent cards and dialog at 320.0 / 1.0
+00:00 +1: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_me_design_test.dart: Agent cards and dialog at 320.0 / 1.0
+00:00 +2: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_markdown_design_test.dart: markdown reading 320.0/2.0
+00:00 +3: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_me_design_test.dart: Agent cards and dialog at 320.0 / 2.0
+00:00 +4: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_me_design_test.dart: Agent cards and dialog at 320.0 / 2.0
+00:00 +5: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_markdown_design_test.dart: markdown reading 390.0/2.0
+00:00 +6: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_me_design_test.dart: Agent cards and dialog at 390.0 / 1.0
+00:00 +7: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_markdown_design_test.dart: markdown reading 430.0/1.0
+00:00 +8: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_me_design_test.dart: Agent cards and dialog at 390.0 / 2.0
+00:00 +9: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_markdown_design_test.dart: markdown reading 430.0/2.0
+00:00 +10: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_me_design_test.dart: Agent cards and dialog at 430.0 / 1.0
+00:01 +11: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_me_design_test.dart: Agent cards and dialog at 430.0 / 2.0
+00:01 +12: /Users/lute/project/momcozy-lab/app/test/features/agent_hub/agent_me_design_test.dart: (tearDownAll)
+00:01 +12: All tests passed!

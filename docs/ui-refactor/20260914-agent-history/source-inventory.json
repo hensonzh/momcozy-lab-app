@@ -1,0 +1,557 @@
+[
+  {
+    "id": "05-agent/agent-history",
+    "module": "Cozymate",
+    "label": "打开历史",
+    "state": "agent-history",
+    "image": "05-agent/agent-history/default.png",
+    "viewport": "05-agent/agent-history/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [
+      "agent/history"
+    ],
+    "production_widget_files": [
+      "lib/features/agent_hub/presentation/agent_conversation_panel.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/features/agent_hub/agent_me_design_test.dart",
+    "test_case": "conversation drawer long titles at 390.0",
+    "metadata": "raw/test/goldens/design_system/agent-history-390.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/agent-history-320.png",
+        "metadata": "raw/test/goldens/design_system/agent-history-320.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/agent-history-390.png",
+        "metadata": "raw/test/goldens/design_system/agent-history-390.png.json",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/design_system/agent-history-430.png",
+        "metadata": "raw/test/goldens/design_system/agent-history-430.png.json",
+        "width": 430,
+        "height": 844
+      }
+    ]
+  },
+  {
+    "id": "05-agent/agent-history-empty",
+    "module": "Cozymate",
+    "label": "Open history",
+    "state": "agent-history-empty",
+    "image": "05-agent/agent-history-empty/default.png",
+    "viewport": "05-agent/agent-history-empty/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [
+      "agent/history"
+    ],
+    "production_widget_files": [
+      "lib/features/agent_hub/presentation/agent_conversation_panel.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/features/agent_hub/agent_history_design_test.dart",
+    "test_case": "history states 390.0/1.0",
+    "metadata": "raw/test/goldens/design_system/agent-history-empty-390-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/agent-history-empty-320-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-history-empty-320-1x.png.json",
+        "width": 320,
+        "height": 568
+      },
+      {
+        "source": "test/goldens/design_system/agent-history-empty-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-history-empty-320-2x.png.json",
+        "width": 320,
+        "height": 568
+      },
+      {
+        "source": "test/goldens/design_system/agent-history-empty-390-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-history-empty-390-1x.png.json",
+        "width": 390,
+        "height": 568
+      },
+      {
+        "source": "test/goldens/design_system/agent-history-empty-390-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-history-empty-390-2x.png.json",
+        "width": 390,
+        "height": 568
+      },
+      {
+        "source": "test/goldens/design_system/agent-history-empty-430-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-history-empty-430-1x.png.json",
+        "width": 430,
+        "height": 568
+      },
+      {
+        "source": "test/goldens/design_system/agent-history-empty-430-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-history-empty-430-2x.png.json",
+        "width": 430,
+        "height": 568
+      }
+    ]
+  },
+  {
+    "id": "05-agent/agent-history-list",
+    "module": "Cozymate",
+    "label": "Open history",
+    "state": "agent-history-list",
+    "image": "05-agent/agent-history-list/default.png",
+    "viewport": "05-agent/agent-history-list/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [
+      "agent/history"
+    ],
+    "production_widget_files": [
+      "lib/features/agent_hub/presentation/agent_conversation_panel.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/features/agent_hub/agent_history_design_test.dart",
+    "test_case": "history states 390.0/1.0",
+    "metadata": "raw/test/goldens/design_system/agent-history-list-390-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/agent-history-list-320-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-history-list-320-1x.png.json",
+        "width": 320,
+        "height": 568
+      },
+      {
+        "source": "test/goldens/design_system/agent-history-list-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-history-list-320-2x.png.json",
+        "width": 320,
+        "height": 568
+      },
+      {
+        "source": "test/goldens/design_system/agent-history-list-390-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-history-list-390-1x.png.json",
+        "width": 390,
+        "height": 568
+      },
+      {
+        "source": "test/goldens/design_system/agent-history-list-390-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-history-list-390-2x.png.json",
+        "width": 390,
+        "height": 568
+      },
+      {
+        "source": "test/goldens/design_system/agent-history-list-430-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-history-list-430-1x.png.json",
+        "width": 430,
+        "height": 568
+      },
+      {
+        "source": "test/goldens/design_system/agent-history-list-430-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-history-list-430-2x.png.json",
+        "width": 430,
+        "height": 568
+      }
+    ]
+  },
+  {
+    "id": "05-agent/agent-history-list-end",
+    "module": "Cozymate",
+    "label": "Open history",
+    "state": "agent-history-list-end",
+    "image": "05-agent/agent-history-list-end/default.png",
+    "viewport": "05-agent/agent-history-list-end/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [
+      "agent/history"
+    ],
+    "production_widget_files": [
+      "lib/features/agent_hub/presentation/agent_conversation_panel.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/features/agent_hub/agent_history_design_test.dart",
+    "test_case": "history states 390.0/1.0",
+    "metadata": "raw/test/goldens/design_system/agent-history-list-end-390-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/agent-history-list-end-320-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-history-list-end-320-1x.png.json",
+        "width": 320,
+        "height": 568
+      },
+      {
+        "source": "test/goldens/design_system/agent-history-list-end-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-history-list-end-320-2x.png.json",
+        "width": 320,
+        "height": 568
+      },
+      {
+        "source": "test/goldens/design_system/agent-history-list-end-390-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-history-list-end-390-1x.png.json",
+        "width": 390,
+        "height": 568
+      },
+      {
+        "source": "test/goldens/design_system/agent-history-list-end-390-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-history-list-end-390-2x.png.json",
+        "width": 390,
+        "height": 568
+      },
+      {
+        "source": "test/goldens/design_system/agent-history-list-end-430-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-history-list-end-430-1x.png.json",
+        "width": 430,
+        "height": 568
+      },
+      {
+        "source": "test/goldens/design_system/agent-history-list-end-430-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-history-list-end-430-2x.png.json",
+        "width": 430,
+        "height": 568
+      }
+    ]
+  },
+  {
+    "id": "05-agent/agent-history-load-error",
+    "module": "Cozymate",
+    "label": "Open history",
+    "state": "agent-history-load-error",
+    "image": "05-agent/agent-history-load-error/default.png",
+    "viewport": "05-agent/agent-history-load-error/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [
+      "agent/history",
+      "common/loading",
+      "common/empty",
+      "common/error"
+    ],
+    "production_widget_files": [
+      "lib/features/agent_hub/presentation/agent_conversation_panel.dart",
+      "lib/shared/widgets/product_feedback.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/features/agent_hub/agent_history_design_test.dart",
+    "test_case": "history states 390.0/1.0",
+    "metadata": "raw/test/goldens/design_system/agent-history-load-error-390-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/agent-history-load-error-320-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-history-load-error-320-1x.png.json",
+        "width": 320,
+        "height": 568
+      },
+      {
+        "source": "test/goldens/design_system/agent-history-load-error-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-history-load-error-320-2x.png.json",
+        "width": 320,
+        "height": 568
+      },
+      {
+        "source": "test/goldens/design_system/agent-history-load-error-390-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-history-load-error-390-1x.png.json",
+        "width": 390,
+        "height": 568
+      },
+      {
+        "source": "test/goldens/design_system/agent-history-load-error-390-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-history-load-error-390-2x.png.json",
+        "width": 390,
+        "height": 568
+      },
+      {
+        "source": "test/goldens/design_system/agent-history-load-error-430-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-history-load-error-430-1x.png.json",
+        "width": 430,
+        "height": 568
+      },
+      {
+        "source": "test/goldens/design_system/agent-history-load-error-430-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-history-load-error-430-2x.png.json",
+        "width": 430,
+        "height": 568
+      }
+    ]
+  },
+  {
+    "id": "05-agent/agent-history-loading",
+    "module": "Cozymate",
+    "label": "Open history",
+    "state": "agent-history-loading",
+    "image": "05-agent/agent-history-loading/default.png",
+    "viewport": "05-agent/agent-history-loading/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [
+      "agent/history",
+      "common/loading",
+      "common/empty",
+      "common/error"
+    ],
+    "production_widget_files": [
+      "lib/features/agent_hub/presentation/agent_conversation_panel.dart",
+      "lib/shared/widgets/product_feedback.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/features/agent_hub/agent_history_design_test.dart",
+    "test_case": "history states 390.0/1.0",
+    "metadata": "raw/test/goldens/design_system/agent-history-loading-390-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/agent-history-loading-320-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-history-loading-320-1x.png.json",
+        "width": 320,
+        "height": 568
+      },
+      {
+        "source": "test/goldens/design_system/agent-history-loading-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-history-loading-320-2x.png.json",
+        "width": 320,
+        "height": 568
+      },
+      {
+        "source": "test/goldens/design_system/agent-history-loading-390-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-history-loading-390-1x.png.json",
+        "width": 390,
+        "height": 568
+      },
+      {
+        "source": "test/goldens/design_system/agent-history-loading-390-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-history-loading-390-2x.png.json",
+        "width": 390,
+        "height": 568
+      },
+      {
+        "source": "test/goldens/design_system/agent-history-loading-430-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-history-loading-430-1x.png.json",
+        "width": 430,
+        "height": 568
+      },
+      {
+        "source": "test/goldens/design_system/agent-history-loading-430-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-history-loading-430-2x.png.json",
+        "width": 430,
+        "height": 568
+      }
+    ]
+  },
+  {
+    "id": "05-agent/agent-history-locked",
+    "module": "Cozymate",
+    "label": "Open history",
+    "state": "agent-history-locked",
+    "image": "05-agent/agent-history-locked/default.png",
+    "viewport": "05-agent/agent-history-locked/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [
+      "agent/history"
+    ],
+    "production_widget_files": [
+      "lib/features/agent_hub/presentation/agent_conversation_panel.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/features/agent_hub/agent_history_design_test.dart",
+    "test_case": "history states 390.0/1.0",
+    "metadata": "raw/test/goldens/design_system/agent-history-locked-390-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/agent-history-locked-320-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-history-locked-320-1x.png.json",
+        "width": 320,
+        "height": 568
+      },
+      {
+        "source": "test/goldens/design_system/agent-history-locked-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-history-locked-320-2x.png.json",
+        "width": 320,
+        "height": 568
+      },
+      {
+        "source": "test/goldens/design_system/agent-history-locked-390-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-history-locked-390-1x.png.json",
+        "width": 390,
+        "height": 568
+      },
+      {
+        "source": "test/goldens/design_system/agent-history-locked-390-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-history-locked-390-2x.png.json",
+        "width": 390,
+        "height": 568
+      },
+      {
+        "source": "test/goldens/design_system/agent-history-locked-430-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-history-locked-430-1x.png.json",
+        "width": 430,
+        "height": 568
+      },
+      {
+        "source": "test/goldens/design_system/agent-history-locked-430-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-history-locked-430-2x.png.json",
+        "width": 430,
+        "height": 568
+      }
+    ]
+  },
+  {
+    "id": "05-agent/agent-history-switch-error",
+    "module": "Cozymate",
+    "label": "Open history",
+    "state": "agent-history-switch-error",
+    "image": "05-agent/agent-history-switch-error/default.png",
+    "viewport": "05-agent/agent-history-switch-error/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [
+      "agent/history"
+    ],
+    "production_widget_files": [
+      "lib/features/agent_hub/presentation/agent_conversation_panel.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/features/agent_hub/agent_history_design_test.dart",
+    "test_case": "history states 390.0/1.0",
+    "metadata": "raw/test/goldens/design_system/agent-history-switch-error-390-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/agent-history-switch-error-320-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-history-switch-error-320-1x.png.json",
+        "width": 320,
+        "height": 568
+      },
+      {
+        "source": "test/goldens/design_system/agent-history-switch-error-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-history-switch-error-320-2x.png.json",
+        "width": 320,
+        "height": 568
+      },
+      {
+        "source": "test/goldens/design_system/agent-history-switch-error-390-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-history-switch-error-390-1x.png.json",
+        "width": 390,
+        "height": 568
+      },
+      {
+        "source": "test/goldens/design_system/agent-history-switch-error-390-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-history-switch-error-390-2x.png.json",
+        "width": 390,
+        "height": 568
+      },
+      {
+        "source": "test/goldens/design_system/agent-history-switch-error-430-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-history-switch-error-430-1x.png.json",
+        "width": 430,
+        "height": 568
+      },
+      {
+        "source": "test/goldens/design_system/agent-history-switch-error-430-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-history-switch-error-430-2x.png.json",
+        "width": 430,
+        "height": 568
+      }
+    ]
+  },
+  {
+    "id": "05-agent/agent-history-switching",
+    "module": "Cozymate",
+    "label": "Open history",
+    "state": "agent-history-switching",
+    "image": "05-agent/agent-history-switching/default.png",
+    "viewport": "05-agent/agent-history-switching/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/"
+    ],
+    "mapped_design_candidates": [
+      "agent/history"
+    ],
+    "production_widget_files": [
+      "lib/features/agent_hub/presentation/agent_conversation_panel.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-widget-render-with-fixture-data",
+    "normal_entry_verified": false,
+    "test": "test/features/agent_hub/agent_history_design_test.dart",
+    "test_case": "history states 390.0/1.0",
+    "metadata": "raw/test/goldens/design_system/agent-history-switching-390-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/design_system/agent-history-switching-320-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-history-switching-320-1x.png.json",
+        "width": 320,
+        "height": 568
+      },
+      {
+        "source": "test/goldens/design_system/agent-history-switching-320-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-history-switching-320-2x.png.json",
+        "width": 320,
+        "height": 568
+      },
+      {
+        "source": "test/goldens/design_system/agent-history-switching-390-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-history-switching-390-1x.png.json",
+        "width": 390,
+        "height": 568
+      },
+      {
+        "source": "test/goldens/design_system/agent-history-switching-390-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-history-switching-390-2x.png.json",
+        "width": 390,
+        "height": 568
+      },
+      {
+        "source": "test/goldens/design_system/agent-history-switching-430-1x.png",
+        "metadata": "raw/test/goldens/design_system/agent-history-switching-430-1x.png.json",
+        "width": 430,
+        "height": 568
+      },
+      {
+        "source": "test/goldens/design_system/agent-history-switching-430-2x.png",
+        "metadata": "raw/test/goldens/design_system/agent-history-switching-430-2x.png.json",
+        "width": 430,
+        "height": 568
+      }
+    ]
+  }
+]

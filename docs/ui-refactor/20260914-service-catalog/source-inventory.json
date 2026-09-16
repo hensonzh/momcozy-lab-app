@@ -1,0 +1,774 @@
+[
+  {
+    "id": "03-mom/mom-journey-service-catalog",
+    "module": "妈妈",
+    "label": "泌乳支持",
+    "state": "mom-journey-service-catalog",
+    "image": "03-mom/mom-journey-service-catalog/default.png",
+    "viewport": "03-mom/mom-journey-service-catalog/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services"
+    ],
+    "mapped_design_candidates": [
+      "services/catalog",
+      "services/team",
+      "common/not-found",
+      "services/state-20"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_catalog_page.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/mom/mom_inventory_journey_test.dart",
+    "test_case": "inventory Mom AI card to Cozymate draft and service catalog",
+    "metadata": "raw/test/goldens/ui_inventory/mom-journey-service-catalog-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/mom-journey-service-catalog-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/mom-journey-service-catalog-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Home expert companionship entry → real service catalog",
+    "journey": {
+      "source": "test/goldens/ui_inventory/mom-journey-service-catalog-393.png",
+      "previous_source": "test/goldens/ui_inventory/mom-journey-ai-context-draft-393.png",
+      "route": "/services",
+      "trigger": "Home expert companionship entry → real service catalog",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/mom/mom_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "07-me/more-current-expert-catalog",
+    "module": "账号与隐私",
+    "label": "泌乳支持",
+    "state": "more-current-expert-catalog",
+    "image": "07-me/more-current-expert-catalog/default.png",
+    "viewport": "07-me/more-current-expert-catalog/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services"
+    ],
+    "mapped_design_candidates": [
+      "services/catalog",
+      "services/team",
+      "common/not-found",
+      "services/state-20"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_catalog_page.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/profile/more_current_inventory_test.dart",
+    "test_case": "inventory current More routes 393/1x",
+    "metadata": "raw/test/goldens/ui_inventory/more-current-expert-catalog-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/more-current-expert-catalog-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/more-current-expert-catalog-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/more-current-expert-catalog-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/more-current-expert-catalog-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services",
+    "entry": "Authenticated Me → tap More bottom navigation",
+    "trigger": "Expert support card → real service catalog",
+    "journey": {
+      "source": "test/goldens/ui_inventory/more-current-expert-catalog-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/more-current-inbox-return-393-1x.png",
+      "route": "/services",
+      "trigger": "Expert support card → real service catalog",
+      "root_entry": "Authenticated Me → tap More bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production More/account/privacy/service pages and notification coordinator/repositories; isolated HTTP, push gateway and permission platform; real router.go and ScaffoldMessenger callbacks, no native OS dialog or remote push",
+      "test": "test/modules/profile/more_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "07-me/more-current-package-return",
+    "module": "账号与隐私",
+    "label": "喂养安心",
+    "state": "more-current-package-return",
+    "image": "07-me/more-current-package-return/default.png",
+    "viewport": "07-me/more-current-package-return/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services"
+    ],
+    "mapped_design_candidates": [
+      "services/catalog",
+      "services/team",
+      "common/not-found",
+      "services/state-20"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_catalog_page.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/profile/more_current_inventory_test.dart",
+    "test_case": "inventory current More routes 393/1x",
+    "metadata": "raw/test/goldens/ui_inventory/more-current-package-return-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/more-current-package-return-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/more-current-package-return-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/more-current-package-return-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/more-current-package-return-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services",
+    "entry": "Authenticated Me → tap More bottom navigation",
+    "trigger": "Tap page Back → /services",
+    "journey": {
+      "source": "test/goldens/ui_inventory/more-current-package-return-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/more-current-expert-package-393-1x.png",
+      "route": "/services",
+      "trigger": "Tap page Back → /services",
+      "root_entry": "Authenticated Me → tap More bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production More/account/privacy/service pages and notification coordinator/repositories; isolated HTTP, push gateway and permission platform; real router.go and ScaffoldMessenger callbacks, no native OS dialog or remote push",
+      "test": "test/modules/profile/more_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "07-me/notification-followup-booking-catalog",
+    "module": "账号与隐私",
+    "label": "泌乳支持",
+    "state": "notification-followup-booking-catalog",
+    "image": "07-me/notification-followup-booking-catalog/default.png",
+    "viewport": "07-me/notification-followup-booking-catalog/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services"
+    ],
+    "mapped_design_candidates": [
+      "services/catalog",
+      "services/team",
+      "common/not-found",
+      "services/state-20"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_catalog_page.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/features/notifications/notification_followup_inventory_test.dart",
+    "test_case": "notification registration waiting failure pending and retry from booking",
+    "metadata": "raw/test/goldens/ui_inventory/notification-followup-booking-catalog-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/notification-followup-booking-catalog-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/notification-followup-booking-catalog-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services",
+    "entry": "Authenticated More page",
+    "trigger": "Expert plan entry → service catalog",
+    "journey": {
+      "source": "test/goldens/ui_inventory/notification-followup-booking-catalog-393.png",
+      "previous_source": "test/goldens/ui_inventory/notification-followup-booking-mom-393.png",
+      "route": "/services",
+      "trigger": "Expert plan entry → service catalog",
+      "root_entry": "Authenticated More page",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production notification coordinator/repository/controller; isolated HTTP, push gateway and permission platform; real router.go and ScaffoldMessenger callbacks, no native OS dialog or remote push",
+      "test": "test/features/notifications/notification_followup_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-journey-catalog",
+    "module": "专家服务与咨询",
+    "label": "泌乳支持",
+    "state": "service-journey-catalog",
+    "image": "08-expert-service/service-journey-catalog/default.png",
+    "viewport": "08-expert-service/service-journey-catalog/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services"
+    ],
+    "mapped_design_candidates": [
+      "services/catalog",
+      "services/team",
+      "common/not-found",
+      "services/state-20"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_catalog_page.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_inventory_journey_test.dart",
+    "test_case": "inventory Services catalog team and every package detail",
+    "metadata": "raw/test/goldens/ui_inventory/service-journey-catalog-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-journey-catalog-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-journey-catalog-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Me expert plan → actual service catalog",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-journey-catalog-393.png",
+      "previous_source": null,
+      "route": "/services",
+      "trigger": "Me expert plan → actual service catalog",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-journey-catalog-empty",
+    "module": "专家服务与咨询",
+    "label": "泌乳支持",
+    "state": "service-journey-catalog-empty",
+    "image": "08-expert-service/service-journey-catalog-empty/default.png",
+    "viewport": "08-expert-service/service-journey-catalog-empty/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services"
+    ],
+    "mapped_design_candidates": [
+      "services/catalog",
+      "services/team",
+      "common/not-found",
+      "common/loading",
+      "common/empty",
+      "common/error",
+      "services/state-20"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_catalog_page.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart",
+      "lib/shared/widgets/product_feedback.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_inventory_journey_test.dart",
+    "test_case": "inventory Services catalog loading error empty and package refresh",
+    "metadata": "raw/test/goldens/ui_inventory/service-journey-catalog-empty-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-journey-catalog-empty-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-journey-catalog-empty-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Retry returns no packages → empty catalog",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-journey-catalog-empty-393.png",
+      "previous_source": "test/goldens/ui_inventory/service-journey-catalog-read-error-393.png",
+      "route": "/services",
+      "trigger": "Retry returns no packages → empty catalog",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-journey-catalog-loading",
+    "module": "专家服务与咨询",
+    "label": "service-journey-catalog-loading",
+    "state": "service-journey-catalog-loading",
+    "image": "08-expert-service/service-journey-catalog-loading/default.png",
+    "viewport": "08-expert-service/service-journey-catalog-loading/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services"
+    ],
+    "mapped_design_candidates": [
+      "services/catalog",
+      "services/team",
+      "common/not-found",
+      "common/loading",
+      "common/empty",
+      "common/error",
+      "services/state-20"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_catalog_page.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/product_feedback.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_inventory_journey_test.dart",
+    "test_case": "inventory Services catalog loading error empty and package refresh",
+    "metadata": "raw/test/goldens/ui_inventory/service-journey-catalog-loading-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-journey-catalog-loading-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-journey-catalog-loading-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Catalog navigation with requests pending",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-journey-catalog-loading-393.png",
+      "previous_source": null,
+      "route": "/services",
+      "trigger": "Catalog navigation with requests pending",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-journey-catalog-pull-refreshed",
+    "module": "专家服务与咨询",
+    "label": "泌乳支持",
+    "state": "service-journey-catalog-pull-refreshed",
+    "image": "08-expert-service/service-journey-catalog-pull-refreshed/default.png",
+    "viewport": "08-expert-service/service-journey-catalog-pull-refreshed/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services"
+    ],
+    "mapped_design_candidates": [
+      "services/catalog",
+      "services/team",
+      "common/not-found",
+      "services/state-20"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_catalog_page.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_inventory_journey_test.dart",
+    "test_case": "inventory Services catalog loading error empty and package refresh",
+    "metadata": "raw/test/goldens/ui_inventory/service-journey-catalog-pull-refreshed-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-journey-catalog-pull-refreshed-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-journey-catalog-pull-refreshed-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Pull refresh → packages restored",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-journey-catalog-pull-refreshed-393.png",
+      "previous_source": "test/goldens/ui_inventory/service-journey-catalog-empty-393.png",
+      "route": "/services",
+      "trigger": "Pull refresh → packages restored",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-journey-catalog-read-error",
+    "module": "专家服务与咨询",
+    "label": "暂时无法载入，请稍后重试",
+    "state": "service-journey-catalog-read-error",
+    "image": "08-expert-service/service-journey-catalog-read-error/default.png",
+    "viewport": "08-expert-service/service-journey-catalog-read-error/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services"
+    ],
+    "mapped_design_candidates": [
+      "services/catalog",
+      "services/team",
+      "common/not-found",
+      "common/loading",
+      "common/empty",
+      "common/error",
+      "services/state-20"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_catalog_page.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/product_feedback.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_inventory_journey_test.dart",
+    "test_case": "inventory Services catalog loading error empty and package refresh",
+    "metadata": "raw/test/goldens/ui_inventory/service-journey-catalog-read-error-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-journey-catalog-read-error-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-journey-catalog-read-error-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Catalog unavailable → full-page error",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-journey-catalog-read-error-393.png",
+      "previous_source": "test/goldens/ui_inventory/service-journey-catalog-loading-393.png",
+      "route": "/services",
+      "trigger": "Catalog unavailable → full-page error",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-journey-catalog-return",
+    "module": "专家服务与咨询",
+    "label": "喂养安心",
+    "state": "service-journey-catalog-return",
+    "image": "08-expert-service/service-journey-catalog-return/default.png",
+    "viewport": "08-expert-service/service-journey-catalog-return/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services"
+    ],
+    "mapped_design_candidates": [
+      "services/catalog",
+      "services/team",
+      "common/not-found",
+      "services/state-20"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_catalog_page.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_inventory_journey_test.dart",
+    "test_case": "inventory Services catalog team and every package detail",
+    "metadata": "raw/test/goldens/ui_inventory/service-journey-catalog-return-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-journey-catalog-return-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-journey-catalog-return-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "All four package detail back paths → catalog",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-journey-catalog-return-393.png",
+      "previous_source": "test/goldens/ui_inventory/service-journey-package-team-comfortable-feeding-393.png",
+      "route": "/services",
+      "trigger": "All four package detail back paths → catalog",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-journey-catalog-team",
+    "module": "专家服务与咨询",
+    "label": "IBCLC 专家团队服务",
+    "state": "service-journey-catalog-team",
+    "image": "08-expert-service/service-journey-catalog-team/default.png",
+    "viewport": "08-expert-service/service-journey-catalog-team/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services"
+    ],
+    "mapped_design_candidates": [
+      "services/catalog",
+      "services/team",
+      "common/not-found",
+      "services/state-20"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_catalog_page.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_inventory_journey_test.dart",
+    "test_case": "inventory Services catalog team and every package detail",
+    "metadata": "raw/test/goldens/ui_inventory/service-journey-catalog-team-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-journey-catalog-team-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-journey-catalog-team-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Learn about team → provider modal",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-journey-catalog-team-393.png",
+      "previous_source": "test/goldens/ui_inventory/service-journey-catalog-393.png",
+      "route": "/services",
+      "trigger": "Learn about team → provider modal",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-journey-purchase-owned-catalog",
+    "module": "专家服务与咨询",
+    "label": "喂养安心",
+    "state": "service-journey-purchase-owned-catalog",
+    "image": "08-expert-service/service-journey-purchase-owned-catalog/default.png",
+    "viewport": "08-expert-service/service-journey-purchase-owned-catalog/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services"
+    ],
+    "mapped_design_candidates": [
+      "services/catalog",
+      "services/team",
+      "common/not-found",
+      "services/state-20"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_catalog_page.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_inventory_journey_test.dart",
+    "test_case": "inventory Services purchase validation decline challenge success and booking",
+    "metadata": "raw/test/goldens/ui_inventory/service-journey-purchase-owned-catalog-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-journey-purchase-owned-catalog-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-journey-purchase-owned-catalog-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Package back → catalog retains prior loaded state until refresh",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-journey-purchase-owned-catalog-393.png",
+      "previous_source": "test/goldens/ui_inventory/service-journey-purchase-owned-detail-393.png",
+      "route": "/services",
+      "trigger": "Package back → catalog retains prior loaded state until refresh",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-journey-purchase-owned-catalog-refreshed",
+    "module": "专家服务与咨询",
+    "label": "泌乳支持",
+    "state": "service-journey-purchase-owned-catalog-refreshed",
+    "image": "08-expert-service/service-journey-purchase-owned-catalog-refreshed/default.png",
+    "viewport": "08-expert-service/service-journey-purchase-owned-catalog-refreshed/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services"
+    ],
+    "mapped_design_candidates": [
+      "services/catalog",
+      "services/team",
+      "common/not-found",
+      "services/state-20"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_catalog_page.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_inventory_journey_test.dart",
+    "test_case": "inventory Services purchase validation decline challenge success and booking",
+    "metadata": "raw/test/goldens/ui_inventory/service-journey-purchase-owned-catalog-refreshed-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-journey-purchase-owned-catalog-refreshed-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-journey-purchase-owned-catalog-refreshed-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Pull refresh → catalog marks purchased plan",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-journey-purchase-owned-catalog-refreshed-393.png",
+      "previous_source": "test/goldens/ui_inventory/service-journey-purchase-owned-catalog-393.png",
+      "route": "/services",
+      "trigger": "Pull refresh → catalog marks purchased plan",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-journey-purchase-pending-catalog",
+    "module": "专家服务与咨询",
+    "label": "喂养安心",
+    "state": "service-journey-purchase-pending-catalog",
+    "image": "08-expert-service/service-journey-purchase-pending-catalog/default.png",
+    "viewport": "08-expert-service/service-journey-purchase-pending-catalog/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services"
+    ],
+    "mapped_design_candidates": [
+      "services/catalog",
+      "services/team",
+      "common/not-found",
+      "services/state-20"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_catalog_page.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_inventory_journey_test.dart",
+    "test_case": "inventory Services create order retry pending payment and resume",
+    "metadata": "raw/test/goldens/ui_inventory/service-journey-purchase-pending-catalog-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-journey-purchase-pending-catalog-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-journey-purchase-pending-catalog-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Package back → catalog retains its previously loaded state",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-journey-purchase-pending-catalog-393.png",
+      "previous_source": "test/goldens/ui_inventory/service-journey-purchase-pending-detail-393.png",
+      "route": "/services",
+      "trigger": "Package back → catalog retains its previously loaded state",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_inventory_journey_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/service-journey-purchase-pending-catalog-refreshed",
+    "module": "专家服务与咨询",
+    "label": "泌乳支持",
+    "state": "service-journey-purchase-pending-catalog-refreshed",
+    "image": "08-expert-service/service-journey-purchase-pending-catalog-refreshed/default.png",
+    "viewport": "08-expert-service/service-journey-purchase-pending-catalog-refreshed/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services"
+    ],
+    "mapped_design_candidates": [
+      "services/catalog",
+      "services/team",
+      "common/not-found",
+      "services/state-20"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_catalog_page.dart",
+      "lib/shared/widgets/momcozy_components.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/service_inventory_journey_test.dart",
+    "test_case": "inventory Services create order retry pending payment and resume",
+    "metadata": "raw/test/goldens/ui_inventory/service-journey-purchase-pending-catalog-refreshed-393.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/service-journey-purchase-pending-catalog-refreshed-393.png",
+        "metadata": "raw/test/goldens/ui_inventory/service-journey-purchase-pending-catalog-refreshed-393.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Pull refresh → pending order resume action",
+    "journey": {
+      "source": "test/goldens/ui_inventory/service-journey-purchase-pending-catalog-refreshed-393.png",
+      "previous_source": "test/goldens/ui_inventory/service-journey-purchase-pending-catalog-393.png",
+      "route": "/services",
+      "trigger": "Pull refresh → pending order resume action",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/service_inventory_journey_test.dart"
+    }
+  }
+]

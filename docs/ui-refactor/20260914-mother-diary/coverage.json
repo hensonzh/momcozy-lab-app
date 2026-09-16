@@ -1,0 +1,2144 @@
+[
+  {
+    "source_id": "03-mom/diary",
+    "design_family": "rest/empty",
+    "figma_nodes": [
+      "306:1086",
+      "306:1803"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/diary-body",
+    "design_family": "body/empty",
+    "figma_nodes": [
+      "306:1353",
+      "306:2107"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/diary-body-selected",
+    "design_family": "body/empty",
+    "figma_nodes": [
+      "306:1353",
+      "306:2107"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/diary-keyboard-error",
+    "design_family": "body/save-error",
+    "figma_nodes": [
+      "308:1160",
+      "308:1724"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/diary-mood",
+    "design_family": "mood/empty",
+    "figma_nodes": [
+      "306:1629",
+      "306:2416"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/diary-mood-selected",
+    "design_family": "mood/multiple",
+    "figma_nodes": [
+      "306:1716",
+      "306:2513"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/diary-page-body",
+    "design_family": "body/empty",
+    "figma_nodes": [
+      "306:1353",
+      "306:2107"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/diary-page-keyboard",
+    "design_family": "body/empty",
+    "figma_nodes": [
+      "306:1353",
+      "306:2107"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/diary-page-mood",
+    "design_family": "mood/empty",
+    "figma_nodes": [
+      "306:1629",
+      "306:2416"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/diary-page-offline",
+    "design_family": "body/save-error",
+    "figma_nodes": [
+      "308:1160",
+      "308:1724"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/diary-page-rest",
+    "design_family": "rest/empty",
+    "figma_nodes": [
+      "306:1086",
+      "306:1803"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/diary-page-saved",
+    "design_family": "body/saved",
+    "figma_nodes": [
+      "308:1384",
+      "308:1969"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/diary-rest",
+    "design_family": "rest/empty",
+    "figma_nodes": [
+      "306:1086",
+      "306:1803"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/diary-rest-selected",
+    "design_family": "rest/selected",
+    "figma_nodes": [
+      "306:1156",
+      "306:1882"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/diary-state-body-bowel",
+    "design_family": "body/optional",
+    "figma_nodes": [
+      "306:1517",
+      "306:2289"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/diary-state-body-discomfort",
+    "design_family": "body/dependent",
+    "figma_nodes": [
+      "306:1425",
+      "306:2186"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/diary-state-body-urination",
+    "design_family": "body/optional",
+    "figma_nodes": [
+      "306:1517",
+      "306:2289"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/diary-state-empty-validation",
+    "design_family": "body/validation",
+    "figma_nodes": [
+      "308:1086",
+      "308:1643"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/diary-state-rest-day",
+    "design_family": "rest/optional",
+    "figma_nodes": [
+      "306:1226",
+      "306:1961"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/diary-state-rest-disruptions",
+    "design_family": "rest/optional",
+    "figma_nodes": [
+      "306:1226",
+      "306:1961"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/diary-state-rest-stretch",
+    "design_family": "rest/optional",
+    "figma_nodes": [
+      "306:1226",
+      "306:1961"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-body-control-bowel-cleared",
+    "design_family": "body/optional",
+    "figma_nodes": [
+      "306:1517",
+      "306:2289"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-body-control-bowel-difficult",
+    "design_family": "body/optional",
+    "figma_nodes": [
+      "306:1517",
+      "306:2289"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-body-control-bowel-painfulPiles",
+    "design_family": "body/optional",
+    "figma_nodes": [
+      "306:1517",
+      "306:2289"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-body-control-bowel-restored",
+    "design_family": "body/optional",
+    "figma_nodes": [
+      "306:1517",
+      "306:2289"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-body-control-bowel-smooth",
+    "design_family": "body/optional",
+    "figma_nodes": [
+      "306:1517",
+      "306:2289"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-body-control-dependent-refilled",
+    "design_family": "body/empty",
+    "figma_nodes": [
+      "306:1353",
+      "306:2107"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-body-control-empty",
+    "design_family": "body/empty",
+    "figma_nodes": [
+      "306:1353",
+      "306:2107"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-body-control-energy-cleared",
+    "design_family": "body/empty",
+    "figma_nodes": [
+      "306:1353",
+      "306:2107"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-body-control-energy-depleted",
+    "design_family": "body/empty",
+    "figma_nodes": [
+      "306:1353",
+      "306:2107"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-body-control-energy-energized",
+    "design_family": "body/empty",
+    "figma_nodes": [
+      "306:1353",
+      "306:2107"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-body-control-energy-managing",
+    "design_family": "body/empty",
+    "figma_nodes": [
+      "306:1353",
+      "306:2107"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-body-control-energy-restored",
+    "design_family": "body/empty",
+    "figma_nodes": [
+      "306:1353",
+      "306:2107"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-body-control-impact-careLimited",
+    "design_family": "body/dependent",
+    "figma_nodes": [
+      "306:1425",
+      "306:2186"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-body-control-impact-cleared",
+    "design_family": "body/dependent",
+    "figma_nodes": [
+      "306:1425",
+      "306:2186"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-body-control-impact-none",
+    "design_family": "body/dependent",
+    "figma_nodes": [
+      "306:1425",
+      "306:2186"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-body-control-impact-restored",
+    "design_family": "body/dependent",
+    "figma_nodes": [
+      "306:1425",
+      "306:2186"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-body-control-impact-some",
+    "design_family": "body/dependent",
+    "figma_nodes": [
+      "306:1425",
+      "306:2186"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-body-control-note-cleared",
+    "design_family": "body/long-note",
+    "figma_nodes": [
+      "308:1571",
+      "308:2170"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-body-control-note-entered",
+    "design_family": "body/long-note",
+    "figma_nodes": [
+      "308:1571",
+      "308:2170"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-body-control-note-restored",
+    "design_family": "body/long-note",
+    "figma_nodes": [
+      "308:1571",
+      "308:2170"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-body-control-optional-collapsed",
+    "design_family": "body/optional",
+    "figma_nodes": [
+      "306:1517",
+      "306:2289"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-body-control-optional-open",
+    "design_family": "body/optional",
+    "figma_nodes": [
+      "306:1517",
+      "306:2289"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-body-control-reopened",
+    "design_family": "body/empty",
+    "figma_nodes": [
+      "306:1353",
+      "306:2107"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-body-control-reopened-optional",
+    "design_family": "body/optional",
+    "figma_nodes": [
+      "306:1517",
+      "306:2289"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-body-control-saved",
+    "design_family": "body/saved",
+    "figma_nodes": [
+      "308:1384",
+      "308:1969"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-body-control-severity-cleared",
+    "design_family": "body/dependent",
+    "figma_nodes": [
+      "306:1425",
+      "306:2186"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-body-control-severity-hardToIgnore",
+    "design_family": "body/dependent",
+    "figma_nodes": [
+      "306:1425",
+      "306:2186"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-body-control-severity-mild",
+    "design_family": "body/dependent",
+    "figma_nodes": [
+      "306:1425",
+      "306:2186"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-body-control-severity-noticeable",
+    "design_family": "body/dependent",
+    "figma_nodes": [
+      "306:1425",
+      "306:2186"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-body-control-severity-restored",
+    "design_family": "body/dependent",
+    "figma_nodes": [
+      "306:1425",
+      "306:2186"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-body-control-site-back",
+    "design_family": "body/empty",
+    "figma_nodes": [
+      "306:1353",
+      "306:2107"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-body-control-site-cesarean",
+    "design_family": "body/empty",
+    "figma_nodes": [
+      "306:1353",
+      "306:2107"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-body-control-site-clear-back",
+    "design_family": "body/empty",
+    "figma_nodes": [
+      "306:1353",
+      "306:2107"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-body-control-site-clear-cesarean",
+    "design_family": "body/empty",
+    "figma_nodes": [
+      "306:1353",
+      "306:2107"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-body-control-site-clear-headChest",
+    "design_family": "body/empty",
+    "figma_nodes": [
+      "306:1353",
+      "306:2107"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-body-control-site-clear-lowerAbdomen",
+    "design_family": "body/empty",
+    "figma_nodes": [
+      "306:1353",
+      "306:2107"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-body-control-site-clear-other",
+    "design_family": "body/empty",
+    "figma_nodes": [
+      "306:1353",
+      "306:2107"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-body-control-site-clear-perineum",
+    "design_family": "body/empty",
+    "figma_nodes": [
+      "306:1353",
+      "306:2107"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-body-control-site-headChest",
+    "design_family": "body/empty",
+    "figma_nodes": [
+      "306:1353",
+      "306:2107"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-body-control-site-lowerAbdomen",
+    "design_family": "body/empty",
+    "figma_nodes": [
+      "306:1353",
+      "306:2107"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-body-control-site-other",
+    "design_family": "body/empty",
+    "figma_nodes": [
+      "306:1353",
+      "306:2107"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-body-control-site-perineum",
+    "design_family": "body/empty",
+    "figma_nodes": [
+      "306:1353",
+      "306:2107"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-body-control-site-restored-dependent-empty",
+    "design_family": "body/empty",
+    "figma_nodes": [
+      "306:1353",
+      "306:2107"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-body-control-trend-better",
+    "design_family": "body/empty",
+    "figma_nodes": [
+      "306:1353",
+      "306:2107"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-body-control-trend-cleared",
+    "design_family": "body/empty",
+    "figma_nodes": [
+      "306:1353",
+      "306:2107"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-body-control-trend-restored",
+    "design_family": "body/empty",
+    "figma_nodes": [
+      "306:1353",
+      "306:2107"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-body-control-trend-same",
+    "design_family": "body/empty",
+    "figma_nodes": [
+      "306:1353",
+      "306:2107"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-body-control-trend-worse",
+    "design_family": "body/empty",
+    "figma_nodes": [
+      "306:1353",
+      "306:2107"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-body-control-urination-cleared",
+    "design_family": "body/optional",
+    "figma_nodes": [
+      "306:1517",
+      "306:2289"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-body-control-urination-leakingUrgency",
+    "design_family": "body/optional",
+    "figma_nodes": [
+      "306:1517",
+      "306:2289"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-body-control-urination-normal",
+    "design_family": "body/optional",
+    "figma_nodes": [
+      "306:1517",
+      "306:2289"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-body-control-urination-painfulDifficult",
+    "design_family": "body/optional",
+    "figma_nodes": [
+      "306:1517",
+      "306:2289"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-body-control-urination-restored",
+    "design_family": "body/optional",
+    "figma_nodes": [
+      "306:1517",
+      "306:2289"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-journey-body-discomfort-expanded",
+    "design_family": "body/dependent",
+    "figma_nodes": [
+      "306:1425",
+      "306:2186"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-journey-body-note",
+    "design_family": "body/long-note",
+    "figma_nodes": [
+      "308:1571",
+      "308:2170"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-journey-body-optional-expanded",
+    "design_family": "body/optional",
+    "figma_nodes": [
+      "306:1517",
+      "306:2289"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-journey-diary-body-empty",
+    "design_family": "body/empty",
+    "figma_nodes": [
+      "306:1353",
+      "306:2107"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-journey-diary-conflict",
+    "design_family": "body/conflict",
+    "figma_nodes": [
+      "308:1235",
+      "308:1806"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-journey-diary-conflict-reload-confirm",
+    "design_family": "body/conflict",
+    "figma_nodes": [
+      "308:1235",
+      "308:1806"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-journey-diary-conflict-reloaded",
+    "design_family": "body/conflict",
+    "figma_nodes": [
+      "308:1235",
+      "308:1806"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-journey-diary-conflict-resolved",
+    "design_family": "body/conflict",
+    "figma_nodes": [
+      "308:1235",
+      "308:1806"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-journey-diary-conflict-retained",
+    "design_family": "body/conflict",
+    "figma_nodes": [
+      "308:1235",
+      "308:1806"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-journey-diary-detail-body",
+    "design_family": "body/empty",
+    "figma_nodes": [
+      "306:1353",
+      "306:2107"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-journey-diary-detail-mood",
+    "design_family": "mood/empty",
+    "figma_nodes": [
+      "306:1629",
+      "306:2416"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-journey-diary-detail-rest",
+    "design_family": "rest/empty",
+    "figma_nodes": [
+      "306:1086",
+      "306:1803"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-journey-diary-detail-updated",
+    "design_family": "rest/empty",
+    "figma_nodes": [
+      "306:1086",
+      "306:1803"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-journey-diary-discard-confirm",
+    "design_family": "rest/discard",
+    "figma_nodes": [
+      "309:1086",
+      "309:1094"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-journey-diary-draft-retained",
+    "design_family": "rest/empty",
+    "figma_nodes": [
+      "306:1086",
+      "306:1803"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-journey-diary-empty-validation",
+    "design_family": "body/validation",
+    "figma_nodes": [
+      "308:1086",
+      "308:1643"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-journey-diary-modal-saved",
+    "design_family": "body/saved",
+    "figma_nodes": [
+      "308:1384",
+      "308:1969"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-journey-diary-mood-empty",
+    "design_family": "mood/empty",
+    "figma_nodes": [
+      "306:1629",
+      "306:2416"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-journey-diary-optional-discard-confirm",
+    "design_family": "rest/discard",
+    "figma_nodes": [
+      "309:1086",
+      "309:1094"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-journey-diary-read-error",
+    "design_family": "body/read-error",
+    "figma_nodes": [
+      "308:1457",
+      "308:2049"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-journey-diary-read-recovered",
+    "design_family": "rest/empty",
+    "figma_nodes": [
+      "306:1086",
+      "306:1803"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-journey-diary-rest-empty",
+    "design_family": "rest/empty",
+    "figma_nodes": [
+      "306:1086",
+      "306:1803"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-journey-diary-save-error",
+    "design_family": "body/save-error",
+    "figma_nodes": [
+      "308:1160",
+      "308:1724"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-journey-diary-saving",
+    "design_family": "body/saving",
+    "figma_nodes": [
+      "308:1312",
+      "308:1890"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-journey-mood-exclusive-pressure",
+    "design_family": "mood/exclusive",
+    "figma_nodes": [
+      "308:2249",
+      "308:2336"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-journey-mood-multiple-pressures",
+    "design_family": "mood/multiple",
+    "figma_nodes": [
+      "306:1716",
+      "306:2513"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-journey-mood-quick-prefilled",
+    "design_family": "mood/quick-low",
+    "figma_nodes": [
+      "308:2433",
+      "308:2520"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-journey-rest-optional-expanded",
+    "design_family": "rest/optional",
+    "figma_nodes": [
+      "306:1226",
+      "306:1961"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-mood-control-empty",
+    "design_family": "mood/empty",
+    "figma_nodes": [
+      "306:1629",
+      "306:2416"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-mood-control-empty-replacement-discard-confirm",
+    "design_family": "mood/discard",
+    "figma_nodes": [
+      "309:1086",
+      "309:1094"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-mood-control-empty-replacement-validation",
+    "design_family": "body/validation",
+    "figma_nodes": [
+      "308:1086",
+      "308:1643"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-mood-control-impact-cleared",
+    "design_family": "mood/empty",
+    "figma_nodes": [
+      "306:1629",
+      "306:2416"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-mood-control-impact-hard",
+    "design_family": "mood/empty",
+    "figma_nodes": [
+      "306:1629",
+      "306:2416"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-mood-control-impact-none",
+    "design_family": "mood/empty",
+    "figma_nodes": [
+      "306:1629",
+      "306:2416"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-mood-control-impact-restored",
+    "design_family": "mood/empty",
+    "figma_nodes": [
+      "306:1629",
+      "306:2416"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-mood-control-impact-some",
+    "design_family": "mood/empty",
+    "figma_nodes": [
+      "306:1629",
+      "306:2416"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-mood-control-pressure-babyWorry",
+    "design_family": "mood/multiple",
+    "figma_nodes": [
+      "306:1716",
+      "306:2513"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-mood-control-pressure-bodyRecovery",
+    "design_family": "mood/multiple",
+    "figma_nodes": [
+      "306:1716",
+      "306:2513"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-mood-control-pressure-clear-babyWorry",
+    "design_family": "mood/multiple",
+    "figma_nodes": [
+      "306:1716",
+      "306:2513"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-mood-control-pressure-clear-bodyRecovery",
+    "design_family": "mood/multiple",
+    "figma_nodes": [
+      "306:1716",
+      "306:2513"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-mood-control-pressure-clear-familyFriction",
+    "design_family": "mood/multiple",
+    "figma_nodes": [
+      "306:1716",
+      "306:2513"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-mood-control-pressure-clear-feedingPressure",
+    "design_family": "mood/multiple",
+    "figma_nodes": [
+      "306:1716",
+      "306:2513"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-mood-control-pressure-clear-noTime",
+    "design_family": "mood/multiple",
+    "figma_nodes": [
+      "306:1716",
+      "306:2513"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-mood-control-pressure-clear-selfDoubt",
+    "design_family": "mood/multiple",
+    "figma_nodes": [
+      "306:1716",
+      "306:2513"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-mood-control-pressure-clear-sleepLoss",
+    "design_family": "mood/multiple",
+    "figma_nodes": [
+      "306:1716",
+      "306:2513"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-mood-control-pressure-exclusive-cleared",
+    "design_family": "mood/exclusive",
+    "figma_nodes": [
+      "308:2249",
+      "308:2336"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-mood-control-pressure-exclusive-restored",
+    "design_family": "mood/exclusive",
+    "figma_nodes": [
+      "308:2249",
+      "308:2336"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-mood-control-pressure-exclusive-to-ordinary",
+    "design_family": "mood/exclusive",
+    "figma_nodes": [
+      "308:2249",
+      "308:2336"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-mood-control-pressure-familyFriction",
+    "design_family": "mood/multiple",
+    "figma_nodes": [
+      "306:1716",
+      "306:2513"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-mood-control-pressure-feedingPressure",
+    "design_family": "mood/multiple",
+    "figma_nodes": [
+      "306:1716",
+      "306:2513"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-mood-control-pressure-noTime",
+    "design_family": "mood/multiple",
+    "figma_nodes": [
+      "306:1716",
+      "306:2513"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-mood-control-pressure-refill-bodyRecovery",
+    "design_family": "mood/multiple",
+    "figma_nodes": [
+      "306:1716",
+      "306:2513"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-mood-control-pressure-refill-familyFriction",
+    "design_family": "mood/multiple",
+    "figma_nodes": [
+      "306:1716",
+      "306:2513"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-mood-control-pressure-refill-feedingPressure",
+    "design_family": "mood/multiple",
+    "figma_nodes": [
+      "306:1716",
+      "306:2513"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-mood-control-pressure-refill-noTime",
+    "design_family": "mood/multiple",
+    "figma_nodes": [
+      "306:1716",
+      "306:2513"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-mood-control-pressure-refill-selfDoubt",
+    "design_family": "mood/multiple",
+    "figma_nodes": [
+      "306:1716",
+      "306:2513"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-mood-control-pressure-refill-sleepLoss",
+    "design_family": "mood/multiple",
+    "figma_nodes": [
+      "306:1716",
+      "306:2513"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-mood-control-pressure-restored",
+    "design_family": "mood/multiple",
+    "figma_nodes": [
+      "306:1716",
+      "306:2513"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-mood-control-pressure-selfDoubt",
+    "design_family": "mood/multiple",
+    "figma_nodes": [
+      "306:1716",
+      "306:2513"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-mood-control-pressure-sleepLoss",
+    "design_family": "mood/multiple",
+    "figma_nodes": [
+      "306:1716",
+      "306:2513"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-mood-control-pressure-unclear",
+    "design_family": "mood/multiple",
+    "figma_nodes": [
+      "306:1716",
+      "306:2513"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-mood-control-quick-low",
+    "design_family": "mood/quick-low",
+    "figma_nodes": [
+      "308:2433",
+      "308:2520"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-mood-control-quick-low-discard-confirm",
+    "design_family": "mood/discard",
+    "figma_nodes": [
+      "309:1086",
+      "309:1094"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-mood-control-quick-steady",
+    "design_family": "mood/quick-low",
+    "figma_nodes": [
+      "308:2433",
+      "308:2520"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-mood-control-quick-steady-discard-confirm",
+    "design_family": "mood/discard",
+    "figma_nodes": [
+      "309:1086",
+      "309:1094"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-mood-control-quick-unclear",
+    "design_family": "mood/quick-low",
+    "figma_nodes": [
+      "308:2433",
+      "308:2520"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-mood-control-quick-unclear-discard-confirm",
+    "design_family": "mood/discard",
+    "figma_nodes": [
+      "309:1086",
+      "309:1094"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-mood-control-reopened",
+    "design_family": "mood/empty",
+    "figma_nodes": [
+      "306:1629",
+      "306:2416"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-mood-control-saved",
+    "design_family": "body/saved",
+    "figma_nodes": [
+      "308:1384",
+      "308:1969"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-mood-control-saved-all-cleared",
+    "design_family": "body/saved",
+    "figma_nodes": [
+      "308:1384",
+      "308:1969"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-mood-control-saved-impact-cleared",
+    "design_family": "body/saved",
+    "figma_nodes": [
+      "308:1384",
+      "308:1969"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-mood-control-saved-pressure-cleared",
+    "design_family": "body/saved",
+    "figma_nodes": [
+      "308:1384",
+      "308:1969"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-mood-control-saved-tone-cleared",
+    "design_family": "body/saved",
+    "figma_nodes": [
+      "308:1384",
+      "308:1969"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-mood-control-support-alone",
+    "design_family": "mood/empty",
+    "figma_nodes": [
+      "306:1629",
+      "306:2416"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-mood-control-support-carryingMost",
+    "design_family": "mood/empty",
+    "figma_nodes": [
+      "306:1629",
+      "306:2416"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-mood-control-support-cleared",
+    "design_family": "mood/empty",
+    "figma_nodes": [
+      "306:1629",
+      "306:2416"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-mood-control-support-restored",
+    "design_family": "mood/empty",
+    "figma_nodes": [
+      "306:1629",
+      "306:2416"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-mood-control-support-supported",
+    "design_family": "mood/empty",
+    "figma_nodes": [
+      "306:1629",
+      "306:2416"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-mood-control-tone-cleared",
+    "design_family": "mood/empty",
+    "figma_nodes": [
+      "306:1629",
+      "306:2416"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-mood-control-tone-low",
+    "design_family": "mood/empty",
+    "figma_nodes": [
+      "306:1629",
+      "306:2416"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-mood-control-tone-reactive",
+    "design_family": "mood/empty",
+    "figma_nodes": [
+      "306:1629",
+      "306:2416"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-mood-control-tone-restored",
+    "design_family": "mood/empty",
+    "figma_nodes": [
+      "306:1629",
+      "306:2416"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-mood-control-tone-steady",
+    "design_family": "mood/empty",
+    "figma_nodes": [
+      "306:1629",
+      "306:2416"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-mood-control-tone-tense",
+    "design_family": "mood/empty",
+    "figma_nodes": [
+      "306:1629",
+      "306:2416"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-mood-control-tone-unclear",
+    "design_family": "mood/empty",
+    "figma_nodes": [
+      "306:1629",
+      "306:2416"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-note-boundary-body-1999",
+    "design_family": "body/long-note",
+    "figma_nodes": [
+      "308:1571",
+      "308:2170"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-note-boundary-body-2000",
+    "design_family": "body/long-note",
+    "figma_nodes": [
+      "308:1571",
+      "308:2170"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-note-boundary-body-cleared",
+    "design_family": "body/long-note",
+    "figma_nodes": [
+      "308:1571",
+      "308:2170"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-note-boundary-body-discard-confirm",
+    "design_family": "body/discard",
+    "figma_nodes": [
+      "309:1086",
+      "309:1094"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-note-boundary-body-empty",
+    "design_family": "body/long-note",
+    "figma_nodes": [
+      "308:1571",
+      "308:2170"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-note-boundary-body-note-scroll-end",
+    "design_family": "body/long-note",
+    "figma_nodes": [
+      "308:1571",
+      "308:2170"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-note-boundary-body-note-scroll-start",
+    "design_family": "body/long-note",
+    "figma_nodes": [
+      "308:1571",
+      "308:2170"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-note-boundary-body-overflow-truncated",
+    "design_family": "body/long-note",
+    "figma_nodes": [
+      "308:1571",
+      "308:2170"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-note-boundary-body-reopened",
+    "design_family": "body/long-note",
+    "figma_nodes": [
+      "308:1571",
+      "308:2170"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-note-boundary-body-saved",
+    "design_family": "body/saved",
+    "figma_nodes": [
+      "308:1384",
+      "308:1969"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-rest-clear-day-rest-cleared",
+    "design_family": "rest/optional",
+    "figma_nodes": [
+      "306:1226",
+      "306:1961"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-rest-clear-day-rest-restored",
+    "design_family": "rest/optional",
+    "figma_nodes": [
+      "306:1226",
+      "306:1961"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-rest-clear-day-rest-selected",
+    "design_family": "rest/optional",
+    "figma_nodes": [
+      "306:1226",
+      "306:1961"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-rest-clear-empty",
+    "design_family": "rest/empty",
+    "figma_nodes": [
+      "306:1086",
+      "306:1803"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-rest-clear-interruptions-cleared",
+    "design_family": "rest/empty",
+    "figma_nodes": [
+      "306:1086",
+      "306:1803"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-rest-clear-interruptions-restored",
+    "design_family": "rest/empty",
+    "figma_nodes": [
+      "306:1086",
+      "306:1803"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-rest-clear-interruptions-selected",
+    "design_family": "rest/selected",
+    "figma_nodes": [
+      "306:1156",
+      "306:1882"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-rest-clear-optional-open",
+    "design_family": "rest/optional",
+    "figma_nodes": [
+      "306:1226",
+      "306:1961"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-rest-clear-recovery-cleared",
+    "design_family": "rest/empty",
+    "figma_nodes": [
+      "306:1086",
+      "306:1803"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-rest-clear-recovery-restored",
+    "design_family": "rest/empty",
+    "figma_nodes": [
+      "306:1086",
+      "306:1803"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-rest-clear-recovery-selected",
+    "design_family": "rest/selected",
+    "figma_nodes": [
+      "306:1156",
+      "306:1882"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-rest-clear-reopened",
+    "design_family": "rest/empty",
+    "figma_nodes": [
+      "306:1086",
+      "306:1803"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-rest-clear-reopened-optional",
+    "design_family": "rest/optional",
+    "figma_nodes": [
+      "306:1226",
+      "306:1961"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-rest-clear-resleep-cleared",
+    "design_family": "rest/optional",
+    "figma_nodes": [
+      "306:1226",
+      "306:1961"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-rest-clear-resleep-restored",
+    "design_family": "rest/optional",
+    "figma_nodes": [
+      "306:1226",
+      "306:1961"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-rest-clear-resleep-selected",
+    "design_family": "rest/optional",
+    "figma_nodes": [
+      "306:1226",
+      "306:1961"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-rest-clear-saved",
+    "design_family": "body/saved",
+    "figma_nodes": [
+      "308:1384",
+      "308:1969"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-rest-clear-stretch-cleared",
+    "design_family": "rest/optional",
+    "figma_nodes": [
+      "306:1226",
+      "306:1961"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-rest-clear-stretch-restored",
+    "design_family": "rest/optional",
+    "figma_nodes": [
+      "306:1226",
+      "306:1961"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-rest-clear-stretch-selected",
+    "design_family": "rest/optional",
+    "figma_nodes": [
+      "306:1226",
+      "306:1961"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-rest-control-day-rest-none",
+    "design_family": "rest/optional",
+    "figma_nodes": [
+      "306:1226",
+      "306:1961"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-rest-control-day-rest-sixtyMinutesPlus",
+    "design_family": "rest/optional",
+    "figma_nodes": [
+      "306:1226",
+      "306:1961"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-rest-control-day-rest-thirtyToSixtyMinutes",
+    "design_family": "rest/optional",
+    "figma_nodes": [
+      "306:1226",
+      "306:1961"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-rest-control-day-rest-underThirtyMinutes",
+    "design_family": "rest/optional",
+    "figma_nodes": [
+      "306:1226",
+      "306:1961"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-rest-control-disruption-baby",
+    "design_family": "rest/optional",
+    "figma_nodes": [
+      "306:1226",
+      "306:1961"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-rest-control-disruption-cannotSleep",
+    "design_family": "rest/optional",
+    "figma_nodes": [
+      "306:1226",
+      "306:1961"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-rest-control-disruption-clear-baby",
+    "design_family": "rest/optional",
+    "figma_nodes": [
+      "306:1226",
+      "306:1961"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-rest-control-disruption-clear-cannotSleep",
+    "design_family": "rest/optional",
+    "figma_nodes": [
+      "306:1226",
+      "306:1961"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-rest-control-disruption-clear-discomfort",
+    "design_family": "rest/optional",
+    "figma_nodes": [
+      "306:1226",
+      "306:1961"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-rest-control-disruption-clear-environment",
+    "design_family": "rest/optional",
+    "figma_nodes": [
+      "306:1226",
+      "306:1961"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-rest-control-disruption-clear-feeding",
+    "design_family": "rest/optional",
+    "figma_nodes": [
+      "306:1226",
+      "306:1961"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-rest-control-disruption-clear-other",
+    "design_family": "rest/optional",
+    "figma_nodes": [
+      "306:1226",
+      "306:1961"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-rest-control-disruption-discomfort",
+    "design_family": "rest/optional",
+    "figma_nodes": [
+      "306:1226",
+      "306:1961"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-rest-control-disruption-environment",
+    "design_family": "rest/optional",
+    "figma_nodes": [
+      "306:1226",
+      "306:1961"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-rest-control-disruption-feeding",
+    "design_family": "rest/optional",
+    "figma_nodes": [
+      "306:1226",
+      "306:1961"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-rest-control-disruption-other",
+    "design_family": "rest/optional",
+    "figma_nodes": [
+      "306:1226",
+      "306:1961"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-rest-control-disruption-restored",
+    "design_family": "rest/optional",
+    "figma_nodes": [
+      "306:1226",
+      "306:1961"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-rest-control-duration-cleared",
+    "design_family": "rest/empty",
+    "figma_nodes": [
+      "306:1086",
+      "306:1803"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-rest-control-duration-fiveToSixHours",
+    "design_family": "rest/empty",
+    "figma_nodes": [
+      "306:1086",
+      "306:1803"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-rest-control-duration-fourToFiveHours",
+    "design_family": "rest/empty",
+    "figma_nodes": [
+      "306:1086",
+      "306:1803"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-rest-control-duration-restored",
+    "design_family": "rest/empty",
+    "figma_nodes": [
+      "306:1086",
+      "306:1803"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-rest-control-duration-sixHoursPlus",
+    "design_family": "rest/empty",
+    "figma_nodes": [
+      "306:1086",
+      "306:1803"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-rest-control-duration-threeToFourHours",
+    "design_family": "rest/empty",
+    "figma_nodes": [
+      "306:1086",
+      "306:1803"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-rest-control-duration-underThreeHours",
+    "design_family": "rest/empty",
+    "figma_nodes": [
+      "306:1086",
+      "306:1803"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-rest-control-duration-unknown",
+    "design_family": "rest/empty",
+    "figma_nodes": [
+      "306:1086",
+      "306:1803"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-rest-control-empty",
+    "design_family": "rest/empty",
+    "figma_nodes": [
+      "306:1086",
+      "306:1803"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-rest-control-interruptions-fivePlus",
+    "design_family": "rest/empty",
+    "figma_nodes": [
+      "306:1086",
+      "306:1803"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-rest-control-interruptions-none",
+    "design_family": "rest/empty",
+    "figma_nodes": [
+      "306:1086",
+      "306:1803"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-rest-control-interruptions-oneToTwo",
+    "design_family": "rest/empty",
+    "figma_nodes": [
+      "306:1086",
+      "306:1803"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-rest-control-interruptions-threeToFour",
+    "design_family": "rest/empty",
+    "figma_nodes": [
+      "306:1086",
+      "306:1803"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-rest-control-interruptions-unknown",
+    "design_family": "rest/empty",
+    "figma_nodes": [
+      "306:1086",
+      "306:1803"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-rest-control-optional-collapsed",
+    "design_family": "rest/optional",
+    "figma_nodes": [
+      "306:1226",
+      "306:1961"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-rest-control-optional-open",
+    "design_family": "rest/optional",
+    "figma_nodes": [
+      "306:1226",
+      "306:1961"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-rest-control-recovery-exhausted",
+    "design_family": "rest/empty",
+    "figma_nodes": [
+      "306:1086",
+      "306:1803"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-rest-control-recovery-managing",
+    "design_family": "rest/empty",
+    "figma_nodes": [
+      "306:1086",
+      "306:1803"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-rest-control-recovery-restored",
+    "design_family": "rest/empty",
+    "figma_nodes": [
+      "306:1086",
+      "306:1803"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-rest-control-reopened",
+    "design_family": "rest/empty",
+    "figma_nodes": [
+      "306:1086",
+      "306:1803"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-rest-control-reopened-optional",
+    "design_family": "rest/optional",
+    "figma_nodes": [
+      "306:1226",
+      "306:1961"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-rest-control-resleep-easy",
+    "design_family": "rest/optional",
+    "figma_nodes": [
+      "306:1226",
+      "306:1961"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-rest-control-resleep-hard",
+    "design_family": "rest/optional",
+    "figma_nodes": [
+      "306:1226",
+      "306:1961"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-rest-control-resleep-somewhatHard",
+    "design_family": "rest/optional",
+    "figma_nodes": [
+      "306:1226",
+      "306:1961"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-rest-control-saved",
+    "design_family": "body/saved",
+    "figma_nodes": [
+      "308:1384",
+      "308:1969"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-rest-control-stretch-oneToTwoHours",
+    "design_family": "rest/optional",
+    "figma_nodes": [
+      "306:1226",
+      "306:1961"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-rest-control-stretch-threeHoursPlus",
+    "design_family": "rest/optional",
+    "figma_nodes": [
+      "306:1226",
+      "306:1961"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-rest-control-stretch-twoToThreeHours",
+    "design_family": "rest/optional",
+    "figma_nodes": [
+      "306:1226",
+      "306:1961"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-rest-control-stretch-underOneHour",
+    "design_family": "rest/optional",
+    "figma_nodes": [
+      "306:1226",
+      "306:1961"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-rest-control-stretch-unknown",
+    "design_family": "rest/optional",
+    "figma_nodes": [
+      "306:1226",
+      "306:1961"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "05-agent/agent-workflow-journey-diary-history",
+    "design_family": "rest/empty",
+    "figma_nodes": [
+      "306:1086",
+      "306:1803"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  },
+  {
+    "source_id": "03-mom/mom-diary-loading",
+    "design_family": "body/loading",
+    "figma_nodes": [
+      "308:1479",
+      "308:2071"
+    ],
+    "verification": "shared-widget and representative flow tests; not a replay of every original capture sequence"
+  }
+]

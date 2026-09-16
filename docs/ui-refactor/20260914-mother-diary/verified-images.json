@@ -1,0 +1,622 @@
+[
+  {
+    "path": "test/goldens/design_system/diary-body-320.png",
+    "sha256": "8e620096425d394d75b530abda5db8e37b1dcb7ee7b8b67aecb25602ea7c8e55"
+  },
+  {
+    "path": "test/goldens/design_system/diary-body-390.png",
+    "sha256": "8019af8e6c86acf2d258b6c42afed7782c5168c6e80fc1107a23451a0278ed4c"
+  },
+  {
+    "path": "test/goldens/design_system/diary-body-430.png",
+    "sha256": "f08f9d4ae8702ba54ec91830122ab1250d52dae0b0759827be54c8397e26adf1"
+  },
+  {
+    "path": "test/goldens/design_system/diary-body-selected-320.png",
+    "sha256": "2cb2e05d38aedb074d0c7851c720cd460f4fa20f88d1290d767fb048a310f84b"
+  },
+  {
+    "path": "test/goldens/design_system/diary-body-selected-390.png",
+    "sha256": "fa3ebcdca2f1d194d6a48ad1cf8b008acaca748e0c1360aa6f0fd2ca931db2ee"
+  },
+  {
+    "path": "test/goldens/design_system/diary-body-selected-430.png",
+    "sha256": "5f84c769f876f77e4605d87dc2744d58cf17c451427ca2b4ee0d4ce3b784ca65"
+  },
+  {
+    "path": "test/goldens/design_system/diary-keyboard-error-320.png",
+    "sha256": "02ec25226d06f9a3be5e15b9a54b7d7ac83f9cf2bc0643d6edca4da27c4e9c14"
+  },
+  {
+    "path": "test/goldens/design_system/diary-mood-320.png",
+    "sha256": "7f7d831027cac3398deae093ad8b7e1038ca8b10040a4cca32616a8b9fac5ef4"
+  },
+  {
+    "path": "test/goldens/design_system/diary-mood-390.png",
+    "sha256": "a1f4bba3a7e1c81823526354eec2ff99587e9e216eaefcb9e536d7655f2a1360"
+  },
+  {
+    "path": "test/goldens/design_system/diary-mood-430.png",
+    "sha256": "a37b7486c3ae2408a7cbbc5ac6d0a6c0f25b659a808cf6416f2b373908298c42"
+  },
+  {
+    "path": "test/goldens/design_system/diary-mood-selected-320.png",
+    "sha256": "ceff17657a777ad082820efa71920df975e8f0f04556eaa41f4072c26cac6417"
+  },
+  {
+    "path": "test/goldens/design_system/diary-mood-selected-390.png",
+    "sha256": "b8ca7afca34f4ff5a70a5aa6a95884c0155fe189fb533b3d2f46b420e02bb450"
+  },
+  {
+    "path": "test/goldens/design_system/diary-mood-selected-430.png",
+    "sha256": "b8e62c8a829dc72297b218e8ec0bc82261abd9bf3a1d5008c49bce273f61158f"
+  },
+  {
+    "path": "test/goldens/design_system/diary-page-body-320-2x.png",
+    "sha256": "f52d50adba2f5e901dfe0a3f1e15d2154304e41d286bde4213c435c1108642e8"
+  },
+  {
+    "path": "test/goldens/design_system/diary-page-body-320.png",
+    "sha256": "da91f2ed56dba30d3fe19ee982779f7cb7098ccd232d92e1ba33e576b25796a6"
+  },
+  {
+    "path": "test/goldens/design_system/diary-page-body-390-2x.png",
+    "sha256": "6ec6e25243674da32a76c4650c92c95ee29a4d797aad839f122e452f31a1456a"
+  },
+  {
+    "path": "test/goldens/design_system/diary-page-body-390.png",
+    "sha256": "e8f0b1bc00724215f106a166638c1d1483bfe16763bc6050ff6735a6ca8c3413"
+  },
+  {
+    "path": "test/goldens/design_system/diary-page-body-430-2x.png",
+    "sha256": "7f4c2b9edce209f65a3abbfb88fe31c6ef92552aceeb22fdb3691573bc178e5f"
+  },
+  {
+    "path": "test/goldens/design_system/diary-page-body-430.png",
+    "sha256": "c21e213c6cff26b1931077bb626751512d30eb313bcfed9a0461e0353ae7dfa6"
+  },
+  {
+    "path": "test/goldens/design_system/diary-page-keyboard-320-2x.png",
+    "sha256": "ca754464bf1e6533fe17e554757ece0f6bd0c3e1b21eff0ff59bb96962b7818b"
+  },
+  {
+    "path": "test/goldens/design_system/diary-page-mood-320-2x.png",
+    "sha256": "c8c4c696acca96e6140c4bca7e7e94cb91e52e2623c21ec3a321ea0f64e70f72"
+  },
+  {
+    "path": "test/goldens/design_system/diary-page-mood-320.png",
+    "sha256": "bded7d69d8857c1467c8cc6b656b0747213d08f5fb4c8d43bed469b3b48bb3fe"
+  },
+  {
+    "path": "test/goldens/design_system/diary-page-mood-390-2x.png",
+    "sha256": "0039baf11d62b633f9c00cc544e74a43948aa11e49035d45c0c43ea6ad61309e"
+  },
+  {
+    "path": "test/goldens/design_system/diary-page-mood-390.png",
+    "sha256": "7932d9445720f97e991166293ebb55baa6199d5ba20cd3b1eaf892b1d6602995"
+  },
+  {
+    "path": "test/goldens/design_system/diary-page-mood-430-2x.png",
+    "sha256": "5b70f5cb2f79ff24d5ec69acde67357cf3b746f4f707c3eddccf51b461de1338"
+  },
+  {
+    "path": "test/goldens/design_system/diary-page-mood-430.png",
+    "sha256": "44c20ac0c84216e7b1f2ea30b004cce83ce8752ddcf19a0fe922c79a73d62219"
+  },
+  {
+    "path": "test/goldens/design_system/diary-page-offline-320-2x.png",
+    "sha256": "6c8a560abdd4510da1361b607e3717b63e957e065225af9fc013db608327e270"
+  },
+  {
+    "path": "test/goldens/design_system/diary-page-offline-320.png",
+    "sha256": "b72b85b280bc2dc85c5199967ad48d44dcc0a1bfd7e973ec2a665df670ceed0d"
+  },
+  {
+    "path": "test/goldens/design_system/diary-page-offline-390-2x.png",
+    "sha256": "f429857c9a7e5e6d2bb745ef6c0812bf6138953a7c23be239dd1459de5816933"
+  },
+  {
+    "path": "test/goldens/design_system/diary-page-offline-390.png",
+    "sha256": "ade411b0365478083e6a7655356f2a36078ef7e288f3c9d9e7ee47d434d30591"
+  },
+  {
+    "path": "test/goldens/design_system/diary-page-offline-430-2x.png",
+    "sha256": "dbe6a6a620c8e7cd1632f71bc170d380cdb0b7e813009a962dcfe333e71c7ff7"
+  },
+  {
+    "path": "test/goldens/design_system/diary-page-offline-430.png",
+    "sha256": "8ee6caf5410df73a116dfc86c9b5945d16aed2add9fe72246233f5b4a67f0c82"
+  },
+  {
+    "path": "test/goldens/design_system/diary-page-rest-320-2x.png",
+    "sha256": "70988427f6323da940cb59c2954580fff03dd7841648c7bdecaab38dd0bee5b6"
+  },
+  {
+    "path": "test/goldens/design_system/diary-page-rest-320.png",
+    "sha256": "bebfdaa0e3c689d5f0b209cc6f86f5e74d72022b35138d7d0d34f35839f94bf6"
+  },
+  {
+    "path": "test/goldens/design_system/diary-page-rest-390-2x.png",
+    "sha256": "9fd4790f54f354a17a8c81bb61674420a74b7d54ad9d991a93b655b0f335e47e"
+  },
+  {
+    "path": "test/goldens/design_system/diary-page-rest-390.png",
+    "sha256": "81265407a6782543e2e8f30ec9c1ae8d6d9bfea8756c5e7c5bb1eda4746a2ce9"
+  },
+  {
+    "path": "test/goldens/design_system/diary-page-rest-430-2x.png",
+    "sha256": "7f195d93fadd1f015979d0ec7f023d7a86fe41b144eeefc41dce3cbc6ad269f5"
+  },
+  {
+    "path": "test/goldens/design_system/diary-page-rest-430.png",
+    "sha256": "e933fc09d433d1ce940a046b777bc977e766e426c580da1e4aa20c8dfa8802a3"
+  },
+  {
+    "path": "test/goldens/design_system/diary-page-saved-320-2x.png",
+    "sha256": "0167e713b5b9063f2b34bcdecbca3282bfde8863a8b7c764c7cd6d2d200e0606"
+  },
+  {
+    "path": "test/goldens/design_system/diary-page-saved-320.png",
+    "sha256": "3624424de21e7d777265f3dd08bd6ec894a732d3a1b2dea2e20df6cfe161fb1c"
+  },
+  {
+    "path": "test/goldens/design_system/diary-page-saved-390-2x.png",
+    "sha256": "bf20fb8a92c4ddc39a10fca9a3bd05401db66099dcfa037ea64c2de58fd103c3"
+  },
+  {
+    "path": "test/goldens/design_system/diary-page-saved-390.png",
+    "sha256": "2df899d05f13eacaf0bdaa6c5840d20a8a7e6df63b480bda58d4fca00d114030"
+  },
+  {
+    "path": "test/goldens/design_system/diary-page-saved-430-2x.png",
+    "sha256": "b2640d40455cc78ec8520df560a99fd8b44a68ff1ce2ef8d84a022819a0f2811"
+  },
+  {
+    "path": "test/goldens/design_system/diary-page-saved-430.png",
+    "sha256": "168bc5610f0c87be0d450a144814b931e02c8e04cbea18c1253d414b66e5e823"
+  },
+  {
+    "path": "test/goldens/design_system/diary-rest-320.png",
+    "sha256": "3617bd14ec22c9539d4c973c5a3c9d8613c36842f87536933ce27ceb76e10813"
+  },
+  {
+    "path": "test/goldens/design_system/diary-rest-390.png",
+    "sha256": "51d419f84c5e4d8188d02786f9ea8c03591152412072019e842e6cff1d172b99"
+  },
+  {
+    "path": "test/goldens/design_system/diary-rest-430.png",
+    "sha256": "bd3442d1581c80639b86db95bf7913f5433e69e79c764bfedcceed01c672c16e"
+  },
+  {
+    "path": "test/goldens/design_system/diary-rest-selected-320.png",
+    "sha256": "e8556400f6d858e1b1d743813283475a006a83ecb2f00b797564f32e0337bc30"
+  },
+  {
+    "path": "test/goldens/design_system/diary-rest-selected-390.png",
+    "sha256": "972f96b51f6e8d110c10f341e78800c30359a8fa2a38667727303dbe81fa224d"
+  },
+  {
+    "path": "test/goldens/design_system/diary-rest-selected-430.png",
+    "sha256": "bd25bcb6275a9c0514383c7419a9f90178ebce2a443470e1fdb127991f1d2a38"
+  },
+  {
+    "path": "test/goldens/design_system/diary-state-body-bowel-320-2x.png",
+    "sha256": "76ef34fba3b0e945dfd6332eb93ff56d518151c956cff61fb0aa2b2ebaa3f580"
+  },
+  {
+    "path": "test/goldens/design_system/diary-state-body-bowel-320.png",
+    "sha256": "1f4599e168e692b87fd34a5a7acd963ba6b636a00743379113e63006ed37058a"
+  },
+  {
+    "path": "test/goldens/design_system/diary-state-body-bowel-390-2x.png",
+    "sha256": "3e491aee79523b683796c7734c14f7b2e2edff0104538c0b0a84105bbec9d735"
+  },
+  {
+    "path": "test/goldens/design_system/diary-state-body-bowel-390.png",
+    "sha256": "dd4477c12d9450401082156a1f1c47ac7c8677da9d296757bf3ff40396a760a2"
+  },
+  {
+    "path": "test/goldens/design_system/diary-state-body-bowel-430-2x.png",
+    "sha256": "65e40ab3055f6d1c38d7b0ad76e81dcde5cb62ff307f7d50fcd46d4c8e73befd"
+  },
+  {
+    "path": "test/goldens/design_system/diary-state-body-bowel-430.png",
+    "sha256": "334f49d6dbd486eb65a1bf5c470720f735fb1d64ec50fd460d406f37b0da1e04"
+  },
+  {
+    "path": "test/goldens/design_system/diary-state-body-discomfort-320-2x.png",
+    "sha256": "db2261a855c5fd70d5b759bdebeb6cbfd27f5912273b8339fc14b2e2da878f24"
+  },
+  {
+    "path": "test/goldens/design_system/diary-state-body-discomfort-320.png",
+    "sha256": "3a7a89c2a31fa3915e53621ece69a8a998b1d508eb49b97a74f7daed768e05ac"
+  },
+  {
+    "path": "test/goldens/design_system/diary-state-body-discomfort-390-2x.png",
+    "sha256": "5e69c9415f60faaa9009807fde0b088e66043ae01f84458aa455853b3ca2a051"
+  },
+  {
+    "path": "test/goldens/design_system/diary-state-body-discomfort-390.png",
+    "sha256": "b43ef1639f7de55c3b2f7e30988895b7c04e91020afd4cee74ccdc2ae021370b"
+  },
+  {
+    "path": "test/goldens/design_system/diary-state-body-discomfort-430-2x.png",
+    "sha256": "6e75f70de91a3f272d9e9a6bb01b4462bee786b8a3a5c72e4cab8cb5879446b4"
+  },
+  {
+    "path": "test/goldens/design_system/diary-state-body-discomfort-430.png",
+    "sha256": "6602b6dcb77a36bc54e19daa62dea6da3193eaae2114a41da4549be4b21d673c"
+  },
+  {
+    "path": "test/goldens/design_system/diary-state-body-urination-320-2x.png",
+    "sha256": "d81401806030868e549a0cbb45bebd5f1074e97b6e99363f72da4e2e88cdab5f"
+  },
+  {
+    "path": "test/goldens/design_system/diary-state-body-urination-320.png",
+    "sha256": "e54f8b94bd65d15f873e9d160d8d74795ab7fe2c65e7737afafd6f963bc35e68"
+  },
+  {
+    "path": "test/goldens/design_system/diary-state-body-urination-390-2x.png",
+    "sha256": "013ae541efad748f2ee7796e78c70fa9b94084688839818e718d07a1337981ea"
+  },
+  {
+    "path": "test/goldens/design_system/diary-state-body-urination-390.png",
+    "sha256": "b1be1248784cf276ca464f2bb77fe14fe3bc66dcea57fb006cb368e5588ff5bd"
+  },
+  {
+    "path": "test/goldens/design_system/diary-state-body-urination-430-2x.png",
+    "sha256": "611a6ae407038bac460854b38f0057dd71e497a9141f15e99568b330a82df3e6"
+  },
+  {
+    "path": "test/goldens/design_system/diary-state-body-urination-430.png",
+    "sha256": "803f175e7153455a0f91e7435859b18047e68e4d8665808a814cdce3d049c7d5"
+  },
+  {
+    "path": "test/goldens/design_system/diary-state-empty-validation-320-2x.png",
+    "sha256": "62e185f04021d68adda20c87e400edced3fe7d43c6b8020eb2f6f214a3f3cc85"
+  },
+  {
+    "path": "test/goldens/design_system/diary-state-empty-validation-320.png",
+    "sha256": "3a45e49eef619ac54dfcbd0a1eea7b898e22f08c9df6cacc03dc7c4a3fe11c3f"
+  },
+  {
+    "path": "test/goldens/design_system/diary-state-empty-validation-390-2x.png",
+    "sha256": "12f013e548b1ffe6ec08a8522a1936fcbdaefb39359541a71d1c377c35502cfe"
+  },
+  {
+    "path": "test/goldens/design_system/diary-state-empty-validation-390.png",
+    "sha256": "bf020eb39e7e71005738f0a87fa0761811f5d86bd4ae799eb1f2ce7fc5d5a6b7"
+  },
+  {
+    "path": "test/goldens/design_system/diary-state-empty-validation-430-2x.png",
+    "sha256": "26b1a013bfc01feca58af28075589b67114f3ba53d1ed453390a0d4f63aeffb9"
+  },
+  {
+    "path": "test/goldens/design_system/diary-state-empty-validation-430.png",
+    "sha256": "ccb9b63d9795582499c847a64592316930801b1843663f7d7b181886d5437b53"
+  },
+  {
+    "path": "test/goldens/design_system/diary-state-rest-day-320-2x.png",
+    "sha256": "c3cae4ace4123b7f54667faaea9e037630c0a15151c34c788e2a0d4e739d04f7"
+  },
+  {
+    "path": "test/goldens/design_system/diary-state-rest-day-320.png",
+    "sha256": "1f565bfa35b4d6c946956465e248f504565ed35b9f02a2c503ef6b623b975b7e"
+  },
+  {
+    "path": "test/goldens/design_system/diary-state-rest-day-390-2x.png",
+    "sha256": "22dee11629a9a3f4865ea0177fc81cce4d43d551ef5099e4248da60cbc7401c7"
+  },
+  {
+    "path": "test/goldens/design_system/diary-state-rest-day-390.png",
+    "sha256": "cdd86f45d1431d860d599d61f82daae4b910ec5ffcba93935d45b7c518e98ddc"
+  },
+  {
+    "path": "test/goldens/design_system/diary-state-rest-day-430-2x.png",
+    "sha256": "e4a41f9bba2c4abaee9c04731170f6a20c112a0f73174dec4a0eae60567fdcf4"
+  },
+  {
+    "path": "test/goldens/design_system/diary-state-rest-day-430.png",
+    "sha256": "6d05a9540ac5b2e048c53db9f7165413464d1de0afcb1a9f157e4020f06e249d"
+  },
+  {
+    "path": "test/goldens/design_system/diary-state-rest-disruptions-320-2x.png",
+    "sha256": "118744752a24a8ffaf8728a9ba98d505813170de15e7f23fa154089f9ad2f015"
+  },
+  {
+    "path": "test/goldens/design_system/diary-state-rest-disruptions-320.png",
+    "sha256": "78ecd5c26acffb7cf8847fbd0bfce90086d2eff3858ba24da79c1511aa9934fc"
+  },
+  {
+    "path": "test/goldens/design_system/diary-state-rest-disruptions-390-2x.png",
+    "sha256": "b1eca426b7035e43391d1a70b75cd30438fc3ba6dde63e9241c0719f8e0a1a87"
+  },
+  {
+    "path": "test/goldens/design_system/diary-state-rest-disruptions-390.png",
+    "sha256": "1f87c2453a50ab3ef9b6e3ae99d69779a9db2aee3249f38a76aabdffaa5956af"
+  },
+  {
+    "path": "test/goldens/design_system/diary-state-rest-disruptions-430-2x.png",
+    "sha256": "b21f9bc23aab6c51d6f2d61dfd7a4193152e28ad6642f99cbb6236a7442680b3"
+  },
+  {
+    "path": "test/goldens/design_system/diary-state-rest-disruptions-430.png",
+    "sha256": "d112b02c1909c825e9995a61b8a1b6425d8e0648da0750f0c597ee70cead2a25"
+  },
+  {
+    "path": "test/goldens/design_system/diary-state-rest-stretch-320-2x.png",
+    "sha256": "90c187209e8ec4c878a6ae8109cea82225d7d003a90934b254ccd73153e5f9f6"
+  },
+  {
+    "path": "test/goldens/design_system/diary-state-rest-stretch-320.png",
+    "sha256": "8b244c0424f6727cb72b51c1742d334a0b42dcdefd84360854044abcd8633163"
+  },
+  {
+    "path": "test/goldens/design_system/diary-state-rest-stretch-390-2x.png",
+    "sha256": "cd5c63ed79875ea6138e5b587877da9f820fff262a4001f1d5cfa83a733f3ac6"
+  },
+  {
+    "path": "test/goldens/design_system/diary-state-rest-stretch-390.png",
+    "sha256": "5918f2bcd0a8a9bf152254316045b442b84b79b36eec0854bb8ed46ed4ca4899"
+  },
+  {
+    "path": "test/goldens/design_system/diary-state-rest-stretch-430-2x.png",
+    "sha256": "41adcd0cb9b05f795334c6a9c1f65bc63618b3aa13bde3f7d54a668543ee0797"
+  },
+  {
+    "path": "test/goldens/design_system/diary-state-rest-stretch-430.png",
+    "sha256": "1a88ce57dffe59b9dbbf23b6a7176bc5475458a53208cbbeb96eaa6992ff5009"
+  },
+  {
+    "path": "test/goldens/product_baseline/diary-320.png",
+    "sha256": "ff225c5e0259008b10e322c34e9f2718de6d081470e8a324b49a6f63af65555c"
+  },
+  {
+    "path": "test/goldens/product_baseline/diary-390.png",
+    "sha256": "7ef76448bbd6418b7f398ef11369b2c6589f6a55230a6c7aaa81d34962f43c7b"
+  },
+  {
+    "path": "test/goldens/product_baseline/diary-430.png",
+    "sha256": "088d93631145158a47f6965c1ec14385cc913f0942b90b982e6511521ca7ded7"
+  },
+  {
+    "path": "test/goldens/ui_refactor/diary-cleared-validation-320-1x.png",
+    "sha256": "54a10690a3e269cc76275fb4676ff18d0e90f1be31ba242b8e0c02d285210f28"
+  },
+  {
+    "path": "test/goldens/ui_refactor/diary-cleared-validation-320-2x.png",
+    "sha256": "0d3115108041d09c1c997f72bed30aa134dc10345a665db5532a4f597fa24475"
+  },
+  {
+    "path": "test/goldens/ui_refactor/diary-cleared-validation-390-1x.png",
+    "sha256": "344cfb89de5ef7bfa859f60b9e71e64bb659a89e591e853db075ca77853e62db"
+  },
+  {
+    "path": "test/goldens/ui_refactor/diary-cleared-validation-390-2x.png",
+    "sha256": "0aa3123c108cfc84e5f8805359b0783c34d84fb787327887e736e8f875761d65"
+  },
+  {
+    "path": "test/goldens/ui_refactor/diary-cleared-validation-430-1x.png",
+    "sha256": "b646856c5f0c410a47d00542fd292d6e03db77bb7938797c3712ceb18aec7811"
+  },
+  {
+    "path": "test/goldens/ui_refactor/diary-cleared-validation-430-2x.png",
+    "sha256": "7ca092458f7fcb420cf452790bdc919ef159618bd9271913c0ee08cca0f00601"
+  },
+  {
+    "path": "test/goldens/ui_refactor/diary-conflict-320-1x.png",
+    "sha256": "2260b1a616361fcabdcb9d07681df82af7824aba1ff196e8fa89ff1023677cbb"
+  },
+  {
+    "path": "test/goldens/ui_refactor/diary-conflict-320-2x.png",
+    "sha256": "3fcbce4ac5828976c721bad35095ecc08b114c399eeddbac7d26fd1e5dbc3da7"
+  },
+  {
+    "path": "test/goldens/ui_refactor/diary-conflict-390-1x.png",
+    "sha256": "6187e3e0454ccd52579663fd16516ad748f04b4ca31e89ac1f4e87539d85d84e"
+  },
+  {
+    "path": "test/goldens/ui_refactor/diary-conflict-390-2x.png",
+    "sha256": "13aae0bc00ddc0795d119c3e299cd3c0e377fbb0a1492458a981ee15ac7ccf5e"
+  },
+  {
+    "path": "test/goldens/ui_refactor/diary-conflict-430-1x.png",
+    "sha256": "9d104fae14ae8dc2062f2fe7130f4a68e98a79f2272ba12a81e9924a13298049"
+  },
+  {
+    "path": "test/goldens/ui_refactor/diary-conflict-430-2x.png",
+    "sha256": "e06172083ae141083f47ab9901ad986c7b5a4428c85b11a692a14b9326bda1e5"
+  },
+  {
+    "path": "test/goldens/ui_refactor/diary-discard-confirm-320-1x.png",
+    "sha256": "7a06974ef23b7da5d83a7dc21e85e4795f69ba4dd7274a89117bdaa0547beb0f"
+  },
+  {
+    "path": "test/goldens/ui_refactor/diary-discard-confirm-320-2x.png",
+    "sha256": "16d5f94b8803944c66c403786ef12d71d0e5acda262371f44d472b3bd734471f"
+  },
+  {
+    "path": "test/goldens/ui_refactor/diary-discard-confirm-390-1x.png",
+    "sha256": "dbdfc5b920699ddc9399280b23a5caea2af2d4ef2ab60992411aef2fb66116bb"
+  },
+  {
+    "path": "test/goldens/ui_refactor/diary-discard-confirm-390-2x.png",
+    "sha256": "9bb485513ff37b5f2570461b4974f6f671a783ea490015dfa59d6d67f969bef4"
+  },
+  {
+    "path": "test/goldens/ui_refactor/diary-discard-confirm-430-1x.png",
+    "sha256": "f923acca042682ef4d4c9cf75ad871d026dc7a93f6fa6ed54562427607845853"
+  },
+  {
+    "path": "test/goldens/ui_refactor/diary-discard-confirm-430-2x.png",
+    "sha256": "923f64c075d647cbc7139bbe2e0e8510ddd73f43707bab71cdca8743670cd727"
+  },
+  {
+    "path": "test/goldens/ui_refactor/diary-exclusive-pressure-320-1x.png",
+    "sha256": "6d371ef3405e8e9e0ba7eea3e37546c1dd9a3b298c992b79dd8bba7d36503beb"
+  },
+  {
+    "path": "test/goldens/ui_refactor/diary-exclusive-pressure-320-2x.png",
+    "sha256": "ff667935583ac88506bbf57db6c20f791143a1b9064ecd16ae44f24923db92c5"
+  },
+  {
+    "path": "test/goldens/ui_refactor/diary-exclusive-pressure-390-1x.png",
+    "sha256": "ffcaf1298366724491e7a692f0f40cdb9da0e221891549f7f4885af16a697248"
+  },
+  {
+    "path": "test/goldens/ui_refactor/diary-exclusive-pressure-390-2x.png",
+    "sha256": "65cde13f9f38ee4ee09faf619d2cc5d52e7aab963f7732efdd7fd1146af53810"
+  },
+  {
+    "path": "test/goldens/ui_refactor/diary-exclusive-pressure-430-1x.png",
+    "sha256": "cfec2865fda6efd0879e7747f793c18adf0bdb8018d727ccf1fb50be2a0b8c0d"
+  },
+  {
+    "path": "test/goldens/ui_refactor/diary-exclusive-pressure-430-2x.png",
+    "sha256": "e4c898f8aed7e8ff09094b0d955485be7fe40ab3b8e1b90f442d5684f2274b86"
+  },
+  {
+    "path": "test/goldens/ui_refactor/diary-loading-320-1x.png",
+    "sha256": "a793d94210165d07bffcd09ae6c9eadc3b18b2e49cd2b8714431376c41cf50c1"
+  },
+  {
+    "path": "test/goldens/ui_refactor/diary-loading-320-2x.png",
+    "sha256": "0808c00ad03d35dcbdeeab90248b30e0cc1b85aabd50c50ff26afa472d8b28c8"
+  },
+  {
+    "path": "test/goldens/ui_refactor/diary-loading-390-1x.png",
+    "sha256": "759194ee294082ec28189082fe0153976fe56acf89c5e6b2140835a3f5ea46ba"
+  },
+  {
+    "path": "test/goldens/ui_refactor/diary-loading-390-2x.png",
+    "sha256": "83a52c2b97a89e301281f8590463f8e131ae6665cb7e590ff2f40a557e4d70ee"
+  },
+  {
+    "path": "test/goldens/ui_refactor/diary-loading-430-1x.png",
+    "sha256": "96f33bece169a2261169bb2a65df51b2b213d32a30467d5bc18b8c18c3039444"
+  },
+  {
+    "path": "test/goldens/ui_refactor/diary-loading-430-2x.png",
+    "sha256": "378017193ed56383c8884f0168c33f0a9b2ffa4c72eef8afc2832cacf9b9c2f9"
+  },
+  {
+    "path": "test/goldens/ui_refactor/diary-note-limit-320-1x.png",
+    "sha256": "a0395b3565600f076f36fbeaad6b4f9a92e8e7890e6027e168f9044f02f9246f"
+  },
+  {
+    "path": "test/goldens/ui_refactor/diary-note-limit-320-2x.png",
+    "sha256": "15a0103f6dac3f45da4ba22444bf3df31601b4dcd87c68a2e8fa47caf3d96b4b"
+  },
+  {
+    "path": "test/goldens/ui_refactor/diary-note-limit-390-1x.png",
+    "sha256": "9a55148e8fdb102480b91e5da316e05991e8f40e74c491ceeb48f572ce884f20"
+  },
+  {
+    "path": "test/goldens/ui_refactor/diary-note-limit-390-2x.png",
+    "sha256": "567579c28a4c8cb0b6244ba476d700188355c1bd2cbae5180f7d0688c607c56a"
+  },
+  {
+    "path": "test/goldens/ui_refactor/diary-note-limit-430-1x.png",
+    "sha256": "c5b18091d1eb85f0fe9e226bc88efca19bf45e9b7f94d691156a160df23ba461"
+  },
+  {
+    "path": "test/goldens/ui_refactor/diary-note-limit-430-2x.png",
+    "sha256": "7de94a155649842b64039dee3b94a8921c3a314ef14ddd2ee1d6d77e3d143a96"
+  },
+  {
+    "path": "test/goldens/ui_refactor/diary-quick-mood-320-1x.png",
+    "sha256": "7050a1a4e788f77cb9e148e8727eb52143e7c1293cc2b4636d9d45cc9fc86294"
+  },
+  {
+    "path": "test/goldens/ui_refactor/diary-quick-mood-320-2x.png",
+    "sha256": "4cc711435e8c788790a0659ee177ebfcc8105cb7a63bbadedf1a5e445cf40bc9"
+  },
+  {
+    "path": "test/goldens/ui_refactor/diary-quick-mood-390-1x.png",
+    "sha256": "159b56d77bc5412848328a6ae5d1ccb32c2d3ebebb3430ef0aa0339428ef8de1"
+  },
+  {
+    "path": "test/goldens/ui_refactor/diary-quick-mood-390-2x.png",
+    "sha256": "75fdd92b5abfd13633276f5f72f96ae0b93238e77f9efbdb4c513aca7ff2d18e"
+  },
+  {
+    "path": "test/goldens/ui_refactor/diary-quick-mood-430-1x.png",
+    "sha256": "5292e58a29b176e1b8fbd147384c879ebb9dfc8821393499548747125d94f766"
+  },
+  {
+    "path": "test/goldens/ui_refactor/diary-quick-mood-430-2x.png",
+    "sha256": "94f0f46e177c13f48715939df55b604fe77773c6efca55795ce2c0a10f5ff23b"
+  },
+  {
+    "path": "test/goldens/ui_refactor/diary-read-error-320-1x.png",
+    "sha256": "4f26cedb720c7eaeea4bba147637ae702762d672a03f7922729fd1ea32a5d8b0"
+  },
+  {
+    "path": "test/goldens/ui_refactor/diary-read-error-320-2x.png",
+    "sha256": "43ea4530193d1d166a758f98c83c8ef961e885b8ad1399994526464f5ee0e22f"
+  },
+  {
+    "path": "test/goldens/ui_refactor/diary-read-error-390-1x.png",
+    "sha256": "c3abbc06665820c085211a5f6bcca7219450b36caf418e9f6ea6b597f22ee95b"
+  },
+  {
+    "path": "test/goldens/ui_refactor/diary-read-error-390-2x.png",
+    "sha256": "4f429508cb6575100d95f911182f79e6615afa954b544462bc196eea1c384084"
+  },
+  {
+    "path": "test/goldens/ui_refactor/diary-read-error-430-1x.png",
+    "sha256": "da61c1d224dcc08a827ea2a22132de6b775d3b677d823eef590571b2eef5b4da"
+  },
+  {
+    "path": "test/goldens/ui_refactor/diary-read-error-430-2x.png",
+    "sha256": "37556bfa15716dbafcffe6c29ed80acdaa5fe8c8cd932578c3b9fc60cd630e37"
+  },
+  {
+    "path": "test/goldens/ui_refactor/diary-saved-long-note-320-1x.png",
+    "sha256": "3f5584f7835ae16d5870ba74990f1ddb32c01735f5f1296279d50737823cfc33"
+  },
+  {
+    "path": "test/goldens/ui_refactor/diary-saved-long-note-320-2x.png",
+    "sha256": "7fa2ff65719334e63c6ac2648796f9fa8165e5c0bf1731bc3b1cd96183369aa5"
+  },
+  {
+    "path": "test/goldens/ui_refactor/diary-saved-long-note-390-1x.png",
+    "sha256": "e2ddef3fc57a5e5df9765593014e14a39691c527ad9365b13b2bf522fe5138e3"
+  },
+  {
+    "path": "test/goldens/ui_refactor/diary-saved-long-note-390-2x.png",
+    "sha256": "28e84ab8919f0b01f91adfd4a69aea76b18f0f09e97b0021e8ec2de670c292ca"
+  },
+  {
+    "path": "test/goldens/ui_refactor/diary-saved-long-note-430-1x.png",
+    "sha256": "5bea2cc301f89bcf1e3285bf5e319b12e53be5705e98e0defdffaaf5f641ef73"
+  },
+  {
+    "path": "test/goldens/ui_refactor/diary-saved-long-note-430-2x.png",
+    "sha256": "29bb1ecadb4431cd4f292d395fe45d8b4bf44628a4d0a9bade00052592c6e57d"
+  },
+  {
+    "path": "test/goldens/ui_refactor/diary-saving-320-1x.png",
+    "sha256": "d6f9ba2c6817a763001dd510163f7344ee69c64289d3524de826552d0caf98dd"
+  },
+  {
+    "path": "test/goldens/ui_refactor/diary-saving-320-2x.png",
+    "sha256": "bd3882a8de205b164b892ca23020ccb45ac00f71ae6e028ba75943041ea531d0"
+  },
+  {
+    "path": "test/goldens/ui_refactor/diary-saving-390-1x.png",
+    "sha256": "b5593230d7d6a254e5e1a5b52e324371621a675c5bc47806a24df1bd989fdeb5"
+  },
+  {
+    "path": "test/goldens/ui_refactor/diary-saving-390-2x.png",
+    "sha256": "2f44e03cb76e31a0fbd21a99132626767c039abce44eed69c52d58ad08afa35d"
+  },
+  {
+    "path": "test/goldens/ui_refactor/diary-saving-430-1x.png",
+    "sha256": "4ef746c31908352ebdc1caceff9607dec79dab36b16d6182ecbde99675e15c13"
+  },
+  {
+    "path": "test/goldens/ui_refactor/diary-saving-430-2x.png",
+    "sha256": "5717f664f8b926c0bba0c1c81d3efcca535fab0ca22409029dbfc63222f2228f"
+  }
+]

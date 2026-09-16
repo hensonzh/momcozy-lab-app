@@ -1,0 +1,11 @@
+{
+  "lib/features/agent_hub/agent_hub_page.dart": "dd4337c095c001286b6b212f007a68dc989f96fc39873e5974d5ffc6e3c0327f",
+  "lib/features/agent_hub/artifacts/cards/agent_result_card.dart": "7b382d4f4c2b25593a1eb66be213fc95d406ba23d90bd504c93e93fc203b3f29",
+  "lib/features/agent_hub/artifacts/cards/agent_artifact_card_registry.dart": "70281c706e7a7ba290687dc8511d54490a044e12a7824c7868624c0d03addff4",
+  "lib/features/agent_hub/artifacts/agent_artifact_panel.dart": "034d14ed097cc402d04ad35bf32189a1a08dcdf0a0d89370a173da0e84972588",
+  "lib/features/agent_hub/artifacts/forms/agent_artifact_form_dialog.dart": "a1565dabf4d3a6d3956c710165fc53ba6608cb90b65887f0ceced2dad9f54040",
+  "test/support/agent_markdown_scenarios.dart": "86aeb124274dd97ff642295f51f8078d741592f980cfb1d3bdaf1b2834a4f7d2",
+  "test/features/agent_hub/agent_resource_card_design_test.dart": "69d0658ec795199e6ab5dab2177cd2a534bc3ab88b3a7f3dc7c47e15ab1f37a7",
+  "test/features/agent_hub/agent_me_design_test.dart": "e8fbe436e75d589844844c5d4229561d0ab212e310764a6e3a521ae3974970fb",
+  "test/features/agent_hub/agent_hub_page_test.dart": "0c8d2dc3caf78fef7704b4eac568eb2d3c81e18635f9546ab433acd2bdfcaf8b"
+}

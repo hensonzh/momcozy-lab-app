@@ -270,9 +270,21 @@ class ConsultationRoomController extends ChangeNotifier {
 
   Future<void> _disconnectAndReport() async {
     final connection = _connectionId;
+    final generation = _generation;
+    final lastPresenceAt = _lastPresenceAt;
     _connectionId = null;
     _lastPresenceAt = null;
-    await media.disconnect();
+    try {
+      await media.disconnect();
+    } catch (_) {
+      // Suppress presence while disconnecting, but retain the same connection
+      // for retry if local cleanup fails. Never restore a replaced/disposed one.
+      if (!_disposed && generation == _generation && _connectionId == null) {
+        _connectionId = connection;
+        _lastPresenceAt = lastPresenceAt;
+      }
+      rethrow;
+    }
     if (connection != null) await _reportLeft(connection);
   }
 

@@ -89,10 +89,9 @@ void main() {
           (widget.image as AssetImage).assetName == MomCozyAssets.momcozyLogo,
     );
     expect(leadingIcon, findsOneWidget);
-    expect(brandLogo, findsOneWidget);
+    expect(brandLogo, findsNothing);
     final titleCenterY = tester.getCenter(title).dy;
     expect(tester.getCenter(leadingIcon).dy, closeTo(titleCenterY, 0.5));
-    expect(tester.getCenter(brandLogo).dy, closeTo(titleCenterY, 0.5));
 
     await tester.tap(find.text('开始评估'));
     await tester.pump();

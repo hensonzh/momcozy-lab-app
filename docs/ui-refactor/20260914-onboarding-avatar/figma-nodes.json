@@ -1,0 +1,242 @@
+[
+  {
+    "id": "234:1108",
+    "name": "Onboarding avatar / 创建形象",
+    "x": 80,
+    "y": 104000,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "234:1125",
+    "name": "Onboarding avatar / 照片失败",
+    "x": 520,
+    "y": 104000,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "234:1144",
+    "name": "Onboarding avatar / 照片来源",
+    "x": 960,
+    "y": 104000,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "234:1168",
+    "name": "Onboarding avatar / 使用原形象确认",
+    "x": 1400,
+    "y": 104000,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "234:1193",
+    "name": "Onboarding avatar / 上传中",
+    "x": 1840,
+    "y": 104000,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "234:1210",
+    "name": "Onboarding avatar / 排队中",
+    "x": 2280,
+    "y": 104000,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "234:1230",
+    "name": "Onboarding avatar / 生成中",
+    "x": 2720,
+    "y": 104000,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "234:1250",
+    "name": "Onboarding avatar / 准备中",
+    "x": 3160,
+    "y": 104000,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "234:1270",
+    "name": "Onboarding avatar / 后台生成提示",
+    "x": 3600,
+    "y": 104000,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "234:1298",
+    "name": "Onboarding avatar / 候选未选择",
+    "x": 80,
+    "y": 105800,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "234:1328",
+    "name": "Onboarding avatar / 候选已选",
+    "x": 520,
+    "y": 105800,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "234:1358",
+    "name": "Onboarding avatar / 原形象已选",
+    "x": 960,
+    "y": 105800,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "234:1388",
+    "name": "Onboarding avatar / 缩略图加载中",
+    "x": 1400,
+    "y": 105800,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "234:1418",
+    "name": "Onboarding avatar / 缩略图失败",
+    "x": 1840,
+    "y": 105800,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "234:1448",
+    "name": "Onboarding avatar / 确认失败",
+    "x": 2280,
+    "y": 105800,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "234:1480",
+    "name": "Onboarding avatar / 确认中",
+    "x": 2720,
+    "y": 105800,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "234:1510",
+    "name": "Onboarding avatar / 更换形象",
+    "x": 3160,
+    "y": 105800,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "234:1524",
+    "name": "Onboarding avatar / 形象已启用",
+    "x": 3600,
+    "y": 105800,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "234:1534",
+    "name": "Onboarding avatar / 大字号创建",
+    "x": 80,
+    "y": 107600,
+    "width": 320,
+    "height": 844
+  },
+  {
+    "id": "234:1550",
+    "name": "Onboarding avatar / 短屏照片说明",
+    "x": 520,
+    "y": 107600,
+    "width": 320,
+    "height": 568
+  },
+  {
+    "id": "234:1566",
+    "name": "Onboarding avatar / 大字号照片来源",
+    "x": 960,
+    "y": 107600,
+    "width": 320,
+    "height": 844
+  },
+  {
+    "id": "234:1589",
+    "name": "Onboarding avatar / 大字号默认确认",
+    "x": 1400,
+    "y": 107600,
+    "width": 320,
+    "height": 844
+  },
+  {
+    "id": "234:1613",
+    "name": "Onboarding avatar / 大字号生成进度",
+    "x": 1840,
+    "y": 107600,
+    "width": 320,
+    "height": 844
+  },
+  {
+    "id": "234:1633",
+    "name": "Onboarding avatar / 大字号后台提示",
+    "x": 2280,
+    "y": 107600,
+    "width": 320,
+    "height": 844
+  },
+  {
+    "id": "234:1661",
+    "name": "Onboarding avatar / 短屏候选操作",
+    "x": 2720,
+    "y": 107600,
+    "width": 320,
+    "height": 568
+  },
+  {
+    "id": "234:1691",
+    "name": "Onboarding avatar / 大字号图片失败",
+    "x": 3160,
+    "y": 107600,
+    "width": 320,
+    "height": 844
+  },
+  {
+    "id": "234:1721",
+    "name": "Onboarding avatar / 更换失败保留原形象",
+    "x": 3600,
+    "y": 107600,
+    "width": 320,
+    "height": 844
+  },
+  {
+    "id": "234:1736",
+    "name": "Onboarding avatar / 任务提示合集",
+    "x": 80,
+    "y": 109400,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "234:1753",
+    "name": "Onboarding avatar / 大字号任务提示",
+    "x": 520,
+    "y": 109400,
+    "width": 320,
+    "height": 844
+  },
+  {
+    "id": "234:1770",
+    "name": "Onboarding avatar / 短屏任务提示",
+    "x": 960,
+    "y": 109400,
+    "width": 320,
+    "height": 568
+  }
+]

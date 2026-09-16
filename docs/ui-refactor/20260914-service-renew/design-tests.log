@@ -1,0 +1,16 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/modules/services/service_renew_test.dart
+00:00 +0: renew selection opens existing eligibility flow 320.0/1.0
+00:00 +1: renew selection opens existing eligibility flow 320.0/2.0
+00:00 +2: renew selection opens existing eligibility flow 390.0/1.0
+00:00 +3: renew selection opens existing eligibility flow 390.0/2.0
+00:01 +4: renew selection opens existing eligibility flow 430.0/1.0
+00:01 +5: renew selection opens existing eligibility flow 430.0/2.0
+00:01 +6: renew pays through existing controller and opens new booking
+00:01 +7: pending order reopens without new purchase; retry locks duplicate taps
+00:01 +8: ongoing service navigates without making a new order
+00:01 +9: disabled purchase, empty catalog, offline retry are explicit
+00:01 +10: short large catalog loads, scrolls and returns without ordering
+00:01 +11: owned service remains reachable with purchase disabled CareEpisodeStatus.paused
+00:01 +12: owned service remains reachable with purchase disabled CareEpisodeStatus.provisioningPending
+00:01 +13: refresh prevents selection until current catalog is ready
+00:02 +14: All tests passed!

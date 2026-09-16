@@ -182,14 +182,46 @@ void main() {
               ),
             );
           }
+          if ((width == 390 && scale == 1) || (width == 320 && scale == 2)) {
+            if (scale == 2) {
+              await expectLater(
+                find.byType(MaterialApp),
+                matchesGoldenFile(
+                  '../../goldens/design_system/baby-editor-current-${kind.name}-top-320-2x.png',
+                ),
+              );
+            }
+            final position = tester
+                .state<ScrollableState>(find.byType(Scrollable).first)
+                .position;
+            if (kind == BabyRecordKind.diaper ||
+                kind == BabyRecordKind.development) {
+              position.jumpTo(position.maxScrollExtent / 2);
+              await tester.pumpAndSettle();
+              await expectLater(
+                find.byType(MaterialApp),
+                matchesGoldenFile(
+                  '../../goldens/design_system/baby-editor-current-${kind.name}-middle-${width.toInt()}-${scale.toInt()}x.png',
+                ),
+              );
+            }
+            position.jumpTo(position.maxScrollExtent);
+            await tester.pumpAndSettle();
+            await expectLater(
+              find.byType(MaterialApp),
+              matchesGoldenFile(
+                '../../goldens/design_system/baby-editor-current-${kind.name}-end-${width.toInt()}-${scale.toInt()}x.png',
+              ),
+            );
+          }
           if (width == 320 && kind == BabyRecordKind.feeding) {
             tester.view.viewInsets = const FakeViewPadding(bottom: 320);
             addTearDown(tester.view.resetViewInsets);
             await tester.pumpAndSettle();
           }
-          await tester.ensureVisible(find.text('保存记录'));
+          await tester.ensureVisible(find.byKey(const ValueKey('baby-save')));
           await tester.pumpAndSettle();
-          await tester.tap(find.text('保存记录'));
+          await tester.tap(find.byKey(const ValueKey('baby-save')));
           await tester.pumpAndSettle();
           expect(saved, isNotEmpty);
           expect(saved!.every((record) => record.babyId == 'baby'), isTrue);
@@ -206,6 +238,7 @@ void main() {
         (tester) async {
           viewport(tester, width);
           final repo = populated();
+          var privacyOpened = false;
           await tester.pumpWidget(
             app(
               BabyRecordsPage(
@@ -215,6 +248,7 @@ void main() {
                 timezoneProvider: () async => 'Asia/Shanghai',
                 now: () => babyTestNow,
                 onBack: () {},
+                onPrivacy: () => privacyOpened = true,
               ),
               textScale: scale,
             ),
@@ -229,15 +263,40 @@ void main() {
               ),
             );
           }
-          await tester.ensureVisible(find.text('编辑'));
+          await tester.scrollUntilVisible(
+            find.text('数据来源'),
+            220,
+            scrollable: find.byType(Scrollable).first,
+          );
+          await tester.pumpAndSettle();
+          await tester.tap(find.text('数据来源'));
+          await tester.pumpAndSettle();
+          await tester.ensureVisible(find.text('隐私与授权'));
+          await tester.pumpAndSettle();
+          await tester.tap(find.text('隐私与授权'));
+          expect(privacyOpened, isTrue);
+          if (width == 390 && scale == 1) {
+            await expectLater(
+              find.byType(MaterialApp),
+              matchesGoldenFile(
+                '../../goldens/design_system/baby-history-source-390.png',
+              ),
+            );
+          }
+          await tester.scrollUntilVisible(
+            find.text('编辑'),
+            -200,
+            scrollable: find.byType(Scrollable).first,
+          );
+          await tester.pumpAndSettle();
           await tester.tap(find.text('编辑'));
           await tester.pumpAndSettle();
           await tester.enterText(
             find.byKey(const ValueKey('feeding-volume')),
             '90',
           );
-          await tester.ensureVisible(find.text('保存记录'));
-          await tester.tap(find.text('保存记录'));
+          await tester.ensureVisible(find.byKey(const ValueKey('baby-save')));
+          await tester.tap(find.byKey(const ValueKey('baby-save')));
           await tester.pumpAndSettle();
           expect(
             repo.values.whereType<BabyFeedingRecord>().single.volumeMl,
@@ -312,53 +371,57 @@ void main() {
     expect(tester.takeException(), isNull);
     await tester.pumpWidget(const SizedBox());
   });
-  testWidgets('baby overview follows the compact product baseline', (
-    tester,
-  ) async {
-    viewport(tester, 390);
-    final boundary = GlobalKey();
-    await tester.pumpWidget(
-      app(
-        RepaintBoundary(
-          key: boundary,
-          child: Scaffold(
-            body: BabyHomePage(
-              controller: BabyHomeController(
-                profileRepository: BabyTestProfiles(),
-                recordRepository: populated(),
-                timezoneProvider: () async => 'Asia/Shanghai',
-                now: () => babyTestNow,
+  for (final width in [320.0, 390.0, 430.0]) {
+    testWidgets(
+      'baby overview matches the current product design at $width',
+      (tester) async {
+        viewport(tester, width);
+        final boundary = GlobalKey();
+        await tester.pumpWidget(
+          app(
+            RepaintBoundary(
+              key: boundary,
+              child: Scaffold(
+                body: BabyHomePage(
+                  controller: BabyHomeController(
+                    profileRepository: BabyTestProfiles(),
+                    recordRepository: populated(),
+                    timezoneProvider: () async => 'Asia/Shanghai',
+                    now: () => babyTestNow,
+                  ),
+                  onAsk: (_) {},
+                  onHistory: (_) async {},
+                ),
               ),
-              onAsk: (_) {},
-              onHistory: (_) async {},
             ),
           ),
-        ),
-      ),
+        );
+        await tester.pumpAndSettle();
+        await tester.runAsync(
+          () => precacheImage(
+            const AssetImage('assets/images/momcozy-agent.png'),
+            tester.element(find.byType(MaterialApp)),
+          ),
+        );
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+        await expectLater(
+          find.byKey(boundary),
+          matchesGoldenFile('goldens/baby-home-${width.toInt()}.png'),
+        );
+        await tester.scrollUntilVisible(
+          find.text('查看全部记录'),
+          220,
+          scrollable: find.byType(Scrollable).first,
+        );
+        await tester.pumpAndSettle();
+        await expectLater(
+          find.byKey(boundary),
+          matchesGoldenFile('goldens/baby-growth-${width.toInt()}.png'),
+        );
+        await tester.pumpWidget(const SizedBox());
+      },
+      tags: ['golden'],
     );
-    await tester.pumpAndSettle();
-    await tester.runAsync(
-      () => precacheImage(
-        const AssetImage('assets/images/momcozy-agent.png'),
-        tester.element(find.byType(MaterialApp)),
-      ),
-    );
-    await tester.pumpAndSettle();
-    expect(tester.takeException(), isNull);
-    await expectLater(
-      find.byKey(boundary),
-      matchesGoldenFile('goldens/baby-home-390.png'),
-    );
-    await tester.scrollUntilVisible(
-      find.text('查看全部记录'),
-      220,
-      scrollable: find.byType(Scrollable).first,
-    );
-    await tester.pumpAndSettle();
-    await expectLater(
-      find.byKey(boundary),
-      matchesGoldenFile('goldens/baby-growth-390.png'),
-    );
-    await tester.pumpWidget(const SizedBox());
-  }, tags: ['golden']);
+  }
 }

@@ -1,0 +1,220 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart: (setUpAll)
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart: wet keeps its primary action visible at 320.0/1.0
+00:00 +1: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart: nursing keeps its primary action visible at 320.0/1.0
+00:00 +2: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart: sleep-start keeps its primary action visible at 320.0/1.0
+00:00 +3: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart: sleep-active keeps its primary action visible at 320.0/1.0
+00:00 +4: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart: wet keeps its primary action visible at 320.0/2.0
+00:00 +5: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart: nursing keeps its primary action visible at 320.0/2.0
+00:00 +6: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart: sleep-start keeps its primary action visible at 320.0/2.0
+00:00 +7: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart: sleep-active keeps its primary action visible at 320.0/2.0
+00:00 +8: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart: wet keeps its primary action visible at 390.0/1.0
+00:01 +9: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart: nursing keeps its primary action visible at 390.0/1.0
+00:01 +10: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart: sleep-start keeps its primary action visible at 390.0/1.0
+00:01 +11: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart: sleep-active keeps its primary action visible at 390.0/1.0
+00:01 +12: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart: wet keeps its primary action visible at 390.0/2.0
+00:01 +13: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart: nursing keeps its primary action visible at 390.0/2.0
+00:01 +14: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart: sleep-start keeps its primary action visible at 390.0/2.0
+00:01 +15: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart: sleep-active keeps its primary action visible at 390.0/2.0
+00:01 +16: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart: wet keeps its primary action visible at 430.0/1.0
+00:01 +17: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart: nursing keeps its primary action visible at 430.0/1.0
+00:01 +18: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart: sleep-start keeps its primary action visible at 430.0/1.0
+00:01 +19: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart: sleep-active keeps its primary action visible at 430.0/1.0
+00:01 +20: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart: wet keeps its primary action visible at 430.0/2.0
+00:01 +21: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart: nursing keeps its primary action visible at 430.0/2.0
+00:01 +22: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart: sleep-start keeps its primary action visible at 430.0/2.0
+00:01 +23: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart: sleep-active keeps its primary action visible at 430.0/2.0
+00:01 +24: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart: collapsed notes preserve the draft and uncertain save retries once
+00:01 +25: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_editor_states_test.dart: (tearDownAll)
+00:01 +25: loading /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_growth_empty_state_test.dart
+00:02 +25: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_growth_empty_state_test.dart: (setUpAll)
+00:02 +25: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_growth_empty_state_test.dart: missing birth growth profile at 320.0/1.0 is actionable without fabricated reference
+00:02 +26: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_growth_empty_state_test.dart: missing sex growth profile at 320.0/1.0 is actionable without fabricated reference
+00:02 +27: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_growth_empty_state_test.dart: missing both growth profile at 320.0/1.0 is actionable without fabricated reference
+00:03 +28: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_growth_empty_state_test.dart: missing birth growth profile at 320.0/2.0 is actionable without fabricated reference
+00:03 +29: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_growth_empty_state_test.dart: missing sex growth profile at 320.0/2.0 is actionable without fabricated reference
+00:03 +30: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_growth_empty_state_test.dart: missing both growth profile at 320.0/2.0 is actionable without fabricated reference
+00:03 +31: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_growth_empty_state_test.dart: missing birth growth profile at 390.0/1.0 is actionable without fabricated reference
+00:03 +32: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_growth_empty_state_test.dart: missing sex growth profile at 390.0/1.0 is actionable without fabricated reference
+00:03 +33: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_growth_empty_state_test.dart: missing both growth profile at 390.0/1.0 is actionable without fabricated reference
+00:03 +34: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_growth_empty_state_test.dart: missing birth growth profile at 390.0/2.0 is actionable without fabricated reference
+00:03 +35: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_growth_empty_state_test.dart: missing sex growth profile at 390.0/2.0 is actionable without fabricated reference
+00:03 +36: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_growth_empty_state_test.dart: missing both growth profile at 390.0/2.0 is actionable without fabricated reference
+00:03 +37: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_growth_empty_state_test.dart: missing birth growth profile at 430.0/1.0 is actionable without fabricated reference
+00:03 +38: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_growth_empty_state_test.dart: missing sex growth profile at 430.0/1.0 is actionable without fabricated reference
+00:04 +39: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_growth_empty_state_test.dart: missing both growth profile at 430.0/1.0 is actionable without fabricated reference
+00:04 +40: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_growth_empty_state_test.dart: missing birth growth profile at 430.0/2.0 is actionable without fabricated reference
+00:04 +41: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_growth_empty_state_test.dart: missing sex growth profile at 430.0/2.0 is actionable without fabricated reference
+00:04 +42: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_growth_empty_state_test.dart: missing both growth profile at 430.0/2.0 is actionable without fabricated reference
+00:04 +43: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_growth_empty_state_test.dart: (tearDownAll)
+00:04 +43: loading /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_home_controller_test.dart
+00:04 +43: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_home_controller_test.dart: late response from previous baby cannot replace the selected baby or its record state
+00:04 +44: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_home_controller_test.dart: an empty account does not request or invent a demo baby
+00:04 +45: loading /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_knowledge_and_summary_test.dart
+00:04 +45: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_knowledge_and_summary_test.dart: knowledge changes at local eight and ignores another baby and later events
+00:04 +46: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_knowledge_and_summary_test.dart: dated measurements become eligible on the next completed date, without invented timestamps
+00:04 +47: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_knowledge_and_summary_test.dart: daily sleep uses elapsed overlap while intake and nursing keep distinct known quantities
+00:04 +48: loading /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart
+00:05 +48: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: (setUpAll)
+00:05 +48: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: baby home and knowledge scroll with double text at 320.0
+00:05 +49: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: feeding editor remains usable at 320.0 / 1.0
+00:06 +50: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: feeding editor remains usable at 320.0 / 2.0
+00:06 +51: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: sleep editor remains usable at 320.0 / 1.0
+00:06 +52: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: sleep editor remains usable at 320.0 / 2.0
+00:06 +53: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: diaper editor remains usable at 320.0 / 1.0
+00:06 +54: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: diaper editor remains usable at 320.0 / 2.0
+00:06 +55: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: growth editor remains usable at 320.0 / 1.0
+00:06 +56: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: growth editor remains usable at 320.0 / 2.0
+00:06 +57: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: development editor remains usable at 320.0 / 1.0
+00:06 +58: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: development editor remains usable at 320.0 / 2.0
+00:06 +59: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: baby home and knowledge scroll with double text at 390.0
+00:06 +60: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: feeding editor remains usable at 390.0 / 1.0
+00:06 +61: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: feeding editor remains usable at 390.0 / 2.0
+00:06 +62: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: sleep editor remains usable at 390.0 / 1.0
+00:06 +63: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: sleep editor remains usable at 390.0 / 2.0
+00:06 +64: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: diaper editor remains usable at 390.0 / 1.0
+00:06 +65: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: diaper editor remains usable at 390.0 / 2.0
+00:06 +66: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: growth editor remains usable at 390.0 / 1.0
+00:06 +67: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: growth editor remains usable at 390.0 / 2.0
+00:06 +68: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: development editor remains usable at 390.0 / 1.0
+00:06 +69: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: development editor remains usable at 390.0 / 2.0
+00:06 +70: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: baby home and knowledge scroll with double text at 430.0
+00:07 +71: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: feeding editor remains usable at 430.0 / 1.0
+00:07 +72: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: feeding editor remains usable at 430.0 / 2.0
+00:07 +73: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: sleep editor remains usable at 430.0 / 1.0
+00:07 +74: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: sleep editor remains usable at 430.0 / 2.0
+00:07 +75: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: diaper editor remains usable at 430.0 / 1.0
+00:07 +76: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: diaper editor remains usable at 430.0 / 2.0
+00:07 +77: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: growth editor remains usable at 430.0 / 1.0
+00:07 +78: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: growth editor remains usable at 430.0 / 2.0
+00:07 +79: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: development editor remains usable at 430.0 / 1.0
+00:07 +80: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: development editor remains usable at 430.0 / 2.0
+00:07 +81: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: history edits and restores the same baby record at 320.0 / 1.0
+00:07 +82: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: history edits and restores the same baby record at 320.0 / 2.0
+00:07 +83: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: history edits and restores the same baby record at 390.0 / 1.0
+00:07 +84: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: history edits and restores the same baby record at 390.0 / 2.0
+00:07 +85: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: history edits and restores the same baby record at 430.0 / 1.0
+00:08 +86: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: history edits and restores the same baby record at 430.0 / 2.0
+00:08 +87: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: a record URL cannot load a baby outside the owned profiles
+00:08 +88: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: a failed home request is not presented as no records
+00:08 +89: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: baby overview matches the current product design at 320.0
+00:08 +90: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: baby overview matches the current product design at 390.0
+00:08 +91: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: baby overview matches the current product design at 430.0
+00:08 +92: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_pages_test.dart: (tearDownAll)
+00:08 +92: loading /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_controller_test.dart
+00:08 +92: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_controller_test.dart: uncertain creation freezes the exact draft and retries with the same key
+00:08 +93: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_controller_test.dart: version conflict keeps the draft until the user reloads the current profile
+00:08 +94: loading /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart
+00:09 +94: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart: (setUpAll)
+00:09 +94: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart: profile dialog scrolls and saves at 320.0 / 1.0 / long=false
+00:09 +95: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart: profile dialog scrolls and saves at 320.0 / 1.0 / long=true
+00:09 +96: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart: profile dialog scrolls and saves at 320.0 / 2.0 / long=false
+00:09 +97: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart: profile dialog scrolls and saves at 320.0 / 2.0 / long=true
+00:09 +98: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart: profile dialog scrolls and saves at 390.0 / 1.0 / long=false
+00:09 +99: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart: profile dialog scrolls and saves at 390.0 / 1.0 / long=true
+00:09 +100: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart: profile dialog scrolls and saves at 390.0 / 2.0 / long=false
+00:09 +101: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart: profile dialog scrolls and saves at 390.0 / 2.0 / long=true
+00:09 +102: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart: profile dialog scrolls and saves at 430.0 / 1.0 / long=false
+00:10 +103: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart: profile dialog scrolls and saves at 430.0 / 1.0 / long=true
+00:10 +104: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart: profile dialog scrolls and saves at 430.0 / 2.0 / long=false
+00:10 +105: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart: profile dialog scrolls and saves at 430.0 / 2.0 / long=true
+00:10 +106: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_editor_test.dart: (tearDownAll)
+00:10 +106: loading /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_redesign_test.dart
+00:10 +106: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_redesign_test.dart: (setUpAll)
+00:10 +106: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_redesign_test.dart: profile draft, conflict reload and removed profile 320.0/1.0
+00:11 +107: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_redesign_test.dart: profile choices and uncertain save preserve exact request 320.0/1.0
+00:11 +108: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_redesign_test.dart: profile draft, conflict reload and removed profile 320.0/2.0
+00:11 +109: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_redesign_test.dart: profile choices and uncertain save preserve exact request 320.0/2.0
+00:12 +110: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_redesign_test.dart: profile draft, conflict reload and removed profile 390.0/1.0
+00:12 +111: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_redesign_test.dart: profile choices and uncertain save preserve exact request 390.0/1.0
+00:12 +112: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_redesign_test.dart: profile draft, conflict reload and removed profile 390.0/2.0
+00:12 +113: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_redesign_test.dart: profile choices and uncertain save preserve exact request 390.0/2.0
+00:13 +114: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_redesign_test.dart: profile draft, conflict reload and removed profile 430.0/1.0
+00:13 +115: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_redesign_test.dart: profile choices and uncertain save preserve exact request 430.0/1.0
+00:13 +116: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_redesign_test.dart: profile draft, conflict reload and removed profile 430.0/2.0
+00:13 +117: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_redesign_test.dart: profile choices and uncertain save preserve exact request 430.0/2.0
+00:13 +118: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_redesign_test.dart: (tearDownAll)
+00:13 +118: loading /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profiles_test.dart
+00:14 +118: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profiles_test.dart: canonical profile uses actual date and rejects retired profile facts
+00:14 +119: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profiles_test.dart: create and edit use the canonical endpoint, idempotency and current version
+00:14 +120: loading /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_record_editor_controller_test.dart
+00:14 +120: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_record_editor_controller_test.dart: feeding requires method and breast side, and changing method cannot invent an intake amount
+00:14 +121: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_record_editor_controller_test.dart: uncertain growth batch keeps the same measurements and key until confirmed
+00:14 +122: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_record_editor_controller_test.dart: waking an existing sleep retries its original end time and version
+00:14 +123: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_record_editor_controller_test.dart: observations keep calendar dates and cannot precede birth
+00:14 +124: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_record_editor_controller_test.dart: delete and undo recover uncertain responses using the exact receipt versions
+00:14 +125: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_record_editor_controller_test.dart: local clock rejects the DST gap and distinguishes both repeated times
+00:14 +126: loading /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_records_test.dart
+00:14 +126: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_records_test.dart: five persisted record types retain dates, units and concrete observations
+00:14 +127: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_records_test.dart: unknown intake stays empty and feeding types cannot carry old measurements
+00:14 +128: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_records_test.dart: repository preserves scope, version and idempotency on mutations
+00:14 +129: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_records_test.dart: foreign baby in a response is rejected before reaching page state
+00:14 +130: loading /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart
+00:15 +130: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart: (setUpAll)
+00:15 +130: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart: partial batch undo retries only unconfirmed records and never another baby
+00:15 +131: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart: busy undo is single flight and a baby switch cannot reuse its feedback
+00:15 +132: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart: conflict and an existing sleep update cannot be undone as new records
+00:15 +133: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart: feeding validation, save, uncertain undo and feedback at 320.0/1.0
+00:16 +134: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart: feeding validation, save, uncertain undo and feedback at 320.0/2.0
+00:16 +135: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart: feeding validation, save, uncertain undo and feedback at 390.0/1.0
+00:16 +136: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart: feeding validation, save, uncertain undo and feedback at 390.0/2.0
+00:16 +137: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart: feeding validation, save, uncertain undo and feedback at 430.0/1.0
+00:16 +138: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart: feeding validation, save, uncertain undo and feedback at 430.0/2.0
+00:16 +139: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_save_feedback_test.dart: (tearDownAll)
+00:16 +139: loading /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_switcher_design_test.dart
+00:17 +139: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_switcher_design_test.dart: (setUpAll)
+00:17 +139: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_switcher_design_test.dart: switcher changes the selected baby and opens its profile at 320.0/1.0
+00:17 +140: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_switcher_design_test.dart: switcher changes the selected baby and opens its profile at 320.0/2.0
+00:17 +141: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_switcher_design_test.dart: switcher changes the selected baby and opens its profile at 390.0/1.0
+00:18 +142: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_switcher_design_test.dart: switcher changes the selected baby and opens its profile at 390.0/2.0
+00:18 +143: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_switcher_design_test.dart: switcher changes the selected baby and opens its profile at 430.0/1.0
+00:18 +144: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_switcher_design_test.dart: switcher changes the selected baby and opens its profile at 430.0/2.0
+00:18 +145: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_switcher_design_test.dart: (tearDownAll)
+00:18 +145: loading /Users/lute/project/momcozy-lab/app/test/modules/baby/growth_reference_test.dart
+00:18 +145: /Users/lute/project/momcozy-lab/app/test/modules/baby/growth_reference_test.dart: WHO weekly and monthly points use actual calendar months through leap day
+00:18 +146: /Users/lute/project/momcozy-lab/app/test/modules/baby/growth_reference_test.dart: age uses completed calendar months and a missing date stays unknown
+00:18 +147: /Users/lute/project/momcozy-lab/app/test/modules/baby/growth_reference_test.dart: record values outside the default chart range remain visible
+00:18 +148: loading /Users/lute/project/momcozy-lab/app/test/shared/choice_field_test.dart
+00:18 +148: /Users/lute/project/momcozy-lab/app/test/shared/choice_field_test.dart: exclusive selection and toggling work with chips
+00:19 +149: /Users/lute/project/momcozy-lab/app/test/shared/choice_field_test.dart: exclusive selection and toggling work with warmTiles
+00:19 +150: /Users/lute/project/momcozy-lab/app/test/shared/choice_field_test.dart: exclusive selection and toggling work with warmSegmented
+00:19 +151: /Users/lute/project/momcozy-lab/app/test/shared/choice_field_test.dart: exclusive selection and toggling work with momTiles
+00:19 +152: /Users/lute/project/momcozy-lab/app/test/shared/choice_field_test.dart: exclusive selection and toggling work with momSegmented
+00:19 +153: loading /Users/lute/project/momcozy-lab/app/test/shared/date_time_picker_test.dart
+00:20 +153: /Users/lute/project/momcozy-lab/app/test/shared/date_time_picker_test.dart: large 12-hour picker preserves midnight and noon
+00:20 +154: /Users/lute/project/momcozy-lab/app/test/shared/date_time_picker_test.dart: large picker bounds, locale and time validation en_US
+00:20 +155: /Users/lute/project/momcozy-lab/app/test/shared/date_time_picker_test.dart: large picker bounds, locale and time validation zh_CN
+00:20 +156: /Users/lute/project/momcozy-lab/app/test/shared/date_time_picker_test.dart: date and time dialogs settle without elapsed motion
+00:20 +157: loading /Users/lute/project/momcozy-lab/app/test/domain/health_records_test.dart
+00:21 +157: /Users/lute/project/momcozy-lab/app/test/domain/health_records_test.dart: calendar dates reject overflow and count days without DST arithmetic
+00:21 +158: /Users/lute/project/momcozy-lab/app/test/domain/health_records_test.dart: milk summary is owner scoped, counts only measured pump volume
+00:21 +159: /Users/lute/project/momcozy-lab/app/test/domain/health_records_test.dart: unrecorded milk and a measured zero are distinguishable
+00:21 +160: /Users/lute/project/momcozy-lab/app/test/domain/health_records_test.dart: lactation rejects future times and invalid measurements but allows unknown
+00:21 +161: /Users/lute/project/momcozy-lab/app/test/domain/health_records_test.dart: daily diary groups retain partial self reports without fake completion
+00:21 +162: /Users/lute/project/momcozy-lab/app/test/domain/health_records_test.dart: baby records are isolated, nursing duration never increases intake
+00:21 +163: /Users/lute/project/momcozy-lab/app/test/domain/health_records_test.dart: sleep overlaps are counted once and bounded by the selected day
+00:21 +164: loading /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_home_redesign_test.dart
+00:21 +164: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_home_redesign_test.dart: (setUpAll)
+00:21 +164: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_home_redesign_test.dart: home redesign layout and original navigation 390.0/1.0
+00:22 +165: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_home_redesign_test.dart: home redesign empty loading and error recover 390.0/1.0
+00:22 +166: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_home_redesign_test.dart: home redesign saved undo failure and recovery 390.0/1.0
+00:22 +167: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_home_redesign_test.dart: home redesign layout and original navigation 320.0/2.0
+00:23 +168: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_home_redesign_test.dart: home redesign empty loading and error recover 320.0/2.0
+00:23 +169: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_home_redesign_test.dart: home redesign saved undo failure and recovery 320.0/2.0
+00:23 +170: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_home_redesign_test.dart: (tearDownAll)
+00:23 +170: loading /Users/lute/project/momcozy-lab/app/test/shared/knowledge_article_design_test.dart
+00:23 +170: /Users/lute/project/momcozy-lab/app/test/shared/knowledge_article_design_test.dart: (setUpAll)
+00:23 +170: /Users/lute/project/momcozy-lab/app/test/shared/knowledge_article_design_test.dart: knowledge mom at 320.0 / 1.0
+00:24 +171: /Users/lute/project/momcozy-lab/app/test/shared/knowledge_article_design_test.dart: knowledge mom at 320.0 / 2.0
+00:24 +172: /Users/lute/project/momcozy-lab/app/test/shared/knowledge_article_design_test.dart: knowledge mom at 390.0 / 1.0
+00:24 +173: /Users/lute/project/momcozy-lab/app/test/shared/knowledge_article_design_test.dart: knowledge mom at 390.0 / 2.0
+00:24 +174: /Users/lute/project/momcozy-lab/app/test/shared/knowledge_article_design_test.dart: knowledge mom at 430.0 / 1.0
+00:24 +175: /Users/lute/project/momcozy-lab/app/test/shared/knowledge_article_design_test.dart: knowledge mom at 430.0 / 2.0
+00:24 +176: /Users/lute/project/momcozy-lab/app/test/shared/knowledge_article_design_test.dart: knowledge baby at 320.0 / 1.0
+00:24 +177: /Users/lute/project/momcozy-lab/app/test/shared/knowledge_article_design_test.dart: knowledge baby at 320.0 / 2.0
+00:24 +178: /Users/lute/project/momcozy-lab/app/test/shared/knowledge_article_design_test.dart: knowledge baby at 390.0 / 1.0
+00:24 +179: /Users/lute/project/momcozy-lab/app/test/shared/knowledge_article_design_test.dart: knowledge baby at 390.0 / 2.0
+00:24 +180: /Users/lute/project/momcozy-lab/app/test/shared/knowledge_article_design_test.dart: knowledge baby at 430.0 / 1.0
+00:24 +181: /Users/lute/project/momcozy-lab/app/test/shared/knowledge_article_design_test.dart: knowledge baby at 430.0 / 2.0
+00:24 +182: /Users/lute/project/momcozy-lab/app/test/shared/knowledge_article_design_test.dart: (tearDownAll)
+00:24 +182: All tests passed!

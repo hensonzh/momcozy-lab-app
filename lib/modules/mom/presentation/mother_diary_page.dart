@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../shared/widgets/momcozy_components.dart';
 import '../../../domain/mother/mother_diary.dart';
 import '../../../domain/shared/local_date.dart';
-import '../../../shared/design_system/momcozy_design_system.dart';
+import '../../../shared/design_system/mom_home_tokens.dart';
 import '../application/mother_diary_controller.dart';
 import 'mother_diary_editor.dart';
 
@@ -42,7 +42,7 @@ class _MotherDiaryPageState extends State<MotherDiaryPage> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    backgroundColor: MomCozyColors.background,
+    backgroundColor: MomHomeTokens.background,
     body: MomCozyPageBody(
       child: MotherDiaryEditor(
         controller: _controller,

@@ -1,0 +1,8 @@
+{
+  "lib/features/agent_hub/artifacts/forms/agent_artifact_form.dart": "75270b8cc241249bf2b9c34dbc9c75b14fb98e86a64ec13711db6f1fd0dedf69",
+  "lib/features/agent_hub/artifacts/forms/agent_artifact_form_dialog.dart": "f2fa1623d32726adaa6653d7c1cdf64e72053088d30ac2fae4d0392d2bb977ad",
+  "test/features/agent_hub/agent_form_design_test.dart": "6eb49e03f1e171df327c0d65063e1ce7f144daa9466ab4f7a7764041419acc7f",
+  "test/features/agent_hub/agent_ticket_form_design_test.dart": "a9a3d492d4d3e33f1b0ba0df6be2164bcd9cffc0f1bba432842dff798be2c812",
+  "test/features/agent_hub/agent_hub_page_test.dart": "9a6ef95d933b6429674ca540010b6e85b368b623c63f27267672cbf584deceb3",
+  "test/support/agent_form_scenarios.dart": "8f9f7cab3234f34a5c42f893a24208fc930f37573d2fc1a2669e8bfac6d1130f"
+}

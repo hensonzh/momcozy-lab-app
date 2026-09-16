@@ -1,0 +1,322 @@
+[
+  {
+    "id": "214:1108",
+    "name": "Schedule / 当天安排",
+    "x": 80,
+    "y": 84500,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "214:1243",
+    "name": "Schedule / 空日程",
+    "x": 520,
+    "y": 84500,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "214:1347",
+    "name": "Schedule / 照护方案展开",
+    "x": 960,
+    "y": 84500,
+    "width": 393,
+    "height": 1361
+  },
+  {
+    "id": "214:1489",
+    "name": "Schedule / 服务期",
+    "x": 1400,
+    "y": 84500,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "214:1626",
+    "name": "Schedule / 多服务筛选",
+    "x": 1840,
+    "y": 84500,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "214:1763",
+    "name": "Schedule / 任务更新中",
+    "x": 2280,
+    "y": 84500,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "214:1898",
+    "name": "Schedule / 任务更新失败",
+    "x": 2720,
+    "y": 84500,
+    "width": 393,
+    "height": 1262
+  },
+  {
+    "id": "214:2037",
+    "name": "Schedule / 首次加载",
+    "x": 3160,
+    "y": 84500,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "214:2045",
+    "name": "Schedule / 离线",
+    "x": 3600,
+    "y": 84500,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "214:2053",
+    "name": "Schedule / 任务待完成",
+    "x": 80,
+    "y": 86500,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "214:2188",
+    "name": "Schedule / 任务进行中",
+    "x": 520,
+    "y": 86500,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "214:2323",
+    "name": "Schedule / 任务跳过",
+    "x": 960,
+    "y": 86500,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "214:2458",
+    "name": "Schedule / 待确认咨询",
+    "x": 1400,
+    "y": 86500,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "214:2593",
+    "name": "Schedule / 已完成咨询",
+    "x": 1840,
+    "y": 86500,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "214:2728",
+    "name": "Schedule / 刷新失败",
+    "x": 2280,
+    "y": 86500,
+    "width": 393,
+    "height": 1262
+  },
+  {
+    "id": "214:2867",
+    "name": "Schedule / 下个月",
+    "x": 2720,
+    "y": 86500,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "214:2971",
+    "name": "Schedule / 大字号日程",
+    "x": 3160,
+    "y": 86500,
+    "width": 320,
+    "height": 844
+  },
+  {
+    "id": "214:3106",
+    "name": "Schedule / 短屏大字号",
+    "x": 3600,
+    "y": 86500,
+    "width": 320,
+    "height": 568
+  },
+  {
+    "id": "214:3241",
+    "name": "Schedule editor / 添加",
+    "x": 80,
+    "y": 88500,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "214:3370",
+    "name": "Schedule editor / 已填写",
+    "x": 520,
+    "y": 88500,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "214:3499",
+    "name": "Schedule editor / 修改",
+    "x": 960,
+    "y": 88500,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "214:3628",
+    "name": "Schedule editor / 保存中",
+    "x": 1400,
+    "y": 88500,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "214:3757",
+    "name": "Schedule editor / 保存结果不确定",
+    "x": 1840,
+    "y": 88500,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "214:3888",
+    "name": "Schedule editor / 冲突",
+    "x": 2280,
+    "y": 88500,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "214:4019",
+    "name": "Schedule editor / 校验失败",
+    "x": 2720,
+    "y": 88500,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "214:4150",
+    "name": "Schedule editor / 删除确认",
+    "x": 3160,
+    "y": 88500,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "214:4269",
+    "name": "Schedule editor / 大字号短屏编辑",
+    "x": 3600,
+    "y": 88500,
+    "width": 320,
+    "height": 568
+  },
+  {
+    "id": "214:4398",
+    "name": "Schedule editor / 大字号删除",
+    "x": 4040,
+    "y": 88500,
+    "width": 320,
+    "height": 844
+  },
+  {
+    "id": "216:1108",
+    "name": "Schedule auxiliary / date",
+    "x": 80,
+    "y": 89800,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "216:1339",
+    "name": "Schedule auxiliary / dateinput",
+    "x": 520,
+    "y": 89800,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "216:1479",
+    "name": "Schedule auxiliary / dateerror",
+    "x": 960,
+    "y": 89800,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "216:1620",
+    "name": "Schedule auxiliary / year",
+    "x": 1400,
+    "y": 89800,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "216:1760",
+    "name": "Schedule auxiliary / time",
+    "x": 1840,
+    "y": 89800,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "216:1910",
+    "name": "Schedule auxiliary / timeinput",
+    "x": 2280,
+    "y": 89800,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "216:2054",
+    "name": "Schedule auxiliary / timeerror",
+    "x": 2720,
+    "y": 89800,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "216:2199",
+    "name": "Schedule auxiliary / discard",
+    "x": 3160,
+    "y": 89800,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "216:2336",
+    "name": "Schedule auxiliary / uncertain-discard",
+    "x": 3600,
+    "y": 89800,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "216:2473",
+    "name": "Schedule auxiliary / taskmenu",
+    "x": 80,
+    "y": 91000,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "216:2608",
+    "name": "Schedule auxiliary / servicemenu",
+    "x": 520,
+    "y": 91000,
+    "width": 393,
+    "height": 844
+  },
+  {
+    "id": "216:2742",
+    "name": "Schedule auxiliary / personalmenu",
+    "x": 960,
+    "y": 91000,
+    "width": 393,
+    "height": 844
+  }
+]

@@ -1,7 +1,19 @@
 import 'package:flutter/material.dart';
+import '../../../shared/design_system/mom_home_tokens.dart';
+import 'package:momcozy_flutter_app/shared/design_system/momcozy_motion.dart';
 import 'package:flutter/services.dart';
 import 'package:momcozy_flutter_app/shared/design_system/momcozy_design_system.dart';
 import 'package:momcozy_flutter_app/features/onboarding/presentation/avatar_task_controller.dart';
+
+Widget _withSizeTransition(BuildContext context, Widget child) {
+  // A zero-duration AnimatedSize can invalidate its own layout while resizing.
+  if (MediaQuery.disableAnimationsOf(context)) return child;
+  return AnimatedSize(
+    duration: const Duration(milliseconds: 240),
+    curve: Curves.easeOutCubic,
+    child: child,
+  );
+}
 
 class AvatarTaskBanner extends StatefulWidget {
   const AvatarTaskBanner({
@@ -59,13 +71,13 @@ class _AvatarTaskBannerState extends State<AvatarTaskBanner> {
     final ready = status == AvatarTaskStatus.reviewRequired;
     final failed = status == AvatarTaskStatus.failed;
     final completed = status == AvatarTaskStatus.completed;
-    final foreground = ready ? MomCozyColors.raised : MomCozyColors.foreground;
+    const foreground = MomHomeTokens.ink;
     final background = switch (status) {
-      AvatarTaskStatus.reviewRequired => MomCozyColors.primaryDark,
+      AvatarTaskStatus.reviewRequired => MomHomeTokens.mint,
       AvatarTaskStatus.failed => MomCozyColors.amberSoft,
-      AvatarTaskStatus.completed => MomCozyColors.careSoft,
+      AvatarTaskStatus.completed => MomHomeTokens.mint,
       AvatarTaskStatus.queued ||
-      AvatarTaskStatus.generating => MomCozyColors.roseSoft,
+      AvatarTaskStatus.generating => MomHomeTokens.surface,
       AvatarTaskStatus.hidden => Colors.transparent,
     };
     final title = switch (status) {
@@ -93,10 +105,9 @@ class _AvatarTaskBannerState extends State<AvatarTaskBanner> {
       button: actionable,
       label: '$title. $subtitle',
       child: ExcludeSemantics(
-        child: AnimatedSize(
-          duration: const Duration(milliseconds: 240),
-          curve: Curves.easeOutCubic,
-          child: Padding(
+        child: _withSizeTransition(
+          context,
+          Padding(
             padding: const EdgeInsets.fromLTRB(
               MomCozySpacing.pageGutter,
               MomCozySpacing.compact,
@@ -106,10 +117,10 @@ class _AvatarTaskBannerState extends State<AvatarTaskBanner> {
             child: Material(
               key: const ValueKey('avatar-task-banner'),
               color: background,
-              borderRadius: BorderRadius.circular(MomCozyRadii.card),
+              borderRadius: BorderRadius.circular(MomHomeTokens.cardRadius),
               elevation: 0,
               child: InkWell(
-                borderRadius: BorderRadius.circular(MomCozyRadii.card),
+                borderRadius: BorderRadius.circular(MomHomeTokens.cardRadius),
                 onTap: actionable ? widget.onOpen : null,
                 child: Padding(
                   padding: MomCozyInsets.compactCard,
@@ -119,7 +130,10 @@ class _AvatarTaskBannerState extends State<AvatarTaskBanner> {
                       const SizedBox(width: 12),
                       Expanded(
                         child: AnimatedSwitcher(
-                          duration: const Duration(milliseconds: 260),
+                          duration: MomCozyMotion.duration(
+                            context,
+                            const Duration(milliseconds: 260),
+                          ),
                           child: Column(
                             key: ValueKey(status),
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -128,8 +142,9 @@ class _AvatarTaskBannerState extends State<AvatarTaskBanner> {
                               Text(
                                 title,
                                 style: TextStyle(
+                                  fontFamily: 'NotoSansSCHome',
                                   color: foreground,
-                                  fontSize: MomCozyTypography.bodySize,
+                                  fontSize: 14,
                                   fontWeight: FontWeight.w700,
                                 ),
                               ),
@@ -137,12 +152,9 @@ class _AvatarTaskBannerState extends State<AvatarTaskBanner> {
                               Text(
                                 subtitle,
                                 style: TextStyle(
-                                  color: ready
-                                      ? MomCozyColors.raised.withValues(
-                                          alpha: 0.86,
-                                        )
-                                      : MomCozyColors.mutedForeground,
-                                  fontSize: MomCozyTypography.secondarySize,
+                                  fontFamily: 'NotoSansSCHome',
+                                  color: MomHomeTokens.secondary,
+                                  fontSize: 12,
                                   height: 1.25,
                                   fontWeight: FontWeight.w500,
                                 ),
@@ -155,9 +167,7 @@ class _AvatarTaskBannerState extends State<AvatarTaskBanner> {
                         const SizedBox(width: 6),
                         Icon(
                           Icons.chevron_right_rounded,
-                          color: ready
-                              ? MomCozyColors.raised
-                              : MomCozyColors.primaryDark,
+                          color: MomHomeTokens.rose,
                         ),
                       ],
                     ],
@@ -186,7 +196,7 @@ class _TaskStatusIcon extends StatelessWidget {
         dimension: MomCozyIconSizes.standard,
         child: CircularProgressIndicator(
           strokeWidth: 2.4,
-          color: MomCozyColors.primaryDark,
+          color: MomHomeTokens.rose,
         ),
       );
     }

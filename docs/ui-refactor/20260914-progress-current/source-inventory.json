@@ -1,0 +1,2746 @@
+[
+  {
+    "id": "08-expert-service/progress-current-active",
+    "module": "专家服务与咨询",
+    "label": "我的陪伴计划",
+    "state": "progress-current-active",
+    "image": "08-expert-service/progress-current-active/default.png",
+    "viewport": "08-expert-service/progress-current-active/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode"
+    ],
+    "mapped_design_candidates": [
+      "services/progress",
+      "common/not-found"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_progress_page.dart",
+      "lib/modules/services/presentation/service_timeline.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/mom_timeline_event.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/progress_current_inventory_test.dart",
+    "test_case": "current timeline service states and renewal entry false",
+    "metadata": "raw/test/goldens/ui_inventory/progress-current-active-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/progress-current-active-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-active-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/progress-current-active-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-active-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Active plan → appointment action",
+    "journey": {
+      "source": "test/goldens/ui_inventory/progress-current-active-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/progress-current-states-home-393-1x.png",
+      "route": "/services/episodes/service-episode",
+      "trigger": "Active plan → appointment action",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/progress_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/progress-current-active-booking",
+    "module": "专家服务与咨询",
+    "label": "先做个预约前确认",
+    "state": "progress-current-active-booking",
+    "image": "08-expert-service/progress-current-active-booking/default.png",
+    "viewport": "08-expert-service/progress-current-active-booking/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode/booking"
+    ],
+    "mapped_design_candidates": [
+      "services/booking",
+      "common/not-found",
+      "services/state-32",
+      "services/state-33",
+      "services/state-34",
+      "services/state-35",
+      "services/state-36",
+      "services/state-37"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/booking_flow_dialogs.dart",
+      "lib/modules/services/presentation/booking_page.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/progress_current_inventory_test.dart",
+    "test_case": "current timeline service states and renewal entry false",
+    "metadata": "raw/test/goldens/ui_inventory/progress-current-active-booking-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/progress-current-active-booking-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-active-booking-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/progress-current-active-booking-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-active-booking-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode/booking",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Active plan without appointment → booking precheck",
+    "journey": {
+      "source": "test/goldens/ui_inventory/progress-current-active-booking-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/progress-current-active-393-1x.png",
+      "route": "/services/episodes/service-episode/booking",
+      "trigger": "Active plan without appointment → booking precheck",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/progress_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/progress-current-active-booking-closed",
+    "module": "专家服务与咨询",
+    "label": "先做个预约前确认",
+    "state": "progress-current-active-booking-closed",
+    "image": "08-expert-service/progress-current-active-booking-closed/default.png",
+    "viewport": "08-expert-service/progress-current-active-booking-closed/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode/booking"
+    ],
+    "mapped_design_candidates": [
+      "services/booking",
+      "common/not-found",
+      "services/state-32",
+      "services/state-33",
+      "services/state-34",
+      "services/state-35",
+      "services/state-36",
+      "services/state-37"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/booking_page.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/progress_current_inventory_test.dart",
+    "test_case": "current timeline service states and renewal entry false",
+    "metadata": "raw/test/goldens/ui_inventory/progress-current-active-booking-closed-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/progress-current-active-booking-closed-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-active-booking-closed-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/progress-current-active-booking-closed-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-active-booking-closed-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode/booking",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Close precheck → start-confirmation page",
+    "journey": {
+      "source": "test/goldens/ui_inventory/progress-current-active-booking-closed-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/progress-current-active-booking-393-1x.png",
+      "route": "/services/episodes/service-episode/booking",
+      "trigger": "Close precheck → start-confirmation page",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/progress_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/progress-current-active-booking-return",
+    "module": "专家服务与咨询",
+    "label": "我的陪伴计划",
+    "state": "progress-current-active-booking-return",
+    "image": "08-expert-service/progress-current-active-booking-return/default.png",
+    "viewport": "08-expert-service/progress-current-active-booking-return/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode"
+    ],
+    "mapped_design_candidates": [
+      "services/progress",
+      "common/not-found"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_progress_page.dart",
+      "lib/modules/services/presentation/service_timeline.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/mom_timeline_event.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/progress_current_inventory_test.dart",
+    "test_case": "current timeline service states and renewal entry false",
+    "metadata": "raw/test/goldens/ui_inventory/progress-current-active-booking-return-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/progress-current-active-booking-return-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-active-booking-return-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/progress-current-active-booking-return-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-active-booking-return-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Booking Back → active timeline",
+    "journey": {
+      "source": "test/goldens/ui_inventory/progress-current-active-booking-return-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/progress-current-active-booking-closed-393-1x.png",
+      "route": "/services/episodes/service-episode",
+      "trigger": "Booking Back → active timeline",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/progress_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/progress-current-active-exhausted",
+    "module": "专家服务与咨询",
+    "label": "我的陪伴计划",
+    "state": "progress-current-active-exhausted",
+    "image": "08-expert-service/progress-current-active-exhausted/default.png",
+    "viewport": "08-expert-service/progress-current-active-exhausted/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode"
+    ],
+    "mapped_design_candidates": [
+      "services/progress",
+      "common/not-found"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_progress_page.dart",
+      "lib/modules/services/presentation/service_timeline.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/mom_timeline_event.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/progress_current_inventory_test.dart",
+    "test_case": "current timeline service states and renewal entry false",
+    "metadata": "raw/test/goldens/ui_inventory/progress-current-active-exhausted-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/progress-current-active-exhausted-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-active-exhausted-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/progress-current-active-exhausted-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-active-exhausted-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Active service with zero remaining → no new booking or renewal",
+    "journey": {
+      "source": "test/goldens/ui_inventory/progress-current-active-exhausted-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/progress-current-renew-return-393-1x.png",
+      "route": "/services/episodes/service-episode",
+      "trigger": "Active service with zero remaining → no new booking or renewal",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/progress_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/progress-current-active-past-end",
+    "module": "专家服务与咨询",
+    "label": "我的陪伴计划",
+    "state": "progress-current-active-past-end",
+    "image": "08-expert-service/progress-current-active-past-end/default.png",
+    "viewport": "08-expert-service/progress-current-active-past-end/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode"
+    ],
+    "mapped_design_candidates": [
+      "services/progress",
+      "common/not-found"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_progress_page.dart",
+      "lib/modules/services/presentation/service_timeline.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/mom_timeline_event.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/progress_current_inventory_test.dart",
+    "test_case": "current timeline service states and renewal entry false",
+    "metadata": "raw/test/goldens/ui_inventory/progress-current-active-past-end-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/progress-current-active-past-end-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-active-past-end-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/progress-current-active-past-end-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-active-past-end-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Server still active after endsAt → current timeline retains booking action",
+    "journey": {
+      "source": "test/goldens/ui_inventory/progress-current-active-past-end-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/progress-current-active-exhausted-393-1x.png",
+      "route": "/services/episodes/service-episode",
+      "trigger": "Server still active after endsAt → current timeline retains booking action",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/progress_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/progress-current-appointment-return",
+    "module": "专家服务与咨询",
+    "label": "↑ 查看更早记录",
+    "state": "progress-current-appointment-return",
+    "image": "08-expert-service/progress-current-appointment-return/default.png",
+    "viewport": "08-expert-service/progress-current-appointment-return/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode"
+    ],
+    "mapped_design_candidates": [
+      "services/progress",
+      "common/not-found"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_progress_page.dart",
+      "lib/modules/services/presentation/service_timeline.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/mom_timeline_event.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/progress_current_inventory_test.dart",
+    "test_case": "current timeline earlier latest appointment and summary false",
+    "metadata": "raw/test/goldens/ui_inventory/progress-current-appointment-return-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/progress-current-appointment-return-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-appointment-return-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/progress-current-appointment-return-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-appointment-return-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Appointment Close → timeline",
+    "journey": {
+      "source": "test/goldens/ui_inventory/progress-current-appointment-return-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/progress-current-event-appointment-393-1x.png",
+      "route": "/services/episodes/service-episode",
+      "trigger": "Appointment Close → timeline",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/progress_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/progress-current-appointments-error",
+    "module": "专家服务与咨询",
+    "label": "我的陪伴计划",
+    "state": "progress-current-appointments-error",
+    "image": "08-expert-service/progress-current-appointments-error/default.png",
+    "viewport": "08-expert-service/progress-current-appointments-error/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode"
+    ],
+    "mapped_design_candidates": [
+      "services/progress",
+      "common/not-found"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_progress_page.dart",
+      "lib/modules/services/presentation/service_timeline.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/mom_timeline_event.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/progress_current_inventory_test.dart",
+    "test_case": "current timeline loading missing and retry false",
+    "metadata": "raw/test/goldens/ui_inventory/progress-current-appointments-error-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/progress-current-appointments-error-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-appointments-error-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/progress-current-appointments-error-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-appointments-error-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Appointment read 503 → service identity retained",
+    "journey": {
+      "source": "test/goldens/ui_inventory/progress-current-appointments-error-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/progress-current-appointments-loading-393-1x.png",
+      "route": "/services/episodes/service-episode",
+      "trigger": "Appointment read 503 → service identity retained",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/progress_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/progress-current-appointments-loading",
+    "module": "专家服务与咨询",
+    "label": "我的陪伴计划",
+    "state": "progress-current-appointments-loading",
+    "image": "08-expert-service/progress-current-appointments-loading/default.png",
+    "viewport": "08-expert-service/progress-current-appointments-loading/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode"
+    ],
+    "mapped_design_candidates": [
+      "services/progress",
+      "common/not-found"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_progress_page.dart",
+      "lib/modules/services/presentation/service_timeline.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/mom_timeline_event.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/progress_current_inventory_test.dart",
+    "test_case": "current timeline loading missing and retry false",
+    "metadata": "raw/test/goldens/ui_inventory/progress-current-appointments-loading-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/progress-current-appointments-loading-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-appointments-loading-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/progress-current-appointments-loading-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-appointments-loading-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Overview recovered, appointment context pending",
+    "journey": {
+      "source": "test/goldens/ui_inventory/progress-current-appointments-loading-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/progress-current-missing-home-return-393-1x.png",
+      "route": "/services/episodes/service-episode",
+      "trigger": "Overview recovered, appointment context pending",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/progress_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/progress-current-appointments-recovered",
+    "module": "专家服务与咨询",
+    "label": "我的陪伴计划",
+    "state": "progress-current-appointments-recovered",
+    "image": "08-expert-service/progress-current-appointments-recovered/default.png",
+    "viewport": "08-expert-service/progress-current-appointments-recovered/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode"
+    ],
+    "mapped_design_candidates": [
+      "services/progress",
+      "common/not-found"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_progress_page.dart",
+      "lib/modules/services/presentation/service_timeline.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/mom_timeline_event.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/progress_current_inventory_test.dart",
+    "test_case": "current timeline loading missing and retry false",
+    "metadata": "raw/test/goldens/ui_inventory/progress-current-appointments-recovered-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/progress-current-appointments-recovered-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-appointments-recovered-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/progress-current-appointments-recovered-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-appointments-recovered-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Retry appointment read → purchase-only timeline",
+    "journey": {
+      "source": "test/goldens/ui_inventory/progress-current-appointments-recovered-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/progress-current-appointments-error-393-1x.png",
+      "route": "/services/episodes/service-episode",
+      "trigger": "Retry appointment read → purchase-only timeline",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/progress_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/progress-current-booking-return",
+    "module": "专家服务与咨询",
+    "label": "↑ 查看更早记录",
+    "state": "progress-current-booking-return",
+    "image": "08-expert-service/progress-current-booking-return/default.png",
+    "viewport": "08-expert-service/progress-current-booking-return/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode"
+    ],
+    "mapped_design_candidates": [
+      "services/progress",
+      "common/not-found"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_progress_page.dart",
+      "lib/modules/services/presentation/service_timeline.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/mom_timeline_event.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/progress_current_inventory_test.dart",
+    "test_case": "current timeline earlier latest appointment and summary false",
+    "metadata": "raw/test/goldens/ui_inventory/progress-current-booking-return-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/progress-current-booking-return-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-booking-return-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/progress-current-booking-return-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-booking-return-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Booking Back → timeline",
+    "journey": {
+      "source": "test/goldens/ui_inventory/progress-current-booking-return-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/progress-current-event-booking-393-1x.png",
+      "route": "/services/episodes/service-episode",
+      "trigger": "Booking Back → timeline",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/progress_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/progress-current-episode-missing",
+    "module": "专家服务与咨询",
+    "label": "暂时找不到这个服务包",
+    "state": "progress-current-episode-missing",
+    "image": "08-expert-service/progress-current-episode-missing/default.png",
+    "viewport": "08-expert-service/progress-current-episode-missing/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode"
+    ],
+    "mapped_design_candidates": [
+      "services/progress",
+      "common/not-found"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_progress_page.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/progress_current_inventory_test.dart",
+    "test_case": "current timeline loading missing and retry false",
+    "metadata": "raw/test/goldens/ui_inventory/progress-current-episode-missing-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/progress-current-episode-missing-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-episode-missing-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/progress-current-episode-missing-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-episode-missing-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Retry returns no matching episode → missing service",
+    "journey": {
+      "source": "test/goldens/ui_inventory/progress-current-episode-missing-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/progress-current-initial-error-393-1x.png",
+      "route": "/services/episodes/service-episode",
+      "trigger": "Retry returns no matching episode → missing service",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/progress_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/progress-current-errors-home",
+    "module": "专家服务与咨询",
+    "label": "下午好，Mia",
+    "state": "progress-current-errors-home",
+    "image": "08-expert-service/progress-current-errors-home/default.png",
+    "viewport": "08-expert-service/progress-current-errors-home/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/me"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "mom/home",
+      "mom/record-picker",
+      "mom/other-functions",
+      "common/not-found",
+      "mom/state-01",
+      "mom/state-11",
+      "mom/state-31",
+      "mom/state-38",
+      "mom/state-43"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/modules/mom/presentation/mom_home_sections.dart",
+      "lib/modules/mom/presentation/mother_home_page.dart",
+      "lib/modules/services/presentation/expert_support_section.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/progress_current_inventory_test.dart",
+    "test_case": "current timeline loading missing and retry false",
+    "metadata": "raw/test/goldens/ui_inventory/progress-current-errors-home-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/progress-current-errors-home-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-errors-home-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/progress-current-errors-home-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-errors-home-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/me",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "More → Me before timeline request",
+    "journey": {
+      "source": "test/goldens/ui_inventory/progress-current-errors-home-393-1x.png",
+      "previous_source": null,
+      "route": "/me",
+      "trigger": "More → Me before timeline request",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/progress_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/progress-current-errors-home-return",
+    "module": "专家服务与咨询",
+    "label": "下午好，Mia",
+    "state": "progress-current-errors-home-return",
+    "image": "08-expert-service/progress-current-errors-home-return/default.png",
+    "viewport": "08-expert-service/progress-current-errors-home-return/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/me"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "mom/home",
+      "mom/record-picker",
+      "mom/other-functions",
+      "common/not-found",
+      "mom/state-01",
+      "mom/state-11",
+      "mom/state-31",
+      "mom/state-38",
+      "mom/state-43"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/modules/mom/presentation/mom_home_sections.dart",
+      "lib/modules/mom/presentation/mother_home_page.dart",
+      "lib/modules/services/presentation/expert_support_section.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/progress_current_inventory_test.dart",
+    "test_case": "current timeline loading missing and retry false",
+    "metadata": "raw/test/goldens/ui_inventory/progress-current-errors-home-return-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/progress-current-errors-home-return-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-errors-home-return-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/progress-current-errors-home-return-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-errors-home-return-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/me",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Timeline Back → Me",
+    "journey": {
+      "source": "test/goldens/ui_inventory/progress-current-errors-home-return-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/progress-current-refresh-recovered-393-1x.png",
+      "route": "/me",
+      "trigger": "Timeline Back → Me",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/progress_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/progress-current-event-appointment",
+    "module": "专家服务与咨询",
+    "label": "预约详情",
+    "state": "progress-current-event-appointment",
+    "image": "08-expert-service/progress-current-event-appointment/default.png",
+    "viewport": "08-expert-service/progress-current-event-appointment/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/service-appointment/room"
+    ],
+    "mapped_design_candidates": [
+      "services/preparation",
+      "services/room",
+      "services/room-leave",
+      "common/not-found",
+      "services/state-53"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/consultation/presentation/consultation_preparation.dart",
+      "lib/modules/consultation/presentation/room_page.dart",
+      "lib/modules/services/presentation/mom_appointment_widgets.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/progress_current_inventory_test.dart",
+    "test_case": "current timeline earlier latest appointment and summary false",
+    "metadata": "raw/test/goldens/ui_inventory/progress-current-event-appointment-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/progress-current-event-appointment-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-event-appointment-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/progress-current-event-appointment-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-event-appointment-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/appointments/service-appointment/room",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Confirmed event → appointment detail",
+    "journey": {
+      "source": "test/goldens/ui_inventory/progress-current-event-appointment-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/progress-current-summary-return-393-1x.png",
+      "route": "/services/appointments/service-appointment/room",
+      "trigger": "Confirmed event → appointment detail",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/progress_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/progress-current-event-booking",
+    "module": "专家服务与咨询",
+    "label": "已确认 · IBCLC 咨询",
+    "state": "progress-current-event-booking",
+    "image": "08-expert-service/progress-current-event-booking/default.png",
+    "viewport": "08-expert-service/progress-current-event-booking/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode/booking"
+    ],
+    "mapped_design_candidates": [
+      "services/booking",
+      "common/not-found",
+      "services/state-32",
+      "services/state-33",
+      "services/state-34",
+      "services/state-35",
+      "services/state-36",
+      "services/state-37"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/features/notifications/presentation/appointment_reminder_tile.dart",
+      "lib/modules/services/presentation/booking_page.dart",
+      "lib/modules/services/presentation/mom_appointment_widgets.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/progress_current_inventory_test.dart",
+    "test_case": "current timeline earlier latest appointment and summary false",
+    "metadata": "raw/test/goldens/ui_inventory/progress-current-event-booking-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/progress-current-event-booking-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-event-booking-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/progress-current-event-booking-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-event-booking-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode/booking",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Timeline booking with confirmed appointment → existing appointment detail",
+    "journey": {
+      "source": "test/goldens/ui_inventory/progress-current-event-booking-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/progress-current-appointment-return-393-1x.png",
+      "route": "/services/episodes/service-episode/booking",
+      "trigger": "Timeline booking with confirmed appointment → existing appointment detail",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/progress_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/progress-current-event-in-progress",
+    "module": "专家服务与咨询",
+    "label": "↑ 查看更早记录",
+    "state": "progress-current-event-in-progress",
+    "image": "08-expert-service/progress-current-event-in-progress/default.png",
+    "viewport": "08-expert-service/progress-current-event-in-progress/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode"
+    ],
+    "mapped_design_candidates": [
+      "services/progress",
+      "common/not-found"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_progress_page.dart",
+      "lib/modules/services/presentation/service_timeline.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/mom_timeline_event.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/progress_current_inventory_test.dart",
+    "test_case": "current timeline earlier latest appointment and summary false",
+    "metadata": "raw/test/goldens/ui_inventory/progress-current-event-in-progress-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/progress-current-event-in-progress-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-event-in-progress-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/progress-current-event-in-progress-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-event-in-progress-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Refresh current consultation → in-progress event",
+    "journey": {
+      "source": "test/goldens/ui_inventory/progress-current-event-in-progress-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/progress-current-events-refresh-recovered-393-1x.png",
+      "route": "/services/episodes/service-episode",
+      "trigger": "Refresh current consultation → in-progress event",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/progress_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/progress-current-event-summary",
+    "module": "专家服务与咨询",
+    "label": "Test IBCLC 给你的总结",
+    "state": "progress-current-event-summary",
+    "image": "08-expert-service/progress-current-event-summary/default.png",
+    "viewport": "08-expert-service/progress-current-event-summary/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/completed-event/summary"
+    ],
+    "mapped_design_candidates": [
+      "services/summary",
+      "services/summary-task",
+      "common/not-found"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/consultation_summary_content.dart",
+      "lib/modules/services/presentation/consultation_summary_page.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/progress_current_inventory_test.dart",
+    "test_case": "current timeline earlier latest appointment and summary false",
+    "metadata": "raw/test/goldens/ui_inventory/progress-current-event-summary-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/progress-current-event-summary-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-event-summary-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/progress-current-event-summary-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-event-summary-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/appointments/completed-event/summary",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Completed event → published summary",
+    "journey": {
+      "source": "test/goldens/ui_inventory/progress-current-event-summary-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/progress-current-events-latest-return-393-1x.png",
+      "route": "/services/appointments/completed-event/summary",
+      "trigger": "Completed event → published summary",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/progress_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/progress-current-events-earlier",
+    "module": "专家服务与咨询",
+    "label": "↑ 查看更早记录",
+    "state": "progress-current-events-earlier",
+    "image": "08-expert-service/progress-current-events-earlier/default.png",
+    "viewport": "08-expert-service/progress-current-events-earlier/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode"
+    ],
+    "mapped_design_candidates": [
+      "services/progress",
+      "common/not-found"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_progress_page.dart",
+      "lib/modules/services/presentation/service_timeline.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/mom_timeline_event.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/progress_current_inventory_test.dart",
+    "test_case": "current timeline earlier latest appointment and summary false",
+    "metadata": "raw/test/goldens/ui_inventory/progress-current-events-earlier-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/progress-current-events-earlier-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-events-earlier-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/progress-current-events-earlier-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-events-earlier-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Earlier records → identity and first event",
+    "journey": {
+      "source": "test/goldens/ui_inventory/progress-current-events-earlier-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/progress-current-events-latest-393-1x.png",
+      "route": "/services/episodes/service-episode",
+      "trigger": "Earlier records → identity and first event",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/progress_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/progress-current-events-home",
+    "module": "专家服务与咨询",
+    "label": "下午好，Mia",
+    "state": "progress-current-events-home",
+    "image": "08-expert-service/progress-current-events-home/default.png",
+    "viewport": "08-expert-service/progress-current-events-home/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/me"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "mom/home",
+      "mom/record-picker",
+      "mom/other-functions",
+      "common/not-found",
+      "mom/state-01",
+      "mom/state-11",
+      "mom/state-31",
+      "mom/state-38",
+      "mom/state-43"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/modules/mom/presentation/mom_home_sections.dart",
+      "lib/modules/mom/presentation/mother_home_page.dart",
+      "lib/modules/services/presentation/expert_support_section.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/progress_current_inventory_test.dart",
+    "test_case": "current timeline earlier latest appointment and summary false",
+    "metadata": "raw/test/goldens/ui_inventory/progress-current-events-home-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/progress-current-events-home-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-events-home-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/progress-current-events-home-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-events-home-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/me",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "More → Me with existing service",
+    "journey": {
+      "source": "test/goldens/ui_inventory/progress-current-events-home-393-1x.png",
+      "previous_source": null,
+      "route": "/me",
+      "trigger": "More → Me with existing service",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/progress_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/progress-current-events-home-return",
+    "module": "专家服务与咨询",
+    "label": "下午好，Mia",
+    "state": "progress-current-events-home-return",
+    "image": "08-expert-service/progress-current-events-home-return/default.png",
+    "viewport": "08-expert-service/progress-current-events-home-return/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/me"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "mom/home",
+      "mom/record-picker",
+      "mom/other-functions",
+      "common/not-found",
+      "mom/state-01",
+      "mom/state-11",
+      "mom/state-31",
+      "mom/state-38",
+      "mom/state-43"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/modules/mom/presentation/mom_home_sections.dart",
+      "lib/modules/mom/presentation/mother_home_page.dart",
+      "lib/modules/services/presentation/expert_support_section.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/progress_current_inventory_test.dart",
+    "test_case": "current timeline earlier latest appointment and summary false",
+    "metadata": "raw/test/goldens/ui_inventory/progress-current-events-home-return-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/progress-current-events-home-return-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-events-home-return-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/progress-current-events-home-return-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-events-home-return-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/me",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Timeline Back → Me",
+    "journey": {
+      "source": "test/goldens/ui_inventory/progress-current-events-home-return-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/progress-current-in-progress-return-393-1x.png",
+      "route": "/me",
+      "trigger": "Timeline Back → Me",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/progress_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/progress-current-events-latest",
+    "module": "专家服务与咨询",
+    "label": "↑ 查看更早记录",
+    "state": "progress-current-events-latest",
+    "image": "08-expert-service/progress-current-events-latest/default.png",
+    "viewport": "08-expert-service/progress-current-events-latest/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode"
+    ],
+    "mapped_design_candidates": [
+      "services/progress",
+      "common/not-found"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_progress_page.dart",
+      "lib/modules/services/presentation/service_timeline.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/mom_timeline_event.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/progress_current_inventory_test.dart",
+    "test_case": "current timeline earlier latest appointment and summary false",
+    "metadata": "raw/test/goldens/ui_inventory/progress-current-events-latest-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/progress-current-events-latest-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-events-latest-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/progress-current-events-latest-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-events-latest-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Open multi-event service → latest event",
+    "journey": {
+      "source": "test/goldens/ui_inventory/progress-current-events-latest-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/progress-current-events-home-393-1x.png",
+      "route": "/services/episodes/service-episode",
+      "trigger": "Open multi-event service → latest event",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/progress_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/progress-current-events-latest-return",
+    "module": "专家服务与咨询",
+    "label": "↑ 查看更早记录",
+    "state": "progress-current-events-latest-return",
+    "image": "08-expert-service/progress-current-events-latest-return/default.png",
+    "viewport": "08-expert-service/progress-current-events-latest-return/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode"
+    ],
+    "mapped_design_candidates": [
+      "services/progress",
+      "common/not-found"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_progress_page.dart",
+      "lib/modules/services/presentation/service_timeline.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/mom_timeline_event.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/progress_current_inventory_test.dart",
+    "test_case": "current timeline earlier latest appointment and summary false",
+    "metadata": "raw/test/goldens/ui_inventory/progress-current-events-latest-return-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/progress-current-events-latest-return-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-events-latest-return-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/progress-current-events-latest-return-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-events-latest-return-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Back to latest → latest event and footer",
+    "journey": {
+      "source": "test/goldens/ui_inventory/progress-current-events-latest-return-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/progress-current-events-earlier-393-1x.png",
+      "route": "/services/episodes/service-episode",
+      "trigger": "Back to latest → latest event and footer",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/progress_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/progress-current-events-refresh-error",
+    "module": "专家服务与咨询",
+    "label": "↑ 查看更早记录",
+    "state": "progress-current-events-refresh-error",
+    "image": "08-expert-service/progress-current-events-refresh-error/default.png",
+    "viewport": "08-expert-service/progress-current-events-refresh-error/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode"
+    ],
+    "mapped_design_candidates": [
+      "services/progress",
+      "common/not-found"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_progress_page.dart",
+      "lib/modules/services/presentation/service_timeline.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/mom_timeline_event.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/progress_current_inventory_test.dart",
+    "test_case": "current timeline earlier latest appointment and summary false",
+    "metadata": "raw/test/goldens/ui_inventory/progress-current-events-refresh-error-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/progress-current-events-refresh-error-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-events-refresh-error-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/progress-current-events-refresh-error-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-events-refresh-error-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Appointment context 503 → retained old events and retry",
+    "journey": {
+      "source": "test/goldens/ui_inventory/progress-current-events-refresh-error-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/progress-current-events-refresh-pending-393-1x.png",
+      "route": "/services/episodes/service-episode",
+      "trigger": "Appointment context 503 → retained old events and retry",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/progress_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/progress-current-events-refresh-pending",
+    "module": "专家服务与咨询",
+    "label": "↑ 查看更早记录",
+    "state": "progress-current-events-refresh-pending",
+    "image": "08-expert-service/progress-current-events-refresh-pending/default.png",
+    "viewport": "08-expert-service/progress-current-events-refresh-pending/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode"
+    ],
+    "mapped_design_candidates": [
+      "services/progress",
+      "common/not-found"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_progress_page.dart",
+      "lib/modules/services/presentation/service_timeline.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/mom_timeline_event.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/progress_current_inventory_test.dart",
+    "test_case": "current timeline earlier latest appointment and summary false",
+    "metadata": "raw/test/goldens/ui_inventory/progress-current-events-refresh-pending-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/progress-current-events-refresh-pending-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-events-refresh-pending-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/progress-current-events-refresh-pending-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-events-refresh-pending-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Pull refresh → existing events while appointment context waits",
+    "journey": {
+      "source": "test/goldens/ui_inventory/progress-current-events-refresh-pending-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/progress-current-booking-return-393-1x.png",
+      "route": "/services/episodes/service-episode",
+      "trigger": "Pull refresh → existing events while appointment context waits",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/progress_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/progress-current-events-refresh-recovered",
+    "module": "专家服务与咨询",
+    "label": "↑ 查看更早记录",
+    "state": "progress-current-events-refresh-recovered",
+    "image": "08-expert-service/progress-current-events-refresh-recovered/default.png",
+    "viewport": "08-expert-service/progress-current-events-refresh-recovered/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode"
+    ],
+    "mapped_design_candidates": [
+      "services/progress",
+      "common/not-found"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_progress_page.dart",
+      "lib/modules/services/presentation/service_timeline.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/mom_timeline_event.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/progress_current_inventory_test.dart",
+    "test_case": "current timeline earlier latest appointment and summary false",
+    "metadata": "raw/test/goldens/ui_inventory/progress-current-events-refresh-recovered-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/progress-current-events-refresh-recovered-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-events-refresh-recovered-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/progress-current-events-refresh-recovered-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-events-refresh-recovered-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Retry → synced events and latest position",
+    "journey": {
+      "source": "test/goldens/ui_inventory/progress-current-events-refresh-recovered-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/progress-current-events-refresh-error-393-1x.png",
+      "route": "/services/episodes/service-episode",
+      "trigger": "Retry → synced events and latest position",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/progress_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/progress-current-in-progress-return",
+    "module": "专家服务与咨询",
+    "label": "↑ 查看更早记录",
+    "state": "progress-current-in-progress-return",
+    "image": "08-expert-service/progress-current-in-progress-return/default.png",
+    "viewport": "08-expert-service/progress-current-in-progress-return/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode"
+    ],
+    "mapped_design_candidates": [
+      "services/progress",
+      "common/not-found"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_progress_page.dart",
+      "lib/modules/services/presentation/service_timeline.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/mom_timeline_event.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/progress_current_inventory_test.dart",
+    "test_case": "current timeline earlier latest appointment and summary false",
+    "metadata": "raw/test/goldens/ui_inventory/progress-current-in-progress-return-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/progress-current-in-progress-return-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-in-progress-return-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/progress-current-in-progress-return-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-in-progress-return-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Close active consultation entry → timeline",
+    "journey": {
+      "source": "test/goldens/ui_inventory/progress-current-in-progress-return-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/progress-current-in-progress-room-393-1x.png",
+      "route": "/services/episodes/service-episode",
+      "trigger": "Close active consultation entry → timeline",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/progress_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/progress-current-in-progress-room",
+    "module": "专家服务与咨询",
+    "label": "预约详情",
+    "state": "progress-current-in-progress-room",
+    "image": "08-expert-service/progress-current-in-progress-room/default.png",
+    "viewport": "08-expert-service/progress-current-in-progress-room/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/appointments/service-appointment/room"
+    ],
+    "mapped_design_candidates": [
+      "services/preparation",
+      "services/room",
+      "services/room-leave",
+      "common/not-found",
+      "services/state-53"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/consultation/presentation/consultation_preparation.dart",
+      "lib/modules/consultation/presentation/room_page.dart",
+      "lib/modules/services/presentation/mom_appointment_widgets.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/progress_current_inventory_test.dart",
+    "test_case": "current timeline earlier latest appointment and summary false",
+    "metadata": "raw/test/goldens/ui_inventory/progress-current-in-progress-room-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/progress-current-in-progress-room-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-in-progress-room-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/progress-current-in-progress-room-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-in-progress-room-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/appointments/service-appointment/room",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "In-progress event → active consultation entry",
+    "journey": {
+      "source": "test/goldens/ui_inventory/progress-current-in-progress-room-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/progress-current-event-in-progress-393-1x.png",
+      "route": "/services/appointments/service-appointment/room",
+      "trigger": "In-progress event → active consultation entry",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/progress_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/progress-current-initial-error",
+    "module": "专家服务与咨询",
+    "label": "暂时无法载入，请稍后重试",
+    "state": "progress-current-initial-error",
+    "image": "08-expert-service/progress-current-initial-error/default.png",
+    "viewport": "08-expert-service/progress-current-initial-error/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode"
+    ],
+    "mapped_design_candidates": [
+      "services/progress",
+      "common/not-found",
+      "common/loading",
+      "common/empty",
+      "common/error"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_progress_page.dart",
+      "lib/shared/widgets/product_feedback.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/progress_current_inventory_test.dart",
+    "test_case": "current timeline loading missing and retry false",
+    "metadata": "raw/test/goldens/ui_inventory/progress-current-initial-error-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/progress-current-initial-error-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-initial-error-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/progress-current-initial-error-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-initial-error-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Overview 503 → retry card",
+    "journey": {
+      "source": "test/goldens/ui_inventory/progress-current-initial-error-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/progress-current-initial-loading-393-1x.png",
+      "route": "/services/episodes/service-episode",
+      "trigger": "Overview 503 → retry card",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/progress_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/progress-current-initial-loading",
+    "module": "专家服务与咨询",
+    "label": "正在加载服务进度…",
+    "state": "progress-current-initial-loading",
+    "image": "08-expert-service/progress-current-initial-loading/default.png",
+    "viewport": "08-expert-service/progress-current-initial-loading/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode"
+    ],
+    "mapped_design_candidates": [
+      "services/progress",
+      "common/not-found"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_progress_page.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/progress_current_inventory_test.dart",
+    "test_case": "current timeline loading missing and retry false",
+    "metadata": "raw/test/goldens/ui_inventory/progress-current-initial-loading-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/progress-current-initial-loading-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-initial-loading-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/progress-current-initial-loading-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-initial-loading-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Service progress → overview pending",
+    "journey": {
+      "source": "test/goldens/ui_inventory/progress-current-initial-loading-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/progress-current-errors-home-393-1x.png",
+      "route": "/services/episodes/service-episode",
+      "trigger": "Service progress → overview pending",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/progress_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/progress-current-missing-home-return",
+    "module": "专家服务与咨询",
+    "label": "下午好，Mia",
+    "state": "progress-current-missing-home-return",
+    "image": "08-expert-service/progress-current-missing-home-return/default.png",
+    "viewport": "08-expert-service/progress-current-missing-home-return/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/me"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "mom/home",
+      "mom/record-picker",
+      "mom/other-functions",
+      "common/not-found",
+      "mom/state-01",
+      "mom/state-11",
+      "mom/state-31",
+      "mom/state-38",
+      "mom/state-43"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/modules/mom/presentation/mom_home_sections.dart",
+      "lib/modules/mom/presentation/mother_home_page.dart",
+      "lib/modules/services/presentation/expert_support_section.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/progress_current_inventory_test.dart",
+    "test_case": "current timeline loading missing and retry false",
+    "metadata": "raw/test/goldens/ui_inventory/progress-current-missing-home-return-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/progress-current-missing-home-return-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-missing-home-return-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/progress-current-missing-home-return-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-missing-home-return-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/me",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Missing service action → original Me",
+    "journey": {
+      "source": "test/goldens/ui_inventory/progress-current-missing-home-return-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/progress-current-episode-missing-393-1x.png",
+      "route": "/me",
+      "trigger": "Missing service action → original Me",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/progress_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/progress-current-past-end-booking",
+    "module": "专家服务与咨询",
+    "label": "先做个预约前确认",
+    "state": "progress-current-past-end-booking",
+    "image": "08-expert-service/progress-current-past-end-booking/default.png",
+    "viewport": "08-expert-service/progress-current-past-end-booking/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode/booking"
+    ],
+    "mapped_design_candidates": [
+      "services/booking",
+      "common/not-found",
+      "services/state-32",
+      "services/state-33",
+      "services/state-34",
+      "services/state-35",
+      "services/state-36",
+      "services/state-37"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/booking_flow_dialogs.dart",
+      "lib/modules/services/presentation/booking_page.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/progress_current_inventory_test.dart",
+    "test_case": "current timeline service states and renewal entry false",
+    "metadata": "raw/test/goldens/ui_inventory/progress-current-past-end-booking-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/progress-current-past-end-booking-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-past-end-booking-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/progress-current-past-end-booking-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-past-end-booking-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode/booking",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Past-end active plan booking → actual target handling",
+    "journey": {
+      "source": "test/goldens/ui_inventory/progress-current-past-end-booking-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/progress-current-active-past-end-393-1x.png",
+      "route": "/services/episodes/service-episode/booking",
+      "trigger": "Past-end active plan booking → actual target handling",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/progress_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/progress-current-past-end-return",
+    "module": "专家服务与咨询",
+    "label": "我的陪伴计划",
+    "state": "progress-current-past-end-return",
+    "image": "08-expert-service/progress-current-past-end-return/default.png",
+    "viewport": "08-expert-service/progress-current-past-end-return/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode"
+    ],
+    "mapped_design_candidates": [
+      "services/progress",
+      "common/not-found"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_progress_page.dart",
+      "lib/modules/services/presentation/service_timeline.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/mom_timeline_event.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/progress_current_inventory_test.dart",
+    "test_case": "current timeline service states and renewal entry false",
+    "metadata": "raw/test/goldens/ui_inventory/progress-current-past-end-return-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/progress-current-past-end-return-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-past-end-return-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/progress-current-past-end-return-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-past-end-return-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Booking Back → unchanged active timeline",
+    "journey": {
+      "source": "test/goldens/ui_inventory/progress-current-past-end-return-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/progress-current-past-end-booking-393-1x.png",
+      "route": "/services/episodes/service-episode",
+      "trigger": "Booking Back → unchanged active timeline",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/progress_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/progress-current-refresh-error",
+    "module": "专家服务与咨询",
+    "label": "暂时无法载入，请稍后重试",
+    "state": "progress-current-refresh-error",
+    "image": "08-expert-service/progress-current-refresh-error/default.png",
+    "viewport": "08-expert-service/progress-current-refresh-error/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode"
+    ],
+    "mapped_design_candidates": [
+      "services/progress",
+      "common/not-found",
+      "common/loading",
+      "common/empty",
+      "common/error"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_progress_page.dart",
+      "lib/shared/widgets/product_feedback.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/progress_current_inventory_test.dart",
+    "test_case": "current timeline loading missing and retry false",
+    "metadata": "raw/test/goldens/ui_inventory/progress-current-refresh-error-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/progress-current-refresh-error-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-refresh-error-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/progress-current-refresh-error-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-refresh-error-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Overview refresh 503 → full error surface",
+    "journey": {
+      "source": "test/goldens/ui_inventory/progress-current-refresh-error-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/progress-current-refresh-loading-393-1x.png",
+      "route": "/services/episodes/service-episode",
+      "trigger": "Overview refresh 503 → full error surface",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/progress_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/progress-current-refresh-loading",
+    "module": "专家服务与咨询",
+    "label": "我的陪伴计划",
+    "state": "progress-current-refresh-loading",
+    "image": "08-expert-service/progress-current-refresh-loading/default.png",
+    "viewport": "08-expert-service/progress-current-refresh-loading/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode"
+    ],
+    "mapped_design_candidates": [
+      "services/progress",
+      "common/not-found"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_progress_page.dart",
+      "lib/modules/services/presentation/service_timeline.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/mom_timeline_event.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/progress_current_inventory_test.dart",
+    "test_case": "current timeline loading missing and retry false",
+    "metadata": "raw/test/goldens/ui_inventory/progress-current-refresh-loading-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/progress-current-refresh-loading-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-refresh-loading-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/progress-current-refresh-loading-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-refresh-loading-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Pull refresh → retained timeline with progress",
+    "journey": {
+      "source": "test/goldens/ui_inventory/progress-current-refresh-loading-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/progress-current-appointments-recovered-393-1x.png",
+      "route": "/services/episodes/service-episode",
+      "trigger": "Pull refresh → retained timeline with progress",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/progress_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/progress-current-refresh-recovered",
+    "module": "专家服务与咨询",
+    "label": "我的陪伴计划",
+    "state": "progress-current-refresh-recovered",
+    "image": "08-expert-service/progress-current-refresh-recovered/default.png",
+    "viewport": "08-expert-service/progress-current-refresh-recovered/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode"
+    ],
+    "mapped_design_candidates": [
+      "services/progress",
+      "common/not-found"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_progress_page.dart",
+      "lib/modules/services/presentation/service_timeline.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/mom_timeline_event.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/progress_current_inventory_test.dart",
+    "test_case": "current timeline loading missing and retry false",
+    "metadata": "raw/test/goldens/ui_inventory/progress-current-refresh-recovered-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/progress-current-refresh-recovered-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-refresh-recovered-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/progress-current-refresh-recovered-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-refresh-recovered-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Retry overview → service timeline restored",
+    "journey": {
+      "source": "test/goldens/ui_inventory/progress-current-refresh-recovered-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/progress-current-refresh-error-393-1x.png",
+      "route": "/services/episodes/service-episode",
+      "trigger": "Retry overview → service timeline restored",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/progress_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/progress-current-renew-options",
+    "module": "专家服务与咨询",
+    "label": "继续支持",
+    "state": "progress-current-renew-options",
+    "image": "08-expert-service/progress-current-renew-options/default.png",
+    "viewport": "08-expert-service/progress-current-renew-options/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode/renew"
+    ],
+    "mapped_design_candidates": [
+      "services/renew",
+      "common/not-found"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/modules/services/presentation/service_renew_page.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/progress_current_inventory_test.dart",
+    "test_case": "current timeline service states and renewal entry false",
+    "metadata": "raw/test/goldens/ui_inventory/progress-current-renew-options-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/progress-current-renew-options-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-renew-options-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/progress-current-renew-options-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-renew-options-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode/renew",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Ended service Continue support → renewal options",
+    "journey": {
+      "source": "test/goldens/ui_inventory/progress-current-renew-options-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/progress-current-state-cancelled-393-1x.png",
+      "route": "/services/episodes/service-episode/renew",
+      "trigger": "Ended service Continue support → renewal options",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/progress_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/progress-current-renew-purchase",
+    "module": "专家服务与咨询",
+    "label": "继续支持",
+    "state": "progress-current-renew-purchase",
+    "image": "08-expert-service/progress-current-renew-purchase/default.png",
+    "viewport": "08-expert-service/progress-current-renew-purchase/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode/renew"
+    ],
+    "mapped_design_candidates": [
+      "services/purchase",
+      "services/renew",
+      "common/not-found",
+      "services/state-25",
+      "services/state-26",
+      "services/state-27",
+      "services/state-28",
+      "services/state-29",
+      "services/state-30"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/modules/services/presentation/service_purchase_dialog.dart",
+      "lib/modules/services/presentation/service_renew_page.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/progress_current_inventory_test.dart",
+    "test_case": "current timeline service states and renewal entry false",
+    "metadata": "raw/test/goldens/ui_inventory/progress-current-renew-purchase-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/progress-current-renew-purchase-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-renew-purchase-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/progress-current-renew-purchase-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-renew-purchase-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode/renew",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Select renewal plan → real eligibility dialog",
+    "journey": {
+      "source": "test/goldens/ui_inventory/progress-current-renew-purchase-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/progress-current-renew-options-393-1x.png",
+      "route": "/services/episodes/service-episode/renew",
+      "trigger": "Select renewal plan → real eligibility dialog",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/progress_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/progress-current-renew-purchase-closed",
+    "module": "专家服务与咨询",
+    "label": "继续支持",
+    "state": "progress-current-renew-purchase-closed",
+    "image": "08-expert-service/progress-current-renew-purchase-closed/default.png",
+    "viewport": "08-expert-service/progress-current-renew-purchase-closed/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode/renew"
+    ],
+    "mapped_design_candidates": [
+      "services/renew",
+      "common/not-found"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_flow_theme.dart",
+      "lib/modules/services/presentation/service_renew_page.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/progress_current_inventory_test.dart",
+    "test_case": "current timeline service states and renewal entry false",
+    "metadata": "raw/test/goldens/ui_inventory/progress-current-renew-purchase-closed-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/progress-current-renew-purchase-closed-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-renew-purchase-closed-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/progress-current-renew-purchase-closed-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-renew-purchase-closed-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode/renew",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Close eligibility → renewal options",
+    "journey": {
+      "source": "test/goldens/ui_inventory/progress-current-renew-purchase-closed-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/progress-current-renew-purchase-393-1x.png",
+      "route": "/services/episodes/service-episode/renew",
+      "trigger": "Close eligibility → renewal options",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/progress_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/progress-current-renew-return",
+    "module": "专家服务与咨询",
+    "label": "我的陪伴计划",
+    "state": "progress-current-renew-return",
+    "image": "08-expert-service/progress-current-renew-return/default.png",
+    "viewport": "08-expert-service/progress-current-renew-return/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode"
+    ],
+    "mapped_design_candidates": [
+      "services/progress",
+      "common/not-found"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_progress_page.dart",
+      "lib/modules/services/presentation/service_timeline.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/mom_timeline_event.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/progress_current_inventory_test.dart",
+    "test_case": "current timeline service states and renewal entry false",
+    "metadata": "raw/test/goldens/ui_inventory/progress-current-renew-return-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/progress-current-renew-return-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-renew-return-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/progress-current-renew-return-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-renew-return-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Renewal Back → ended timeline",
+    "journey": {
+      "source": "test/goldens/ui_inventory/progress-current-renew-return-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/progress-current-renew-purchase-closed-393-1x.png",
+      "route": "/services/episodes/service-episode",
+      "trigger": "Renewal Back → ended timeline",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/progress_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/progress-current-state-cancelled",
+    "module": "专家服务与咨询",
+    "label": "我的陪伴计划",
+    "state": "progress-current-state-cancelled",
+    "image": "08-expert-service/progress-current-state-cancelled/default.png",
+    "viewport": "08-expert-service/progress-current-state-cancelled/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode"
+    ],
+    "mapped_design_candidates": [
+      "services/progress",
+      "common/not-found"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_progress_page.dart",
+      "lib/modules/services/presentation/service_timeline.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/mom_timeline_event.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/progress_current_inventory_test.dart",
+    "test_case": "current timeline service states and renewal entry false",
+    "metadata": "raw/test/goldens/ui_inventory/progress-current-state-cancelled-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/progress-current-state-cancelled-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-state-cancelled-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/progress-current-state-cancelled-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-state-cancelled-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Refresh server episode cancelled → supported state and actions",
+    "journey": {
+      "source": "test/goldens/ui_inventory/progress-current-state-cancelled-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/progress-current-state-completed-393-1x.png",
+      "route": "/services/episodes/service-episode",
+      "trigger": "Refresh server episode cancelled → supported state and actions",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/progress_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/progress-current-state-completed",
+    "module": "专家服务与咨询",
+    "label": "我的陪伴计划",
+    "state": "progress-current-state-completed",
+    "image": "08-expert-service/progress-current-state-completed/default.png",
+    "viewport": "08-expert-service/progress-current-state-completed/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode"
+    ],
+    "mapped_design_candidates": [
+      "services/progress",
+      "common/not-found"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_progress_page.dart",
+      "lib/modules/services/presentation/service_timeline.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/mom_timeline_event.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/progress_current_inventory_test.dart",
+    "test_case": "current timeline service states and renewal entry false",
+    "metadata": "raw/test/goldens/ui_inventory/progress-current-state-completed-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/progress-current-state-completed-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-state-completed-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/progress-current-state-completed-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-state-completed-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Refresh server episode completed → supported state and actions",
+    "journey": {
+      "source": "test/goldens/ui_inventory/progress-current-state-completed-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/progress-current-state-paused-393-1x.png",
+      "route": "/services/episodes/service-episode",
+      "trigger": "Refresh server episode completed → supported state and actions",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/progress_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/progress-current-state-paused",
+    "module": "专家服务与咨询",
+    "label": "我的陪伴计划",
+    "state": "progress-current-state-paused",
+    "image": "08-expert-service/progress-current-state-paused/default.png",
+    "viewport": "08-expert-service/progress-current-state-paused/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode"
+    ],
+    "mapped_design_candidates": [
+      "services/progress",
+      "common/not-found"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_progress_page.dart",
+      "lib/modules/services/presentation/service_timeline.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/mom_timeline_event.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/progress_current_inventory_test.dart",
+    "test_case": "current timeline service states and renewal entry false",
+    "metadata": "raw/test/goldens/ui_inventory/progress-current-state-paused-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/progress-current-state-paused-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-state-paused-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/progress-current-state-paused-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-state-paused-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Refresh server episode paused → supported state and actions",
+    "journey": {
+      "source": "test/goldens/ui_inventory/progress-current-state-paused-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/progress-current-state-provisioning_pending-393-1x.png",
+      "route": "/services/episodes/service-episode",
+      "trigger": "Refresh server episode paused → supported state and actions",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/progress_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/progress-current-state-provisioning_pending",
+    "module": "专家服务与咨询",
+    "label": "我的陪伴计划",
+    "state": "progress-current-state-provisioning_pending",
+    "image": "08-expert-service/progress-current-state-provisioning_pending/default.png",
+    "viewport": "08-expert-service/progress-current-state-provisioning_pending/viewport.png",
+    "extent": "viewport",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode"
+    ],
+    "mapped_design_candidates": [
+      "services/progress",
+      "common/not-found"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_progress_page.dart",
+      "lib/modules/services/presentation/service_timeline.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/mom_timeline_event.dart",
+      "lib/shared/widgets/momcozy_line_icon.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/progress_current_inventory_test.dart",
+    "test_case": "current timeline service states and renewal entry false",
+    "metadata": "raw/test/goldens/ui_inventory/progress-current-state-provisioning_pending-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/progress-current-state-provisioning_pending-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-state-provisioning_pending-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/progress-current-state-provisioning_pending-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-state-provisioning_pending-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Refresh server episode provisioning_pending → supported state and actions",
+    "journey": {
+      "source": "test/goldens/ui_inventory/progress-current-state-provisioning_pending-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/progress-current-active-booking-return-393-1x.png",
+      "route": "/services/episodes/service-episode",
+      "trigger": "Refresh server episode provisioning_pending → supported state and actions",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/progress_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/progress-current-states-home",
+    "module": "专家服务与咨询",
+    "label": "下午好，Mia",
+    "state": "progress-current-states-home",
+    "image": "08-expert-service/progress-current-states-home/default.png",
+    "viewport": "08-expert-service/progress-current-states-home/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/me"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "mom/home",
+      "mom/record-picker",
+      "mom/other-functions",
+      "common/not-found",
+      "mom/state-01",
+      "mom/state-11",
+      "mom/state-31",
+      "mom/state-38",
+      "mom/state-43"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/modules/mom/presentation/mom_home_sections.dart",
+      "lib/modules/mom/presentation/mother_home_page.dart",
+      "lib/modules/services/presentation/expert_support_section.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/progress_current_inventory_test.dart",
+    "test_case": "current timeline service states and renewal entry false",
+    "metadata": "raw/test/goldens/ui_inventory/progress-current-states-home-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/progress-current-states-home-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-states-home-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/progress-current-states-home-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-states-home-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/me",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "More → Me with existing service",
+    "journey": {
+      "source": "test/goldens/ui_inventory/progress-current-states-home-393-1x.png",
+      "previous_source": null,
+      "route": "/me",
+      "trigger": "More → Me with existing service",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/progress_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/progress-current-states-home-return",
+    "module": "专家服务与咨询",
+    "label": "下午好，Mia",
+    "state": "progress-current-states-home-return",
+    "image": "08-expert-service/progress-current-states-home-return/default.png",
+    "viewport": "08-expert-service/progress-current-states-home-return/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/me"
+    ],
+    "mapped_design_candidates": [
+      "common/navigation",
+      "mom/home",
+      "mom/record-picker",
+      "mom/other-functions",
+      "common/not-found",
+      "mom/state-01",
+      "mom/state-11",
+      "mom/state-31",
+      "mom/state-38",
+      "mom/state-43"
+    ],
+    "production_widget_files": [
+      "lib/app/mom_bottom_navigation.dart",
+      "lib/app/momcozy_app.dart",
+      "lib/core/observability/momcozy_observability.dart",
+      "lib/modules/mom/presentation/mom_home_sections.dart",
+      "lib/modules/mom/presentation/mother_home_page.dart",
+      "lib/modules/services/presentation/expert_support_section.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/momcozy_components.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/progress_current_inventory_test.dart",
+    "test_case": "current timeline service states and renewal entry false",
+    "metadata": "raw/test/goldens/ui_inventory/progress-current-states-home-return-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/progress-current-states-home-return-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-states-home-return-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/progress-current-states-home-return-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-states-home-return-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/me",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Timeline Back → Me",
+    "journey": {
+      "source": "test/goldens/ui_inventory/progress-current-states-home-return-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/progress-current-past-end-return-393-1x.png",
+      "route": "/me",
+      "trigger": "Timeline Back → Me",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/progress_current_inventory_test.dart"
+    }
+  },
+  {
+    "id": "08-expert-service/progress-current-summary-return",
+    "module": "专家服务与咨询",
+    "label": "↑ 查看更早记录",
+    "state": "progress-current-summary-return",
+    "image": "08-expert-service/progress-current-summary-return/default.png",
+    "viewport": "08-expert-service/progress-current-summary-return/viewport.png",
+    "extent": "full-measured-scroll-stitch",
+    "needs_long_review": false,
+    "route_candidates": [
+      "/services/episodes/service-episode"
+    ],
+    "mapped_design_candidates": [
+      "services/progress",
+      "common/not-found"
+    ],
+    "production_widget_files": [
+      "lib/app/momcozy_app.dart",
+      "lib/modules/services/presentation/service_progress_page.dart",
+      "lib/modules/services/presentation/service_timeline.dart",
+      "lib/shared/widgets/mom_companion_widgets.dart",
+      "lib/shared/widgets/mom_settings_widgets.dart",
+      "lib/shared/widgets/mom_timeline_event.dart"
+    ],
+    "evidence_kind": "actual-app-router-with-isolated-http-fixtures",
+    "normal_entry_verified": true,
+    "test": "test/modules/services/progress_current_inventory_test.dart",
+    "test_case": "current timeline earlier latest appointment and summary false",
+    "metadata": "raw/test/goldens/ui_inventory/progress-current-summary-return-393-1x.png.json",
+    "variants": [
+      {
+        "source": "test/goldens/ui_inventory/progress-current-summary-return-320-2x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-summary-return-320-2x.png.json",
+        "width": 320,
+        "height": 844
+      },
+      {
+        "source": "test/goldens/ui_inventory/progress-current-summary-return-393-1x.png",
+        "metadata": "raw/test/goldens/ui_inventory/progress-current-summary-return-393-1x.png.json",
+        "width": 393,
+        "height": 844
+      }
+    ],
+    "verified_route": "/services/episodes/service-episode",
+    "entry": "Authenticated More → tap Me bottom navigation",
+    "trigger": "Summary Back → original timeline",
+    "journey": {
+      "source": "test/goldens/ui_inventory/progress-current-summary-return-393-1x.png",
+      "previous_source": "test/goldens/ui_inventory/progress-current-event-summary-393-1x.png",
+      "route": "/services/episodes/service-episode",
+      "trigger": "Summary Back → original timeline",
+      "root_entry": "Authenticated More → tap Me bottom navigation",
+      "evidence": "Actual MomCozyFlutterApp/createMomCozyRouter, production repositories and codecs, isolated in-memory HTTP data, fixed clock and timezone",
+      "test": "test/modules/services/progress_current_inventory_test.dart"
+    }
+  }
+]

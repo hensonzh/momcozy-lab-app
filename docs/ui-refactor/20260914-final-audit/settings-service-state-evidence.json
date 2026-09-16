@@ -1,0 +1,3735 @@
+[
+  {
+    "owner_id": "more",
+    "state": "身份完整与缺失",
+    "source_evidence": [
+      {
+        "id": "07-me/more-current-identity-resolved",
+        "image": "07-me/more-current-identity-resolved/default.png",
+        "observed_route": "/more",
+        "trigger": "Both responses arrived → name and email displayed",
+        "extent": "viewport"
+      },
+      {
+        "id": "07-me/more-current-identity-name-only-arrived",
+        "image": "07-me/more-current-identity-name-only-arrived/default.png",
+        "observed_route": "/more",
+        "trigger": "Name response arrived, email pending → combined identity still loading",
+        "extent": "viewport"
+      }
+    ],
+    "report": "20260914-more/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "122:9"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/more-390.png"
+    ],
+    "note": "身份完整、仅姓名及未到齐字段沿用同一身份卡，长字段纵排；原异步到达顺序保留。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [
+      {
+        "id": "124:68",
+        "live_node_available": false,
+        "archives": [
+          "20260914-more/figma-responsive-account.png",
+          "20260914-more/figma-state.json"
+        ],
+        "current_family_node": "122:9",
+        "note": "响应式身份组件设计保留 PNG 与创建记录，当前主画板复用该规则。"
+      }
+    ],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": [
+      "test/goldens/ui_refactor/more-long-identity-393-1x.png"
+    ]
+  },
+  {
+    "owner_id": "more",
+    "state": "加载",
+    "source_evidence": [
+      {
+        "id": "07-me/more-current-identity-pending",
+        "image": "07-me/more-current-identity-pending/default.png",
+        "observed_route": "/more",
+        "trigger": "Both identity endpoints pending → loading account card",
+        "extent": "viewport"
+      }
+    ],
+    "report": "20260914-more/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "122:105"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/more-390.png"
+    ],
+    "note": "共享身份卡加载变体：保留管理入口，当前加载基线见 more_redesign_states_test。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": [
+      "test/goldens/ui_refactor/more-loading-393-1x.png"
+    ]
+  },
+  {
+    "owner_id": "more",
+    "state": "未读变化",
+    "source_evidence": [
+      {
+        "id": "07-me/more-current-inbox-return",
+        "image": "07-me/more-current-inbox-return/default.png",
+        "observed_route": "/more",
+        "trigger": "Tap page Back → /more",
+        "extent": "viewport"
+      },
+      {
+        "id": "07-me/notification-current-archive-final-more",
+        "image": "07-me/notification-current-archive-final-more/default.png",
+        "observed_route": "/more",
+        "trigger": "Back More → no unread badge; scroll More back to top",
+        "extent": "viewport"
+      }
+    ],
+    "report": "20260914-more/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "122:9"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/more-390.png"
+    ],
+    "note": "共享设置行未读计数；通知打开/归档后的 More 为目的页面复用。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [
+      {
+        "id": "122:185",
+        "live_node_available": false,
+        "archives": [
+          "20260914-more/figma-unavailable.png",
+          "20260914-more/figma-state.json"
+        ],
+        "current_family_node": "122:9",
+        "note": "More 不可用/禁用变体保留归档，当前使用同一身份/设置行框架。"
+      }
+    ],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "more",
+    "state": "退出等待与错误",
+    "source_evidence": [
+      {
+        "id": "07-me/more-current-logout-remote-pending",
+        "image": "07-me/more-current-logout-remote-pending/default.png",
+        "observed_route": "/login",
+        "trigger": "Sign out → local session cleared and login immediately, remote revoke pending",
+        "extent": "viewport"
+      },
+      {
+        "id": "07-me/more-current-logout-error-message",
+        "image": "07-me/more-current-logout-error-message/default.png",
+        "observed_route": "/login",
+        "trigger": "Remote revoke returns 503 → login with sign-out failure Snackbar",
+        "extent": "viewport"
+      }
+    ],
+    "report": "20260914-more/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "122:9",
+      "225:1400",
+      "228:1150"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/more-390.png"
+    ],
+    "note": "退出等待禁用原按钮，失败按原流程留 More 或返回登录显示提示；跨页提示复用认证交付。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [
+      {
+        "id": "122:185",
+        "live_node_available": false,
+        "archives": [
+          "20260914-more/figma-unavailable.png",
+          "20260914-more/figma-state.json"
+        ],
+        "current_family_node": "122:9",
+        "note": "More 不可用/禁用变体保留归档，当前使用同一身份/设置行框架。"
+      }
+    ],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": [
+      "test/goldens/ui_refactor/more-unavailable-393-1x.png"
+    ]
+  },
+  {
+    "owner_id": "account",
+    "state": "身份",
+    "source_evidence": [
+      {
+        "id": "07-me/account-current-password-ready",
+        "image": "07-me/account-current-password-ready/default.png",
+        "observed_route": "/account",
+        "trigger": "Email-only account",
+        "extent": "viewport"
+      },
+      {
+        "id": "07-me/account-current-google-only-ready",
+        "image": "07-me/account-current-google-only-ready/default.png",
+        "observed_route": "/account",
+        "trigger": "Account GET google-only → real identity status and provider layout",
+        "extent": "viewport"
+      }
+    ],
+    "report": "20260914-account/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "128:68"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/account-390.png"
+    ],
+    "note": "身份、验证/删除状态与登录方式分组；Google-only 与密码方式按真实 profile 展示。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [
+      {
+        "id": "128:294",
+        "live_node_available": false,
+        "archives": [
+          "20260914-account/figma-qa.json",
+          "20260914-account/figma-state.json"
+        ],
+        "current_family_node": "128:68",
+        "note": "无登录方式和禁用状态复用当前账号结构，原创建/审计记录保留。"
+      },
+      {
+        "id": "128:329",
+        "live_node_available": false,
+        "archives": [
+          "20260914-account/figma-qa.json",
+          "20260914-account/figma-state.json"
+        ],
+        "current_family_node": "128:68",
+        "note": "长账号与大字号历史画板记录保留；当前版长身份/底部基线验证换行及可达性。"
+      }
+    ],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": [
+      "test/goldens/ui_refactor/account-no-providers-393-1x.png",
+      "test/goldens/ui_refactor/account-long-identity-393-1x.png"
+    ]
+  },
+  {
+    "owner_id": "account",
+    "state": "密码确认",
+    "source_evidence": [
+      {
+        "id": "07-me/account-current-password-entered",
+        "image": "07-me/account-current-password-entered/default.png",
+        "observed_route": "/account",
+        "trigger": "Enter password → obscured input",
+        "extent": "viewport"
+      }
+    ],
+    "report": "20260914-account/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "130:68",
+      "128:149"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/account-link-password-390.png",
+      "test/goldens/design_system/account-link-password-keyboard-390.png"
+    ],
+    "note": "密码确认沿用真实参数、焦点与键盘避让。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [
+      {
+        "id": "130:109",
+        "live_node_available": false,
+        "archives": [
+          "20260914-account/figma-keyboard.png",
+          "20260914-account/figma-qa.json"
+        ],
+        "current_family_node": "130:68",
+        "note": "键盘和大字号历史设计有导出；当前密码确认画板保留，平台 inset 由 Widget 验证。"
+      }
+    ],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": [
+      "test/goldens/ui_refactor/account-password-keyboard-393-1x.png"
+    ]
+  },
+  {
+    "owner_id": "account",
+    "state": "Google 绑定反馈",
+    "source_evidence": [
+      {
+        "id": "07-me/account-current-google-unavailable",
+        "image": "07-me/account-current-google-unavailable/default.png",
+        "observed_route": "/account",
+        "trigger": "Native gateway lacks build client ID → inline unavailable feedback",
+        "extent": "viewport"
+      }
+    ],
+    "report": "20260914-account/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "128:227",
+      "132:68"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/account-390.png"
+    ],
+    "note": "绑定成功及不可用反馈复用账号错误区域；确认前无网络写入。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": [
+      "test/goldens/ui_refactor/account-google-unavailable-393-1x.png",
+      "test/goldens/ui_refactor/account-linked-393-1x.png"
+    ]
+  },
+  {
+    "owner_id": "account",
+    "state": "删除账号",
+    "source_evidence": [
+      {
+        "id": "07-me/account-current-delete-confirm",
+        "image": "07-me/account-current-delete-confirm/default.png",
+        "observed_route": "/account",
+        "trigger": "Request deletion → confirmation",
+        "extent": "viewport"
+      },
+      {
+        "id": "07-me/account-current-delete-pending",
+        "image": "07-me/account-current-delete-pending/default.png",
+        "observed_route": "/account",
+        "trigger": "Confirm → DELETE pending, account actions disabled",
+        "extent": "viewport"
+      },
+      {
+        "id": "07-me/account-current-delete-error",
+        "image": "07-me/account-current-delete-error/default.png",
+        "observed_route": "/account",
+        "trigger": "DELETE 503 → account retained with inline error",
+        "extent": "viewport"
+      }
+    ],
+    "report": "20260914-account/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "128:189",
+      "128:359",
+      "132:68"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/account-delete-390.png"
+    ],
+    "note": "删除先确认，等待锁定，失败恢复入口；绑定和删除共享 _run 忙碌规则。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [
+      {
+        "id": "128:262",
+        "live_node_available": false,
+        "archives": [
+          "20260914-account/figma-qa.json",
+          "20260914-account/figma-state.json"
+        ],
+        "current_family_node": "132:68",
+        "note": "操作失败历史变体；当前 Google 错误画板展示相同页内错误模式，删除实际文案由对应测试证明。"
+      }
+    ],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": [
+      "test/goldens/ui_refactor/account-delete-confirm-393-1x.png",
+      "test/goldens/ui_refactor/account-link-pending-393-1x.png",
+      "test/goldens/ui_refactor/account-delete-error-393-1x.png"
+    ]
+  },
+  {
+    "owner_id": "account",
+    "state": "退出",
+    "source_evidence": [
+      {
+        "id": "07-me/account-current-logout-success-result",
+        "image": "07-me/account-current-logout-success-result/default.png",
+        "observed_route": "/login",
+        "trigger": "Remote revoke success → login",
+        "extent": "viewport"
+      },
+      {
+        "id": "07-me/account-current-logout-error-result",
+        "image": "07-me/account-current-logout-error-result/default.png",
+        "observed_route": "/login",
+        "trigger": "Remote revoke 503 → Account-specific sign-out Snackbar",
+        "extent": "viewport"
+      }
+    ],
+    "report": "20260914-account/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "224:1108",
+      "225:1400"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/auth-login-390.png"
+    ],
+    "note": "退出后的源图是登录目的页；原账号退出清除会话与服务器失败文案保留。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "privacy",
+    "state": "无服务",
+    "source_evidence": [
+      {
+        "id": "07-me/privacy-journey-empty-services",
+        "image": "07-me/privacy-journey-empty-services/default.png",
+        "observed_route": "/privacy",
+        "trigger": "Retry with no owned services → empty state and no editable defaults",
+        "extent": "viewport"
+      }
+    ],
+    "report": "20260914-privacy/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "142:473"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/privacy-empty-390.png"
+    ],
+    "note": "无服务仍解释记录与授权边界，不显示虚构服务。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "privacy",
+    "state": "按服务授权",
+    "source_evidence": [
+      {
+        "id": "07-me/privacy-journey-service-picker",
+        "image": "07-me/privacy-journey-service-picker/default.png",
+        "observed_route": "/privacy",
+        "trigger": "Tap service picker → list of owned services",
+        "extent": "viewport"
+      },
+      {
+        "id": "07-me/privacy-journey-second-service-saved",
+        "image": "07-me/privacy-journey-second-service-saved/default.png",
+        "observed_route": "/privacy",
+        "trigger": "Save second service → first service stays unchanged",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "20260914-privacy/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "142:1358",
+      "142:1061",
+      "142:611"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/privacy-top-390.png",
+      "test/goldens/design_system/privacy-saved-390.png"
+    ],
+    "note": "服务选择与独立授权；切换前保护未保存草稿，保存沿用 episodeId。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": [
+      "test/goldens/ui_refactor/privacy-long-picker-393-1x.png",
+      "test/goldens/ui_refactor/privacy-saved-bottom-393-1x.png"
+    ]
+  },
+  {
+    "owner_id": "privacy",
+    "state": "开启与关闭",
+    "source_evidence": [
+      {
+        "id": "07-me/privacy-journey-granted",
+        "image": "07-me/privacy-journey-granted/default.png",
+        "observed_route": "/privacy",
+        "trigger": "Re-enable three permissions → save without revocation confirmation",
+        "extent": "full-measured-scroll-stitch"
+      },
+      {
+        "id": "07-me/privacy-journey-revoked",
+        "image": "07-me/privacy-journey-revoked/default.png",
+        "observed_route": "/privacy",
+        "trigger": "Confirm required revocation → both HTTP writes and saved state",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "20260914-privacy/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "142:541",
+      "142:1199",
+      "142:1119"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/privacy-confirm-390.png",
+      "test/goldens/design_system/privacy-saved-390.png"
+    ],
+    "note": "开关及必要授权撤回确认；取消保留草稿，不删除已有账号记录。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": [
+      "test/goldens/ui_refactor/privacy-required-scopes-393-1x.png"
+    ]
+  },
+  {
+    "owner_id": "privacy",
+    "state": "加载",
+    "source_evidence": [
+      {
+        "id": "07-me/privacy-journey-overview-loading",
+        "image": "07-me/privacy-journey-overview-loading/default.png",
+        "observed_route": "/privacy",
+        "trigger": "Privacy entry → overview HTTP pending",
+        "extent": "viewport"
+      },
+      {
+        "id": "07-me/privacy-journey-consent-loading",
+        "image": "07-me/privacy-journey-consent-loading/default.png",
+        "observed_route": "/privacy",
+        "trigger": "Overview loads → selected consent read pending",
+        "extent": "viewport"
+      }
+    ],
+    "report": "20260914-privacy/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "142:445",
+      "142:501"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/privacy-top-390.png"
+    ],
+    "note": "共享页面/授权加载变体；当前隐私状态测试覆盖两层读取。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": [
+      "test/goldens/ui_refactor/privacy-overview-loading-393-1x.png",
+      "test/goldens/ui_refactor/privacy-consent-loading-393-1x.png"
+    ]
+  },
+  {
+    "owner_id": "privacy",
+    "state": "保存失败",
+    "source_evidence": [
+      {
+        "id": "07-me/privacy-journey-optional-uncertain",
+        "image": "07-me/privacy-journey-optional-uncertain/default.png",
+        "observed_route": "/privacy",
+        "trigger": "Optional write HTTP failure → uncertain state",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "20260914-privacy/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "142:771",
+      "142:868",
+      "142:965"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/privacy-uncertain-390.png"
+    ],
+    "note": "不确定结果复用原写入身份，部分完成只重试剩余授权；冲突要求重新读取。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": [
+      "test/goldens/ui_refactor/privacy-uncertain-bottom-393-1x.png",
+      "test/goldens/ui_refactor/privacy-partial-uncertain-393-1x.png",
+      "test/goldens/ui_refactor/privacy-conflict-bottom-393-1x.png"
+    ]
+  },
+  {
+    "owner_id": "notifications",
+    "state": "空",
+    "source_evidence": [
+      {
+        "id": "07-me/notification-current-inbox-empty",
+        "image": "07-me/notification-current-inbox-empty/default.png",
+        "observed_route": "/notifications",
+        "trigger": "More notifications entry → empty inbox",
+        "extent": "viewport"
+      }
+    ],
+    "report": "20260914-notifications/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "135:117"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/notifications-empty-390.png"
+    ],
+    "note": "真实空列表；与首次读取失败明确区分。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "notifications",
+    "state": "未读与已读",
+    "source_evidence": [
+      {
+        "id": "07-me/notification-current-inbox-first-page",
+        "image": "07-me/notification-current-inbox-first-page/default.png",
+        "observed_route": "/notifications",
+        "trigger": "Retry → first three updates with unread count and load more",
+        "extent": "full-measured-scroll-stitch"
+      },
+      {
+        "id": "07-me/notification-current-inbox-all-read",
+        "image": "07-me/notification-current-inbox-all-read/default.png",
+        "observed_route": "/notifications",
+        "trigger": "Mark all read → server state refreshed, unread badge cleared",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "20260914-notifications/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "134:68",
+      "135:82"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/notifications-inbox-390.png",
+      "test/goldens/design_system/notifications-read-390.png"
+    ],
+    "note": "正文完整占卡宽，未读/类型/时间在顶，归档为独立操作。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": [
+      "test/goldens/ui_refactor/notifications-all-read-393-1x.png"
+    ]
+  },
+  {
+    "owner_id": "notifications",
+    "state": "分页",
+    "source_evidence": [
+      {
+        "id": "07-me/notification-current-inbox-second-page",
+        "image": "07-me/notification-current-inbox-second-page/default.png",
+        "observed_route": "/notifications",
+        "trigger": "Load more → append second page",
+        "extent": "full-measured-scroll-stitch"
+      },
+      {
+        "id": "07-me/notification-current-inbox-last-page",
+        "image": "07-me/notification-current-inbox-last-page/default.png",
+        "observed_route": "/notifications",
+        "trigger": "Load final page → full list, no load-more CTA",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "20260914-notifications/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "136:775",
+      "137:357"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/notifications-inbox-390.png"
+    ],
+    "note": "列表卡复用，分页操作区保留等待、后续页、失败与内容。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": [
+      "test/goldens/ui_refactor/notifications-pagination-pending-393-1x.png",
+      "test/goldens/ui_refactor/notifications-pagination-error-393-1x.png"
+    ]
+  },
+  {
+    "owner_id": "notifications",
+    "state": "归档",
+    "source_evidence": [
+      {
+        "id": "07-me/notification-current-inbox-archived",
+        "image": "07-me/notification-current-inbox-archived/default.png",
+        "observed_route": "/notifications",
+        "trigger": "Archive last update → removed immediately, unread count refreshed",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "20260914-notifications/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "136:813"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/notifications-inbox-390.png"
+    ],
+    "note": "归档等待/错误沿用同一卡片操作区，成功删除对应行，未读统计来自控制器。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": [
+      "test/goldens/ui_refactor/notifications-archive-pending-393-1x.png",
+      "test/goldens/ui_refactor/notifications-archive-error-393-1x.png"
+    ]
+  },
+  {
+    "owner_id": "notifications",
+    "state": "加载",
+    "source_evidence": [
+      {
+        "id": "07-me/notification-current-inbox-loading",
+        "image": "07-me/notification-current-inbox-loading/default.png",
+        "observed_route": "/notifications",
+        "trigger": "Refresh empty inbox → pending response",
+        "extent": "viewport"
+      }
+    ],
+    "report": "20260914-notifications/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "135:155"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/notifications-inbox-390.png"
+    ],
+    "note": "列表加载变体，不把未返回数据当作空态。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": [
+      "test/goldens/ui_refactor/notifications-loading-393-1x.png"
+    ]
+  },
+  {
+    "owner_id": "notifications",
+    "state": "错误",
+    "source_evidence": [
+      {
+        "id": "07-me/notification-current-inbox-read-error",
+        "image": "07-me/notification-current-inbox-read-error/default.png",
+        "observed_route": "/notifications",
+        "trigger": "Empty inbox read fails → error and retry",
+        "extent": "viewport"
+      }
+    ],
+    "report": "20260914-notifications/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "135:194",
+      "135:234"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/notifications-error-390.png"
+    ],
+    "note": "首次失败与保留内容失败分开；重试保留原目标行为。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": [
+      "test/goldens/ui_refactor/notifications-initial-error-393-1x.png"
+    ]
+  },
+  {
+    "owner_id": "notifications",
+    "state": "跳转反馈",
+    "source_evidence": [
+      {
+        "id": "07-me/notification-current-notification-open-error",
+        "image": "07-me/notification-current-notification-open-error/default.png",
+        "observed_route": "/notifications",
+        "trigger": "Open update request fails → inbox retained with Snackbar",
+        "extent": "full-measured-scroll-stitch"
+      },
+      {
+        "id": "07-me/notification-current-notification-target-unavailable",
+        "image": "07-me/notification-current-notification-target-unavailable/default.png",
+        "observed_route": "/notifications",
+        "trigger": "Retry open → server reports resource unavailable, item read, no navigation",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "20260914-notifications/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "135:234"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/notifications-inbox-390.png"
+    ],
+    "note": "打开错误/目标不可用为原 Snackbar；不新增通知详情页，目的路由由目标交付负责。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": [
+      "test/goldens/ui_refactor/notifications-archive-error-393-1x.png"
+    ]
+  },
+  {
+    "owner_id": "notification-settings",
+    "state": "分类开关",
+    "source_evidence": [
+      {
+        "id": "07-me/notification-permission-current-permission-restored-enabled",
+        "image": "07-me/notification-permission-current-permission-restored-enabled/default.png",
+        "observed_route": "/notifications/settings",
+        "trigger": "Enable after authorization → true persisted without re-request",
+        "extent": "full-measured-scroll-stitch"
+      },
+      {
+        "id": "07-me/notification-permission-current-permission-restored-disabled",
+        "image": "07-me/notification-permission-current-permission-restored-disabled/default.png",
+        "observed_route": "/notifications/settings",
+        "trigger": "Disable appointments → false persisted",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "20260914-notifications/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "135:274",
+      "136:187"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/notifications-settings-390.png"
+    ],
+    "note": "分类开关及恢复后的实际偏好保留，不自动开启未订阅提醒。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": [
+      "test/goldens/ui_refactor/notifications-settings-restored-393-1x.png"
+    ]
+  },
+  {
+    "owner_id": "notification-settings",
+    "state": "未申请",
+    "source_evidence": [
+      {
+        "id": "07-me/notification-permission-current-education-ready",
+        "image": "07-me/notification-permission-current-education-ready/default.png",
+        "observed_route": "/notifications/settings",
+        "trigger": "Notification center settings → preferences",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "20260914-notifications/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "135:274"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/notifications-settings-390.png"
+    ],
+    "note": "未申请权限展示原启用流程。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "notification-settings",
+    "state": "允许",
+    "source_evidence": [
+      {
+        "id": "07-me/notification-permission-current-request-authorized",
+        "image": "07-me/notification-permission-current-request-authorized/default.png",
+        "observed_route": "/notifications/settings",
+        "trigger": "Continue → fake platform grants permission, registration and preference save succeed",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "20260914-notifications/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "136:187"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/notifications-settings-390.png"
+    ],
+    "note": "Allowed 权限摘要，原权限控制器与注册协调器提供实际状态。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": [
+      "test/goldens/ui_refactor/notifications-settings-restored-393-1x.png"
+    ]
+  },
+  {
+    "owner_id": "notification-settings",
+    "state": "拒绝",
+    "source_evidence": [
+      {
+        "id": "07-me/notification-permission-current-education-denied",
+        "image": "07-me/notification-permission-current-education-denied/default.png",
+        "observed_route": "/notifications/settings",
+        "trigger": "Continue → simulated native denial, settings off and Snackbar",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "20260914-notifications/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "136:249"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/notifications-settings-390.png"
+    ],
+    "note": "Denied 提示与系统设置入口。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": [
+      "test/goldens/ui_refactor/notifications-settings-denied-393-1x.png"
+    ]
+  },
+  {
+    "owner_id": "notification-settings",
+    "state": "设备注册中",
+    "source_evidence": [
+      {
+        "id": "07-me/notification-permission-current-registration-pending",
+        "image": "07-me/notification-permission-current-registration-pending/default.png",
+        "observed_route": "/notifications/settings",
+        "trigger": "Refresh → server returns token binding pending",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "20260914-notifications/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "136:497"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/notifications-settings-390.png"
+    ],
+    "note": "共享设备推送状态提示区表达 registration pending，保留原反馈文案和禁用条件。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "notification-settings",
+    "state": "注册错误",
+    "source_evidence": [
+      {
+        "id": "07-me/notification-permission-current-registration-http-error",
+        "image": "07-me/notification-permission-current-registration-http-error/default.png",
+        "observed_route": "/notifications/settings",
+        "trigger": "Registration 503 → settings error, category values retained",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "20260914-notifications/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "136:497"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/notifications-settings-390.png"
+    ],
+    "note": "共享注册失败提示及刷新重试；不能把偏好已保存当作设备注册成功。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "notification-settings",
+    "state": "不可用",
+    "source_evidence": [
+      {
+        "id": "07-me/notification-permission-current-registration-sdk-unavailable",
+        "image": "07-me/notification-permission-current-registration-sdk-unavailable/default.png",
+        "observed_route": "/notifications/settings",
+        "trigger": "Refresh → SDK unavailable, in-app inbox remains",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "20260914-notifications/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "136:373"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/notifications-settings-390.png"
+    ],
+    "note": "SDK/设备不可用沿用中性提示与 App 内通知入口。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [
+      {
+        "id": "136:548",
+        "live_node_available": false,
+        "archives": [
+          "20260914-notifications/figma-qa.json",
+          "20260914-notifications/figma-state.json"
+        ],
+        "current_family_node": "136:373",
+        "note": "无协调器历史变体保留记录；当前不可用框架与原 null coordinator 分支一致。"
+      }
+    ],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": [
+      "test/goldens/ui_refactor/notifications-no-coordinator-393-1x.png",
+      "test/goldens/ui_refactor/notifications-platform-unavailable-393-1x.png"
+    ]
+  },
+  {
+    "owner_id": "service-catalog",
+    "state": "四套餐",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/service-current-catalog",
+        "image": "08-expert-service/service-current-catalog/default.png",
+        "observed_route": "/services",
+        "trigger": "Home expert plan → current catalog",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "20260914-service-catalog/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "149:565"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/catalog-state-list-top-390.png"
+    ],
+    "note": "四方案同一目录模式，名称/次数/天数/价格均来自 catalog；已购/待付为独立区块。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": [
+      "test/goldens/ui_refactor/catalog-discovery-393-1x.png"
+    ]
+  },
+  {
+    "owner_id": "service-catalog",
+    "state": "空",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/service-current-catalog-empty",
+        "image": "08-expert-service/service-current-catalog-empty/default.png",
+        "observed_route": "/services",
+        "trigger": "Retry → no available packages",
+        "extent": "viewport"
+      }
+    ],
+    "report": "20260914-service-catalog/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "149:845"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/catalog-state-list-top-390.png"
+    ],
+    "note": "同目录空方案变体，团队发现入口保留。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": [
+      "test/goldens/ui_refactor/catalog-empty-393-1x.png"
+    ]
+  },
+  {
+    "owner_id": "service-catalog",
+    "state": "加载",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/service-current-catalog-loading",
+        "image": "08-expert-service/service-current-catalog-loading/default.png",
+        "observed_route": "/services",
+        "trigger": "Enter catalog with GET pending",
+        "extent": "viewport"
+      }
+    ],
+    "report": "20260914-service-catalog/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "149:875"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/catalog-state-list-top-390.png"
+    ],
+    "note": "首次加载状态，无假方案。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": [
+      "test/goldens/ui_refactor/catalog-loading-393-1x.png"
+    ]
+  },
+  {
+    "owner_id": "service-catalog",
+    "state": "错误",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/service-current-catalog-error",
+        "image": "08-expert-service/service-current-catalog-error/default.png",
+        "observed_route": "/services",
+        "trigger": "Catalog 503 → retry",
+        "extent": "viewport"
+      }
+    ],
+    "report": "20260914-service-catalog/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "149:884",
+      "149:894"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/catalog-state-list-top-390.png"
+    ],
+    "note": "首次与刷新失败复用错误区，刷新保留内容。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": [
+      "test/goldens/ui_refactor/catalog-initial-error-393-1x.png"
+    ]
+  },
+  {
+    "owner_id": "service-package",
+    "state": "四套餐内容",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/service-current-package-better-breastfeeding",
+        "image": "08-expert-service/service-current-package-better-breastfeeding/default.png",
+        "observed_route": "/services/better-breastfeeding",
+        "trigger": "Catalog 亲喂改善 → current package",
+        "extent": "full-measured-scroll-stitch"
+      },
+      {
+        "id": "08-expert-service/service-current-package-comfortable-feeding",
+        "image": "08-expert-service/service-current-package-comfortable-feeding/default.png",
+        "observed_route": "/services/comfortable-feeding",
+        "trigger": "Catalog 舒适哺乳支持 → current package",
+        "extent": "full-measured-scroll-stitch"
+      },
+      {
+        "id": "08-expert-service/service-current-package-feeding-confidence",
+        "image": "08-expert-service/service-current-package-feeding-confidence/default.png",
+        "observed_route": "/services/feeding-confidence",
+        "trigger": "Catalog 喂养安心 → current package",
+        "extent": "full-measured-scroll-stitch"
+      },
+      {
+        "id": "08-expert-service/service-current-package-milk-supply-care",
+        "image": "08-expert-service/service-current-package-milk-supply-care/default.png",
+        "observed_route": "/services/milk-supply-care",
+        "trigger": "Catalog 奶量管理 → current package",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "20260914-service-package/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "156:1108",
+      "156:1176",
+      "156:1244",
+      "156:1312"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/catalog-state-feeding-confidence-top-390.png",
+      "test/goldens/design_system/catalog-state-better-breastfeeding-top-390.png",
+      "test/goldens/design_system/catalog-state-milk-supply-care-top-390.png",
+      "test/goldens/design_system/catalog-state-comfortable-feeding-top-390.png"
+    ],
+    "note": "四套真实方案内容使用共同摘要、团队发现及两类交付分组。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "service-package",
+    "state": "未购",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/service-current-package-feeding-confidence",
+        "image": "08-expert-service/service-current-package-feeding-confidence/default.png",
+        "observed_route": "/services/feeding-confidence",
+        "trigger": "Catalog 喂养安心 → current package",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "20260914-service-package/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "156:1108"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/service-package-390.png"
+    ],
+    "note": "未购以摘要/交付和固定购买入口组织。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "service-package",
+    "state": "待付",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/service-current-pending-package",
+        "image": "08-expert-service/service-current-pending-package/default.png",
+        "observed_route": "/services/feeding-confidence",
+        "trigger": "Pending order → package resume footer",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "20260914-service-package/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "156:1542"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/service-package-390.png"
+    ],
+    "note": "共享详情结构，待付保留原订单的继续付款入口。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "service-package",
+    "state": "已购",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/service-current-owned-package",
+        "image": "08-expert-service/service-current-owned-package/default.png",
+        "observed_route": "/services/feeding-confidence",
+        "trigger": "Owned package → expert identity, remaining sessions, progress and booking",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "20260914-service-package/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "156:1380",
+      "156:1461"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/service-package-390.png"
+    ],
+    "note": "已购切到我的陪伴计划、阶段、专家和剩余次数；详情原 episode 优先级保留。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": [
+      "test/goldens/ui_refactor/package-owned-top-393-1x.png",
+      "test/goldens/ui_refactor/package-owned-progress-393-1x.png"
+    ]
+  },
+  {
+    "owner_id": "service-package",
+    "state": "不可购买",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/service-current-package-purchase-disabled",
+        "image": "08-expert-service/service-current-package-purchase-disabled/default.png",
+        "observed_route": "/services/feeding-confidence",
+        "trigger": "Reenter package when payment disabled",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "20260914-service-package/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "156:1610"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/service-package-390.png"
+    ],
+    "note": "共享详情禁用购买变体，原开关不改变。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "service-package",
+    "state": "缺失",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/service-current-package-missing",
+        "image": "08-expert-service/service-current-package-missing/default.png",
+        "observed_route": "/services/feeding-confidence",
+        "trigger": "Retry returns removed package → unavailable page",
+        "extent": "viewport"
+      }
+    ],
+    "report": "20260914-service-package/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "156:1696"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/service-package-390.png"
+    ],
+    "note": "缺失方案独立空提示，无购买操作。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": [
+      "test/goldens/ui_refactor/package-missing-393-1x.png"
+    ]
+  },
+  {
+    "owner_id": "service-package",
+    "state": "加载",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/service-current-package-loading",
+        "image": "08-expert-service/service-current-package-loading/default.png",
+        "observed_route": "/services/feeding-confidence",
+        "trigger": "Select package with GET pending",
+        "extent": "viewport"
+      }
+    ],
+    "report": "20260914-service-package/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "156:1678"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/service-package-390.png"
+    ],
+    "note": "加载变体，数据未到不显示旧动作。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": [
+      "test/goldens/ui_refactor/package-loading-393-1x.png"
+    ]
+  },
+  {
+    "owner_id": "service-package",
+    "state": "错误",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/service-current-package-error",
+        "image": "08-expert-service/service-current-package-error/default.png",
+        "observed_route": "/services/feeding-confidence",
+        "trigger": "Package catalog GET 503 → retry",
+        "extent": "viewport"
+      }
+    ],
+    "report": "20260914-service-package/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "156:1686",
+      "156:1704"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/service-package-390.png"
+    ],
+    "note": "读取和保留内容刷新错误变体，重试不创建订单。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": [
+      "test/goldens/ui_refactor/package-error-393-1x.png"
+    ]
+  },
+  {
+    "owner_id": "service-progress",
+    "state": "进行中",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/progress-current-active",
+        "image": "08-expert-service/progress-current-active/default.png",
+        "observed_route": "/services/episodes/service-episode",
+        "trigger": "Active plan → appointment action",
+        "extent": "viewport"
+      }
+    ],
+    "report": "20260914-service-progress/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "162:1108",
+      "162:1636"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/progress-latest-390.png"
+    ],
+    "note": "计划摘要与事件共同滚动；默认定位最近记录。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "service-progress",
+    "state": "暂停",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/progress-current-state-paused",
+        "image": "08-expert-service/progress-current-state-paused/default.png",
+        "observed_route": "/services/episodes/service-episode",
+        "trigger": "Refresh server episode paused → supported state and actions",
+        "extent": "viewport"
+      }
+    ],
+    "report": "20260914-service-progress/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "162:1243"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/progress-earlier-390.png"
+    ],
+    "note": "共享摘要显示真实 paused 状态与阶段，保留 canBook 条件。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "service-progress",
+    "state": "到期",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/progress-current-active-past-end",
+        "image": "08-expert-service/progress-current-active-past-end/default.png",
+        "observed_route": "/services/episodes/service-episode",
+        "trigger": "Server still active after endsAt → current timeline retains booking action",
+        "extent": "viewport"
+      },
+      {
+        "id": "08-expert-service/progress-current-state-completed",
+        "image": "08-expert-service/progress-current-state-completed/default.png",
+        "observed_route": "/services/episodes/service-episode",
+        "trigger": "Refresh server episode completed → supported state and actions",
+        "extent": "viewport"
+      }
+    ],
+    "report": "20260914-service-progress/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "162:1108",
+      "162:1212"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/progress-completed-renewal-390.png"
+    ],
+    "note": "active 超过结束时间仍显示服务器实际状态，时间/次数控制预约；completed 为完成变体。不从日期伪造完成阶段。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "service-progress",
+    "state": "次数用尽",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/progress-current-active-exhausted",
+        "image": "08-expert-service/progress-current-active-exhausted/default.png",
+        "observed_route": "/services/episodes/service-episode",
+        "trigger": "Active service with zero remaining → no new booking or renewal",
+        "extent": "viewport"
+      }
+    ],
+    "report": "20260914-service-progress/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "162:1108"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/progress-earlier-390.png"
+    ],
+    "note": "次数用尽复用计划摘要与原 canBook 禁用，不人为增加阶段。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "service-progress",
+    "state": "最近与更早",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/progress-current-events-earlier",
+        "image": "08-expert-service/progress-current-events-earlier/default.png",
+        "observed_route": "/services/episodes/service-episode",
+        "trigger": "Earlier records → identity and first event",
+        "extent": "full-measured-scroll-stitch"
+      },
+      {
+        "id": "08-expert-service/progress-current-events-latest",
+        "image": "08-expert-service/progress-current-events-latest/default.png",
+        "observed_route": "/services/episodes/service-episode",
+        "trigger": "Open multi-event service → latest event",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "20260914-service-progress/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "162:1139",
+      "162:1636",
+      "163:1108"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/progress-earlier-390.png",
+      "test/goldens/design_system/progress-latest-390.png"
+    ],
+    "note": "最近/更早跳转，短屏大字底部入口不遮盖事件。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "service-progress",
+    "state": "加载",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/progress-current-initial-loading",
+        "image": "08-expert-service/progress-current-initial-loading/default.png",
+        "observed_route": "/services/episodes/service-episode",
+        "trigger": "Service progress → overview pending",
+        "extent": "viewport"
+      }
+    ],
+    "report": "20260914-service-progress/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "162:1332",
+      "162:1361"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/progress-loading-390.png"
+    ],
+    "note": "服务与预约读取各自加载状态。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "service-progress",
+    "state": "错误",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/progress-current-initial-error",
+        "image": "08-expert-service/progress-current-initial-error/default.png",
+        "observed_route": "/services/episodes/service-episode",
+        "trigger": "Overview 503 → retry card",
+        "extent": "viewport"
+      }
+    ],
+    "report": "20260914-service-progress/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "162:1340",
+      "162:1393"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/progress-offline-390.png"
+    ],
+    "note": "读取失败及恢复，事件筛选与排序不变。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "service-renew",
+    "state": "可续购",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/renew-list",
+        "image": "08-expert-service/renew-list/default.png",
+        "observed_route": null,
+        "trigger": "renew selection opens existing eligibility flow 390.0/1.0",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "20260914-service-renew/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "208:1108",
+      "208:1176"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/renew-list-390.png",
+      "test/goldens/design_system/renew-selected-390.png"
+    ],
+    "note": "方案完整信息与选择优先级保留。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "service-renew",
+    "state": "暂停",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/renew-short-owned-paused",
+        "image": "08-expert-service/renew-short-owned-paused/default.png",
+        "observed_route": null,
+        "trigger": "owned service remains reachable with purchase disabled CareEpisodeStatus.paused",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "20260914-service-renew/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "208:1244",
+      "208:1693"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/renew-ongoing-390.png"
+    ],
+    "note": "暂停服务复用已有服务摘要，购买关闭时仍可查看。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "service-renew",
+    "state": "到期",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/renew-journey-list",
+        "image": "08-expert-service/renew-journey-list/default.png",
+        "observed_route": "/services/episodes/completed-episode/renew",
+        "trigger": "Completed timeline continue support → original package highlighted in actual renewal route",
+        "extent": "viewport"
+      }
+    ],
+    "report": "20260914-service-renew/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "208:1108"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/renew-list-390.png"
+    ],
+    "note": "到期入口复用续购方案选择，不把源 episode 改写为新的服务。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "service-renew",
+    "state": "无套餐",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/renew-empty",
+        "image": "08-expert-service/renew-empty/default.png",
+        "observed_route": null,
+        "trigger": "disabled purchase, empty catalog, offline retry are explicit",
+        "extent": "viewport"
+      }
+    ],
+    "report": "20260914-service-renew/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "208:1591"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/renew-empty-390.png"
+    ],
+    "note": "空方案状态。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "service-renew",
+    "state": "加载",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/renew-short-loading",
+        "image": "08-expert-service/renew-short-loading/default.png",
+        "observed_route": null,
+        "trigger": "short large catalog loads, scrolls and returns without ordering",
+        "extent": "viewport"
+      }
+    ],
+    "report": "20260914-service-renew/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "208:1614",
+      "208:1453"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/renew-order-loading-390.png"
+    ],
+    "note": "首次加载与订单读取分别反馈；短屏对应已归档状态基线。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "service-renew",
+    "state": "错误",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/renew-offline",
+        "image": "08-expert-service/renew-offline/default.png",
+        "observed_route": null,
+        "trigger": "disabled purchase, empty catalog, offline retry are explicit",
+        "extent": "viewport"
+      },
+      {
+        "id": "08-expert-service/renew-order-error",
+        "image": "08-expert-service/renew-order-error/default.png",
+        "observed_route": null,
+        "trigger": "pending order reopens without new purchase; retry locks duplicate taps",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "20260914-service-renew/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "208:1603",
+      "208:1382"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/renew-offline-390.png",
+      "test/goldens/design_system/renew-order-error-390.png"
+    ],
+    "note": "读取错误与对应按钮旁订单错误，可沿用原订单恢复。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "service-renew",
+    "state": "购买入口",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/renew-eligibility",
+        "image": "08-expert-service/renew-eligibility/default.png",
+        "observed_route": null,
+        "trigger": "renew selection opens existing eligibility flow 390.0/1.0",
+        "extent": "viewport"
+      },
+      {
+        "id": "08-expert-service/renew-pending-listed",
+        "image": "08-expert-service/renew-pending-listed/default.png",
+        "observed_route": null,
+        "trigger": "pending order reopens without new purchase; retry locks duplicate taps",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "20260914-service-renew/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "208:1830",
+      "208:1313"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/renew-eligibility-390.png",
+      "test/goldens/design_system/renew-pending-listed-390.png"
+    ],
+    "note": "新购买先资格确认；待付恢复既有订单，复用购买弹窗。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "booking",
+    "state": "前确认入口",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/booking-precheck-current-initial",
+        "image": "08-expert-service/booking-precheck-current-initial/default.png",
+        "observed_route": "/services/episodes/service-episode/booking",
+        "trigger": "Retry booking context → automatic precheck",
+        "extent": "viewport"
+      }
+    ],
+    "report": "20260914-booking/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "165:1142",
+      "165:1414"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/booking-precheck-390.png"
+    ],
+    "note": "原预约前确认入口与资格流程。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "booking",
+    "state": "时段列表",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/booking-selection-current-selection-slots",
+        "image": "08-expert-service/booking-selection-current-selection-slots/default.png",
+        "observed_route": "/services/episodes/service-episode/booking",
+        "trigger": "Complete precheck → available times",
+        "extent": "viewport"
+      }
+    ],
+    "report": "20260914-booking/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "165:1108",
+      "165:1283",
+      "165:1345"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/booking-empty-slots-393.png"
+    ],
+    "note": "专家、日期、时段分组，空态/加载共享选择框架，不可选时段不提交。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "booking",
+    "state": "保留",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/booking-selection-current-held-review",
+        "image": "08-expert-service/booking-selection-current-held-review/default.png",
+        "observed_route": "/services/episodes/service-episode/booking",
+        "trigger": "Retry same idempotency key → held appointment review",
+        "extent": "viewport"
+      }
+    ],
+    "report": "20260914-booking/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "165:1155",
+      "165:1630"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/booking-held-390.png"
+    ],
+    "note": "保留摘要与确认，使用原保留身份/时限。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "booking",
+    "state": "已确认",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/booking-selection-current-confirmed-detail",
+        "image": "08-expert-service/booking-selection-current-confirmed-detail/default.png",
+        "observed_route": "/services/episodes/service-episode/booking",
+        "trigger": "Return from unchanged intake → confirmed booking detail",
+        "extent": "viewport"
+      }
+    ],
+    "report": "20260914-booking/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "165:1191",
+      "165:2015"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/booking-confirmed-top-393.png",
+      "test/goldens/design_system/booking-confirmed-preparation-393.png"
+    ],
+    "note": "已确认先时间专家，再准备操作与提醒。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "booking",
+    "state": "咨询中",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/booking-recovery-current-cancel-in-progress-return",
+        "image": "08-expert-service/booking-recovery-current-cancel-in-progress-return/default.png",
+        "trigger": "current confirmed appointment cancellation and state recovery false",
+        "extent": "viewport",
+        "observed_route": "/services/episodes/service-episode/booking"
+      }
+    ],
+    "report": "20260914-booking/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "165:1224"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/booking-confirmed-top-393.png"
+    ],
+    "note": "共享预约详情的咨询中变体；取消恢复后使用服务器当前状态和动作。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "booking",
+    "state": "业务拒绝",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/booking-recovery-current-hold-service_not_bookable",
+        "image": "08-expert-service/booking-recovery-current-hold-service_not_bookable/default.png",
+        "observed_route": "/services/episodes/service-episode/booking",
+        "trigger": "Select time → HTTP 409 business rejection: service_not_bookable",
+        "extent": "viewport"
+      }
+    ],
+    "report": "20260914-booking/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "165:1250",
+      "165:1484",
+      "165:1593"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/booking-unavailable-390.png"
+    ],
+    "note": "无次数/不适用/服务不可约拒绝沿用原错误映射和入口恢复。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "booking",
+    "state": "等待",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/booking-selection-current-confirm-pending",
+        "image": "08-expert-service/booking-selection-current-confirm-pending/default.png",
+        "observed_route": "/services/episodes/service-episode/booking",
+        "trigger": "Confirm held appointment → expected-version request pending",
+        "extent": "viewport"
+      }
+    ],
+    "report": "20260914-booking/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "165:1689"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/booking-held-390.png"
+    ],
+    "note": "同确认布局忙碌变体，返回与关闭锁定。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "booking",
+    "state": "错误恢复",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/booking-recovery-current-cancel-uncertain",
+        "image": "08-expert-service/booking-recovery-current-cancel-uncertain/default.png",
+        "observed_route": "/services/episodes/service-episode/booking",
+        "trigger": "Cancellation HTTP 503 → uncertain, retry or query latest",
+        "extent": "full-measured-scroll-stitch"
+      },
+      {
+        "id": "08-expert-service/booking-selection-current-confirm-error",
+        "image": "08-expert-service/booking-selection-current-confirm-error/default.png",
+        "observed_route": "/services/episodes/service-episode/booking",
+        "trigger": "Pending Back blocked; confirm HTTP 503 → retry",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "20260914-booking/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "165:1748",
+      "165:1921"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/booking-confirm-uncertain-390.png",
+      "test/goldens/design_system/appointment-cancel-uncertain-390.png"
+    ],
+    "note": "确认/取消结果未知保持原操作身份，允许查询或重试。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "appointment",
+    "state": "held",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/appointment-held",
+        "image": "08-expert-service/appointment-held/default.png",
+        "observed_route": null,
+        "trigger": "appointment actions follow held state",
+        "extent": "viewport"
+      }
+    ],
+    "report": "20260914-appointment-detail/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "170:1350",
+      "170:1454"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/appointment-held-390.png"
+    ],
+    "note": "待确认主按钮进入原 booking，返回后重新读取。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "appointment",
+    "state": "confirmed",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/appointment-detail",
+        "image": "08-expert-service/appointment-detail/default.png",
+        "observed_route": null,
+        "trigger": "appointment detail at 390.0 / 1.0",
+        "extent": "viewport"
+      }
+    ],
+    "report": "20260914-appointment-detail/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "170:1108",
+      "170:1154"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/appointment-detail-390.png"
+    ],
+    "note": "按资料版本选择填写/查看；准备/服务/提醒分组。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "appointment",
+    "state": "in_progress",
+    "source_evidence": [
+      {
+        "id": "00-overview/reused-state-evidence/appointment-in-progress",
+        "image": "00-overview/reused-state-evidence/appointment-in-progress/default.png",
+        "observed_route": null,
+        "trigger": "进入咨询中的预约详情 → 返回咨询室；原专项测试点击并断言目标回调。",
+        "extent": "FULL_VIEWPORT; visually inspected, all content visible"
+      }
+    ],
+    "report": "20260914-appointment-detail/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "170:1200"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/appointment-in_progress-390.png"
+    ],
+    "note": "既有复用图为咨询中详情；按钮回到原咨询室。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "appointment",
+    "state": "completed",
+    "source_evidence": [
+      {
+        "id": "00-overview/reused-state-evidence/appointment-completed",
+        "image": "00-overview/reused-state-evidence/appointment-completed/default.png",
+        "observed_route": null,
+        "trigger": "进入已完成预约详情 → 查看咨询总结；原专项测试点击并断言目标回调。",
+        "extent": "FULL_VIEWPORT; visually inspected, all content visible"
+      }
+    ],
+    "report": "20260914-appointment-detail/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "170:1241"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/appointment-completed-390.png"
+    ],
+    "note": "已完成提供总结入口，时间与专家仍为原预约。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "appointment",
+    "state": "cancelled",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/appointment-cancelled",
+        "image": "08-expert-service/appointment-cancelled/default.png",
+        "observed_route": null,
+        "trigger": "appointment actions follow cancelled state",
+        "extent": "viewport"
+      }
+    ],
+    "report": "20260914-appointment-detail/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "170:1280"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/appointment-cancelled-390.png"
+    ],
+    "note": "取消保留服务入口，无虚构可继续咨询操作。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "appointment",
+    "state": "expired",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/appointment-expired",
+        "image": "08-expert-service/appointment-expired/default.png",
+        "observed_route": null,
+        "trigger": "appointment actions follow expired state",
+        "extent": "viewport"
+      }
+    ],
+    "report": "20260914-appointment-detail/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "170:1315"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/appointment-expired-390.png"
+    ],
+    "note": "过期状态与原动作限制。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "appointment",
+    "state": "加载",
+    "source_evidence": [
+      {
+        "id": "00-overview/reused-state-evidence/appointment-loading",
+        "image": "00-overview/reused-state-evidence/appointment-loading/default.png",
+        "observed_route": null,
+        "trigger": "打开独立预约详情 → 首次请求未返回；同一测试完成请求后出现取消按钮。",
+        "extent": "FULL_VIEWPORT; visually inspected, all content visible"
+      }
+    ],
+    "report": "20260914-appointment-detail/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "170:1389"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/appointment-detail-390.png"
+    ],
+    "note": "加载变体，源为复用渲染；请求未完成不显示旧动作。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "appointment",
+    "state": "错误",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/appointment-unavailable",
+        "image": "08-expert-service/appointment-unavailable/default.png",
+        "observed_route": null,
+        "trigger": "appointment read failure retries instead of showing stale actions",
+        "extent": "viewport"
+      }
+    ],
+    "report": "20260914-appointment-detail/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "170:1397",
+      "170:1493"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/appointment-unavailable-390.png"
+    ],
+    "note": "首次/刷新失败无旧动作，可重试。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "intake",
+    "state": "初始",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/service-journey-intake-unfilled",
+        "image": "08-expert-service/service-journey-intake-unfilled/default.png",
+        "observed_route": "/services/appointments/service-appointment/intake",
+        "trigger": "Confirmed booking → unfilled intake with profile prefill",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "20260914-intake/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "173:1151",
+      "173:1108"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/intake-form-390.png"
+    ],
+    "note": "咨询重点、补充与基础信息分组，初始字段缺失不提交。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "intake",
+    "state": "已填写",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/service-journey-intake-reopened",
+        "image": "08-expert-service/service-journey-intake-reopened/default.png",
+        "observed_route": "/services/appointments/service-appointment/intake",
+        "trigger": "Reopen saved intake → populated data and granted consent",
+        "extent": "viewport"
+      }
+    ],
+    "report": "20260914-intake/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "173:1326",
+      "173:1371"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/intake-form-390.png"
+    ],
+    "note": "已有/前次预填复用表单，预填仍要求重新授权，保存修改不重复弹首次完成引导。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "intake",
+    "state": "补充展开",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/intake-optional",
+        "image": "08-expert-service/intake-optional/default.png",
+        "observed_route": null,
+        "trigger": "intake design disclosures consent and save at 390.0 / 1.0",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "20260914-intake/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "173:1215"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/intake-optional-390.png"
+    ],
+    "note": "补充内容展开独立区域。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "intake",
+    "state": "基础信息",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/intake-profile",
+        "image": "08-expert-service/intake-profile/default.png",
+        "observed_route": null,
+        "trigger": "intake design disclosures consent and save at 390.0 / 1.0",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "20260914-intake/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "173:1262",
+      "173:1566"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/intake-profile-390.png"
+    ],
+    "note": "基础字段与月龄语义、日期范围保留。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "intake",
+    "state": "授权",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/intake-consent",
+        "image": "08-expert-service/intake-consent/default.png",
+        "observed_route": null,
+        "trigger": "intake design disclosures consent and save at 390.0 / 1.0",
+        "extent": "viewport"
+      },
+      {
+        "id": "08-expert-service/service-journey-intake-consent-withdrawn-draft",
+        "image": "08-expert-service/service-journey-intake-consent-withdrawn-draft/default.png",
+        "observed_route": "/services/appointments/service-appointment/intake",
+        "trigger": "Uncheck draft consent → save disabled without server mutation",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "20260914-intake/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "173:1633",
+      "174:1108"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/intake-consent-390.png"
+    ],
+    "note": "完整授权说明与显式开关；撤回草稿保持关闭不自动恢复。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "intake",
+    "state": "校验",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/intake-consent-validation",
+        "image": "08-expert-service/intake-consent-validation/default.png",
+        "observed_route": null,
+        "trigger": "inventory intake server consent validation",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "20260914-intake/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "173:1108",
+      "173:1457"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/intake-form-390.png"
+    ],
+    "note": "复用表单错误区表达服务器 consent_conflict；当前 intake_test 专项直接校验该基线及一次请求。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "intake",
+    "state": "保存中",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/service-journey-intake-saving",
+        "image": "08-expert-service/service-journey-intake-saving/default.png",
+        "observed_route": "/services/appointments/service-appointment/intake",
+        "trigger": "Save response pending → fields locked",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "20260914-intake/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "173:1414"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/intake-form-390.png"
+    ],
+    "note": "同表单忙碌布局，字段/返回锁定，保留保存版本。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "intake",
+    "state": "错误",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/intake-uncertain",
+        "image": "08-expert-service/intake-uncertain/default.png",
+        "observed_route": null,
+        "trigger": "intake uncertain save locks fields and retries identical snapshot",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "20260914-intake/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "173:1457",
+      "173:1809"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/intake-uncertain-390.png",
+      "test/goldens/design_system/intake-uncertain-leave-390.png"
+    ],
+    "note": "结果不确定使用原快照重试，离开提醒保留。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "intake",
+    "state": "已保存",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/intake-saved",
+        "image": "08-expert-service/intake-saved/default.png",
+        "observed_route": null,
+        "trigger": "intake design disclosures consent and save at 390.0 / 1.0",
+        "extent": "viewport"
+      }
+    ],
+    "report": "20260914-intake/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "173:1691",
+      "174:1169"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/intake-saved-390.png"
+    ],
+    "note": "首次保存成功提示，摘要为原预约，不增加关闭入口。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "provider-team",
+    "state": "团队",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/service-current-catalog-team",
+        "image": "08-expert-service/service-current-catalog-team/default.png",
+        "trigger": "current service catalog all package and team entries false",
+        "extent": "viewport"
+      }
+    ],
+    "report": "20260914-service-catalog/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "149:1443",
+      "153:1139"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/catalog-state-list-top-390.png"
+    ],
+    "note": "团队弹窗独立设计；实际专家资料用中性头像，通用合照只用于团队发现。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": [
+      "test/goldens/ui_refactor/catalog-long-team-393-1x.png",
+      "test/goldens/ui_refactor/catalog-team-bottom-393-1x.png"
+    ]
+  },
+  {
+    "owner_id": "provider-team",
+    "state": "空",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/service-current-catalog-team-empty",
+        "image": "08-expert-service/service-current-catalog-team-empty/default.png",
+        "trigger": "current catalog loading empty errors and refresh false",
+        "extent": "viewport"
+      }
+    ],
+    "report": "20260914-service-catalog/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "149:1401"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/catalog-state-list-top-390.png"
+    ],
+    "note": "共享团队弹窗空数据提示。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "provider-team",
+    "state": "关闭",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/service-current-catalog",
+        "image": "08-expert-service/service-current-catalog/default.png",
+        "trigger": "current service catalog all package and team entries false",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "20260914-service-catalog/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "149:565"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/catalog-state-list-top-390.png"
+    ],
+    "note": "关闭回到原目录；其他服务入口调用同一弹窗，不重复设计。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "purchase",
+    "state": "资格",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/purchase-current-eligibility-ready",
+        "image": "08-expert-service/purchase-current-eligibility-ready/default.png",
+        "trigger": "current purchase eligibility rejection create retry false",
+        "extent": "viewport"
+      }
+    ],
+    "report": "20260914-service-package/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "156:1993",
+      "156:2082"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/purchase-eligibility-390.png"
+    ],
+    "note": "区域、适用性与非紧急说明仍需原确认。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "purchase",
+    "state": "付款",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/purchase-current-payment-pending",
+        "image": "08-expert-service/purchase-current-payment-pending/default.png",
+        "trigger": "current purchase uncertain payment retry query false",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "20260914-service-package/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "156:2445",
+      "156:2656"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/purchase-payment-390.png"
+    ],
+    "note": "付款表单及忙碌状态，标题/关闭固定，正文可滚动。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "purchase",
+    "state": "校验",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/purchase-current-fields-invalid",
+        "image": "08-expert-service/purchase-current-fields-invalid/default.png",
+        "trigger": "current purchase fields decline verification success false",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "20260914-service-package/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "156:2550"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/purchase-payment-390.png"
+    ],
+    "note": "共享卡字段校验及错误布局；长屏和键盘测试保留。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "purchase",
+    "state": "拒付",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/purchase-current-declined",
+        "image": "08-expert-service/purchase-current-declined/default.png",
+        "trigger": "current purchase fields decline verification success false",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "20260914-service-package/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "156:2761"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/purchase-failed-390.png"
+    ],
+    "note": "原拒付反馈与重试。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "purchase",
+    "state": "额外验证",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/purchase-current-challenge",
+        "image": "08-expert-service/purchase-current-challenge/default.png",
+        "trigger": "current purchase fields decline verification success false",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "20260914-service-package/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "156:2869"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/purchase-challenge-390.png"
+    ],
+    "note": "原银行额外验证，不跳过确认。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "purchase",
+    "state": "待付",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/purchase-current-processing",
+        "image": "08-expert-service/purchase-current-processing/default.png",
+        "trigger": "current purchase cancelled challenge reconciling and entitlement sync false",
+        "extent": "viewport"
+      }
+    ],
+    "report": "20260914-service-package/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "156:2656",
+      "156:3063",
+      "156:3174"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/purchase-payment-390.png"
+    ],
+    "note": "处理/未知/查询复用订单状态模式，原操作身份不变。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "purchase",
+    "state": "取消",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/purchase-current-plain-cancelled",
+        "image": "08-expert-service/purchase-current-plain-cancelled/default.png",
+        "trigger": "current purchase plain cancellation and reconciliation completion false",
+        "extent": "viewport"
+      }
+    ],
+    "report": "20260914-service-package/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "156:2977",
+      "156:3978"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/purchase-payment-390.png"
+    ],
+    "note": "取消状态移除付款入口，按实际 sandbox/Stripe 模式。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "purchase",
+    "state": "成功",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/purchase-current-verified-success",
+        "image": "08-expert-service/purchase-current-verified-success/default.png",
+        "trigger": "current purchase fields decline verification success false",
+        "extent": "viewport"
+      }
+    ],
+    "report": "20260914-service-package/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "156:3444",
+      "159:1302"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/purchase-success-390.png"
+    ],
+    "note": "真实回传权益后成功，预约/稍后仍返回原结果。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "purchase",
+    "state": "同步权益",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/purchase-current-paid-awaiting-benefits",
+        "image": "08-expert-service/purchase-current-paid-awaiting-benefits/default.png",
+        "trigger": "current purchase cancelled challenge reconciling and entitlement sync false",
+        "extent": "viewport"
+      },
+      {
+        "id": "08-expert-service/purchase-current-benefits-synced",
+        "image": "08-expert-service/purchase-current-benefits-synced/default.png",
+        "trigger": "current purchase cancelled challenge reconciling and entitlement sync false",
+        "extent": "viewport"
+      }
+    ],
+    "report": "20260914-service-package/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "156:3263",
+      "156:3444"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/purchase-success-390.png"
+    ],
+    "note": "已付未获权益只提供查询；同步权益后才进入成功状态。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "purchase",
+    "state": "错误",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/purchase-current-create-error",
+        "image": "08-expert-service/purchase-current-create-error/default.png",
+        "trigger": "current purchase eligibility rejection create retry false",
+        "extent": "full-measured-scroll-stitch"
+      },
+      {
+        "id": "08-expert-service/purchase-current-payment-uncertain",
+        "image": "08-expert-service/purchase-current-payment-uncertain/default.png",
+        "trigger": "current purchase uncertain payment retry query false",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "20260914-service-package/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "156:2351",
+      "156:3063",
+      "156:3350",
+      "156:3706"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/purchase-stripe-launch-error-390.png"
+    ],
+    "note": "订单创建/付款未知/查询/Stripe 打开失败使用原恢复方式，不虚构支付完成。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "booking-precheck",
+    "state": "州选择",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/booking-precheck-current-region-menu",
+        "image": "08-expert-service/booking-precheck-current-region-menu/default.png",
+        "trigger": "current booking precheck controls and recovery false",
+        "extent": "viewport"
+      }
+    ],
+    "report": "20260914-booking/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "165:1414"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/booking-precheck-390.png"
+    ],
+    "note": "州选择沿用原系统下拉与支持列表，复用预检布局。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "booking-precheck",
+    "state": "适用性",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/booking-precheck-current-suitable",
+        "image": "08-expert-service/booking-precheck-current-suitable/default.png",
+        "trigger": "current booking precheck controls and recovery false",
+        "extent": "viewport"
+      }
+    ],
+    "report": "20260914-booking/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "165:1449"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/booking-precheck-390.png"
+    ],
+    "note": "适用性与风险确认独立区域。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "booking-precheck",
+    "state": "风险",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/booking-precheck-current-emergency-help",
+        "image": "08-expert-service/booking-precheck-current-emergency-help/default.png",
+        "trigger": "current booking precheck controls and recovery false",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "20260914-booking/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "165:1521"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/booking-emergency-390.png"
+    ],
+    "note": "紧急风险提示保留原业务门槛。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "booking-precheck",
+    "state": "等待",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/booking-precheck-current-submit-pending",
+        "image": "08-expert-service/booking-precheck-current-submit-pending/default.png",
+        "trigger": "current booking precheck controls and recovery false",
+        "extent": "viewport"
+      }
+    ],
+    "report": "20260914-booking/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "165:1558"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/booking-precheck-390.png"
+    ],
+    "note": "预检忙碌锁定，不重复请求。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "booking-precheck",
+    "state": "拒绝",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/booking-precheck-current-server-service_unsuitable",
+        "image": "08-expert-service/booking-precheck-current-server-service_unsuitable/default.png",
+        "trigger": "current booking precheck controls and recovery false",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "20260914-booking/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "165:1484",
+      "165:1593"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/booking-unavailable-390.png"
+    ],
+    "note": "不支持/服务器不适用沿用提示与重新选择入口。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "booking-precheck",
+    "state": "重试",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/booking-precheck-current-availability-restored",
+        "image": "08-expert-service/booking-precheck-current-availability-restored/default.png",
+        "trigger": "current booking precheck availability loading and retry false",
+        "extent": "viewport"
+      }
+    ],
+    "report": "20260914-booking/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "165:1108",
+      "165:1593"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/booking-precheck-390.png"
+    ],
+    "note": "重试恢复后进入原时段选择，保留资格结果。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "booking-review",
+    "state": "held",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/booking-selection-current-held-review",
+        "image": "08-expert-service/booking-selection-current-held-review/default.png",
+        "trigger": "current booking hold reselect and confirmation recovery false",
+        "extent": "viewport"
+      }
+    ],
+    "report": "20260914-booking/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "165:1630"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/booking-held-390.png"
+    ],
+    "note": "保留的真实时间/时区/专家及有效期。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "booking-review",
+    "state": "提醒草稿",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/booking-selection-current-reminder-selected",
+        "image": "08-expert-service/booking-selection-current-reminder-selected/default.png",
+        "trigger": "current booking hold reselect and confirmation recovery false",
+        "extent": "viewport"
+      },
+      {
+        "id": "08-expert-service/booking-selection-current-reminder-cleared",
+        "image": "08-expert-service/booking-selection-current-reminder-cleared/default.png",
+        "trigger": "current booking hold reselect and confirmation recovery false",
+        "extent": "viewport"
+      }
+    ],
+    "report": "20260914-booking/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "165:1630"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/booking-held-390.png"
+    ],
+    "note": "提醒草稿选中/清空复用原控件，不把草稿当作已登记。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "booking-review",
+    "state": "过期",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/booking-recovery-current-confirm-hold-expired",
+        "image": "08-expert-service/booking-recovery-current-confirm-hold-expired/default.png",
+        "trigger": "current booking hold expiry and latest confirmation false",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "20260914-booking/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "165:1809"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/booking-hold-expired-390.png"
+    ],
+    "note": "过期移除确认，重选不重复释放过期数据。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "booking-review",
+    "state": "确认中",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/booking-selection-current-confirm-pending",
+        "image": "08-expert-service/booking-selection-current-confirm-pending/default.png",
+        "trigger": "current booking hold reselect and confirmation recovery false",
+        "extent": "viewport"
+      }
+    ],
+    "report": "20260914-booking/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "165:1689"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/booking-held-390.png"
+    ],
+    "note": "确认等待禁止返回/关闭。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "booking-review",
+    "state": "错误",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/booking-selection-current-confirm-error",
+        "image": "08-expert-service/booking-selection-current-confirm-error/default.png",
+        "trigger": "current booking hold reselect and confirmation recovery false",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "20260914-booking/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "165:1748"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/booking-confirm-uncertain-390.png"
+    ],
+    "note": "失败/结果未知原版本重试。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "booking-review",
+    "state": "已确认",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/booking-selection-current-confirmed-detail",
+        "image": "08-expert-service/booking-selection-current-confirmed-detail/default.png",
+        "trigger": "current booking hold reselect and confirmation recovery false",
+        "extent": "viewport"
+      }
+    ],
+    "report": "20260914-booking/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "165:1191"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/booking-confirmed-top-393.png"
+    ],
+    "note": "成功关闭弹窗进入预约详情，复用页面设计。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "appointment-cancel",
+    "state": "确认",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/booking-recovery-current-cancel-open",
+        "image": "08-expert-service/booking-recovery-current-cancel-open/default.png",
+        "trigger": "current confirmed appointment cancellation and state recovery false",
+        "extent": "viewport"
+      }
+    ],
+    "report": "20260914-booking/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "165:1865",
+      "167:1202"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/appointment-cancel-390.png"
+    ],
+    "note": "取消确认保留时间、专家和影响说明。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "appointment-cancel",
+    "state": "保留",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/booking-recovery-current-cancel-retained",
+        "image": "08-expert-service/booking-recovery-current-cancel-retained/default.png",
+        "trigger": "current confirmed appointment cancellation and state recovery false",
+        "extent": "viewport"
+      }
+    ],
+    "report": "20260914-booking/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "165:1865"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/appointment-cancel-390.png"
+    ],
+    "note": "保留/关闭取消弹窗返回原页，不发取消请求。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "appointment-cancel",
+    "state": "等待",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/booking-recovery-current-cancel-pending",
+        "image": "08-expert-service/booking-recovery-current-cancel-pending/default.png",
+        "trigger": "current confirmed appointment cancellation and state recovery false",
+        "extent": "viewport"
+      }
+    ],
+    "report": "20260914-booking/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "165:2048"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/appointment-cancel-390.png"
+    ],
+    "note": "共用取消弹窗等待变体，关闭与返回锁定。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "appointment-cancel",
+    "state": "未知",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/booking-recovery-current-cancel-uncertain",
+        "image": "08-expert-service/booking-recovery-current-cancel-uncertain/default.png",
+        "trigger": "current confirmed appointment cancellation and state recovery false",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "20260914-booking/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "165:1921"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/appointment-cancel-uncertain-390.png"
+    ],
+    "note": "未知结果保留原预约版本查询/重试。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "appointment-cancel",
+    "state": "状态变化",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/booking-recovery-current-cancel-no-longer-allowed",
+        "image": "08-expert-service/booking-recovery-current-cancel-no-longer-allowed/default.png",
+        "trigger": "current confirmed appointment cancellation and state recovery false",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "20260914-booking/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "165:1921",
+      "165:1224"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/appointment-cancel-uncertain-390.png"
+    ],
+    "note": "状态变化沿用原错误说明与重新读取；已开始咨询不可继续取消。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "appointment-cancel",
+    "state": "恢复",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/booking-recovery-current-cancel-in-progress-return",
+        "image": "08-expert-service/booking-recovery-current-cancel-in-progress-return/default.png",
+        "trigger": "current confirmed appointment cancellation and state recovery false",
+        "extent": "viewport"
+      }
+    ],
+    "report": "20260914-booking/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "165:1224"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/booking-confirmed-top-393.png"
+    ],
+    "note": "恢复返回真实咨询中详情；不将恢复图当作取消成功。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "intake-consent",
+    "state": "说明",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/service-journey-intake-consent-info",
+        "image": "08-expert-service/service-journey-intake-consent-info/default.png",
+        "trigger": "inventory Services intake fields consent uncertain save and update",
+        "extent": "viewport"
+      }
+    ],
+    "report": "20260914-intake/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "173:1633",
+      "174:1108"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/intake-consent-390.png"
+    ],
+    "note": "用途、对象与影响全文可滚动。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "intake-consent",
+    "state": "关闭",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/service-journey-intake-unfilled",
+        "image": "08-expert-service/service-journey-intake-unfilled/default.png",
+        "trigger": "inventory Services intake fields consent uncertain save and update",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "20260914-intake/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "173:1151"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/intake-form-390.png"
+    ],
+    "note": "关闭只回表单，不自动授予授权。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "intake-saved",
+    "state": "保存成功",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/intake-saved",
+        "image": "08-expert-service/intake-saved/default.png",
+        "trigger": "intake design disclosures consent and save at 390.0 / 1.0",
+        "extent": "viewport"
+      }
+    ],
+    "report": "20260914-intake/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "173:1691",
+      "174:1169"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/intake-saved-390.png"
+    ],
+    "note": "首次提交完成的共享提示。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "intake-saved",
+    "state": "预咨询",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/service-journey-intake-to-cozymate",
+        "image": "08-expert-service/service-journey-intake-to-cozymate/default.png",
+        "trigger": "inventory Services date pickers intake retry profile and preconsult",
+        "extent": "viewport"
+      }
+    ],
+    "report": "20260914-intake/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "173:1691"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/intake-saved-390.png"
+    ],
+    "note": "预咨询回调携带原 CareIntake；目的页为 Cozymate，视觉由 Agent 对话交付负责，旧紫色源图不作为新版标准。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "intake-saved",
+    "state": "稍后",
+    "source_evidence": [
+      {
+        "id": "08-expert-service/service-journey-intake-saved-return",
+        "image": "08-expert-service/service-journey-intake-saved-return/default.png",
+        "trigger": "inventory Services intake fields consent uncertain save and update",
+        "extent": "viewport"
+      }
+    ],
+    "report": "20260914-intake/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "170:1154"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/appointment-detail-390.png"
+    ],
+    "note": "稍后关闭完成提示回原预约并刷新资料状态，复用独立预约设计。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "notification-education",
+    "state": "说明",
+    "source_evidence": [
+      {
+        "id": "07-me/notification-permission-current-education-dialog",
+        "image": "07-me/notification-permission-current-education-dialog/default.png",
+        "trigger": "notification permission education cancellation denial and settings false",
+        "extent": "viewport"
+      }
+    ],
+    "report": "20260914-notifications/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "136:577"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/notifications-consent-390.png"
+    ],
+    "note": "权限教育沿用原说明与确认值。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "notification-education",
+    "state": "暂不",
+    "source_evidence": [
+      {
+        "id": "07-me/notification-permission-current-education-not-now",
+        "image": "07-me/notification-permission-current-education-not-now/default.png",
+        "trigger": "notification permission education cancellation denial and settings false",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "20260914-notifications/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "136:577",
+      "135:274"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/notifications-settings-390.png"
+    ],
+    "note": "暂不回设置并保留关闭偏好，无额外授权。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "notification-education",
+    "state": "继续",
+    "source_evidence": [
+      {
+        "id": "07-me/notification-permission-current-request-authorized",
+        "image": "07-me/notification-permission-current-request-authorized/default.png",
+        "trigger": "notification permission request failure retry and direct settings error false",
+        "extent": "full-measured-scroll-stitch"
+      }
+    ],
+    "report": "20260914-notifications/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "136:577",
+      "136:187"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/notifications-settings-390.png"
+    ],
+    "note": "继续走原平台请求与授权反馈，不以按钮点击代表 OS 授权。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "notification-education",
+    "state": "拒绝后去设置",
+    "source_evidence": [
+      {
+        "id": "07-me/notification-permission-current-offer-settings-dialog",
+        "image": "07-me/notification-permission-current-offer-settings-dialog/default.png",
+        "trigger": "notification permission education cancellation denial and settings false",
+        "extent": "viewport"
+      }
+    ],
+    "report": "20260914-notifications/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "136:612"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/notifications-consent-390.png"
+    ],
+    "note": "拒绝后系统设置引导复用共享确认框，平台调用保留。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": []
+  },
+  {
+    "owner_id": "account-confirm",
+    "state": "密码确认",
+    "source_evidence": [
+      {
+        "id": "07-me/account-current-password-entered",
+        "image": "07-me/account-current-password-entered/default.png",
+        "trigger": "inventory current Account Google local unavailable false",
+        "extent": "viewport"
+      }
+    ],
+    "report": "20260914-account/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "130:68"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/account-link-password-390.png"
+    ],
+    "note": "复用账号密码确认，输入/键盘可达。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [
+      {
+        "id": "130:109",
+        "live_node_available": false,
+        "archives": [
+          "20260914-account/figma-keyboard.png",
+          "20260914-account/figma-qa.json"
+        ],
+        "current_family_node": "130:68",
+        "note": "键盘和大字号历史设计有导出；当前密码确认画板保留，平台 inset 由 Widget 验证。"
+      }
+    ],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": [
+      "test/goldens/ui_refactor/account-password-keyboard-393-1x.png"
+    ]
+  },
+  {
+    "owner_id": "account-confirm",
+    "state": "绑定 Google",
+    "source_evidence": [
+      {
+        "id": "07-me/account-current-google-unavailable",
+        "image": "07-me/account-current-google-unavailable/default.png",
+        "trigger": "inventory current Account Google local unavailable false",
+        "extent": "viewport"
+      }
+    ],
+    "report": "20260914-account/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "132:68",
+      "128:227"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/account-390.png"
+    ],
+    "note": "Google 不可用为页内反馈；绑定成功分支原行为保留，不虚构独立新弹层。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": [
+      "test/goldens/ui_refactor/account-google-unavailable-393-1x.png"
+    ]
+  },
+  {
+    "owner_id": "account-confirm",
+    "state": "删除账号",
+    "source_evidence": [
+      {
+        "id": "07-me/account-current-delete-confirm",
+        "image": "07-me/account-current-delete-confirm/default.png",
+        "trigger": "inventory current Account delete recovery success false",
+        "extent": "viewport"
+      }
+    ],
+    "report": "20260914-account/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "128:189"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/account-delete-390.png"
+    ],
+    "note": "复用破坏性确认弹窗。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": [
+      "test/goldens/ui_refactor/account-delete-confirm-393-1x.png"
+    ]
+  },
+  {
+    "owner_id": "account-confirm",
+    "state": "错误",
+    "source_evidence": [
+      {
+        "id": "07-me/account-current-delete-error",
+        "image": "07-me/account-current-delete-error/default.png",
+        "trigger": "inventory current Account delete recovery success false",
+        "extent": "viewport"
+      }
+    ],
+    "report": "20260914-account/HANDOFF.md",
+    "figma_file": "ePIoJkiMiXiug9ibpcgRbl",
+    "figma_nodes": [
+      "132:68"
+    ],
+    "layout_evidence": [
+      "test/goldens/design_system/account-390.png"
+    ],
+    "note": "原错误提示区及恢复入口，不能把确认弹窗当作删除完成。",
+    "evidence_scope": "Existing design and behavior acceptance with explicit component/state/destination reuse. Layout samples for a shared family do not claim replay of each source journey.",
+    "status": "verified_existing_design_and_behavior_with_explicit_reuse",
+    "historical_figma_nodes": [
+      {
+        "id": "128:262",
+        "live_node_available": false,
+        "archives": [
+          "20260914-account/figma-qa.json",
+          "20260914-account/figma-state.json"
+        ],
+        "current_family_node": "132:68",
+        "note": "操作失败历史变体；当前 Google 错误画板展示相同页内错误模式，删除实际文案由对应测试证明。"
+      }
+    ],
+    "verification_record": "20260914-final-audit/SETTINGS-SERVICES.md",
+    "supplementary_runtime_evidence": [
+      "test/goldens/ui_refactor/account-delete-error-393-1x.png"
+    ]
+  }
+]

@@ -2,8 +2,12 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import '../../../shared/widgets/momcozy_components.dart';
-import '../../../shared/widgets/product_feedback.dart';
-import 'package:momcozy_flutter_app/shared/design_system/momcozy_design_system.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import '../../../shared/widgets/mom_settings_widgets.dart';
+import '../../../shared/widgets/mom_companion_widgets.dart';
+import '../../../shared/design_system/mom_home_tokens.dart';
+import '../../../shared/design_system/mom_settings_theme.dart';
+import '../../../shared/design_system/momcozy_text_roles.dart';
 import 'package:momcozy_flutter_app/features/notifications/domain/momcozy_notification.dart';
 import 'package:momcozy_flutter_app/features/notifications/presentation/notifications_controller.dart';
 
@@ -47,98 +51,202 @@ class _NotificationsPageState extends State<NotificationsPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: MomCozyColors.background,
-      child: MomCozyPageBody(
-        child: AnimatedBuilder(
-          animation: _controller,
-          builder: (context, child) {
-            final state = _controller.state;
-            return RefreshIndicator(
-              color: MomCozyColors.primary,
-              onRefresh: _controller.load,
-              child: ListView(
-                key: const ValueKey('route-page-/notifications'),
-                physics: const AlwaysScrollableScrollPhysics(),
-                padding: MomCozyInsets.page,
-                children: [
-                  _NotificationsHeader(
-                    unreadCount: state.unreadCount,
-                    loading: state.phase == NotificationsPhase.loading,
-                    onBack: widget.onBack,
-                    onRefresh: () => unawaited(_controller.load()),
-                  ),
-                  Wrap(
-                    alignment: WrapAlignment.spaceBetween,
-                    crossAxisAlignment: WrapCrossAlignment.center,
-                    spacing: MomCozySpacing.compact,
-                    children: [
-                      TextButton(
-                        onPressed:
-                            state.unreadCount == 0 || state.busyIds.isNotEmpty
-                            ? null
-                            : () => unawaited(_controller.markAllRead()),
-                        child: const Text('Mark all read'),
-                      ),
-                      if (widget.onSettings != null)
+  Widget build(BuildContext context) => AnimatedBuilder(
+    animation: _controller,
+    builder: (context, _) {
+      final state = _controller.state;
+      final initialLoading =
+          state.phase == NotificationsPhase.loading &&
+          state.notifications.isEmpty;
+      final count = initialLoading
+          ? 'Loading updates'
+          : state.error != null && state.notifications.isEmpty
+          ? 'Your updates'
+          : state.unreadCount == 0
+          ? 'All caught up'
+          : '${state.unreadCount} unread';
+      final readAll = TextButton(
+        onPressed: state.unreadCount == 0 || state.busyIds.isNotEmpty
+            ? null
+            : () => unawaited(_controller.markAllRead()),
+        child: const Text('Mark all read'),
+      );
+      return Theme(
+        data: momSettingsTheme(Theme.of(context)),
+        child: Scaffold(
+          appBar: AppBar(
+            toolbarHeight: MediaQuery.textScalerOf(context).scale(1) > 1.3
+                ? 136
+                : 56,
+            title: const Text('Notifications', maxLines: 2),
+            leading: IconButton(
+              key: const ValueKey('notifications-back'),
+              tooltip: 'Back',
+              onPressed: widget.onBack,
+              icon: SvgPicture.asset(
+                'assets/images/me_baby_overview/icons/back-button.svg',
+                width: 36,
+                height: 32,
+              ),
+            ),
+          ),
+          body: ClipRect(
+            child: MomCozyPageBody(
+              child: RefreshIndicator(
+                color: MomHomeTokens.rose,
+                onRefresh: _controller.load,
+                child: ListView(
+                  key: const ValueKey('route-page-/notifications'),
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 28),
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            'Stay close to every update.',
+                            style: MomHomeTokens.text(
+                              12,
+                              color: MomHomeTokens.secondary,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: MomHomeTokens.gap),
                         IconButton(
-                          tooltip: 'Notification settings',
-                          onPressed: widget.onSettings,
-                          icon: const Icon(Icons.settings_outlined),
+                          key: const ValueKey('notifications-refresh'),
+                          tooltip: 'Refresh notifications',
+                          onPressed: state.phase == NotificationsPhase.loading
+                              ? null
+                              : () => unawaited(_controller.load()),
+                          color: MomHomeTokens.secondary,
+                          icon: state.phase == NotificationsPhase.loading
+                              ? const SizedBox.square(
+                                  dimension: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                              : const Icon(Icons.refresh_rounded),
                         ),
-                    ],
-                  ),
-                  const SizedBox(height: MomCozySpacing.card),
-                  if (state.error != null) ...[
-                    _NotificationsErrorBanner(
-                      onRetry: () => unawaited(_controller.load()),
+                        if (widget.onSettings != null) ...[
+                          const SizedBox(width: MomHomeTokens.gap),
+                          IconButton(
+                            tooltip: 'Notification settings',
+                            onPressed: widget.onSettings,
+                            color: MomHomeTokens.secondary,
+                            icon: const Icon(Icons.settings_outlined),
+                          ),
+                        ],
+                      ],
                     ),
-                    const SizedBox(height: MomCozySpacing.headingGap),
-                  ],
-                  if (state.phase == NotificationsPhase.loading &&
-                      state.notifications.isEmpty)
-                    const ProductLoadingView()
-                  else if (state.notifications.isEmpty)
-                    const ProductEmptyView(
-                      title: 'No notifications yet',
-                      description:
-                          'Confirmed reminders and updates will appear here.',
-                      icon: Icons.notifications_none_rounded,
-                    )
-                  else
-                    for (
-                      var index = 0;
-                      index < state.notifications.length;
-                      index += 1
-                    ) ...[
-                      _NotificationCard(
-                        notification: state.notifications[index],
-                        timestamp: _notificationTimestamp(
-                          context,
-                          state.notifications[index].createdAt,
-                          widget.now(),
-                        ),
-                        busy: state.busyIds.contains(
-                          state.notifications[index].id,
-                        ),
-                        onOpen: () => unawaited(
-                          widget.onOpen?.call(state.notifications[index].id) ??
-                              _controller.markRead(
-                                state.notifications[index].id,
+                    const SizedBox(height: MomHomeTokens.gap),
+                    MomSettingsCard(
+                      gradient: MomHomeTokens.milk,
+                      border: false,
+                      children: [
+                        MediaQuery.textScalerOf(context).scale(1) > 1.3
+                            ? Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                spacing: MomHomeTokens.gap,
+                                children: [
+                                  Text(
+                                    count,
+                                    style: MomHomeTokens.text(
+                                      18,
+                                      weight: FontWeight.w700,
+                                    ),
+                                  ),
+                                  readAll,
+                                ],
+                              )
+                            : Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      count,
+                                      style: MomHomeTokens.text(
+                                        18,
+                                        weight: FontWeight.w700,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: MomHomeTokens.gap),
+                                  readAll,
+                                ],
                               ),
-                        ),
-                        onArchive: () => unawaited(
-                          _controller.archive(state.notifications[index].id),
-                        ),
+                      ],
+                    ),
+                    const SizedBox(height: MomHomeTokens.gap),
+                    if (state.error != null) ...[
+                      _NotificationsErrorBanner(
+                        onRetry: () => unawaited(_controller.load()),
+                        hasContent: state.notifications.isNotEmpty,
                       ),
-                      if (index < state.notifications.length - 1)
-                        const SizedBox(height: MomCozySpacing.content),
+                      const SizedBox(height: MomHomeTokens.gap),
                     ],
-                  if (state.nextCursor != null)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 16),
-                      child: OutlinedButton(
+                    if (initialLoading)
+                      MomSettingsCard(
+                        children: [
+                          Text(
+                            'Loading notifications…',
+                            style: MomHomeTokens.text(
+                              18,
+                              weight: FontWeight.w700,
+                            ),
+                          ),
+                          Text(
+                            'Your updates will appear here.',
+                            style: MomHomeTokens.text(
+                              13,
+                              color: MomHomeTokens.secondary,
+                            ),
+                          ),
+                          const LinearProgressIndicator(
+                            semanticsLabel: 'Loading notifications',
+                          ),
+                        ],
+                      )
+                    else if (state.notifications.isEmpty && state.error == null)
+                      MomSettingsCard(
+                        children: [
+                          Text(
+                            'No notifications yet',
+                            style: MomHomeTokens.text(
+                              18,
+                              weight: FontWeight.w700,
+                            ),
+                          ),
+                          Text(
+                            'Confirmed reminders and updates will appear here.',
+                            style: MomHomeTokens.text(
+                              13,
+                              color: MomHomeTokens.secondary,
+                              height: 1.55,
+                            ),
+                          ),
+                        ],
+                      )
+                    else
+                      for (final notification in state.notifications) ...[
+                        _NotificationCard(
+                          notification: notification,
+                          timestamp: _notificationTimestamp(
+                            context,
+                            notification.createdAt,
+                            widget.now(),
+                          ),
+                          busy: state.busyIds.contains(notification.id),
+                          onOpen: () => unawaited(
+                            widget.onOpen?.call(notification.id) ??
+                                _controller.markRead(notification.id),
+                          ),
+                          onArchive: () =>
+                              unawaited(_controller.archive(notification.id)),
+                        ),
+                        const SizedBox(height: MomHomeTokens.gap),
+                      ],
+                    if (state.nextCursor != null)
+                      OutlinedButton(
                         onPressed: state.loadingMore
                             ? null
                             : () => unawaited(_controller.loadMore()),
@@ -146,79 +254,15 @@ class _NotificationsPageState extends State<NotificationsPage> {
                           state.loadingMore ? 'Loading…' : 'Load more',
                         ),
                       ),
-                    ),
-                ],
-              ),
-            );
-          },
-        ),
-      ),
-    );
-  }
-}
-
-class _NotificationsHeader extends StatelessWidget {
-  const _NotificationsHeader({
-    required this.unreadCount,
-    required this.loading,
-    required this.onBack,
-    required this.onRefresh,
-  });
-
-  final int unreadCount;
-  final bool loading;
-  final VoidCallback onBack;
-  final VoidCallback onRefresh;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            IconButton(
-              key: const ValueKey('notifications-back'),
-              tooltip: 'Back',
-              onPressed: onBack,
-              icon: const Icon(Icons.arrow_back_rounded),
-            ),
-            const SizedBox(width: MomCozySpacing.xs),
-            Expanded(
-              child: Text(
-                'Notifications',
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  color: MomCozyColors.foreground,
-                  fontWeight: FontWeight.w700,
+                  ],
                 ),
               ),
             ),
-            IconButton(
-              key: const ValueKey('notifications-refresh'),
-              tooltip: 'Refresh notifications',
-              onPressed: loading ? null : onRefresh,
-              icon: loading
-                  ? const SizedBox.square(
-                      dimension: MomCozyIconSizes.medium,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : const Icon(Icons.refresh_rounded),
-            ),
-          ],
-        ),
-        Padding(
-          padding: const EdgeInsets.only(left: 52, top: 2),
-          child: Text(
-            unreadCount == 0 ? 'All caught up' : '$unreadCount unread',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: MomCozyColors.mutedForeground,
-              fontWeight: FontWeight.w600,
-            ),
           ),
         ),
-      ],
-    );
-  }
+      );
+    },
+  );
 }
 
 class _NotificationCard extends StatelessWidget {
@@ -229,7 +273,6 @@ class _NotificationCard extends StatelessWidget {
     required this.onOpen,
     required this.onArchive,
   });
-
   final MomCozyNotification notification;
   final String timestamp;
   final bool busy;
@@ -239,130 +282,164 @@ class _NotificationCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final unread = notification.isUnread;
-    return MomCozySurface(
-      key: ValueKey('notification-item-${notification.id}'),
-      color: unread ? MomCozyColors.roseSoft : MomCozyColors.raised,
-      padding: MomCozyInsets.compactCard,
-      onTap: busy ? null : onOpen,
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox.square(
-            dimension: MomCozyTapTargets.minimum,
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                color: MomCozyColors.raised,
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                _notificationIcon(notification.type),
-                color: MomCozyColors.primary,
-                size: MomCozyIconSizes.standard,
+    final identity = Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        ExcludeSemantics(
+          child: Container(
+            width: 32,
+            height: 32,
+            decoration: BoxDecoration(
+              color: MomHomeTokens.milk.colors.first,
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              _notificationIcon(notification.type),
+              color: MomHomeTokens.secondary,
+              size: 20,
+            ),
+          ),
+        ),
+        if (unread) ...[
+          const SizedBox(width: 8),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            decoration: BoxDecoration(
+              color: MomHomeTokens.mint,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Text(
+              'New',
+              style: MomHomeTokens.text(
+                11,
+                weight: FontWeight.w700,
+                color: MomHomeTokens.teal,
               ),
             ),
           ),
-          const SizedBox(width: MomCozySpacing.content),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    if (unread) ...[
-                      const SizedBox.square(
-                        dimension: 8,
-                        child: DecoratedBox(
-                          decoration: BoxDecoration(
-                            color: MomCozyColors.primary,
-                            shape: BoxShape.circle,
+        ],
+      ],
+    );
+    final time = Text(
+      timestamp,
+      style: MomHomeTokens.text(11, color: MomHomeTokens.secondary),
+    );
+    return MomHomeSurface(
+      key: ValueKey('notification-item-${notification.id}'),
+      gradient: const LinearGradient(
+        colors: [MomHomeTokens.surface, MomHomeTokens.surface],
+      ),
+      border: MomHomeTokens.border,
+      onTap: busy ? null : onOpen,
+      child: Padding(
+        padding: const EdgeInsets.all(MomHomeTokens.inset),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          spacing: MomHomeTokens.gap,
+          children: [
+            MediaQuery.textScalerOf(context).scale(1) > 1.3
+                ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    spacing: 8,
+                    children: [identity, if (timestamp.isNotEmpty) time],
+                  )
+                : Row(
+                    children: [
+                      identity,
+                      const SizedBox(width: 8),
+                      if (timestamp.isNotEmpty)
+                        Expanded(
+                          child: Align(
+                            alignment: Alignment.centerRight,
+                            child: time,
+                          ),
+                        ),
+                    ],
+                  ),
+            Text(
+              notification.title.isEmpty
+                  ? 'Momcozy update'
+                  : notification.title,
+              style: MomHomeTokens.text(16, weight: FontWeight.w700),
+            ),
+            if (notification.body.isNotEmpty)
+              Text(
+                notification.body,
+                style: MomHomeTokens.text(
+                  13,
+                  color: MomHomeTokens.secondary,
+                  height: 1.55,
+                ).merge(MomCozyTextRoles.paragraphOf(context)),
+              ),
+            Align(
+              alignment: Alignment.centerRight,
+              child: busy
+                  ? const SizedBox(
+                      width: 44,
+                      height: 44,
+                      child: Center(
+                        child: SizedBox.square(
+                          dimension: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            semanticsLabel: 'Updating notification',
                           ),
                         ),
                       ),
-                      const SizedBox(width: MomCozySpacing.compact),
-                    ],
-                    Expanded(
-                      child: Text(
-                        notification.title.isEmpty
-                            ? 'Momcozy update'
-                            : notification.title,
-                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                          color: MomCozyColors.foreground,
-                          fontWeight: unread
-                              ? FontWeight.w700
-                              : FontWeight.w600,
+                    )
+                  : Tooltip(
+                      message: 'Archive notification',
+                      child: TextButton.icon(
+                        key: ValueKey(
+                          'notification-archive-${notification.id}',
                         ),
+                        onPressed: onArchive,
+                        style: TextButton.styleFrom(
+                          foregroundColor: MomHomeTokens.secondary,
+                        ),
+                        icon: const Icon(Icons.archive_outlined, size: 16),
+                        label: const Text('Archive'),
                       ),
                     ),
-                  ],
-                ),
-                if (notification.body.isNotEmpty) ...[
-                  const SizedBox(height: MomCozySpacing.xs),
-                  Text(
-                    notification.body,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: MomCozyColors.mutedForeground,
-                      height: 1.35,
-                    ),
-                  ),
-                ],
-                if (timestamp.isNotEmpty) ...[
-                  const SizedBox(height: MomCozySpacing.compact),
-                  Text(
-                    timestamp,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: MomCozyColors.mutedForeground,
-                    ),
-                  ),
-                ],
-              ],
             ),
-          ),
-          busy
-              ? const Padding(
-                  padding: EdgeInsets.all(12),
-                  child: SizedBox.square(
-                    dimension: MomCozyIconSizes.medium,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  ),
-                )
-              : IconButton(
-                  key: ValueKey('notification-archive-${notification.id}'),
-                  tooltip: 'Archive notification',
-                  onPressed: onArchive,
-                  icon: const Icon(
-                    Icons.archive_outlined,
-                    size: MomCozyIconSizes.medium,
-                  ),
-                ),
-        ],
+          ],
+        ),
       ),
     );
   }
 }
 
 class _NotificationsErrorBanner extends StatelessWidget {
-  const _NotificationsErrorBanner({required this.onRetry});
-
+  const _NotificationsErrorBanner({
+    required this.onRetry,
+    required this.hasContent,
+  });
+  final bool hasContent;
   final VoidCallback onRetry;
-
   @override
-  Widget build(BuildContext context) {
-    return MomCozySurface(
-      color: MomCozyColors.amberSoft,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Couldn’t refresh notifications',
-            style: MomCozyTypography.title,
+  Widget build(BuildContext context) => Semantics(
+    liveRegion: true,
+    child: MomSettingsCard(
+      gradient: MomHomeTokens.body,
+      children: [
+        Text(
+          'Couldn’t refresh notifications',
+          style: MomHomeTokens.text(18, weight: FontWeight.w700),
+        ),
+        Text(
+          hasContent
+              ? 'Previously loaded updates remain visible.'
+              : 'Please try again to load your updates.',
+          style: MomHomeTokens.text(
+            13,
+            color: MomHomeTokens.secondary,
+            height: 1.55,
           ),
-          const SizedBox(height: MomCozySpacing.compact),
-          const Text('Previously loaded updates remain visible.'),
-          TextButton(onPressed: onRetry, child: const Text('Retry')),
-        ],
-      ),
-    );
-  }
+        ),
+        OutlinedButton(onPressed: onRetry, child: const Text('Retry')),
+      ],
+    ),
+  );
 }
 
 IconData _notificationIcon(String type) {

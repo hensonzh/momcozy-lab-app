@@ -56,14 +56,31 @@ void main() {
     }
   });
 
-  testWidgets('notification conversation target opens the requested owned thread', (tester) async {
-    const state = AgentStreamRunState(phase: AgentStreamRunPhase.finished, threadId: 'notification-thread', runId: 'notification-run', textContent: 'Saved conversation update');
-    final repository = _SequencedConversationRepository([_conversationHistory(state)]);
-    await tester.pumpWidget(_host(AgentHubPage(initialConversationId: 'notification-thread', conversationRepository: repository)));
-    await tester.pumpAndSettle();
-    expect(repository.loadCalls, 1);
-    expect(find.text('Saved conversation update'), findsOneWidget);
-  });
+  testWidgets(
+    'notification conversation target opens the requested owned thread',
+    (tester) async {
+      const state = AgentStreamRunState(
+        phase: AgentStreamRunPhase.finished,
+        threadId: 'notification-thread',
+        runId: 'notification-run',
+        textContent: 'Saved conversation update',
+      );
+      final repository = _SequencedConversationRepository([
+        _conversationHistory(state),
+      ]);
+      await tester.pumpWidget(
+        _host(
+          AgentHubPage(
+            initialConversationId: 'notification-thread',
+            conversationRepository: repository,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(repository.loadCalls, 1);
+      expect(find.text('Saved conversation update'), findsOneWidget);
+    },
+  );
 
   testWidgets('Agent Hub renders idle composer state', (tester) async {
     await tester.pumpWidget(_host(const AgentHubPage()));
@@ -122,7 +139,7 @@ void main() {
   ) async {
     await tester.pumpWidget(_host(const AgentHubPage()));
 
-    expect(find.text('Cozymate'), findsNothing);
+    expect(find.text('Cozymate'), findsOneWidget);
     expect(find.text('母婴健康 · 日程 · 泌乳计划'), findsNothing);
     expect(find.byKey(const ValueKey('agent-v3-service-health')), findsNothing);
     expect(
@@ -143,6 +160,29 @@ void main() {
       isEmpty,
     );
   });
+
+  testWidgets(
+    'design shortcuts send through the existing conversation runner',
+    (tester) async {
+      final client = _ControllableAgentStreamClient();
+      addTearDown(client.dispose);
+      await tester.pumpWidget(
+        _host(AgentHubPage(runner: AgentStreamRunner(client))),
+      );
+      await tester.tap(find.text('奶量分析'));
+      await tester.pump();
+      expect(client.requests.single.message, '帮我分析最近的奶量记录，告诉我可以先关注哪些变化。');
+      expect(find.text(client.requests.single.message), findsOneWidget);
+      final recovery = tester.widget<OutlinedButton>(
+        find.ancestor(
+          of: find.text('产后康复评估'),
+          matching: find.byType(OutlinedButton),
+        ),
+      );
+      expect(recovery.onPressed, isNull);
+      await tester.pumpWidget(const SizedBox());
+    },
+  );
 
   testWidgets('schedule actions expose authoritative preview details', (
     tester,
@@ -482,7 +522,7 @@ void main() {
       ),
     );
 
-    expect(find.textContaining('这次处理没有成功'), findsOneWidget);
+    expect(find.text('这次没有拿到回复。'), findsOneWidget);
     expect(find.text('服务执行失败，请稍后重试'), findsOneWidget);
     expect(find.textContaining('连接中断'), findsNothing);
   });
@@ -1634,7 +1674,19 @@ void main() {
       await tester.tap(find.byKey(const ValueKey('agent-send-button')));
       await tester.pumpAndSettle();
 
-      expect(find.text('nihao'), findsOneWidget);
+      final sentText = find.byWidgetPredicate(
+        (widget) => widget is Text && widget.data == 'nihao',
+      );
+      expect(sentText, findsOneWidget);
+      expect(
+        tester
+            .widget<TextField>(
+              find.byKey(const ValueKey('agent-composer-input')),
+            )
+            .controller!
+            .text,
+        'nihao',
+      );
       expect(find.textContaining('嗨，我是 Cozymate'), findsOneWidget);
       expect(find.textContaining('这次没有拿到回复'), findsOneWidget);
       expect(find.text('网络不可用，请检查连接后重试'), findsOneWidget);
@@ -1643,7 +1695,7 @@ void main() {
         find.byKey(const ValueKey('agent-chat-scroll-view')),
       );
       final greetingRect = tester.getRect(find.textContaining('嗨，我是 Cozymate'));
-      final userRect = tester.getRect(find.text('nihao'));
+      final userRect = tester.getRect(sentText);
       final errorRect = tester.getRect(find.textContaining('这次没有拿到回复'));
       final retryRect = tester.getRect(
         find.byKey(const ValueKey('agent-retry-button')),
@@ -1651,7 +1703,7 @@ void main() {
       expect(greetingRect.top - chatRect.top, lessThan(120));
       expect(userRect.top, greaterThan(greetingRect.bottom));
       expect(errorRect.top, greaterThan(userRect.bottom));
-      expect(retryRect.top - chatRect.top, lessThan(360));
+      expect(retryRect.bottom, lessThanOrEqualTo(chatRect.bottom));
     },
   );
 
@@ -1746,7 +1798,7 @@ void main() {
       find.byKey(const ValueKey('agent-image-attachment-0')),
       findsOneWidget,
     );
-    expect(find.text('图片 1'), findsOneWidget);
+    expect(find.text('pump-display.png'), findsOneWidget);
 
     await tester.enterText(
       find.byKey(const ValueKey('agent-composer-input')),
@@ -2188,7 +2240,7 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('agent-remove-image-button')));
     await tester.pump();
 
-    expect(find.text('图片 1'), findsOneWidget);
+    expect(find.text('gallery.png'), findsOneWidget);
     expect(find.byType(AgentComposerImageAttachment), findsOneWidget);
     expect(
       tester
@@ -2336,7 +2388,7 @@ void main() {
       find.byKey(const ValueKey('agent-image-attachment-chip')),
       findsOneWidget,
     );
-    expect(find.text('图片 1'), findsOneWidget);
+    expect(find.text('retained-across-tab.png'), findsOneWidget);
   });
 
   testWidgets('Agent Hub clears cached active runs when restored', (
@@ -2425,9 +2477,18 @@ void main() {
   });
 
   testWidgets('Agent Hub applies initial composer prefill', (tester) async {
+    final client = _ControllableAgentStreamClient();
     await tester.pumpWidget(
-      _host(const AgentHubPage(initialComposerText: '我想调整今天的吸乳排期')),
+      _host(
+        AgentHubPage(
+          runner: AgentStreamRunner(client),
+          initialComposerText: '我想调整今天的吸乳排期',
+        ),
+      ),
     );
+    await tester.pump();
+    await tester.pump();
+    expect(client.requests, isEmpty);
 
     expect(
       tester
@@ -2485,6 +2546,7 @@ void main() {
     'Agent Hub starts hidden motion-result feedback without a fake user bubble',
     (tester) async {
       final client = _ControllableAgentStreamClient();
+      addTearDown(client.dispose);
 
       await tester.pumpWidget(
         _host(
@@ -2507,6 +2569,26 @@ void main() {
       expect(client.requests.single.idempotencyKey, endsWith('assessment-1'));
       expect(client.requests.single.metadata['assessment_id'], 'assessment-1');
       expect(find.text('请读取刚完成的体态评估并给出简短反馈。'), findsNothing);
+      client.emit(
+        0,
+        AgentStreamEvent(const {
+          'event_id': 'hidden-failure',
+          'type': 'run.failed',
+          'run_id': 'hidden-run',
+          'sequence': 1,
+          'payload': {'code': 'runtime_error'},
+        }),
+      );
+      await tester.pumpAndSettle();
+      expect(
+        tester
+            .widget<TextField>(
+              find.byKey(const ValueKey('agent-composer-input')),
+            )
+            .controller!
+            .text,
+        isEmpty,
+      );
     },
   );
 
@@ -3656,7 +3738,7 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.text('这次处理没有成功，暂时没有生成回复。你可以重试一次。'), findsOneWidget);
+      expect(find.text('这次没有拿到回复。'), findsOneWidget);
       expect(find.byKey(const ValueKey('agent-retry-button')), findsNothing);
 
       await tester.enterText(
@@ -5439,7 +5521,7 @@ void main() {
       const ValueKey('agent-artifact-form-error-long-required-form'),
     );
     expect(error, findsOneWidget);
-    expect(position.pixels, greaterThan(0));
+    expect(scrollController.position.pixels, greaterThan(0));
     final scrollRect = tester.getRect(scrollView);
     final errorRect = tester.getRect(error);
     expect(errorRect.top, greaterThanOrEqualTo(scrollRect.top));
@@ -6625,6 +6707,13 @@ milk_total: 120ml
     expect(find.textContaining('**'), findsNothing);
     expect(find.byType(MarkdownBody), findsOneWidget);
     expect(find.text('产后恢复的几个关键方面', findRichText: true), findsOneWidget);
+    final markdownStyles = tester
+        .widget<MarkdownBody>(find.byType(MarkdownBody))
+        .styleSheet!;
+    expect(markdownStyles.p!.height, 1.65);
+    expect(markdownStyles.h2!.fontSize, 18);
+    expect(markdownStyles.h2!.height, 1.4);
+    expect(markdownStyles.a!.decoration, TextDecoration.underline);
     expect(find.text('1. 身体恢复', findRichText: true), findsOneWidget);
     expect(find.textContaining('恶露观察', findRichText: true), findsOneWidget);
     expect(find.textContaining('休息充足', findRichText: true), findsOneWidget);
@@ -7320,7 +7409,7 @@ milk_total: 120ml
 
     expect(find.byKey(const ValueKey('agent-run-status-line')), findsNothing);
     expect(find.text('这轮暂时没处理好'), findsNothing);
-    expect(find.text('这次处理没有成功，暂时没有生成回复。你可以重试一次。'), findsOneWidget);
+    expect(find.text('这次没有拿到回复。'), findsOneWidget);
   });
 
   testWidgets('Agent Hub treats hidden semantic as authoritative', (

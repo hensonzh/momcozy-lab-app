@@ -1,0 +1,410 @@
+[
+  {
+    "path": "test/goldens/design_system/baby-development-editor-320.png",
+    "width": 320,
+    "height": 844,
+    "sha256": "132d840b95121a146b5e0ba4fd0ef6e13978092011d997ae1dece4b38e5b87cf"
+  },
+  {
+    "path": "test/goldens/design_system/baby-development-editor-390.png",
+    "width": 390,
+    "height": 844,
+    "sha256": "19d4f930c665fa5105fdf2d11384faaff2ae3bfa9fc2cd233e0c9ef5a03694a1"
+  },
+  {
+    "path": "test/goldens/design_system/baby-development-editor-430.png",
+    "width": 430,
+    "height": 844,
+    "sha256": "af54d8d76dffa152e5a96ce881d1fea3e6215ef17e9ac11c37072c0287dd49c4"
+  },
+  {
+    "path": "test/goldens/design_system/baby-diaper-editor-320.png",
+    "width": 320,
+    "height": 844,
+    "sha256": "cbb0d7566e1d0d81417d54dce059cf630c214834e8d3e4ff790bfff438b06b39"
+  },
+  {
+    "path": "test/goldens/design_system/baby-diaper-editor-390.png",
+    "width": 390,
+    "height": 844,
+    "sha256": "ccd6da7f5f5aab1f22fb6512317f2e9850632a908ac1e4dde80e5fab8629b692"
+  },
+  {
+    "path": "test/goldens/design_system/baby-diaper-editor-430.png",
+    "width": 430,
+    "height": 844,
+    "sha256": "b7aa9d404f31bd799b0d023d05368910c90f15d4822ddd16063da8cc57151fa7"
+  },
+  {
+    "path": "test/goldens/design_system/baby-feeding-editor-320.png",
+    "width": 320,
+    "height": 844,
+    "sha256": "a81fe39326a65bcd2cb9c004e883529f7c8d9e203e12e284fd0de98896920b5c"
+  },
+  {
+    "path": "test/goldens/design_system/baby-feeding-editor-390.png",
+    "width": 390,
+    "height": 844,
+    "sha256": "db9f79cf8ab155fdf6aab00e3d7c0b232a5a9bf611f2591f0db49955e2027150"
+  },
+  {
+    "path": "test/goldens/design_system/baby-feeding-editor-430.png",
+    "width": 430,
+    "height": 844,
+    "sha256": "cb52197422d2688c896a8beb64976eee31a3b53eb60abd8efb9ac15e147aa130"
+  },
+  {
+    "path": "test/goldens/design_system/baby-feeding-validation-320.png",
+    "width": 320,
+    "height": 844,
+    "sha256": "1612d5fd1ae30977caf8a5d2088018b1e86076bfa55aae5d539de78314e7548c"
+  },
+  {
+    "path": "test/goldens/design_system/baby-feeding-validation-390.png",
+    "width": 390,
+    "height": 844,
+    "sha256": "89d534e847012e8017eb0def895e14981c024ea22081814c880b19d2130fdadc"
+  },
+  {
+    "path": "test/goldens/design_system/baby-feeding-validation-430.png",
+    "width": 430,
+    "height": 844,
+    "sha256": "c87824fcc734b5c6993f9e66451d5b80987a5d2ffc1f2e30b55d2eb346aa7b8c"
+  },
+  {
+    "path": "test/goldens/design_system/baby-growth-editor-320.png",
+    "width": 320,
+    "height": 844,
+    "sha256": "63dfca752460fbb03e62e454fcd63cb6f879df7d957bcb39559c4ebd513484e0"
+  },
+  {
+    "path": "test/goldens/design_system/baby-growth-editor-390.png",
+    "width": 390,
+    "height": 844,
+    "sha256": "a634a13b70f3a34cdbd29d1235b57229311b008319099cc94f3b522db0a71599"
+  },
+  {
+    "path": "test/goldens/design_system/baby-growth-editor-430.png",
+    "width": 430,
+    "height": 844,
+    "sha256": "85cbb3f7b23c85b35826f4145965bc80110141ba5f10ae322a0802a174b8d73b"
+  },
+  {
+    "path": "test/goldens/design_system/baby-history-320.png",
+    "width": 320,
+    "height": 844,
+    "sha256": "928093339b38f76f6764ab24d3c0a2cd7b6b4e6fe3240570012f0b199916090f"
+  },
+  {
+    "path": "test/goldens/design_system/baby-history-390.png",
+    "width": 390,
+    "height": 844,
+    "sha256": "5bc9d662e8baad26df2bd56e5af3ab8b5c22cbcb6e008ac74336bd3157a0244a"
+  },
+  {
+    "path": "test/goldens/design_system/baby-history-430.png",
+    "width": 430,
+    "height": 844,
+    "sha256": "bc390e2c04a3024cd443e22e5c48571dc86560765855133ee060375531bcbac4"
+  },
+  {
+    "path": "test/goldens/design_system/baby-history-source-390.png",
+    "width": 390,
+    "height": 844,
+    "sha256": "d802b5908419413561b403cfedd88d42d088cc52553bd5378131b9be2c2d0a4f"
+  },
+  {
+    "path": "test/goldens/design_system/baby-nursing-320.png",
+    "width": 320,
+    "height": 844,
+    "sha256": "c04b5487b2e1f0aeca551f6932ab65ddba29dc136c77f27c84a1970f121a8620"
+  },
+  {
+    "path": "test/goldens/design_system/baby-nursing-390.png",
+    "width": 390,
+    "height": 844,
+    "sha256": "f7c67cf120a83ee1eecd1b74c1661cf66c0be58a3c51ecdc4e008b02bc88aed8"
+  },
+  {
+    "path": "test/goldens/design_system/baby-nursing-430.png",
+    "width": 430,
+    "height": 844,
+    "sha256": "90472d8f5f5cf84c6526269aa162e0a3cc60f122dcd23b31985231b5e1f2d776"
+  },
+  {
+    "path": "test/goldens/design_system/baby-save-uncertain-320.png",
+    "width": 320,
+    "height": 844,
+    "sha256": "55ff55e6fdc7647c1134863bdad415d8789ee8386defb284f58fda67366cabbf"
+  },
+  {
+    "path": "test/goldens/design_system/baby-sleep-active-320.png",
+    "width": 320,
+    "height": 844,
+    "sha256": "43a4c06d8219fea1f94ea6829b48f91b25c4f27134b4f22c7d23593173286ae9"
+  },
+  {
+    "path": "test/goldens/design_system/baby-sleep-active-390.png",
+    "width": 390,
+    "height": 844,
+    "sha256": "6cb5a46ad7d527441223d91bd5948e95a5a63b6833199bc20c15dae165a79e9c"
+  },
+  {
+    "path": "test/goldens/design_system/baby-sleep-active-430.png",
+    "width": 430,
+    "height": 844,
+    "sha256": "fd5eb6277a613300aeaf23b4e8b1f7e726c5b05bcc214d4d310715d6dd95f27a"
+  },
+  {
+    "path": "test/goldens/design_system/baby-sleep-editor-320.png",
+    "width": 320,
+    "height": 844,
+    "sha256": "b1381b964c953dcc4e7dbecca7b2dec2f7a80175b189314949b9817951420c96"
+  },
+  {
+    "path": "test/goldens/design_system/baby-sleep-editor-390.png",
+    "width": 390,
+    "height": 844,
+    "sha256": "8df6c659530f92c1c387a4890fe6c7a8386c9c0af02f94c768e7554c5bd8ad45"
+  },
+  {
+    "path": "test/goldens/design_system/baby-sleep-editor-430.png",
+    "width": 430,
+    "height": 844,
+    "sha256": "c5ccc04ef3b148f7f3d4f92755b0fdba5de5b01f54d5afd04925185cecb25396"
+  },
+  {
+    "path": "test/goldens/design_system/baby-sleep-start-320.png",
+    "width": 320,
+    "height": 844,
+    "sha256": "013d374489e73c1eb608505c553cee000b063b2b7d20dc2297f315d950da336b"
+  },
+  {
+    "path": "test/goldens/design_system/baby-sleep-start-390.png",
+    "width": 390,
+    "height": 844,
+    "sha256": "a7141b1784c9b757008ad332dad67528981328ba846d798a2ada1e3326e48a5d"
+  },
+  {
+    "path": "test/goldens/design_system/baby-sleep-start-430.png",
+    "width": 430,
+    "height": 844,
+    "sha256": "45f6add39be1da738b724f55a9a38cd24709fa0cb35e944a668e39aad651faad"
+  },
+  {
+    "path": "test/goldens/design_system/baby-wet-320.png",
+    "width": 320,
+    "height": 844,
+    "sha256": "3c03e3942f0cdad81a28955981121b5fbd4810ede3ce3ad2d3249f66f2dd4fc6"
+  },
+  {
+    "path": "test/goldens/design_system/baby-wet-390.png",
+    "width": 390,
+    "height": 844,
+    "sha256": "09aebe4b05af2fdfc1316e90f9d0e35b4e4e411e4cdbdb0dd989251024367254"
+  },
+  {
+    "path": "test/goldens/design_system/baby-wet-430.png",
+    "width": 430,
+    "height": 844,
+    "sha256": "06dcd71950549245cd71eeef3b1a8bd01fa248ed22f574ec6f94e69b820d6d41"
+  },
+  {
+    "path": "test/goldens/design_system/baby-editor-current-development-end-320-2x.png",
+    "width": 320,
+    "height": 844,
+    "sha256": "84c4cc69de098e25893da48384db64ec91859fb95b8ba0dd7e48c02d2fc4ffa4"
+  },
+  {
+    "path": "test/goldens/design_system/baby-editor-current-development-end-390-1x.png",
+    "width": 390,
+    "height": 844,
+    "sha256": "678fd2408d4e05de696c53931e78b40b8cdc79f74752370843de732cd2344861"
+  },
+  {
+    "path": "test/goldens/design_system/baby-editor-current-development-middle-320-2x.png",
+    "width": 320,
+    "height": 844,
+    "sha256": "68ca5d69235bdcecd4e4d22d9e525867389e773e08522cc881c1dff43e8a11b8"
+  },
+  {
+    "path": "test/goldens/design_system/baby-editor-current-development-middle-390-1x.png",
+    "width": 390,
+    "height": 844,
+    "sha256": "b215479782e5d7b5961f0776d031b7a4f1905c7d91e417834c2998b8a920dbb4"
+  },
+  {
+    "path": "test/goldens/design_system/baby-editor-current-development-top-320-2x.png",
+    "width": 320,
+    "height": 844,
+    "sha256": "72e5e44e2e2c99314961842343de9853f96f904d9c38f4bd7123a09d80e97c0d"
+  },
+  {
+    "path": "test/goldens/design_system/baby-editor-current-diaper-end-320-2x.png",
+    "width": 320,
+    "height": 844,
+    "sha256": "b8d4b8355b1d5d2608e8fb72dc062632d2bb08c43494f12e990e956aec8abf62"
+  },
+  {
+    "path": "test/goldens/design_system/baby-editor-current-diaper-end-390-1x.png",
+    "width": 390,
+    "height": 844,
+    "sha256": "e834fd7a3e2045d213d3e2cb1cc0a9a1ff5aa587e266184d40c72c5e12ef2ec3"
+  },
+  {
+    "path": "test/goldens/design_system/baby-editor-current-diaper-middle-320-2x.png",
+    "width": 320,
+    "height": 844,
+    "sha256": "b1cf0902af95d6e59e77786a8d8bce3959f8606dbab2b18c6ad36f0350e49fcf"
+  },
+  {
+    "path": "test/goldens/design_system/baby-editor-current-diaper-middle-390-1x.png",
+    "width": 390,
+    "height": 844,
+    "sha256": "9e99a238737b9849ccfa0bbee66ce6e7c9e088ff8bae4290994971b9dee5afce"
+  },
+  {
+    "path": "test/goldens/design_system/baby-editor-current-diaper-top-320-2x.png",
+    "width": 320,
+    "height": 844,
+    "sha256": "5861bf98d16c8467bf96122d66fd826abfd06fe13888c3743756667ea08bc12e"
+  },
+  {
+    "path": "test/goldens/design_system/baby-editor-current-feeding-end-320-2x.png",
+    "width": 320,
+    "height": 844,
+    "sha256": "e6e020caaa8e57887c35df3b5c3043787fe56ea9f81cc4c997d82ed0556a92c7"
+  },
+  {
+    "path": "test/goldens/design_system/baby-editor-current-feeding-end-390-1x.png",
+    "width": 390,
+    "height": 844,
+    "sha256": "db9f79cf8ab155fdf6aab00e3d7c0b232a5a9bf611f2591f0db49955e2027150"
+  },
+  {
+    "path": "test/goldens/design_system/baby-editor-current-feeding-top-320-2x.png",
+    "width": 320,
+    "height": 844,
+    "sha256": "96f913f0daefb19427260f19ff050ff161b5fb617812161dd3e2728e414c4cb5"
+  },
+  {
+    "path": "test/goldens/design_system/baby-editor-current-growth-end-320-2x.png",
+    "width": 320,
+    "height": 844,
+    "sha256": "03e0a85e1bd45dd39a8abf972cb4c21b24723df8f409ce7ed30bb275af4e472f"
+  },
+  {
+    "path": "test/goldens/design_system/baby-editor-current-growth-end-390-1x.png",
+    "width": 390,
+    "height": 844,
+    "sha256": "a634a13b70f3a34cdbd29d1235b57229311b008319099cc94f3b522db0a71599"
+  },
+  {
+    "path": "test/goldens/design_system/baby-editor-current-growth-top-320-2x.png",
+    "width": 320,
+    "height": 844,
+    "sha256": "2b8e32cbe439592416a1ed883098d1d8ece03603daafd1c6f3968992ee8adc31"
+  },
+  {
+    "path": "test/goldens/design_system/baby-editor-current-sleep-end-320-2x.png",
+    "width": 320,
+    "height": 844,
+    "sha256": "ec2afefa17b73f4801aee83ea0e1b58a2dba186340a2ac52da0100e28edf2184"
+  },
+  {
+    "path": "test/goldens/design_system/baby-editor-current-sleep-end-390-1x.png",
+    "width": 390,
+    "height": 844,
+    "sha256": "048a65c5604f12fc41a97e0bdb1d81fd0ca5f0cd5376eb021c12c3c4f0185836"
+  },
+  {
+    "path": "test/goldens/design_system/baby-editor-current-sleep-top-320-2x.png",
+    "width": 320,
+    "height": 844,
+    "sha256": "95f08f25dd584cbd2ac4eea8cc5384b3c442a28e61c955947135efe32684dd4a"
+  },
+  {
+    "path": "test/goldens/design_system/baby-records-current-empty-320-2x.png",
+    "width": 320,
+    "height": 844,
+    "sha256": "db8b7190dbe4ef4e3235fcac4c7ac39184eb3cdc532e8fab7be6a82ac2152720"
+  },
+  {
+    "path": "test/goldens/design_system/baby-records-current-empty-390-1x.png",
+    "width": 390,
+    "height": 844,
+    "sha256": "46e66d04e9466ac034d840d7c4e0b5b1a4b995d4fc0b8bc20de8536d48983f43"
+  },
+  {
+    "path": "test/goldens/design_system/baby-records-current-list-320-2x.png",
+    "width": 320,
+    "height": 844,
+    "sha256": "01af3db4b3221e1f810807a7f4dc504d2c43e2ce982c1856d1cea3ffee1398d2"
+  },
+  {
+    "path": "test/goldens/design_system/baby-records-current-list-390-1x.png",
+    "width": 390,
+    "height": 844,
+    "sha256": "0373b8da04e9b4d3dfa1fe3799483147f45660fcc8daff21334cfafa61d49396"
+  },
+  {
+    "path": "test/goldens/design_system/baby-records-current-month-320-2x.png",
+    "width": 320,
+    "height": 844,
+    "sha256": "57c76ed6340018d36709b7665095ab7cedcb706b7fc1b898d88997d31fdbdc1d"
+  },
+  {
+    "path": "test/goldens/design_system/baby-records-current-month-390-1x.png",
+    "width": 390,
+    "height": 844,
+    "sha256": "24edb0138035b2a59bfe68228057fa33ba833217a003e0783d468b0cdd331c67"
+  },
+  {
+    "path": "test/goldens/design_system/baby-records-current-page-error-320-2x.png",
+    "width": 320,
+    "height": 844,
+    "sha256": "c9c0d7f6c3d62650846f3e132ec133dd03576f937d8683b4a195f316d3bf5811"
+  },
+  {
+    "path": "test/goldens/design_system/baby-records-current-page-error-390-1x.png",
+    "width": 390,
+    "height": 844,
+    "sha256": "3c551423829a5acf228be6de48669d97b0feca01bdfb1e39395f2b686a29de89"
+  },
+  {
+    "path": "test/goldens/design_system/baby-records-current-page-loading-320-2x.png",
+    "width": 320,
+    "height": 844,
+    "sha256": "e64db89e81a6705ef454bd84a4e3460553e4d25b2add05f4b263ab532129777c"
+  },
+  {
+    "path": "test/goldens/design_system/baby-records-current-page-loading-390-1x.png",
+    "width": 390,
+    "height": 844,
+    "sha256": "5432e7f18b31c935215d147dd5ae41bbc870c32f93ea46ee70646048fdbcd86f"
+  },
+  {
+    "path": "test/goldens/design_system/baby-records-current-page-recovered-320-2x.png",
+    "width": 320,
+    "height": 844,
+    "sha256": "1ec5e034de5978af6be12937e95dea29ba974cf9cbd1715853abb0ef8c26d8a6"
+  },
+  {
+    "path": "test/goldens/design_system/baby-records-current-page-recovered-390-1x.png",
+    "width": 390,
+    "height": 844,
+    "sha256": "eb1743ac481094756b327360d3f0beef510ccca967bc49792aba25bc38021b21"
+  },
+  {
+    "path": "test/goldens/design_system/baby-editor-current-growth-saving-390-1x.png",
+    "width": 390,
+    "height": 844,
+    "sha256": "9509c270deb8784f4e6062465f9c19917474d75195da43bec86f7f4276a3275f"
+  },
+  {
+    "path": "test/goldens/design_system/baby-editor-current-growth-validation-390-1x.png",
+    "width": 390,
+    "height": 844,
+    "sha256": "c050aa2212a2560c560f8140f6b068b26e7784ce868dce4249111148c0c40b1d"
+  }
+]

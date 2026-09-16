@@ -1,0 +1,41 @@
+{
+  "observed_states": 2735,
+  "added": [
+    "01-auth/auth-followup-login-password-visible",
+    "06-schedule/schedule-date-picker",
+    "06-schedule/schedule-date-range-error-320-2x-short",
+    "06-schedule/schedule-long-agenda-end",
+    "06-schedule/schedule-overview",
+    "06-schedule/schedule-save-busy",
+    "06-schedule/schedule-short-loading",
+    "06-schedule/schedule-short-offline",
+    "06-schedule/schedule-short-refresh-error",
+    "06-schedule/schedule-task-busy",
+    "06-schedule/schedule-time-error-320-2x-short",
+    "06-schedule/schedule-time-picker",
+    "08-expert-service/renew-short-last-package",
+    "08-expert-service/renew-short-loading",
+    "08-expert-service/renew-short-owned-paused",
+    "08-expert-service/renew-short-owned-provisioningPending"
+  ],
+  "changed": [
+    "01-auth/auth-followup-forgot-empty",
+    "06-schedule/schedule",
+    "06-schedule/schedule-care",
+    "06-schedule/schedule-create",
+    "06-schedule/schedule-delete",
+    "06-schedule/schedule-edit",
+    "06-schedule/schedule-plan",
+    "06-schedule/schedule-save-uncertain",
+    "06-schedule/schedule-task-menu",
+    "08-expert-service/renew-disabled",
+    "08-expert-service/renew-eligibility",
+    "08-expert-service/renew-empty",
+    "08-expert-service/renew-list",
+    "08-expert-service/renew-offline",
+    "08-expert-service/renew-ongoing",
+    "08-expert-service/renew-order-error",
+    "08-expert-service/renew-selected"
+  ],
+  "removed": []
+}
