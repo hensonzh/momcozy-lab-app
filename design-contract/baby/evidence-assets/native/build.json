@@ -1,0 +1,16 @@
+{
+  "version": "1.0.0+57",
+  "flavor": "local",
+  "mode": "debug",
+  "package": "com.momcozymai.app.flutterpoc.local",
+  "device": "emulator-5554",
+  "source_base_commit": "959c2321",
+  "source": "current uncommitted working tree",
+  "product_url": "http://10.0.2.2:8769",
+  "agent_url": "http://10.0.2.2:8010",
+  "apk": "build/app/outputs/flutter-apk/app-local-debug.apk",
+  "bytes": 253916438,
+  "sha256": "b5d0d7454f0f0178b4138b254207e45e7bff5169efb6bab75df74c17f41c7467",
+  "data_reset": false,
+  "cloud_publish": false
+}

@@ -1,0 +1,23 @@
+{
+  "reference": "design-contract/baby/references/figma-622-3343.png",
+  "actual": "design-contract/baby/comparisons/actual-current/stool.png",
+  "reference_crop": [
+    0,
+    0,
+    393,
+    752
+  ],
+  "actual_crop": [
+    0,
+    58,
+    393,
+    810
+  ],
+  "actual_dpr": 1,
+  "size": [
+    393,
+    752
+  ],
+  "mean_absolute_channel_difference": 2.4522009726959375,
+  "note": "Diagnostic only. Not a fidelity score or acceptance threshold."
+}

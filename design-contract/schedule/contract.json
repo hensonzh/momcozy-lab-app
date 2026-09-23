@@ -1,0 +1,613 @@
+{
+  "schemaVersion": "1.0",
+  "project": {
+    "id": "schedule",
+    "name": "Schedule",
+    "target": "flutter",
+    "implementationRoot": "lib/modules/schedule"
+  },
+  "source": {
+    "fileKey": "ePIoJkiMiXiug9ibpcgRbl",
+    "fileUrl": "https://www.figma.com/design/ePIoJkiMiXiug9ibpcgRbl/",
+    "version": "Schedule Page 567:1133; current MCP export 2026-09-21",
+    "exportedAt": "2026-09-21T00:00:00Z"
+  },
+  "tokens": {
+    "color": {
+      "background": "#fbf8f4",
+      "surface": "#fffdfc",
+      "ink": "#2b2826",
+      "secondary": "#776e69",
+      "rose": "#b54f78",
+      "selectedFill": "#f7eff7",
+      "selectedBorder": "#cbb0c7",
+      "mint": "#e9f4f0",
+      "lavender": "#eee9f9"
+    },
+    "typography": {
+      "body": {
+        "family": "Noto Sans SC",
+        "size": 16,
+        "weight": 400,
+        "lineHeight": 24
+      },
+      "label": {
+        "family": "Noto Sans SC",
+        "size": 15,
+        "weight": 600,
+        "lineHeight": 22
+      },
+      "calendarTitle": {
+        "family": "Noto Sans SC",
+        "size": 20,
+        "weight": 700,
+        "lineHeight": 28
+      },
+      "weekNavigation": {
+        "family": "Noto Sans SC",
+        "size": 24,
+        "weight": 700,
+        "lineHeight": 28
+      }
+    },
+    "spacing": {
+      "page": 16,
+      "section": 14,
+      "control": 8,
+      "bottomNavigation": 82
+    },
+    "radius": {
+      "calendar": 26,
+      "card": 20,
+      "control": 16,
+      "button": 16
+    }
+  },
+  "screens": [
+    {
+      "id": "schedule.page",
+      "name": "Schedule page",
+      "figmaNodeId": "788:8",
+      "route": "/schedule",
+      "viewport": {
+        "width": 393,
+        "height": 844,
+        "dpr": 1,
+        "safeArea": {
+          "top": 0,
+          "right": 0,
+          "bottom": 82,
+          "left": 0
+        }
+      },
+      "shell": {
+        "scrollable": true,
+        "bottomNavigation": "primary",
+        "fixedBottomHeight": 82,
+        "extendedBody": true
+      },
+      "states": [
+        {
+          "id": "month",
+          "figmaNodeId": "214:1108",
+          "reference": "references/month.png",
+          "status": "interactionVerified",
+          "fixture": {
+            "selectedDate": "2026-09-09",
+            "calendar": "month",
+            "agenda": "mixed"
+          }
+        },
+        {
+          "id": "week",
+          "figmaNodeId": "788:8",
+          "reference": "references/week.png",
+          "status": "interactionVerified",
+          "fixture": {
+            "selectedDate": "2026-09-09",
+            "calendar": "week",
+            "agenda": "mixed"
+          }
+        },
+        {
+          "id": "empty",
+          "figmaNodeId": "214:1243",
+          "reference": "references/empty-month.png",
+          "status": "interactionVerified",
+          "fixture": {
+            "selectedDate": "2026-09-09",
+            "calendar": "month",
+            "agenda": "empty"
+          }
+        },
+        {
+          "id": "loading",
+          "figmaNodeId": "214:2037",
+          "reference": "references/loading.png",
+          "status": "interactionVerified",
+          "fixture": {
+            "selectedDate": "2026-09-09",
+            "calendar": "month",
+            "phase": "loading"
+          }
+        },
+        {
+          "id": "offline",
+          "figmaNodeId": "214:2045",
+          "reference": "references/offline.png",
+          "status": "interactionVerified",
+          "fixture": {
+            "selectedDate": "2026-09-09",
+            "calendar": "month",
+            "phase": "offline"
+          }
+        },
+        {
+          "id": "personalMenu",
+          "figmaNodeId": "216:2742",
+          "reference": "references/personal-menu.png",
+          "status": "interactionVerified",
+          "fixture": {
+            "selectedDate": "2026-09-09",
+            "menu": "personal"
+          }
+        },
+        {
+          "id": "refreshFailure",
+          "figmaNodeId": "214:2728",
+          "status": "referenceMissing",
+          "fixture": {
+            "selectedDate": "2026-09-09",
+            "phase": "refreshFailure"
+          },
+          "verification": {
+            "interactionVerified": true,
+            "note": "Local actual captured; current Figma reference export unavailable."
+          }
+        }
+      ],
+      "components": [
+        "schedule.calendar",
+        "schedule.agendaCard",
+        "schedule.floatingAdd",
+        "schedule.bottomNavigation",
+        "schedule.popupMenu"
+      ]
+    },
+    {
+      "id": "schedule.editor",
+      "name": "Personal schedule editor",
+      "figmaNodeId": "214:3241",
+      "route": "/schedule",
+      "viewport": {
+        "width": 393,
+        "height": 844,
+        "dpr": 1,
+        "safeArea": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "shell": {
+        "scrollable": false,
+        "bottomNavigation": "primary",
+        "fixedBottomHeight": 82,
+        "modal": true
+      },
+      "states": [
+        {
+          "id": "create",
+          "figmaNodeId": "214:3241",
+          "reference": "references/create.png",
+          "status": "interactionVerified",
+          "fixture": {
+            "mode": "create",
+            "selectedDate": "2026-09-09"
+          }
+        },
+        {
+          "id": "edit",
+          "figmaNodeId": "214:3499",
+          "reference": "references/edit.png",
+          "status": "interactionVerified",
+          "fixture": {
+            "mode": "edit",
+            "selectedDate": "2026-09-09"
+          }
+        },
+        {
+          "id": "delete",
+          "figmaNodeId": "214:4150",
+          "reference": "references/delete.png",
+          "status": "interactionVerified",
+          "fixture": {
+            "mode": "delete",
+            "selectedDate": "2026-09-09"
+          }
+        },
+        {
+          "id": "datePicker",
+          "figmaNodeId": "214:3628",
+          "status": "referenceMissing",
+          "fixture": {
+            "mode": "datePicker"
+          },
+          "verification": {
+            "interactionVerified": true
+          }
+        },
+        {
+          "id": "timePicker",
+          "figmaNodeId": "214:3757",
+          "status": "referenceMissing",
+          "fixture": {
+            "mode": "timePicker"
+          },
+          "verification": {
+            "interactionVerified": true
+          }
+        },
+        {
+          "id": "discard",
+          "figmaNodeId": "214:4019",
+          "status": "referenceMissing",
+          "fixture": {
+            "mode": "discard"
+          },
+          "verification": {
+            "interactionVerified": true
+          }
+        }
+      ],
+      "components": [
+        "schedule.editorDialog"
+      ]
+    }
+  ],
+  "components": [
+    {
+      "id": "schedule.calendar",
+      "figmaNodeId": "788:13",
+      "type": "calendar",
+      "flutterWidget": "ScheduleCalendar",
+      "states": [
+        "schedule.page.month",
+        "schedule.page.week"
+      ],
+      "layout": {
+        "width": "fill",
+        "monthHeight": 369,
+        "weekHeight": 149,
+        "padding": 12,
+        "radius": 26
+      }
+    },
+    {
+      "id": "schedule.agendaCard",
+      "figmaNodeId": "788:25",
+      "type": "agendaCard",
+      "flutterWidget": "ScheduleAgendaCard",
+      "states": [
+        "schedule.page.month",
+        "schedule.page.week",
+        "schedule.page.empty"
+      ],
+      "layout": {
+        "width": "fill",
+        "minHeight": 84,
+        "paddingHorizontal": 16,
+        "paddingVertical": 20,
+        "radius": 20
+      }
+    },
+    {
+      "id": "schedule.floatingAdd",
+      "figmaNodeId": "788:68",
+      "type": "floatingActionButton",
+      "flutterWidget": "ScheduleFloatingAddButton",
+      "states": [
+        "normal"
+      ],
+      "layout": {
+        "size": 52,
+        "bottomNavigationOverlap": 18
+      }
+    },
+    {
+      "id": "schedule.bottomNavigation",
+      "figmaNodeId": "788:77",
+      "type": "bottomNavigation",
+      "flutterWidget": "MomBottomNavigation",
+      "states": [
+        "normal"
+      ],
+      "layout": {
+        "height": 82,
+        "extendedBody": true
+      }
+    },
+    {
+      "id": "schedule.popupMenu",
+      "figmaNodeId": "217:1531",
+      "type": "popupMenu",
+      "flutterWidget": "PersonalScheduleMenu",
+      "states": [
+        "schedule.page.personalMenu"
+      ],
+      "layout": {
+        "width": 180,
+        "radius": 18,
+        "itemMinHeight": 44
+      }
+    },
+    {
+      "id": "schedule.editorDialog",
+      "figmaNodeId": "214:3241",
+      "type": "bottomSheetDialog",
+      "flutterWidget": "PersonalScheduleEditor",
+      "states": [
+        "schedule.editor.create",
+        "schedule.editor.edit",
+        "schedule.editor.delete"
+      ],
+      "layout": {
+        "sidePadding": 18,
+        "radius": 24,
+        "fieldHeight": 46
+      }
+    }
+  ],
+  "interactions": [
+    {
+      "id": "schedule.page.toggleCalendar",
+      "screen": "schedule.page",
+      "trigger": "tap:calendarToggle",
+      "from": "month",
+      "to": "week",
+      "status": "interactionVerified",
+      "network": {
+        "request": false
+      }
+    },
+    {
+      "id": "schedule.page.selectDate",
+      "screen": "schedule.page",
+      "trigger": "tap:calendarDate",
+      "from": "month",
+      "to": "month",
+      "status": "interactionVerified",
+      "network": {
+        "request": false
+      }
+    },
+    {
+      "id": "schedule.page.shiftMonth",
+      "screen": "schedule.page",
+      "trigger": "tap:monthArrow",
+      "from": "month",
+      "to": "month",
+      "status": "interactionVerified",
+      "network": {
+        "request": true,
+        "retainContentWhileRefreshing": true
+      }
+    },
+    {
+      "id": "schedule.page.shiftWeek",
+      "screen": "schedule.page",
+      "trigger": "tap:weekArrow",
+      "from": "week",
+      "to": "week",
+      "status": "interactionVerified",
+      "network": {
+        "request": false
+      }
+    },
+    {
+      "id": "schedule.page.openCreate",
+      "screen": "schedule.page",
+      "trigger": "tap:floatingAdd",
+      "from": "month",
+      "to": "schedule.editor.create",
+      "status": "interactionVerified",
+      "network": {
+        "request": false
+      }
+    },
+    {
+      "id": "schedule.page.openPersonalMenu",
+      "screen": "schedule.page",
+      "trigger": "tap:personalMore",
+      "from": "month",
+      "to": "schedule.page.personalMenu",
+      "status": "interactionVerified",
+      "network": {
+        "request": false
+      }
+    },
+    {
+      "id": "schedule.page.retry",
+      "screen": "schedule.page",
+      "trigger": "tap:retry",
+      "from": "offline",
+      "to": "month",
+      "status": "interactionVerified",
+      "network": {
+        "request": true
+      }
+    },
+    {
+      "id": "schedule.page.openConsultation",
+      "screen": "schedule.page",
+      "trigger": "tap:consultationCard",
+      "from": "month",
+      "to": "existingAppointmentFlow",
+      "status": "interactionVerified",
+      "network": {
+        "request": false
+      }
+    },
+    {
+      "id": "schedule.page.updateCareTask",
+      "screen": "schedule.page",
+      "trigger": "tap:careTask",
+      "from": "month",
+      "to": "existingCareTaskFlow",
+      "status": "interactionVerified",
+      "network": {
+        "request": true,
+        "mutation": "statusOnly"
+      }
+    },
+    {
+      "id": "schedule.editor.saveCreate",
+      "screen": "schedule.editor",
+      "trigger": "tap:addToSchedule",
+      "from": "schedule.editor.create",
+      "to": "month",
+      "status": "interactionVerified",
+      "network": {
+        "request": true,
+        "refresh": [
+          "currentMonth"
+        ],
+        "retainContentWhileRefreshing": true
+      }
+    },
+    {
+      "id": "schedule.editor.saveEdit",
+      "screen": "schedule.editor",
+      "trigger": "tap:saveChanges",
+      "from": "schedule.editor.edit",
+      "to": "month",
+      "status": "interactionVerified",
+      "network": {
+        "request": true,
+        "refresh": [
+          "currentMonth"
+        ],
+        "retainContentWhileRefreshing": true
+      }
+    },
+    {
+      "id": "schedule.editor.delete",
+      "screen": "schedule.editor",
+      "trigger": "tap:delete",
+      "from": "schedule.editor.delete",
+      "to": "month",
+      "status": "interactionVerified",
+      "network": {
+        "request": true,
+        "refresh": [
+          "currentMonth"
+        ]
+      }
+    },
+    {
+      "id": "schedule.editor.openDatePicker",
+      "screen": "schedule.editor",
+      "trigger": "tap:dateField",
+      "from": "schedule.editor.create",
+      "to": "schedule.editor.datePicker",
+      "status": "interactionVerified",
+      "network": {
+        "request": false
+      }
+    },
+    {
+      "id": "schedule.editor.openTimePicker",
+      "screen": "schedule.editor",
+      "trigger": "tap:timeField",
+      "from": "schedule.editor.create",
+      "to": "schedule.editor.timePicker",
+      "status": "interactionVerified",
+      "network": {
+        "request": false
+      }
+    },
+    {
+      "id": "schedule.editor.discard",
+      "screen": "schedule.editor",
+      "trigger": "tap:close",
+      "from": "schedule.editor.create",
+      "to": "month",
+      "status": "interactionVerified",
+      "network": {
+        "request": false
+      }
+    }
+  ],
+  "assets": [
+    {
+      "id": "schedule.chevron",
+      "figmaNodeId": "788:163",
+      "localPath": "assets/schedule_chevron.svg",
+      "format": "svg",
+      "checksum": "cd9136573baa7b35de3deee6d11d3ad456cafc325b94eb4bd0b5ead3154601d7"
+    },
+    {
+      "id": "schedule.date",
+      "figmaNodeId": "219:1108",
+      "localPath": "assets/schedule_date.svg",
+      "format": "svg",
+      "checksum": "648214b8bbfbc3b65ef30d348c03a679c443738b2b2ceef03b43e14c837a86ee"
+    },
+    {
+      "id": "schedule.more",
+      "figmaNodeId": "791:744",
+      "localPath": "assets/schedule_more.svg",
+      "format": "svg",
+      "checksum": "0f94cd0c1e15c915f7c3f30e42d82399148e4d424118a6398e63c02f43f8f164"
+    },
+    {
+      "id": "schedule.offline",
+      "figmaNodeId": "797:5",
+      "localPath": "assets/schedule_offline.svg",
+      "format": "svg",
+      "checksum": "dbaeb09e7410d7c821d2c56b046a529d407acff982d953de6bb10d6e7d5e9591"
+    }
+  ],
+  "validation": {
+    "referenceDir": "references",
+    "actualDir": "actual",
+    "comparisonDir": "comparisons",
+    "requiredStates": [
+      "schedule.page.month",
+      "schedule.page.week",
+      "schedule.page.empty",
+      "schedule.page.loading",
+      "schedule.page.offline",
+      "schedule.page.personalMenu",
+      "schedule.editor.create",
+      "schedule.editor.edit",
+      "schedule.editor.delete"
+    ],
+    "requiredChecks": [
+      "flutter analyze",
+      "flutter test",
+      "same-size overlay",
+      "same-size comparison metrics",
+      "interaction regression",
+      "device check"
+    ]
+  },
+  "overrides": [
+    {
+      "area": "consultation",
+      "decision": "reuseExistingAppointmentFlow",
+      "reason": "User selected UI-only sync with existing business entry points; no new unified edit/delete API."
+    },
+    {
+      "area": "careTask",
+      "decision": "reuseExistingCareTaskFlow",
+      "reason": "Current backend supports status update only; keep existing care task mutation and route."
+    },
+    {
+      "area": "typography",
+      "decision": "useBundledNotoSansSC",
+      "reason": "Match Figma Chinese glyph metrics on the target app while retaining platform rasterization."
+    }
+  ]
+}

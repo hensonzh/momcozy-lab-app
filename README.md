@@ -195,6 +195,11 @@ The extended Product API rollout flag remains gated by backend availability:
 See [the integration baseline](docs/flutter/unified-app-integration.md) for
 contract ownership and verification gates.
 
+Versioned UI design contracts and durable visual evidence live under
+[`design-contract/`](design-contract/README.md). Workspace-level
+`../design-assets/` content is a dated local archive and must not be used as a
+runtime, test, or documentation dependency.
+
 ## Contract and Regression Tests
 
 Current Dart test coverage:

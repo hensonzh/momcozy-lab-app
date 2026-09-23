@@ -59,7 +59,7 @@ Native verification exposed the shell navigation beneath sheets. Baby sheets and
 
 Read the final Figma nodes and exported 30 original assets, including vector outlines for the small close/time/date glyphs. Calibrated card/field geometry, typography, selected/disabled styles, sheet safe areas, profile title updates and original home artwork. The existing Me app-shell navigation is reused. All current draft/save/close behavior remains covered.
 
-Independent Figma vs Flutter captures cover 21 views/states at matching logical dimensions, with explicit foreground/system-area crops. References, app renders, overlays, differences, asset provenance and remaining differences are in [the visual review](../../../design-assets/baby-figma-app-20260920/README.md). This is separate from Flutter's own golden baselines; neither goldens nor difference averages are treated as proof of pixel identity. Real age/count formatting and data-driven WHO curves intentionally remain driven by current product rules.
+Independent Figma vs Flutter captures cover 21 views/states at matching logical dimensions, with explicit foreground/system-area crops. References, app renders, overlays, differences, asset provenance and remaining differences are in [the visual review](../../design-contract/baby/README.md). This is separate from Flutter's own golden baselines; neither goldens nor difference averages are treated as proof of pixel identity. Real age/count formatting and data-driven WHO curves intentionally remain driven by current product rules.
 
 Final static analysis is clean; 109 targeted Baby, navigation, domain and accessibility tests pass, including 320/393/430px and keyboard/large-text interactions. A reusable skill is installed at `/Users/lute/.codex/skills/figma-to-app/`; its comparison utility passed identical-image, size-rejection, DPR, crop and bounds checks.
 
@@ -67,7 +67,7 @@ Rebuilt and installed the final vector-asset implementation on `emulator-5554` a
 
 ## Shared navigation correction — 2026-09-20
 
-The prior calibration reused the App's existing Me navigation but omitted the final Figma navigation styling. This omission is now corrected in the shared `MomCozyBottomNavigation`: original dimensional artwork, rose selected state, DM Sans labels, 82px chrome and raised 58px Cozymate avatar. Me and Baby navigation have independent same-size Figma comparisons, including the protrusion; see [navigation evidence](../../../design-assets/baby-figma-app-20260920/navigation/README.md). Static analysis is clean and 133 relevant tests pass, including navigation routes, large text and the raised avatar's hit area. The reusable skill now explicitly requires checking the entire App shell rather than assuming an existing shared component matches the design.
+The prior calibration reused the App's existing Me navigation but omitted the final Figma navigation styling. This omission is now corrected in the shared `MomCozyBottomNavigation`: original dimensional artwork, rose selected state, DM Sans labels, 82px chrome and raised 58px Cozymate avatar. Me and Baby navigation have independent same-size Figma comparisons, including the protrusion; see [navigation evidence](../../design-contract/baby/evidence-assets/navigation/README.md). Static analysis is clean and 133 relevant tests pass, including navigation routes, large text and the raised avatar's hit area. The reusable skill now explicitly requires checking the entire App shell rather than assuming an existing shared component matches the design.
 
 ## Non-disruptive Baby refresh — 2026-09-20
 
@@ -89,7 +89,7 @@ The final run passed 115 targeted tests and Flutter static analysis. The local d
 
 ## Baby design contract — 2026-09-20
 
-The Baby module is now organized under [the versioned Figma-to-App contract](../../design-contract/baby/README.md). `contract.json` freezes 32 Figma states, 21 local same-size references, 30 local assets, tokens, Flutter widget mappings, modal interactions and targeted refresh rules. Eleven manifest states remain explicitly `referenceMissing` until Figma exports are supplied; no neighboring screenshot is used as a substitute.
+The Baby module is now organized under [the versioned Figma-to-App contract](../../design-contract/baby/README.md). `contract.json` freezes 32 Figma states, 32 local same-size references, 30 local assets, tokens, Flutter widget mappings, modal interactions and targeted refresh rules. All reference images are now present; 30 states are visually verified, while the no-profile navigation first frame and long-name truncation remain implemented with explicit limitations rather than being reported as visual passes.
 
 The first contract-driven calibration changed empty summaries and growth cards from “未记录” to the Figma-aligned “待记录”, using the secondary text color. The next pass corrected the home wet-diaper summary unit from “片” to “次”, matching the Figma card and the product requirement. The regression suite asserts both changes and current Baby tests remain green. The rebuilt APK installed successfully; the recapture screen reached the existing “加载失败，请重试” branch because the backend fixture was unavailable, which is recorded in `design-contract/baby/evidence.json` rather than treated as a visual pass.
 

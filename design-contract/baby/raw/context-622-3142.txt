@@ -1,0 +1,86 @@
+const img = "[temporary-export-url-omitted]";
+const imgAsterisk = "[temporary-export-url-omitted]";
+const img1 = "[temporary-export-url-omitted]";
+
+export default function Component() {
+  return (
+    <div className="bg-[#fbf8f4] content-stretch flex flex-col items-center overflow-clip relative rounded-tl-[28px] rounded-tr-[28px] size-full" data-node-id="622:3142" data-name="完整底部弹层 / 固定标题与操作">
+      <div className="h-[24px] relative shrink-0 w-[393px]" data-node-id="622:3143" data-name="拖动指示">
+        <img alt="" className="absolute block inset-0 max-w-none size-full" src={img} />
+      </div>
+      <div className="bg-[#fbf8f4] content-stretch flex flex-col items-start overflow-clip relative shrink-0 w-[366px]" data-node-id="330:1455" data-name="Fixed header and save / scrollable content">
+        <div className="bg-[#fffdfc] content-stretch flex flex-col items-start overflow-clip px-[16px] py-[8px] relative shrink-0 w-[366px]" data-node-id="330:1456" data-name="Fixed title">
+          <div className="[word-break:break-word] content-stretch flex gap-[8px] items-center overflow-clip relative shrink-0 text-[20px] w-[334px]" data-node-id="330:1457" data-name="Title and close">
+            <p className="font-['Noto_Sans_SC:Bold'] font-semibold leading-[28px] relative shrink-0 text-[#2b2826] w-[282px]" data-node-id="330:1458">
+              记录尿湿
+            </p>
+            <button className="block cursor-pointer font-['Noto_Sans_SC:Regular'] font-normal leading-[0] relative shrink-0 text-[#b54f78] text-left w-[44px]" data-node-id="330:1459">
+              <p className="leading-[1.4]">×</p>
+            </button>
+          </div>
+        </div>
+        <div className="bg-[#fbf8f4] content-stretch flex flex-col gap-[14px] items-start overflow-clip p-[16px] relative shrink-0 w-[366px]" data-node-id="330:1460" data-name="Scrollable form">
+          <div className="content-stretch flex gap-[8px] items-center overflow-clip relative shrink-0 w-[334px]" data-node-id="330:1461" data-name="Choices /">
+            <div className="bg-[#fffdfc] border border-[#e9e1dc] border-solid content-stretch flex flex-col items-start overflow-clip px-[10px] py-[13px] relative rounded-[14px] shrink-0 w-[106px]" data-node-id="330:1462" data-name="Action / 精神状态">
+              <p className="[word-break:break-word] font-['Noto_Sans_SC:Medium'] font-medium leading-[22px] relative shrink-0 text-[#776e69] text-[15px] text-center w-[86px]" data-node-id="330:1463">
+                精神状态
+              </p>
+            </div>
+            <div className="bg-[#f7eff7] border border-[#cbb0c7] border-solid content-stretch flex flex-col items-start overflow-clip px-[10px] py-[13px] relative rounded-[14px] shrink-0 w-[106px]" data-node-id="330:1464" data-name="Action / 尿湿">
+              <p className="[word-break:break-word] font-['Noto_Sans_SC:Bold'] font-semibold leading-[22px] relative shrink-0 text-[#865c80] text-[15px] text-center w-[86px]" data-node-id="330:1465">
+                尿湿
+              </p>
+            </div>
+            <div className="bg-[#fffdfc] border border-[#e9e1dc] border-solid content-stretch flex flex-col items-start overflow-clip px-[10px] py-[13px] relative rounded-[14px] shrink-0 w-[106px]" data-node-id="330:1466" data-name="Action / 便便">
+              <p className="[word-break:break-word] font-['Noto_Sans_SC:Medium'] font-medium leading-[22px] relative shrink-0 text-[#776e69] text-[15px] text-center w-[86px]" data-node-id="330:1467">
+                便便
+              </p>
+            </div>
+          </div>
+          <div className="bg-[#fffdfc] border border-[#e9e1dc] border-solid content-stretch flex flex-col gap-[14px] items-start overflow-clip p-[16px] relative rounded-[22px] shrink-0 w-[334px]" data-node-id="330:1468" data-name="Record fields">
+            <div className="content-stretch flex gap-[4px] items-center overflow-clip relative shrink-0 w-[302px]" data-node-id="666:6" data-name="字段标题 / 今日湿尿布数 / 必填">
+              <p className="[word-break:break-word] font-['Noto_Sans_SC:Bold'] font-semibold leading-[22px] relative shrink-0 text-[#2b2826] text-[15px] whitespace-nowrap" data-node-id="330:1469">
+                今日湿尿布数
+              </p>
+              <div className="relative shrink-0 size-[8px]" data-node-id="666:7" data-name="必填图标 / Asterisk">
+                <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgAsterisk} />
+              </div>
+            </div>
+            <div className="bg-[#fffdfc] border border-[#e9e1dc] border-solid content-stretch flex flex-col items-start overflow-clip p-[14px] relative rounded-[14px] shrink-0 w-[302px]" data-node-id="666:2" data-name="Field / 湿尿布数 / 正整数">
+              <div className="[word-break:break-word] content-stretch flex font-['Noto_Sans_SC:Regular'] font-normal gap-[8px] items-center overflow-clip relative shrink-0 w-[274px]" data-node-id="666:3" data-name="Value and unit">
+                <p className="leading-[24px] relative shrink-0 text-[#2b2826] text-[16px] w-[234px]" data-node-id="666:4">
+                  1
+                </p>
+                <p className="leading-[20px] relative shrink-0 text-[#776e69] text-[14px] w-[32px]" data-node-id="666:5">
+                  片
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="bg-[#fffdfc] content-stretch flex flex-col items-start overflow-clip p-[16px] relative shrink-0 w-[366px]" data-node-id="330:1485" data-name="Fixed save action">
+          <div className="bg-[#b54f78] content-stretch flex flex-col items-start overflow-clip px-[10px] py-[14px] relative rounded-[14px] shrink-0 w-[334px]" data-node-id="330:1486" data-name="Action / 保存">
+            <p className="[word-break:break-word] font-['Noto_Sans_SC:Bold'] font-semibold leading-[24px] relative shrink-0 text-[#fffdfc] text-[16px] text-center w-[314px]" data-node-id="330:1487">
+              保存
+            </p>
+          </div>
+        </div>
+      </div>
+      <div className="h-[34px] relative shrink-0 w-[393px]" data-node-id="622:3145" data-name="底部安全区">
+        <img alt="" className="absolute block inset-0 max-w-none size-full" src={img1} />
+      </div>
+    </div>
+  );
+}
+
+SUPER CRITICAL: The generated React+Tailwind code MUST be converted to match the target project's technology stack and styling system.
+1. Analyze the target codebase to identify: technology stack, styling approach, component patterns, and design tokens
+2. Convert React syntax to the target framework/library
+3. Transform all Tailwind classes to the target styling system while preserving exact visual design
+4. Follow the project's existing patterns and conventions
+DO NOT install any Tailwind as a dependency unless the user instructs you to do so.
+
+
+Node ids have been added to the code as data attributes, e.g. `data-node-id="1:2"`.
+
+Images and SVGs will be stored as constants, e.g. const image = '[temporary-export-url-omitted]'. These constants will be used in the code as the source for the image, ex: <img src={image} />. Image assets are stored on a remote server for 7 days and can be fetched using the provided URLs until they expire.

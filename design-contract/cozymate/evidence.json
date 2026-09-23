@@ -1,0 +1,187 @@
+{
+  "contract": "design-contract/cozymate/contract.json",
+  "source": {
+    "fileKey": "ePIoJkiMiXiug9ibpcgRbl",
+    "pageNodeId": "567:1132",
+    "capturedAt": "2026-09-21T07:30:00Z",
+    "viewport": "393x844@1x"
+  },
+  "visualComparisons": [
+    {
+      "state": "home",
+      "reference": "references/home.png",
+      "actual": "actual/home.png",
+      "comparison": "comparisons/home/comparison.json",
+      "status": "checked"
+    },
+    {
+      "state": "streaming",
+      "reference": "references/streaming.png",
+      "actual": "actual/streaming.png",
+      "comparison": "comparisons/streaming/comparison.json",
+      "status": "checked"
+    },
+    {
+      "state": "reply",
+      "reference": "references/reply.png",
+      "actual": "actual/reply.png",
+      "comparison": "comparisons/reply/comparison.json",
+      "status": "checked"
+    },
+    {
+      "state": "disconnected-empty",
+      "reference": "references/disconnected-empty.png",
+      "actual": "actual/disconnected-empty.png",
+      "comparison": "comparisons/disconnected-empty/comparison.json",
+      "status": "checked"
+    },
+    {
+      "state": "terminal-error",
+      "reference": "references/terminal-error.png",
+      "actual": "actual/terminal-error.png",
+      "comparison": "comparisons/terminal-error/comparison.json",
+      "status": "checked"
+    }
+  ],
+  "interactionChecks": [
+    "attachment menu opens anchored above composer",
+    "pending attachments use compact 64px thumbnails and retain draft",
+    "sent images use bounded direct preview; sent files use compact metadata rows",
+    "streaming text reveals progressively and drains on completion or cancellation",
+    "bottom navigation remains visible on Cozymate route"
+  ],
+  "commands": [
+    "python3 \"$CODEX_HOME/skills/figma-to-app/scripts/validate_contract.py\" design-contract/cozymate/contract.json",
+    "flutter analyze --no-pub lib/features/agent_hub/agent_hub_page.dart lib/features/agent_hub/presentation/agent_attachment_tile.dart lib/features/agent_hub/presentation/agent_image_previews.dart lib/features/agent_hub/presentation/agent_file_previews.dart",
+    "flutter test --no-pub test/features/agent_hub/agent_attachment_design_test.dart",
+    "flutter test --no-pub test/features/agent_hub/agent_text_reveal_test.dart",
+    "git diff --check"
+  ],
+  "knownLimits": [
+    "comparison metrics are diagnostics, not fidelity scores",
+    "disconnected-partial and resumed references require an isolated fixture to remove preceding conversation history from the capture",
+    "attachment full-page states still need a device capture at the same 393x844 viewport before being marked visuallyVerified"
+  ],
+  "welcomeContinuity": {
+    "checkedAt": "2026-09-23T01:17:25Z",
+    "decision": "Preserve the exact visible welcome as one ordinary assistant bubble after first send.",
+    "figma": {
+      "pageNodeId": "567:1132",
+      "nodes": {
+        "streaming": "246:1173",
+        "reply": "246:1212",
+        "disconnected-empty": "246:1250",
+        "disconnected-partial": "246:1330",
+        "resumed": "246:1372",
+        "terminal-error": "246:1291"
+      },
+      "operation": "Figma Find/Replace: six exact full-text matches on This page; replaced 6 results; full replacement subsequently matched 6 results.",
+      "references": "references/welcome-continuity/",
+      "viewport": "393x844@1x",
+      "copyAndLayoutChecked": true
+    },
+    "regression": {
+      "baseline": "Existing failed-first-send regression and new named-welcome lifecycle regression both failed before the fix because the visible greeting was replaced by the compact copy.",
+      "result": "96 tests passed; targeted flutter analyze and contract validation passed.",
+      "states": [
+        "streaming",
+        "reply",
+        "disconnected-empty",
+        "disconnected-partial",
+        "resumed",
+        "terminal-error"
+      ],
+      "assertions": [
+        "Full welcome content equals the profile greeting, with assistant role and ordinary bubble state.",
+        "Exactly one welcome remains before the first user message through failed send, retry, streaming, completed reply, follow-ups, disconnect and resume.",
+        "No layout exceptions at widths 320/390/430 and text scales 1x/2x."
+      ],
+      "goldens": "36 affected conversation-state baselines refreshed. One home-320-1x baseline refreshed after waiting for visible image providers, fixing an existing navigation-image loading race; the other five home baselines remain byte-identical.",
+      "log": "comparisons/welcome-continuity/flutter-tests.log"
+    },
+    "visualComparisons": [
+      {
+        "state": "streaming",
+        "comparison": "comparisons/welcome-continuity/streaming/comparison.json",
+        "status": "checked-copy-and-order",
+        "fullVisualAcceptance": false
+      },
+      {
+        "state": "reply",
+        "comparison": "comparisons/welcome-continuity/reply/comparison.json",
+        "status": "checked-copy-and-order",
+        "fullVisualAcceptance": false
+      }
+    ],
+    "knownLimits": [
+      "Full-page visual parity is not claimed: existing background, avatar, typography/line-height, button and navigation differences remain.",
+      "The lifecycle capture includes preceding turns for terminal-error, disconnected-partial and resumed, and a different draft in disconnected-empty. Those full-page captures are behavioral evidence and were not compared as aligned Figma fixtures.",
+      "Validation used Flutter widget rendering; no device build, installation or release was performed."
+    ]
+  },
+  "conversationRecovery": {
+    "checkedAt": "2026-09-23",
+    "decision": "Restore the current owned conversation, or discover the latest owned conversation when none is selected, then open at the latest content without inserting a synthetic assistant message.",
+    "figma": {
+      "pageNodeId": "567:1132",
+      "nodes": {
+        "chat": "246:1144",
+        "history-loading": "830:15"
+      },
+      "references": "references/conversation-recovery/",
+      "viewport": "393x844@1x",
+      "verifiedInFigmaOn": "2026-09-23"
+    },
+    "implementation": {
+      "runtimeEndpoint": "GET /v1/agent/threads/{thread_id}/history",
+      "pageSize": 20,
+      "cursor": "exclusive before_sequence",
+      "ownerScoped": true,
+      "localRecoveryState": [
+        "rendered transcript cache keyed by durable message identity",
+        "draft and attachment references",
+        "current run and pagination cursors"
+      ]
+    },
+    "regression": {
+      "flutter": "117 combined targeted Flutter tests passed, including the 8 focused conversation-recovery cases; targeted flutter analyze passed.",
+      "runtime": "31 targeted pytest cases, Ruff, and MyPy passed.",
+      "assertions": [
+        "Every page return refreshes the current conversation, or discovers the latest conversation when none is selected, and lands at the latest content.",
+        "Cold restart restores the draft and cached conversation at the latest content.",
+        "Older pages deduplicate durable IDs and preserve the current viewport.",
+        "A reply arriving while the user is browsing older messages does not pull the viewport to the bottom and exposes only the ordinary latest-message control.",
+        "Late history responses cannot overwrite a newer local turn or its draft.",
+        "Foreign or deleted threads return 404 before message reads."
+      ]
+    },
+    "visualComparisons": [
+      {
+        "state": "chat",
+        "comparison": "comparisons/conversation-recovery/chat/comparison.json",
+        "status": "behavior-and-layout-reviewed",
+        "fullVisualAcceptance": false
+      },
+      {
+        "state": "history-loading",
+        "comparison": "comparisons/conversation-recovery/history-loading/comparison.json",
+        "status": "behavior-and-layout-reviewed",
+        "fullVisualAcceptance": false
+      }
+    ],
+    "knownLimits": [
+      "Behavior captures intentionally exercise longer transcripts for pagination, so their fixture data does not exactly match the compact Figma examples.",
+      "Comparison metrics are diagnostic only; full-page pixel parity is not claimed.",
+      "Validation used Flutter widget rendering and the live Figma file; no device installation or release was performed."
+    ]
+  },
+  "attachmentMenuEvidence": {
+    "directory": "design-contract/cozymate/evidence-assets/attachment-menu",
+    "reference": "design-contract/cozymate/evidence-assets/attachment-menu/figma-menu.png",
+    "actual": "design-contract/cozymate/evidence-assets/attachment-menu/app-menu.png",
+    "comparison": "design-contract/cozymate/evidence-assets/attachment-menu/comparison/comparison.json",
+    "device": "design-contract/cozymate/evidence-assets/attachment-menu/native-menu.png",
+    "status": "component-visually-verified",
+    "note": "The attachment menu component was compared at 220x156; full-page attachment states remain separately limited."
+  }
+}

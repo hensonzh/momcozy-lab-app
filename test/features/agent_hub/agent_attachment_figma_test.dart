@@ -46,7 +46,7 @@ void main() {
             );
             final png = await image.toByteData(format: ui.ImageByteFormat.png);
             final out = Directory(
-              '../design-assets/cozymate-attachment-menu-20260920',
+              'build/design-evidence/cozymate/attachment-menu',
             );
             out.createSync(recursive: true);
             File(

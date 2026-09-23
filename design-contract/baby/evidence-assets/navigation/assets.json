@@ -1,0 +1,46 @@
+[
+  {
+    "file": "ArtworkColorMore.svg",
+    "bytes": 2444,
+    "sha256": "7f0c2260f5642b83cd1db2f08371db5573b383ee16db27e651c6ba0058611cfa",
+    "viewBox": "0 0 28 28",
+    "source_node": "520:1047"
+  },
+  {
+    "file": "ArtworkColorSchedule.svg",
+    "bytes": 2033,
+    "sha256": "169dd1fa2af956f4a73a8581e551557c9fcfe5076aad99619e583e2d598683ff",
+    "viewBox": "0 0 28 28",
+    "source_node": "520:1039"
+  },
+  {
+    "file": "ArtworkSoftBaby.png",
+    "bytes": 912144,
+    "sha256": "e05afc4e53d9a3cff14076bda0d22af3eab300c79e6b4ecbacb8293347d30fe0",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "source_node": "527:1023"
+  },
+  {
+    "file": "ArtworkSoftMe.png",
+    "bytes": 921086,
+    "sha256": "313df0fed04b407761a808bab2ea3bec782840c8173b5abe63c97e764c49e31e",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "source_node": "527:1022"
+  },
+  {
+    "file": "AvatarCozymateNav.png",
+    "bytes": 19793,
+    "sha256": "0beda2b87f50dbaf2c78d3bc74e2d2e000660e12e5cbb7285abb7b9cc4a85a08",
+    "dimensions": [
+      108,
+      108
+    ],
+    "source_node": "483:1075"
+  }
+]

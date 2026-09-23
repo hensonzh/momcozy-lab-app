@@ -1,6 +1,6 @@
 {
-  "reference": "/Users/lute/project/momcozy-lab/design-assets/me-app-sync-20260920/reference/settings.png",
-  "actual": "/Users/lute/project/momcozy-lab/design-assets/me-app-sync-20260920/actual/settings.png",
+  "reference": "docs/ui-reference/me/references/settings.png",
+  "actual": "docs/ui-reference/me/actual/settings.png",
   "reference_crop": [
     0,
     548,

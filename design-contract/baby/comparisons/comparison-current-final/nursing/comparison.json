@@ -1,0 +1,23 @@
+{
+  "reference": "design-contract/baby/references/figma-330-1355.png",
+  "actual": "design-contract/baby/comparisons/actual-current/nursing.png",
+  "reference_crop": [
+    0,
+    0,
+    393,
+    602
+  ],
+  "actual_crop": [
+    0,
+    208,
+    393,
+    810
+  ],
+  "actual_dpr": 1,
+  "size": [
+    393,
+    602
+  ],
+  "mean_absolute_channel_difference": 2.3002981297850815,
+  "note": "Diagnostic only. Not a fidelity score or acceptance threshold."
+}

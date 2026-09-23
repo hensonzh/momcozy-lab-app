@@ -1,0 +1,25 @@
+{
+  "version": "1.0.0+57",
+  "flavor": "local",
+  "mode": "debug",
+  "package": "com.momcozymai.app.flutterpoc.local",
+  "device": "emulator-5554",
+  "source_base_commit": "959c2321e2f2e61e0fd281ddbc8e431212b19155",
+  "source": "current working tree including Schedule UI sync",
+  "product_url": "http://10.0.2.2:8769",
+  "agent_url": "http://10.0.2.2:8010",
+  "apk": "build/app/outputs/flutter-apk/app-local-debug.apk",
+  "bytes": 336952951,
+  "sha256": "724da685c9c2bda045bfb04db1435406ae5f06a3ffb8ab7a645d65dd47db2759",
+  "data_reset": false,
+  "cloud_publish": false,
+  "aapt2_override": "/Users/lute/Library/Android/sdk/build-tools/36.0.0/aapt2",
+  "schedule_svg_assets_verified": [
+    "schedule_chevron.svg",
+    "schedule_more.svg",
+    "schedule_offline.svg",
+    "schedule_date.svg"
+  ],
+  "built_at": "2026-09-21T07:43:15+08:00",
+  "installed_at": "2026-09-21T07:43:40+08:00"
+}

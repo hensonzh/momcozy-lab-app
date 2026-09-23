@@ -1,0 +1,122 @@
+{
+  "contract": "contract.json",
+  "verifiedAt": "2026-09-21T00:00:00Z",
+  "source": {
+    "fileKey": "ePIoJkiMiXiug9ibpcgRbl",
+    "page": "Schedule Page",
+    "primaryViewport": "393x844@1x"
+  },
+  "visual": {
+    "referenceDir": "references",
+    "actualDir": "actual",
+    "comparisonDir": "comparisons",
+    "states": {
+      "create": {
+        "status": "visuallyVerified",
+        "comparisonJson": "comparisons/create/comparison.json",
+        "meanAbsoluteChannelDifference": 1.8288783972279505
+      },
+      "delete": {
+        "status": "visuallyVerified",
+        "comparisonJson": "comparisons/delete/comparison.json",
+        "meanAbsoluteChannelDifference": 1.6260607230000523
+      },
+      "edit": {
+        "status": "visuallyVerified",
+        "comparisonJson": "comparisons/edit/comparison.json",
+        "meanAbsoluteChannelDifference": 1.599123082056044
+      },
+      "empty-month": {
+        "status": "visuallyVerified",
+        "comparisonJson": "comparisons/empty-month/comparison.json",
+        "meanAbsoluteChannelDifference": 2.2054928467775325
+      },
+      "loading": {
+        "status": "visuallyVerified",
+        "comparisonJson": "comparisons/loading/comparison.json",
+        "meanAbsoluteChannelDifference": 0.7434175882043181
+      },
+      "month": {
+        "status": "visuallyVerified",
+        "comparisonJson": "comparisons/month/comparison.json",
+        "meanAbsoluteChannelDifference": 2.3595896192853614
+      },
+      "offline": {
+        "status": "visuallyVerified",
+        "comparisonJson": "comparisons/offline/comparison.json",
+        "meanAbsoluteChannelDifference": 0.9213225924452001
+      },
+      "personal-menu": {
+        "status": "visuallyVerified",
+        "comparisonJson": "comparisons/personal-menu/comparison.json",
+        "meanAbsoluteChannelDifference": 1.70731783300974
+      },
+      "week": {
+        "status": "visuallyVerified",
+        "comparisonJson": "comparisons/week/comparison.json",
+        "meanAbsoluteChannelDifference": 1.6205917939936245
+      }
+    },
+    "note": "Metrics are diagnostic only; platform font antialiasing and shadow rasterization remain documented differences."
+  },
+  "interaction": {
+    "status": "interactionVerified",
+    "testCommand": "flutter test --no-pub test/modules/schedule test/app/momcozy_route_shell_contract_test.dart test/app/mom_navigation_test.dart --reporter expanded",
+    "result": "51 tests passed",
+    "coverage": [
+      "month/week toggle",
+      "date selection",
+      "month and week navigation",
+      "offline retry",
+      "refresh failure retention",
+      "personal create/edit/delete",
+      "date/time pickers",
+      "discard and failed-save retry",
+      "care-task status route",
+      "consultation existing route"
+    ]
+  },
+  "static": {
+    "command": "flutter analyze --no-pub lib/modules/schedule lib/shared/widgets/mom_settings_widgets.dart lib/app/momcozy_app.dart test/modules/schedule",
+    "result": "No issues found"
+  },
+  "device": {
+    "status": "verified",
+    "device": "emulator-5554 Android 17/API 37 1280x2856",
+    "package": "com.momcozymai.app.flutterpoc.local",
+    "apk": "build/app/outputs/flutter-apk/app-local-debug.apk",
+    "sha256": "724da685c9c2bda045bfb04db1435406ae5f06a3ffb8ab7a645d65dd47db2759",
+    "evidence": [
+      "evidence-assets/native/installed-schedule-final.png"
+    ],
+    "checks": [
+      "installed successfully",
+      "Schedule tab selected",
+      "收起日历 semantics visible",
+      "添加日程 semantics visible",
+      "empty-state semantics visible"
+    ]
+  },
+  "openItems": [
+    {
+      "state": "schedule.page.refreshFailure",
+      "status": "referenceMissing",
+      "reason": "No current Figma reference image is stored; local behavior is interaction verified."
+    },
+    {
+      "state": "schedule.editor.datePicker",
+      "status": "referenceMissing",
+      "reason": "No current Figma reference image is stored; interaction is verified."
+    },
+    {
+      "state": "schedule.editor.timePicker",
+      "status": "referenceMissing",
+      "reason": "No current Figma reference image is stored; interaction is verified."
+    },
+    {
+      "state": "schedule.editor.discard",
+      "status": "referenceMissing",
+      "reason": "No current Figma reference image is stored; interaction is verified."
+    }
+  ]
+}

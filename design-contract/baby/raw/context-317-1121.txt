@@ -1,0 +1,97 @@
+const imgFrame = "[temporary-export-url-omitted]";
+const imgAsterisk = "[temporary-export-url-omitted]";
+
+export default function BabyProfileEditor() {
+  return (
+    <div className="overflow-clip relative rounded-[24px] size-full" data-node-id="317:1121" data-name="BabyProfileEditor">
+      <div className="absolute h-[60px] left-0 overflow-clip top-0 w-[393px]" data-node-id="317:1122" data-name="Fixed header">
+        <p className="-translate-x-1/2 [word-break:break-word] absolute font-['Noto_Sans_SC:Bold'] font-semibold h-[28px] leading-[28px] left-[196.5px] overflow-hidden text-[#2b2826] text-[20px] text-center text-ellipsis top-[16px] w-[281px] whitespace-nowrap" data-node-id="317:1123">
+          Luna 的资料
+        </p>
+        <div className="absolute content-stretch flex items-center justify-center left-[8px] overflow-clip size-[44px] top-[8px]" data-node-id="622:1084" data-name="返回 / 保留来源上下文">
+          <div className="relative shrink-0 size-[20px]" data-node-id="622:1085" data-name="Frame">
+            <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgFrame} />
+          </div>
+        </div>
+      </div>
+      <div className="absolute bg-[#fbf8f4] h-[76px] left-0 overflow-clip top-[710px] w-[393px]" data-node-id="317:1125" data-name="Fixed save action">
+        <div className="absolute bg-[#e5e0db] content-stretch flex flex-col h-[44px] items-center left-[16px] overflow-clip px-[10px] py-[14px] rounded-[16px] top-[12px] w-[361px]" data-node-id="317:1126" data-name="Button / 保存宝宝资料 / Disabled">
+          <p className="[word-break:break-word] font-['Noto_Sans_SC:Bold'] font-semibold leading-[24px] relative shrink-0 text-[#99918c] text-[16px] text-center w-[314px]" data-node-id="317:1127">
+            保存宝宝资料
+          </p>
+        </div>
+      </div>
+      <div className="absolute bg-[#fbf8f4] h-[650px] left-0 overflow-x-clip overflow-y-auto top-[60px] w-[393px]" data-node-id="317:1128" data-name="Scroll viewport">
+        <div className="absolute bg-[#fbf8f4] content-stretch flex flex-col gap-[14px] items-start left-[13.5px] overflow-clip p-[16px] top-0 w-[366px]" data-node-id="317:1129" data-name="Scrollable fields">
+          <div className="bg-[#fffdfc] border border-[#e9e1dc] border-solid content-stretch flex flex-col gap-[14px] items-start overflow-clip p-[16px] relative rounded-[22px] shrink-0 w-[334px]" data-node-id="317:1130" data-name="Name and birth date">
+            <div className="bg-[#fffdfc] content-stretch flex flex-col gap-[14px] items-start overflow-clip relative shrink-0 w-[302px]" data-node-id="317:1131" data-name="宝宝称呼">
+              <div className="content-stretch flex gap-[4px] items-center overflow-clip relative shrink-0 w-[302px]" data-node-id="650:8" data-name="字段标题 / 必填">
+                <p className="[word-break:break-word] font-['Noto_Sans_SC:Bold'] font-semibold leading-[22px] relative shrink-0 text-[#2b2826] text-[15px] whitespace-nowrap" data-node-id="317:1132">
+                  宝宝称呼
+                </p>
+                <div className="relative shrink-0 size-[8px]" data-node-id="650:9" data-name="必填图标 / Asterisk">
+                  <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgAsterisk} />
+                </div>
+              </div>
+              <div className="bg-[#fffdfc] border border-[#e9e1dc] border-solid content-stretch flex flex-col items-start overflow-clip p-[12px] relative rounded-[16px] shrink-0 w-[302px]" data-node-id="317:1133" data-name="Input / 宝宝称呼">
+                <p className="[word-break:break-word] font-['Noto_Sans_SC:Regular'] font-normal h-[22.4px] leading-[24px] overflow-hidden relative shrink-0 text-[#2e2b29] text-[16px] text-ellipsis w-[278px] whitespace-nowrap" data-node-id="317:1134">
+                  Luna
+                </p>
+              </div>
+            </div>
+            <div className="bg-[#fffdfc] content-stretch flex flex-col gap-[14px] items-start overflow-clip relative shrink-0 w-[302px]" data-node-id="317:1135" data-name="出生日期">
+              <p className="[word-break:break-word] font-['Noto_Sans_SC:Bold'] font-semibold leading-[22px] relative shrink-0 text-[#2b2826] text-[15px] w-[302px]" data-node-id="317:1136">
+                出生日期
+              </p>
+              <div className="content-stretch flex flex-col items-start overflow-clip relative shrink-0 w-[302px]" data-node-id="317:1137" data-name="出生日期 / 只读 / 与妈妈分娩日期同步">
+                <p className="[word-break:break-word] font-['Noto_Sans_SC:Regular'] font-normal leading-[24px] relative shrink-0 text-[#2b2826] text-[16px] w-full" data-node-id="317:1138">
+                  2026-08-22
+                </p>
+              </div>
+              <p className="[word-break:break-word] font-['Noto_Sans_SC:Regular'] font-normal leading-[20px] min-w-full relative shrink-0 text-[#776e69] text-[13px] w-[min-content]" data-node-id="650:14">
+                与妈妈的分娩日期一致
+              </p>
+            </div>
+          </div>
+          <div className="bg-[#fffdfc] border border-[#e9e1dc] border-solid content-stretch flex flex-col gap-[14px] items-start overflow-clip p-[16px] relative rounded-[22px] shrink-0 w-[334px]" data-node-id="317:1141" data-name="宝宝性别">
+            <div className="content-stretch flex gap-[4px] items-center overflow-clip relative shrink-0 w-[302px]" data-node-id="650:11" data-name="字段标题 / 必填">
+              <p className="[word-break:break-word] font-['Noto_Sans_SC:Bold'] font-semibold leading-[22px] relative shrink-0 text-[#2b2826] text-[15px] whitespace-nowrap" data-node-id="317:1142">
+                宝宝性别
+              </p>
+              <div className="relative shrink-0 size-[8px]" data-node-id="650:12" data-name="必填图标 / Asterisk">
+                <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgAsterisk} />
+              </div>
+            </div>
+            <p className="[word-break:break-word] font-['Noto_Sans_SC:Regular'] font-normal leading-[20px] relative shrink-0 text-[#776e69] text-[13px] w-[302px]" data-node-id="317:1143">
+              用于匹配生长参考范围
+            </p>
+            <div className="bg-[#fffdfc] content-stretch flex gap-[8px] h-[44px] items-start overflow-clip relative shrink-0 w-[302px]" data-node-id="317:1144" data-name="Mom choice tiles">
+              <div className="bg-[#f7eff7] border border-[#cbb0c7] border-solid content-stretch flex flex-[1_0_0] flex-col h-[44px] items-start min-w-px overflow-clip p-[8px] relative rounded-[16px]" data-node-id="317:1145" data-name="女宝宝">
+                <p className="[word-break:break-word] font-['Noto_Sans_SC:Bold'] font-semibold leading-[22px] relative shrink-0 text-[#865c80] text-[15px] text-center w-full" data-node-id="317:1146">
+                  女宝宝
+                </p>
+              </div>
+              <div className="bg-[#fffdfc] border border-[#e9e1dc] border-solid content-stretch flex flex-[1_0_0] flex-col h-[44px] items-start min-w-px overflow-clip p-[8px] relative rounded-[16px]" data-node-id="317:1147" data-name="男宝宝">
+                <p className="[word-break:break-word] font-['Noto_Sans_SC:Medium'] font-medium leading-[22px] relative shrink-0 text-[#776e69] text-[15px] text-center w-full" data-node-id="317:1148">
+                  男宝宝
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+SUPER CRITICAL: The generated React+Tailwind code MUST be converted to match the target project's technology stack and styling system.
+1. Analyze the target codebase to identify: technology stack, styling approach, component patterns, and design tokens
+2. Convert React syntax to the target framework/library
+3. Transform all Tailwind classes to the target styling system while preserving exact visual design
+4. Follow the project's existing patterns and conventions
+DO NOT install any Tailwind as a dependency unless the user instructs you to do so.
+
+
+Node ids have been added to the code as data attributes, e.g. `data-node-id="1:2"`.
+
+Images and SVGs will be stored as constants, e.g. const image = '[temporary-export-url-omitted]'. These constants will be used in the code as the source for the image, ex: <img src={image} />. Image assets are stored on a remote server for 7 days and can be fetched using the provided URLs until they expire.

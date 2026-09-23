@@ -5,14 +5,14 @@
 - 32 个状态现在都有同尺寸 Figma 参考图；新增的 11 个首页/生长状态已经完成 Flutter 同尺寸截图和对照，仍保留无资料首页导航图片首帧与长名称截断夹具两项待核验。
 - `comparisons/actual-home-states/` 保存本轮 11 个首页/生长状态的 Flutter 实际截图，`comparisons/home-state-captures.json` 保存逐状态对照记录。
 - `raw/` 保存本次导出的 manifest、资源索引和比较索引。
-- `assets` 使用 App 内的本地资源路径 `app/assets/images/baby_figma/`，运行时不依赖 Figma 临时 URL。
+- `assets` 使用 App 内的本地资源路径 `assets/images/baby_figma/`，运行时不依赖 Figma 临时 URL。
 - `evidence.json` 记录当前测试、设备复核和本轮校准差异；它不是设计输入，修改视觉后必须同步更新。
 
 校验契约：
 
 ```bash
-python3 /Users/lute/.codex/skills/figma-to-app/scripts/validate_contract.py \
-  app/design-contract/baby/contract.json
+python3 "$CODEX_HOME/skills/figma-to-app/scripts/validate_contract.py" \
+  design-contract/baby/contract.json
 ```
 
 Baby UI 修改必须先更新契约中的状态或 override，再运行同尺寸截图和 Flutter 交互测试。参考图和 App 实际截图必须按状态一一比对，不要把 App golden 当作 Figma 参考图。

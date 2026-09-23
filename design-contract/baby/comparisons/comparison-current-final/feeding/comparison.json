@@ -1,0 +1,23 @@
+{
+  "reference": "design-contract/baby/references/figma-622-1333.png",
+  "actual": "design-contract/baby/comparisons/actual-current/feeding.png",
+  "reference_crop": [
+    0,
+    0,
+    393,
+    596
+  ],
+  "actual_crop": [
+    0,
+    214,
+    393,
+    810
+  ],
+  "actual_dpr": 1,
+  "size": [
+    393,
+    596
+  ],
+  "mean_absolute_channel_difference": 2.424934963653648,
+  "note": "Diagnostic only. Not a fidelity score or acceptance threshold."
+}

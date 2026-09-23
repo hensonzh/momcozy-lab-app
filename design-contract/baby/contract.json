@@ -4,7 +4,7 @@
     "id": "baby",
     "name": "MomCozy Baby 模块",
     "target": "flutter",
-    "implementationRoot": "app/lib/modules/baby"
+    "implementationRoot": "lib/modules/baby"
   },
   "source": {
     "fileKey": "ePIoJkiMiXiug9ibpcgRbl",
@@ -1108,7 +1108,7 @@
     {
       "id": "baby.asset.01",
       "figmaNodeId": "326:1087",
-      "localPath": "app/assets/images/baby_figma/OriginalCozymatePortrait.png",
+      "localPath": "assets/images/baby_figma/OriginalCozymatePortrait.png",
       "format": "png",
       "checksum": "8cd1545b50f649444b3cca64c113e6be7cc4a1784c3dde6705b2f63421bab4e0",
       "symbol": "imgOriginalCozymatePortrait",
@@ -1117,7 +1117,7 @@
     {
       "id": "baby.asset.02",
       "figmaNodeId": "326:1087",
-      "localPath": "app/assets/images/baby_figma/ChevronDownRounded.svg",
+      "localPath": "assets/images/baby_figma/ChevronDownRounded.svg",
       "format": "svg",
       "checksum": "1508fcf5f289cbc7db1f62a8ad63e14203b915cb5b5e1d68d9454e059e5aafc2",
       "symbol": "imgChevronDownRounded",
@@ -1126,7 +1126,7 @@
     {
       "id": "baby.asset.03",
       "figmaNodeId": "326:1087",
-      "localPath": "app/assets/images/baby_figma/DecorationLilac.svg",
+      "localPath": "assets/images/baby_figma/DecorationLilac.svg",
       "format": "svg",
       "checksum": "bd8327369a20ab7fd25d7ce35bac9fb5e7152f2ccd3efe1e5ab36ca14b949dda",
       "symbol": "imgDecorationLilac",
@@ -1135,7 +1135,7 @@
     {
       "id": "baby.asset.04",
       "figmaNodeId": "326:1087",
-      "localPath": "app/assets/images/baby_figma/DecorationBlush.svg",
+      "localPath": "assets/images/baby_figma/DecorationBlush.svg",
       "format": "svg",
       "checksum": "4c9dab8ffb1cfd7941c459a1acef909f7c7f3b198956d3b0b0f21c539237d7f8",
       "symbol": "imgDecorationBlush",
@@ -1144,7 +1144,7 @@
     {
       "id": "baby.asset.05",
       "figmaNodeId": "326:1087",
-      "localPath": "app/assets/images/baby_figma/DecorationSpark.svg",
+      "localPath": "assets/images/baby_figma/DecorationSpark.svg",
       "format": "svg",
       "checksum": "1afa5afc0b93af8e3bb9716ba63ce74857514fc0f116ee6ff197b6896c2beea4",
       "symbol": "imgDecorationSpark",
@@ -1153,7 +1153,7 @@
     {
       "id": "baby.asset.06",
       "figmaNodeId": "326:1087",
-      "localPath": "app/assets/images/baby_figma/ChevronRightRounded.svg",
+      "localPath": "assets/images/baby_figma/ChevronRightRounded.svg",
       "format": "svg",
       "checksum": "e4fd3a1b4ec710c6412094d6c16e9ac51ead5b9dcb64c4df20372dea067251b8",
       "symbol": "imgChevronRightRounded",
@@ -1162,7 +1162,7 @@
     {
       "id": "baby.asset.07",
       "figmaNodeId": "326:1087",
-      "localPath": "app/assets/images/baby_figma/DecorationBlush1.svg",
+      "localPath": "assets/images/baby_figma/DecorationBlush1.svg",
       "format": "svg",
       "checksum": "9036d8fa9d70c56d69aa4d05bb68a24f51de01928758081743d7a2f7a2c0ed82",
       "symbol": "imgDecorationBlush1",
@@ -1171,7 +1171,7 @@
     {
       "id": "baby.asset.08",
       "figmaNodeId": "326:1087",
-      "localPath": "app/assets/images/baby_figma/DecorationDrop.svg",
+      "localPath": "assets/images/baby_figma/DecorationDrop.svg",
       "format": "svg",
       "checksum": "423fbd631c232a4e16fc498262946ae4287cf245865e18ce14227ceb631911d7",
       "symbol": "imgDecorationDrop",
@@ -1180,7 +1180,7 @@
     {
       "id": "baby.asset.09",
       "figmaNodeId": "326:1087",
-      "localPath": "app/assets/images/baby_figma/DecorationWave.svg",
+      "localPath": "assets/images/baby_figma/DecorationWave.svg",
       "format": "svg",
       "checksum": "87fbf612d9109d28a2bb6f712c4adc023de12d9d6f8795520a8657a41ec0362d",
       "symbol": "imgDecorationWave",
@@ -1189,7 +1189,7 @@
     {
       "id": "baby.asset.10",
       "figmaNodeId": "326:1087",
-      "localPath": "app/assets/images/baby_figma/IconDrop.svg",
+      "localPath": "assets/images/baby_figma/IconDrop.svg",
       "format": "svg",
       "checksum": "01df2ce0deb409cd32e9c0834fdf4853028759e59cb06fa650126c0ef50869fb",
       "symbol": "imgIconDrop",
@@ -1198,7 +1198,7 @@
     {
       "id": "baby.asset.11",
       "figmaNodeId": "326:1087",
-      "localPath": "app/assets/images/baby_figma/DecorationWarm.svg",
+      "localPath": "assets/images/baby_figma/DecorationWarm.svg",
       "format": "svg",
       "checksum": "f72ee0db1f6e66006ce04550ea32b460bfb11543a80903738a718c4cd6650dda",
       "symbol": "imgDecorationWarm",
@@ -1207,7 +1207,7 @@
     {
       "id": "baby.asset.12",
       "figmaNodeId": "326:1087",
-      "localPath": "app/assets/images/baby_figma/IconMentalState.svg",
+      "localPath": "assets/images/baby_figma/IconMentalState.svg",
       "format": "svg",
       "checksum": "d8adc1b6eaa2a68f9cf502ce37993b2e28725d5871da70fbd629f20f907d17e0",
       "symbol": "imgIconMentalState",
@@ -1216,7 +1216,7 @@
     {
       "id": "baby.asset.13",
       "figmaNodeId": "326:1087",
-      "localPath": "app/assets/images/baby_figma/DecorationWarm1.svg",
+      "localPath": "assets/images/baby_figma/DecorationWarm1.svg",
       "format": "svg",
       "checksum": "70eea48e75da66d8bca7152ae9a0bdec763f46a2cd119fb6a2d3df6cd81d0156",
       "symbol": "imgDecorationWarm1",
@@ -1225,7 +1225,7 @@
     {
       "id": "baby.asset.14",
       "figmaNodeId": "326:1087",
-      "localPath": "app/assets/images/baby_figma/DecorationDrop1.svg",
+      "localPath": "assets/images/baby_figma/DecorationDrop1.svg",
       "format": "svg",
       "checksum": "333812af11db8021df1b05fb38c82e81df383132b1794bc3d91150e42877fb11",
       "symbol": "imgDecorationDrop1",
@@ -1234,7 +1234,7 @@
     {
       "id": "baby.asset.15",
       "figmaNodeId": "326:1087",
-      "localPath": "app/assets/images/baby_figma/IconDrop1.svg",
+      "localPath": "assets/images/baby_figma/IconDrop1.svg",
       "format": "svg",
       "checksum": "6122454b697ae1ae13265a1eb900d66d2b97f2203279cf8a7fe53d43a1729def",
       "symbol": "imgIconDrop1",
@@ -1243,7 +1243,7 @@
     {
       "id": "baby.asset.16",
       "figmaNodeId": "326:1087",
-      "localPath": "app/assets/images/baby_figma/DecorationBlush2.svg",
+      "localPath": "assets/images/baby_figma/DecorationBlush2.svg",
       "format": "svg",
       "checksum": "42024b37bbdfbcea6f58e1f6bb74b97bb5e85ec3060010743f597240c4525e8f",
       "symbol": "imgDecorationBlush2",
@@ -1252,7 +1252,7 @@
     {
       "id": "baby.asset.17",
       "figmaNodeId": "326:1087",
-      "localPath": "app/assets/images/baby_figma/DecorationWave1.svg",
+      "localPath": "assets/images/baby_figma/DecorationWave1.svg",
       "format": "svg",
       "checksum": "3e39c922f75a9fa5e4d1c3c6ec4866c24f401aa4494533714df171e1742813cd",
       "symbol": "imgDecorationWave1",
@@ -1261,7 +1261,7 @@
     {
       "id": "baby.asset.18",
       "figmaNodeId": "326:1087",
-      "localPath": "app/assets/images/baby_figma/IconNote.svg",
+      "localPath": "assets/images/baby_figma/IconNote.svg",
       "format": "svg",
       "checksum": "67c1c484344468ac2416624a40d932e5a601091d6f929367e88c191cf6ed8022",
       "symbol": "imgIconNote",
@@ -1270,7 +1270,7 @@
     {
       "id": "baby.asset.19",
       "figmaNodeId": "326:1087",
-      "localPath": "app/assets/images/baby_figma/DecorationWarm2.svg",
+      "localPath": "assets/images/baby_figma/DecorationWarm2.svg",
       "format": "svg",
       "checksum": "ece364690de5aa7e706c64e8b8035b07f1917dd6c78b65db7b2a55f6e3c57788",
       "symbol": "imgDecorationWarm2",
@@ -1279,7 +1279,7 @@
     {
       "id": "baby.asset.20",
       "figmaNodeId": "326:1087",
-      "localPath": "app/assets/images/baby_figma/DecorationRing.svg",
+      "localPath": "assets/images/baby_figma/DecorationRing.svg",
       "format": "svg",
       "checksum": "43d99d743ed26704b8f6fffa5324b8271e0f73da33c01374ee60febc97d1c921",
       "symbol": "imgDecorationRing",
@@ -1288,7 +1288,7 @@
     {
       "id": "baby.asset.21",
       "figmaNodeId": "326:1087",
-      "localPath": "app/assets/images/baby_figma/DecorationMint.svg",
+      "localPath": "assets/images/baby_figma/DecorationMint.svg",
       "format": "svg",
       "checksum": "46b2695401e99b75d5f1f7c704cf2365b0fa7b7d8953bcf140a0b8ba7cc7592c",
       "symbol": "imgDecorationMint",
@@ -1297,7 +1297,7 @@
     {
       "id": "baby.asset.22",
       "figmaNodeId": "326:1087",
-      "localPath": "app/assets/images/baby_figma/DecorationRing1.svg",
+      "localPath": "assets/images/baby_figma/DecorationRing1.svg",
       "format": "svg",
       "checksum": "4f5ed96e8359f2d9cf735b261ec9abd6e6741a7f3142f1baa23260b3a3a75877",
       "symbol": "imgDecorationRing1",
@@ -1306,7 +1306,7 @@
     {
       "id": "baby.asset.23",
       "figmaNodeId": "317:1121",
-      "localPath": "app/assets/images/baby_figma/Back.svg",
+      "localPath": "assets/images/baby_figma/Back.svg",
       "format": "svg",
       "checksum": "f45bb01f655ef89795469549b5763c13e3e3155cf45267b6a9e783a6e4e1d571",
       "symbol": "imgFrame",
@@ -1315,7 +1315,7 @@
     {
       "id": "baby.asset.24",
       "figmaNodeId": "317:1121",
-      "localPath": "app/assets/images/baby_figma/Asterisk.svg",
+      "localPath": "assets/images/baby_figma/Asterisk.svg",
       "format": "svg",
       "checksum": "064f14b3960334acb72f4a4533b4f998198d16a6bad818772f576752f196b5be",
       "symbol": "imgAsterisk",
@@ -1324,7 +1324,7 @@
     {
       "id": "baby.asset.25",
       "figmaNodeId": "622:3946",
-      "localPath": "app/assets/images/baby_figma/Cozymate.png",
+      "localPath": "assets/images/baby_figma/Cozymate.png",
       "format": "png",
       "checksum": "6f892b7df0d36fbd2ee18e3ee7c1f85166da4d264d6859caea5f40362516b4ee",
       "symbol": "imgCozymate",
@@ -1333,7 +1333,7 @@
     {
       "id": "baby.asset.26",
       "figmaNodeId": "622:3946",
-      "localPath": "app/assets/images/baby_figma/Close.svg",
+      "localPath": "assets/images/baby_figma/Close.svg",
       "format": "svg",
       "checksum": "303df4ff3862f250b22deb7d1bf5c06b9c1abecae76af113864551e4eeadca45",
       "symbol": "imgFrame",
@@ -1342,7 +1342,7 @@
     {
       "id": "baby.asset.27",
       "figmaNodeId": "329:1219",
-      "localPath": "app/assets/images/baby_figma/Clock.svg",
+      "localPath": "assets/images/baby_figma/Clock.svg",
       "format": "svg",
       "checksum": "414026fe7ecfe997a88e91a5ca4adf8096f7191dfadca2a1af55e08b8c6a1be9",
       "symbol": "Clock.svg",
@@ -1351,7 +1351,7 @@
     {
       "id": "baby.asset.28",
       "figmaNodeId": "330:1590",
-      "localPath": "app/assets/images/baby_figma/Calendar.svg",
+      "localPath": "assets/images/baby_figma/Calendar.svg",
       "format": "svg",
       "checksum": "c75c70274ab712cc00e80fe2dbb2e523527fcfe6ef79af3b0495b59dbf9e9d25",
       "symbol": "Calendar.svg",
@@ -1360,7 +1360,7 @@
     {
       "id": "baby.asset.29",
       "figmaNodeId": "329:1204",
-      "localPath": "app/assets/images/baby_figma/FormClose.svg",
+      "localPath": "assets/images/baby_figma/FormClose.svg",
       "format": "svg",
       "checksum": "3dd39bde0b92627bee7e3339388a9f1db30bb101fcaa92dac3793668aae766cc",
       "symbol": "FormClose.svg",
@@ -1369,7 +1369,7 @@
     {
       "id": "baby.asset.30",
       "figmaNodeId": "327:2565",
-      "localPath": "app/assets/images/baby_figma/SwitcherClose.svg",
+      "localPath": "assets/images/baby_figma/SwitcherClose.svg",
       "format": "svg",
       "checksum": "efe5eac3fd338c1b520a8f7aeb40ec1236e4f04fcf58485de8deed47fc95c0ca",
       "symbol": "SwitcherClose.svg",

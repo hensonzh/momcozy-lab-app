@@ -1,0 +1,202 @@
+const img = "[temporary-export-url-omitted]";
+const imgAsterisk = "[temporary-export-url-omitted]";
+const imgEllipse = "[temporary-export-url-omitted]";
+const imgEllipse1 = "[temporary-export-url-omitted]";
+const imgEllipse2 = "[temporary-export-url-omitted]";
+const imgEllipse3 = "[temporary-export-url-omitted]";
+const imgEllipse4 = "[temporary-export-url-omitted]";
+const imgEllipse5 = "[temporary-export-url-omitted]";
+const imgEllipse6 = "[temporary-export-url-omitted]";
+const imgEllipse7 = "[temporary-export-url-omitted]";
+const img1 = "[temporary-export-url-omitted]";
+
+export default function Component() {
+  return (
+    <div className="bg-[#fbf8f4] content-stretch flex flex-col items-center overflow-clip relative rounded-tl-[28px] rounded-tr-[28px] size-full" data-node-id="622:3343" data-name="完整底部弹层 / 固定标题与操作">
+      <div className="h-[24px] relative shrink-0 w-[393px]" data-node-id="622:3344" data-name="拖动指示">
+        <img alt="" className="absolute block inset-0 max-w-none size-full" src={img} />
+      </div>
+      <div className="bg-[#fbf8f4] content-stretch flex flex-col items-start overflow-clip relative shrink-0 w-[366px]" data-node-id="330:1489" data-name="Fixed header and save / scrollable content">
+        <div className="bg-[#fffdfc] content-stretch flex flex-col items-start overflow-clip px-[16px] py-[8px] relative shrink-0 w-[366px]" data-node-id="330:1490" data-name="Fixed title">
+          <div className="[word-break:break-word] content-stretch flex gap-[8px] items-center overflow-clip relative shrink-0 text-[20px] w-[334px]" data-node-id="330:1491" data-name="Title and close">
+            <p className="font-['Noto_Sans_SC:Bold'] font-semibold leading-[28px] relative shrink-0 text-[#2b2826] w-[282px]" data-node-id="330:1492">
+              记录便便
+            </p>
+            <button className="block cursor-pointer font-['Noto_Sans_SC:Regular'] font-normal leading-[0] relative shrink-0 text-[#b54f78] text-left w-[44px]" data-node-id="330:1493">
+              <p className="leading-[1.4]">×</p>
+            </button>
+          </div>
+        </div>
+        <div className="bg-[#fbf8f4] content-stretch flex flex-col gap-[14px] items-start overflow-clip pb-[16px] pt-[14px] px-[16px] relative shrink-0 w-[366px]" data-node-id="330:1494" data-name="Scrollable form">
+          <div className="content-stretch flex gap-[8px] items-center overflow-clip relative shrink-0 w-[334px]" data-node-id="330:1495" data-name="Choices /">
+            <div className="bg-[#fffdfc] border border-[#e9e1dc] border-solid content-stretch flex flex-col items-start overflow-clip px-[10px] py-[13px] relative rounded-[14px] shrink-0 w-[106px]" data-node-id="330:1496" data-name="Action / 精神状态">
+              <p className="[word-break:break-word] font-['Noto_Sans_SC:Medium'] font-medium leading-[22px] relative shrink-0 text-[#776e69] text-[15px] text-center w-[86px]" data-node-id="330:1497">
+                精神状态
+              </p>
+            </div>
+            <div className="bg-[#fffdfc] border border-[#e9e1dc] border-solid content-stretch flex flex-col items-start overflow-clip px-[10px] py-[13px] relative rounded-[14px] shrink-0 w-[106px]" data-node-id="330:1498" data-name="Action / 尿湿">
+              <p className="[word-break:break-word] font-['Noto_Sans_SC:Medium'] font-medium leading-[22px] relative shrink-0 text-[#776e69] text-[15px] text-center w-[86px]" data-node-id="330:1499">
+                尿湿
+              </p>
+            </div>
+            <div className="bg-[#f7eff7] border border-[#cbb0c7] border-solid content-stretch flex flex-col items-start overflow-clip px-[10px] py-[13px] relative rounded-[14px] shrink-0 w-[106px]" data-node-id="330:1500" data-name="Action / 便便">
+              <p className="[word-break:break-word] font-['Noto_Sans_SC:Bold'] font-semibold leading-[22px] relative shrink-0 text-[#865c80] text-[15px] text-center w-[86px]" data-node-id="330:1501">
+                便便
+              </p>
+            </div>
+          </div>
+          <div className="bg-[#fffdfc] border border-[#e9e1dc] border-solid content-stretch flex flex-col gap-[14px] items-start overflow-clip p-[16px] relative rounded-[22px] shrink-0 w-[334px]" data-node-id="330:1502" data-name="Record fields">
+            <div className="content-stretch flex gap-[4px] items-center overflow-clip relative shrink-0 w-[302px]" data-node-id="667:2" data-name="字段标题 / 今日便便次数 / 必填">
+              <p className="[word-break:break-word] font-['Noto_Sans_SC:Bold'] font-semibold leading-[22px] relative shrink-0 text-[#2b2826] text-[15px] whitespace-nowrap" data-node-id="667:3">
+                今日便便次数
+              </p>
+              <div className="relative shrink-0 size-[8px]" data-node-id="667:4" data-name="必填图标 / Asterisk">
+                <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgAsterisk} />
+              </div>
+            </div>
+            <div className="bg-[#fffdfc] border border-[#e9e1dc] border-solid content-stretch flex flex-col items-start overflow-clip p-[14px] relative rounded-[14px] shrink-0 w-[302px]" data-node-id="667:6" data-name="Field / 便便次数 / 正整数">
+              <div className="[word-break:break-word] content-stretch flex font-['Noto_Sans_SC:Regular'] font-normal gap-[8px] items-center overflow-clip relative shrink-0 w-[274px]" data-node-id="667:7" data-name="Value and unit">
+                <p className="leading-[24px] relative shrink-0 text-[#2b2826] text-[16px] w-[234px]" data-node-id="667:8">
+                  1
+                </p>
+                <p className="leading-[20px] relative shrink-0 text-[#776e69] text-[14px] w-[32px]" data-node-id="667:9">
+                  次
+                </p>
+              </div>
+            </div>
+            <p className="[word-break:break-word] font-['Noto_Sans_SC:Bold'] font-semibold leading-[22px] relative shrink-0 text-[#2b2826] text-[15px] w-[302px]" data-node-id="330:1516">
+              便便颜色
+            </p>
+            <div className="content-stretch flex gap-[8px] items-start overflow-clip relative shrink-0 w-[302px]" data-node-id="330:1517" data-name="Choices / 便便颜色（可不填）">
+              <div className="bg-[#fffdfc] border border-[#e9e1dc] border-solid content-stretch flex flex-col gap-[4px] items-center overflow-clip p-[8px] relative rounded-[14px] shrink-0 w-[69.5px]" data-node-id="330:1518" data-name="Action / 黄色">
+                <div className="relative shrink-0 size-[18px]" data-node-id="332:1086" data-name="Ellipse">
+                  <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgEllipse} />
+                </div>
+                <div className="[word-break:break-word] flex flex-col font-['Noto_Sans_SC:Medium'] font-medium h-[44px] justify-center leading-[0] relative shrink-0 text-[#776e69] text-[15px] text-center w-[53.5px]" data-node-id="330:1519">
+                  <p className="leading-[22px]">黄色</p>
+                </div>
+              </div>
+              <div className="bg-[#fffdfc] border border-[#e9e1dc] border-solid content-stretch flex flex-col gap-[4px] items-center overflow-clip p-[8px] relative rounded-[14px] shrink-0 w-[69.5px]" data-node-id="330:1520" data-name="Action / 黄褐色">
+                <div className="relative shrink-0 size-[18px]" data-node-id="332:1087" data-name="Ellipse">
+                  <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgEllipse1} />
+                </div>
+                <div className="[word-break:break-word] flex flex-col font-['Noto_Sans_SC:Medium'] font-medium h-[44px] justify-center leading-[0] relative shrink-0 text-[#776e69] text-[15px] text-center w-[53.5px]" data-node-id="330:1521">
+                  <p className="leading-[22px]">黄褐色</p>
+                </div>
+              </div>
+              <div className="bg-[#fffdfc] border border-[#e9e1dc] border-solid content-stretch flex flex-col gap-[4px] items-center overflow-clip p-[8px] relative rounded-[14px] shrink-0 w-[69.5px]" data-node-id="330:1522" data-name="Action / 绿色">
+                <div className="relative shrink-0 size-[18px]" data-node-id="332:1088" data-name="Ellipse">
+                  <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgEllipse2} />
+                </div>
+                <div className="[word-break:break-word] flex flex-col font-['Noto_Sans_SC:Medium'] font-medium h-[44px] justify-center leading-[0] relative shrink-0 text-[#776e69] text-[15px] text-center w-[53.5px]" data-node-id="330:1523">
+                  <p className="leading-[22px]">绿色</p>
+                </div>
+              </div>
+              <div className="bg-[#fffdfc] border border-[#e9e1dc] border-solid content-stretch flex flex-col gap-[4px] items-center overflow-clip p-[8px] relative rounded-[14px] shrink-0 w-[69.5px]" data-node-id="330:1524" data-name="Action / 棕色">
+                <div className="relative shrink-0 size-[18px]" data-node-id="332:1089" data-name="Ellipse">
+                  <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgEllipse3} />
+                </div>
+                <div className="[word-break:break-word] flex flex-col font-['Noto_Sans_SC:Medium'] font-medium h-[44px] justify-center leading-[0] relative shrink-0 text-[#776e69] text-[15px] text-center w-[53.5px]" data-node-id="330:1525">
+                  <p className="leading-[22px]">棕色</p>
+                </div>
+              </div>
+            </div>
+            <div className="content-stretch flex gap-[8px] items-start overflow-clip relative shrink-0 w-[302px]" data-node-id="330:1526" data-name="Choices / 便便颜色（可不填）">
+              <div className="bg-[#fffdfc] border border-[#e9e1dc] border-solid content-stretch flex flex-col gap-[4px] items-center overflow-clip p-[8px] relative rounded-[14px] shrink-0 w-[69.5px]" data-node-id="330:1527" data-name="Action / 黑色">
+                <div className="relative shrink-0 size-[18px]" data-node-id="332:1090" data-name="Ellipse">
+                  <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgEllipse4} />
+                </div>
+                <div className="[word-break:break-word] flex flex-col font-['Noto_Sans_SC:Medium'] font-medium h-[44px] justify-center leading-[0] relative shrink-0 text-[#776e69] text-[15px] text-center w-[53.5px]" data-node-id="330:1528">
+                  <p className="leading-[22px]">黑色</p>
+                </div>
+              </div>
+              <div className="bg-[#fffdfc] border border-[#e9e1dc] border-solid content-stretch flex flex-col gap-[4px] items-center overflow-clip p-[8px] relative rounded-[14px] shrink-0 w-[69.5px]" data-node-id="330:1529" data-name="Action / 红色">
+                <div className="relative shrink-0 size-[18px]" data-node-id="332:1091" data-name="Ellipse">
+                  <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgEllipse5} />
+                </div>
+                <div className="[word-break:break-word] flex flex-col font-['Noto_Sans_SC:Medium'] font-medium h-[44px] justify-center leading-[0] relative shrink-0 text-[#776e69] text-[15px] text-center w-[53.5px]" data-node-id="330:1530">
+                  <p className="leading-[22px]">红色</p>
+                </div>
+              </div>
+              <div className="bg-[#fffdfc] border border-[#e9e1dc] border-solid content-stretch flex flex-col gap-[4px] items-center overflow-clip p-[8px] relative rounded-[14px] shrink-0 w-[69.5px]" data-node-id="330:1531" data-name="Action / 灰白／很浅">
+                <div className="relative shrink-0 size-[18px]" data-node-id="332:1092" data-name="Ellipse">
+                  <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgEllipse6} />
+                </div>
+                <div className="[word-break:break-word] flex flex-col font-['Noto_Sans_SC:Medium'] font-medium h-[44px] justify-center leading-[0] relative shrink-0 text-[#776e69] text-[15px] text-center w-[53.5px]" data-node-id="330:1532">
+                  <p className="leading-[22px]">灰白／很浅</p>
+                </div>
+              </div>
+              <div className="bg-[#fffdfc] border border-[#e9e1dc] border-solid content-stretch flex flex-col gap-[4px] items-center overflow-clip p-[8px] relative rounded-[14px] shrink-0 w-[69.5px]" data-node-id="330:1533" data-name="Action / 不确定">
+                <div className="relative shrink-0 size-[18px]" data-node-id="332:1093" data-name="Ellipse">
+                  <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgEllipse7} />
+                </div>
+                <div className="[word-break:break-word] flex flex-col font-['Noto_Sans_SC:Medium'] font-medium h-[44px] justify-center leading-[0] relative shrink-0 text-[#776e69] text-[15px] text-center w-[53.5px]" data-node-id="330:1534">
+                  <p className="leading-[22px]">不确定</p>
+                </div>
+              </div>
+            </div>
+            <p className="[word-break:break-word] font-['Noto_Sans_SC:Bold'] font-semibold leading-[22px] relative shrink-0 text-[#2b2826] text-[15px] w-[302px]" data-node-id="330:1535">
+              便便性状
+            </p>
+            <div className="content-stretch flex gap-[8px] items-center overflow-clip relative shrink-0 w-[302px]" data-node-id="330:1536" data-name="Choices / 便便质地（可不填）">
+              <div className="bg-[#fffdfc] border border-[#e9e1dc] border-solid content-stretch flex flex-col items-start overflow-clip px-[10px] py-[13px] relative rounded-[14px] shrink-0 w-[95.333px]" data-node-id="330:1537" data-name="Action / 水样">
+                <p className="[word-break:break-word] font-['Noto_Sans_SC:Medium'] font-medium leading-[22px] relative shrink-0 text-[#776e69] text-[15px] text-center w-[75.333px]" data-node-id="330:1538">
+                  水样
+                </p>
+              </div>
+              <div className="bg-[#fffdfc] border border-[#e9e1dc] border-solid content-stretch flex flex-col items-start overflow-clip px-[10px] py-[13px] relative rounded-[14px] shrink-0 w-[95.333px]" data-node-id="330:1539" data-name="Action / 稀软">
+                <p className="[word-break:break-word] font-['Noto_Sans_SC:Medium'] font-medium leading-[22px] relative shrink-0 text-[#776e69] text-[15px] text-center w-[75.333px]" data-node-id="330:1540">
+                  稀软
+                </p>
+              </div>
+              <div className="bg-[#fffdfc] border border-[#e9e1dc] border-solid content-stretch flex flex-col items-start overflow-clip px-[10px] py-[13px] relative rounded-[14px] shrink-0 w-[95.333px]" data-node-id="330:1542" data-name="Action / 糊状">
+                <p className="[word-break:break-word] font-['Noto_Sans_SC:Medium'] font-medium leading-[22px] relative shrink-0 text-[#776e69] text-[15px] text-center w-[75.333px]" data-node-id="330:1543">
+                  糊状
+                </p>
+              </div>
+            </div>
+            <div className="content-stretch flex gap-[8px] items-center overflow-clip relative shrink-0 w-[302px]" data-node-id="330:1541" data-name="Choices / 便便质地（可不填）">
+              <div className="bg-[#fffdfc] border border-[#e9e1dc] border-solid content-stretch flex flex-col items-start overflow-clip px-[10px] py-[13px] relative rounded-[14px] shrink-0 w-[95.333px]" data-node-id="330:1544" data-name="Action / 成形">
+                <p className="[word-break:break-word] font-['Noto_Sans_SC:Medium'] font-medium leading-[22px] relative shrink-0 text-[#776e69] text-[15px] text-center w-[75.333px]" data-node-id="330:1545">
+                  成形
+                </p>
+              </div>
+              <div className="bg-[#fffdfc] border border-[#e9e1dc] border-solid content-stretch flex flex-col items-start overflow-clip px-[10px] py-[13px] relative rounded-[14px] shrink-0 w-[95.333px]" data-node-id="330:1547" data-name="Action / 干硬">
+                <p className="[word-break:break-word] font-['Noto_Sans_SC:Medium'] font-medium leading-[22px] relative shrink-0 text-[#776e69] text-[15px] text-center w-[75.333px]" data-node-id="330:1548">
+                  干硬
+                </p>
+              </div>
+              <div className="bg-[#fffdfc] border border-[#e9e1dc] border-solid content-stretch flex flex-col items-start overflow-clip px-[10px] py-[13px] relative rounded-[14px] shrink-0 w-[95.333px]" data-node-id="330:1549" data-name="Action / 不确定">
+                <p className="[word-break:break-word] font-['Noto_Sans_SC:Medium'] font-medium leading-[22px] relative shrink-0 text-[#776e69] text-[15px] text-center w-[75.333px]" data-node-id="330:1550">
+                  不确定
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="bg-[#fffdfc] content-stretch flex flex-col items-start overflow-clip p-[16px] relative shrink-0 w-[366px]" data-node-id="330:1560" data-name="Fixed save action">
+          <div className="bg-[#b54f78] content-stretch flex flex-col items-start overflow-clip px-[10px] py-[14px] relative rounded-[14px] shrink-0 w-[334px]" data-node-id="330:1561" data-name="Action / 保存">
+            <p className="[word-break:break-word] font-['Noto_Sans_SC:Bold'] font-semibold leading-[24px] relative shrink-0 text-[#fffdfc] text-[16px] text-center w-[314px]" data-node-id="330:1562">
+              保存
+            </p>
+          </div>
+        </div>
+      </div>
+      <div className="h-[34px] relative shrink-0 w-[393px]" data-node-id="622:3346" data-name="底部安全区">
+        <img alt="" className="absolute block inset-0 max-w-none size-full" src={img1} />
+      </div>
+    </div>
+  );
+}
+
+SUPER CRITICAL: The generated React+Tailwind code MUST be converted to match the target project's technology stack and styling system.
+1. Analyze the target codebase to identify: technology stack, styling approach, component patterns, and design tokens
+2. Convert React syntax to the target framework/library
+3. Transform all Tailwind classes to the target styling system while preserving exact visual design
+4. Follow the project's existing patterns and conventions
+DO NOT install any Tailwind as a dependency unless the user instructs you to do so.
+
+
+Node ids have been added to the code as data attributes, e.g. `data-node-id="1:2"`.
+
+Images and SVGs will be stored as constants, e.g. const image = '[temporary-export-url-omitted]'. These constants will be used in the code as the source for the image, ex: <img src={image} />. Image assets are stored on a remote server for 7 days and can be fetched using the provided URLs until they expire.
