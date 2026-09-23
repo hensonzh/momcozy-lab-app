@@ -1,0 +1,78 @@
+const imgCozymate = "[temporary-export-url-omitted]";
+const img = "[temporary-export-url-omitted]";
+const imgFrame = "[temporary-export-url-omitted]";
+const img1 = "[temporary-export-url-omitted]";
+
+export default function Component() {
+  return (
+    <div className="bg-[#fbf8f4] content-stretch flex flex-col items-center overflow-clip relative rounded-tl-[28px] rounded-tr-[28px] size-full" data-node-id="622:3946" data-name="完整底部弹层 / 固定标题与操作">
+      <div className="h-[24px] relative shrink-0 w-[393px]" data-node-id="622:3947" data-name="拖动指示">
+        <img alt="" className="absolute block inset-0 max-w-none size-full" src={img} />
+      </div>
+      <div className="content-stretch flex flex-col gap-[16px] items-start overflow-clip pb-[16px] pt-[4px] px-[16px] relative shrink-0 w-[366px]" data-node-id="327:2594" data-name="Fixed-header dialog">
+        <div className="content-stretch flex gap-[8px] items-start overflow-clip relative shrink-0 w-[334px]" data-node-id="327:2595" data-name="Fixed title and close">
+          <p className="[word-break:break-word] flex-[1_0_0] font-['Noto_Sans_SC:Bold'] font-bold leading-[29px] min-w-px relative text-[#2b2826] text-[20px]" data-node-id="327:2599">
+            比时间表更早出现的，是宝宝的饥饱信号
+          </p>
+          <button className="content-stretch cursor-pointer flex items-center justify-center overflow-clip relative shrink-0 size-[44px]" data-node-id="677:2" data-name="关闭 / 44px">
+            <div className="relative shrink-0 size-[20px]" data-node-id="677:3" data-name="Frame">
+              <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgFrame} />
+            </div>
+          </button>
+        </div>
+        <div className="content-stretch flex flex-col gap-[20px] items-start overflow-clip relative shrink-0 w-[334px]" data-node-id="327:2598" data-name="Scrollable dialog body">
+          <p className="[word-break:break-word] font-['Noto_Sans_SC:Regular'] font-normal leading-[21px] relative shrink-0 text-[#776e69] text-[13px] w-[334px]" data-node-id="327:2600">
+            新生宝宝会用动作表达需要。把记录时间和当时看到的信号放在一起回想，能更从容地认识宝宝自己的节奏。
+          </p>
+          <div className="[word-break:break-word] content-stretch flex flex-col gap-[6px] items-start overflow-clip relative shrink-0 text-[#2b2826] text-[14px] w-[334px]" data-node-id="327:2601" data-name="文字段落 / 饥饿信号">
+            <p className="font-['Noto_Sans_SC:Bold'] font-bold leading-[20px] relative shrink-0 w-[334px]" data-node-id="677:5">
+              可能饿了
+            </p>
+            <p className="font-['Noto_Sans_SC:Regular'] font-normal leading-[22px] relative shrink-0 w-[334px]" data-node-id="327:2602">
+              手靠近嘴、转头寻找乳房或奶瓶、咂嘴，可能是在表达饥饿。
+            </p>
+          </div>
+          <div className="[word-break:break-word] content-stretch flex flex-col gap-[6px] items-start overflow-clip relative shrink-0 text-[#2b2826] text-[14px] w-[334px]" data-node-id="327:2603" data-name="文字段落 / 饱足信号">
+            <p className="font-['Noto_Sans_SC:Bold'] font-bold leading-[20px] relative shrink-0 w-[334px]" data-node-id="677:6">
+              可能吃饱了
+            </p>
+            <p className="font-['Noto_Sans_SC:Regular'] font-normal leading-[22px] relative shrink-0 w-[334px]" data-node-id="327:2604">
+              闭嘴、转开头或双手放松，可能是在表达已经吃饱。
+            </p>
+          </div>
+          <div className="content-stretch flex flex-col items-start overflow-clip relative rounded-[16px] shrink-0 w-[334px]" data-node-id="327:2605" data-name="Knowledge point 3">
+            <p className="[word-break:break-word] font-['Noto_Sans_SC:Regular'] font-normal leading-[21px] relative shrink-0 text-[#776e69] text-[13px] w-[334px]" data-node-id="327:2606">
+              每个宝宝都不完全一样；连续观察比用一次表现下结论更可靠。
+            </p>
+          </div>
+          <p className="[word-break:break-word] font-['Noto_Sans_SC:Regular'] font-normal leading-[17px] relative shrink-0 text-[#776e69] text-[11px] w-[334px]" data-node-id="327:2609">
+            内容用于帮助理解记录，不是对宝宝健康或发育状态的判断。
+          </p>
+        </div>
+        <div className="bg-[#b54f78] content-stretch flex gap-[10px] h-[56px] items-center justify-center overflow-clip px-[16px] py-[10px] relative rounded-[18px] shrink-0 w-[334px]" data-node-id="327:2610" data-name="Action / 问问 Cozymate">
+          <div className="relative shrink-0 size-[32px]" data-node-id="677:7" data-name="智能体头像 / Cozymate">
+            <img alt="" className="absolute block inset-0 max-w-none size-full" height="32" src={imgCozymate} width="32" />
+          </div>
+          <p className="[word-break:break-word] font-['Noto_Sans_SC:Bold'] font-bold leading-[22px] relative shrink-0 text-[#fffdfc] text-[15px] text-center whitespace-nowrap" data-node-id="327:2611">
+            问问 Cozymate
+          </p>
+        </div>
+      </div>
+      <div className="h-[34px] relative shrink-0 w-[393px]" data-node-id="622:3949" data-name="底部安全区">
+        <img alt="" className="absolute block inset-0 max-w-none size-full" src={img1} />
+      </div>
+    </div>
+  );
+}
+
+SUPER CRITICAL: The generated React+Tailwind code MUST be converted to match the target project's technology stack and styling system.
+1. Analyze the target codebase to identify: technology stack, styling approach, component patterns, and design tokens
+2. Convert React syntax to the target framework/library
+3. Transform all Tailwind classes to the target styling system while preserving exact visual design
+4. Follow the project's existing patterns and conventions
+DO NOT install any Tailwind as a dependency unless the user instructs you to do so.
+
+
+Node ids have been added to the code as data attributes, e.g. `data-node-id="1:2"`.
+
+Images and SVGs will be stored as constants, e.g. const image = '[temporary-export-url-omitted]'. These constants will be used in the code as the source for the image, ex: <img src={image} />. Image assets are stored on a remote server for 7 days and can be fetched using the provided URLs until they expire.

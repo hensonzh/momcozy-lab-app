@@ -1,0 +1,13 @@
+{
+  "reference": "design-contract/cozymate/references/conversation-recovery/history-loading.png",
+  "actual": "design-contract/cozymate/actual/conversation-recovery/history-loading.png",
+  "reference_crop": null,
+  "actual_crop": null,
+  "actual_dpr": 1,
+  "size": [
+    393,
+    844
+  ],
+  "mean_absolute_channel_difference": 40.410834951300195,
+  "note": "Diagnostic only. Not a fidelity score or acceptance threshold."
+}

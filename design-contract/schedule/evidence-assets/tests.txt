@@ -1,0 +1,54 @@
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_page_golden_test.dart
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_page_golden_test.dart: (setUpAll)
+00:00 +1: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_page_golden_test.dart: (setUpAll)
+00:00 +2: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_page_golden_test.dart: (setUpAll)
+00:00 +2: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_controller_test.dart: same-month selection does not read; returning to cache rejects a later month response
+00:00 +3: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_page_golden_test.dart: agenda merges all-day tasks, personal events and consultations chronologically
+00:00 +4: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_page_golden_test.dart: agenda merges all-day tasks, personal events and consultations chronologically
+00:00 +5: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_controller_test.dart: save applies authoritative object; stale refresh cannot restore removed entries
+00:00 +6: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_page_golden_test.dart: full viewport month and week match Figma geometry; local controls do not fetch
+00:00 +7: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_page_golden_test.dart: full viewport month and week match Figma geometry; local controls do not fetch
+00:00 +8: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_page_golden_test.dart: full viewport month and week match Figma geometry; local controls do not fetch
+00:00 +9: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_page_golden_test.dart: full viewport month and week match Figma geometry; local controls do not fetch
+00:00 +10: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_page_golden_test.dart: full viewport month and week match Figma geometry; local controls do not fetch
+00:01 +11: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_page_golden_test.dart: full viewport month and week match Figma geometry; local controls do not fetch
+00:01 +12: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_page_golden_test.dart: full viewport month and week match Figma geometry; local controls do not fetch
+00:01 +13: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_page_golden_test.dart: full viewport month and week match Figma geometry; local controls do not fetch
+00:01 +14: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_page_golden_test.dart: full viewport month and week match Figma geometry; local controls do not fetch
+00:01 +15: /Users/lute/project/momcozy-lab/app/test/modules/schedule/personal_schedule_editor_test.dart: personal schedule create edit delete at 320.0/1.0
+00:01 +16: /Users/lute/project/momcozy-lab/app/test/modules/schedule/personal_schedule_editor_test.dart: personal schedule create edit delete at 320.0/1.0
+00:01 +17: /Users/lute/project/momcozy-lab/app/test/modules/schedule/personal_schedule_editor_test.dart: personal schedule create edit delete at 320.0/1.0
+00:01 +18: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: schedule real shell, local calendar and personal CRUD
+00:01 +19: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: schedule real shell, local calendar and personal CRUD
+00:01 +20: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: schedule real shell, local calendar and personal CRUD
+00:01 +21: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: schedule real shell, local calendar and personal CRUD
+00:01 +22: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: schedule real shell, local calendar and personal CRUD
+00:01 +23: /Users/lute/project/momcozy-lab/app/test/modules/schedule/personal_schedule_editor_test.dart: personal schedule create edit delete at 320.0/2.0
+00:02 +24: /Users/lute/project/momcozy-lab/app/test/modules/schedule/personal_schedule_editor_test.dart: personal schedule create edit delete at 320.0/2.0
+00:02 +25: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: schedule discard and failed save preserve draft with one retry key
+00:02 +26: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: schedule discard and failed save preserve draft with one retry key
+00:02 +27: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: schedule discard and failed save preserve draft with one retry key
+00:02 +28: /Users/lute/project/momcozy-lab/app/test/modules/schedule/personal_schedule_editor_test.dart: personal schedule create edit delete at 390.0/1.0
+00:02 +29: /Users/lute/project/momcozy-lab/app/test/modules/schedule/personal_schedule_editor_test.dart: personal schedule create edit delete at 390.0/1.0
+00:02 +30: /Users/lute/project/momcozy-lab/app/test/modules/schedule/personal_schedule_editor_test.dart: personal schedule create edit delete at 390.0/1.0
+00:02 +31: /Users/lute/project/momcozy-lab/app/test/modules/schedule/personal_schedule_editor_test.dart: personal schedule create edit delete at 390.0/1.0
+00:02 +32: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_page_golden_test.dart: existing care and appointment actions at 430.0/1.0
+00:02 +33: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: schedule existing task status and care plan route
+00:02 +34: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: schedule existing task status and care plan route
+00:03 +35: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: schedule existing task status and care plan route
+00:03 +36: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: schedule existing task status and care plan route
+00:03 +37: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_page_golden_test.dart: short large display can reach last task above floating button and navigation
+00:03 +38: /Users/lute/project/momcozy-lab/app/test/modules/schedule/personal_schedule_editor_test.dart: personal schedule create edit delete at 430.0/1.0
+00:03 +39: /Users/lute/project/momcozy-lab/app/test/modules/schedule/personal_schedule_editor_test.dart: personal schedule create edit delete at 430.0/1.0
+00:03 +40: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: schedule appointment completed reuses production route
+00:03 +41: /Users/lute/project/momcozy-lab/app/test/modules/schedule/personal_schedule_editor_test.dart: personal schedule create edit delete at 430.0/2.0
+00:03 +42: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: schedule appointment held reuses production route
+00:03 +43: /Users/lute/project/momcozy-lab/app/test/modules/schedule/personal_schedule_editor_test.dart: short keyboard viewport can reach the preserved failure and retry
+00:03 +44: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: schedule appointment cancelled reuses production route
+00:03 +45: /Users/lute/project/momcozy-lab/app/test/modules/schedule/personal_schedule_editor_test.dart: failed save preserves the draft and retries the same creation
+00:03 +46: /Users/lute/project/momcozy-lab/app/test/modules/schedule/schedule_inventory_journey_test.dart: schedule appointment expired reuses production route
+00:03 +47: /Users/lute/project/momcozy-lab/app/test/modules/schedule/personal_schedule_editor_test.dart: edited retry recovers the original creation then updates without duplicates
+00:03 +48: /Users/lute/project/momcozy-lab/app/test/modules/schedule/personal_schedule_editor_test.dart: pending personal save locks edits and close then creates once
+00:04 +49: /Users/lute/project/momcozy-lab/app/test/modules/schedule/personal_schedule_editor_test.dart: large editor date and time validation retain draft and accepted values
+00:04 +50: /Users/lute/project/momcozy-lab/app/test/modules/schedule/personal_schedule_editor_test.dart: (tearDownAll)
+00:04 +50: All tests passed!

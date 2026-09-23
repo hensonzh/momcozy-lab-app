@@ -1,0 +1,11 @@
+{
+  "device": "emulator-5554",
+  "version": "1.0.0+57",
+  "flavor": "local/debug",
+  "me_and_baby_visual_checked": true,
+  "baby_selected_semantics": true,
+  "raised_avatar_tap": true,
+  "data_reset": false,
+  "records_saved": 0,
+  "apk_sha256": "3fb11f615fadf93d12a1d06f180928629ca2d0df9575e12496578b62bb170457"
+}

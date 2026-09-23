@@ -95,7 +95,7 @@ Future<void> capture(WidgetTester tester, String name, Widget child) async {
         await (key.currentContext!.findRenderObject()! as RenderRepaintBoundary)
             .toImage();
     final data = await image.toByteData(format: ui.ImageByteFormat.png);
-    final file = File('../design-assets/me-app-sync-20260920/actual/$name.png');
+    final file = File('build/design-evidence/me/actual/$name.png');
     await file.parent.create(recursive: true);
     await file.writeAsBytes(data!.buffer.asUint8List());
     image.dispose();
@@ -397,7 +397,7 @@ void main() {
               .toImage();
       final data = await image.toByteData(format: ui.ImageByteFormat.png);
       await File(
-        '../design-assets/me-app-sync-20260920/actual/confirmation.png',
+        'build/design-evidence/me/actual/confirmation.png',
       ).writeAsBytes(data!.buffer.asUint8List());
       image.dispose();
     });
@@ -453,7 +453,7 @@ void main() {
                 .toImage();
         final data = await image.toByteData(format: ui.ImageByteFormat.png);
         await File(
-          '../design-assets/me-app-sync-20260920/actual/$name.png',
+          'build/design-evidence/me/actual/$name.png',
         ).writeAsBytes(data!.buffer.asUint8List());
         image.dispose();
       });

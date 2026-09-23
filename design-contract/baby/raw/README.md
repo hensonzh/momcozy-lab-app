@@ -1,8 +1,8 @@
 # Baby：Figma → Flutter 视觉校准
 
-日期：2026-09-21。基准为 [Baby 最终设计页](https://www.figma.com/design/ePIoJkiMiXiug9ibpcgRbl/?node-id=370-1022)，以最新确认需求覆盖旧画板状态。此报告对应本轮视觉校准；此前功能、动效及本地后端部署记录见 [App 交付文档](../../app/docs/product/baby-app-uiux-20260920.md)。
+日期：2026-09-21。基准为 [Baby 最终设计页](https://www.figma.com/design/ePIoJkiMiXiug9ibpcgRbl/?node-id=370-1022)，以最新确认需求覆盖旧画板状态。此报告对应本轮视觉校准；此前功能、动效及本地后端部署记录见 [App 交付文档](../../../docs/product/baby-app-uiux-20260920.md)。
 
-**底栏补正：** 第一轮仅复用了 App 现有底栏，遗漏了 Me 最终导航的视觉同步。下文原有 21 个对比不包含底栏，不能代表完整页面验收。现已另外按 `483:1058` / `691:116` 更新共享底栏，完成独立比对及回归，见 [底栏补正记录](navigation/README.md)。
+**底栏补正：** 第一轮仅复用了 App 现有底栏，遗漏了 Me 最终导航的视觉同步。下文原有 21 个对比不包含底栏，不能代表完整页面验收。现已另外按 `483:1058` / `691:116` 更新共享底栏，完成独立比对及回归，见 [底栏补正记录](../evidence-assets/navigation/README.md)。
 
 ## 本轮修正
 
@@ -29,13 +29,13 @@
 
 本轮通过官方 Figma MCP 补齐了 manifest 中此前未落地的 11 个首页/生长节点参考图，存放在 `../references/figma-*.png`；对应 Flutter 同尺寸截图存放在 `../comparisons/actual-home-states/`，逐状态索引见 [home-state-captures.json](../comparisons/home-state-captures.json)。
 
-- [首页并排图](comparison/home/side-by-side.png)
-- [喂养并排图](comparison/feeding/side-by-side.png)
-- [便便并排图](comparison/stool/side-by-side.png)
-- [生长记录并排图](comparison/growth/side-by-side.png)
-- [资料保存中并排图](comparison/profile-saving/side-by-side.png)
-- [知识弹窗并排图](comparison/knowledge/side-by-side.png)
-- [切换宝宝并排图](comparison/switcher/side-by-side.png)
+- [首页并排图](../comparisons/comparison-current-final/home/side-by-side.png)
+- [喂养并排图](../comparisons/comparison-current-final/feeding/side-by-side.png)
+- [便便并排图](../comparisons/comparison-current-final/stool/side-by-side.png)
+- [生长记录并排图](../comparisons/comparison-current-final/growth/side-by-side.png)
+- [资料保存中并排图](../comparisons/comparison-current-final/profile-saving/side-by-side.png)
+- [知识弹窗并排图](../comparisons/comparison-current-final/knowledge/side-by-side.png)
+- [切换宝宝并排图](../comparisons/comparison-current-final/switcher/side-by-side.png)
 
 表单/资料使用 393×844 逻辑视口、DPR 1、顶部 24 / 底部 34 的固定安全区；首页长内容使用 390px 宽。隔离仓库固定 Luna、出生日期 2026-08-22、2026-09-13 日期及亚洲上海时区，未向真实账号写入这些示例。
 
@@ -45,7 +45,7 @@
 
 ## 验证和边界
 
-- `flutter analyze`：无问题，见 [日志](flutter-analyze.log)。
+- `flutter analyze`：无问题，见 [日志](../evidence-assets/flutter-analyze.log)。
 - `flutter test test/modules/baby test/app/baby_route_refresh_test.dart test/app/navigation_figma_capture_test.dart test/shared/route_motion_test.dart test/app/status_card_accessibility_test.dart`：116 项通过。包含 320/393/430px、大文字、键盘、根导航浮层、草稿、保存锁定、失败、动效和 11 个新增同尺寸状态夹具。
 - 30 份资源均非空，可解析；运行代码不引用 Figma 临时下载 URL。
 - `figma-to-app` skill 结构校验通过；脚本验证了相同图零差异、尺寸不一致拒绝、显式 DPR、裁切和越界拒绝。
@@ -56,7 +56,7 @@
 
 ## 可复用 skill
 
-已安装到 `/Users/lute/.codex/skills/figma-to-app/`。包括 `SKILL.md`、Flutter 注意事项、截图对比脚本和 Codex skill 元数据。后续可使用 `$figma-to-app`；流程要求最终节点清单、原始素材、原生交互、同尺寸比对、状态回归、设备复核及如实记录差异。
+已安装到 `$CODEX_HOME/skills/figma-to-app/`。包括 `SKILL.md`、Flutter 注意事项、截图对比脚本和 Codex skill 元数据。后续可使用 `$figma-to-app`；流程要求最终节点清单、原始素材、原生交互、同尺寸比对、状态回归、设备复核及如实记录差异。
 
 ## 本地安装复核
 
@@ -64,4 +64,4 @@
 
 原生界面复核通过：喂养必填禁用/补全激活、瓶喂二级选项、弹窗外部关闭、知识弹窗头像、切换宝宝、资料页返回、首页滚动末端。最终小图标已用 SVG 轮廓替换 1× PNG，设备上清晰显示。页面末端只保留底栏头像避让间距。
 
-见 [原生检查结果](native/verification.json)、[构建元数据及 SHA256](native/build.json)、[首页](native/home.png)、[喂养](native/feeding-selected.png)、[知识弹窗](native/knowledge.png)、[资料页](native/profile.png)、[滚动末端](native/home-bottom.png)。本次是 Android 模拟器检查，未进行 iOS/物理真机或帧率测量。构建通过，已有插件的 KGP 迁移提示为非阻断警告。
+见 [原生检查结果](../evidence-assets/native/verification.json)、[构建元数据及 SHA256](../evidence-assets/native/build.json)、[首页](../evidence-assets/native/home.png)、[喂养](../evidence-assets/native/feeding-selected.png)、[知识弹窗](../evidence-assets/native/knowledge.png)、[资料页](../evidence-assets/native/profile.png)、[滚动末端](../evidence-assets/native/home-bottom.png)。本次是 Android 模拟器检查，未进行 iOS/物理真机或帧率测量。构建通过，已有插件的 KGP 迁移提示为非阻断警告。

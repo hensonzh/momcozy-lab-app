@@ -1,0 +1,23 @@
+{
+  "reference": "design-contract/baby/references/figma-317-1237.png",
+  "actual": "design-contract/baby/comparisons/actual-current/profile-edited.png",
+  "reference_crop": [
+    0,
+    0,
+    393,
+    810
+  ],
+  "actual_crop": [
+    0,
+    0,
+    393,
+    810
+  ],
+  "actual_dpr": 1,
+  "size": [
+    393,
+    810
+  ],
+  "mean_absolute_channel_difference": 1.695610425240055,
+  "note": "Diagnostic only. Not a fidelity score or acceptance threshold."
+}

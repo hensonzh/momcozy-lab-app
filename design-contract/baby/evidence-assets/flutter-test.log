@@ -1,0 +1,184 @@
+Resolving dependencies...
+Downloading packages...
+  archive 4.0.9 (4.3.0 available)
+  clock 1.1.2 (1.1.3 available)
+  code_assets 1.2.1 (2.1.0 available)
+  cross_file 0.3.5+4 (0.3.5+5 available)
+  dart_webrtc 1.8.1 (1.8.2 available)
+  dbus 0.7.15 (0.8.0 available)
+  equatable 2.1.0 (3.0.0 available)
+  file_selector_android 0.5.2+8 (0.5.2+11 available)
+  file_selector_ios 0.5.3+5 (0.5.3+6 available)
+  file_selector_linux 0.9.4 (0.9.4+1 available)
+  file_selector_macos 0.9.5 (0.9.5+1 available)
+  file_selector_windows 0.9.3+5 (0.9.3+6 available)
+  firebase_core 4.14.0 (4.15.0 available)
+  firebase_core_web 3.11.0 (3.12.0 available)
+  firebase_messaging 16.6.0 (16.7.0 available)
+  flutter_markdown_plus 1.0.11 (1.0.12 available)
+  flutter_secure_storage 10.3.1 (11.2.0 available)
+  flutter_secure_storage_darwin 0.3.2 (0.4.3 available)
+  flutter_secure_storage_linux 3.0.1 (3.0.3 available)
+  flutter_secure_storage_platform_interface 2.0.1 (2.1.1 available)
+  flutter_webrtc 1.6.0 (1.6.2+hotfix.3 available)
+  go_router 17.3.0 (18.0.1 available)
+  hooks 2.0.2 (2.2.0 available)
+  html 0.15.6 (0.15.7 available)
+  image 4.9.1 (4.10.1 available)
+  image_picker_android 0.8.13+19 (0.8.13+23 available)
+  image_picker_ios 0.8.13+6 (0.8.13+7 available)
+  intl 0.20.2 (0.20.3 available)
+  jni 1.0.0 (1.0.3 available)
+  jni_flutter 1.0.1 (1.0.3 available)
+  livekit_client 2.12.0 (2.13.0 available)
+  logger 2.7.0 (2.8.0 available)
+  matcher 0.12.19 (0.12.20 available)
+  material_color_utilities 0.13.0 (0.13.1 available)
+  meta 1.18.0 (1.19.0 available)
+  mime 2.0.0 (2.1.0 available)
+  objective_c 9.4.1 (9.6.0 available)
+  package_config 2.2.0 (3.0.0 available)
+  pdfium_dart 0.1.3 (0.3.1 available)
+  pdfium_flutter 0.1.9 (0.3.1 available)
+  pdfrx 2.2.24 (2.6.5 available)
+  pdfrx_engine 0.3.9 (0.6.1 available)
+  platform 3.1.6 (3.2.0 available)
+  posix 6.5.0 (6.5.2 available)
+  process 5.0.5 (5.0.6 available)
+  protobuf 6.0.0 (6.1.0 available)
+  pub_semver 2.2.0 (2.2.1 available)
+  record_use 0.6.0 (1.1.1 available)
+  share_plus 13.2.0 (13.3.0 available)
+  share_plus_platform_interface 7.1.0 (7.2.0 available)
+  stack_trace 1.12.1 (1.12.2 available)
+  synchronized 3.4.1 (3.4.2 available)
+  test_api 0.7.11 (0.7.14 available)
+  url_launcher_android 6.3.32 (6.3.33 available)
+  url_launcher_ios 6.4.1 (6.4.2 available)
+  url_launcher_linux 3.2.2 (3.2.3 available)
+  url_launcher_macos 3.2.5 (3.2.6 available)
+  url_launcher_windows 3.1.5 (3.1.6 available)
+  uuid 4.5.3 (4.6.0 available)
+  vector_math 2.2.0 (2.4.3 available)
+  video_player 2.11.1 (2.14.0 available)
+  video_player_android 2.10.0 (2.12.2 available)
+  video_player_avfoundation 2.10.0 (2.12.0 available)
+  vm_service 15.2.0 (15.3.0 available)
+  webdriver 3.1.0 (3.2.0 available)
+  win32 6.3.0 (6.4.0 available)
+  yaml 3.1.3 (3.1.4 available)
+Got dependencies!
+67 packages have newer versions incompatible with dependency constraints.
+Try `flutter pub outdated` for more information.
+00:00 +0: loading /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_final_design_test.dart
+00:00 +0: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_controller_test.dart: failed creation retains its draft and unchanged retries use the same key
+00:00 +1: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_controller_test.dart: failed creation retains its draft and unchanged retries use the same key
+00:00 +2: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_profile_controller_test.dart: failed creation retains its draft and unchanged retries use the same key
+00:00 +3: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_motion_test.dart: press is visual only, releases on scroll/cancel, and never delays taps
+00:00 +4: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_motion_test.dart: press is visual only, releases on scroll/cancel, and never delays taps
+00:00 +5: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_motion_test.dart: press is visual only, releases on scroll/cancel, and never delays taps
+00:00 +6: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_motion_test.dart: press is visual only, releases on scroll/cancel, and never delays taps
+00:00 +7: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_motion_test.dart: press is visual only, releases on scroll/cancel, and never delays taps
+00:00 +8: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_motion_test.dart: press is visual only, releases on scroll/cancel, and never delays taps
+00:00 +9: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_motion_test.dart: press is visual only, releases on scroll/cancel, and never delays taps
+00:00 +10: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_motion_test.dart: press is visual only, releases on scroll/cancel, and never delays taps
+00:00 +11: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_motion_test.dart: press is visual only, releases on scroll/cancel, and never delays taps
+00:00 +12: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_motion_test.dart: press is visual only, releases on scroll/cancel, and never delays taps
+00:00 +13: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_motion_test.dart: press is visual only, releases on scroll/cancel, and never delays taps
+00:00 +14: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_motion_test.dart: press is visual only, releases on scroll/cancel, and never delays taps
+00:00 +15: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_current_flow_test.dart: home, switcher, knowledge and natural scroll 320.0/1.0
+00:00 +16: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_current_flow_test.dart: home, switcher, knowledge and natural scroll 320.0/1.0
+00:00 +17: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_current_flow_test.dart: home, switcher, knowledge and natural scroll 320.0/1.0
+00:00 +18: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_current_flow_test.dart: home, switcher, knowledge and natural scroll 320.0/1.0
+00:00 +19: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_current_flow_test.dart: home, switcher, knowledge and natural scroll 320.0/1.0
+00:00 +20: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_current_flow_test.dart: home, switcher, knowledge and natural scroll 320.0/1.0
+00:00 +21: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_current_flow_test.dart: home, switcher, knowledge and natural scroll 320.0/1.0
+00:00 +22: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_current_flow_test.dart: home, switcher, knowledge and natural scroll 320.0/1.0
+00:00 +23: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_current_flow_test.dart: home, switcher, knowledge and natural scroll 320.0/1.0
+00:00 +24: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_current_flow_test.dart: home, switcher, knowledge and natural scroll 320.0/1.0
+00:00 +25: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_current_flow_test.dart: home, switcher, knowledge and natural scroll 320.0/1.0
+00:00 +26: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_current_flow_test.dart: home, switcher, knowledge and natural scroll 320.0/1.0
+00:00 +27: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_current_flow_test.dart: home, switcher, knowledge and natural scroll 320.0/1.0
+00:00 +28: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_current_flow_test.dart: home, switcher, knowledge and natural scroll 320.0/1.0
+00:00 +29: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_current_flow_test.dart: home, switcher, knowledge and natural scroll 320.0/1.0
+00:00 +30: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_current_flow_test.dart: home, switcher, knowledge and natural scroll 320.0/1.0
+00:01 +31: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_current_flow_test.dart: home, switcher, knowledge and natural scroll 320.0/1.0
+00:01 +32: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_figma_capture_test.dart: Figma baby switcher capture
+00:01 +33: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_motion_test.dart: rapid tab changes keep one live form and preserve every draft
+00:01 +34: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_motion_test.dart: rapid tab changes keep one live form and preserve every draft
+00:01 +35: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_motion_test.dart: rapid tab changes keep one live form and preserve every draft
+00:01 +36: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_current_flow_test.dart: editor stays usable with keyboard BabyRecordKind.feeding 320.0/1.0
+00:01 +37: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_current_flow_test.dart: editor stays usable with keyboard BabyRecordKind.feeding 320.0/1.0
+00:01 +38: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_current_flow_test.dart: editor stays usable with keyboard BabyRecordKind.feeding 320.0/1.0
+00:01 +39: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_final_design_test.dart: layout BabyRecordKind.dailyStatus at 393.0
+00:01 +40: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_figma_capture_test.dart: Figma capture feeding
+00:01 +41: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_figma_capture_test.dart: Figma capture feeding
+00:01 +42: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_figma_capture_test.dart: Figma capture feeding
+00:01 +43: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_figma_capture_test.dart: Figma capture feeding
+00:01 +44: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_figma_capture_test.dart: Figma capture feeding
+00:01 +45: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_figma_capture_test.dart: Figma capture feeding
+00:01 +46: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_figma_capture_test.dart: Figma capture feeding
+00:01 +47: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_figma_capture_test.dart: Figma capture feeding
+00:01 +48: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_figma_capture_test.dart: Figma capture feeding
+00:01 +49: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_figma_capture_test.dart: Figma capture feeding
+00:01 +50: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_figma_capture_test.dart: Figma capture feeding
+00:01 +51: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_figma_capture_test.dart: Figma capture feeding
+00:01 +52: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_figma_capture_test.dart: Figma capture feeding
+00:01 +53: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_figma_capture_test.dart: Figma capture feeding
+00:01 +54: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_figma_capture_test.dart: Figma capture feeding
+00:01 +55: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_figma_capture_test.dart: Figma capture feeding
+00:01 +56: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_figma_capture_test.dart: Figma capture feeding
+00:01 +57: /Users/lute/project/momcozy-lab/app/test/shared/route_motion_test.dart: TargetPlatform.android route motion reduced=false
+00:01 +58: /Users/lute/project/momcozy-lab/app/test/shared/route_motion_test.dart: TargetPlatform.android route motion reduced=false
+00:01 +59: /Users/lute/project/momcozy-lab/app/test/shared/route_motion_test.dart: TargetPlatform.android route motion reduced=false
+00:01 +60: /Users/lute/project/momcozy-lab/app/test/shared/route_motion_test.dart: TargetPlatform.android route motion reduced=false
+00:01 +61: /Users/lute/project/momcozy-lab/app/test/shared/route_motion_test.dart: TargetPlatform.android route motion reduced=false
+00:01 +62: /Users/lute/project/momcozy-lab/app/test/shared/route_motion_test.dart: TargetPlatform.android route motion reduced=false
+00:01 +63: /Users/lute/project/momcozy-lab/app/test/shared/route_motion_test.dart: TargetPlatform.android route motion reduced=false
+00:01 +64: /Users/lute/project/momcozy-lab/app/test/shared/route_motion_test.dart: TargetPlatform.android route motion reduced=false
+00:01 +65: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_figma_capture_test.dart: Figma capture error
+00:01 +66: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_figma_capture_test.dart: Figma capture error
+00:01 +67: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_final_design_test.dart: profile remains open after save and only new edits enable saving
+00:01 +68: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_final_design_test.dart: profile remains open after save and only new edits enable saving
+00:01 +69: /Users/lute/project/momcozy-lab/app/test/app/status_card_accessibility_test.dart: mother and baby status cards expose a semantic tap action
+00:02 +70: /Users/lute/project/momcozy-lab/app/test/app/status_card_accessibility_test.dart: mother and baby status cards expose a semantic tap action
+00:02 +71: /Users/lute/project/momcozy-lab/app/test/app/status_card_accessibility_test.dart: mother and baby status cards expose a semantic tap action
+00:02 +72: /Users/lute/project/momcozy-lab/app/test/app/status_card_accessibility_test.dart: mother and baby status cards expose a semantic tap action
+00:02 +73: /Users/lute/project/momcozy-lab/app/test/app/status_card_accessibility_test.dart: mother and baby status cards expose a semantic tap action
+00:02 +74: /Users/lute/project/momcozy-lab/app/test/app/status_card_accessibility_test.dart: mother and baby status cards expose a semantic tap action
+00:02 +75: /Users/lute/project/momcozy-lab/app/test/app/status_card_accessibility_test.dart: mother and baby status cards expose a semantic tap action
+00:02 +76: /Users/lute/project/momcozy-lab/app/test/app/status_card_accessibility_test.dart: mother and baby status cards expose a semantic tap action
+00:02 +77: /Users/lute/project/momcozy-lab/app/test/app/status_card_accessibility_test.dart: mother and baby status cards expose a semantic tap action
+00:02 +78: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_figma_capture_test.dart: Figma capture incomplete
+00:02 +79: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_current_flow_test.dart: editor stays usable with keyboard BabyRecordKind.growth 393.0/1.0
+00:02 +80: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_figma_capture_test.dart: Figma capture mental
+00:02 +81: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_figma_capture_test.dart: Figma capture mental
+00:02 +82: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_current_flow_test.dart: editor stays usable with keyboard BabyRecordKind.feeding 393.0/2.0
+00:02 +83: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_figma_capture_test.dart: Figma capture selected
+00:02 +84: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_figma_capture_test.dart: Figma capture selected
+00:02 +85: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_figma_capture_test.dart: Figma capture selected
+00:02 +86: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_current_flow_test.dart: home, switcher, knowledge and natural scroll 430.0/1.0
+00:02 +87: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_figma_capture_test.dart: Figma capture cross-tab
+00:02 +88: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_current_flow_test.dart: editor stays usable with keyboard BabyRecordKind.feeding 430.0/1.0
+00:02 +89: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_figma_capture_test.dart: Figma capture wet
+00:02 +90: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_figma_capture_test.dart: Figma capture wet
+00:02 +91: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_figma_capture_test.dart: Figma capture wet
+00:02 +92: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_current_flow_test.dart: home, switcher, knowledge and natural scroll 430.0/2.0
+00:02 +93: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_figma_capture_test.dart: Figma capture stool
+00:02 +94: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_figma_capture_test.dart: Figma capture stool
+00:02 +95: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_figma_capture_test.dart: Figma capture stool
+00:02 +96: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_figma_capture_test.dart: Figma capture stool
+00:02 +97: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_current_flow_test.dart: feeding is two-level, one side only and mandatory choices gate save
+00:02 +98: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_figma_capture_test.dart: Figma capture growth
+00:03 +99: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_figma_capture_test.dart: Figma capture growth
+00:03 +100: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_current_flow_test.dart: outside dismissal during saving finishes the submitted snapshot
+00:03 +101: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_figma_capture_test.dart: Figma capture profile
+00:03 +102: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_figma_capture_test.dart: Figma capture profile-new
+00:03 +103: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_figma_capture_test.dart: Figma capture profile-edited
+00:03 +104: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_figma_capture_test.dart: Figma capture profile-saving
+00:03 +105: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_figma_capture_test.dart: Figma capture profile-saved
+00:03 +106: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_figma_capture_test.dart: Figma capture profile-again
+00:04 +107: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_figma_capture_test.dart: Figma capture profile-long
+00:04 +108: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_figma_capture_test.dart: Figma capture knowledge
+00:04 +109: /Users/lute/project/momcozy-lab/app/test/modules/baby/baby_figma_capture_test.dart: (tearDownAll)
+00:04 +109: All tests passed!

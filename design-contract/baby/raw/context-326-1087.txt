@@ -1,0 +1,352 @@
+const imgOriginalCozymatePortrait = "[temporary-export-url-omitted]";
+const imgChevronDownRounded = "[temporary-export-url-omitted]";
+const imgDecorationLilac = "[temporary-export-url-omitted]";
+const imgDecorationBlush = "[temporary-export-url-omitted]";
+const imgDecorationSpark = "[temporary-export-url-omitted]";
+const imgChevronRightRounded = "[temporary-export-url-omitted]";
+const imgDecorationBlush1 = "[temporary-export-url-omitted]";
+const imgDecorationDrop = "[temporary-export-url-omitted]";
+const imgDecorationWave = "[temporary-export-url-omitted]";
+const imgIconDrop = "[temporary-export-url-omitted]";
+const imgDecorationWarm = "[temporary-export-url-omitted]";
+const imgIconMentalState = "[temporary-export-url-omitted]";
+const imgDecorationWarm1 = "[temporary-export-url-omitted]";
+const imgDecorationDrop1 = "[temporary-export-url-omitted]";
+const imgIconDrop1 = "[temporary-export-url-omitted]";
+const imgDecorationBlush2 = "[temporary-export-url-omitted]";
+const imgDecorationWave1 = "[temporary-export-url-omitted]";
+const imgIconNote = "[temporary-export-url-omitted]";
+const imgDecorationWarm2 = "[temporary-export-url-omitted]";
+const imgDecorationRing = "[temporary-export-url-omitted]";
+const imgDecorationMint = "[temporary-export-url-omitted]";
+const imgDecorationRing1 = "[temporary-export-url-omitted]";
+const imgReferenceVisualFlutterRetainsAuthoritativeWhoData = "[temporary-export-url-omitted]";
+
+export default function ScrollablePage() {
+  return (
+    <div className="bg-[#fbf8f4] content-stretch flex flex-col gap-[14px] items-start p-[16px] relative size-full" data-node-id="326:1087" data-name="Scrollable page">
+      <div className="content-stretch flex gap-[8px] items-start overflow-clip relative shrink-0 w-[358px]" data-node-id="326:1088" data-name="Current baby">
+        <div className="content-stretch flex items-center justify-center overflow-clip relative shrink-0 size-[44px]" data-node-id="607:3" data-name="切换宝宝 · 左侧下拉按钮">
+          <div className="relative shrink-0 size-[20px]" data-node-id="607:4" data-name="Chevron down · rounded">
+            <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgChevronDownRounded} />
+          </div>
+        </div>
+        <div className="[word-break:break-word] content-stretch flex flex-col gap-[8px] items-start leading-[1.4] overflow-clip relative shrink-0" data-node-id="607:2" data-name="宝宝姓名与月龄">
+          <p className="font-['Noto_Sans_SC:Bold'] font-bold overflow-hidden relative shrink-0 text-[#2b2826] text-[26px] text-ellipsis w-[306px] whitespace-nowrap" data-node-id="326:1089">
+            Luna
+          </p>
+          <p className="font-['Noto_Sans_SC:Regular'] font-normal relative shrink-0 text-[#776e69] text-[12px] w-[306px]" data-node-id="326:1091">
+            女宝宝 · 3 周
+          </p>
+        </div>
+      </div>
+      <div className="bg-gradient-to-r content-stretch flex flex-col from-[#fff3ee] gap-[12px] items-start overflow-clip p-[18px] relative rounded-[22px] shrink-0 to-[#ead9fb] via-1/2 via-[#f8f0f7] w-[358px]" data-node-id="326:1092" data-name="Knowledge summary">
+        <div className="absolute inset-0 overflow-clip" data-node-id="351:1022" data-name="decoration/me-family">
+          <div className="absolute left-[252px] size-[140px] top-[-30px]" data-node-id="351:1023" data-name="decoration/lilac">
+            <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgDecorationLilac} />
+          </div>
+          <div className="absolute h-[92px] left-[-38px] top-[153px] w-[150px]" data-node-id="351:1024" data-name="decoration/blush">
+            <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgDecorationBlush} />
+          </div>
+          <div className="absolute left-[309px] size-[18px] top-[78px]" data-node-id="351:1025" data-name="decoration/spark">
+            <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgDecorationSpark} />
+          </div>
+        </div>
+        <div className="content-stretch flex gap-[12px] items-start overflow-clip relative shrink-0 w-[322px]" data-node-id="326:1093" data-name="Summary title and original portrait">
+          <div className="content-stretch flex flex-col items-start overflow-clip relative shrink-0 w-[260px]" data-node-id="326:1094" data-name="Summary heading">
+            <p className="[word-break:break-word] font-['Noto_Sans_SC:Bold'] font-bold leading-[1.4] relative shrink-0 text-[#2b2826] text-[18px] w-[260px]" data-node-id="326:1096">
+              比时间表更早出现的，是宝宝的饥饱信号
+            </p>
+          </div>
+          <div className="relative rounded-[25px] shrink-0 size-[50px]" data-node-id="326:1097" data-name="Original Cozymate portrait">
+            <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none rounded-[25px] size-full" src={imgOriginalCozymatePortrait} />
+          </div>
+        </div>
+        <p className="[word-break:break-word] font-['Noto_Sans_SC:Regular'] font-normal leading-[1.4] relative shrink-0 text-[#776e69] text-[13px] w-[322px]" data-node-id="326:1098">
+          新生宝宝会用动作表达需要。把记录时间和当时看到的信号放在一起回想，能更从容地认识宝宝自己的节奏。
+        </p>
+        <div className="content-stretch flex h-[31px] items-center justify-end overflow-clip relative shrink-0 w-[322px]" data-node-id="609:2" data-name="进入详情 · 圆角右向图标">
+          <div className="relative shrink-0 size-[20px]" data-node-id="609:3" data-name="Chevron right · rounded">
+            <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgChevronRightRounded} />
+          </div>
+        </div>
+      </div>
+      <div className="content-stretch flex gap-[8px] items-center overflow-clip relative shrink-0 w-[358px]" data-node-id="326:1128" data-name="Section / 今日吃奶">
+        <p className="[word-break:break-word] font-['Noto_Sans_SC:Bold'] font-bold leading-[1.4] relative shrink-0 text-[#2b2826] text-[18px] w-[282px]" data-node-id="326:1129">
+          今日吃奶
+        </p>
+        <div className="content-stretch flex flex-col items-start overflow-clip px-[10px] py-[13px] relative rounded-[14px] shrink-0 w-[68px]" data-node-id="326:1130" data-name="Action / 记录">
+          <p className="[word-break:break-word] font-['Noto_Sans_SC:Bold'] font-bold leading-[1.4] relative shrink-0 text-[#b54f78] text-[13px] text-center w-[48px]" data-node-id="326:1131">
+            记录
+          </p>
+        </div>
+      </div>
+      <div className="bg-gradient-to-r content-stretch flex flex-col from-[#fbece8] gap-[10px] items-start overflow-clip p-[16px] relative rounded-[22px] shrink-0 to-[#f7e5e1] w-[358px]" data-node-id="326:1132" data-name="Feeding summary">
+        <div className="absolute inset-0 overflow-clip" data-node-id="351:1040" data-name="decoration/me-family">
+          <div className="absolute h-[76.667px] left-[275px] top-[-24px] w-[125px]" data-node-id="351:1041" data-name="decoration/blush">
+            <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgDecorationBlush1} />
+          </div>
+          <div className="absolute h-[44.333px] left-[245px] top-[5px] w-[38px]" data-node-id="351:1042" data-name="decoration/drop">
+            <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgDecorationDrop} />
+          </div>
+          <div className="absolute h-[64px] left-[145px] top-[50px] w-[210px]" data-node-id="351:1044" data-name="decoration/wave">
+            <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgDecorationWave} />
+          </div>
+        </div>
+        <div className="content-stretch flex gap-[12px] items-center overflow-clip relative shrink-0 w-[326px]" data-node-id="326:1133" data-name="Feeding count">
+          <div className="relative shrink-0 size-[28px]" data-node-id="326:1134" data-name="Icon / drop">
+            <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgIconDrop} />
+          </div>
+          <p className="[word-break:break-word] font-['Noto_Sans_SC:Bold'] font-bold leading-[1.4] relative shrink-0 text-[#2b2826] text-[22px] w-[254px]" data-node-id="326:1136">
+            1 次
+          </p>
+          <div className="content-stretch flex h-[31px] items-center justify-center overflow-clip relative shrink-0 w-[28px]" data-node-id="609:5" data-name="进入详情 · 圆角右向图标">
+            <div className="relative shrink-0 size-[20px]" data-node-id="609:6" data-name="Chevron right · rounded">
+              <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgChevronRightRounded} />
+            </div>
+          </div>
+        </div>
+        <p className="[word-break:break-word] font-['Noto_Sans_SC:Regular'] font-normal leading-[1.4] relative shrink-0 text-[#776e69] text-[13px] w-[326px]" data-node-id="326:1138">
+          最近 17:00 · 已记录瓶喂 60 ml
+        </p>
+      </div>
+      <div className="content-stretch flex gap-[8px] items-center overflow-clip relative shrink-0 w-[358px]" data-node-id="326:1100" data-name="Section / 今日状态">
+        <p className="[word-break:break-word] font-['Noto_Sans_SC:Bold'] font-bold leading-[1.4] relative shrink-0 text-[#2b2826] text-[18px] w-[282px]" data-node-id="326:1101">
+          今日状态
+        </p>
+        <div className="content-stretch flex flex-col items-start overflow-clip px-[10px] py-[13px] relative rounded-[14px] shrink-0 w-[68px]" data-node-id="326:1102" data-name="Action / 记录">
+          <p className="[word-break:break-word] font-['Noto_Sans_SC:Bold'] font-bold leading-[1.4] relative shrink-0 text-[#b54f78] text-[13px] text-center w-[48px]" data-node-id="326:1103">
+            记录
+          </p>
+        </div>
+      </div>
+      <div className="content-stretch flex gap-[10px] items-start overflow-clip relative shrink-0 w-[358px]" data-node-id="326:1104" data-name="Daily summary">
+        <div className="bg-gradient-to-r content-stretch flex flex-col from-[#f8f2e9] h-[148px] items-start justify-between overflow-clip p-[12px] relative rounded-[22px] shrink-0 to-[#f4eadb] w-[112.667px]" data-node-id="326:1105" data-name="吃奶后精神状态 summary">
+          <div className="absolute inset-0 overflow-clip" data-node-id="351:1027" data-name="decoration/me-family">
+            <div className="absolute left-[48.67px] size-[90px] top-[90px]" data-node-id="351:1028" data-name="decoration/warm">
+              <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgDecorationWarm} />
+            </div>
+          </div>
+          <div className="content-stretch flex flex-col gap-[8px] items-start overflow-clip relative shrink-0 w-[88.667px]" data-node-id="326:1106" data-name="Label and icon">
+            <div className="relative shrink-0 size-[28px]" data-node-id="667:20" data-name="Icon / mental-state">
+              <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgIconMentalState} />
+            </div>
+            <div className="[word-break:break-word] font-['Noto_Sans_SC:Regular'] font-normal leading-[0] relative shrink-0 text-[#776e69] text-[12px] w-[88.667px]" data-node-id="326:1109">
+              <p className="leading-[16px] mb-0">吃奶后</p>
+              <p className="leading-[16px]">精神状态</p>
+            </div>
+          </div>
+          <div className="[word-break:break-word] content-stretch flex flex-col gap-[2px] items-start overflow-clip relative shrink-0 w-[88.667px]" data-node-id="326:1110" data-name="Value">
+            <p className="font-['Noto_Sans_SC:Regular'] font-normal leading-[1.4] relative shrink-0 text-[#776e69] text-[12px] w-[88.667px]" data-node-id="326:1111">
+              最近
+            </p>
+            <p className="font-['Noto_Sans_SC:Bold'] font-bold leading-[22px] relative shrink-0 text-[#2b2826] text-[16px] w-[88.667px]" data-node-id="326:1112">
+              平静满足
+            </p>
+          </div>
+        </div>
+        <div className="bg-gradient-to-r content-stretch flex flex-col from-[#f7f1e7] h-[148px] items-start justify-between overflow-clip p-[12px] relative rounded-[22px] shrink-0 to-[#f2e9db] w-[112.667px]" data-node-id="326:1113" data-name="尿湿 summary">
+          <div className="absolute inset-0 overflow-clip" data-node-id="351:1031" data-name="decoration/me-family">
+            <div className="absolute left-[57.67px] size-[82px] top-[97px]" data-node-id="351:1032" data-name="decoration/warm">
+              <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgDecorationWarm1} />
+            </div>
+            <div className="absolute h-[39.667px] left-[74.67px] top-[17px] w-[34px]" data-node-id="351:1033" data-name="decoration/drop">
+              <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgDecorationDrop1} />
+            </div>
+          </div>
+          <div className="content-stretch flex flex-col gap-[8px] items-start overflow-clip relative shrink-0 w-[88.667px]" data-node-id="326:1114" data-name="Label and icon">
+            <div className="relative shrink-0 size-[28px]" data-node-id="326:1115" data-name="Icon / drop">
+              <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgIconDrop1} />
+            </div>
+            <p className="[word-break:break-word] font-['Noto_Sans_SC:Regular'] font-normal leading-[1.4] relative shrink-0 text-[#776e69] text-[14px] w-[88.667px]" data-node-id="326:1117">
+              尿湿
+            </p>
+          </div>
+          <div className="content-stretch flex flex-col items-start overflow-clip relative shrink-0 w-[88.667px]" data-node-id="326:1118" data-name="Value">
+            <p className="[word-break:break-word] font-['Noto_Sans_SC:Bold'] font-bold leading-[1.4] relative shrink-0 text-[#2b2826] text-[22px] w-[88.667px]" data-node-id="326:1119">
+              1 次
+            </p>
+          </div>
+        </div>
+        <div className="bg-gradient-to-r content-stretch flex flex-col from-[#fbece8] h-[148px] items-start justify-between overflow-clip p-[12px] relative rounded-[22px] shrink-0 to-[#f7e3df] w-[112.667px]" data-node-id="326:1120" data-name="便便 summary">
+          <div className="absolute inset-0 overflow-clip" data-node-id="351:1035" data-name="decoration/me-family">
+            <div className="absolute h-[66.24px] left-[38.67px] top-[99px] w-[108px]" data-node-id="351:1036" data-name="decoration/blush">
+              <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgDecorationBlush2} />
+            </div>
+            <div className="absolute h-[48.762px] left-[-16.33px] top-[102px] w-[160px]" data-node-id="351:1037" data-name="decoration/wave">
+              <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgDecorationWave1} />
+            </div>
+          </div>
+          <div className="content-stretch flex flex-col gap-[8px] items-start overflow-clip relative shrink-0 w-[88.667px]" data-node-id="326:1121" data-name="Label and icon">
+            <div className="relative shrink-0 size-[28px]" data-node-id="326:1122" data-name="Icon / note">
+              <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgIconNote} />
+            </div>
+            <p className="[word-break:break-word] font-['Noto_Sans_SC:Regular'] font-normal leading-[1.4] relative shrink-0 text-[#776e69] text-[14px] w-[88.667px]" data-node-id="326:1125">
+              便便
+            </p>
+          </div>
+          <div className="content-stretch flex flex-col items-start overflow-clip relative shrink-0 w-[88.667px]" data-node-id="326:1126" data-name="Value">
+            <p className="[word-break:break-word] font-['Noto_Sans_SC:Bold'] font-bold leading-[1.4] relative shrink-0 text-[#2b2826] text-[22px] w-[88.667px]" data-node-id="326:1127">
+              1 次
+            </p>
+          </div>
+        </div>
+      </div>
+      <div className="content-stretch flex gap-[8px] items-center overflow-clip relative shrink-0 w-[358px]" data-node-id="326:1139" data-name="Section / 生长发育记录">
+        <p className="[word-break:break-word] font-['Noto_Sans_SC:Bold'] font-bold leading-[1.4] relative shrink-0 text-[#2b2826] text-[18px] w-[282px]" data-node-id="326:1140">
+          生长发育记录
+        </p>
+        <div className="content-stretch flex flex-col items-start overflow-clip px-[10px] py-[13px] relative rounded-[14px] shrink-0 w-[68px]" data-node-id="326:1141" data-name="Action / 记录">
+          <p className="[word-break:break-word] font-['Noto_Sans_SC:Bold'] font-bold leading-[1.4] relative shrink-0 text-[#b54f78] text-[13px] text-center w-[48px]" data-node-id="326:1142">
+            记录
+          </p>
+        </div>
+      </div>
+      <div className="content-stretch flex gap-[10px] items-center overflow-clip relative shrink-0 w-[358px]" data-node-id="326:1143" data-name="Latest measurements">
+        <div className="bg-[#fffdfc] border border-[#e9e1dc] border-solid content-stretch flex flex-col gap-[8px] items-start overflow-clip p-[12px] relative rounded-[22px] shrink-0 w-[112.667px]" data-node-id="326:1144" data-name="体重">
+          <div className="absolute inset-[-1px] overflow-clip" data-node-id="351:1047" data-name="decoration/me-family">
+            <div className="absolute left-[72.67px] size-[76px] top-[61px]" data-node-id="351:1048" data-name="decoration/warm">
+              <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgDecorationWarm2} />
+            </div>
+            <div className="absolute left-[66.67px] size-[64px] top-[59px]" data-node-id="351:1049" data-name="decoration/ring">
+              <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgDecorationRing} />
+            </div>
+          </div>
+          <p className="[word-break:break-word] font-['Noto_Sans_SC:Regular'] font-normal leading-[1.4] relative shrink-0 text-[#776e69] text-[13px] w-[88.667px]" data-node-id="326:1145">
+            体重
+          </p>
+          <p className="[word-break:break-word] font-['Noto_Sans_SC:Bold'] font-bold leading-[1.4] relative shrink-0 text-[#2b2826] text-[22px] w-[88.667px]" data-node-id="326:1146">
+            4.2 kg
+          </p>
+          <p className="[word-break:break-word] font-['Noto_Sans_SC:Regular'] font-normal leading-[1.4] relative shrink-0 text-[#776e69] text-[12px] w-[88.667px]" data-node-id="326:1147">
+            9/8
+          </p>
+        </div>
+        <div className="bg-[#fffdfc] border border-[#e9e1dc] border-solid content-stretch flex flex-col gap-[8px] items-start overflow-clip p-[12px] relative rounded-[22px] shrink-0 w-[112.667px]" data-node-id="326:1148" data-name="身长">
+          <div className="absolute inset-[-1px] overflow-clip" data-node-id="351:1050" data-name="decoration/me-family">
+            <div className="absolute left-[72.67px] size-[76px] top-[61px]" data-node-id="351:1051" data-name="decoration/warm">
+              <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgDecorationWarm2} />
+            </div>
+            <div className="absolute left-[66.67px] size-[64px] top-[59px]" data-node-id="351:1052" data-name="decoration/ring">
+              <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgDecorationRing} />
+            </div>
+          </div>
+          <p className="[word-break:break-word] font-['Noto_Sans_SC:Regular'] font-normal leading-[1.4] relative shrink-0 text-[#776e69] text-[13px] w-[88.667px]" data-node-id="326:1149">
+            身长
+          </p>
+          <p className="[word-break:break-word] font-['Noto_Sans_SC:Bold'] font-bold leading-[1.4] relative shrink-0 text-[#2b2826] text-[22px] w-[88.667px]" data-node-id="326:1150">
+            54 cm
+          </p>
+          <p className="[word-break:break-word] font-['Noto_Sans_SC:Regular'] font-normal leading-[1.4] relative shrink-0 text-[#776e69] text-[12px] w-[88.667px]" data-node-id="326:1151">
+            9/8
+          </p>
+        </div>
+        <div className="bg-[#fffdfc] border border-[#e9e1dc] border-solid content-stretch flex flex-col gap-[8px] items-start overflow-clip p-[12px] relative rounded-[22px] shrink-0 w-[112.667px]" data-node-id="326:1152" data-name="头围">
+          <div className="absolute inset-[-1px] overflow-clip" data-node-id="351:1053" data-name="decoration/me-family">
+            <div className="absolute left-[72.67px] size-[76px] top-[61px]" data-node-id="351:1054" data-name="decoration/warm">
+              <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgDecorationWarm2} />
+            </div>
+            <div className="absolute left-[66.67px] size-[64px] top-[59px]" data-node-id="351:1055" data-name="decoration/ring">
+              <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgDecorationRing} />
+            </div>
+          </div>
+          <p className="[word-break:break-word] font-['Noto_Sans_SC:Regular'] font-normal leading-[1.4] relative shrink-0 text-[#776e69] text-[13px] w-[88.667px]" data-node-id="326:1153">
+            头围
+          </p>
+          <p className="[word-break:break-word] font-['Noto_Sans_SC:Bold'] font-bold leading-[1.4] relative shrink-0 text-[#2b2826] text-[22px] w-[88.667px]" data-node-id="326:1154">
+            36 cm
+          </p>
+          <p className="[word-break:break-word] font-['Noto_Sans_SC:Regular'] font-normal leading-[1.4] relative shrink-0 text-[#776e69] text-[12px] w-[88.667px]" data-node-id="326:1155">
+            9/8
+          </p>
+        </div>
+      </div>
+      <div className="bg-[#fffdfc] border border-[#e9e1dc] border-solid content-stretch flex flex-col gap-[12px] items-start overflow-clip p-[16px] relative rounded-[22px] shrink-0 w-[358px]" data-node-id="326:1156" data-name="Growth trend / 体重">
+        <div className="absolute inset-[-1px_-1px_280px_-1px] overflow-clip" data-node-id="351:1056" data-name="decoration/me-family">
+          <div className="absolute left-[289px] size-[118px] top-[-47px]" data-node-id="351:1057" data-name="decoration/mint">
+            <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgDecorationMint} />
+          </div>
+          <div className="absolute left-[302px] size-[80px] top-[-25px]" data-node-id="351:1058" data-name="decoration/ring">
+            <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgDecorationRing1} />
+          </div>
+        </div>
+        <p className="[word-break:break-word] font-['Noto_Sans_SC:Bold'] font-bold leading-[1.4] relative shrink-0 text-[#2b2826] text-[16px] w-[326px]" data-node-id="326:1157">
+          生长趋势
+        </p>
+        <p className="[word-break:break-word] font-['Noto_Sans_SC:Regular'] font-normal leading-[1.4] relative shrink-0 text-[#776e69] text-[12px] w-[326px]" data-node-id="326:1158">
+          出生至 6 月 · 女宝宝 · kg
+        </p>
+        <div className="bg-[#f2ebe5] content-stretch flex gap-[4px] items-center overflow-clip relative rounded-[14px] shrink-0 w-[326px]" data-node-id="326:1159" data-name="Growth metric selection">
+          <div className="bg-[#f7eff7] content-stretch flex flex-col items-start overflow-clip px-[10px] py-[13px] relative rounded-[14px] shrink-0 w-[106px]" data-node-id="326:1160" data-name="Action / 体重">
+            <p className="[word-break:break-word] font-['Noto_Sans_SC:Bold'] font-bold leading-[1.4] relative shrink-0 text-[#865c80] text-[13px] text-center w-[86px]" data-node-id="326:1161">
+              体重
+            </p>
+          </div>
+          <div className="content-stretch flex flex-col items-start overflow-clip px-[10px] py-[13px] relative rounded-[14px] shrink-0 w-[106px]" data-node-id="326:1162" data-name="Action / 身长">
+            <p className="[word-break:break-word] font-['Noto_Sans_SC:Bold'] font-bold leading-[1.4] relative shrink-0 text-[#b54f78] text-[13px] text-center w-[86px]" data-node-id="326:1163">
+              身长
+            </p>
+          </div>
+          <div className="content-stretch flex flex-col items-start overflow-clip px-[10px] py-[13px] relative rounded-[14px] shrink-0 w-[106px]" data-node-id="326:1164" data-name="Action / 头围">
+            <p className="[word-break:break-word] font-['Noto_Sans_SC:Bold'] font-bold leading-[1.4] relative shrink-0 text-[#b54f78] text-[13px] text-center w-[86px]" data-node-id="326:1165">
+              头围
+            </p>
+          </div>
+        </div>
+        <div className="bg-[#fffdfc] h-[145px] overflow-clip relative shrink-0 w-[326px]" data-node-id="326:1166" data-name="Same data coordinates and WHO range">
+          <div className="absolute bg-[#e9e1dc] h-px left-[35px] top-[10px] w-[273px]" data-node-id="326:1167" data-name="Grid" />
+          <p className="[word-break:break-word] absolute font-['Noto_Sans_SC:Regular'] font-normal leading-[1.4] left-0 text-[#776e69] text-[10px] top-[3px] w-[32px]" data-node-id="326:1168">
+            10.3
+          </p>
+          <div className="absolute bg-[#e9e1dc] h-px left-[35px] top-[36.75px] w-[273px]" data-node-id="326:1169" data-name="Grid" />
+          <p className="[word-break:break-word] absolute font-['Noto_Sans_SC:Regular'] font-normal leading-[1.4] left-0 text-[#776e69] text-[10px] top-[29.75px] w-[32px]" data-node-id="326:1170">
+            8.2
+          </p>
+          <div className="absolute bg-[#e9e1dc] h-px left-[35px] top-[63.5px] w-[273px]" data-node-id="326:1171" data-name="Grid" />
+          <p className="[word-break:break-word] absolute font-['Noto_Sans_SC:Regular'] font-normal leading-[1.4] left-0 text-[#776e69] text-[10px] top-[56.5px] w-[32px]" data-node-id="326:1172">
+            6.0
+          </p>
+          <div className="absolute bg-[#e9e1dc] h-px left-[35px] top-[90.25px] w-[273px]" data-node-id="326:1173" data-name="Grid" />
+          <p className="[word-break:break-word] absolute font-['Noto_Sans_SC:Regular'] font-normal leading-[1.4] left-0 text-[#776e69] text-[10px] top-[83.25px] w-[32px]" data-node-id="326:1174">
+            3.8
+          </p>
+          <div className="absolute bg-[#e9e1dc] h-px left-[35px] top-[117px] w-[273px]" data-node-id="326:1175" data-name="Grid" />
+          <p className="[word-break:break-word] absolute font-['Noto_Sans_SC:Regular'] font-normal leading-[1.4] left-0 text-[#776e69] text-[10px] top-[110px] w-[32px]" data-node-id="326:1176">
+            1.7
+          </p>
+          <p className="[word-break:break-word] absolute font-['Noto_Sans_SC:Regular'] font-normal leading-[1.4] left-[25px] text-[#776e69] text-[10px] top-[125px] w-[32px]" data-node-id="326:1177">
+            0月
+          </p>
+          <p className="[word-break:break-word] absolute font-['Noto_Sans_SC:Regular'] font-normal leading-[1.4] left-[116px] text-[#776e69] text-[10px] top-[125px] w-[32px]" data-node-id="326:1178">
+            2月
+          </p>
+          <p className="[word-break:break-word] absolute font-['Noto_Sans_SC:Regular'] font-normal leading-[1.4] left-[207px] text-[#776e69] text-[10px] top-[125px] w-[32px]" data-node-id="326:1179">
+            4月
+          </p>
+          <p className="[word-break:break-word] absolute font-['Noto_Sans_SC:Regular'] font-normal leading-[1.4] left-[298px] text-[#776e69] text-[10px] top-[125px] w-[32px]" data-node-id="326:1180">
+            6月
+          </p>
+          <div className="absolute h-[107px] left-[35px] top-[10px] w-[273px]" data-node-id="326:1181" data-name="Reference visual: Flutter retains authoritative WHO data">
+            <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgReferenceVisualFlutterRetainsAuthoritativeWhoData} />
+          </div>
+        </div>
+        <div className="bg-[#e9e1dc] h-px relative shrink-0 w-[326px]" data-node-id="326:1185" data-name="Divider" />
+        <p className="[word-break:break-word] font-['Noto_Sans_SC:Regular'] font-normal leading-[1.4] relative shrink-0 text-[#776e69] text-[13px] w-[326px]" data-node-id="326:1186">
+          深色线是 Luna 的记录，浅绿色为 WHO 同龄参考范围。适合观察长期变化，不能根据单次测量下结论。
+        </p>
+      </div>
+    </div>
+  );
+}
+
+SUPER CRITICAL: The generated React+Tailwind code MUST be converted to match the target project's technology stack and styling system.
+1. Analyze the target codebase to identify: technology stack, styling approach, component patterns, and design tokens
+2. Convert React syntax to the target framework/library
+3. Transform all Tailwind classes to the target styling system while preserving exact visual design
+4. Follow the project's existing patterns and conventions
+DO NOT install any Tailwind as a dependency unless the user instructs you to do so.
+
+
+Node ids have been added to the code as data attributes, e.g. `data-node-id="1:2"`.
+
+Images and SVGs will be stored as constants, e.g. const image = '[temporary-export-url-omitted]'. These constants will be used in the code as the source for the image, ex: <img src={image} />. Image assets are stored on a remote server for 7 days and can be fetched using the provided URLs until they expire.

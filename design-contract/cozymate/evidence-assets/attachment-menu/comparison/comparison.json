@@ -1,0 +1,13 @@
+{
+  "reference": "design-contract/cozymate/evidence-assets/attachment-menu/figma-menu.png",
+  "actual": "design-contract/cozymate/evidence-assets/attachment-menu/app-menu.png",
+  "reference_crop": null,
+  "actual_crop": null,
+  "actual_dpr": 1,
+  "size": [
+    220,
+    156
+  ],
+  "mean_absolute_channel_difference": 2.840073815073815,
+  "note": "Diagnostic only. Not a fidelity score or acceptance threshold."
+}

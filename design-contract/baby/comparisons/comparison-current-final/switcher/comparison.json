@@ -1,0 +1,23 @@
+{
+  "reference": "design-contract/baby/references/figma-621-198.png",
+  "actual": "design-contract/baby/comparisons/actual-current/switcher.png",
+  "reference_crop": [
+    0,
+    0,
+    393,
+    384
+  ],
+  "actual_crop": [
+    0,
+    426,
+    393,
+    810
+  ],
+  "actual_dpr": 1,
+  "size": [
+    393,
+    384
+  ],
+  "mean_absolute_channel_difference": 2.5253724024597117,
+  "note": "Diagnostic only. Not a fidelity score or acceptance threshold."
+}

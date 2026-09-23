@@ -1,0 +1,159 @@
+const imgEllipse = "https://www.figma.com/api/mcp/asset/a7128d69-b1a2-49db-996d-c16edd6e2d51.png";
+const imgArtworkSoftMe = "https://www.figma.com/api/mcp/asset/77a2e7c0-f2c3-44ee-ae96-e11c7b9b781c.png";
+const imgArtworkSoftBaby = "https://www.figma.com/api/mcp/asset/842eb30a-55b7-4892-a199-b7181b0146d3.png";
+const imgAvatarCozymateNav = "https://www.figma.com/api/mcp/asset/2ecbd8cc-2077-43bc-b119-1b7bae2a80f6.png";
+const imgIconComposerV2 = "https://www.figma.com/api/mcp/asset/5112062d-0fc4-4b70-8ac3-c99fa58572f2.svg";
+const imgIconComposerV3 = "https://www.figma.com/api/mcp/asset/43581f69-a4df-4198-8b23-5f60ff9afae4.svg";
+const imgArtworkColorSchedule = "https://www.figma.com/api/mcp/asset/2b2ce28f-d0f5-40f1-9de2-43fd4d82c080.svg";
+const imgArtworkColorMore = "https://www.figma.com/api/mcp/asset/316b4a74-0cbd-4d96-85b5-62d50f0a5ca0.svg";
+
+export default function CozymateReply() {
+  return (
+    <div className="bg-[var(--momcozy\/background,#fbf8f4)] content-stretch flex flex-col items-start relative size-full" data-node-id="246:1212" data-name="Cozymate / reply">
+      <div className="content-stretch flex flex-[1_0_0] flex-col items-start min-h-px overflow-x-clip overflow-y-auto pb-[16px] pt-[24px] px-[16px] relative w-full" data-node-id="246:1220" data-name="scrolling transcript">
+        <div className="content-stretch flex flex-col gap-[18px] items-start relative shrink-0 w-full" data-node-id="246:1221" data-name="messages">
+          <div className="content-stretch flex flex-col items-start relative shrink-0 w-full" data-node-id="246:1222" data-name="assistant turn">
+            <div className="content-stretch flex gap-[10px] items-start relative shrink-0 w-full" data-node-id="246:1223" data-name="portrait and message">
+              <div className="relative shrink-0 size-[40px]" data-node-id="246:1224" data-name="Ellipse">
+                <img alt="" className="absolute block inset-0 max-w-none size-full" height="40" src={imgEllipse} width="40" />
+              </div>
+              <div className="content-stretch flex flex-[1_0_0] flex-col items-start min-w-px relative" data-node-id="246:1225" data-name="message content">
+                <div className="bg-[var(--momcozy\/surface,#fffdfc)] border border-[var(--momcozy\/border,#e9e1dc)] border-solid content-stretch flex flex-col items-start p-[16px] relative rounded-[22px] shrink-0 w-full" data-node-id="246:1226" data-name="reply">
+                  <div className="[word-break:break-word] font-['Noto_Sans_SC:Regular'] font-normal leading-[0] relative shrink-0 text-[16px] text-[color:var(--momcozy\/ink,#2b2826)] w-full whitespace-pre-wrap" data-node-id="246:1227">
+                    <p className="leading-[1.4] mb-0">嗨 Mia，</p>
+                    <p className="leading-[1.4] mb-0">​</p>
+                    <p className="leading-[1.4] mb-0">今天想聊点什么呢？</p>
+                    <p className="leading-[1.4] mb-0">​</p>
+                    <p className="leading-[1.4]">把你现在最关心的事情告诉我就好，我会陪你一起梳理。</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="content-stretch flex items-start justify-end relative shrink-0 w-full" data-node-id="246:1228" data-name="user alignment">
+            <div className="bg-[var(--momcozy\/rose,#b54f78)] content-stretch flex flex-col items-start p-[14px] relative rounded-[22px] shrink-0 w-[310px]" data-node-id="246:1229" data-name="user message">
+              <p className="[word-break:break-word] font-['Noto_Sans_SC:Regular'] font-normal leading-[1.4] relative shrink-0 text-[16px] text-[color:var(--momcozy\/surface,#fffdfc)] w-full" data-node-id="246:1230">
+                这是一条仅用于本地视觉检查的消息。
+              </p>
+            </div>
+          </div>
+          <div className="content-stretch flex flex-col items-start relative shrink-0 w-full" data-node-id="246:1231" data-name="assistant turn">
+            <div className="content-stretch flex gap-[10px] items-start relative shrink-0 w-full" data-node-id="246:1232" data-name="portrait and message">
+              <div className="relative shrink-0 size-[40px]" data-node-id="246:1233" data-name="Ellipse">
+                <img alt="" className="absolute block inset-0 max-w-none size-full" height="40" src={imgEllipse} width="40" />
+              </div>
+              <div className="content-stretch flex flex-[1_0_0] flex-col items-start min-w-px relative" data-node-id="246:1234" data-name="message content">
+                <div className="bg-[var(--momcozy\/surface,#fffdfc)] border border-[var(--momcozy\/border,#e9e1dc)] border-solid content-stretch flex flex-col items-start p-[16px] relative rounded-[22px] shrink-0 w-full" data-node-id="246:1235" data-name="reply">
+                  <p className="[word-break:break-word] font-['Noto_Sans_SC:Regular'] font-normal leading-[1.4] relative shrink-0 text-[16px] text-[color:var(--momcozy\/ink,#2b2826)] w-full" data-node-id="246:1236">
+                    这是本地视觉测试回复，不包含健康判断。
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="content-stretch flex flex-col gap-[12px] items-start pb-[20px] pt-[16px] px-[16px] relative shrink-0 w-full" data-node-id="246:1237" data-name="shortcuts and composer">
+        <div className="content-stretch flex gap-[8px] items-start relative shrink-0 w-full" data-node-id="246:1238" data-name="existing shortcuts">
+          <div className="border border-[var(--momcozy\/border,#e9e1dc)] border-solid content-stretch flex flex-col items-start justify-center min-h-[44px] px-[12px] py-[4px] relative rounded-[16px] shrink-0 w-[76px]" data-node-id="246:1239" data-name="button/奶量分析">
+            <p className="[word-break:break-word] font-['Noto_Sans_SC:Bold'] font-bold leading-[1.4] relative shrink-0 text-[13px] text-[color:var(--momcozy\/rose,#b54f78)] text-center w-full" data-node-id="246:1240">
+              奶量分析
+            </p>
+          </div>
+          <div className="border border-[var(--momcozy\/border,#e9e1dc)] border-solid content-stretch flex flex-col items-start justify-center min-h-[44px] px-[12px] py-[4px] relative rounded-[16px] shrink-0 w-[102px]" data-node-id="246:1241" data-name="button/产后康复评估">
+            <p className="[word-break:break-word] font-['Noto_Sans_SC:Bold'] font-bold leading-[1.4] relative shrink-0 text-[13px] text-[color:var(--momcozy\/rose,#b54f78)] text-center w-full" data-node-id="246:1242">
+              产后康复评估
+            </p>
+          </div>
+        </div>
+        <div className="bg-[var(--momcozy\/surface,#fffdfc)] border border-[#e9dfe4] border-solid content-stretch flex flex-col items-start p-[6px] relative rounded-[20px] shrink-0 w-full" data-node-id="246:1243" data-name="adaptive composer">
+          <div className="content-stretch flex gap-[4px] items-center relative shrink-0 w-full" data-node-id="246:1244" data-name="attachment and send">
+            <div className="content-stretch flex flex-col items-center justify-center relative rounded-[16px] shrink-0 size-[44px]" data-node-id="246:1245" data-name="control/+">
+              <div className="relative shrink-0 size-[44px]" data-node-id="723:1092" data-name="icon/composer-v2">
+                <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgIconComposerV2} />
+              </div>
+            </div>
+            <p className="[word-break:break-word] flex-[1_0_0] font-['Noto_Sans_SC:Regular'] font-normal leading-[22px] min-w-px relative text-[#95898f] text-[15px]" data-node-id="246:1247">
+              和 Cozymate 聊聊...
+            </p>
+            <div className="content-stretch flex flex-col items-center justify-center relative rounded-[22px] shrink-0 size-[44px]" data-node-id="246:1248" data-name="control/➤">
+              <div className="relative shrink-0 size-[44px]" data-node-id="723:1094" data-name="icon/composer-v2">
+                <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgIconComposerV3} />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="bg-[#fffcfa] h-[82px] relative shrink-0 w-[393px]" data-node-id="613:1795" data-name="navigation/bottom · Cozymate active">
+        <div className="absolute bg-[rgba(198,182,194,0.22)] h-[0.5px] left-0 top-0 w-[393px]" data-node-id="613:1796" data-name="divider/top" />
+        <div className="absolute h-[58px] left-[8px] top-[5px] w-[75.4px]" data-node-id="613:1797" data-name="tab/me">
+          <div className="absolute h-[34px] left-[16.7px] rounded-[14px] top-[3px] w-[42px]" data-node-id="613:1798" data-name="slot/icon">
+            <div className="absolute left-[7px] size-[28px] top-[3px]" data-node-id="613:1799" data-name="icon/me">
+              <div className="absolute left-0 size-[28px] top-0" data-node-id="613:1800" data-name="artwork/soft-me">
+                <img alt="" className="absolute inset-0 max-w-none object-contain pointer-events-none size-full" src={imgArtworkSoftMe} />
+              </div>
+            </div>
+          </div>
+          <p className="-translate-x-1/2 [word-break:break-word] absolute font-['DM_Sans:Medium'] font-medium h-[16px] leading-[16px] left-[37.7px] text-[#786d77] text-[12px] text-center top-[42px] w-[75.4px]" data-node-id="613:1801" style={{ fontVariationSettings: '"opsz" 14' }}>
+            Me
+          </p>
+        </div>
+        <div className="absolute h-[58px] left-[83.4px] top-[5px] w-[75.4px]" data-node-id="613:1802" data-name="tab/baby">
+          <div className="absolute h-[34px] left-[16.7px] rounded-[14px] top-[3px] w-[42px]" data-node-id="613:1803" data-name="slot/icon">
+            <div className="absolute left-[7px] size-[28px] top-[3px]" data-node-id="613:1804" data-name="icon/baby">
+              <div className="absolute left-0 size-[28px] top-0" data-node-id="613:1805" data-name="artwork/soft-baby">
+                <img alt="" className="absolute inset-0 max-w-none object-contain pointer-events-none size-full" src={imgArtworkSoftBaby} />
+              </div>
+            </div>
+          </div>
+          <p className="-translate-x-1/2 [word-break:break-word] absolute font-['DM_Sans:Medium'] font-medium h-[16px] leading-[16px] left-[37.7px] text-[#786d77] text-[12px] text-center top-[42px] w-[75.4px]" data-node-id="613:1806" style={{ fontVariationSettings: '"opsz" 14' }}>
+            Baby
+          </p>
+        </div>
+        <div className="absolute h-[58px] left-[158.8px] top-[5px] w-[75.4px]" data-node-id="613:1807" data-name="tab/cozymate-active">
+          <div className="absolute bg-[#f8e8ef] border-2 border-[#fffcfa] border-solid drop-shadow-[0px_2px_3px_rgba(122,94,145,0.1)] left-[8.7px] rounded-[29px] size-[58px] top-[-19px]" data-node-id="613:1808" data-name="slot/icon">
+            <div className="absolute left-0 size-[54px] top-0" data-node-id="613:1809" data-name="avatar/cozymate-nav">
+              <img alt="" className="absolute block inset-0 max-w-none size-full" height="54" src={imgAvatarCozymateNav} width="54" />
+            </div>
+          </div>
+          <p className="-translate-x-1/2 [word-break:break-word] absolute font-['DM_Sans:SemiBold'] font-semibold h-[16px] leading-[16px] left-[37.7px] text-[#a14d72] text-[12px] text-center top-[42px] w-[75.4px]" data-node-id="613:1810" style={{ fontVariationSettings: '"opsz" 14' }}>
+            Cozymate
+          </p>
+        </div>
+        <div className="absolute h-[58px] left-[234.2px] top-[5px] w-[75.4px]" data-node-id="613:1811" data-name="tab/schedule">
+          <div className="absolute h-[34px] left-[16.7px] rounded-[14px] top-[3px] w-[42px]" data-node-id="613:1812" data-name="slot/icon">
+            <div className="absolute left-[7px] overflow-clip size-[28px] top-[3px]" data-node-id="613:1813" data-name="icon/schedule">
+              <div className="absolute left-0 size-[28px] top-0" data-node-id="613:1814" data-name="artwork/color-schedule">
+                <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgArtworkColorSchedule} />
+              </div>
+            </div>
+          </div>
+          <p className="-translate-x-1/2 [word-break:break-word] absolute font-['DM_Sans:Medium'] font-medium h-[16px] leading-[16px] left-[37.7px] text-[#786d77] text-[12px] text-center top-[42px] w-[75.4px]" data-node-id="613:1822" style={{ fontVariationSettings: '"opsz" 14' }}>
+            Schedule
+          </p>
+        </div>
+        <div className="absolute h-[58px] left-[309.6px] top-[5px] w-[75.4px]" data-node-id="613:1823" data-name="tab/more">
+          <div className="absolute h-[34px] left-[16.7px] rounded-[14px] top-[3px] w-[42px]" data-node-id="613:1824" data-name="slot/icon">
+            <div className="absolute left-[7px] overflow-clip size-[28px] top-[3px]" data-node-id="613:1825" data-name="icon/more">
+              <div className="absolute left-0 size-[28px] top-0" data-node-id="613:1826" data-name="artwork/color-more">
+                <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgArtworkColorMore} />
+              </div>
+            </div>
+          </div>
+          <p className="-translate-x-1/2 [word-break:break-word] absolute font-['DM_Sans:Medium'] font-medium h-[16px] leading-[16px] left-[37.7px] text-[#786d77] text-[12px] text-center top-[42px] w-[75.4px]" data-node-id="613:1832" style={{ fontVariationSettings: '"opsz" 14' }}>
+            More
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+SUPER CRITICAL: The generated React+Tailwind code MUST be converted to match the target project's technology stack and styling system.
+1. Analyze the target codebase to identify: technology stack, styling approach, component patterns, and design tokens
+2. Convert React syntax to the target framework/library
+3. Transform all Tailwind classes to the target styling system while preserving exact visual design
+4. Follow the project's existing patterns and conventions
+DO NOT install any Tailwind as a dependency unless the user instructs you to do so.
+
+Node ids have been added to the code as data attributes, e.g. `data-node-id="1:2"`.
+Images and SVGs will be stored as constants, e.g. const image = 'https://www.figma.com/api/mcp/asset/550e8400-e29b-41d4-a716-446655440000.png'. These constants will be used in the code as the source for the image, ex: <img src={image} />. Image assets are stored on a remote server for 7 days and can be fetched using the provided URLs until they expire.

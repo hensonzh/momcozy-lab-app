@@ -1,0 +1,13 @@
+{
+  "reference": "design-contract/cozymate/references/welcome-continuity/reply.png",
+  "actual": "design-contract/cozymate/actual/welcome-continuity/reply.png",
+  "reference_crop": null,
+  "actual_crop": null,
+  "actual_dpr": 1,
+  "size": [
+    393,
+    844
+  ],
+  "mean_absolute_channel_difference": 12.7963401790416,
+  "note": "Diagnostic only. Not a fidelity score or acceptance threshold."
+}

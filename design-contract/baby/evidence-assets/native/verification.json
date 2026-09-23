@@ -1,0 +1,20 @@
+{
+  "device": "emulator-5554",
+  "physical_size": [
+    1280,
+    2856
+  ],
+  "dpr": 3,
+  "version": "1.0.0+57",
+  "package": "com.momcozymai.app.flutterpoc.local",
+  "checks": [
+    "feeding required fields disable save",
+    "bottle secondary choice enables valid save",
+    "outside tap dismisses sheet",
+    "knowledge avatar CTA and outside dismissal",
+    "profile root navigation and back",
+    "home end-of-scroll capture"
+  ],
+  "records_saved": 0,
+  "data_reset": false
+}

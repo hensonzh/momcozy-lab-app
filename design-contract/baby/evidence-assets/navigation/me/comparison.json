@@ -1,0 +1,13 @@
+{
+  "reference": "design-contract/baby/evidence-assets/navigation/figma-me.png",
+  "actual": "design-contract/baby/evidence-assets/navigation/app-me.png",
+  "reference_crop": null,
+  "actual_crop": null,
+  "actual_dpr": 1,
+  "size": [
+    393,
+    100
+  ],
+  "mean_absolute_channel_difference": 1.0327650551314675,
+  "note": "Diagnostic only. Not a fidelity score or acceptance threshold."
+}

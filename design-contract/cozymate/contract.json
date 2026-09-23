@@ -1,0 +1,890 @@
+{
+  "schemaVersion": "1.0",
+  "project": {
+    "id": "cozymate",
+    "name": "Cozymate",
+    "target": "flutter",
+    "implementationRoot": "lib/features/agent_hub"
+  },
+  "source": {
+    "fileKey": "ePIoJkiMiXiug9ibpcgRbl",
+    "fileUrl": "https://www.figma.com/design/ePIoJkiMiXiug9ibpcgRbl/",
+    "version": "2026-09-21 baseline; welcome-continuity update 2026-09-23; conversation-recovery simplification override 2026-09-23",
+    "exportedAt": "2026-09-21T07:30:00Z",
+    "welcomeContinuityExportedAt": "2026-09-23T01:17:25Z",
+    "conversationRecoveryExportedAt": "2026-09-23T09:09:38Z"
+  },
+  "tokens": {
+    "color": {
+      "background": "#FBF8F4",
+      "surface": "#FFFDFC",
+      "ink": "#2B2826",
+      "secondary": "#776E69",
+      "rose": "#B54F78",
+      "roseSoft": "#F5E7ED",
+      "border": "#E9DFE4",
+      "mint": "#E8F3F0",
+      "teal": "#4F7888"
+    },
+    "typography": {
+      "body": {
+        "family": "Noto Sans SC",
+        "size": 16,
+        "weight": 400,
+        "lineHeight": 24
+      },
+      "label": {
+        "family": "Noto Sans SC",
+        "size": 14,
+        "weight": 600,
+        "lineHeight": 20
+      },
+      "caption": {
+        "family": "Noto Sans SC",
+        "size": 11,
+        "weight": 400,
+        "lineHeight": 14
+      }
+    },
+    "spacing": {
+      "page": 16,
+      "section": 14,
+      "control": 8,
+      "menuItem": 48
+    },
+    "radius": {
+      "card": 22,
+      "control": 14,
+      "button": 16,
+      "menu": 18
+    }
+  },
+  "screens": [
+    {
+      "id": "cozymate.conversation",
+      "name": "Cozymate conversation",
+      "figmaNodeId": "567:1132",
+      "route": "/cozymate",
+      "viewport": {
+        "width": 393,
+        "height": 844,
+        "dpr": 1,
+        "safeArea": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "shell": {
+        "scrollable": true,
+        "bottomNavigation": "cozymate",
+        "fixedBottomHeight": 82,
+        "keyboardResize": "preserve-composer-above-keyboard"
+      },
+      "states": [
+        {
+          "id": "home",
+          "figmaNodeId": "246:1086",
+          "reference": "references/home.png",
+          "status": "implemented",
+          "fixture": {
+            "state": "home",
+            "locale": "zh-CN",
+            "userName": "Mia",
+            "viewport": "393x844",
+            "dpr": 1,
+            "textScale": 1.0,
+            "scrollOffset": 0.0
+          },
+          "components": [
+            "cozymate.shell",
+            "cozymate.transcript",
+            "cozymate.composer",
+            "cozymate.bottomNavigation",
+            "cozymate.attachmentMenu",
+            "cozymate.attachmentTile",
+            "cozymate.sentImage",
+            "cozymate.sentFile"
+          ]
+        },
+        {
+          "id": "streaming",
+          "figmaNodeId": "246:1173",
+          "reference": "references/welcome-continuity/streaming.png",
+          "status": "interactionVerified",
+          "fixture": {
+            "state": "streaming",
+            "locale": "zh-CN",
+            "userName": "Mia",
+            "viewport": "393x844",
+            "dpr": 1,
+            "textScale": 1.0,
+            "scrollOffset": 0.0
+          },
+          "components": [
+            "cozymate.shell",
+            "cozymate.transcript",
+            "cozymate.composer",
+            "cozymate.bottomNavigation",
+            "cozymate.attachmentMenu",
+            "cozymate.attachmentTile",
+            "cozymate.sentImage",
+            "cozymate.sentFile"
+          ]
+        },
+        {
+          "id": "reply",
+          "figmaNodeId": "246:1212",
+          "reference": "references/welcome-continuity/reply.png",
+          "status": "interactionVerified",
+          "fixture": {
+            "state": "reply",
+            "locale": "zh-CN",
+            "userName": "Mia",
+            "viewport": "393x844",
+            "dpr": 1,
+            "textScale": 1.0,
+            "scrollOffset": 0.0
+          },
+          "components": [
+            "cozymate.shell",
+            "cozymate.transcript",
+            "cozymate.composer",
+            "cozymate.bottomNavigation",
+            "cozymate.attachmentMenu",
+            "cozymate.attachmentTile",
+            "cozymate.sentImage",
+            "cozymate.sentFile"
+          ]
+        },
+        {
+          "id": "chat",
+          "figmaNodeId": "246:1144",
+          "reference": "references/conversation-recovery/chat.png",
+          "status": "interactionVerified",
+          "fixture": {
+            "state": "chat",
+            "locale": "zh-CN",
+            "userName": "Mia",
+            "viewport": "393x844",
+            "dpr": 1,
+            "textScale": 1.0,
+            "scrollOffset": 0.0
+          },
+          "components": [
+            "cozymate.shell",
+            "cozymate.transcript",
+            "cozymate.composer",
+            "cozymate.bottomNavigation",
+            "cozymate.attachmentMenu",
+            "cozymate.attachmentTile",
+            "cozymate.sentImage",
+            "cozymate.sentFile"
+          ]
+        },
+        {
+          "id": "history-loading",
+          "figmaNodeId": "830:15",
+          "reference": "references/conversation-recovery/history-loading.png",
+          "status": "interactionVerified",
+          "fixture": {
+            "state": "history-loading",
+            "locale": "zh-CN",
+            "userName": "Mia",
+            "viewport": "393x844",
+            "dpr": 1,
+            "textScale": 1.0,
+            "scrollOffset": 0.0
+          },
+          "components": [
+            "cozymate.shell",
+            "cozymate.transcript",
+            "cozymate.composer",
+            "cozymate.bottomNavigation",
+            "cozymate.attachmentMenu",
+            "cozymate.attachmentTile",
+            "cozymate.sentImage",
+            "cozymate.sentFile"
+          ]
+        },
+        {
+          "id": "disconnected-empty",
+          "figmaNodeId": "246:1250",
+          "reference": "references/welcome-continuity/disconnected-empty.png",
+          "status": "interactionVerified",
+          "fixture": {
+            "state": "disconnected-empty",
+            "locale": "zh-CN",
+            "userName": "Mia",
+            "viewport": "393x844",
+            "dpr": 1,
+            "textScale": 1.0,
+            "scrollOffset": 0.0
+          },
+          "components": [
+            "cozymate.shell",
+            "cozymate.transcript",
+            "cozymate.composer",
+            "cozymate.bottomNavigation",
+            "cozymate.attachmentMenu",
+            "cozymate.attachmentTile",
+            "cozymate.sentImage",
+            "cozymate.sentFile"
+          ]
+        },
+        {
+          "id": "disconnected-partial",
+          "figmaNodeId": "246:1330",
+          "reference": "references/welcome-continuity/disconnected-partial.png",
+          "status": "interactionVerified",
+          "fixture": {
+            "state": "disconnected-partial",
+            "locale": "zh-CN",
+            "userName": "Mia",
+            "viewport": "393x844",
+            "dpr": 1,
+            "textScale": 1.0,
+            "scrollOffset": 0.0
+          },
+          "components": [
+            "cozymate.shell",
+            "cozymate.transcript",
+            "cozymate.composer",
+            "cozymate.bottomNavigation",
+            "cozymate.attachmentMenu",
+            "cozymate.attachmentTile",
+            "cozymate.sentImage",
+            "cozymate.sentFile"
+          ]
+        },
+        {
+          "id": "resumed",
+          "figmaNodeId": "246:1372",
+          "reference": "references/welcome-continuity/resumed.png",
+          "status": "interactionVerified",
+          "fixture": {
+            "state": "resumed",
+            "locale": "zh-CN",
+            "userName": "Mia",
+            "viewport": "393x844",
+            "dpr": 1,
+            "textScale": 1.0,
+            "scrollOffset": 0.0
+          },
+          "components": [
+            "cozymate.shell",
+            "cozymate.transcript",
+            "cozymate.composer",
+            "cozymate.bottomNavigation",
+            "cozymate.attachmentMenu",
+            "cozymate.attachmentTile",
+            "cozymate.sentImage",
+            "cozymate.sentFile"
+          ]
+        },
+        {
+          "id": "terminal-error",
+          "figmaNodeId": "246:1291",
+          "reference": "references/welcome-continuity/terminal-error.png",
+          "status": "interactionVerified",
+          "fixture": {
+            "state": "terminal-error",
+            "locale": "zh-CN",
+            "userName": "Mia",
+            "viewport": "393x844",
+            "dpr": 1,
+            "textScale": 1.0,
+            "scrollOffset": 0.0
+          },
+          "components": [
+            "cozymate.shell",
+            "cozymate.transcript",
+            "cozymate.composer",
+            "cozymate.bottomNavigation",
+            "cozymate.attachmentMenu",
+            "cozymate.attachmentTile",
+            "cozymate.sentImage",
+            "cozymate.sentFile"
+          ]
+        },
+        {
+          "id": "attachment-menu",
+          "figmaNodeId": "259:1097",
+          "reference": "references/attachment-menu.png",
+          "status": "implemented",
+          "fixture": {
+            "state": "attachment-menu",
+            "locale": "zh-CN",
+            "userName": "Mia",
+            "viewport": "393x844",
+            "dpr": 1,
+            "textScale": 1.0,
+            "scrollOffset": 0.0
+          },
+          "components": [
+            "cozymate.shell",
+            "cozymate.transcript",
+            "cozymate.composer",
+            "cozymate.bottomNavigation",
+            "cozymate.attachmentMenu",
+            "cozymate.attachmentTile",
+            "cozymate.sentImage",
+            "cozymate.sentFile"
+          ]
+        },
+        {
+          "id": "pending-image",
+          "figmaNodeId": "259:1130",
+          "reference": "references/pending-image.png",
+          "status": "implemented",
+          "fixture": {
+            "state": "pending-image",
+            "locale": "zh-CN",
+            "userName": "Mia",
+            "viewport": "393x844",
+            "dpr": 1,
+            "textScale": 1.0,
+            "scrollOffset": 0.0
+          },
+          "components": [
+            "cozymate.shell",
+            "cozymate.transcript",
+            "cozymate.composer",
+            "cozymate.bottomNavigation",
+            "cozymate.attachmentMenu",
+            "cozymate.attachmentTile",
+            "cozymate.sentImage",
+            "cozymate.sentFile"
+          ]
+        },
+        {
+          "id": "pending-file",
+          "figmaNodeId": "259:1162",
+          "reference": "references/pending-file.png",
+          "status": "implemented",
+          "fixture": {
+            "state": "pending-file",
+            "locale": "zh-CN",
+            "userName": "Mia",
+            "viewport": "393x844",
+            "dpr": 1,
+            "textScale": 1.0,
+            "scrollOffset": 0.0
+          },
+          "components": [
+            "cozymate.shell",
+            "cozymate.transcript",
+            "cozymate.composer",
+            "cozymate.bottomNavigation",
+            "cozymate.attachmentMenu",
+            "cozymate.attachmentTile",
+            "cozymate.sentImage",
+            "cozymate.sentFile"
+          ]
+        },
+        {
+          "id": "uploading",
+          "figmaNodeId": "259:1194",
+          "reference": "references/uploading.png",
+          "status": "implemented",
+          "fixture": {
+            "state": "uploading",
+            "locale": "zh-CN",
+            "userName": "Mia",
+            "viewport": "393x844",
+            "dpr": 1,
+            "textScale": 1.0,
+            "scrollOffset": 0.0
+          },
+          "components": [
+            "cozymate.shell",
+            "cozymate.transcript",
+            "cozymate.composer",
+            "cozymate.bottomNavigation",
+            "cozymate.attachmentMenu",
+            "cozymate.attachmentTile",
+            "cozymate.sentImage",
+            "cozymate.sentFile"
+          ]
+        },
+        {
+          "id": "sent-image",
+          "figmaNodeId": "262:1086",
+          "reference": "references/sent-image.png",
+          "status": "implemented",
+          "fixture": {
+            "state": "sent-image",
+            "locale": "zh-CN",
+            "userName": "Mia",
+            "viewport": "393x844",
+            "dpr": 1,
+            "textScale": 1.0,
+            "scrollOffset": 0.0
+          },
+          "components": [
+            "cozymate.shell",
+            "cozymate.transcript",
+            "cozymate.composer",
+            "cozymate.bottomNavigation",
+            "cozymate.attachmentMenu",
+            "cozymate.attachmentTile",
+            "cozymate.sentImage",
+            "cozymate.sentFile"
+          ]
+        },
+        {
+          "id": "sent-files",
+          "figmaNodeId": "259:1226",
+          "reference": "references/sent-files.png",
+          "status": "implemented",
+          "fixture": {
+            "state": "sent-files",
+            "locale": "zh-CN",
+            "userName": "Mia",
+            "viewport": "393x844",
+            "dpr": 1,
+            "textScale": 1.0,
+            "scrollOffset": 0.0
+          },
+          "components": [
+            "cozymate.shell",
+            "cozymate.transcript",
+            "cozymate.composer",
+            "cozymate.bottomNavigation",
+            "cozymate.attachmentMenu",
+            "cozymate.attachmentTile",
+            "cozymate.sentImage",
+            "cozymate.sentFile"
+          ]
+        },
+        {
+          "id": "image-error",
+          "figmaNodeId": "267:1754",
+          "reference": "references/image-error.png",
+          "status": "implemented",
+          "fixture": {
+            "state": "image-error",
+            "locale": "zh-CN",
+            "userName": "Mia",
+            "viewport": "393x844",
+            "dpr": 1,
+            "textScale": 1.0,
+            "scrollOffset": 0.0
+          },
+          "components": [
+            "cozymate.shell",
+            "cozymate.transcript",
+            "cozymate.composer",
+            "cozymate.bottomNavigation",
+            "cozymate.attachmentMenu",
+            "cozymate.attachmentTile",
+            "cozymate.sentImage",
+            "cozymate.sentFile"
+          ]
+        },
+        {
+          "id": "file-error",
+          "figmaNodeId": "267:1802",
+          "reference": "references/file-error.png",
+          "status": "implemented",
+          "fixture": {
+            "state": "file-error",
+            "locale": "zh-CN",
+            "userName": "Mia",
+            "viewport": "393x844",
+            "dpr": 1,
+            "textScale": 1.0,
+            "scrollOffset": 0.0
+          },
+          "components": [
+            "cozymate.shell",
+            "cozymate.transcript",
+            "cozymate.composer",
+            "cozymate.bottomNavigation",
+            "cozymate.attachmentMenu",
+            "cozymate.attachmentTile",
+            "cozymate.sentImage",
+            "cozymate.sentFile"
+          ]
+        },
+        {
+          "id": "too-large",
+          "figmaNodeId": "267:1850",
+          "reference": "references/too-large.png",
+          "status": "implemented",
+          "fixture": {
+            "state": "too-large",
+            "locale": "zh-CN",
+            "userName": "Mia",
+            "viewport": "393x844",
+            "dpr": 1,
+            "textScale": 1.0,
+            "scrollOffset": 0.0
+          },
+          "components": [
+            "cozymate.shell",
+            "cozymate.transcript",
+            "cozymate.composer",
+            "cozymate.bottomNavigation",
+            "cozymate.attachmentMenu",
+            "cozymate.attachmentTile",
+            "cozymate.sentImage",
+            "cozymate.sentFile"
+          ]
+        },
+        {
+          "id": "unsupported",
+          "figmaNodeId": "267:1890",
+          "reference": "references/unsupported.png",
+          "status": "implemented",
+          "fixture": {
+            "state": "unsupported",
+            "locale": "zh-CN",
+            "userName": "Mia",
+            "viewport": "393x844",
+            "dpr": 1,
+            "textScale": 1.0,
+            "scrollOffset": 0.0
+          },
+          "components": [
+            "cozymate.shell",
+            "cozymate.transcript",
+            "cozymate.composer",
+            "cozymate.bottomNavigation",
+            "cozymate.attachmentMenu",
+            "cozymate.attachmentTile",
+            "cozymate.sentImage",
+            "cozymate.sentFile"
+          ]
+        },
+        {
+          "id": "removed-draft",
+          "figmaNodeId": "267:1930",
+          "reference": "references/removed-draft.png",
+          "status": "implemented",
+          "fixture": {
+            "state": "removed-draft",
+            "locale": "zh-CN",
+            "userName": "Mia",
+            "viewport": "393x844",
+            "dpr": 1,
+            "textScale": 1.0,
+            "scrollOffset": 0.0
+          },
+          "components": [
+            "cozymate.shell",
+            "cozymate.transcript",
+            "cozymate.composer",
+            "cozymate.bottomNavigation",
+            "cozymate.attachmentMenu",
+            "cozymate.attachmentTile",
+            "cozymate.sentImage",
+            "cozymate.sentFile"
+          ]
+        }
+      ],
+      "components": [
+        "cozymate.shell",
+        "cozymate.transcript",
+        "cozymate.composer",
+        "cozymate.bottomNavigation",
+        "cozymate.attachmentMenu",
+        "cozymate.attachmentTile",
+        "cozymate.sentImage",
+        "cozymate.sentFile"
+      ]
+    }
+  ],
+  "components": [
+    {
+      "id": "cozymate.shell",
+      "figmaNodeId": "246:1086",
+      "type": "screenShell",
+      "flutterWidget": "AgentHubPage",
+      "states": [
+        "normal"
+      ],
+      "layout": {
+        "viewport": "393x844",
+        "bottomNavigationHeight": 82
+      }
+    },
+    {
+      "id": "cozymate.transcript",
+      "figmaNodeId": "246:1144",
+      "type": "transcript",
+      "flutterWidget": "AgentHubHistorySliver",
+      "states": [
+        "normal"
+      ],
+      "layout": {
+        "scrollable": true,
+        "horizontalPadding": 16
+      }
+    },
+    {
+      "id": "cozymate.composer",
+      "figmaNodeId": "246:1086",
+      "type": "composer",
+      "flutterWidget": "AgentComposerBar",
+      "states": [
+        "normal"
+      ],
+      "layout": {
+        "height": 56,
+        "bottomNavigationGap": 16
+      }
+    },
+    {
+      "id": "cozymate.attachmentMenu",
+      "figmaNodeId": "259:1097",
+      "type": "menu",
+      "flutterWidget": "AgentComposerBar.attachmentMenu",
+      "states": [
+        "normal"
+      ],
+      "layout": {
+        "width": 220,
+        "height": 156,
+        "padding": 6,
+        "itemHeight": 48,
+        "radius": 18
+      }
+    },
+    {
+      "id": "cozymate.attachmentTile",
+      "figmaNodeId": "259:1130",
+      "type": "attachmentTile",
+      "flutterWidget": "AgentAttachmentTile",
+      "states": [
+        "normal"
+      ],
+      "layout": {
+        "thumbnail": 40,
+        "radius": 18
+      }
+    },
+    {
+      "id": "cozymate.sentImage",
+      "figmaNodeId": "262:1086",
+      "type": "sentImage",
+      "flutterWidget": "AgentSentImages",
+      "states": [
+        "normal"
+      ],
+      "layout": {
+        "maxWidth": 112,
+        "maxHeight": 240
+      }
+    },
+    {
+      "id": "cozymate.sentFile",
+      "figmaNodeId": "259:1226",
+      "type": "sentFile",
+      "flutterWidget": "AgentSentFiles",
+      "states": [
+        "normal"
+      ],
+      "layout": {
+        "width": 244,
+        "height": 56,
+        "radius": 14
+      }
+    },
+    {
+      "id": "cozymate.bottomNavigation",
+      "figmaNodeId": "246:1086",
+      "type": "bottomNavigation",
+      "flutterWidget": "MomBottomNavigation",
+      "states": [
+        "normal"
+      ],
+      "layout": {
+        "height": 82
+      }
+    }
+  ],
+  "interactions": [
+    {
+      "id": "send-message",
+      "screen": "cozymate.conversation",
+      "trigger": "composer.send",
+      "from": "composer.ready",
+      "to": "streaming",
+      "status": "interactionVerified",
+      "behavior": "Archive the exact visible welcome as one ordinary assistant bubble, followed by the user message and the real streaming/reply state; keep bottom navigation."
+    },
+    {
+      "id": "stop-stream",
+      "screen": "cozymate.conversation",
+      "trigger": "composer.stop",
+      "from": "streaming",
+      "to": "reply",
+      "status": "implemented",
+      "behavior": "stop stream and drain visible text"
+    },
+    {
+      "id": "open-attachments",
+      "screen": "cozymate.conversation",
+      "trigger": "composer.attachment",
+      "from": "composer.ready",
+      "to": "attachment-menu",
+      "status": "implemented",
+      "behavior": "show anchored menu"
+    },
+    {
+      "id": "select-image",
+      "screen": "cozymate.conversation",
+      "trigger": "attachmentMenu.photo",
+      "from": "attachment-menu",
+      "to": "pending-image",
+      "status": "implemented",
+      "behavior": "keep draft and show compact preview"
+    },
+    {
+      "id": "select-file",
+      "screen": "cozymate.conversation",
+      "trigger": "attachmentMenu.file",
+      "from": "attachment-menu",
+      "to": "pending-file",
+      "status": "implemented",
+      "behavior": "keep draft and show compact metadata"
+    },
+    {
+      "id": "upload-attachment",
+      "screen": "cozymate.conversation",
+      "trigger": "attachment.send",
+      "from": "pending-image",
+      "to": "uploading",
+      "status": "implemented",
+      "behavior": "disable send while upload is active"
+    },
+    {
+      "id": "attachment-success",
+      "screen": "cozymate.conversation",
+      "trigger": "upload.completed",
+      "from": "uploading",
+      "to": "sent-image",
+      "status": "implemented",
+      "behavior": "render image directly at bounded size"
+    },
+    {
+      "id": "attachment-failure",
+      "screen": "cozymate.conversation",
+      "trigger": "upload.failed",
+      "from": "uploading",
+      "to": "image-error",
+      "status": "implemented",
+      "behavior": "preserve draft and expose retry"
+    },
+    {
+      "id": "connection-recovery",
+      "screen": "cozymate.conversation",
+      "trigger": "stream.reconnected",
+      "from": "disconnected-partial",
+      "to": "resumed",
+      "status": "implemented",
+      "behavior": "resume current run without losing draft"
+    }
+  ],
+  "assets": [
+    {
+      "id": "attachment-camera",
+      "figmaNodeId": "259:1108",
+      "format": "png",
+      "localPath": "assets/images/cozymate_attachment_camera.png",
+      "checksum": "sha256:db41e28c85271e5b5d989461ce9d1a9f30cfb65abb99fb76569dac8a06710264",
+      "usage": [
+        "cozymate.attachmentMenu"
+      ]
+    },
+    {
+      "id": "attachment-photo",
+      "figmaNodeId": "259:1115",
+      "format": "svg",
+      "localPath": "assets/images/cozymate_attachment_photo.svg",
+      "checksum": "sha256:7b4af3880b2b4f202dbf319cf3c6b3db1325e701fecb3ab40bbca5dad1783439",
+      "usage": [
+        "cozymate.attachmentMenu"
+      ]
+    },
+    {
+      "id": "attachment-file",
+      "figmaNodeId": "259:1123",
+      "format": "svg",
+      "localPath": "assets/images/cozymate_attachment_file.svg",
+      "checksum": "sha256:b82dfa1a422fe4a1f7b442dd96397a9a8490bd0e39e6a2b1e83c3083e102a395",
+      "usage": [
+        "cozymate.attachmentMenu"
+      ]
+    }
+  ],
+  "overrides": [
+    {
+      "id": "copy-welcome",
+      "decision": "Use the user-approved Cozymate copy and the term 智能伙伴",
+      "scope": "welcome copy",
+      "reason": "explicit product override"
+    },
+    {
+      "id": "removed-v1-modules",
+      "decision": "Do not ship new-session, conversation-list/switching, form, action-confirmation, result, voice and resource flows in一期; owner-scoped recovery and in-thread backward history remain in scope.",
+      "scope": "一期范围",
+      "reason": "explicit product scope"
+    },
+    {
+      "id": "attachment-menu",
+      "decision": "Use current Figma menu geometry and rose palette",
+      "scope": "cozymate.attachmentMenu",
+      "reason": "explicit UI calibration"
+    },
+    {
+      "id": "welcome-continuity",
+      "date": "2026-09-23",
+      "decision": "首次发送后将已显示的完整欢迎语原文保留为普通助手气泡；按欢迎语、用户消息、实际回复的顺序展示，后续消息与重试不重复插入欢迎语。",
+      "scope": "cozymate.conversation: home -> streaming/reply/disconnected-empty/disconnected-partial/resumed/terminal-error",
+      "reason": "用户确认修正首次进入与发送后文案不一致的问题"
+    },
+    {
+      "id": "conversation-recovery",
+      "date": "2026-09-23",
+      "scope": "cozymate.conversation/chat and history scrolling; retire Figma nodes 830:104 and 831:2",
+      "reason": "用户认为附加提示与未读状态使设计复杂，明确要求回到最初方案",
+      "decision": "每次进入或回到 Cozymate 时恢复当前会话；没有当前会话时发现当前账号最近一条真实会话；刷新完成后定位到最新内容，并保留草稿与附件。继续支持向上分页、持久化消息 ID 去重和分页时的视口保持。用户在本次访问中手动向上翻阅时，新回复不强制滚到底，只保留普通“回到最新消息”控制；不再保存阅读位置、未读标记或续聊提示元数据。"
+    }
+  ],
+  "validation": {
+    "referenceDir": "design-contract/cozymate/references",
+    "actualDir": "design-contract/cozymate/actual",
+    "comparisonDir": "design-contract/cozymate/comparisons",
+    "requiredStates": [
+      "cozymate.conversation.home",
+      "cozymate.conversation.streaming",
+      "cozymate.conversation.reply",
+      "cozymate.conversation.chat",
+      "cozymate.conversation.history-loading",
+      "cozymate.conversation.disconnected-empty",
+      "cozymate.conversation.disconnected-partial",
+      "cozymate.conversation.resumed",
+      "cozymate.conversation.terminal-error",
+      "cozymate.conversation.attachment-menu",
+      "cozymate.conversation.pending-image",
+      "cozymate.conversation.pending-file",
+      "cozymate.conversation.uploading",
+      "cozymate.conversation.sent-image",
+      "cozymate.conversation.sent-files",
+      "cozymate.conversation.image-error",
+      "cozymate.conversation.file-error",
+      "cozymate.conversation.too-large",
+      "cozymate.conversation.unsupported",
+      "cozymate.conversation.removed-draft"
+    ],
+    "commands": [
+      "flutter analyze --no-pub lib/features/agent_hub",
+      "flutter test --no-pub test/features/agent_hub",
+      "git diff --check"
+    ],
+    "notes": "References are 393x844 Figma renders. Platform chrome and font rasterization are recorded separately in evidence.json."
+  }
+}
