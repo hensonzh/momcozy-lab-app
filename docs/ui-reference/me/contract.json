@@ -1,0 +1,814 @@
+{
+  "schemaVersion": "1.0",
+  "project": {
+    "id": "me",
+    "name": "MomCozy Me module",
+    "target": "flutter"
+  },
+  "source": {
+    "fileKey": "ePIoJkiMiXiug9ibpcgRbl",
+    "fileUrl": "https://www.figma.com/design/ePIoJkiMiXiug9ibpcgRbl/",
+    "version": "nodes-confirmed-2026-09-20",
+    "exportedAt": "2026-09-20T00:00:00Z"
+  },
+  "tokens": {
+    "color": {
+      "background": "#fbf8f4",
+      "surface": "#fffdfa",
+      "ink": "#2b2826",
+      "muted": "#776e69",
+      "rose": "#b44e78",
+      "selectedFill": "#f7eff7",
+      "selectedBorder": "#b44e78"
+    },
+    "typography": {
+      "body": {
+        "family": "BabyNotoSans",
+        "size": 14,
+        "weight": 400,
+        "lineHeight": 20
+      },
+      "heading": {
+        "family": "BabyNotoSans",
+        "size": 22,
+        "weight": 700,
+        "lineHeight": 32
+      },
+      "caption": {
+        "family": "BabyNotoSans",
+        "size": 12,
+        "weight": 400,
+        "lineHeight": 18
+      }
+    },
+    "spacing": {
+      "page": 16,
+      "section": 16,
+      "control": 12,
+      "card": 22
+    },
+    "radius": {
+      "card": 22,
+      "control": 16,
+      "button": 24
+    }
+  },
+  "screens": [
+    {
+      "id": "me.home",
+      "name": "Me 首页",
+      "figmaNodeId": "483:1025",
+      "route": "/me",
+      "states": [
+        {
+          "id": "empty",
+          "figmaNodeId": "483:1025",
+          "reference": "references/home.png",
+          "status": "interactionVerified",
+          "fixture": {
+            "preferredName": "Mia",
+            "deliveryDate": "2026-08-30",
+            "concern": "none",
+            "records": {}
+          }
+        }
+      ],
+      "components": [
+        "me.homeHeader",
+        "me.concernCard",
+        "me.recordCard",
+        "me.bottomNavigation"
+      ],
+      "viewport": {
+        "width": 393,
+        "height": 844,
+        "dpr": 1,
+        "safeArea": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "shell": {
+        "scrollable": true,
+        "bottomNavigation": "me",
+        "fixedBottomHeight": 82
+      }
+    },
+    {
+      "id": "me.concernsEmpty",
+      "name": "关注空状态",
+      "figmaNodeId": "539:1022",
+      "route": "/me/concerns",
+      "states": [
+        {
+          "id": "empty",
+          "figmaNodeId": "539:1022",
+          "reference": "references/concerns-empty.png",
+          "status": "interactionVerified",
+          "fixture": {
+            "concerns": []
+          }
+        }
+      ],
+      "components": [
+        "me.pageHeader",
+        "me.concernEmpty"
+      ],
+      "viewport": {
+        "width": 393,
+        "height": 844,
+        "dpr": 1,
+        "safeArea": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "shell": {
+        "scrollable": true,
+        "bottomNavigation": "none",
+        "fixedBottomHeight": 0
+      }
+    },
+    {
+      "id": "me.concernDetail",
+      "name": "关注详情",
+      "figmaNodeId": "705:429",
+      "route": "/me/concerns/:id",
+      "states": [
+        {
+          "id": "selected",
+          "figmaNodeId": "705:429",
+          "reference": "references/concern-detail.png",
+          "status": "interactionVerified",
+          "fixture": {
+            "concern": "feedingDiscomfort",
+            "records": []
+          }
+        }
+      ],
+      "components": [
+        "me.pageHeader",
+        "me.concernDetail",
+        "me.recordRow"
+      ],
+      "viewport": {
+        "width": 393,
+        "height": 844,
+        "dpr": 1,
+        "safeArea": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "shell": {
+        "scrollable": true,
+        "bottomNavigation": "none",
+        "fixedBottomHeight": 0
+      }
+    },
+    {
+      "id": "me.confirmation",
+      "name": "确认关注",
+      "figmaNodeId": "483:2685",
+      "route": "/me/concerns/confirm",
+      "states": [
+        {
+          "id": "selected",
+          "figmaNodeId": "483:2685",
+          "reference": "references/confirmation.png",
+          "status": "interactionVerified",
+          "fixture": {
+            "issues": [
+              "喂奶或泵奶时不舒服"
+            ],
+            "records": [
+              "喂奶记录",
+              "泵奶记录",
+              "喂奶疼痛"
+            ],
+            "reminder": "on"
+          }
+        }
+      ],
+      "components": [
+        "me.pageHeader",
+        "me.confirmationCard",
+        "me.recordRow",
+        "me.reminderSwitch",
+        "me.primaryButton"
+      ],
+      "viewport": {
+        "width": 393,
+        "height": 844,
+        "dpr": 1,
+        "safeArea": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "shell": {
+        "scrollable": true,
+        "bottomNavigation": "none",
+        "fixedBottomHeight": 0
+      }
+    },
+    {
+      "id": "me.recordsManager",
+      "name": "管理记录",
+      "figmaNodeId": "483:3216",
+      "route": "/me/records/manage",
+      "states": [
+        {
+          "id": "default",
+          "figmaNodeId": "483:3216",
+          "reference": "references/manager.png",
+          "status": "interactionVerified",
+          "fixture": {
+            "order": [
+              "feed",
+              "energy",
+              "sleep",
+              "mood"
+            ],
+            "dirty": false
+          }
+        }
+      ],
+      "components": [
+        "me.pageHeader",
+        "me.sortRow",
+        "me.primaryButton"
+      ],
+      "viewport": {
+        "width": 393,
+        "height": 844,
+        "dpr": 1,
+        "safeArea": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "shell": {
+        "scrollable": true,
+        "bottomNavigation": "none",
+        "fixedBottomHeight": 0
+      }
+    },
+    {
+      "id": "me.profile",
+      "name": "个人档案概览",
+      "figmaNodeId": "613:1083",
+      "route": "/me/profile",
+      "states": [
+        {
+          "id": "overview",
+          "figmaNodeId": "613:1083",
+          "reference": "references/profile.png",
+          "status": "interactionVerified",
+          "fixture": {
+            "preferredName": "Mia",
+            "age": null,
+            "deliveryDate": "2026-08-30"
+          }
+        }
+      ],
+      "components": [
+        "me.pageHeader",
+        "me.profileCard",
+        "me.profileSection"
+      ],
+      "viewport": {
+        "width": 393,
+        "height": 844,
+        "dpr": 1,
+        "safeArea": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "shell": {
+        "scrollable": true,
+        "bottomNavigation": "none",
+        "fixedBottomHeight": 0
+      }
+    },
+    {
+      "id": "me.energySheet",
+      "name": "今天精力记录",
+      "figmaNodeId": "483:1909",
+      "route": "/me/records/energy",
+      "states": [
+        {
+          "id": "selected",
+          "figmaNodeId": "483:1909",
+          "reference": "references/energy.png",
+          "status": "interactionVerified",
+          "fixture": {
+            "value": "有力气",
+            "time": "15:00"
+          }
+        }
+      ],
+      "components": [
+        "me.recordSheet",
+        "me.choice",
+        "me.primaryButton"
+      ],
+      "viewport": {
+        "width": 393,
+        "height": 844,
+        "dpr": 1,
+        "safeArea": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "shell": {
+        "scrollable": true,
+        "bottomNavigation": "none",
+        "fixedBottomHeight": 0
+      }
+    },
+    {
+      "id": "me.notificationSheet",
+      "name": "通知设置底部弹窗",
+      "figmaNodeId": "770:132",
+      "route": "/me/notification-settings",
+      "states": [
+        {
+          "id": "denied",
+          "figmaNodeId": "770:132",
+          "reference": "references/settings.png",
+          "status": "interactionVerified",
+          "fixture": {
+            "permission": "denied",
+            "reminder": "on"
+          }
+        }
+      ],
+      "components": [
+        "me.notificationSheet",
+        "me.primaryButton"
+      ],
+      "viewport": {
+        "width": 393,
+        "height": 844,
+        "dpr": 1,
+        "safeArea": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "shell": {
+        "scrollable": true,
+        "bottomNavigation": "none",
+        "fixedBottomHeight": 0
+      }
+    },
+    {
+      "id": "me.profileEditor",
+      "name": "个人档案编辑表单",
+      "figmaNodeId": "730:42",
+      "route": "/me/profile/edit",
+      "states": [
+        {
+          "id": "group0",
+          "figmaNodeId": "730:42",
+          "status": "referenceMissing",
+          "fixture": {
+            "group": 0
+          }
+        },
+        {
+          "id": "group1",
+          "figmaNodeId": "730:176",
+          "status": "referenceMissing",
+          "fixture": {
+            "group": 1
+          }
+        },
+        {
+          "id": "group2",
+          "figmaNodeId": "730:446",
+          "status": "referenceMissing",
+          "fixture": {
+            "group": 2
+          }
+        },
+        {
+          "id": "group3",
+          "figmaNodeId": "730:550",
+          "status": "referenceMissing",
+          "fixture": {
+            "group": 3
+          }
+        }
+      ],
+      "components": [
+        "me.profileForm",
+        "me.primaryButton"
+      ],
+      "viewport": {
+        "width": 393,
+        "height": 844,
+        "dpr": 1,
+        "safeArea": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "shell": {
+        "scrollable": true,
+        "bottomNavigation": "none",
+        "fixedBottomHeight": 0
+      }
+    }
+  ],
+  "components": [
+    {
+      "id": "me.pageHeader",
+      "figmaNodeId": "613:1083",
+      "type": "pageHeader",
+      "flutterWidget": "MePage",
+      "states": [
+        "normal",
+        "largeText"
+      ]
+    },
+    {
+      "id": "me.homeHeader",
+      "figmaNodeId": "483:1025",
+      "type": "homeHeader",
+      "flutterWidget": "MeHomePage",
+      "states": [
+        "normal",
+        "largeText"
+      ]
+    },
+    {
+      "id": "me.concernCard",
+      "figmaNodeId": "483:1025",
+      "type": "concernCard",
+      "flutterWidget": "MeHomePage",
+      "states": [
+        "normal",
+        "largeText"
+      ]
+    },
+    {
+      "id": "me.recordCard",
+      "figmaNodeId": "483:1025",
+      "type": "metricCard",
+      "flutterWidget": "MeHomeMetric",
+      "states": [
+        "normal",
+        "largeText"
+      ]
+    },
+    {
+      "id": "me.bottomNavigation",
+      "figmaNodeId": "370:1022",
+      "type": "bottomNavigation",
+      "flutterWidget": "MomCozyBottomNavigation",
+      "states": [
+        "normal",
+        "largeText"
+      ]
+    },
+    {
+      "id": "me.concernEmpty",
+      "figmaNodeId": "539:1022",
+      "type": "emptyState",
+      "flutterWidget": "MeConcernsPage",
+      "states": [
+        "normal",
+        "largeText"
+      ]
+    },
+    {
+      "id": "me.concernDetail",
+      "figmaNodeId": "705:429",
+      "type": "detailCard",
+      "flutterWidget": "MeConcernDetail",
+      "states": [
+        "normal",
+        "largeText"
+      ]
+    },
+    {
+      "id": "me.recordRow",
+      "figmaNodeId": "483:3216",
+      "type": "recordRow",
+      "flutterWidget": "MeMetricRow",
+      "states": [
+        "normal",
+        "largeText"
+      ]
+    },
+    {
+      "id": "me.confirmationCard",
+      "figmaNodeId": "483:2685",
+      "type": "confirmationCard",
+      "flutterWidget": "MeConcernFlow",
+      "states": [
+        "normal",
+        "largeText"
+      ]
+    },
+    {
+      "id": "me.reminderSwitch",
+      "figmaNodeId": "770:132",
+      "type": "reminderSwitch",
+      "flutterWidget": "Switch",
+      "states": [
+        "normal",
+        "largeText"
+      ]
+    },
+    {
+      "id": "me.primaryButton",
+      "figmaNodeId": "483:2685",
+      "type": "primaryButton",
+      "flutterWidget": "MeButton",
+      "states": [
+        "normal",
+        "largeText"
+      ]
+    },
+    {
+      "id": "me.sortRow",
+      "figmaNodeId": "483:3216",
+      "type": "sortRow",
+      "flutterWidget": "MeManageRecords",
+      "states": [
+        "normal",
+        "largeText"
+      ]
+    },
+    {
+      "id": "me.profileCard",
+      "figmaNodeId": "613:1083",
+      "type": "profileCard",
+      "flutterWidget": "MeProfilePage",
+      "states": [
+        "normal",
+        "largeText"
+      ]
+    },
+    {
+      "id": "me.profileSection",
+      "figmaNodeId": "613:1083",
+      "type": "profileSection",
+      "flutterWidget": "MeProfilePage",
+      "states": [
+        "normal",
+        "largeText"
+      ]
+    },
+    {
+      "id": "me.recordSheet",
+      "figmaNodeId": "483:1909",
+      "type": "recordSheet",
+      "flutterWidget": "MeRecordSheet",
+      "states": [
+        "normal",
+        "largeText"
+      ]
+    },
+    {
+      "id": "me.choice",
+      "figmaNodeId": "483:1909",
+      "type": "choice",
+      "flutterWidget": "MeChoice",
+      "states": [
+        "normal",
+        "largeText"
+      ]
+    },
+    {
+      "id": "me.notificationSheet",
+      "figmaNodeId": "770:132",
+      "type": "bottomSheet",
+      "flutterWidget": "showMeNotificationSettings",
+      "states": [
+        "normal",
+        "largeText"
+      ]
+    },
+    {
+      "id": "me.profileForm",
+      "figmaNodeId": "730:42",
+      "type": "profileForm",
+      "flutterWidget": "MeProfileEditor",
+      "states": [
+        "normal",
+        "largeText"
+      ]
+    }
+  ],
+  "interactions": [
+    {
+      "id": "me.home.open-concerns",
+      "screen": "me.home",
+      "trigger": "tap:concern.primaryButton",
+      "from": "empty",
+      "to": "me.confirmation.selected",
+      "status": "interactionVerified",
+      "network": {
+        "request": false,
+        "refreshOnCancel": false
+      }
+    },
+    {
+      "id": "me.confirmation.confirm",
+      "screen": "me.confirmation",
+      "trigger": "tap:确认",
+      "from": "selected",
+      "to": "me.home.empty",
+      "status": "interactionVerified",
+      "network": {
+        "submitSnapshot": true,
+        "refresh": [
+          "meHome"
+        ],
+        "retainContentWhileRefreshing": true
+      }
+    },
+    {
+      "id": "me.recordsManager.save-order",
+      "screen": "me.recordsManager",
+      "trigger": "tap:保存",
+      "from": "default",
+      "to": "me.home.empty",
+      "status": "interactionVerified",
+      "network": {
+        "submitSnapshot": true,
+        "refresh": [
+          "meHome"
+        ],
+        "retainContentWhileRefreshing": true
+      }
+    },
+    {
+      "id": "me.energy.save",
+      "screen": "me.energySheet",
+      "trigger": "tap:保存记录",
+      "from": "selected",
+      "to": "me.home.empty",
+      "status": "interactionVerified",
+      "network": {
+        "submitSnapshot": true,
+        "refresh": [
+          "meHome"
+        ],
+        "retainContentWhileRefreshing": true
+      }
+    },
+    {
+      "id": "me.notification.native-permission",
+      "screen": "me.notificationSheet",
+      "trigger": "tap:确认",
+      "from": "denied",
+      "to": "me.home.empty",
+      "status": "interactionVerified",
+      "network": {
+        "request": false,
+        "refreshOnCancel": false
+      },
+      "notes": "直接调用系统原生通知授权，不绘制仿制弹窗"
+    }
+  ],
+  "assets": [
+    {
+      "id": "me.asset.assetcozymateavatar",
+      "figmaNodeId": "483:1025",
+      "localPath": "assets/images/me_figma/AssetCozymateAvatar.png",
+      "format": "png",
+      "checksum": "60bef5d03b3f445f986d90092be56cd73023534530e5a94a48341d87fc881f54"
+    },
+    {
+      "id": "me.asset.avatarcozymatenav",
+      "figmaNodeId": "483:1025",
+      "localPath": "assets/images/me_figma/AvatarCozymateNav.png",
+      "format": "png",
+      "checksum": "0beda2b87f50dbaf2c78d3bc74e2d2e000660e12e5cbb7285abb7b9cc4a85a08"
+    },
+    {
+      "id": "me.asset.illustrationenergy",
+      "figmaNodeId": "483:1102",
+      "localPath": "assets/images/me_figma/IllustrationEnergy.png",
+      "format": "png",
+      "checksum": "4db7681c05e814dda4ee8aed4cb30c29c322e52b4d778774fa0a7ef3f341559f"
+    },
+    {
+      "id": "me.asset.illustrationsleep",
+      "figmaNodeId": "483:1110",
+      "localPath": "assets/images/me_figma/IllustrationSleep.png",
+      "format": "png",
+      "checksum": "42997d2dfcd275da63857a2d4fe3f98188f55e7b954529f476499eca2f00570a"
+    },
+    {
+      "id": "me.asset.illustrationmood",
+      "figmaNodeId": "483:1116",
+      "localPath": "assets/images/me_figma/IllustrationMood.png",
+      "format": "png",
+      "checksum": "b5730ff9dd6826346ec5ad2f8bd301a66225cdce158137a00b5bda51900fb953"
+    },
+    {
+      "id": "me.asset.illustrationpain",
+      "figmaNodeId": "483:1332",
+      "localPath": "assets/images/me_figma/IllustrationPain.png",
+      "format": "png",
+      "checksum": "82e3b9a30dc1b8fa26bdec3c6f2cdbe79023745139fef89e40a1481569e76683"
+    },
+    {
+      "id": "me.asset.decorationambientring",
+      "figmaNodeId": "483:1025",
+      "localPath": "assets/images/me_figma/DecorationAmbientRing.svg",
+      "format": "svg",
+      "checksum": "90c00aa2f96075d080d024ba1a8230c0a2d84ea804cf369de091290ffff82f1d"
+    },
+    {
+      "id": "me.asset.decorationambientpetal",
+      "figmaNodeId": "483:1025",
+      "localPath": "assets/images/me_figma/DecorationAmbientPetal.svg",
+      "format": "svg",
+      "checksum": "3961889201a47506ede7de309c8e78d490e899119e5cbf4aa76253ca58dc7032"
+    },
+    {
+      "id": "me.asset.iconchevronleft",
+      "figmaNodeId": "613:1083",
+      "localPath": "assets/images/me_figma/IconChevronLeft.svg",
+      "format": "svg",
+      "checksum": "1f92de535bd8b107b5a8885f7b4872d8377f96095ce45d6ff42b3adb57cf53d3"
+    },
+    {
+      "id": "me.asset.iconarrowforward",
+      "figmaNodeId": "483:1025",
+      "localPath": "assets/images/me_figma/IconArrowForward.svg",
+      "format": "svg",
+      "checksum": "5aecfeb7a8872ddfd44ef5bda7fe3fdfeb599d4ab78ad231ba972134a087b3fb"
+    },
+    {
+      "id": "me.asset.iconbell",
+      "figmaNodeId": "770:132",
+      "localPath": "assets/images/me_figma/IconBell.svg",
+      "format": "svg",
+      "checksum": "ca6d2f064b661efeccd2e45e3c88ee7ad3069ba071999f1db1ed8754ea0b8d3d"
+    },
+    {
+      "id": "me.asset.controlreminderswitchon",
+      "figmaNodeId": "770:132",
+      "localPath": "assets/images/me_figma/ControlReminderSwitchOn.svg",
+      "format": "svg",
+      "checksum": "97d265a3bef662150a7b405d2028cdafdc9e75217d6f3a1e4ab0442302a6926a"
+    }
+  ],
+  "validation": {
+    "referenceDir": "references",
+    "actualDir": "actual",
+    "comparisonDir": "comparisons",
+    "requiredStates": [
+      "me.home.empty",
+      "me.concernsEmpty.empty",
+      "me.concernDetail.selected",
+      "me.confirmation.selected",
+      "me.recordsManager.default",
+      "me.profile.overview",
+      "me.energySheet.selected",
+      "me.notificationSheet.denied"
+    ],
+    "requiredChecks": [
+      "flutter analyze",
+      "Me widget/interaction tests",
+      "same-size overlay and difference",
+      "device check"
+    ]
+  },
+  "overrides": [
+    {
+      "id": "me.product.latest-copy",
+      "reason": "用户确认的最新中文文案和交互覆盖旧 Figma 画板",
+      "impact": "concern copy, empty-record copy, no pause state, no choice indicators, native notification permission",
+      "reviewedAt": "2026-09-20"
+    }
+  ]
+}

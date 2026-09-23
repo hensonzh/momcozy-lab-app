@@ -1,0 +1,96 @@
+{
+  "contract": "contract.json",
+  "capturedAt": "2026-09-21T00:00:00+08:00",
+  "viewport": {
+    "width": 393,
+    "height": 844,
+    "dpr": 1,
+    "textScale": 1
+  },
+  "screens": {
+    "me.home.empty": {
+      "visual": "visuallyVerified",
+      "interaction": "interactionVerified",
+      "reference": "references/home.png",
+      "actual": "actual/home.png",
+      "comparison": "comparisons/home/comparison.json"
+    },
+    "me.concernsEmpty.empty": {
+      "visual": "visuallyVerified",
+      "interaction": "interactionVerified",
+      "reference": "references/concerns-empty.png",
+      "actual": "actual/concerns-empty.png",
+      "comparison": "comparisons/concerns-empty/comparison.json"
+    },
+    "me.concernDetail.selected": {
+      "visual": "visuallyVerified",
+      "interaction": "interactionVerified",
+      "reference": "references/concern-detail.png",
+      "actual": "actual/concern-detail.png",
+      "comparison": "comparisons/concern-detail/comparison.json"
+    },
+    "me.confirmation.selected": {
+      "visual": "visuallyVerified",
+      "interaction": "interactionVerified",
+      "reference": "references/confirmation.png",
+      "actual": "actual/confirmation.png",
+      "comparison": "comparisons/confirmation/comparison.json"
+    },
+    "me.recordsManager.default": {
+      "visual": "visuallyVerified",
+      "interaction": "interactionVerified",
+      "reference": "references/manager.png",
+      "actual": "actual/manager.png",
+      "comparison": "comparisons/manager/comparison.json"
+    },
+    "me.profile.overview": {
+      "visual": "visuallyVerified",
+      "interaction": "interactionVerified",
+      "reference": "references/profile.png",
+      "actual": "actual/profile.png",
+      "comparison": "comparisons/profile/comparison.json"
+    },
+    "me.energySheet.selected": {
+      "visual": "visuallyVerified",
+      "interaction": "interactionVerified",
+      "reference": "references/energy.png",
+      "actual": "actual/energy.png",
+      "comparison": "comparisons/energy/comparison.json"
+    },
+    "me.notificationSheet.denied": {
+      "visual": "visuallyVerified",
+      "interaction": "interactionVerified",
+      "reference": "references/settings.png",
+      "actual": "actual/settings.png",
+      "comparison": "comparisons/settings/comparison.json"
+    }
+  },
+  "checks": [
+    {
+      "command": "flutter test --no-pub test/modules/mom/me_experience_test.dart test/modules/mom/me_permission_test.dart test/shared/me_components_test.dart",
+      "result": "28 passed"
+    },
+    {
+      "command": "python scripts/validate_contract.py docs/ui-reference/me/contract.json",
+      "result": "VALID"
+    },
+    {
+      "command": "scripts/compare_screens.py at 393x844 dpr=1",
+      "result": "8 same-size comparisons generated"
+    }
+  ],
+  "diagnosticMeanAbsoluteChannelDifference": {
+    "home": 3.1532,
+    "concerns-empty": 2.7209,
+    "concern-detail": 2.6839,
+    "confirmation": 3.4015,
+    "manager": 2.7478,
+    "profile": 1.8738,
+    "energy": 2.2541,
+    "settings": 3.1482
+  },
+  "remaining": [
+    "Figma reference exports for profile editor groups 0-3 and the remaining record sheets are not archived as standalone same-size images; those states remain referenceMissing in contract.json.",
+    "Small pixel differences are concentrated in font rasterization and anti-aliasing; diagnostics are not an acceptance score."
+  ]
+}

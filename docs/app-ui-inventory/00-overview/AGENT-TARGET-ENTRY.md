@@ -1,5 +1,8 @@
 # 通知 → 指定 Cozymate 会话：实际入口审计
 
+> 2026-09-20 一期范围更新：会话历史管理、新建会话和消息长按菜单已删除；指定会话仅加载正文。下文截图和入口描述为历史版本记录。
+
+
 > 历史版本报告：当前初始化错误已修复，指定会话入口及历史抽屉条件以 [G08 当前核验](AGENT-ENTRY-CURRENT.md) 为准。以下错误图和日志保留作版本记录。
 
 使用正式 `MomCozyFlutterApp/createMomCozyRouter`、通知 coordinator/repository 以及默认 Agent 页面构建器，从“更多 → 通知 → Conversation ready”逐步点击。没有注入 Agent 页面、没有开启历史功能开关，也没有绕过通知路由校验。

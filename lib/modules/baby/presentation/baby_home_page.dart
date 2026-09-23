@@ -1,14 +1,13 @@
+import 'baby_motion.dart';
 import 'dart:async';
 import '../../../shared/widgets/momcozy_line_icon.dart';
 import 'package:flutter/material.dart';
-import 'package:momcozy_flutter_app/shared/design_system/momcozy_motion.dart';
 import '../../../domain/baby/baby_profile.dart';
 import '../../../domain/baby/baby_record.dart';
-import '../../../shared/widgets/knowledge_banner.dart';
+import 'baby_artwork.dart';
 import '../../../shared/widgets/product_feedback.dart';
 import '../../../shared/design_system/mom_home_tokens.dart';
-import '../../../shared/design_system/mom_settings_theme.dart';
-import '../../../shared/widgets/mom_companion_widgets.dart';
+
 import '../../../shared/widgets/mom_settings_widgets.dart';
 import '../../../shared/zoned_time.dart';
 import '../application/baby_home_controller.dart';
@@ -19,20 +18,19 @@ import 'baby_overview_cards.dart';
 import 'baby_labels.dart';
 import 'baby_profile_editor.dart';
 import 'baby_record_editor.dart';
-import 'baby_saved_feedback.dart';
+import 'baby_design.dart';
+import 'baby_knowledge_sheet.dart';
 
 class BabyHomePage extends StatefulWidget {
   const BabyHomePage({
     super.key,
     required this.controller,
     required this.onAsk,
-    required this.onHistory,
     this.onBabySelected,
     this.rememberedBabyId,
   });
   final BabyHomeController controller;
   final ValueChanged<String> onAsk;
-  final Future<void> Function(String babyId) onHistory;
   final Future<void> Function(String babyId)? onBabySelected;
   final String? rememberedBabyId;
   @override
@@ -43,7 +41,6 @@ class _BabyHomePageState extends State<BabyHomePage>
     with WidgetsBindingObserver {
   Timer? _timer;
   final _scroll = ScrollController();
-  final _feedbackKey = GlobalKey();
   GrowthMetric _metric = GrowthMetric.weight;
   bool _switching = false;
   @override
@@ -113,136 +110,107 @@ class _BabyHomePageState extends State<BabyHomePage>
       timezone: zone,
       now: c.now,
       profile: profile,
+      deliveryDate: c.deliveryDate,
     );
-    if (!mounted) return;
-    await _load(selectedBabyId: saved?.id);
+    if (!mounted || saved == null || !identical(c, widget.controller)) return;
+    await c.applySavedProfile(saved);
+    if (mounted && identical(c, widget.controller)) await _remember(saved.id);
   }
 
   Future<void> _switch() async {
     final c = widget.controller, selected = widget.controller.baby;
     if (_switching || selected == null) return;
     final profiles = c.profiles.value!;
-    final choice = await showDialog<String>(
-      context: context,
-      animationStyle: MomCozyMotion.animationStyle(context),
-      builder: (context) => Theme(
-        data: momSettingsTheme(Theme.of(context)),
-        child: Dialog(
-          backgroundColor: MomHomeTokens.surface,
-          surfaceTintColor: Colors.transparent,
-          insetPadding: const EdgeInsets.all(12),
-          clipBehavior: Clip.antiAlias,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(24),
-          ),
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 440, maxHeight: 720),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          '切换宝宝',
-                          style: MomHomeTokens.text(
-                            20,
-                            weight: FontWeight.w700,
-                          ),
-                        ),
+    final choice = await showBabySheet<String>(
+      context,
+      Builder(
+        builder: (sheetContext) => BabySheetBody(
+          title: '切换宝宝',
+          style: BabySheetStyle.switcher,
+          body: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            spacing: 14,
+            children: [
+              for (final profile in profiles)
+                BabyPressFeedback(
+                  child: OutlinedButton(
+                    onPressed: () => Navigator.pop(sheetContext, profile.id),
+                    style: OutlinedButton.styleFrom(
+                      alignment: Alignment.centerLeft,
+                      minimumSize: const Size.fromHeight(50),
+                      padding: const EdgeInsets.all(14),
+                      backgroundColor: profile.id == selected.id
+                          ? BabyDesign.selected
+                          : MomHomeTokens.surface,
+                      foregroundColor: profile.id == selected.id
+                          ? BabyDesign.selectedInk
+                          : MomHomeTokens.ink,
+                      side: BorderSide(
+                        color: profile.id == selected.id
+                            ? BabyDesign.selectedBorder
+                            : MomHomeTokens.border,
                       ),
-                      const SizedBox(width: 8),
-                      IconButton(
-                        tooltip: '关闭宝宝切换',
-                        onPressed: () => Navigator.pop(context),
-                        color: MomHomeTokens.rose,
-                        icon: const Icon(Icons.close, size: 20),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
                       ),
-                    ],
-                  ),
-                ),
-                Flexible(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        for (final profile in profiles) ...[
-                          Semantics(
-                            selected: profile.id == selected.id,
-                            child: Material(
-                              color: profile.id == selected.id
-                                  ? MomHomeTokens.mint
-                                  : MomHomeTokens.surface,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(16),
-                                side: BorderSide(
-                                  color: profile.id == selected.id
-                                      ? MomHomeTokens.teal
-                                      : MomHomeTokens.border,
-                                ),
-                              ),
-                              clipBehavior: Clip.antiAlias,
-                              child: InkWell(
-                                onTap: () => Navigator.pop(context, profile.id),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(14),
-                                  child: Wrap(
-                                    spacing: 8,
-                                    runSpacing: 4,
-                                    crossAxisAlignment:
-                                        WrapCrossAlignment.center,
-                                    children: [
-                                      Text(
-                                        profile.name,
-                                        style: MomHomeTokens.text(
-                                          16,
-                                          weight: FontWeight.w700,
-                                          color: profile.id == selected.id
-                                              ? MomHomeTokens.teal
-                                              : MomHomeTokens.ink,
-                                        ),
-                                      ),
-                                      if (profile.id == selected.id)
-                                        Text(
-                                          '当前',
-                                          style: MomHomeTokens.text(
-                                            12,
-                                            color: MomHomeTokens.teal,
-                                          ),
-                                        ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 14),
-                        ],
-                        Text(
-                          '每个宝宝的喂养、睡眠、尿便和生长发育数据会分开保存。',
-                          style: MomHomeTokens.text(
-                            13,
-                            color: MomHomeTokens.secondary,
-                          ),
-                        ),
-                        const SizedBox(height: 14),
-                        TextButton(
-                          onPressed: () => Navigator.pop(context, 'edit'),
-                          child: const Text('编辑当前宝宝资料'),
-                        ),
-                        TextButton(
-                          onPressed: () => Navigator.pop(context, 'add'),
-                          child: const Text('添加宝宝'),
-                        ),
-                      ],
+                      textStyle: BabyDesign.text(
+                        16,
+                        line: 22,
+                        weight: FontWeight.w700,
+                      ),
+                    ),
+                    child: Text(
+                      '${profile.name}${profile.id == selected.id ? '  · 当前' : ''}',
                     ),
                   ),
                 ),
-              ],
-            ),
+              Text(
+                '每个宝宝的喂养、吃奶后精神状态、尿便和生长发育数据会分开保存。',
+                style: BabyDesign.text(
+                  13,
+                  line: 18,
+                  color: MomHomeTokens.secondary,
+                ),
+              ),
+              BabyPressFeedback(
+                child: TextButton(
+                  style: TextButton.styleFrom(
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    minimumSize: const Size.fromHeight(44),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 13,
+                    ),
+                    textStyle: BabyDesign.text(
+                      13,
+                      line: 18,
+                      weight: FontWeight.w700,
+                    ),
+                  ),
+                  onPressed: () => Navigator.pop(sheetContext, 'edit'),
+                  child: const Text('编辑当前宝宝资料'),
+                ),
+              ),
+              BabyPressFeedback(
+                child: TextButton(
+                  style: TextButton.styleFrom(
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    minimumSize: const Size.fromHeight(44),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 13,
+                    ),
+                    textStyle: BabyDesign.text(
+                      13,
+                      line: 18,
+                      weight: FontWeight.w700,
+                    ),
+                  ),
+                  onPressed: () => Navigator.pop(sheetContext, 'add'),
+                  child: const Text('添加宝宝'),
+                ),
+              ),
+            ],
           ),
         ),
       ),
@@ -273,9 +241,7 @@ class _BabyHomePageState extends State<BabyHomePage>
     final c = widget.controller,
         baby = widget.controller.baby,
         zone = widget.controller.timezone;
-    if (baby == null || zone == null || c.savedFeedback?.busy == true) return;
-    c.dismissSaved();
-    final activeId = c.summary?.activeSleep?.id;
+    if (baby == null || zone == null) return;
     final saved = await showBabyRecordEditor(
       context,
       repository: c.recordRepository,
@@ -283,49 +249,20 @@ class _BabyHomePageState extends State<BabyHomePage>
       timezone: zone,
       now: c.now,
       kind: kind,
-      activeSleep: c.summary?.activeSleep,
       diaperKind: diaper,
       growthMetric: metric ?? _metric,
     );
-    if (!mounted) return;
-    if (identical(c, widget.controller)) await c.refreshRecords();
-    if (saved != null &&
-        mounted &&
-        identical(c, widget.controller) &&
-        c.baby?.id == baby.id) {
-      c.showSaved(
-        saved,
-        allowUndo: saved.every(
-          (r) => r.id != activeId && r.recordKind != BabyRecordKind.development,
-        ),
-      );
-      await WidgetsBinding.instance.endOfFrame;
-      if (mounted && _scroll.hasClients) {
-        await MomCozyMotion.scrollTo(
-          context,
-          _scroll,
-          _scroll.position.maxScrollExtent,
-          duration: const Duration(milliseconds: 250),
-          curve: Curves.easeOut,
-        );
-        final feedbackContext = _feedbackKey.currentContext;
-        if (feedbackContext != null && feedbackContext.mounted) {
-          await Scrollable.ensureVisible(feedbackContext);
-        }
-      }
+    if (saved != null && mounted && identical(c, widget.controller)) {
+      await c.refreshRecords(kind: kind);
     }
-  }
-
-  Future<void> _history() async {
-    final baby = widget.controller.baby;
-    if (baby == null) return;
-    await widget.onHistory(baby.id);
-    if (mounted) await widget.controller.refreshRecords();
   }
 
   @override
   Widget build(BuildContext context) => Theme(
-    data: momSettingsTheme(Theme.of(context)),
+    data: BabyDesign.theme(
+      Theme.of(context),
+      reduceMotion: MediaQuery.disableAnimationsOf(context),
+    ),
     child: ColoredBox(
       color: MomHomeTokens.background,
       child: AnimatedBuilder(
@@ -337,14 +274,14 @@ class _BabyHomePageState extends State<BabyHomePage>
               onRefresh: _load,
               child: ListView(
                 physics: const AlwaysScrollableScrollPhysics(),
-                padding: MomHomeTokens.padding,
+                padding: const EdgeInsets.fromLTRB(16, 20, 16, 36),
                 children: [
                   Text(
                     '宝宝',
-                    style: MomHomeTokens.text(26, weight: FontWeight.w700),
+                    style: BabyDesign.text(26, weight: FontWeight.w700),
                   ),
-                  const SizedBox(height: 14),
-                  if (c.profiles.loading)
+                  const SizedBox(height: 26),
+                  if (c.profiles.loading && !c.profiles.hasValue)
                     const Padding(
                       padding: EdgeInsets.all(40),
                       child: Center(child: CircularProgressIndicator()),
@@ -354,28 +291,32 @@ class _BabyHomePageState extends State<BabyHomePage>
                       failure: c.profiles.failure!,
                       onRetry: _load,
                       useMomStyle: true,
+                      compactMomStyle: true,
                     )
                   else
                     MomSettingsCard(
+                      padding: const EdgeInsets.all(24),
                       children: [
                         Text(
                           '添加宝宝，开始记录',
-                          style: MomHomeTokens.text(
-                            18,
-                            weight: FontWeight.w700,
-                          ),
+                          style: BabyDesign.text(18, weight: FontWeight.w700),
                         ),
                         Text(
                           '先填写宝宝称呼，之后可以逐步完善资料。',
-                          style: MomHomeTokens.text(
+                          style: BabyDesign.text(
                             14,
                             color: MomHomeTokens.secondary,
                           ),
                         ),
-                        FilledButton.icon(
-                          onPressed: _profile,
-                          icon: const Icon(Icons.add),
-                          label: const Text('添加宝宝'),
+                        BabyPressFeedback(
+                          child: FilledButton.icon(
+                            style: FilledButton.styleFrom(
+                              minimumSize: const Size.fromHeight(45),
+                            ),
+                            onPressed: _profile,
+                            icon: const Icon(Icons.add),
+                            label: const Text('添加宝宝'),
+                          ),
                         ),
                       ],
                     ),
@@ -384,11 +325,11 @@ class _BabyHomePageState extends State<BabyHomePage>
             );
           }
           final summary = c.summary, zone = c.timezone!;
-          final missing = c.recentRecords.loading
+          final missing = c.recentRecords.loading && !c.recentRecords.hasValue
               ? '载入中…'
-              : c.recentRecords.failure != null
+              : c.recentRecords.failure != null && !c.recentRecords.hasValue
               ? '暂未载入'
-              : '未记录';
+              : '待记录';
           final article =
               babyKnowledgeArticles[selectBabyKnowledge(
                 now: c.now(),
@@ -409,7 +350,7 @@ class _BabyHomePageState extends State<BabyHomePage>
             child: ListView(
               controller: _scroll,
               physics: const AlwaysScrollableScrollPhysics(),
-              padding: MomHomeTokens.padding,
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 36),
               children: [
                 Semantics(
                   label: '当前宝宝 ${baby.name}，${babySexLabel(baby.sex)}，切换宝宝',
@@ -420,135 +361,151 @@ class _BabyHomePageState extends State<BabyHomePage>
                   child: InkWell(
                     onTap: _switching ? null : _switch,
                     borderRadius: BorderRadius.circular(16),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 4),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              baby.name,
-                              style: MomHomeTokens.text(
-                                26,
-                                weight: FontWeight.w700,
-                              ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      spacing: 8,
+                      children: [
+                        SizedBox(
+                          width: 44,
+                          height: 44,
+                          child: Center(
+                            child: BabyDesign.asset(
+                              'ChevronDownRounded',
+                              width: 20,
+                              height: 20,
                             ),
                           ),
-                          const SizedBox(width: 8),
-                          const Icon(
-                            Icons.expand_more,
-                            size: 24,
-                            color: MomHomeTokens.rose,
+                        ),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            spacing: 8,
+                            children: [
+                              Text(
+                                baby.name,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: BabyDesign.text(
+                                  22,
+                                  line: 36,
+                                  weight: FontWeight.w700,
+                                ),
+                              ),
+                              Text(
+                                '${babySexLabel(baby.sex)} · ${babyAgeLabel(baby, c.date!)}',
+                                style: BabyDesign.text(
+                                  12,
+                                  line: 17,
+                                  color: MomHomeTokens.secondary,
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
-                const SizedBox(height: 8),
-                Text(
-                  '${babySexLabel(baby.sex)} · ${babyAgeLabel(baby, c.date!)}',
-                  style: MomHomeTokens.text(12, color: MomHomeTokens.secondary),
-                ),
                 const SizedBox(height: 14),
-                KnowledgeBanner(
-                  backgroundDecoration: MomCardDecoration.ai,
-                  useMomStyle: true,
-                  splitTitle: false,
-                  reservePortraitSpace: true,
-                  label: '更好地了解 ${baby.name}',
-                  article: article,
-                  onOpen: () => showKnowledgeArticle(
-                    context,
+                BabyPressFeedback(
+                  child: BabyKnowledgeBanner(
                     article: article,
-                    title: '更好地了解 ${baby.name}',
-                    babyStyle: true,
-                    useMomStyle: true,
-                    boundary: '内容用于帮助理解记录，不是对宝宝健康或发育状态的判断。',
-                    onAsk: () => widget.onAsk(article.title),
+                    onOpen: () => showBabyKnowledge(
+                      context,
+                      article,
+                      () => widget.onAsk(article.title),
+                    ),
                   ),
                 ),
                 const SizedBox(height: 14),
-                MomHomeSectionHeader(
+                BabySectionHeader(
                   title: '今日吃奶',
-                  action: '记录',
                   onTap: () => _record(BabyRecordKind.feeding),
                 ),
                 const SizedBox(height: 14),
-                BabyFeedingSummary(
-                  hasRecord: summary != null && summary.feedingCount > 0,
-                  value: summary != null && summary.feedingCount > 0
-                      ? '${summary.feedingCount} 次'
-                      : missing,
-                  detail: feedingFacts.isEmpty
-                      ? '每次喂养记一条'
-                      : feedingFacts.join(' · '),
-                  onTap: () => _record(BabyRecordKind.feeding),
+                BabyPressFeedback(
+                  child: BabyFeedingSummary(
+                    hasRecord: summary != null && summary.feedingCount > 0,
+                    value: summary != null && summary.feedingCount > 0
+                        ? '${summary.feedingCount} 次'
+                        : missing,
+                    detail: feedingFacts.isEmpty
+                        ? '每次喂养记一条'
+                        : feedingFacts.join(' · '),
+                    onTap: () => _record(BabyRecordKind.feeding),
+                  ),
                 ),
-                const SizedBox(height: 16),
-                MomHomeSectionHeader(
+                const SizedBox(height: 14),
+                BabySectionHeader(
                   title: '今日状态',
-                  action: '记录',
-                  onTap: () => _record(BabyRecordKind.sleep),
+                  onTap: () => _record(BabyRecordKind.dailyStatus),
                 ),
                 const SizedBox(height: 14),
-                if (c.recentRecords.failure != null)
+                if (c.recentRecords.failure != null) ...[
                   ProductErrorView(
                     useMomStyle: true,
+                    compactMomStyle: true,
                     failure: c.recentRecords.failure!,
                     onRetry: c.refreshRecords,
                   ),
+                  const SizedBox(height: 11),
+                ],
                 LayoutBuilder(
                   builder: (context, constraints) {
                     final stack =
                         MediaQuery.textScalerOf(context).scale(1) > 1.35;
                     final cards = [
-                      BabyStatusCard(
-                        hasRecord: summary?.activeSleep != null ||
-                            (summary != null && summary.sleepCount > 0),
-                        backgroundDecoration: MomCardDecoration.sleep,
-                        label: '睡眠',
-                        icon: MomCozyLineGlyph.moon,
-                        gradient: MomHomeTokens.sleep,
-                        value: summary?.activeSleep != null
-                            ? '正在睡'
-                            : summary != null && summary.sleepCount > 0
-                            ? '累计 ${babyDuration(summary.sleepDuration)}'
-                            : missing,
-                        detail: summary?.activeSleep != null
-                            ? '${zonedClock(summary!.activeSleep!.occurredAt, zone)} 开始'
-                            : summary != null && summary.sleepCount > 0
-                            ? '${summary.sleepCount} 段 · 最长 ${babyDuration(summary.longestSleep)}'
-                            : '每段睡眠记一条',
-                        onTap: () => _record(BabyRecordKind.sleep),
-                      ),
-                      BabyStatusCard(
-                        hasRecord: summary != null && summary.wetCount > 0,
-                        backgroundDecoration: MomCardDecoration.wet,
-                        label: '尿湿',
-                        icon: MomCozyLineGlyph.drop,
-                        gradient: MomHomeTokens.body,
-                        value: summary != null && summary.wetCount > 0
-                            ? '${summary.wetCount} 次'
-                            : missing,
-                        detail: '每次换尿布记一条',
-                        onTap: () => _record(
-                          BabyRecordKind.diaper,
-                          diaper: DiaperKind.wet,
+                      BabyPressFeedback(
+                        child: BabyStatusCard(
+                          hasRecord: summary?.latestMentalState != null,
+                          artwork: 'mental',
+                          label: '吃奶后精神状态',
+                          asset: 'IconMentalState',
+                          icon: MomCozyLineGlyph.status,
+                          gradient: MomHomeTokens.sleep,
+                          value: summary?.latestMentalState != null
+                              ? babyMentalLabels[summary!.latestMentalState]!
+                              : missing,
+                          detail: summary?.latestMentalState != null
+                              ? '最近'
+                              : '',
+                          onTap: () => _record(BabyRecordKind.dailyStatus),
                         ),
                       ),
-                      BabyStatusCard(
-                        hasRecord: summary != null && summary.dirtyCount > 0,
-                        backgroundDecoration: MomCardDecoration.stool,
-                        label: '便便',
-                        icon: MomCozyLineGlyph.note,
-                        gradient: MomHomeTokens.mood,
-                        value: summary != null && summary.dirtyCount > 0
-                            ? '${summary.dirtyCount} 次'
-                            : missing,
-                        detail: '记录看到的情况',
-                        onTap: () => _record(
-                          BabyRecordKind.diaper,
-                          diaper: DiaperKind.dirty,
+                      BabyPressFeedback(
+                        child: BabyStatusCard(
+                          hasRecord: summary != null && summary.wetCount > 0,
+                          artwork: 'wet',
+                          asset: 'IconDrop1',
+                          label: '尿湿',
+                          icon: MomCozyLineGlyph.drop,
+                          gradient: MomHomeTokens.body,
+                          value: summary != null && summary.wetCount > 0
+                              ? '${summary.wetCount} 次'
+                              : missing,
+                          detail: '今日湿尿布数',
+                          onTap: () => _record(
+                            BabyRecordKind.dailyStatus,
+                            diaper: DiaperKind.wet,
+                          ),
+                        ),
+                      ),
+                      BabyPressFeedback(
+                        child: BabyStatusCard(
+                          hasRecord: summary != null && summary.dirtyCount > 0,
+                          artwork: 'stool',
+                          asset: 'IconNote',
+                          label: '便便',
+                          icon: MomCozyLineGlyph.note,
+                          gradient: MomHomeTokens.mood,
+                          value: summary != null && summary.dirtyCount > 0
+                              ? '${summary.dirtyCount} 次'
+                              : missing,
+                          detail: '今日便便次数',
+                          onTap: () => _record(
+                            BabyRecordKind.dailyStatus,
+                            diaper: DiaperKind.dirty,
+                          ),
                         ),
                       ),
                     ];
@@ -585,24 +542,26 @@ class _BabyHomePageState extends State<BabyHomePage>
                   },
                 ),
                 const SizedBox(height: 14),
-                MomHomeSectionHeader(
+                BabySectionHeader(
                   title: '生长发育记录',
-                  action: '记录',
                   onTap: () => _record(BabyRecordKind.growth),
                 ),
                 const SizedBox(height: 14),
-                if (c.latestGrowth.failure != null)
+                if (c.latestGrowth.failure != null) ...[
                   ProductErrorView(
                     useMomStyle: true,
+                    compactMomStyle: true,
                     failure: c.latestGrowth.failure!,
                     onRetry: c.refreshRecords,
                   ),
+                  const SizedBox(height: 14),
+                ],
                 BabyGrowthMetrics(
                   controller: c,
                   onRecord: (metric) =>
                       _record(BabyRecordKind.growth, metric: metric),
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 14),
                 BabyGrowthCurve(
                   baby: baby,
                   metric: _metric,
@@ -610,45 +569,6 @@ class _BabyHomePageState extends State<BabyHomePage>
                   onMetricChanged: (value) => setState(() => _metric = value),
                   onEditProfile: () => _profile(baby),
                   onRetry: c.refreshRecords,
-                ),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: TextButton.icon(
-                    style: TextButton.styleFrom(
-                      textStyle: MomHomeTokens.text(
-                        13,
-                        weight: FontWeight.w700,
-                      ),
-                    ),
-                    onPressed: () => _record(BabyRecordKind.development),
-                    icon: const Icon(Icons.auto_awesome_outlined, size: 17),
-                    label: const Text('记录发育观察'),
-                  ),
-                ),
-                const SizedBox(height: 18),
-                const MomHomeSectionHeader(title: '睡眠监测'),
-                Text(
-                  '即将开放',
-                  style: MomHomeTokens.text(12, color: MomHomeTokens.secondary),
-                ),
-                const SizedBox(height: 14),
-                const BabySleepMonitor(),
-                const SizedBox(height: 16),
-                if (c.savedFeedback != null)
-                  BabySavedFeedbackView(
-                    key: _feedbackKey,
-                    feedback: c.savedFeedback!,
-                    onUndo: c.undoSaved,
-                    onDismiss: c.dismissSaved,
-                    onHistory: _history,
-                  ),
-                TextButton.icon(
-                  style: TextButton.styleFrom(
-                    textStyle: MomHomeTokens.text(13, weight: FontWeight.w700),
-                  ),
-                  onPressed: _history,
-                  icon: const Icon(Icons.history, size: 18),
-                  label: const Text('查看全部记录'),
                 ),
               ],
             ),

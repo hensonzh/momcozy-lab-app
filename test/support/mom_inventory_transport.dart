@@ -27,7 +27,6 @@ class MomInventoryTransport extends FixtureApiJsonTransportByPath {
       });
   final records = <Map<String, Object?>>[];
   final deleted = <String, Map<String, Object?>>{};
-  final diaries = <String, Map<String, Object?>>{};
   final failingReads = <String>{};
   final readGates = <String, Completer<void>>{};
   bool failWrite = false;
@@ -54,20 +53,7 @@ class MomInventoryTransport extends FixtureApiJsonTransportByPath {
     getPaths.add(path);
     await readGates[path]?.future;
     check(failingReads.contains(path));
-    if (path == '/v1/mother/diary') {
-      return {
-        'items': diaries.entries
-            .where(
-              (r) =>
-                  (query['start'] == null ||
-                      r.key.compareTo(query['start'].toString()) >= 0) &&
-                  (query['end'] == null ||
-                      r.key.compareTo(query['end'].toString()) <= 0),
-            )
-            .map((e) => e.value)
-            .toList(),
-      };
-    }
+
     if (path == '/v1/lactation/records') {
       return {
         'items': records.where((r) {
@@ -168,17 +154,7 @@ class MomInventoryTransport extends FixtureApiJsonTransportByPath {
     await writeGate?.future;
     check(failWrite);
     mutationPaths.add(path);
-    if (path.startsWith('/v1/mother/diary/')) {
-      final date = path.split('/').last;
-      return diaries[date] = {
-        'id': 'inventory-diary-$date',
-        'owner_user_id': 'inventory-user',
-        'entry_date': date,
-        'version': (diaries[date]?['version'] as int? ?? 0) + 1,
-        'updated_at': inventoryMomNow.toIso8601String(),
-        'diary': body['diary'],
-      };
-    }
+
     if (path.startsWith('/v1/lactation/records/')) {
       final row = records.singleWhere((r) => r['id'] == path.split('/').last);
       row['observation'] = body['observation'];

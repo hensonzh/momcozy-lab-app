@@ -98,10 +98,13 @@ function parseEnv(filePath) {
   return values;
 }
 
-function updateEnv(filePath, updates) {
+function updateEnv(filePath, updates, removedKeys = new Set()) {
   const original = readFileSync(filePath, "utf8");
   const seen = new Set();
-  const lines = original.split(/\r?\n/).map((line) => {
+  const lines = original.split(/\r?\n/).filter((line) => {
+    const key = line.match(/^([A-Za-z_][A-Za-z0-9_]*)=/)?.[1];
+    return !removedKeys.has(key);
+  }).map((line) => {
     const match = line.match(/^([A-Za-z_][A-Za-z0-9_]*)=/);
     if (!match || !Object.hasOwn(updates, match[1])) return line;
     const key = match[1];
@@ -118,6 +121,25 @@ function updateEnv(filePath, updates) {
   renameSync(temporary, filePath);
   chmodSync(filePath, 0o600);
   return true;
+}
+
+function synchronizeEnvDefaults(filePath, { renames = {}, removedPrefixes = [] } = {}) {
+  const existing = parseEnv(filePath);
+  const defaults = parseEnv(`${filePath}.example`);
+  const updates = Object.fromEntries(
+    [...defaults].filter(([key]) => !existing.has(key)),
+  );
+  for (const [oldKey, newKey] of Object.entries(renames)) {
+    if (existing.has(oldKey) && !existing.has(newKey)) {
+      updates[newKey] = existing.get(oldKey);
+    }
+  }
+  const removedKeys = new Set([...existing.keys()].filter(
+    (key) => Object.hasOwn(renames, key) || removedPrefixes.some((prefix) => key.startsWith(prefix)),
+  ));
+  if (updateEnv(filePath, updates, removedKeys)) {
+    console.log(`Updated local configuration keys: ${path.relative(workspaceRoot, filePath)}`);
+  }
 }
 
 function generatePrivateKey() {
@@ -150,6 +172,15 @@ function initEnvironment() {
   validateWorkspace();
   copyExampleIfMissing(backendEnv);
   copyExampleIfMissing(agentEnv);
+  synchronizeEnvDefaults(backendEnv);
+  synchronizeEnvDefaults(agentEnv, {
+    renames: {
+      OPENAI_REASONING_EFFORT: "AGENT_MODEL_REASONING_EFFORT",
+      OPENAI_TEXT_VERBOSITY: "AGENT_MODEL_TEXT_VERBOSITY",
+      OPENAI_RESPONSES_STORE: "AGENT_MODEL_STORE",
+    },
+    removedPrefixes: ["FACT_WORKER_"],
+  });
 
   const backend = parseEnv(backendEnv);
   const currentKey = backend.get("AUTH_JWT_PRIVATE_KEY_B64") || "";

@@ -28,6 +28,7 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  uuid: ^4.5.3
   flutter:
     sdk: flutter
   flutter_localizations:
@@ -46,7 +47,6 @@ dependencies:
   meta: ^1.18.0
   path_provider: ^2.1.6
   package_info_plus: ^10.2.1
-  share_plus: ^13.2.0
   url_launcher: ^6.3.2
   flutter_svg: ^2.3.0
   flutter_timezone: ^5.1.0
@@ -85,6 +85,9 @@ flutter:
   uses-material-design: true
 
   assets:
+    - assets/images/me_figma/
+    - assets/images/baby_figma/
+    - assets/images/navigation_figma/
     - assets/images/mom_home/
     - assets/certificates/
     - assets/images/
@@ -94,6 +97,9 @@ flutter:
     - assets/images/me_baby_overview/icons/
 
   fonts:
+    - family: BabyNotoSans
+      fonts:
+        - asset: assets/fonts/BabyNotoSans-VF.ttf
     - family: NotoSansSCHome
       fonts:
         - asset: assets/fonts/NotoSansCJKsc-Regular.otf

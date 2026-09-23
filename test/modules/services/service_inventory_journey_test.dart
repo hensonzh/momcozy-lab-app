@@ -12,12 +12,11 @@ import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 import 'package:momcozy_flutter_app/shared/design_system/momcozy_design_system.dart';
 import 'package:momcozy_flutter_app/modules/mom/presentation/mom_home_sections.dart';
-import 'package:momcozy_flutter_app/modules/mom/presentation/mother_home_page.dart';
+import 'package:momcozy_flutter_app/modules/mom/presentation/me_home_page.dart';
 import 'package:momcozy_flutter_app/modules/services/presentation/service_catalog_page.dart';
 import '../../support/mom_inventory_transport.dart';
 import '../../support/service_inventory_transport.dart';
 import '../../support/fixture_api_transport.dart';
-import '../../support/fake_agent_voice.dart';
 import '../../support/momcozy_test_fonts.dart';
 
 void main() {
@@ -52,7 +51,7 @@ void main() {
       MomCozyApiRuntime(
         jsonTransport: transport,
         multipartTransport: FixtureApiMultipartTransport({}),
-        agentVoicePlaybackPlayer: ImmediateAgentVoicePlaybackPlayer(),
+
         session: session,
         supportsSessionAutoRefresh: false,
         now: () => inventoryMomNow,
@@ -705,7 +704,7 @@ void main() {
       // Finish route motion while keeping the API gate closed. Otherwise the
       // departing shell page remains mounted and contributes a hidden scroll.
       await tester.pump(const Duration(seconds: 1));
-      expect(find.byType(MotherHomePage), findsNothing);
+      expect(find.byType(MeHomePage), findsNothing);
       await capture(
         tester,
         'catalog-loading',

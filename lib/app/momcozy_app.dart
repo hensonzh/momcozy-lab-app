@@ -28,13 +28,10 @@ import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
 import 'package:momcozy_flutter_app/core/config/momcozy_app_capabilities.dart';
 import 'package:momcozy_flutter_app/core/update/app_release_lifecycle.dart';
 import 'package:momcozy_flutter_app/core/routing/route_intent.dart';
-import 'package:momcozy_flutter_app/core/routing/external_url_launcher.dart';
-import 'package:momcozy_flutter_app/core/routing/safe_link_target.dart';
 import 'package:momcozy_flutter_app/core/observability/momcozy_observability.dart';
 import 'package:momcozy_flutter_app/shared/design_system/momcozy_design_system.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_page.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_runtime.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
 import 'package:momcozy_flutter_app/features/app_pages/momcozy_feature_pages.dart';
 import 'package:momcozy_flutter_app/modules/profile/presentation/more_page.dart';
 import 'package:momcozy_flutter_app/features/auth/presentation/auth_page.dart';
@@ -47,12 +44,7 @@ import 'package:momcozy_flutter_app/native/android_p0_platform_channels.dart';
 import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 
 typedef MomCozyAgentHubBuilder =
-    Widget Function(
-      BuildContext context,
-      Uri? uri,
-      Object? extra,
-      AgentVoicePlaybackCoordinator voicePlaybackCoordinator,
-    );
+    Widget Function(BuildContext context, Uri? uri, Object? extra);
 
 class MomCozyFlutterApp extends StatefulWidget {
   const MomCozyFlutterApp({
@@ -68,7 +60,6 @@ class MomCozyFlutterApp extends StatefulWidget {
     this.capabilities = const MomCozyAppCapabilities.fromEnvironment(),
     this.onboardingReleasePolicy = const NoopOnboardingReleasePolicy(),
     this.agentHubBuilder,
-    this.externalUrlLauncher = const PlatformExternalUrlLauncher(),
   }) : assert(
          apiRuntime == null || runtimeController == null,
          'Pass either apiRuntime or runtimeController, not both.',
@@ -85,7 +76,6 @@ class MomCozyFlutterApp extends StatefulWidget {
   final MomCozyAppCapabilities capabilities;
   final OnboardingReleasePolicy onboardingReleasePolicy;
   final MomCozyAgentHubBuilder? agentHubBuilder;
-  final ExternalUrlLauncher externalUrlLauncher;
 
   @override
   State<MomCozyFlutterApp> createState() => _MomCozyFlutterAppState();
@@ -124,7 +114,6 @@ class _MomCozyFlutterAppState extends State<MomCozyFlutterApp>
         lastInviteCodeStore: widget.lastInviteCodeStore,
         capabilities: widget.capabilities,
         agentHubBuilder: widget.agentHubBuilder,
-        externalUrlLauncher: widget.externalUrlLauncher,
       );
   late final bool _ownsRouter = widget.router == null;
   late final RouteIntentPlatform _routeIntentPlatform =
@@ -290,20 +279,10 @@ GoRouter createMomCozyRouter({
       const FlutterSecureMomCozyLastInviteCodeStore(),
   MomCozyAppCapabilities capabilities = const MomCozyAppCapabilities(),
   MomCozyAgentHubBuilder? agentHubBuilder,
-  ExternalUrlLauncher externalUrlLauncher = const PlatformExternalUrlLauncher(),
 }) {
   final resolvedAgentHubBuilder =
       agentHubBuilder ??
-      (context, uri, extra, voicePlaybackCoordinator) =>
-          _buildDefaultAgentHubPage(
-            context,
-            uri,
-            extra,
-            voicePlaybackCoordinator,
-            externalUrlLauncher: externalUrlLauncher,
-            conversationHistoryEnabled:
-                capabilities.agentConversationHistoryEnabled,
-          );
+      (context, uri, extra) => _buildDefaultAgentHubPage(context, uri, extra);
   return GoRouter(
     initialLocation: initialLocation,
     refreshListenable: runtimeController == null
@@ -566,18 +545,8 @@ class MomCozyRouteShell extends StatefulWidget {
 }
 
 class _MomCozyRouteShellState extends State<MomCozyRouteShell> {
-  final AgentVoicePlaybackCoordinator _voicePlaybackCoordinator =
-      AgentVoicePlaybackCoordinator();
   late bool _hasBuiltAgentHub = widget.location == '/';
   bool _openingAvatarTask = false;
-
-  @override
-  void initState() {
-    super.initState();
-    if (widget.location == '/motion-assessment') {
-      unawaited(_voicePlaybackCoordinator.suspendAndDrain());
-    }
-  }
 
   @override
   void didUpdateWidget(covariant MomCozyRouteShell oldWidget) {
@@ -585,25 +554,9 @@ class _MomCozyRouteShellState extends State<MomCozyRouteShell> {
     if (oldWidget.location == '/' && widget.location != '/') {
       FocusManager.instance.primaryFocus?.unfocus();
     }
-    final wasMotionAssessment = oldWidget.location == '/motion-assessment';
-    final isMotionAssessment = widget.location == '/motion-assessment';
-    if (!wasMotionAssessment && isMotionAssessment) {
-      // The assessment owns its own full-duplex Realtime voice session. The
-      // Agent Hub remains mounted offstage, so suspend both current and future
-      // normal Agent playback until this focused flow has ended.
-      unawaited(_voicePlaybackCoordinator.suspendAndDrain());
-    } else if (wasMotionAssessment && !isMotionAssessment) {
-      _voicePlaybackCoordinator.resume();
-    }
     if (widget.location == '/') {
       _hasBuiltAgentHub = true;
     }
-  }
-
-  @override
-  void dispose() {
-    _voicePlaybackCoordinator.cancel();
-    super.dispose();
   }
 
   @override
@@ -613,7 +566,11 @@ class _MomCozyRouteShellState extends State<MomCozyRouteShell> {
     final content = _buildContent(context);
 
     return Scaffold(
-      backgroundColor: MomCozyColors.background,
+      // Let Schedule scroll beneath the navigation's transparent avatar inset.
+      extendBody: location == '/schedule',
+      backgroundColor: location == '/me'
+          ? MomHomeTokens.background
+          : MomCozyColors.background,
       body: SafeArea(
         bottom: hideNavigation,
         child: Column(
@@ -671,7 +628,6 @@ class _MomCozyRouteShellState extends State<MomCozyRouteShell> {
         context,
         isAgentRoute ? widget.uri : null,
         isAgentRoute ? widget.extra : null,
-        _voicePlaybackCoordinator,
       ),
     );
 
@@ -728,12 +684,7 @@ class MomCozyRoutePage extends StatelessWidget {
     }
 
     if (route.path == '/') {
-      return _buildDefaultAgentHubPage(
-        context,
-        uri,
-        extra,
-        AgentVoicePlaybackCoordinator(),
-      );
+      return _buildDefaultAgentHubPage(context, uri, extra);
     }
 
     return MomCozyFeaturePage(
@@ -752,31 +703,20 @@ class MomCozyRoutePage extends StatelessWidget {
   }
 }
 
-// AgentHubPage caches by object identity. Keep conversation keys stable across
-// route rebuilds, while allowing all keys to be collected with their runtime.
-final _conversationInteractionKeys = Expando<Map<String, Object>>(
-  'momcozy-conversation-interaction-keys',
+final _agentSessionInteractionKeys = Expando<Map<String, Object>>(
+  'agent-user-session-keys',
 );
-
-Object _conversationInteractionKey(
-  MomCozyApiRuntime runtime,
-  String conversationId,
-) {
-  final keys = _conversationInteractionKeys[runtime] ??= <String, Object>{};
-  return keys.putIfAbsent(
-    '${runtime.currentSession.userId}:$conversationId',
-    Object.new,
-  );
-}
+Object _agentSessionInteractionKey(MomCozyApiRuntime runtime) =>
+    (_agentSessionInteractionKeys[runtime] ??= {}).putIfAbsent(
+      runtime.currentSession.userId,
+      Object.new,
+    );
 
 Widget _buildDefaultAgentHubPage(
   BuildContext context,
   Uri? uri,
   Object? extra,
-  AgentVoicePlaybackCoordinator voicePlaybackCoordinator, {
-  ExternalUrlLauncher externalUrlLauncher = const PlatformExternalUrlLauncher(),
-  bool conversationHistoryEnabled = false,
-}) {
+) {
   final runtime = MomCozyRuntimeScope.of(context);
   String? currentAccessToken() {
     return runtime.currentSession.accessToken ??
@@ -786,16 +726,14 @@ Widget _buildDefaultAgentHubPage(
 
   final targetConversationId = uri?.queryParameters['conversationId'];
   return AgentHubPage(
-    key: ValueKey(
-      'agent-hub-${runtime.currentSession.userId}${targetConversationId == null ? '' : '-$targetConversationId'}',
-    ),
+    key: ObjectKey(_agentSessionInteractionKey(runtime)),
+    isVisible: uri != null,
+    now: runtime.now,
     initialConversationId: targetConversationId,
-    stateCacheKey: targetConversationId == null
-        ? runtime
-        : _conversationInteractionKey(runtime, targetConversationId),
-    interactionStateStore: targetConversationId != null
-        ? null
-        : createSessionAgentHubInteractionStateStore(runtime.currentSession),
+    stateCacheKey: _agentSessionInteractionKey(runtime),
+    interactionStateStore: createSessionAgentHubInteractionStateStore(
+      runtime.currentSession,
+    ),
     runner: createSessionAgentHubRunner(
       runtime.session,
       accessTokenProvider: currentAccessToken,
@@ -806,41 +744,17 @@ Widget _buildDefaultAgentHubPage(
       accessTokenProvider: currentAccessToken,
       onUnauthorized: runtime.agentStreamUnauthorizedHandler,
     ),
-    actionClient: createSessionAgentHubActionClient(
-      runtime.session,
-      accessTokenProvider: currentAccessToken,
-      onUnauthorized: runtime.agentStreamUnauthorizedHandler,
-    ),
-    clientEventClient: createSessionAgentHubClientEventClient(
-      runtime.session,
-      accessTokenProvider: currentAccessToken,
-      onUnauthorized: runtime.agentStreamUnauthorizedHandler,
-    ),
-    conversationRepository:
-        conversationHistoryEnabled || targetConversationId != null
-        ? runtime.agentConversationRepository
-        : null,
+    conversationRepository: runtime.agentConversationRepository,
     greetingProfileLoader:
         runtime.agentHubProfileRepository.fetchGreetingProfile,
     requestBuilder: (message) =>
         buildSessionAgentHubRequest(message, session: runtime.session),
-    voicePlaybackCoordinator: voicePlaybackCoordinator,
-    voicePlaybackPlayer: runtime.agentVoicePlaybackPlayer,
     pickImage: runtime.agentHubImagePicker,
     pickDocument: runtime.agentHubDocumentPicker,
     mediaRepository: runtime.mediaRepository,
     loadImageThumbnail: runtime.mediaContentRepository.loadImageThumbnail,
     loadImageContent: runtime.mediaContentRepository.loadImage,
-    productAssetRepository: runtime.productAssetRepository,
-    supportTicketSubmitter: runtime.supportTicketRepository.submit,
     onApplicationEvent: runtime.handleAgentApplicationEvent,
-    onArtifactAction: (action) => unawaited(
-      dispatchAgentArtifactAction(
-        context,
-        action,
-        externalUrlLauncher: externalUrlLauncher,
-      ),
-    ),
     initialComposerText: _agentPrefillFromRoute(uri, extra),
     initialAutoSend: _agentAutoSendFromRoute(uri, extra),
     initialAutoRunRequest: _agentAutoRunFromRoute(extra),
@@ -998,7 +912,7 @@ const momCozyRoutes = [
   MomCozyRouteConfig(
     path: '/me',
     title: 'Me',
-    summary: '妈妈状态、日记、泌乳和专家支持。',
+    summary: '妈妈资料、泌乳记录和专家支持。',
     icon: Icons.person_rounded,
     accent: Color(0xff862644),
     priority: 'P0',
@@ -1046,41 +960,3 @@ const momCozyRoutes = [
 ];
 
 const _primaryNavigationRoutes = {'/me', '/baby', '/', '/schedule', '/more'};
-
-Future<void> dispatchAgentArtifactAction(
-  BuildContext context,
-  AgentArtifactActionView action, {
-  ExternalUrlLauncher externalUrlLauncher = const PlatformExternalUrlLauncher(),
-}) async {
-  final path = action.routePath;
-  if (path != null && _knownFlutterRoutePaths.contains(path)) {
-    Object? routeExtra = action.routeExtra;
-    final target = SafeLinkTarget.tryParse(action.value);
-    final location = routeExtra == null && target?.internalPath == path
-        ? target!.internalLocation!
-        : path;
-    context.go(location, extra: routeExtra);
-    return;
-  }
-
-  final externalUri = SafeLinkTarget.tryParse(
-    action.externalUri?.toString(),
-  )?.externalUri;
-  if (externalUri == null) return;
-  var opened = false;
-  try {
-    opened = await externalUrlLauncher.open(externalUri);
-  } catch (_) {
-    opened = false;
-  }
-  if (opened || !context.mounted) return;
-  final messenger = ScaffoldMessenger.maybeOf(context);
-  messenger?.hideCurrentSnackBar();
-  messenger?.showSnackBar(const SnackBar(content: Text('无法打开链接，请稍后重试')));
-}
-
-final _knownFlutterRoutePaths = momCozyRoutes
-    .map((route) => route.path)
-    .followedBy(momModuleRoutes.map((route) => route.path))
-    .followedBy(babyModuleRoutes.map((route) => route.path))
-    .toSet();

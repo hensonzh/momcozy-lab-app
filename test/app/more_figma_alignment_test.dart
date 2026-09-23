@@ -58,7 +58,7 @@ void main() {
     );
     expect(
       tester.getRect(find.byKey(const ValueKey('bottom-nav-chrome'))),
-      const Rect.fromLTWH(0, 766, 393, 78),
+      const Rect.fromLTWH(0, 762, 393, 82),
     );
     for (final entry in {
       'me': 45.7,

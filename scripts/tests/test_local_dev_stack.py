@@ -16,6 +16,28 @@ SCRIPT = ROOT / "scripts" / "local-dev-stack.mjs"
 
 
 class LocalDevStackTest(unittest.TestCase):
+    def test_init_migrates_old_keys_preserves_credentials_and_is_idempotent(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            workspace = Path(directory)
+            self._write_fixture(workspace)
+            self.assertEqual(self._run(workspace, "init").returncode, 0)
+            agent_path = workspace / "agent/env/compose.local.env"
+            example = workspace / "agent/env/compose.local.env.example"
+            example.write_text(example.read_text() + "AGENT_MODEL_PROVIDER=openai_responses\nAGENT_MODEL_REASONING_EFFORT=low\n")
+            agent_path.write_text(agent_path.read_text() + "OPENAI_API_KEY=private-sentinel\nOPENAI_REASONING_EFFORT=medium\nFACT_WORKER_BATCH_SIZE=8\n")
+            result = self._run(workspace, "init")
+            self.assertEqual(result.returncode, 0, result.stderr)
+            values = _read_env(agent_path)
+            self.assertEqual(values["OPENAI_API_KEY"], "private-sentinel")
+            self.assertEqual(values["AGENT_MODEL_REASONING_EFFORT"], "medium")
+            self.assertEqual(values["AGENT_MODEL_PROVIDER"], "openai_responses")
+            self.assertNotIn("FACT_WORKER_BATCH_SIZE", values)
+            self.assertNotIn("OPENAI_REASONING_EFFORT", values)
+            self.assertNotIn("private-sentinel", result.stdout + result.stderr)
+            before = agent_path.read_bytes()
+            self.assertEqual(self._run(workspace, "init").returncode, 0)
+            self.assertEqual(agent_path.read_bytes(), before)
+
     def test_init_provisions_private_env_and_syncs_service_contract(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             workspace = Path(directory)

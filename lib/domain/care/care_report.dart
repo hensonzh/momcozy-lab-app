@@ -14,14 +14,7 @@ enum CareReportState {
   aiConsentRequired,
 }
 
-enum CareReportSourceKind {
-  dialogue,
-  intake,
-  motherDiary,
-  lactation,
-  carePlan,
-  babyRecord,
-}
+enum CareReportSourceKind { dialogue, intake, lactation, carePlan, babyRecord }
 
 enum CareReportReviewDecision { confirmed, feedback }
 

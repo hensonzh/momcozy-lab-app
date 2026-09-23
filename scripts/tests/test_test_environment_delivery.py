@@ -30,6 +30,31 @@ def _literal_run_blocks(workflow: str) -> list[str]:
 
 
 class TestDeliveryContractTest(unittest.TestCase):
+    def test_manual_release_operator_gate(self) -> None:
+        script = _literal_run_blocks(TEST_RELEASE.read_text())[0]
+        cases = [
+            ("Operator, Second", "operator", "SECOND", True),
+            ("operator", "stranger", "operator", False),
+            ("operator", "operator", "stranger", False),
+            ("operator", "oper", "oper", False),
+            ("", "operator", "operator", False),
+            ("operator,invalid!", "operator", "operator", False),
+        ]
+        for allowlist, actor, rerun_actor, allowed in cases:
+            with self.subTest(allowlist=allowlist, actor=actor, rerun=rerun_actor):
+                result = subprocess.run(
+                    ["bash", "-c", script],
+                    env={**os.environ, "TEST_APPROVERS": allowlist,
+                         "GITHUB_ACTOR": actor, "GITHUB_TRIGGERING_ACTOR": rerun_actor},
+                    capture_output=True, text=True, check=False,
+                )
+                self.assertEqual(result.returncode == 0, allowed, result.stderr)
+
+    def test_release_gate_builds_only_the_distribution_apk(self) -> None:
+        script = (ROOT / "scripts/run-flutter-release-gate.mjs").read_text()
+        self.assertEqual(script.count('"scripts/build-flutter-android-apk.mjs"'), 1)
+        self.assertNotIn('"debug"', script)
+
     def test_unified_flavor_is_install_and_publish_isolated(self) -> None:
         gradle = (ROOT / "android" / "app" / "build.gradle.kts").read_text()
         packaging = (ROOT / "scripts" / "check-flutter-android-packaging.mjs").read_text()
@@ -234,11 +259,9 @@ class TestDeliveryContractTest(unittest.TestCase):
             "/usr/bin/flock",
             "test-release.lock",
             "Fetch the currently deployed service manifests again under the lock",
-            "Wait for independent test approval",
+            "Validate the manual release operator",
             "TEST_APPROVERS",
-            "TEST_APPROVAL_ISSUE",
-            "/approve-test",
-            "needs: approve",
+            "needs: authorize",
             "ref: ${{ github.sha }}",
             "mkfifo -m 0600",
             "cat >/dev/null",
@@ -250,7 +273,8 @@ class TestDeliveryContractTest(unittest.TestCase):
 
         self.assertNotIn("TEST_APP_API_TOKEN", workflow)
         self.assertNotIn("TEST_APP_BABY_ID", workflow)
-        self.assertNotIn("GITHUB_TRIGGERING_ACTOR", workflow)
+        self.assertIn("GITHUB_TRIGGERING_ACTOR", workflow)
+        self.assertNotIn("/approve-test", workflow)
         self.assertNotIn("Ignoring self-approval", workflow)
         self.assertNotIn("ref: main", workflow)
         self.assertNotIn("exec sleep 2700", workflow)

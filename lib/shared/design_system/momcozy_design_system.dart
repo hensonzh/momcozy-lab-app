@@ -67,13 +67,13 @@ class MomCozyColors {
   const MomCozyColors._();
 
   // Cozymate palette from the approved me-agent.css reference.
-  static const diaryHeader = Color(0xff3b2c23);
-  static const diaryInk = Color(0xff49392f);
-  static const diaryMuted = Color(0xff826f5e);
-  static const diaryBright = Color(0xfffff8f1);
-  static const diaryMeta = Color(0xffd1c1b3);
-  static const diarySelection = Color(0xffeadbcc);
-  static const diarySelectionBorder = Color(0xff9d8471);
+  static const warmEditorHeader = Color(0xff3b2c23);
+  static const warmEditorInk = Color(0xff49392f);
+  static const warmEditorMuted = Color(0xff826f5e);
+  static const warmEditorBright = Color(0xfffff8f1);
+  static const warmEditorMeta = Color(0xffd1c1b3);
+  static const warmEditorSelection = Color(0xffeadbcc);
+  static const warmEditorSelectionBorder = Color(0xff9d8471);
   static const recordChoiceSurface = Color(0xfff1e7dd);
   static const recordChoiceBackground = Color(0xfffbf7f2);
   static const serviceTeamSurface = Color(0xfff7fbfb);
@@ -277,7 +277,6 @@ class MomCozyAssets {
   static const bottomNavMore = 'assets/images/nav_more.svg';
   static const agentAwakenAvatar = 'assets/images/momcozy-agent-awaken.gif';
   static const agentThinkingAvatar = 'assets/images/momcozy-agent-thinking.mp4';
-  static const agentSpeakingAvatar = 'assets/images/momcozy-agent-speaking.mp4';
   static const pumpM9 = 'assets/images/M9.png';
   static const ibclcConsultantAvatar =
       'assets/images/ibclc-consultant-avatar.jpg';

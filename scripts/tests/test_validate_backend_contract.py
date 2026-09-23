@@ -5,6 +5,8 @@ from scripts.validate_backend_contract import (
     PRODUCT_OPENAPI_PATH,
     AGENT_RUNTIME_SERVICE,
     PRODUCT_SERVICE,
+    REQUIRED_OPENAPI_PATHS,
+    REQUIRED_QUERY_KEYS,
     _parse_args,
     _validate_agent_runtime_pattern,
     _validate_service_boundaries,
@@ -34,6 +36,18 @@ class SplitBackendContractTest(unittest.TestCase):
                 "Agent Runtime OpenAPI contains Product Backend-owned path: "
                 "/v1/profile/me",
             ],
+        )
+
+    def test_requires_owner_scoped_conversation_history_contract(self) -> None:
+        history_path = "/v1/agent/threads/{thread_id}/history"
+
+        self.assertIn(
+            history_path,
+            REQUIRED_OPENAPI_PATHS[AGENT_RUNTIME_SERVICE],
+        )
+        self.assertEqual(
+            REQUIRED_QUERY_KEYS[(AGENT_RUNTIME_SERVICE, history_path)],
+            {"before_sequence", "limit"},
         )
 
     def test_requires_the_deployed_proprietary_runtime_pattern(self) -> None:

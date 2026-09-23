@@ -36,7 +36,7 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
     expect(find.byType(CircularProgressIndicator), findsNothing);
-    expect(find.text('Notes.png'), findsOneWidget);
+    expect(find.byKey(const ValueKey('agent-sent-image-0')), findsOneWidget);
     await tester.runAsync(
       () => precacheImage(
         MemoryImage(imageBytes),
@@ -92,7 +92,7 @@ void main() {
           ),
         );
         await tester.pumpAndSettle();
-        expect(find.text('大小未知'), findsOneWidget);
+        expect(find.byKey(const ValueKey('agent-sent-image-0')), findsOneWidget);
         await tester.tap(find.byKey(const ValueKey('agent-sent-image-0')));
         await tester.runAsync(
           () async => Future<void>.delayed(const Duration(milliseconds: 50)),
@@ -139,7 +139,7 @@ void main() {
     pending.completeError(StateError('fixture-late-failure'));
     await tester.pumpAndSettle();
     expect(find.byKey(const ValueKey('agent-sent-image-close')), findsNothing);
-    expect(find.text('Notes.png'), findsOneWidget);
+    expect(find.byKey(const ValueKey('agent-sent-image-0')), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
   testWidgets('history image loads its authenticated thumbnail by file id', (

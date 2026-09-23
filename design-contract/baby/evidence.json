@@ -1,0 +1,139 @@
+{
+  "contract": "contract.json",
+  "capturedOn": "2026-09-21",
+  "sourceVersion": "baby-figma-app-20260921",
+  "visualReferences": 32,
+  "referenceMissing": [],
+  "behaviorEvidence": {
+    "flutterTests": "passed:116 (round 3; same-size home-state captures included)",
+    "flutterAnalyze": "passed (round 3)",
+    "localDevice": "emulator-5554",
+    "routeCaptureStates": 21,
+    "refreshAndMotionTests": "passed",
+    "localBuild": "passed: app-local-debug.apk rebuilt and installed on emulator-5554 after round 2",
+    "deviceRuntime": "blocked: backend fixture unavailable during recapture; prior device verification remains recorded",
+    "captureRegression": "passed: 21 prior states plus 11 new same-size home/growth captures; 9 new states visually reviewed"
+  },
+  "calibrationRound": {
+    "started": "2026-09-20",
+    "focus": [
+      "home.empty-summary-label",
+      "home.status-card-empty-value",
+      "home.currentBaby-title"
+    ],
+    "next": "无资料首页导航图片首帧资源在 Flutter 测试夹具中仍需单独稳定化；长名称的 Figma 文本是边界裁切而 Flutter 使用标准省略号，保留为已记录的渲染差异。",
+    "completedChanges": [
+      "空态文案统一为“待记录”",
+      "空态摘要和状态卡使用次级灰色",
+      "生长测量空态文案统一为“待记录”",
+      "首页尿湿摘要单位与 Figma 统一为“次”",
+      "从官方 Figma MCP 补齐 11 个首页/生长参考图",
+      "空状态生长指标卡按 Figma 压缩高度",
+      "错误卡片和重试间距按 Figma 对齐",
+      "生长加载状态改为 Figma 点状加载指示器",
+      "无资料首页添加卡片间距、内边距和按钮高度按 Figma 对齐"
+    ],
+    "observedDataDifference": "Figma 参考图年龄为 3 周，App 根据运行时日期显示 3 周 1 天；已记录为数据驱动覆盖，不改为固定文案。",
+    "reviewedReferenceStates": [
+      "home-recorded",
+      "switcher",
+      "profile",
+      "feeding",
+      "mental-empty",
+      "growth",
+      "stool",
+      "knowledge"
+    ],
+    "confirmedVisualMatches": [
+      "sheet geometry and typography",
+      "choice selected/disabled colors",
+      "save button states",
+      "knowledge sheet copy/layout",
+      "profile field spacing",
+      "home card artwork and chart structure"
+    ],
+    "importedFigmaReferences": [
+      "baby.home.no-profile",
+      "baby.home.loading",
+      "baby.home.empty",
+      "baby.home.missing-profile",
+      "baby.home.long-name",
+      "baby.home.error",
+      "baby.home.recent-mental",
+      "baby.home.growth-saved",
+      "baby.home.growth-weight",
+      "baby.home.growth-length",
+      "baby.home.growth-head"
+    ],
+    "pendingVisualComparison": [
+      "baby.home.no-profile",
+      "baby.home.long-name"
+    ],
+    "referenceSource": "Official Figma MCP get_screenshot, file ePIoJkiMiXiug9ibpcgRbl, captured 2026-09-21.",
+    "completedVisualComparison": [
+      "baby.home.loading",
+      "baby.home.empty",
+      "baby.home.missing-profile",
+      "baby.home.error",
+      "baby.home.recent-mental",
+      "baby.home.growth-saved",
+      "baby.home.growth-weight",
+      "baby.home.growth-length",
+      "baby.home.growth-head"
+    ],
+    "fixtureLimitations": {
+      "baby.home.no-profile": "Flutter widget capture first frame can omit the selected Baby navigation bitmap; subsequent states and native shell use the same local asset path.",
+      "baby.home.long-name": "Figma reference clips the final C at the frame edge (C…); Flutter TextOverflow.ellipsis resolves at a full-glyph boundary (…); runtime truncation remains semantic and bounded."
+    }
+  },
+  "knownProductOverrides": [
+    {
+      "id": "baby.title-size",
+      "scope": "baby.home.currentBaby",
+      "designValue": "26px",
+      "productValue": "22px",
+      "reason": "用户在校准中确认 Luna 字体缩小",
+      "status": "accepted"
+    },
+    {
+      "id": "baby.daily-time",
+      "scope": "baby.record.daily.wet,baby.record.daily.stool",
+      "designValue": "事件时间字段",
+      "productValue": "不记录时间",
+      "reason": "用户确认尿湿/便便只记录数量、颜色和性状",
+      "status": "accepted"
+    },
+    {
+      "id": "baby.required-copy",
+      "scope": "baby.record.feeding",
+      "designValue": "先选择这次的喂养方式",
+      "productValue": "必填项仅使用禁用按钮状态",
+      "reason": "用户确认删除无意义提示",
+      "status": "accepted"
+    },
+    {
+      "id": "baby.age-label",
+      "scope": "baby.home.currentBaby",
+      "designValue": "Figma fixture age label",
+      "productValue": "根据出生日期和当前日期实时计算",
+      "reason": "年龄是运行时数据，参考图与当前测试日期不同，不固定成截图文字",
+      "status": "accepted"
+    }
+  ],
+  "deviceEvidence": {
+    "apk": "build/app/outputs/flutter-apk/app-local-debug.apk",
+    "screenshot": "/tmp/baby-contract-calibration-device.png",
+    "observed": "加载失败，请重试（服务端 fixture unavailable）",
+    "figmaCaptureDir": "build/figma-comparison"
+  },
+  "visualCaptureEvidence": {
+    "states": 35,
+    "previousDirectory": "comparisons/actual-current",
+    "previousStates": 24,
+    "newDirectory": "comparisons/actual-home-states",
+    "newStates": 11,
+    "newCaptureTest": "test/modules/baby/baby_home_state_capture_test.dart",
+    "comparisonIndex": "comparisons/home-state-captures.json",
+    "capturedBy": "Flutter widget fixture at Figma frame dimensions; dpr=1"
+  }
+}

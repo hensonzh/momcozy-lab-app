@@ -12,10 +12,6 @@ void main() {
       'MOMCOZY_ENABLE_RELEASE_RESET',
       defaultValue: false,
     );
-    const expectedAgentHistory = bool.fromEnvironment(
-      'MOMCOZY_ENABLE_AGENT_HISTORY',
-      defaultValue: false,
-    );
     const expectedExtendedProductApi = bool.fromEnvironment(
       'MOMCOZY_ENABLE_EXTENDED_PRODUCT_API',
       defaultValue: false,
@@ -23,7 +19,6 @@ void main() {
 
     expect(capabilities.onboardingGateEnabled, expectedOnboarding);
     expect(capabilities.releaseResetEnabled, expectedReleaseReset);
-    expect(capabilities.agentConversationHistoryEnabled, expectedAgentHistory);
     expect(capabilities.extendedProductApiEnabled, expectedExtendedProductApi);
   });
 
@@ -31,13 +26,11 @@ void main() {
     const capabilities = MomCozyAppCapabilities(
       onboardingGateEnabled: true,
       releaseResetEnabled: true,
-      agentConversationHistoryEnabled: true,
       extendedProductApiEnabled: true,
     );
 
     expect(capabilities.onboardingGateEnabled, isTrue);
     expect(capabilities.releaseResetEnabled, isTrue);
-    expect(capabilities.agentConversationHistoryEnabled, isTrue);
     expect(capabilities.extendedProductApiEnabled, isTrue);
     expect(capabilities.isRouteEnabled('/motion-assessment'), isTrue);
   });

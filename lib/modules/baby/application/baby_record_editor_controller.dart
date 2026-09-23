@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/foundation.dart';
 import '../../../domain/baby/baby_profile.dart';
 import '../../../domain/baby/baby_record.dart';
@@ -5,6 +6,8 @@ import '../../../domain/shared/local_date.dart';
 import '../../../domain/shared/product_failure.dart';
 import '../../../shared/mutation_key.dart';
 import '../../../shared/zoned_time.dart';
+
+enum BabyDailyTab { mental, wet, stool }
 
 class BabyRecordEditorController extends ChangeNotifier {
   BabyRecordEditorController({
@@ -61,7 +64,13 @@ class BabyRecordEditorController extends ChangeNotifier {
         sleepStartedAt = occurredAt;
         sleepEndedAt = endedAt;
         sleepNote = note;
-      case BabyGrowthRecord(:final metric, :final value, :final recordedOn):
+      case BabyGrowthRecord(
+        :final metric,
+        :final value,
+        :final recordedOn,
+        :final measurementSource,
+      ):
+        this.measurementSource = measurementSource;
         growthMetric = metric;
         growthValues[metric] = value.toString();
         this.recordedOn = recordedOn;
@@ -72,10 +81,53 @@ class BabyRecordEditorController extends ChangeNotifier {
       ):
         development[itemId] = status;
         this.recordedOn = recordedOn;
+      case BabyDailyStatusRecord(
+        :final mentalState,
+        :final wetCount,
+        :final stoolCount,
+        :final color,
+        :final consistency,
+      ):
+        this.mentalState = mentalState;
+        this.wetCount = wetCount?.toString() ?? '';
+        this.stoolCount = stoolCount?.toString() ?? '';
+        stoolColor = color;
+        stoolConsistency = consistency;
       case null:
         break;
     }
   }
+  BabyDailyTab dailyTab = BabyDailyTab.mental;
+  BabyMentalState? mentalState;
+  String wetCount = '', stoolCount = '';
+  bool bottleSelected = false;
+  Completer<void>? _saveDone;
+  List<BabyRecord>? lastSaved;
+  Future<void> get settled => _saveDone?.future ?? Future.value();
+  bool get isDaily => kind == BabyRecordKind.dailyStatus;
+  bool get canSave {
+    if (busy) return false;
+    final oldValidation = validation, oldMetric = growthMetric;
+    final valid = _draft() != null;
+    validation = oldValidation;
+    growthMetric = oldMetric;
+    return valid;
+  }
+
+  void selectDailyTab(BabyDailyTab value) {
+    if (!editable) return;
+    dailyTab = value;
+    notifyListeners();
+  }
+
+  void setMentalState(BabyMentalState? value) =>
+      _edit(() => mentalState = value);
+  void setWetCount(String value) => _edit(() => wetCount = value);
+  void setStoolCount(String value) => _edit(() => stoolCount = value);
+  void selectBottle(bool value) => _edit(() {
+    bottleSelected = value;
+    feedingMethod = value ? null : BabyFeedingMethod.breastfeeding;
+  });
   final BabyRecordRepository repository;
   final BabyProfile baby;
   final String timezone;
@@ -98,6 +150,9 @@ class BabyRecordEditorController extends ChangeNotifier {
   DateTime? sleepEndedAt;
   late LocalDate recordedOn;
   GrowthMetric growthMetric;
+  String? measurementSource;
+  void setMeasurementSource(String? value) =>
+      _edit(() => measurementSource = value);
   final growthValues = <GrowthMetric, String>{};
   final development = <String, DevelopmentStatus>{};
   bool dirty = false, busy = false, _disposed = false;
@@ -106,7 +161,7 @@ class BabyRecordEditorController extends ChangeNotifier {
   List<BabyRecord>? _pending;
   String? _key;
   bool get uncertain => _pending != null && !busy;
-  bool get editable => !busy && !uncertain;
+  bool get editable => !busy;
   bool get editing => initial != null;
   LocalDate get today => dateInTimezone(now(), timezone);
   BabyRecord? get target =>
@@ -119,6 +174,8 @@ class BabyRecordEditorController extends ChangeNotifier {
   void _edit(VoidCallback update) {
     if (!editable || _disposed) return;
     update();
+    _pending = null;
+    _key = null;
     dirty = true;
     validation = null;
     failure = null;
@@ -193,6 +250,27 @@ class BabyRecordEditorController extends ChangeNotifier {
     final babyId = baby.id;
     List<BabyRecord> records;
     switch (kind) {
+      case BabyRecordKind.dailyStatus:
+        int? count(String text) => int.tryParse(text.trim());
+        if ((wetCount.trim().isNotEmpty && count(wetCount) == null) ||
+            (stoolCount.trim().isNotEmpty && count(stoolCount) == null)) {
+          return null;
+        }
+        records = [
+          BabyDailyStatusRecord(
+            id: id,
+            babyId: babyId,
+            version: version,
+            recordedOn: today,
+            timezone: timezone,
+            savedAt: now(),
+            mentalState: mentalState,
+            wetCount: wetCount.trim().isEmpty ? null : count(wetCount),
+            stoolCount: stoolCount.trim().isEmpty ? null : count(stoolCount),
+            color: stoolColor,
+            consistency: stoolConsistency,
+          ),
+        ];
       case BabyRecordKind.feeding:
         if (feedingMethod == null) {
           validation = '先选择这次的喂养方式。';
@@ -287,6 +365,7 @@ class BabyRecordEditorController extends ChangeNotifier {
               recordedOn: recordedOn,
               timezone: timezone,
               metric: entry.key,
+              measurementSource: measurementSource,
               value: double.parse(entry.value.trim()),
             ),
         ];
@@ -351,6 +430,7 @@ class BabyRecordEditorController extends ChangeNotifier {
     _pending = records;
     _key ??= newMutationKey();
     busy = true;
+    _saveDone = Completer<void>();
     notifyListeners();
     try {
       final saved = records.length > 1
@@ -363,6 +443,7 @@ class BabyRecordEditorController extends ChangeNotifier {
       _pending = null;
       _key = null;
       dirty = false;
+      lastSaved = saved;
       return saved;
     } catch (error) {
       if (_disposed) return null;
@@ -378,6 +459,7 @@ class BabyRecordEditorController extends ChangeNotifier {
       }
       return null;
     } finally {
+      _saveDone?.complete();
       if (!_disposed) {
         busy = false;
         notifyListeners();

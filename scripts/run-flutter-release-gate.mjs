@@ -145,17 +145,6 @@ const steps = [
     [
       "scripts/build-flutter-android-apk.mjs",
       "--mode",
-      "debug",
-      "--flavor",
-      "local",
-    ],
-    projectRoot,
-  ],
-  [
-    "node",
-    [
-      "scripts/build-flutter-android-apk.mjs",
-      "--mode",
       "release",
       "--flavor",
       releaseFlavor,

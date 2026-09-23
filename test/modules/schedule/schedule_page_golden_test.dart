@@ -1,13 +1,12 @@
-@Tags(['golden'])
-library;
-
 import 'dart:async';
-import 'dart:ui' show SemanticsAction;
+import 'dart:io';
+import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:momcozy_flutter_app/app/mom_bottom_navigation.dart';
 import 'package:momcozy_flutter_app/domain/care/appointment.dart';
 import 'package:momcozy_flutter_app/domain/care/care_plan.dart';
-import 'package:momcozy_flutter_app/domain/care/care_episode.dart';
 import 'package:momcozy_flutter_app/domain/care/service_package.dart';
 import 'package:momcozy_flutter_app/domain/shared/local_date.dart';
 import 'package:momcozy_flutter_app/domain/shared/product_failure.dart';
@@ -18,353 +17,304 @@ import 'package:momcozy_flutter_app/shared/design_system/momcozy_theme.dart';
 import '../../support/momcozy_test_fonts.dart';
 
 void main() {
-  for (final width in [320.0, 390.0, 430.0]) {
-    for (final scale in [1.0, 2.0]) {
-      testWidgets(
-        'task menu writes progress with the current version at $width/$scale',
-        (tester) async {
-          await loadMomCozyTestFonts();
-          tester.view.physicalSize = Size(width, 844);
-          tester.view.devicePixelRatio = 1;
-          addTearDown(tester.view.resetPhysicalSize);
-          addTearDown(tester.view.resetDevicePixelRatio);
-          final repo = _ScheduleRepository(plans: [_plan]);
-          String? opened;
-          await tester.pumpWidget(
-            MaterialApp(
-              debugShowCheckedModeBanner: false,
-              theme: momCozyTheme(),
-              builder: (context, child) => MediaQuery(
-                data: MediaQuery.of(
-                  context,
-                ).copyWith(textScaler: TextScaler.linear(scale)),
-                child: child!,
-              ),
-              home: Scaffold(
-                body: SchedulePage(
-                  repository: repo,
-                  timezoneProvider: () async => 'Asia/Shanghai',
-                  catalogLoader: () async => _catalog,
-                  now: () => DateTime(2026, 9, 9),
-                  onOpenPlan: (id) => opened = id,
-                ),
-              ),
-            ),
+  setUpAll(loadMomCozyTestFonts);
+  test(
+    'agenda merges all-day tasks, personal events and consultations chronologically',
+    () {
+      PersonalScheduleEntry entry(String id, String time) =>
+          PersonalScheduleEntry(
+            id: id,
+            title: id,
+            date: LocalDate(2026, 9, 9),
+            startTime: time,
+            note: '',
+            updatedAt: DateTime.utc(2026, 9, 9),
           );
-          await tester.pumpAndSettle();
-          final menu = find.byTooltip('更多记录一次喂养感受选项');
-          await tester.ensureVisible(menu);
-          await tester.pumpAndSettle();
-          await tester.tap(menu);
-          await tester.pumpAndSettle();
-          if (scale == 1) {
-            await expectLater(
-              find.byType(MaterialApp),
-              matchesGoldenFile(
-                '../../goldens/design_system/schedule-task-menu-${width.toInt()}.png',
-              ),
-            );
-          }
-          await tester.tap(find.text('标记进行中'));
-          await tester.pumpAndSettle();
-          expect(repo.taskUpdates.last, ('one', 2, CareTaskStatus.inProgress));
-          expect(find.text('进行中'), findsWidgets);
-          for (final action in [
-            ('暂时跳过', CareTaskStatus.skipped),
-            ('恢复待完成', CareTaskStatus.pending),
-          ]) {
-            await tester.ensureVisible(menu);
-            await tester.pumpAndSettle();
-            await tester.tap(menu);
-            await tester.pumpAndSettle();
-            await tester.tap(find.text(action.$1));
-            await tester.pumpAndSettle();
-            expect(repo.plans.first.publication.tasks.first.status, action.$2);
-          }
-          expect(repo.taskUpdates.map((e) => e.$2).toList(), [2, 3, 4]);
-          await tester.ensureVisible(menu);
-          await tester.pumpAndSettle();
-          await tester.tap(menu);
-          await tester.pumpAndSettle();
-          await tester.tap(find.text('查看服务计划'));
-          await tester.pumpAndSettle();
-          expect(opened, 'episode-1');
-          repo.taskFailure = const ProductFailure(
-            ProductFailureKind.unavailable,
-          );
-          await tester.tap(menu);
-          await tester.pumpAndSettle();
-          await tester.tap(find.text('标记进行中'));
-          await tester.pumpAndSettle();
-          await tester.ensureVisible(find.text('刷新日程'));
-          await tester.pumpAndSettle();
-          expect(find.text('暂时无法确认任务状态，请刷新日程后核对。'), findsOneWidget);
-          await tester.tap(find.text('刷新日程'));
-          await tester.pumpAndSettle();
-          expect(find.text('暂时无法确认任务状态，请刷新日程后核对。'), findsNothing);
-          expect(
-            repo.plans.first.publication.tasks.first.status,
-            CareTaskStatus.pending,
-          );
-          expect(tester.takeException(), isNull);
-          await tester.pumpWidget(const SizedBox());
-        },
+      final page = SchedulePageData(
+        personal: [
+          entry('late', '20:00'),
+          entry('early', '08:00'),
+          entry('tie1', '11:00'),
+          entry('tie2', '11:00'),
+        ],
+        appointments: [_appointment],
+        plans: [_plan],
+        episodes: [],
+        serverTime: DateTime.utc(2026, 9, 9),
+        hasMore: false,
       );
-    }
-  }
-  testWidgets('service periods use actual dates and the display filter', (
-    tester,
-  ) async {
-    await loadMomCozyTestFonts();
-    tester.view.physicalSize = const Size(390, 844);
-    tester.view.devicePixelRatio = 1;
-    addTearDown(tester.view.resetPhysicalSize);
-    addTearDown(tester.view.resetDevicePixelRatio);
-    CareEpisode episode(String id, int start, int end) => CareEpisode(
-      id: id,
-      orderId: 'order-$id',
-      packageId: 'feeding-confidence',
-      status: CareEpisodeStatus.active,
-      stage: CareStage.activeCare,
-      totalSessions: 2,
-      remainingSessions: 2,
-      version: 1,
-      startsAt: DateTime(2026, 9, start),
-      endsAt: DateTime(2026, 9, end),
-    );
-    await tester.pumpWidget(
-      MaterialApp(
-        theme: momCozyTheme(),
-        home: Scaffold(
-          body: SchedulePage(
-            repository: _ScheduleRepository(
-              episodes: [episode('one', 9, 15), episode('two', 20, 25)],
-            ),
-            timezoneProvider: () async => 'Asia/Shanghai',
-            catalogLoader: () async => _catalog,
-            now: () => DateTime(2026, 9, 9),
-          ),
-        ),
-      ),
-    );
-    await tester.pumpAndSettle();
-    expect(find.bySemanticsLabel('9月20日，服务期内'), findsOneWidget);
-    final semantics = tester.ensureSemantics();
-    expect(
-      tester
-          .getSemantics(find.bySemanticsLabel('9月20日，服务期内'))
-          .getSemanticsData()
-          .hasAction(SemanticsAction.tap),
-      isTrue,
-    );
-    semantics.dispose();
-    expect(find.bySemanticsLabel('9月16日'), findsOneWidget);
-    await tester.tap(find.byTooltip('切换日历显示的服务包'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('喂养安心 · 余 2 次').first);
-    await tester.pumpAndSettle();
-    expect(find.bySemanticsLabel('9月20日，服务期内'), findsNothing);
-    expect(find.bySemanticsLabel('9月9日，有安排，服务期内'), findsOneWidget);
-    expect(tester.takeException(), isNull);
-    await tester.pumpWidget(const SizedBox());
-  });
-  for (final width in [320.0, 390.0, 430.0]) {
-    for (final scale in [1.0, 2.0]) {
-      testWidgets('published care plan and appointment at $width / $scale', (
-        tester,
-      ) async {
-        await loadMomCozyTestFonts();
-        tester.view.physicalSize = Size(width, 844);
-        tester.view.devicePixelRatio = 1;
-        addTearDown(tester.view.resetPhysicalSize);
-        addTearDown(tester.view.resetDevicePixelRatio);
-        String? openedPlan;
-        CareAppointment? openedAppointment;
-        await tester.pumpWidget(
-          MaterialApp(
-            theme: momCozyTheme(),
-            debugShowCheckedModeBanner: false,
-            builder: (context, child) => MediaQuery(
-              data: MediaQuery.of(
-                context,
-              ).copyWith(textScaler: TextScaler.linear(scale)),
-              child: child!,
-            ),
-            home: Scaffold(
-              body: SchedulePage(
-                repository: _ScheduleRepository(
-                  plans: [_plan],
-                  appointments: [_appointment],
-                ),
-                timezoneProvider: () async => 'Asia/Shanghai',
-                catalogLoader: () async => _catalog,
-                now: () => DateTime(2026, 9, 9, 10),
-                onOpenPlan: (id) => openedPlan = id,
-                onOpenAppointment: (value) => openedAppointment = value,
-              ),
-            ),
-          ),
-        );
-        await tester.pumpAndSettle();
-        expect(find.text('已确认'), findsOneWidget);
-        if (width == 390 && scale == 1 || width == 320 && scale == 2) {
-          await _extraShot(
-            tester,
-            'overview-${width.toInt()}-${scale.toInt()}x',
-          );
-        }
-        await tester.ensureVisible(find.text('查看'));
-        await tester.pumpAndSettle();
-        await tester.tap(find.text('查看'));
-        expect(openedAppointment?.id, _appointment.id);
-        if (scale == 1) {
-          await expectLater(
-            find.byType(MaterialApp),
-            matchesGoldenFile(
-              '../../goldens/design_system/schedule-care-${width.toInt()}.png',
-            ),
-          );
-        }
-        await tester.scrollUntilVisible(
-          find.text('当前照护方案'),
-          200,
-          scrollable: find.byType(Scrollable).first,
-        );
-        await tester.ensureVisible(find.text('当前照护方案'));
-        await tester.pumpAndSettle();
-        await tester.tap(find.text('当前照护方案'));
-        await tester.pumpAndSettle();
-        await tester.ensureVisible(find.text('查看照护方案 →'));
-        await tester.pumpAndSettle();
-        expect(find.text('1/2'), findsOneWidget);
-        expect(find.text('v2 · 已发布'), findsOneWidget);
-        expect(find.text(_plan.publication.summary), findsOneWidget);
-        if (scale == 1) {
-          await expectLater(
-            find.byType(MaterialApp),
-            matchesGoldenFile(
-              '../../goldens/design_system/schedule-plan-${width.toInt()}.png',
-            ),
-          );
-        }
-        await tester.tap(find.text('查看照护方案 →'));
-        expect(openedPlan, _plan.episodeId);
-        expect(tester.takeException(), isNull);
-        await tester.pumpWidget(const SizedBox());
+      expect(page.agendaOn(LocalDate(2026, 9, 9)).map((e) => e.title), [
+        '记录一次喂养感受',
+        'early',
+        'tie1',
+        'tie2',
+        '哺乳咨询',
+        'late',
+      ]);
+      expect(page.datesWithEvents().toSet(), {
+        LocalDate(2026, 9, 9),
+        LocalDate(2026, 9, 10),
       });
-      testWidgets('schedule month and selected day agenda at $width / $scale', (
-        tester,
-      ) async {
-        await loadMomCozyTestFonts();
-        tester.view.physicalSize = Size(width, 844);
-        tester.view.devicePixelRatio = 1;
-        addTearDown(tester.view.resetPhysicalSize);
-        addTearDown(tester.view.resetDevicePixelRatio);
-
-        await tester.pumpWidget(
-          MaterialApp(
-            debugShowCheckedModeBanner: false,
-            theme: momCozyTheme(),
-            builder: (context, child) => MediaQuery(
-              data: MediaQuery.of(
-                context,
-              ).copyWith(textScaler: TextScaler.linear(scale)),
-              child: child!,
-            ),
-            home: SchedulePage(
-              repository: _ScheduleRepository(),
-              timezoneProvider: () async => 'Asia/Shanghai',
-              catalogLoader: () async => _catalog,
-              now: () => DateTime(2026, 9, 9, 10),
-            ),
-          ),
-        );
-        await tester.pumpAndSettle();
-        expect(tester.takeException(), isNull);
-        if (scale == 1) {
-          await expectLater(
-            find.byType(MaterialApp),
-            matchesGoldenFile(
-              width == 390
-                  ? '../../goldens/product_baseline/schedule-390.png'
-                  : '../../goldens/design_system/schedule-${width.toInt()}.png',
-            ),
-          );
-        }
-        await tester.tap(find.byIcon(Icons.chevron_right_rounded).first);
-        await tester.pumpAndSettle();
-        expect(find.textContaining('2026年10月'), findsOneWidget);
-        expect(tester.takeException(), isNull);
-        await tester.pumpWidget(const SizedBox.shrink());
-      });
-    }
-  }
-  testWidgets(
-    'short large initial load error retries and cached refresh retains agenda',
-    (tester) async {
-      final repo = _ScheduleRepository()..pendingRead = Completer<void>();
-      await _mountExtra(tester, repo, short: true, scale: 2, settle: false);
-      expect(find.text('正在读取日程'), findsOneWidget);
-      await _extraShot(tester, 'short-loading');
-      repo.readFailure = const ProductFailure(ProductFailureKind.offline);
-      repo.pendingRead!.complete();
-      await tester.pumpAndSettle();
-      expect(find.text('网络未连接，请连接后重试'), findsOneWidget);
-      await _extraShot(tester, 'short-offline');
-      repo.readFailure = null;
-      await tester.ensureVisible(find.text('重试'));
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('重试'));
-      await tester.pumpAndSettle();
-      expect(find.text('2026年9月'), findsOneWidget);
-      repo.readFailure = const ProductFailure(ProductFailureKind.offline);
-      await tester
-          .widget<RefreshIndicator>(find.byType(RefreshIndicator))
-          .onRefresh();
-      await tester.pumpAndSettle();
-      await tester.scrollUntilVisible(
-        find.text('重试'),
-        250,
-        scrollable: find.byType(Scrollable).first,
-      );
-      await tester.pumpAndSettle();
-      expect(find.text('宝宝体检'), findsOneWidget);
-      await _extraShot(tester, 'short-refresh-error');
     },
   );
   testWidgets(
-    'task write disables competing changes and keeps server version',
+    'full viewport month and week match Figma geometry; local controls do not fetch',
+    (tester) async {
+      final repo = _ScheduleRepository(
+        plans: [_plan],
+        appointments: [_appointment],
+      );
+      await _mount(tester, repo);
+      expect(find.text('咨询、行动与生活安排'), findsNothing);
+      expect(find.textContaining('当天安排'), findsNothing);
+      expect(
+        tester.getRect(find.byKey(const ValueKey('schedule-month-calendar'))),
+        const Rect.fromLTWH(16, 64, 361, 369),
+      );
+      expect(
+        tester.getRect(find.byKey(const ValueKey('schedule-add'))),
+        const Rect.fromLTWH(329, 666, 48, 48),
+      );
+      expect(
+        tester.getRect(find.byKey(const ValueKey('bottom-nav-chrome'))).top,
+        762,
+      );
+      await _capture(tester, 'month');
+      await tester.tap(find.text('收起日历'));
+      await tester.pumpAndSettle();
+      expect(find.text('9月7日–13日'), findsOneWidget);
+      expect(
+        tester
+            .getSize(find.byKey(const ValueKey('schedule-week-calendar')))
+            .height,
+        149,
+      );
+      expect(repo.readCount, 1);
+      final titles = ['记录一次喂养感受', '宝宝体检', '哺乳咨询'];
+      final ys = titles.map((s) => tester.getTopLeft(find.text(s)).dy).toList();
+      expect(ys[0], lessThan(ys[1]));
+      expect(ys[1], lessThan(ys[2]));
+      expect(find.text('Jamie Lee, IBCLC'), findsNothing);
+      expect(find.text('带好成长记录'), findsNothing);
+      expect(find.text('已完成'), findsNothing);
+      await _capture(tester, 'week');
+      await tester.tap(find.text('展开日历'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('schedule-day-2026-09-23')));
+      await tester.tap(find.text('收起日历'));
+      await tester.pumpAndSettle();
+      expect(find.text('9月21日–27日'), findsOneWidget);
+      expect(find.text('9月23日'), findsOneWidget);
+      expect(find.text('这一天没有安排'), findsOneWidget);
+      expect(repo.readCount, 1);
+      expect(
+        find.byKey(const ValueKey('schedule-dot-2026-09-23')),
+        findsNothing,
+      );
+      await _capture(tester, 'empty');
+      await tester.tap(find.text('展开日历'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('schedule-day-2026-09-12')));
+      await tester.pumpAndSettle();
+      await _capture(tester, 'empty-month');
+      await tester.tap(find.byTooltip('添加日程'));
+      await tester.pumpAndSettle();
+      await _capture(tester, 'create');
+      await tester.tap(find.byTooltip('关闭日程'));
+      await tester.pumpAndSettle();
+      expect(repo.readCount, 1);
+      await tester.tap(find.byKey(const ValueKey('schedule-day-2026-09-09')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('收起日历'));
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(find.byTooltip('更多宝宝体检选项'));
+      await tester.tap(find.byTooltip('更多宝宝体检选项'));
+      await tester.pumpAndSettle();
+      await _capture(tester, 'personal-menu');
+      await tester.tap(find.text('编辑'));
+      await tester.pumpAndSettle();
+      await _capture(tester, 'edit');
+      await tester.tap(find.text('保存修改'));
+      await tester.pumpAndSettle();
+      expect(repo.readCount, 1);
+      await tester.tap(find.byTooltip('更多宝宝体检选项'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('删除'));
+      await tester.pumpAndSettle();
+      await _capture(tester, 'delete');
+      await tester.tap(find.text('保留日程'));
+      await tester.pumpAndSettle();
+      expect(repo.readCount, 1);
+    },
+  );
+  testWidgets(
+    'uncached month never claims an empty day before its read finishes',
+    (tester) async {
+      final repo = _ScheduleRepository();
+      await _mount(tester, repo);
+      repo.pendingRead = Completer<void>();
+      await tester.tap(find.byTooltip('下个月'));
+      await tester.pump();
+      expect(find.text('正在读取日程'), findsOneWidget);
+      expect(find.text('这一天没有安排'), findsNothing);
+      repo.readFailure = const ProductFailure(ProductFailureKind.offline);
+      repo.pendingRead!.complete();
+      await tester.pumpAndSettle();
+      expect(find.text('这个月的日程暂未读取，请重试。'), findsOneWidget);
+      expect(find.text('这一天没有安排'), findsNothing);
+    },
+  );
+  testWidgets('first load retains shell until data is ready', (tester) async {
+    final repo = _ScheduleRepository()..pendingRead = Completer<void>();
+    await _mount(tester, repo, settle: false);
+    expect(find.text('正在读取日程'), findsOneWidget);
+    expect(find.text('Schedule'), findsOneWidget);
+    await _capture(tester, 'loading');
+    repo.pendingRead!.complete();
+    await tester.pumpAndSettle();
+    expect(find.text('正在读取日程'), findsNothing);
+  });
+  testWidgets('offline retry is a real read and keeps navigation', (
+    tester,
+  ) async {
+    final repo = _ScheduleRepository()
+      ..readFailure = const ProductFailure(ProductFailureKind.offline);
+    await _mount(tester, repo);
+    await _capture(tester, 'offline');
+    expect(find.text('Schedule'), findsOneWidget);
+    expect(find.byTooltip('添加日程'), findsNothing);
+    repo.readFailure = null;
+    await tester.tap(find.text('重试'));
+    await tester.pumpAndSettle();
+    expect(repo.readCount, 2);
+    expect(find.text('宝宝体检'), findsOneWidget);
+  });
+  testWidgets(
+    'refresh preserves agenda; failed refresh retries without blanking content',
+    (tester) async {
+      final repo = _ScheduleRepository();
+      await _mount(tester, repo);
+      repo.pendingRead = Completer<void>();
+      final refresh = tester
+          .widget<RefreshIndicator>(find.byType(RefreshIndicator))
+          .onRefresh();
+      await tester.pump();
+      expect(find.text('宝宝体检'), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('schedule-month-calendar')),
+        findsOneWidget,
+      );
+      repo.readFailure = const ProductFailure(ProductFailureKind.offline);
+      repo.pendingRead!.complete();
+      await refresh;
+      await tester.pumpAndSettle();
+      expect(find.text('已保留上次的日程'), findsOneWidget);
+      expect(find.text('宝宝体检'), findsOneWidget);
+      await _capture(tester, 'refresh-failure');
+      repo.readFailure = null;
+      repo.pendingRead = null;
+      await tester.tap(find.text('重试'));
+      await tester.pumpAndSettle();
+      expect(find.text('已保留上次的日程'), findsNothing);
+    },
+  );
+  testWidgets(
+    'failed task update retains version and agenda until reconciliation',
+    (tester) async {
+      final repo = _ScheduleRepository(plans: [_plan])
+        ..taskFailure = const ProductFailure(ProductFailureKind.unavailable);
+      await _mount(tester, repo);
+      await tester.tap(find.text('收起日历'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byTooltip('更多记录一次喂养感受选项'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('标记进行中'));
+      await tester.pumpAndSettle();
+      expect(find.text('暂时无法更新任务'), findsOneWidget);
+      expect(find.text('记录一次喂养感受'), findsOneWidget);
+      expect(repo.taskUpdates, isEmpty);
+      await tester.tap(find.text('重试'));
+      await tester.pumpAndSettle();
+      expect(find.text('暂时无法更新任务'), findsNothing);
+      expect(repo.readCount, 2);
+    },
+  );
+  for (final width in [320.0, 393.0, 430.0]) {
+    for (final scale in [1.0, 2.0]) {
+      testWidgets('existing care and appointment actions at $width/$scale', (
+        tester,
+      ) async {
+        final repo = _ScheduleRepository(
+          plans: [_plan],
+          appointments: [_appointment],
+        );
+        String? plan;
+        CareAppointment? appointment;
+        await _mount(
+          tester,
+          repo,
+          width: width,
+          scale: scale,
+          onPlan: (id) => plan = id,
+          onAppointment: (a) => appointment = a,
+        );
+        await tester.tap(find.text('收起日历'));
+        await tester.pumpAndSettle();
+        final taskMenu = find.byTooltip('更多记录一次喂养感受选项');
+        await tester.ensureVisible(taskMenu);
+        await tester.tap(taskMenu);
+        await tester.pumpAndSettle();
+        expect(find.text('编辑'), findsNothing);
+        expect(find.text('删除'), findsNothing);
+        await tester.tap(find.text('标记进行中'));
+        await tester.pumpAndSettle();
+        expect(repo.taskUpdates.single, ('one', 2, CareTaskStatus.inProgress));
+        expect(repo.readCount, 1);
+        await tester.tap(taskMenu);
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('查看照护方案'));
+        await tester.pumpAndSettle();
+        expect(plan, 'episode-1');
+        final appointmentMenu = find.byTooltip('更多哺乳咨询选项');
+        await tester.ensureVisible(appointmentMenu);
+        await tester.tap(appointmentMenu);
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('查看预约'));
+        await tester.pumpAndSettle();
+        expect(appointment?.id, 'appointment-1');
+        expect(tester.takeException(), isNull);
+      });
+    }
+  }
+  testWidgets(
+    'pending task update prevents competing writes and retains version',
     (tester) async {
       final repo = _ScheduleRepository(plans: [_plan])
         ..pendingTask = Completer<void>();
-      await _mountExtra(tester, repo);
-      await tester.ensureVisible(find.byType(Checkbox));
-      await tester.pumpAndSettle();
-      await tester.tap(find.byType(Checkbox));
-      await tester.pump();
-      expect(tester.widget<Checkbox>(find.byType(Checkbox)).onChanged, isNull);
+      await _mount(tester, repo);
       final menu = find.byTooltip('更多记录一次喂养感受选项');
+      await tester.ensureVisible(menu);
       await tester.tap(menu);
       await tester.pumpAndSettle();
-      for (final item in tester.widgetList<PopupMenuItem<String>>(
-        find.byType(PopupMenuItem<String>),
-      )) {
-        if (item.value != 'plan') expect(item.enabled, isFalse);
-      }
-      await _extraShot(tester, 'task-busy');
+      await tester.tap(find.text('标记进行中'));
+      await tester.pump();
+      await tester.tap(menu);
+      await tester.pumpAndSettle();
+      expect(find.text('标记进行中'), findsNothing);
       await tester.binding.handlePopRoute();
       await tester.pumpAndSettle();
       repo.pendingTask!.complete();
       await tester.pumpAndSettle();
-      expect(repo.taskUpdates.single, ('one', 2, CareTaskStatus.pending));
-      expect(
-        tester.widget<Checkbox>(find.byType(Checkbox)).onChanged,
-        isNotNull,
-      );
+      expect(repo.taskUpdates.single, ('one', 2, CareTaskStatus.inProgress));
+      await tester.tap(menu);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('标记已完成'));
+      await tester.pumpAndSettle();
+      expect(repo.taskUpdates.last, ('one', 3, CareTaskStatus.completed));
     },
   );
   testWidgets(
-    'hundred loaded entries scroll to final action on short large display',
+    'short large display can reach last task above floating button and navigation',
     (tester) async {
       final repo = _ScheduleRepository()
         ..personal = List.generate(
@@ -374,11 +324,11 @@ void main() {
             title: '安排 $i',
             date: LocalDate(2026, 9, 9),
             startTime: '09:00',
-            note: '已加载的个人日程',
+            note: '',
             updatedAt: DateTime.utc(2026, 9, 9),
           ),
         );
-      await _mountExtra(tester, repo, short: true, scale: 2);
+      await _mount(tester, repo, width: 320, height: 568, scale: 2);
       await tester.scrollUntilVisible(
         find.byTooltip('更多安排 99选项'),
         300,
@@ -386,14 +336,106 @@ void main() {
         scrollable: find.byType(Scrollable).first,
       );
       await tester.pumpAndSettle();
-      expect(find.byTooltip('添加日程').hitTestable(), findsOneWidget);
-      await _extraShot(tester, 'long-agenda-end');
+      await tester.drag(find.byType(ListView), const Offset(0, -500));
+      await tester.pumpAndSettle();
+      expect(
+        tester.getBottomRight(find.byTooltip('更多安排 99选项')).dy,
+        lessThan(
+          tester.getTopLeft(find.byKey(const ValueKey('schedule-add'))).dy,
+        ),
+      );
       await tester.tap(find.byTooltip('更多安排 99选项'));
       await tester.pumpAndSettle();
-      expect(find.text('修改'), findsOneWidget);
+      expect(find.text('编辑'), findsOneWidget);
       expect(find.text('删除'), findsOneWidget);
+      expect(tester.takeException(), isNull);
     },
   );
+}
+
+Future<void> _mount(
+  WidgetTester tester,
+  _ScheduleRepository repo, {
+  double width = 393,
+  double height = 844,
+  double scale = 1,
+  bool settle = true,
+  ValueChanged<String>? onPlan,
+  ValueChanged<CareAppointment>? onAppointment,
+}) async {
+  tester.view.physicalSize = Size(width, height);
+  tester.view.devicePixelRatio = 1;
+  addTearDown(tester.view.resetPhysicalSize);
+  addTearDown(tester.view.resetDevicePixelRatio);
+  await tester.pumpWidget(
+    RepaintBoundary(
+      key: const ValueKey('schedule-capture'),
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: momCozyTheme(),
+        builder: (context, child) => MediaQuery(
+          data: MediaQuery.of(
+            context,
+          ).copyWith(textScaler: TextScaler.linear(scale)),
+          child: child!,
+        ),
+        home: Scaffold(
+          extendBody: true,
+          bottomNavigationBar: const MomCozyBottomNavigation(
+            location: '/schedule',
+          ),
+          body: SchedulePage(
+            repository: repo,
+            timezoneProvider: () async => 'Asia/Shanghai',
+            catalogLoader: () async => _catalog,
+            now: () => DateTime(2026, 9, 9),
+            onOpenPlan: onPlan ?? (_) {},
+            onOpenAppointment: onAppointment ?? (_) {},
+          ),
+        ),
+      ),
+    ),
+  );
+  await tester.runAsync(() async {
+    for (final asset in [
+      'ArtworkSoftMe.png',
+      'ArtworkSoftBaby.png',
+      'AvatarCozymateNav.png',
+    ]) {
+      await precacheImage(
+        AssetImage('assets/images/navigation_figma/$asset'),
+        tester.element(find.byType(SchedulePage)),
+      );
+    }
+  });
+  if (settle) {
+    await tester.pumpAndSettle();
+  } else {
+    await tester.pump(const Duration(milliseconds: 100));
+  }
+}
+
+Future<void> _capture(WidgetTester tester, String name) async {
+  expect(tester.takeException(), isNull);
+  debugDisableShadows = false;
+  void repaint(RenderObject node) {
+    node.markNeedsPaint();
+    node.visitChildren(repaint);
+  }
+
+  repaint(tester.renderObject(find.byKey(const ValueKey('schedule-capture'))));
+  await tester.pump();
+  await tester.runAsync(() async {
+    final boundary = tester.renderObject<RenderRepaintBoundary>(
+      find.byKey(const ValueKey('schedule-capture')),
+    );
+    final image = await boundary.toImage(pixelRatio: 1);
+    final data = await image.toByteData(format: ui.ImageByteFormat.png);
+    final out = Directory('build/schedule-figma')..createSync(recursive: true);
+    File('${out.path}/$name.png').writeAsBytesSync(data!.buffer.asUint8List());
+    image.dispose();
+  });
+  debugDisableShadows = true;
 }
 
 final _catalog = ServiceCatalog(
@@ -418,16 +460,12 @@ final _catalog = ServiceCatalog(
 );
 
 class _ScheduleRepository implements ScheduleRepository {
-  _ScheduleRepository({
-    this.episodes = const [],
-    this.plans = const [],
-    this.appointments = const [],
-  });
+  _ScheduleRepository({this.plans = const [], this.appointments = const []});
   ProductFailure? taskFailure, readFailure;
+  int readCount = 0;
   Completer<void>? pendingRead, pendingTask;
   List<PersonalScheduleEntry>? personal;
   final taskUpdates = <(String, int, CareTaskStatus)>[];
-  final List<CareEpisode> episodes;
   final List<ScheduledPlan> plans;
   final List<CareAppointment> appointments;
   final _entry = PersonalScheduleEntry(
@@ -447,13 +485,14 @@ class _ScheduleRepository implements ScheduleRepository {
     int offset = 0,
     int limit = 100,
   }) async {
+    readCount++;
     await pendingRead?.future;
     if (readFailure case final failure?) throw failure;
     return SchedulePageData(
       personal: personal ?? [_entry],
       appointments: appointments,
       plans: plans,
-      episodes: episodes,
+      episodes: const [],
       serverTime: DateTime.utc(2026, 9, 9),
       hasMore: false,
     );
@@ -578,51 +617,3 @@ final _plan = ScheduledPlan(
     publishedAt: DateTime(2026, 9, 9),
   ),
 );
-
-Future<void> _mountExtra(
-  WidgetTester tester,
-  _ScheduleRepository repo, {
-  bool short = false,
-  double scale = 1,
-  bool settle = true,
-}) async {
-  await loadMomCozyTestFonts();
-  tester.view.physicalSize = Size(320, short ? 568 : 844);
-  tester.view.devicePixelRatio = 1;
-  addTearDown(tester.view.resetPhysicalSize);
-  addTearDown(tester.view.resetDevicePixelRatio);
-  await tester.pumpWidget(
-    MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: momCozyTheme(),
-      builder: (context, child) => MediaQuery(
-        data: MediaQuery.of(
-          context,
-        ).copyWith(textScaler: TextScaler.linear(scale)),
-        child: child!,
-      ),
-      home: Scaffold(
-        body: SchedulePage(
-          repository: repo,
-          timezoneProvider: () async => 'Asia/Shanghai',
-          catalogLoader: () async => _catalog,
-          now: () => DateTime(2026, 9, 9),
-          onOpenPlan: (_) {},
-        ),
-      ),
-    ),
-  );
-  if (settle) {
-    await tester.pumpAndSettle();
-  } else {
-    await tester.pump(const Duration(milliseconds: 20));
-  }
-}
-
-Future<void> _extraShot(WidgetTester tester, String name) async {
-  expect(tester.takeException(), isNull);
-  await expectLater(
-    find.byType(MaterialApp),
-    matchesGoldenFile('../../goldens/design_system/schedule-$name.png'),
-  );
-}

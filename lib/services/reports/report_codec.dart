@@ -24,7 +24,6 @@ const reportReviewWire = EnumWire<CareReportReviewDecision>({
 const reportSourceWire = EnumWire<CareReportSourceKind>({
   CareReportSourceKind.dialogue: 'dialogue',
   CareReportSourceKind.intake: 'intake',
-  CareReportSourceKind.motherDiary: 'mother_diary',
   CareReportSourceKind.lactation: 'lactation',
   CareReportSourceKind.carePlan: 'care_plan',
   CareReportSourceKind.babyRecord: 'baby_record',

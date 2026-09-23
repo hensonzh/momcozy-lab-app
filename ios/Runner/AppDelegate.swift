@@ -16,11 +16,6 @@ import UIKit
       NotificationPermissionPlugin.register(with: registrar)
     }
     if let registrar = engineBridge.pluginRegistry.registrar(
-      forPlugin: "MomcozyVoicePcmPlayerPlugin"
-    ) {
-      VoicePcmPlayerPlugin.register(with: registrar)
-    }
-    if let registrar = engineBridge.pluginRegistry.registrar(
       forPlugin: "MomcozyMotionPosePlugin"
     ) {
       MotionPosePlugin.register(with: registrar)

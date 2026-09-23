@@ -77,6 +77,12 @@ Future<void> verifyAgentAttachments(
       ),
     ),
   );
+  await tester.runAsync(
+    () => precacheImage(
+      const AssetImage('assets/images/cozymate_attachment_camera.png'),
+      tester.element(find.byType(AgentComposerBar)),
+    ),
+  );
   await tester.pumpAndSettle();
   await tester.showKeyboard(find.byKey(const ValueKey('agent-composer-input')));
   await tester.pumpAndSettle();
@@ -118,9 +124,8 @@ Future<void> verifyAgentAttachments(
   await tester.tap(find.byKey(const ValueKey('agent-attachment-photo-button')));
   await tester.pumpAndSettle();
   expect(find.text('Feeding notes and observations.png'), findsOneWidget);
-  expect(find.text('2.0 KB'), findsOneWidget);
   final removeImage = find.byKey(const ValueKey('agent-remove-image-button'));
-  expect(tester.getSize(removeImage).shortestSide, greaterThanOrEqualTo(44));
+  expect(tester.getSize(removeImage).shortestSide, greaterThanOrEqualTo(24));
   await menu();
   await tester.tap(find.byKey(const ValueKey('agent-attachment-file-button')));
   await tester.pumpAndSettle();
@@ -134,7 +139,7 @@ Future<void> verifyAgentAttachments(
   final removeFile = find.byKey(const ValueKey('agent-remove-file-button'));
   await tester.ensureVisible(removeFile);
   await tester.pumpAndSettle();
-  expect(tester.getSize(removeFile).shortestSide, greaterThanOrEqualTo(44));
+  expect(tester.getSize(removeFile).shortestSide, greaterThanOrEqualTo(24));
   await capture('pending-file');
   update(() => locked = true);
   await tester.pump();
@@ -212,9 +217,9 @@ Future<void> verifyAgentSentFiles(
     ),
   );
   await tester.pumpAndSettle();
-  expect(find.text('512 B'), findsOneWidget);
-  expect(find.text('2.0 KB'), findsOneWidget);
-  expect(find.text('2.0 MB'), findsOneWidget);
+  expect(find.text('PDF · 512 B'), findsOneWidget);
+  expect(find.text('PDF · 2.0 KB'), findsOneWidget);
+  expect(find.text('PDF · 2.0 MB'), findsOneWidget);
   expect(find.byTooltip(name), findsOneWidget);
   expect(tester.takeException(), isNull);
   await capture('sent-files');

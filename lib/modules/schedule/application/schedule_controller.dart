@@ -62,33 +62,53 @@ final class ScheduleController extends ChangeNotifier {
   final DateTime Function() _now;
   late ScheduleState state;
   bool _disposed = false;
+  int _loadGeneration = 0;
+  LocalDate? _loadedMonth, _activeTarget;
+  Future<void>? _activeLoad;
+  bool get hasCurrentMonth => _loadedMonth == state.month;
 
-  Future<void> load({LocalDate? selected}) async {
+  Future<void> load({LocalDate? selected}) {
+    if (_disposed) return Future.value();
     final target = selected ?? state.selected;
+    if (_activeLoad != null && _activeTarget == target) return _activeLoad!;
+    final generation = ++_loadGeneration;
+    _activeTarget = target;
+    final request = _read(target, generation);
+    _activeLoad = request;
+    return request.whenComplete(() {
+      if (generation == _loadGeneration) {
+        _activeLoad = null;
+        _activeTarget = null;
+      }
+    });
+  }
+
+  Future<void> _read(LocalDate target, int generation) async {
+    final month = LocalDate(target.year, target.month, 1);
     state = state.copyWith(
       phase: SchedulePhase.loading,
       selected: target,
-      month: LocalDate(target.year, target.month, 1),
+      month: month,
       clearError: true,
     );
     notifyListeners();
     try {
       final timezone = await timezoneProvider();
-      final first = state.month;
-      final gridStart = first.addDays(-(first.weekday - 1));
-      final gridEnd = gridStart.addDays(42);
-      final results = await Future.wait([
-        repository.read(start: gridStart, end: gridEnd, timezone: timezone),
-        catalogLoader(),
-      ]);
-      if (_disposed) return;
+      final start = month.addDays(1 - month.weekday);
+      final page = await repository.read(
+        start: start,
+        end: start.addDays(42),
+        timezone: timezone,
+      );
+      if (_disposed || generation != _loadGeneration) return;
+      _loadedMonth = month;
       state = state.copyWith(
         phase: SchedulePhase.ready,
-        page: results[0] as SchedulePageData,
-        catalog: results[1] as ServiceCatalog,
+        page: page,
+        clearError: true,
       );
     } catch (error) {
-      if (_disposed) return;
+      if (_disposed || generation != _loadGeneration) return;
       state = state.copyWith(
         phase: SchedulePhase.failure,
         error: error is ProductFailure
@@ -100,20 +120,35 @@ final class ScheduleController extends ChangeNotifier {
   }
 
   void select(LocalDate date) {
-    state = state.copyWith(
-      selected: date,
-      month: LocalDate(date.year, date.month, 1),
-    );
-    notifyListeners();
+    if (_disposed) return;
+    final month = LocalDate(date.year, date.month, 1);
+    final sameScope =
+        month == _loadedMonth ||
+        (_activeTarget != null &&
+            month == LocalDate(_activeTarget!.year, _activeTarget!.month, 1));
+    if (month == _loadedMonth &&
+        _activeTarget != null &&
+        month != LocalDate(_activeTarget!.year, _activeTarget!.month, 1)) {
+      _invalidateReads();
+      state = state.copyWith(phase: SchedulePhase.ready, clearError: true);
+    }
+    state = state.copyWith(selected: date, month: month);
+    if (sameScope) {
+      notifyListeners();
+    } else {
+      unawaited(load(selected: date));
+    }
   }
 
-  void shiftMonth(int amount) {
-    final month = state.month.addMonths(amount);
-    state = state.copyWith(month: month, selected: month);
-    unawaited(load(selected: month));
+  void shiftMonth(int amount) => select(state.selected.addMonths(amount));
+
+  void _invalidateReads() {
+    ++_loadGeneration;
+    _activeLoad = null;
+    _activeTarget = null;
   }
 
-  Future<void> savePersonal({
+  Future<PersonalScheduleEntry> savePersonal({
     PersonalScheduleEntry? existing,
     required String title,
     required LocalDate date,
@@ -121,8 +156,9 @@ final class ScheduleController extends ChangeNotifier {
     required String note,
     String? idempotencyKey,
   }) async {
+    final PersonalScheduleEntry saved;
     if (existing == null) {
-      await repository.create(
+      saved = await repository.create(
         title: title,
         date: date,
         startTime: startTime,
@@ -132,7 +168,7 @@ final class ScheduleController extends ChangeNotifier {
             'schedule-${DateTime.now().microsecondsSinceEpoch}',
       );
     } else {
-      await repository.update(
+      saved = await repository.update(
         existing,
         title: title,
         date: date,
@@ -140,12 +176,48 @@ final class ScheduleController extends ChangeNotifier {
         note: note,
       );
     }
-    await load(selected: date);
+    if (_disposed) return saved;
+    _invalidateReads();
+    if (state.page != null) {
+      state = state.copyWith(
+        phase: SchedulePhase.ready,
+        clearError: true,
+        selected: saved.date,
+        month: LocalDate(saved.date.year, saved.date.month, 1),
+        page: state.page!.copyWith(
+          personal: [
+            ...state.page!.personal.where((entry) => entry.id != saved.id),
+            saved,
+          ],
+        ),
+      );
+      notifyListeners();
+    }
+    if (state.page == null || _loadedMonth != state.month) {
+      await load(selected: saved.date);
+    }
+    return saved;
   }
 
   Future<void> deletePersonal(PersonalScheduleEntry entry) async {
     await repository.delete(entry);
-    await load();
+    if (_disposed) return;
+    _invalidateReads();
+    if (state.page == null) {
+      await load();
+      return;
+    }
+    state = state.copyWith(
+      phase: SchedulePhase.ready,
+      clearError: true,
+      page: state.page!.copyWith(
+        personal: state.page!.personal.where((e) => e.id != entry.id).toList(),
+      ),
+    );
+    notifyListeners();
+    if (_loadedMonth != state.month) {
+      await load();
+    }
   }
 
   Future<void> updateTask(
@@ -153,13 +225,39 @@ final class ScheduleController extends ChangeNotifier {
     PublishedCareTask task,
     CareTaskStatus status,
   ) async {
-    await repository.updateTask(
+    final publication = await repository.updateTask(
       publicationId: plan.publication.id,
       sourceKey: task.content.sourceKey,
       expectedVersion: task.progressVersion,
       status: status,
     );
-    await load();
+    if (_disposed) return;
+    _invalidateReads();
+    if (state.page == null) {
+      await load();
+      return;
+    }
+    state = state.copyWith(
+      phase: SchedulePhase.ready,
+      clearError: true,
+      page: state.page!.copyWith(
+        plans: [
+          for (final p in state.page!.plans)
+            if (p.publication.id == publication.id)
+              ScheduledPlan(
+                episodeId: p.episodeId,
+                appointmentId: p.appointmentId,
+                publication: publication,
+              )
+            else
+              p,
+        ],
+      ),
+    );
+    notifyListeners();
+    if (_loadedMonth != state.month) {
+      await load();
+    }
   }
 
   @override

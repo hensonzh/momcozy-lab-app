@@ -9,7 +9,7 @@ as an all-or-nothing winner.
 - MomCozyApp product baseline: `pre-merge-momcozyapp-20260815`
 - Integration branch: `integration/unified-app`
 - Product Backend snapshot SHA-256: `a999ac4eb3867ccbfc0dcdba62fed9a457d99e2f779f6d7f9280e280f495db0d`
-- Agent Runtime snapshot SHA-256: `ba66d9b95d7828fc441ed039770989c44edcc4e7f61c06a79bd2f3e28c452771`
+- Agent Runtime snapshot SHA-256: `626e6cd557f3ebb7da8596b37ac2f25272687be45e7a1c5027c61466565e0be7`
 
 The MomCozyApp tree owns the current product shell, visual design, new feature
 modules, motion assessment, media, Agent conversation UI, and native pose
@@ -42,10 +42,13 @@ default and must be enabled explicitly after test contract verification.
 - `MOMCOZY_ENABLE_RELEASE_RESET`: opts into the internal-test release reset,
   but the reset runs only when `MOMCOZY_ENABLE_ONBOARDING` is also true. The
   reset flag alone is intentionally inert.
-- `MOMCOZY_ENABLE_AGENT_HISTORY`: must remain disabled for this baseline. The
-  frozen Agent Runtime OpenAPI does not expose
-  `GET /v1/agent/threads/{thread_id}/history`; enable it only after that endpoint
-  and its response schema pass test contract verification.
+- Cozymate phase one removes new-session and conversation-list/switching UI,
+  voice playback, structured cards, forms, and action confirmation. The old
+  history flag has been removed. Owner-scoped latest-conversation recovery,
+  refresh-to-latest on every entry, in-thread backward pagination, draft and
+  attachment restoration, and notification-targeted transcript loading are
+  part of the default flow. A new reply does not force-scroll while the user is
+  manually browsing older messages during the current visit.
 - `MOMCOZY_ENABLE_EXTENDED_PRODUCT_API`: enables Motion Assessment and other
   optional resources only after their Product endpoints are verified.
 

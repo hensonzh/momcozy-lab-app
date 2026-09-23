@@ -110,50 +110,6 @@ AgentStreamCancelClient createSessionAgentHubCancelClient(
   );
 }
 
-AgentStreamActionClient createDefaultAgentHubActionClient({
-  AgentStreamEndpoint? endpoint,
-  AgentStreamUnauthorizedHandler? onUnauthorized,
-}) {
-  return AgentStreamActionClient(
-    endpoint: endpoint ?? defaultAgentHubActionEndpoint(),
-    onUnauthorized: onUnauthorized,
-  );
-}
-
-AgentStreamActionClient createSessionAgentHubActionClient(
-  MomCozySession session, {
-  AgentStreamEndpoint? endpoint,
-  String? Function()? accessTokenProvider,
-  AgentStreamUnauthorizedHandler? onUnauthorized,
-}) {
-  return AgentStreamActionClient(
-    endpoint:
-        endpoint ??
-        sessionAgentHubActionEndpoint(
-          session,
-          accessTokenProvider: accessTokenProvider,
-        ),
-    onUnauthorized: onUnauthorized,
-  );
-}
-
-AgentStreamClientEventClient createSessionAgentHubClientEventClient(
-  MomCozySession session, {
-  AgentStreamEndpoint? endpoint,
-  String? Function()? accessTokenProvider,
-  AgentStreamUnauthorizedHandler? onUnauthorized,
-}) {
-  return AgentStreamClientEventClient(
-    endpoint:
-        endpoint ??
-        sessionAgentHubSseEndpoint(
-          session,
-          accessTokenProvider: accessTokenProvider,
-        ),
-    onUnauthorized: onUnauthorized,
-  );
-}
-
 AgentHubInteractionStateStore createSessionAgentHubInteractionStateStore(
   MomCozySession session,
 ) {
@@ -166,10 +122,6 @@ AgentStreamEndpoint defaultAgentHubSseEndpoint() {
 
 AgentStreamEndpoint defaultAgentHubCancelEndpoint() {
   return _agentHubEndpoint(_agentHubApiUri('/v1/agent/runs'));
-}
-
-AgentStreamEndpoint defaultAgentHubActionEndpoint() {
-  return _agentHubEndpoint(_agentHubApiUri('/v1/agent/actions'));
 }
 
 AgentStreamEndpoint sessionAgentHubSseEndpoint(
@@ -189,17 +141,6 @@ AgentStreamEndpoint sessionAgentHubCancelEndpoint(
 }) {
   return _agentHubEndpoint(
     _agentHubApiUri('/v1/agent/runs'),
-    token: session.accessToken,
-    tokenProvider: accessTokenProvider,
-  );
-}
-
-AgentStreamEndpoint sessionAgentHubActionEndpoint(
-  MomCozySession session, {
-  String? Function()? accessTokenProvider,
-}) {
-  return _agentHubEndpoint(
-    _agentHubApiUri('/v1/agent/actions'),
     token: session.accessToken,
     tokenProvider: accessTokenProvider,
   );

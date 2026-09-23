@@ -3,9 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/app/momcozy_api_runtime.dart';
 import 'package:momcozy_flutter_app/core/auth/momcozy_session.dart';
-import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_run_state.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_conversation.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/presentation/agent_conversation_panel.dart';
 import 'package:momcozy_flutter_app/features/onboarding/presentation/avatar_task_banner.dart';
 import 'package:momcozy_flutter_app/features/onboarding/presentation/avatar_task_controller.dart';
 import 'package:momcozy_flutter_app/features/onboarding/presentation/onboarding_controller.dart';
@@ -40,7 +37,6 @@ Future<void> verifyMotionPreference(
     ..setForeground(false);
   final body = ValueNotifier<Widget>(const SizedBox());
   final scroll = ScrollController();
-  final canSwitch = ValueNotifier(true);
   var opened = 0;
   await tester.pumpWidget(
     MaterialApp(
@@ -145,43 +141,11 @@ Future<void> verifyMotionPreference(
   expect(scroll.position.isScrollingNotifier.value, isFalse);
   await capture('feedback');
 
-  var selected = '';
-  body.value = Builder(
-    builder: (context) => Center(
-      child: FilledButton(
-        onPressed: () => showAgentConversationPanel(
-          context: context,
-          repository: _Conversations(),
-          activeThreadId: null,
-          canSwitchListenable: canSwitch,
-          onSelected: (id) async {
-            selected = id;
-            return true;
-          },
-          onDismissed: () {},
-        ),
-        child: const Text('打开会话历史'),
-      ),
-    ),
-  );
-  await tester.pumpAndSettle();
-  await tester.tap(find.text('打开会话历史'));
-  await tester.pump();
-  await tester.pump();
-  final panel = find.byKey(const ValueKey('agent-conversation-panel'));
-  expect(tester.getTopLeft(panel).dx, 0);
-  expect(ModalRoute.of(tester.element(panel))!.animation!.value, 1);
-  await capture('history');
-  await tester.tap(find.text('今天的喂养记录'));
-  await tester.pumpAndSettle();
-  expect(selected, 'fixture-thread');
-  expect(panel, findsNothing);
   expect(transport.mutationPaths, isEmpty);
   expect(tester.takeException(), isNull);
   await tester.pumpWidget(const SizedBox());
   scroll.dispose();
   body.dispose();
-  canSwitch.dispose();
   task.dispose();
   onboarding.dispose();
   runtime.dispose();
@@ -206,28 +170,3 @@ Map<String, Object?> _avatarState(String status) => {
     ],
   },
 };
-
-class _Conversations implements AgentConversationRepository {
-  @override
-  Future<List<AgentConversationSummary>> listConversations({
-    int limit = 50,
-  }) async => [
-    AgentConversationSummary(
-      id: 'fixture-thread',
-      title: '今天的喂养记录',
-      status: 'active',
-      createdAt: DateTime.utc(2026, 9, 12),
-      updatedAt: DateTime.utc(2026, 9, 12),
-    ),
-  ];
-  @override
-  Future<AgentConversationHistory> loadConversation(
-    String threadId, {
-    int? beforeSequence,
-    int limit = 20,
-  }) async => AgentConversationHistory(
-    thread: (await listConversations()).first,
-    messages: const [],
-    currentState: const AgentStreamRunState(),
-  );
-}

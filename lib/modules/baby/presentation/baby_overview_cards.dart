@@ -5,6 +5,8 @@ import '../../../shared/widgets/mom_companion_widgets.dart';
 import '../../../shared/widgets/momcozy_line_icon.dart';
 import '../application/baby_home_controller.dart';
 import 'baby_labels.dart';
+import 'baby_design.dart';
+import 'baby_artwork.dart';
 
 class BabyFeedingSummary extends StatelessWidget {
   const BabyFeedingSummary({
@@ -20,93 +22,56 @@ class BabyFeedingSummary extends StatelessWidget {
   @override
   Widget build(BuildContext context) => MomHomeSurface(
     gradient: MomHomeTokens.milk,
-    backgroundDecoration: MomCardDecoration.feeding,
-    onTap: onTap,
-    child: Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Row(
-            children: [
-              const MomCozyLineIcon(
-                MomCozyLineGlyph.drop,
-                size: 28,
-                color: MomHomeTokens.rose,
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Text(
-                  value,
-                  style: MomHomeTokens.text(
-                    hasRecord ? 22 : 18,
-                    weight: FontWeight.w700,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 8),
-              const MomCozyLineIcon(
-                MomCozyLineGlyph.arrow,
-                size: 22,
-                color: MomHomeTokens.rose,
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          Text(
-            detail,
-            style: MomHomeTokens.text(13, color: MomHomeTokens.secondary),
-          ),
-        ],
-      ),
-    ),
-  );
-}
 
-class BabySleepMonitor extends StatelessWidget {
-  const BabySleepMonitor({super.key});
-  @override
-  Widget build(BuildContext context) => Semantics(
-    label: '睡眠监测，即将开放',
-    child: ExcludeSemantics(
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(MomHomeTokens.cardRadius),
-        child: ColoredBox(
-          color: MomHomeTokens.surface,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Image.asset(
-                'assets/images/me_baby_overview/nursery_camera_clean.png',
-                height: 150,
-                fit: BoxFit.cover,
-                alignment: const Alignment(0, -.14),
-              ),
-              MomCardBackground(
-                decoration: MomCardDecoration.monitor,
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        '睡眠节奏与趋势',
-                        style: MomHomeTokens.text(14, weight: FontWeight.w700),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        '基于连续睡眠记录整理',
-                        style: MomHomeTokens.text(
-                          12,
-                          color: MomHomeTokens.secondary,
-                        ),
-                      ),
-                    ],
+    onTap: onTap,
+    child: BabyArtwork(
+      kind: 'feeding',
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              children: [
+                BabyDesign.asset('IconDrop', width: 28, height: 28),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    value,
+                    style: BabyDesign.text(
+                      hasRecord ? 22 : 16,
+                      line: hasRecord ? 31 : 22,
+                      weight: FontWeight.w700,
+                      color: hasRecord
+                          ? MomHomeTokens.ink
+                          : MomHomeTokens.secondary,
+                    ),
                   ),
                 ),
+                const SizedBox(width: 8),
+                SizedBox(
+                  width: 28,
+                  height: 31,
+                  child: Center(
+                    child: BabyDesign.asset(
+                      'ChevronRightRounded',
+                      width: 20,
+                      height: 20,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Text(
+              detail,
+              style: BabyDesign.text(
+                13,
+                line: 18,
+                color: MomHomeTokens.secondary,
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     ),
@@ -121,82 +86,104 @@ class BabyStatusCard extends StatelessWidget {
     required this.hasRecord,
     required this.detail,
     required this.icon,
+    required this.asset,
     required this.gradient,
-    required this.backgroundDecoration,
+    required this.artwork,
     required this.onTap,
   });
   final String label, value, detail;
   final bool hasRecord;
   final MomCozyLineGlyph icon;
+  final String asset, artwork;
   final Gradient gradient;
-  final MomCardDecoration backgroundDecoration;
   final VoidCallback onTap;
   @override
   Widget build(BuildContext context) {
     final large = MediaQuery.textScalerOf(context).scale(1) > 1.35;
     final cumulative = value.startsWith('累计 ');
     final heading = Text(
-      label,
-      style: MomHomeTokens.text(14, color: MomHomeTokens.secondary),
+      label == '吃奶后精神状态' ? '吃奶后\n精神状态' : label,
+      style: BabyDesign.text(
+        label == '吃奶后精神状态' ? 12 : 14,
+        line: label == '吃奶后精神状态' ? 16 : 20,
+        color: MomHomeTokens.secondary,
+      ),
     );
     final facts = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (cumulative)
+        if (cumulative || (label == '吃奶后精神状态' && hasRecord))
           Text(
-            '累计',
-            style: MomHomeTokens.text(12, color: MomHomeTokens.secondary),
+            cumulative ? '累计' : '最近',
+            style: BabyDesign.text(
+              12,
+              line: 17,
+              color: MomHomeTokens.secondary,
+            ),
           ),
         Text(
           cumulative ? value.substring(3) : value,
-          style: MomHomeTokens.text(
-            hasRecord ? 22 : 18,
+          style: BabyDesign.text(
+            label == '吃奶后精神状态'
+                ? 16
+                : hasRecord
+                ? 22
+                : 16,
             weight: FontWeight.w700,
+            line: label == '吃奶后精神状态' || !hasRecord ? 22 : 31,
+            color: hasRecord ? MomHomeTokens.ink : MomHomeTokens.secondary,
           ),
         ),
         if (value == '正在睡')
           Text(
             detail,
-            style: MomHomeTokens.text(12, color: MomHomeTokens.secondary),
+            style: BabyDesign.text(
+              12,
+              line: 17,
+              color: MomHomeTokens.secondary,
+            ),
           ),
       ],
     );
-    final glyph = MomCozyLineIcon(icon, size: 28, color: MomHomeTokens.teal);
+    final glyph = BabyDesign.asset(asset, width: 28, height: 28);
     return MomHomeSurface(
       semanticLabel: '今日$label，$value，$detail',
       gradient: gradient,
-      backgroundDecoration: backgroundDecoration,
+
       onTap: onTap,
-      child: ConstrainedBox(
-        constraints: BoxConstraints(minHeight: large ? 0 : 148),
-        child: Padding(
-          padding: const EdgeInsets.all(12),
-          child: large
-              ? Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    glyph,
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [heading, const SizedBox(height: 8), facts],
+      child: BabyArtwork(
+        kind: artwork,
+        child: ConstrainedBox(
+          constraints: BoxConstraints(minHeight: large ? 0 : 148),
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: large
+                ? Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      glyph,
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [heading, const SizedBox(height: 8), facts],
+                        ),
                       ),
-                    ),
-                  ],
-                )
-              : Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [glyph, const SizedBox(height: 8), heading],
-                    ),
-                    const SizedBox(height: 16),
-                    facts,
-                  ],
-                ),
+                    ],
+                  )
+                : Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [glyph, const SizedBox(height: 8), heading],
+                      ),
+                      const SizedBox(height: 10),
+                      facts,
+                    ],
+                  ),
+          ),
         ),
       ),
     );
@@ -223,71 +210,61 @@ class BabyGrowthMetrics extends StatelessWidget {
         runSpacing: gap,
         children: [
           for (final metric in GrowthMetric.values)
-            SizedBox(
-              width: (constraints.maxWidth - (columns - 1) * gap) / columns,
-              child: Material(
-                color: MomHomeTokens.surface,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(MomHomeTokens.cardRadius),
-                  side: const BorderSide(color: MomHomeTokens.border),
-                ),
-                clipBehavior: Clip.antiAlias,
-                child: InkWell(
-                  onTap: () => onRecord(metric),
-                  child: MomCardBackground(
-                    decoration: MomCardDecoration.measurement,
-                    child: Container(
-                      constraints: const BoxConstraints(minHeight: 106),
-                      padding: EdgeInsets.symmetric(
-                        vertical: 12,
-                        horizontal: 12,
+            Builder(
+              builder: (context) {
+                final record = controller.latestGrowth.value
+                    ?.where((value) => value.metric == metric)
+                    .firstOrNull;
+                return SizedBox(
+                  width: (constraints.maxWidth - (columns - 1) * gap) / columns,
+                  child: Material(
+                    color: MomHomeTokens.surface,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(
+                        MomHomeTokens.cardRadius,
                       ),
-                      child: Builder(
-                        builder: (context) {
-                          final record = controller.latestGrowth.value
-                              ?.where((value) => value.metric == metric)
-                              .firstOrNull;
-                          return Column(
+                      side: const BorderSide(color: MomHomeTokens.border),
+                    ),
+                    clipBehavior: Clip.antiAlias,
+                    child: InkWell(
+                      onTap: () => onRecord(metric),
+                      child: BabyArtwork(
+                        kind: 'measurement',
+                        child: Container(
+                          constraints: BoxConstraints(
+                            minHeight: record == null ? 72 : 106,
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 12,
+                            horizontal: 12,
+                          ),
+                          child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                 growthMetricLabel(metric),
-                                style: const TextStyle(
-                                  fontFamily: 'NotoSansSCHome',
-                                  fontSize: 13,
+                                style: BabyDesign.text(
+                                  13,
+                                  line: 18,
                                   color: MomHomeTokens.secondary,
                                 ),
                               ),
-                              const SizedBox(height: 9),
+                              const SizedBox(height: 8),
                               if (record != null) ...[
-                                Text.rich(
-                                  TextSpan(
-                                    children: [
-                                      TextSpan(text: babyNumber(record.value)),
-                                      TextSpan(
-                                        text: ' ${record.unit}',
-                                        style: const TextStyle(
-                                          fontFamily: 'NotoSansSCHome',
-                                          fontSize: 22,
-                                          color: MomHomeTokens.secondary,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  style: TextStyle(
-                                    fontFamily: 'NotoSansSCHome',
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.w700,
-                                    height: 1.15,
-                                    color: MomHomeTokens.ink,
+                                Text(
+                                  '${babyNumber(record.value)} ${record.unit}',
+                                  style: BabyDesign.text(
+                                    22,
+                                    line: 31,
+                                    weight: FontWeight.w700,
                                   ),
                                 ),
-                                const SizedBox(height: 9),
+                                const SizedBox(height: 8),
                                 Text(
                                   '${record.recordedOn.month}/${record.recordedOn.day}',
-                                  style: const TextStyle(
-                                    fontFamily: 'NotoSansSCHome',
-                                    fontSize: 12,
+                                  style: BabyDesign.text(
+                                    12,
+                                    line: 17,
                                     color: MomHomeTokens.secondary,
                                   ),
                                 ),
@@ -297,7 +274,7 @@ class BabyGrowthMetrics extends StatelessWidget {
                                       ? '载入中…'
                                       : controller.latestGrowth.failure != null
                                       ? '暂未载入'
-                                      : '未记录',
+                                      : '待记录',
                                   style: const TextStyle(
                                     fontFamily: 'NotoSansSCHome',
                                     fontSize: 18,
@@ -306,13 +283,13 @@ class BabyGrowthMetrics extends StatelessWidget {
                                   ),
                                 ),
                             ],
-                          );
-                        },
+                          ),
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ),
+                );
+              },
             ),
         ],
       );

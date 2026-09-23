@@ -5,22 +5,31 @@ import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_hub_greeting
 import '../../support/fixture_api_transport.dart';
 
 void main() {
-  test('builds the personalized greeting when name and age are known', () {
+  test('personalizes the introduction with a trimmed display name', () {
     const profile = AgentHubGreetingProfile(displayName: ' 小美 ', age: 29);
 
     expect(
       agentHubGreetingForProfile(profile),
-      '嗨 小美， \n\n今天想聊点什么呢？ \n\n把你现在最关心的事情告诉我就好，我会陪你一起梳理。',
+      agentHubDefaultGreeting.replaceFirst('嗨，', '嗨 小美，'),
     );
   });
 
-  test('keeps the onboarding greeting until both name and age are known', () {
+  test('personalizes the introduction without requiring age', () {
     expect(
       agentHubGreetingForProfile(
         const AgentHubGreetingProfile(displayName: '小美'),
       ),
-      agentHubDefaultGreeting,
+      agentHubDefaultGreeting.replaceFirst('嗨，', '嗨 小美，'),
     );
+  });
+
+  test('missing names omit the name placeholder', () {
+    for (final profile in [
+      null,
+      const AgentHubGreetingProfile(displayName: '  '),
+    ]) {
+      expect(agentHubGreetingForProfile(profile), agentHubDefaultGreeting);
+    }
   });
 
   test('loads greeting fields from the profile endpoint', () async {

@@ -453,7 +453,7 @@ void main() {
       onboardingController: onboardingController,
       avatarTaskController: taskController,
       avatarThumbnailLoader: (_) async => _onePixelPng,
-      agentHubBuilder: (context, uri, extra, voicePlaybackCoordinator) =>
+      agentHubBuilder: (context, uri, extra) =>
           const Center(child: Text('App content')),
     );
 

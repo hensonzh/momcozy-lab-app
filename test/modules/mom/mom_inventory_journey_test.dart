@@ -14,7 +14,6 @@ import 'package:momcozy_flutter_app/modules/mom/presentation/mom_home_sections.d
 import 'package:momcozy_flutter_app/modules/services/presentation/expert_support_section.dart';
 import '../../support/mom_inventory_transport.dart';
 import '../../support/fixture_api_transport.dart';
-import '../../support/fake_agent_voice.dart';
 import '../../support/momcozy_test_fonts.dart';
 
 void main() {
@@ -48,7 +47,7 @@ void main() {
       MomCozyApiRuntime(
         jsonTransport: transport,
         multipartTransport: FixtureApiMultipartTransport({}),
-        agentVoicePlaybackPlayer: ImmediateAgentVoicePlaybackPlayer(),
+
         session: session,
         supportsSessionAutoRefresh: false,
         now: () => inventoryMomNow,
@@ -285,104 +284,6 @@ void main() {
     },
   );
 
-  testWidgets(
-    'inventory Mom diary quick record tabs save and standalone details',
-    (tester) async {
-      await mount(tester);
-      await tap(tester, find.text('身体与精力'));
-      await capture(
-        tester,
-        'diary-body-empty',
-        'Home body card → quick body record',
-      );
-      await tap(tester, find.text('保存今天的记录'));
-      expect(transport.diaries, isEmpty);
-      await capture(
-        tester,
-        'diary-empty-validation',
-        'Save empty diary → validation',
-      );
-      await tap(tester, find.text('有力气'));
-      await tap(tester, find.text('休息'));
-      await capture(tester, 'diary-rest-empty', 'Quick diary → Rest tab');
-      await tap(tester, find.text('5–6 小时'));
-      await tap(tester, find.text('心情'));
-      await capture(tester, 'diary-mood-empty', 'Quick diary → Mood tab');
-      await tap(tester, find.text('还算平稳'));
-      await tap(tester, find.byTooltip('关闭记录'));
-      await capture(
-        tester,
-        'diary-discard-confirm',
-        'Close unsaved three-section diary → discard confirmation',
-      );
-      await tap(tester, find.text('继续填写'));
-      await capture(
-        tester,
-        'diary-draft-retained',
-        'Continue editing → selected mood and other draft sections remain',
-      );
-      transport.failWrite = true;
-      await tap(tester, find.text('保存今天的记录'));
-      await capture(
-        tester,
-        'diary-save-error',
-        'Save diary → API error preserves entries',
-      );
-      transport.failWrite = false;
-      await tap(tester, find.text('保存今天的记录'));
-      expect(transport.diaries, hasLength(1));
-      await capture(
-        tester,
-        'diary-modal-saved',
-        'Retry save → saved feedback in quick editor',
-      );
-      await tap(tester, find.byTooltip('关闭记录'));
-      await capture(
-        tester,
-        'diary-home-complete',
-        'Close editor → all three home status groups completed',
-      );
-      await tap(tester, find.text('今日已完成记录 ›'));
-      const diaryRoute = '/me/diary';
-      await capture(
-        tester,
-        'diary-detail-rest',
-        'Completed daily status → standalone diary detail',
-        route: diaryRoute,
-      );
-      await tap(tester, find.text('身体'));
-      await capture(
-        tester,
-        'diary-detail-body',
-        'Standalone diary → Body tab',
-        route: diaryRoute,
-      );
-      await tap(tester, find.text('心情'));
-      await capture(
-        tester,
-        'diary-detail-mood',
-        'Standalone diary → Mood tab',
-        route: diaryRoute,
-      );
-      await tap(tester, find.text('有点绷着'));
-      await tap(tester, find.text('保存今天的记录'));
-      expect(transport.diaries.values.single['version'], 2);
-      await capture(
-        tester,
-        'diary-detail-updated',
-        'Save changed mood → updated standalone diary',
-        route: diaryRoute,
-      );
-      await tap(tester, find.byTooltip('关闭记录'));
-      await capture(
-        tester,
-        'diary-return-home',
-        'Close standalone diary → home reloads changed mood',
-      );
-      await tester.pumpWidget(const SizedBox());
-    },
-  );
-
   testWidgets('inventory Mom AI card to Cozymate draft and service catalog', (
     tester,
   ) async {
@@ -395,7 +296,7 @@ void main() {
       route: '/',
     );
     expect(transport.postedBodies, isEmpty);
-    expect(find.text('请结合我今天的记录，帮我了解恢复状态。'), findsOneWidget);
+    expect(find.text('我想聊聊今天的喂养和恢复情况。'), findsOneWidget);
     await tap(tester, find.text('Me'));
     await tap(tester, find.byType(MomExpertPlanEntry));
     await capture(
@@ -542,74 +443,6 @@ void main() {
     await tester.pumpWidget(const SizedBox());
   });
 
-  testWidgets('inventory Mom optional diary sections and mood draft discard', (
-    tester,
-  ) async {
-    await mount(tester);
-    await tap(tester, find.text('身体与精力'));
-    await tap(tester, find.text('腰背'));
-    await capture(
-      tester,
-      'body-discomfort-expanded',
-      'Select discomfort site → severity and impact questions appear',
-    );
-    await tap(tester, find.text('明显'));
-    await tap(tester, find.text('有一点影响'));
-    await tap(tester, find.text('如厕与盆底'));
-    await capture(
-      tester,
-      'body-optional-expanded',
-      'Expand optional toilet and pelvic floor questions',
-    );
-    await tester.enterText(
-      find.widgetWithText(TextFormField, '今天身体最想告诉你什么？'),
-      '今天想多休息',
-    );
-    await capture(tester, 'body-note', 'Enter optional body note');
-    await tap(tester, find.text('休息'));
-    await tap(tester, find.text('补充休息情况'));
-    await capture(
-      tester,
-      'rest-optional-expanded',
-      'Rest tab → expand continuous rest, naps and interruption causes',
-    );
-    await tap(tester, find.text('心情'));
-    await tap(tester, find.text('担心宝宝'));
-    await tap(tester, find.text('喂养压力'));
-    await capture(
-      tester,
-      'mood-multiple-pressures',
-      'Mood tab → select two pressure sources',
-    );
-    await tap(tester, find.text('说不清楚').last);
-    await capture(
-      tester,
-      'mood-exclusive-pressure',
-      'Select unclear pressure → exclusive choice replaces selected sources',
-    );
-    await tap(tester, find.byTooltip('关闭记录'));
-    await capture(
-      tester,
-      'diary-optional-discard-confirm',
-      'Close optional diary draft → discard confirmation',
-    );
-    await tap(tester, find.text('放弃修改'));
-    expect(transport.diaries, isEmpty);
-    await capture(
-      tester,
-      'diary-discarded-home',
-      'Confirm discard → home remains unrecorded',
-    );
-    await tap(tester, find.text('不错'));
-    await capture(
-      tester,
-      'mood-quick-prefilled',
-      'Home quick mood → diary with mood preselected, no write yet',
-    );
-    expect(transport.diaries, isEmpty);
-    await tester.pumpWidget(const SizedBox());
-  });
-
   testWidgets(
     'inventory Mom trend period toggles with recorded and missing days',
     (tester) async {
@@ -660,67 +493,6 @@ void main() {
       await tester.pumpWidget(const SizedBox());
     },
   );
-
-  testWidgets('inventory Mom diary conflict reload and pending save', (
-    tester,
-  ) async {
-    await mount(tester);
-    await tap(tester, find.text('身体与精力'));
-    await tap(tester, find.text('有力气'));
-    transport.failWrite = true;
-    transport.failureStatus = 409;
-    await tap(tester, find.text('保存今天的记录'));
-    await capture(
-      tester,
-      'diary-conflict',
-      'Save returns version conflict → draft preserved',
-    );
-    await tap(tester, find.text('重新载入'));
-    await capture(
-      tester,
-      'diary-conflict-reload-confirm',
-      'Reload conflicting diary → explicit discard confirmation',
-    );
-    await tap(tester, find.text('继续填写'));
-    await capture(
-      tester,
-      'diary-conflict-retained',
-      'Keep draft after conflict → conflict and entered fields remain',
-    );
-    await tap(tester, find.text('重新载入'));
-    transport.failWrite = false;
-    await tap(tester, find.text('放弃修改'));
-    await capture(
-      tester,
-      'diary-conflict-reloaded',
-      'Confirm discard → reload latest empty diary',
-    );
-    await tap(tester, find.text('有力气'));
-    transport.writeGate = Completer<void>();
-    await tester.tap(find.text('保存今天的记录'));
-    await tester.pump();
-    await capture(
-      tester,
-      'diary-saving',
-      'Submit replacement draft → controls disabled while pending',
-    );
-    expect(transport.diaries, isEmpty);
-    transport.writeGate!.complete();
-    await tester.pumpAndSettle();
-    expect(transport.diaries, hasLength(1));
-    await capture(
-      tester,
-      'diary-conflict-resolved',
-      'Save response → persisted diary feedback',
-    );
-    await tap(tester, find.byTooltip('关闭记录'));
-    await capture(
-      tester,
-      'diary-conflict-return-home',
-      'Close saved diary → body state refreshed on home',
-    );
-    await tester.pumpWidget(const SizedBox());
-  });
 
   testWidgets('inventory Mom milk conflict uncertain close and failed delete', (
     tester,
@@ -870,84 +642,4 @@ void main() {
       await tester.pumpWidget(const SizedBox());
     },
   );
-
-  testWidgets('inventory Mom independent loading failures and retry', (
-    tester,
-  ) async {
-    await mount(
-      tester,
-      loading: true,
-      prepare: (t) {
-        for (final path in [
-          '/v1/profile/me',
-          '/v1/profile/lactation',
-          '/v1/mother/diary',
-          '/v1/lactation/records',
-        ]) {
-          t.readGates[path] = Completer<void>();
-        }
-      },
-    );
-    await capture(
-      tester,
-      'home-loading',
-      'Me tab entered with homepage data requests pending',
-    );
-    for (final gate in transport.readGates.values) {
-      gate.complete();
-    }
-    await tester.pumpAndSettle();
-    await capture(
-      tester,
-      'home-loaded-empty',
-      'All requests resolve → initial cards',
-    );
-    transport.failingReads.add('/v1/mother/diary');
-    await tester.drag(find.byType(Scrollable).first, const Offset(0, 400));
-    await tester.pumpAndSettle();
-    await capture(
-      tester,
-      'home-diary-partial-error',
-      'Pull refresh → diary request fails while other modules remain available',
-    );
-    transport.failingReads.clear();
-    await tap(tester, find.text('重试').first);
-    await capture(
-      tester,
-      'home-partial-recovered',
-      'Retry failed section → empty daily status restored',
-    );
-    transport.failingReads.add('/v1/lactation/records');
-    await tap(tester, find.text('查看记录 ›'));
-    await capture(
-      tester,
-      'milk-history-read-error',
-      'Enter standalone lactation page → records request error',
-      route: '/me/lactation',
-    );
-    transport.failingReads.clear();
-    await tap(tester, find.text('重试'));
-    await capture(
-      tester,
-      'milk-history-read-recovered',
-      'Retry standalone records → empty history',
-      route: '/me/lactation',
-    );
-    await tap(tester, find.byTooltip('关闭泌乳记录'));
-    transport.failingReads.add('/v1/mother/diary');
-    await tap(tester, find.text('身体与精力'));
-    await capture(
-      tester,
-      'diary-read-error',
-      'Open quick diary → independent diary load error',
-    );
-    transport.failingReads.clear();
-    await tap(tester, find.text('重试'));
-    await capture(
-      tester,
-      'diary-read-recovered',
-      'Retry diary read → empty body form',
-    );
-    await tester.pumpWidget(const SizedBox());
-  });
 }

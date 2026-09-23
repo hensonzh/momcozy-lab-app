@@ -166,18 +166,26 @@ only when **both** `MOMCOZY_ENABLE_ONBOARDING=true` and
 Enabling the reset flag alone has no effect. With both flags enabled, startup
 compares the installed runtime version and build number (for example
 `1.0.0+57`) with the last launched release. A changed release clears the local
-session, all user-scoped secure storage, generated-card/product media caches,
+session, all user-scoped secure storage, product media caches,
 and prior onboarding completion markers while preserving the device ID and
 last invite code. After the user signs in, the App performs the matching
 idempotent cloud reset before loading onboarding. Reset failure keeps the user
 behind the onboarding gate. Completion is recorded per user, so another
 account on the same device still receives its own reset and onboarding flow.
 
-Two additional rollout flags fail closed until their backend schemas are
-available in test:
+Cozymate phase one includes the current text conversation, attachments, and
+owner-scoped recovery of the latest real conversation. Users can page backward
+inside that conversation while drafts and attachment references remain local to
+the signed-in account. Every entry refreshes the current conversation, or
+discovers the latest owned conversation when none is selected, and opens at its
+latest content. A reply received while the user is manually browsing older
+messages does not force-scroll; the ordinary latest-message control remains
+available. New-session, conversation-list/switching, voice playback, structured
+resource/result cards, forms, and action confirmation are removed. The former
+`MOMCOZY_ENABLE_AGENT_HISTORY` flag is no longer supported; current-conversation
+recovery is part of the default Agent experience.
 
-- `MOMCOZY_ENABLE_AGENT_HISTORY` must remain disabled: the frozen Agent Runtime
-  contract does not expose `GET /v1/agent/threads/{thread_id}/history` yet.
+The extended Product API rollout flag remains gated by backend availability:
 - `MOMCOZY_ENABLE_EXTENDED_PRODUCT_API=true` enables Motion Assessment routes
   and other optional resources that depend on the extended Product Backend API.
   By default, the supported profile, feeding, growth, milk-trend, and Schedule

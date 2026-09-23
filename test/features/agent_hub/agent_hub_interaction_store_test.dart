@@ -5,9 +5,52 @@ import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_client.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_event.dart';
 import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_run_state.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_interaction_store.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/artifacts/agent_artifact_model.dart';
 
 void main() {
+  test('phase one drops retired settings and form drafts from old caches', () {
+    final restored = AgentHubInteractionSnapshot.fromMap({
+      'composerText': '保留当前草稿',
+      'autoVoiceEnabled': true,
+      'localActionStatuses': {'old-action': 'confirmed'},
+      'formSubmissions': {
+        'old-form': {'state': 'submitted'},
+      },
+      'viewState': {
+        'lastReadMessageId': 'old-message',
+        'position': {'scrollOffset': 640, 'atLatest': false},
+      },
+      'pendingAttachmentCleanupIds': ['remove-me'],
+    });
+    final saved = restored.toMap();
+    expect(restored.composerText, '保留当前草稿');
+    expect(restored.pendingAttachmentCleanupIds, ['remove-me']);
+    for (final key in [
+      'autoVoiceEnabled',
+      'localActionStatuses',
+      'formSubmissions',
+      'viewState',
+    ]) {
+      expect(saved.containsKey(key), isFalse);
+    }
+  });
+
+  test('cleanup intent persists without conversation or image bytes', () {
+    const snapshot = AgentHubInteractionSnapshot(
+      pendingAttachmentCleanupIds: ['abandoned-file'],
+    );
+    final restored = AgentHubInteractionSnapshot.fromMap(
+      jsonDecode(jsonEncode(snapshot.toMap(includeImageData: false)))
+          as Map<String, dynamic>,
+    );
+    expect(restored.hasContent, isTrue);
+    expect(restored.hasConversationHistory, isFalse);
+    expect(restored.pendingAttachmentCleanupIds, ['abandoned-file']);
+    expect(
+      AgentHubInteractionSnapshot.fromMap({}).pendingAttachmentCleanupIds,
+      isEmpty,
+    );
+  });
+
   group('restorable conversation detection', () {
     test('ignores settings and unsent local state without history', () {
       const snapshot = AgentHubInteractionSnapshot(
@@ -19,7 +62,7 @@ void main() {
             name: 'draft.png',
           ),
         ],
-        autoVoiceEnabled: false,
+
         activeRequest: AgentStreamRequest(message: '尚未形成历史'),
         runState: AgentStreamRunState(threadId: 'empty-thread'),
       );
@@ -302,43 +345,5 @@ void main() {
     expect(restored.attachedFiles, [file]);
     expect(restored.historyMessages.single.files, [file]);
     expect(restored.activeRequest?.files, [file]);
-  });
-
-  test('submitted artifact forms and request idempotency round-trip', () {
-    final snapshot = AgentHubInteractionSnapshot(
-      activeRequest: const AgentStreamRequest(
-        message: '提交表单',
-        idempotencyKey: 'agent-form-submit-stable',
-      ),
-      formSubmissions: {
-        'form-artifact-1': AgentArtifactFormSubmission.submitted(
-          values: const {
-            'feeding_goal': '提升日间奶量',
-            'support_preferences': ['其它：需要设备建议'],
-          },
-        ),
-        'form-artifact-pending': AgentArtifactFormSubmission.submitting(
-          values: const {'feeding_goal': '建立规律记录'},
-        ),
-      },
-    );
-
-    final restored = AgentHubInteractionSnapshot.fromMap(
-      Map<String, Object?>.from(
-        jsonDecode(jsonEncode(snapshot.toMap())) as Map,
-      ),
-    );
-
-    expect(restored.activeRequest?.idempotencyKey, 'agent-form-submit-stable');
-    expect(restored.formSubmissions, hasLength(1));
-    expect(restored.formSubmissions['form-artifact-1']?.isSubmitted, isTrue);
-    expect(
-      restored.formSubmissions['form-artifact-1']?.values['feeding_goal'],
-      '提升日间奶量',
-    );
-    expect(
-      restored.formSubmissions.containsKey('form-artifact-pending'),
-      isFalse,
-    );
   });
 }

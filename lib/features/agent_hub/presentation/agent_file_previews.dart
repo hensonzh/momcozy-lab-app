@@ -28,7 +28,7 @@ class AgentComposerFileAttachment extends StatelessWidget {
         child: MomCozyLineIcon(
           MomCozyLineGlyph.file,
           size: 21,
-          color: MomHomeTokens.teal,
+          color: MomHomeTokens.rose,
         ),
       ),
     );
@@ -42,16 +42,19 @@ class AgentSentFiles extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final largeText = MediaQuery.textScalerOf(context).scale(14) > 20;
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+      crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         for (var index = 0; index < files.length; index++) ...[
           Container(
             key: ValueKey('agent-sent-file-$index'),
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+            width: 244,
+            height: largeText ? 96 : 56,
+            padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               color: MomHomeTokens.surface,
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(14),
               border: Border.all(color: MomHomeTokens.border),
             ),
             child: Row(
@@ -60,23 +63,48 @@ class AgentSentFiles extends StatelessWidget {
                   width: 32,
                   height: 32,
                   decoration: BoxDecoration(
-                    color: MomHomeTokens.mint,
+                    color: const Color(0xFFF5E7ED),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: const Center(
                     child: MomCozyLineIcon(
                       MomCozyLineGlyph.file,
                       size: 20,
-                      color: MomHomeTokens.teal,
+                      color: MomHomeTokens.rose,
                     ),
                   ),
                 ),
                 const SizedBox(width: 10),
                 Expanded(
-                  child: AgentAttachmentMetadata(
-                    name: files[index].name,
-                    size: files[index].size,
-                    sent: true,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Tooltip(
+                        message: files[index].name,
+                        child: Text(
+                          files[index].name,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: MomHomeTokens.text(
+                            14,
+                            height: 18 / 14,
+                            weight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 1),
+                      Text(
+                        '${_fileType(files[index].name)} · ${agentAttachmentSize(files[index].size)}',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: MomHomeTokens.text(
+                          11,
+                          height: 14 / 11,
+                          color: MomHomeTokens.secondary,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
@@ -87,4 +115,10 @@ class AgentSentFiles extends StatelessWidget {
       ],
     );
   }
+}
+
+String _fileType(String name) {
+  final separator = name.lastIndexOf('.');
+  final extension = separator >= 0 ? name.substring(separator + 1).trim() : '';
+  return extension.isEmpty ? 'FILE' : extension.toUpperCase();
 }

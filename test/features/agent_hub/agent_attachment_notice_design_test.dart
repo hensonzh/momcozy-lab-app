@@ -17,7 +17,6 @@ void main() {
     'file-error': '文件上传失败，请重试。',
     'too-large': '文件不能超过 10MB。',
     'unsupported': '暂仅支持 PDF 文件。',
-    'cleanup-error': '附件清理失败，已保留草稿，请重试。',
   };
   for (final width in [390.0, 320.0]) {
     final scale = width == 320 ? 2.0 : 1.0;
@@ -89,16 +88,7 @@ void main() {
           ),
         );
         await tester.pumpAndSettle();
-        if (entry.key == 'cleanup-error') {
-          await tester.tap(
-            find.byKey(const ValueKey('agent-new-session-button')),
-          );
-          await tester.pumpAndSettle();
-          expect(media.deletions, 1);
-          expect(find.text('Care notes.pdf'), findsOneWidget);
-        } else {
-          expect(media.uploads, 0);
-        }
+        expect(media.uploads, 0);
         expect(find.text(entry.value), findsOneWidget);
         expect(find.textContaining('private picker detail'), findsNothing);
         expect(
@@ -125,15 +115,6 @@ void main() {
               .text,
           'Keep my draft',
         );
-        if (entry.key == 'cleanup-error') {
-          media.failDelete = false;
-          await tester.tap(
-            find.byKey(const ValueKey('agent-new-session-button')),
-          );
-          await tester.pumpAndSettle();
-          expect(media.deletions, 2);
-          expect(find.text('Care notes.pdf'), findsNothing);
-        }
         expect(tester.takeException(), isNull);
         await tester.pumpWidget(const SizedBox());
       });

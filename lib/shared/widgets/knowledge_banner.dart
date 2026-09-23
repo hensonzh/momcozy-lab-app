@@ -191,8 +191,10 @@ class KnowledgeBanner extends StatelessWidget {
                       : Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            labelWidget,
-                            const SizedBox(height: 8),
+                            if (label.isNotEmpty) ...[
+                              labelWidget,
+                              const SizedBox(height: 8),
+                            ],
                             titleWidget,
                           ],
                         ),

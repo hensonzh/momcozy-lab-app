@@ -12,18 +12,22 @@ class AgentConversationApiRepository implements AgentConversationRepository {
   final ApiJsonTransport transport;
 
   @override
-  Future<List<AgentConversationSummary>> listConversations({
-    int limit = 50,
-  }) async {
+  Future<AgentConversationHistory?> loadLatestConversation() async {
     final response = await transport.getJson(
       agentConversationsEndpoint,
-      query: {'limit': limit.clamp(1, 100)},
+      query: {'limit': 20},
     );
     final items = response['items'];
-    if (items is! List) return const <AgentConversationSummary>[];
-    return List<AgentConversationSummary>.unmodifiable(
-      items.map(_conversationFromValue).whereType<AgentConversationSummary>(),
-    );
+    if (items is! List) return null;
+    for (final item in items) {
+      final thread = _conversationFromValue(item);
+      if (thread == null) continue;
+      final history = await loadConversation(thread.id);
+      if (history.messages.isNotEmpty || history.currentState.runId != null) {
+        return history;
+      }
+    }
+    return null;
   }
 
   @override
@@ -143,6 +147,9 @@ AgentConversationHistory _buildConversationHistory({
     if (!message.hiddenAutomation) {
       historyMessages.add(
         AgentConversationMessage(
+          id: message.id,
+          sequence: message.sequence,
+          createdAt: message.createdAt,
           role: message.role,
           content: message.content,
           images: message.images,
@@ -165,6 +172,7 @@ AgentConversationHistory _buildConversationHistory({
         historyMessages.add(
           AgentConversationMessage(
             role: AgentConversationMessageRole.assistant,
+            id: projectedState.messageId ?? 'run:$messageRunId:assistant',
             content: projectedState.textContent,
             runState: projectedState,
           ),
@@ -192,6 +200,7 @@ AgentConversationHistory _buildConversationHistory({
     messages: List<AgentConversationMessage>.unmodifiable(historyMessages),
     currentState: currentState,
     nextBeforeSequence: nextBeforeSequence,
+    latestMessageCreatedAt: messages.isEmpty ? null : messages.last.createdAt,
   );
 }
 
@@ -236,6 +245,8 @@ _ConversationWireMessage? _wireMessageFromValue(Object? value) {
       : '';
   return _ConversationWireMessage(
     id: id,
+    sequence: _int(map['sequence']),
+    createdAt: DateTime.tryParse(_string(map['created_at'])),
     runId: runId.isEmpty ? null : runId,
     role: role,
     content: text,
@@ -327,8 +338,12 @@ class _ConversationWireMessage {
     required this.images,
     required this.files,
     this.hiddenAutomation = false,
+    this.sequence,
+    this.createdAt,
   });
 
+  final int? sequence;
+  final DateTime? createdAt;
   final String id;
   final String? runId;
   final AgentConversationMessageRole role;

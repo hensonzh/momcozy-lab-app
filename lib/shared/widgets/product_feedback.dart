@@ -12,11 +12,13 @@ class ProductErrorView extends StatelessWidget {
     this.onRetry,
     this.preserveDraft = false,
     this.useMomStyle = false,
+    this.compactMomStyle = false,
   });
   final ProductFailure failure;
   final VoidCallback? onRetry;
   final bool preserveDraft;
   final bool useMomStyle;
+  final bool compactMomStyle;
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +35,10 @@ class ProductErrorView extends StatelessWidget {
         liveRegion: true,
         child: MomSettingsCard(
           color: MomCozyColors.amberSoft,
+          padding: compactMomStyle
+              ? const EdgeInsets.fromLTRB(16, 16, 16, 15)
+              : const EdgeInsets.all(MomHomeTokens.inset),
+          spacing: compactMomStyle ? 4 : MomHomeTokens.gap,
           children: [
             Text(message, style: MomHomeTokens.text(13, height: 1.55)),
             if (preserveDraft)

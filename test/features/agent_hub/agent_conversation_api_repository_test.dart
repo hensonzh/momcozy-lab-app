@@ -6,41 +6,6 @@ import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_conversation
 import '../../support/fixture_api_transport.dart';
 
 void main() {
-  test('lists flat conversation summaries in backend order', () async {
-    final transport = FixtureApiJsonTransport({
-      'items': [
-        {
-          'id': 'thread-new',
-          'title': '最近的会话',
-          'status': 'active',
-          'metadata': <String, Object?>{},
-          'created_at': '2026-07-19T08:00:00Z',
-          'updated_at': '2026-07-20T08:00:00Z',
-        },
-        {
-          'id': 'thread-old',
-          'title': '较早的会话',
-          'status': 'active',
-          'metadata': <String, Object?>{},
-          'created_at': '2026-07-18T08:00:00Z',
-          'updated_at': '2026-07-19T08:00:00Z',
-        },
-      ],
-    });
-    final repository = AgentConversationApiRepository(transport: transport);
-
-    final conversations = await repository.listConversations();
-
-    expect(transport.lastPath, agentConversationsEndpoint);
-    expect(transport.lastQuery, {'limit': 50});
-    expect(conversations.map((item) => item.id), ['thread-new', 'thread-old']);
-    expect(conversations.first.title, '最近的会话');
-    expect(
-      conversations.first.updatedAt,
-      DateTime.parse('2026-07-20T08:00:00Z'),
-    );
-  });
-
   test(
     'restores normalized transcript without assistant completion events',
     () async {
@@ -147,6 +112,11 @@ void main() {
       );
       expect(transport.lastQuery, {'limit': 20});
       expect(history.thread.id, 'thread-restore');
+      expect(history.messages.first.id, 'message-user-1');
+      expect(history.messages.first.sequence, 1);
+      expect(history.messages.first.createdAt, DateTime.utc(2026, 7, 19, 8));
+      expect(history.currentState.messageId, 'message-assistant-2');
+      expect(history.latestMessageCreatedAt, DateTime.utc(2026, 7, 20, 8, 1));
       expect(history.messages.map((message) => message.content), [
         '第一问',
         '第一答',
@@ -174,6 +144,60 @@ void main() {
       expect(history.currentState.hasCompletedAssistantMessage, isTrue);
     },
   );
+
+  test(
+    'latest discovery skips empty threads and restores the latest real conversation',
+    () async {
+      Map<String, Object?> thread(String id) => {
+        'id': id,
+        'status': 'active',
+        'created_at': '2026-07-20T08:00:00Z',
+        'updated_at': '2026-07-20T08:00:00Z',
+      };
+      final transport = _PagedHistoryTransport([
+        {
+          'items': [thread('empty'), thread('real')],
+        },
+        {'thread': thread('empty'), 'items': [], 'events': []},
+        {
+          'thread': thread('real'),
+          'items': [
+            _message(
+              id: 'first',
+              runId: 'run-first',
+              text: '第一条消息',
+              sequence: 1,
+            ),
+          ],
+          'events': [],
+        },
+      ]);
+      final history = await AgentConversationApiRepository(
+        transport: transport,
+      ).loadLatestConversation();
+      expect(history?.thread.id, 'real');
+      expect(history?.messages.single.id, 'first');
+      expect(transport.paths, [
+        '/v1/agent/threads',
+        '/v1/agent/threads/empty/history',
+        '/v1/agent/threads/real/history',
+      ]);
+      expect(transport.queries.every((query) => query['limit'] == 20), isTrue);
+    },
+  );
+
+  test('empty account discovery does not create a conversation', () async {
+    final transport = _PagedHistoryTransport([
+      {'items': []},
+    ]);
+    expect(
+      await AgentConversationApiRepository(
+        transport: transport,
+      ).loadLatestConversation(),
+      isNull,
+    );
+    expect(transport.paths, ['/v1/agent/threads']);
+  });
 
   test('loads only the requested history page', () async {
     final thread = {
@@ -372,6 +396,7 @@ class _PagedHistoryTransport implements ApiJsonTransport {
 
   final List<Map<String, Object?>> responses;
   final List<Map<String, Object?>> queries = <Map<String, Object?>>[];
+  final List<String> paths = [];
   int _index = 0;
 
   @override
@@ -380,6 +405,7 @@ class _PagedHistoryTransport implements ApiJsonTransport {
     Map<String, Object?> query = const {},
   }) async {
     queries.add(Map<String, Object?>.from(query));
+    paths.add(path);
     return responses[_index++];
   }
 

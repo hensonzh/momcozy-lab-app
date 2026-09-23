@@ -68,7 +68,7 @@ export default function ScreenMomHomeInitial() {
           <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgDecorationLactationDroplet} />
         </div>
         <p className="[word-break:break-word] font-['Noto_Sans_SC:Medium'] font-medium leading-[29px] relative shrink-0 text-[#2e2424] text-[18px] whitespace-nowrap" data-node-id="88:22">
-          暂未记录
+          待记录
         </p>
         <p className="[word-break:break-word] absolute font-['Noto_Sans_SC:Regular'] font-normal h-[13px] leading-[13px] left-[16px] text-[#7a6663] text-[10px] top-[104px] w-[172px]" data-node-id="88:23">
           记录后，AI 会持续判断奶量与供需趋势

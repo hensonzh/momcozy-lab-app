@@ -35,11 +35,17 @@ class AgentConversationMessage {
   const AgentConversationMessage({
     required this.role,
     required this.content,
+    this.id,
+    this.sequence,
+    this.createdAt,
     this.runState,
     this.images = const <AgentStreamImageInput>[],
     this.files = const <AgentStreamFileInput>[],
   });
 
+  final String? id;
+  final int? sequence;
+  final DateTime? createdAt;
   final AgentConversationMessageRole role;
   final String content;
   final AgentStreamRunState? runState;
@@ -53,16 +59,18 @@ class AgentConversationHistory {
     required this.messages,
     required this.currentState,
     this.nextBeforeSequence,
+    this.latestMessageCreatedAt,
   });
 
   final AgentConversationSummary thread;
   final List<AgentConversationMessage> messages;
   final AgentStreamRunState currentState;
   final int? nextBeforeSequence;
+  final DateTime? latestMessageCreatedAt;
 }
 
 abstract interface class AgentConversationRepository {
-  Future<List<AgentConversationSummary>> listConversations({int limit = 50});
+  Future<AgentConversationHistory?> loadLatestConversation();
 
   Future<AgentConversationHistory> loadConversation(
     String threadId, {

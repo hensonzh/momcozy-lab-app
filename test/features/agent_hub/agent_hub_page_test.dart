@@ -16,17 +16,12 @@ import 'package:momcozy_flutter_app/core/agent_stream/agent_stream_runner.dart';
 import 'package:momcozy_flutter_app/core/network/api_json_transport.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_interaction_store.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/agent_hub_page.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/data/support_ticket_api_repository.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/data/voice_playback.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_conversation.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_document_input.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_hub_greeting.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_image_input.dart';
-import 'package:momcozy_flutter_app/features/agent_hub/domain/agent_voice.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/presentation/agent_file_previews.dart';
 import 'package:momcozy_flutter_app/features/agent_hub/presentation/agent_image_previews.dart';
 import 'package:momcozy_flutter_app/features/media/domain/media_upload.dart';
-import 'package:momcozy_flutter_app/features/media/presentation/product_asset_image.dart';
 import 'package:video_player_platform_interface/video_player_platform_interface.dart';
 
 import '../../support/fixture_reader.dart';
@@ -40,10 +35,7 @@ void main() {
   });
 
   test('Agent Hub animated avatar videos exist in the bundled asset tree', () {
-    for (final asset in [
-      MomCozyAssets.agentThinkingAvatar,
-      MomCozyAssets.agentSpeakingAvatar,
-    ]) {
+    for (final asset in [MomCozyAssets.agentThinkingAvatar]) {
       expect(asset.endsWith('.mp4'), isTrue, reason: '$asset should use MP4');
       final file = File(asset);
       expect(file.existsSync(), isTrue, reason: '$asset should be committed');
@@ -82,64 +74,23 @@ void main() {
     },
   );
 
-  testWidgets('Agent Hub renders idle composer state', (tester) async {
-    await tester.pumpWidget(_host(const AgentHubPage()));
-
-    expect(find.byKey(const ValueKey('agent-hub-page')), findsOneWidget);
-    expect(find.textContaining('嗨，我是 Cozymate'), findsOneWidget);
-    expect(find.textContaining('你希望我怎么称呼你？'), findsOneWidget);
-    expect(
-      find.byKey(const ValueKey('agent-auto-voice-button')),
-      findsOneWidget,
-    );
-    expect(
-      find.byKey(const ValueKey('agent-new-session-button')),
-      findsOneWidget,
-    );
-    expect(find.byKey(const ValueKey('agent-composer-input')), findsOneWidget);
-    expect(
-      find.byKey(const ValueKey('agent-attachment-button')),
-      findsOneWidget,
-    );
-    expect(find.byKey(const ValueKey('agent-voice-button')), findsNothing);
-    expect(find.byKey(const ValueKey('agent-send-button')), findsOneWidget);
-    expect(
-      find.byKey(const ValueKey('agent-assistant-avatar-static')),
-      findsOneWidget,
-    );
-    expect(
-      find.byKey(const ValueKey('agent-assistant-avatar-thinking')),
-      findsNothing,
-    );
-    expect(
-      find.byKey(const ValueKey('agent-assistant-avatar-speaking')),
-      findsNothing,
-    );
-    expect(
-      find.byKey(const ValueKey('agent-response-light-rail')),
-      findsNothing,
-    );
-
-    final imageButton = tester.widget<IconButton>(
-      find.byKey(const ValueKey('agent-attachment-button')),
-    );
-    expect(imageButton.onPressed, isNull);
-    final sendButton = tester.widget<IconButton>(
-      find.byKey(const ValueKey('agent-send-button')),
-    );
-    expect(sendButton.onPressed, isNull);
-    _expectComposerControlsInsideSurface(tester);
-    _expectComposerControlsVerticallyCentered(tester);
-    _expectComposerInputVerticallyCentered(tester);
-    _expectComposerSendButtonBreathesVertically(tester);
-  });
-
   testWidgets('Cozymate keeps the idle conversation free of service menus', (
     tester,
   ) async {
     await tester.pumpWidget(_host(const AgentHubPage()));
 
-    expect(find.text('Cozymate'), findsOneWidget);
+    for (final key in [
+      'agent-conversation-history-button',
+      'agent-new-session-button',
+      'agent-auto-voice-button',
+    ]) {
+      expect(find.byKey(ValueKey(key)), findsNothing);
+    }
+    expect(
+      find.byKey(const ValueKey('agent-attachment-button')),
+      findsOneWidget,
+    );
+    expect(find.text('Cozymate'), findsNothing);
     expect(find.text('母婴健康 · 日程 · 泌乳计划'), findsNothing);
     expect(find.byKey(const ValueKey('agent-v3-service-health')), findsNothing);
     expect(
@@ -171,7 +122,7 @@ void main() {
       );
       await tester.tap(find.text('奶量分析'));
       await tester.pump();
-      expect(client.requests.single.message, '帮我分析最近的奶量记录，告诉我可以先关注哪些变化。');
+      expect(client.requests.single.message, '我想了解奶量和喂养情况，请先问我最重要的问题。');
       expect(find.text(client.requests.single.message), findsOneWidget);
       final recovery = tester.widget<OutlinedButton>(
         find.ancestor(
@@ -184,47 +135,48 @@ void main() {
     },
   );
 
-  testWidgets('schedule actions expose authoritative preview details', (
-    tester,
-  ) async {
-    await tester.pumpWidget(
-      _host(
-        AgentHubPage(
-          state: AgentStreamRunState(
-            phase: AgentStreamRunPhase.waitingForConfirmation,
-            textContent: '请确认是否删除任务。',
-            events: [
-              AgentStreamEvent(const {
-                'type': 'action.confirmation_required',
-                'action_id': 'schedule-delete-1',
-                'payload': {
-                  'action_type': 'schedule_task_delete',
-                  'summary': '删除匹配到的吸奶任务',
-                  'preview_payload': {
-                    'title': '删除下午 2 点吸奶任务',
-                    'target': '吸奶任务',
-                    'before': '2026-08-07 14:00',
-                    'after': '删除',
-                    'date': '2026-08-07',
-                    'timezone': 'Asia/Shanghai',
-                    'impact_scope': '仅此任务',
+  testWidgets(
+    'phase one ignores legacy action previews and keeps the composer usable',
+    (tester) async {
+      await tester.pumpWidget(
+        _host(
+          AgentHubPage(
+            state: AgentStreamRunState(
+              phase: AgentStreamRunPhase.waitingForConfirmation,
+              textContent: '请确认是否删除任务。',
+              events: [
+                AgentStreamEvent(const {
+                  'type': 'action.confirmation_required',
+                  'action_id': 'schedule-delete-1',
+                  'payload': {
+                    'action_type': 'schedule_task_delete',
+                    'summary': '删除匹配到的吸奶任务',
+                    'preview_payload': {
+                      'title': '删除下午 2 点吸奶任务',
+                      'target': '吸奶任务',
+                      'before': '2026-08-07 14:00',
+                      'after': '删除',
+                      'date': '2026-08-07',
+                      'timezone': 'Asia/Shanghai',
+                      'impact_scope': '仅此任务',
+                    },
                   },
-                },
-              }),
-            ],
+                }),
+              ],
+            ),
           ),
         ),
-      ),
-    );
+      );
 
-    expect(find.text('日程删除'), findsOneWidget);
-    expect(find.text('对象：吸奶任务'), findsOneWidget);
-    expect(find.text('原值：2026-08-07 14:00'), findsOneWidget);
-    expect(find.text('变更后：删除'), findsOneWidget);
-    expect(find.text('日期：2026-08-07'), findsOneWidget);
-    expect(find.text('时区：Asia/Shanghai'), findsOneWidget);
-    expect(find.text('影响范围：仅此任务'), findsOneWidget);
-  });
+      expect(find.text('日程删除'), findsNothing);
+      expect(find.text('删除下午 2 点吸奶任务'), findsNothing);
+      expect(find.text('当前版本暂不支持此操作，请继续提问。'), findsWidgets);
+      final composer = find.byKey(const ValueKey('agent-composer-input'));
+      expect(tester.widget<TextField>(composer).enabled, isTrue);
+      await tester.enterText(composer, '继续聊聊');
+      expect(tester.widget<TextField>(composer).controller!.text, '继续聊聊');
+    },
+  );
 
   testWidgets('Agent Hub shows loop light rail while preparing a reply', (
     tester,
@@ -301,143 +253,11 @@ void main() {
     final chatRect = tester.getRect(
       find.byKey(const ValueKey('agent-chat-scroll-view')),
     );
-    final greetingRect = tester.getRect(find.textContaining('嗨，我是 Cozymate'));
+    final greetingRect = tester.getRect(
+      find.textContaining('初次见面，很高兴认识你，我是 Cozymate'),
+    );
 
     expect(greetingRect.top - chatRect.top, lessThan(120));
-  });
-
-  testWidgets('Agent Hub keeps a newly arrived form entry in the viewport', (
-    tester,
-  ) async {
-    tester.view.physicalSize = const Size(390, 844);
-    tester.view.devicePixelRatio = 1;
-    addTearDown(tester.view.resetPhysicalSize);
-    addTearDown(tester.view.resetDevicePixelRatio);
-    final client = _ControllableAgentStreamClient();
-    addTearDown(client.dispose);
-    final history = List<AgentHubHistoryMessage>.generate(
-      12,
-      (index) => AgentHubHistoryMessage(
-        role: index.isEven
-            ? AgentHubHistoryRole.user
-            : AgentHubHistoryRole.assistant,
-        content: '历史消息 $index：用于形成足够长的对话。',
-      ),
-    );
-
-    await tester.pumpWidget(
-      _host(
-        AgentHubPage(
-          runner: AgentStreamRunner(client),
-          historyMessages: history,
-        ),
-        tickersEnabled: true,
-      ),
-    );
-    await tester.enterText(
-      find.byKey(const ValueKey('agent-composer-input')),
-      '帮我整理泌乳支持信息',
-    );
-    await tester.pump();
-    await tester.tap(find.byKey(const ValueKey('agent-send-button')));
-    await tester.pump();
-
-    client.emit(
-      0,
-      AgentStreamEvent({
-        'event_id': 'artifact-focus-event',
-        'type': 'artifact.created',
-        'thread_id': 'thread-artifact-focus',
-        'run_id': 'run-artifact-focus',
-        'artifact_id': 'artifact-focus-form',
-        'sequence': 1,
-        'payload': {
-          'artifact_type': 'form',
-          'schema_version': '1.0',
-          'form': {
-            'id': 'lactation_support_intake',
-            'title': '信息采集',
-            'fields': [
-              for (var index = 0; index < 6; index++)
-                {
-                  'id': 'field_$index',
-                  'label': '基本信息｜字段 ${index + 1}',
-                  'type': 'text',
-                  'required': true,
-                },
-            ],
-          },
-        },
-      }),
-    );
-    await tester.pump();
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 300));
-
-    expect(find.byKey(const ValueKey('agent-artifact-panel')), findsNothing);
-
-    client.emit(
-      0,
-      AgentStreamEvent(const {
-        'event_id': 'artifact-focus-text-event',
-        'type': 'message.delta',
-        'thread_id': 'thread-artifact-focus',
-        'run_id': 'run-artifact-focus',
-        'message_id': 'message-artifact-focus',
-        'sequence': 2,
-        'payload': {'text': '我先说明一下，再请你补充这些信息。'},
-      }),
-    );
-    await tester.pump();
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 300));
-
-    client.emit(
-      0,
-      AgentStreamEvent(const {
-        'event_id': 'artifact-focus-completed-event',
-        'type': 'message.completed',
-        'thread_id': 'thread-artifact-focus',
-        'run_id': 'run-artifact-focus',
-        'message_id': 'message-artifact-focus',
-        'sequence': 3,
-        'payload': {'role': 'assistant', 'content': '我先说明一下，再请你补充这些信息。'},
-      }),
-    );
-    await tester.pump();
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 300));
-
-    final chatRect = tester.getRect(
-      find.byKey(const ValueKey('agent-chat-scroll-view')),
-    );
-    final artifactRect = tester.getRect(
-      find.byKey(const ValueKey('agent-artifact-panel')),
-    );
-    expect(artifactRect.top, greaterThan(chatRect.top));
-    expect(artifactRect.bottom, lessThanOrEqualTo(chatRect.bottom));
-  });
-
-  testWidgets('Agent Hub publishes a pure artifact on assistant completion', (
-    tester,
-  ) async {
-    final artifactEvent = AgentStreamEvent(
-      readFixtureMap('agent_events/rich_text_artifact.json'),
-    );
-
-    await tester.pumpWidget(
-      _host(
-        AgentHubPage(
-          state: AgentStreamRunState(
-            phase: AgentStreamRunPhase.streaming,
-            artifactEvents: {'care-note-001': artifactEvent},
-            completedAssistantMessageReceived: true,
-          ),
-        ),
-      ),
-    );
-
-    expect(find.byKey(const ValueKey('agent-artifact-panel')), findsOneWidget);
   });
 
   testWidgets(
@@ -487,27 +307,6 @@ void main() {
     },
   );
 
-  testWidgets('Agent Hub keeps a textless failed artifact unpublished', (
-    tester,
-  ) async {
-    final artifactEvent = AgentStreamEvent(
-      readFixtureMap('agent_events/rich_text_artifact.json'),
-    );
-
-    await tester.pumpWidget(
-      _host(
-        AgentHubPage(
-          state: AgentStreamRunState(
-            phase: AgentStreamRunPhase.error,
-            artifactEvents: {'care-note-001': artifactEvent},
-          ),
-        ),
-      ),
-    );
-
-    expect(find.byKey(const ValueKey('agent-artifact-panel')), findsNothing);
-  });
-
   testWidgets('Agent Hub distinguishes backend run failure from disconnect', (
     tester,
   ) async {
@@ -525,42 +324,6 @@ void main() {
     expect(find.text('这次没有拿到回复。'), findsOneWidget);
     expect(find.text('服务执行失败，请稍后重试'), findsOneWidget);
     expect(find.textContaining('连接中断'), findsNothing);
-  });
-
-  testWidgets('Agent Hub keeps terminal failure and cancel replies text-only', (
-    tester,
-  ) async {
-    for (final phase in <AgentStreamRunPhase>[
-      AgentStreamRunPhase.error,
-      AgentStreamRunPhase.cancelled,
-    ]) {
-      await tester.pumpWidget(
-        _host(
-          AgentRunTranscript(
-            state: AgentStreamRunState(
-              phase: phase,
-              quickReplies: const ['快捷一', '快捷二', '快捷三'],
-            ),
-            canRetry: true,
-            onRetry: () {},
-            actionCards: const [
-              AgentActionCardView(
-                id: 'terminal-action',
-                title: '不应展示的操作',
-                status: 'confirmation_required',
-              ),
-            ],
-            onConfirmAction: (_) {},
-            onRejectAction: (_) {},
-            onQuickReplySelected: (_) {},
-          ),
-        ),
-      );
-
-      expect(find.byKey(const ValueKey('agent-retry-button')), findsNothing);
-      expect(find.byKey(const ValueKey('agent-quick-replies')), findsNothing);
-      expect(find.text('不应展示的操作'), findsNothing);
-    }
   });
 
   testWidgets('Agent Hub marks active assistant avatar as thinking', (
@@ -642,126 +405,6 @@ void main() {
     expect(videoPlayerPlatform.playedIds.length, greaterThanOrEqualTo(2));
   });
 
-  testWidgets('Agent Hub caches thinking and speaking avatar videos', (
-    tester,
-  ) async {
-    const state = AgentStreamRunState(
-      phase: AgentStreamRunPhase.streaming,
-      messageId: 'msg-mode-reuse',
-      textContent: 'Switch avatar mode.',
-    );
-
-    await tester.pumpWidget(
-      _host(const AgentRunTranscript(state: state), tickersEnabled: true),
-    );
-    await tester.pump();
-    await tester.pump();
-    expect(
-      find.byKey(const ValueKey('agent-assistant-avatar-thinking-media')),
-      findsOneWidget,
-    );
-
-    await tester.pumpWidget(
-      _host(
-        const AgentRunTranscript(
-          state: state,
-          activeVoicePlaybackId: 'msg-mode-reuse',
-        ),
-        tickersEnabled: true,
-      ),
-    );
-    await tester.pump();
-    await tester.pump();
-    expect(
-      find.byKey(const ValueKey('agent-assistant-avatar-speaking-media')),
-      findsOneWidget,
-    );
-
-    await tester.pumpWidget(
-      _host(const AgentRunTranscript(state: state), tickersEnabled: true),
-    );
-    await tester.pump();
-
-    expect(videoPlayerPlatform.createdAssets, [
-      MomCozyAssets.agentThinkingAvatar,
-      MomCozyAssets.agentSpeakingAvatar,
-    ]);
-    expect(videoPlayerPlatform.disposedIds, isEmpty);
-  });
-
-  testWidgets('Agent Hub restores history and starts a new local session', (
-    tester,
-  ) async {
-    final mediaRepository = _FakeAgentImageMediaRepository();
-
-    await tester.pumpWidget(
-      _host(
-        AgentHubPage(
-          historyMessages: const [
-            AgentHubHistoryMessage(
-              role: AgentHubHistoryRole.user,
-              content: '昨天晚上左侧奶量偏低',
-            ),
-            AgentHubHistoryMessage(
-              role: AgentHubHistoryRole.assistant,
-              content: '我建议你先观察舒适度和间隔。',
-            ),
-          ],
-          mediaRepository: mediaRepository,
-          pickImage: (_) async => const AgentStreamImageInput(
-            dataUrl:
-                'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/p9sAAAAASUVORK5CYII=',
-            mimeType: 'image/png',
-            name: 'staged-before-new-session.png',
-          ),
-        ),
-      ),
-    );
-
-    expect(find.byKey(const ValueKey('agent-history-panel')), findsOneWidget);
-    expect(find.text('历史会话'), findsNothing);
-    expect(find.text('昨天晚上左侧奶量偏低'), findsOneWidget);
-    expect(find.text('我建议你先观察舒适度和间隔。'), findsOneWidget);
-
-    await tester.enterText(
-      find.byKey(const ValueKey('agent-composer-input')),
-      '开始新的问题',
-    );
-    await tester.pump();
-    await tester.tap(find.byKey(const ValueKey('agent-attachment-button')));
-    await tester.pumpAndSettle();
-    expect(find.byKey(const ValueKey('agent-attachment-menu')), findsOneWidget);
-    await tester.tap(
-      find.byKey(const ValueKey('agent-attachment-photo-button')),
-    );
-    await tester.pumpAndSettle();
-    expect(
-      find.byKey(const ValueKey('agent-image-attachment-chip')),
-      findsOneWidget,
-    );
-
-    await tester.tap(find.byKey(const ValueKey('agent-new-session-button')));
-    await tester.pump();
-
-    expect(find.byKey(const ValueKey('agent-history-panel')), findsNothing);
-    expect(find.textContaining('嗨，我是 Cozymate'), findsOneWidget);
-    expect(find.byKey(const ValueKey('agent-attachment-menu')), findsNothing);
-    expect(
-      find.byKey(const ValueKey('agent-image-attachment-chip')),
-      findsNothing,
-    );
-    expect(
-      tester
-          .widget<TextField>(find.byKey(const ValueKey('agent-composer-input')))
-          .controller
-          ?.text,
-      '',
-    );
-    expect(mediaRepository.deletedFileIds, [
-      '0ea4b76d-2bc4-4ab8-91b7-3b24df53c518',
-    ]);
-  });
-
   testWidgets('Agent Hub virtualizes long history messages', (tester) async {
     tester.view.physicalSize = const Size(390, 640);
     tester.view.devicePixelRatio = 1;
@@ -783,130 +426,6 @@ void main() {
     expect(find.byKey(const ValueKey('agent-history-0')), findsOneWidget);
     expect(find.byKey(const ValueKey('agent-history-199')), findsNothing);
   });
-
-  testWidgets('Agent Hub keeps links clickable in restored plain history', (
-    tester,
-  ) async {
-    final actions = <AgentArtifactActionView>[];
-    await tester.pumpWidget(
-      _host(
-        AgentHubPage(
-          historyMessages: const [
-            AgentHubHistoryMessage(
-              role: AgentHubHistoryRole.assistant,
-              content: '[查看专业资料](https://example.com/reference)',
-            ),
-          ],
-          onArtifactAction: actions.add,
-        ),
-      ),
-    );
-
-    await tester.tap(find.text('查看专业资料', findRichText: true));
-    await tester.pump();
-
-    expect(
-      actions.single.externalUri,
-      Uri.parse('https://example.com/reference'),
-    );
-  });
-
-  testWidgets('Agent Hub plays greeting voice on first open', (tester) async {
-    final coordinator = AgentVoicePlaybackCoordinator();
-    final player = _PageFakeVoicePlaybackPlayer();
-
-    await tester.pumpWidget(
-      _host(
-        AgentHubPage(
-          voicePlaybackCoordinator: coordinator,
-          voicePlaybackPlayer: player,
-        ),
-      ),
-    );
-    await tester.pump();
-
-    expect(coordinator.activeSource, AgentVoicePlaybackSource.greeting);
-    expect(coordinator.activeId, 'agent-default-greeting');
-    expect(player.playedTexts, isNotEmpty);
-    expect(
-      find.byKey(const ValueKey('agent-assistant-avatar-speaking')),
-      findsOneWidget,
-    );
-  });
-
-  testWidgets(
-    'Agent Hub waits for cold-start restore before showing or playing greeting',
-    (tester) async {
-      final store = _DeferredAgentHubInteractionStateStore();
-      final player = _PageFakeVoicePlaybackPlayer();
-
-      await tester.pumpWidget(
-        _host(
-          AgentHubPage(
-            interactionStateStore: store,
-            voicePlaybackCoordinator: AgentVoicePlaybackCoordinator(),
-            voicePlaybackPlayer: player,
-          ),
-        ),
-      );
-      await tester.pump();
-
-      expect(find.textContaining('嗨，我是 Cozymate'), findsNothing);
-      expect(player.playedTexts, isEmpty);
-
-      store.completeRead(
-        const AgentHubInteractionSnapshot(
-          runState: AgentStreamRunState(
-            phase: AgentStreamRunPhase.finished,
-            threadId: 'thread-cold-restore',
-            textContent: '这是上一次的回复。',
-          ),
-          historyMessages: [
-            AgentHubHistorySnapshot(role: 'user', content: '上一次的问题'),
-          ],
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      expect(find.text('上一次的问题'), findsOneWidget);
-      expect(find.text('这是上一次的回复。', findRichText: true), findsOneWidget);
-      expect(find.textContaining('嗨，我是 Cozymate'), findsNothing);
-      expect(player.playedTexts, isEmpty);
-    },
-  );
-
-  testWidgets(
-    'Agent Hub ignores persisted local state without conversation history',
-    (tester) async {
-      final player = _PageFakeVoicePlaybackPlayer();
-      final store = _MemoryAgentHubInteractionStateStore(
-        const AgentHubInteractionSnapshot(
-          composerText: '不应恢复的草稿',
-          autoVoiceEnabled: false,
-          activeRequest: AgentStreamRequest(message: '不应恢复的请求'),
-        ),
-      );
-
-      await tester.pumpWidget(
-        _host(
-          AgentHubPage(
-            interactionStateStore: store,
-            voicePlaybackCoordinator: AgentVoicePlaybackCoordinator(),
-            voicePlaybackPlayer: player,
-          ),
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      final composer = tester.widget<TextField>(
-        find.byKey(const ValueKey('agent-composer-input')),
-      );
-      expect(composer.controller?.text, isEmpty);
-      expect(find.textContaining('嗨，我是 Cozymate'), findsOneWidget);
-      expect(player.playedTexts, hasLength(1));
-      expect(player.playedTexts.single, contains('嗨，我是 Cozymate'));
-    },
-  );
 
   testWidgets('Agent Hub hides a persisted motion assessment system trigger', (
     tester,
@@ -973,173 +492,6 @@ void main() {
     },
   );
 
-  testWidgets(
-    'Agent Hub restores an interrupted durable run without restarting it',
-    (tester) async {
-      final client = _ControllableAgentStreamClient();
-      final player = _PageFakeVoicePlaybackPlayer();
-      final store = _MemoryAgentHubInteractionStateStore(
-        const AgentHubInteractionSnapshot(
-          runState: AgentStreamRunState(
-            phase: AgentStreamRunPhase.streaming,
-            threadId: 'thread-interrupted',
-            runId: 'run-interrupted',
-            textContent: '上一轮尚未完成的回复',
-          ),
-          activeRequest: AgentStreamRequest(message: '继续生成建议'),
-        ),
-      );
-      addTearDown(client.dispose);
-
-      await tester.pumpWidget(
-        _host(
-          AgentHubPage(
-            runner: AgentStreamRunner(client),
-            interactionStateStore: store,
-            voicePlaybackCoordinator: AgentVoicePlaybackCoordinator(),
-            voicePlaybackPlayer: player,
-          ),
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      expect(client.requests, isEmpty);
-      expect(find.text('上一轮尚未完成的回复'), findsOneWidget);
-      expect(find.text('连接暂时中断，可重试'), findsOneWidget);
-      expect(find.byKey(const ValueKey('agent-stop-button')), findsNothing);
-      expect(find.byKey(const ValueKey('agent-retry-button')), findsOneWidget);
-      expect(player.playedTexts, isEmpty);
-    },
-  );
-
-  testWidgets('Agent Hub falls back to a fresh greeting when restore fails', (
-    tester,
-  ) async {
-    final player = _PageFakeVoicePlaybackPlayer();
-
-    await tester.pumpWidget(
-      _host(
-        AgentHubPage(
-          interactionStateStore: _ThrowingAgentHubInteractionStateStore(),
-          voicePlaybackCoordinator: AgentVoicePlaybackCoordinator(),
-          voicePlaybackPlayer: player,
-        ),
-      ),
-    );
-    await tester.pumpAndSettle();
-
-    expect(find.textContaining('嗨，我是 Cozymate'), findsOneWidget);
-    expect(player.playedTexts, hasLength(1));
-  });
-
-  testWidgets('Agent Hub personalizes greeting text and voice from profile', (
-    tester,
-  ) async {
-    final coordinator = AgentVoicePlaybackCoordinator();
-    final player = _PageFakeVoicePlaybackPlayer();
-
-    await tester.pumpWidget(
-      _host(
-        AgentHubPage(
-          greetingProfileLoader: () async =>
-              const AgentHubGreetingProfile(displayName: '小美', age: 29),
-          voicePlaybackCoordinator: coordinator,
-          voicePlaybackPlayer: player,
-        ),
-      ),
-    );
-    await tester.pump();
-    await tester.pump();
-
-    expect(find.textContaining('嗨 小美'), findsOneWidget);
-    expect(find.textContaining('你希望我怎么称呼你？'), findsNothing);
-    expect(player.playedTexts, hasLength(1));
-    expect(player.playedTexts.single, contains('嗨 小美'));
-
-    player.complete();
-  });
-
-  testWidgets('Agent Hub plays greeting voice for a manual new session', (
-    tester,
-  ) async {
-    final coordinator = AgentVoicePlaybackCoordinator();
-    final player = _PageFakeVoicePlaybackPlayer();
-
-    await tester.pumpWidget(
-      _host(
-        AgentHubPage(
-          historyMessages: const [
-            AgentHubHistoryMessage(
-              role: AgentHubHistoryRole.assistant,
-              content: '上一轮建议。',
-            ),
-          ],
-          voicePlaybackCoordinator: coordinator,
-          voicePlaybackPlayer: player,
-        ),
-      ),
-    );
-
-    await tester.tap(find.byKey(const ValueKey('agent-new-session-button')));
-    await tester.pump();
-
-    expect(coordinator.activeSource, AgentVoicePlaybackSource.greeting);
-    expect(coordinator.activeId, 'agent-default-greeting');
-    expect(find.textContaining('嗨，我是 Cozymate'), findsOneWidget);
-    expect(
-      find.byKey(const ValueKey('agent-assistant-avatar-speaking')),
-      findsOneWidget,
-    );
-
-    player.complete();
-    await tester.pump();
-    await tester.pump();
-
-    expect(coordinator.activeId, isNull);
-    expect(
-      find.byKey(const ValueKey('agent-assistant-avatar-static')),
-      findsOneWidget,
-    );
-    expect(
-      find.byKey(const ValueKey('agent-assistant-avatar-speaking')),
-      findsNothing,
-    );
-  });
-
-  testWidgets(
-    'Agent Hub clears durable history immediately for a new session',
-    (tester) async {
-      final store = _MemoryAgentHubInteractionStateStore(
-        const AgentHubInteractionSnapshot(
-          runState: AgentStreamRunState(
-            phase: AgentStreamRunPhase.finished,
-            threadId: 'thread-to-clear',
-            textContent: '旧会话回复',
-          ),
-          historyMessages: [
-            AgentHubHistorySnapshot(role: 'user', content: '旧会话问题'),
-          ],
-        ),
-      );
-
-      await tester.pumpWidget(
-        _host(AgentHubPage(interactionStateStore: store)),
-      );
-      await tester.pumpAndSettle();
-      store
-        ..writeCount = 0
-        ..clearCount = 0;
-
-      await tester.tap(find.byKey(const ValueKey('agent-new-session-button')));
-      await tester.pump();
-
-      expect(store.clearCount, 1);
-      expect(store.writeCount, 0);
-      expect(store.snapshot, isNull);
-      expect(find.textContaining('嗨，我是 Cozymate'), findsOneWidget);
-    },
-  );
-
   testWidgets('Agent Hub does not overwrite history while restore is pending', (
     tester,
   ) async {
@@ -1161,180 +513,6 @@ void main() {
       ),
     );
     await tester.pump();
-  });
-
-  testWidgets('Agent Hub refreshes the profile for a manual new session', (
-    tester,
-  ) async {
-    final coordinator = AgentVoicePlaybackCoordinator();
-    final player = _PageFakeVoicePlaybackPlayer();
-    var displayName = '小美';
-    var loadCount = 0;
-
-    await tester.pumpWidget(
-      _host(
-        AgentHubPage(
-          greetingProfileLoader: () async {
-            loadCount += 1;
-            return AgentHubGreetingProfile(displayName: displayName, age: 29);
-          },
-          voicePlaybackCoordinator: coordinator,
-          voicePlaybackPlayer: player,
-        ),
-      ),
-    );
-    await tester.pump();
-    await tester.pump();
-
-    expect(find.textContaining('嗨 小美'), findsOneWidget);
-    player.complete();
-    await tester.pump();
-    await tester.pump();
-
-    displayName = '安安';
-    await tester.tap(find.byKey(const ValueKey('agent-new-session-button')));
-    await tester.pump();
-    await tester.pump();
-
-    expect(loadCount, 2);
-    expect(find.textContaining('嗨 安安'), findsOneWidget);
-    expect(find.textContaining('嗨 小美'), findsNothing);
-    expect(player.playedTexts.last, contains('嗨 安安'));
-
-    player.complete();
-  });
-
-  testWidgets('Agent Hub keeps greeting avatar static without a voice player', (
-    tester,
-  ) async {
-    final coordinator = AgentVoicePlaybackCoordinator();
-
-    await tester.pumpWidget(
-      _host(
-        AgentHubPage(
-          historyMessages: const [
-            AgentHubHistoryMessage(
-              role: AgentHubHistoryRole.assistant,
-              content: '上一轮建议。',
-            ),
-          ],
-          voicePlaybackCoordinator: coordinator,
-        ),
-      ),
-    );
-
-    await tester.tap(find.byKey(const ValueKey('agent-new-session-button')));
-    await tester.pump();
-
-    expect(coordinator.activeId, isNull);
-    expect(find.textContaining('嗨，我是 Cozymate'), findsOneWidget);
-    expect(
-      find.byKey(const ValueKey('agent-assistant-avatar-static')),
-      findsOneWidget,
-    );
-    expect(
-      find.byKey(const ValueKey('agent-assistant-avatar-speaking')),
-      findsNothing,
-    );
-  });
-
-  testWidgets('Agent Hub does not play greeting voice when auto voice is off', (
-    tester,
-  ) async {
-    final coordinator = AgentVoicePlaybackCoordinator();
-
-    await tester.pumpWidget(
-      _host(
-        AgentHubPage(
-          historyMessages: const [
-            AgentHubHistoryMessage(
-              role: AgentHubHistoryRole.assistant,
-              content: '上一轮建议。',
-            ),
-          ],
-          voicePlaybackCoordinator: coordinator,
-        ),
-      ),
-    );
-
-    await tester.tap(find.byKey(const ValueKey('agent-auto-voice-button')));
-    await tester.pump();
-    await tester.tap(find.byKey(const ValueKey('agent-new-session-button')));
-    await tester.pump();
-
-    expect(coordinator.activeId, isNull);
-    expect(find.textContaining('嗨，我是 Cozymate'), findsOneWidget);
-    expect(
-      find.byKey(const ValueKey('agent-assistant-avatar-speaking')),
-      findsNothing,
-    );
-  });
-
-  testWidgets('Agent Hub cancels greeting voice when the user sends a turn', (
-    tester,
-  ) async {
-    final coordinator = AgentVoicePlaybackCoordinator();
-    final player = _PageFakeVoicePlaybackPlayer();
-    final client = _ControllableAgentStreamClient();
-
-    await tester.pumpWidget(
-      _host(
-        AgentHubPage(
-          runner: AgentStreamRunner(client),
-          historyMessages: const [
-            AgentHubHistoryMessage(
-              role: AgentHubHistoryRole.assistant,
-              content: '上一轮建议。',
-            ),
-          ],
-          voicePlaybackCoordinator: coordinator,
-          voicePlaybackPlayer: player,
-        ),
-      ),
-    );
-
-    await tester.tap(find.byKey(const ValueKey('agent-new-session-button')));
-    await tester.pump();
-
-    expect(coordinator.activeSource, AgentVoicePlaybackSource.greeting);
-    expect(
-      find.byKey(const ValueKey('agent-assistant-avatar-speaking')),
-      findsOneWidget,
-    );
-
-    await tester.enterText(
-      find.byKey(const ValueKey('agent-composer-input')),
-      '开始正式对话',
-    );
-    await tester.pump();
-    await tester.tap(find.byKey(const ValueKey('agent-send-button')));
-    await tester.pump();
-
-    expect(client.requests, hasLength(1));
-    expect(client.requests.single.message, '开始正式对话');
-    expect(coordinator.activeId, isNull);
-    expect(player.stopCount, 1);
-    expect(
-      find.byKey(const ValueKey('agent-assistant-avatar-speaking')),
-      findsNothing,
-    );
-  });
-
-  testWidgets('Agent Hub disables new session while a run is active', (
-    tester,
-  ) async {
-    await tester.pumpWidget(
-      _host(
-        const AgentHubPage(
-          state: AgentStreamRunState(phase: AgentStreamRunPhase.streaming),
-        ),
-      ),
-    );
-
-    final button = tester.widget<IconButton>(
-      find.byKey(const ValueKey('agent-new-session-button')),
-    );
-    expect(button.onPressed, isNull);
   });
 
   testWidgets('Agent Hub sends composer text through the injected runner', (
@@ -1492,48 +670,6 @@ void main() {
     },
   );
 
-  testWidgets('Agent Hub suppresses quick replies while a form is actionable', (
-    tester,
-  ) async {
-    final formEvent = AgentStreamEvent({
-      'type': 'artifact.created',
-      'artifact_id': 'quick-reply-form',
-      'payload': {
-        'artifact_type': 'form',
-        'schema_version': '1.0',
-        'form': {
-          'id': 'lactation_support_intake',
-          'title': '信息采集',
-          'fields': [
-            {'id': 'feeding_context', 'label': '基本信息｜泌乳目标', 'type': 'text'},
-          ],
-        },
-      },
-    });
-
-    await tester.pumpWidget(
-      _host(
-        AgentRunTranscript(
-          state: AgentStreamRunState(
-            phase: AgentStreamRunPhase.finished,
-            textContent: '请先补充信息。',
-            quickReplies: const ['快捷一', '快捷二', '快捷三'],
-            events: [formEvent],
-          ),
-          onArtifactAction: (_) {},
-          onQuickReplySelected: (_) {},
-        ),
-      ),
-    );
-
-    expect(
-      find.byKey(const ValueKey('agent-artifact-form-entry-quick-reply-form')),
-      findsOneWidget,
-    );
-    expect(find.byKey(const ValueKey('agent-quick-replies')), findsNothing);
-    expect(find.text('快捷一'), findsNothing);
-  });
-
   testWidgets('Agent Hub hides generated quick replies from legacy payloads', (
     tester,
   ) async {
@@ -1579,9 +715,6 @@ void main() {
           requestBuilder: (message) => AgentStreamRequest(
             message: message,
             idempotencyKey: 'request-${message.length}',
-          ),
-          clientEventClient: AgentStreamClientEventClient(
-            recorder: recordedClientEvents.add,
           ),
         ),
       ),
@@ -1687,14 +820,16 @@ void main() {
             .text,
         'nihao',
       );
-      expect(find.textContaining('嗨，我是 Cozymate'), findsOneWidget);
+      expect(find.textContaining('初次见面，很高兴认识你，我是 Cozymate'), findsOneWidget);
       expect(find.textContaining('这次没有拿到回复'), findsOneWidget);
       expect(find.text('网络不可用，请检查连接后重试'), findsOneWidget);
 
       final chatRect = tester.getRect(
         find.byKey(const ValueKey('agent-chat-scroll-view')),
       );
-      final greetingRect = tester.getRect(find.textContaining('嗨，我是 Cozymate'));
+      final greetingRect = tester.getRect(
+        find.textContaining('初次见面，很高兴认识你，我是 Cozymate'),
+      );
       final userRect = tester.getRect(sentText);
       final errorRect = tester.getRect(find.textContaining('这次没有拿到回复'));
       final retryRect = tester.getRect(
@@ -1836,82 +971,6 @@ void main() {
     await tester.pumpAndSettle();
   });
 
-  testWidgets('Agent Hub locks draft actions while an attachment is pending', (
-    tester,
-  ) async {
-    final pickCompleter = Completer<AgentStreamImageInput?>();
-    final client = _FixtureAgentStreamClient(const <AgentStreamEvent>[]);
-
-    await tester.pumpWidget(
-      _host(
-        AgentHubPage(
-          runner: AgentStreamRunner(client),
-          pickImage: (_) => pickCompleter.future,
-        ),
-      ),
-    );
-    await tester.enterText(
-      find.byKey(const ValueKey('agent-composer-input')),
-      '保留这条草稿',
-    );
-    await tester.tap(find.byKey(const ValueKey('agent-attachment-button')));
-    await tester.pumpAndSettle();
-    await tester.tap(
-      find.byKey(const ValueKey('agent-attachment-photo-button')),
-    );
-    await tester.pump();
-    await tester.pump();
-
-    expect(
-      tester
-          .widget<IconButton>(find.byKey(const ValueKey('agent-send-button')))
-          .onPressed,
-      isNull,
-    );
-    expect(
-      tester
-          .widget<IconButton>(
-            find.byKey(const ValueKey('agent-new-session-button')),
-          )
-          .onPressed,
-      isNull,
-    );
-    expect(
-      tester
-          .widget<TextField>(find.byKey(const ValueKey('agent-composer-input')))
-          .enabled,
-      isFalse,
-    );
-    expect(client.requests, isEmpty);
-
-    pickCompleter.complete(
-      const AgentStreamImageInput(
-        dataUrl: 'data:image/png;base64,fixture',
-        mimeType: 'image/png',
-        name: 'pending-image.png',
-      ),
-    );
-    await tester.pumpAndSettle();
-
-    expect(
-      tester
-          .widget<TextField>(find.byKey(const ValueKey('agent-composer-input')))
-          .controller
-          ?.text,
-      '保留这条草稿',
-    );
-    expect(
-      find.byKey(const ValueKey('agent-image-attachment-chip')),
-      findsOneWidget,
-    );
-    expect(
-      tester
-          .widget<IconButton>(find.byKey(const ValueKey('agent-send-button')))
-          .onPressed,
-      isNotNull,
-    );
-  });
-
   testWidgets('Agent Hub uploads and sends a PDF file attachment', (
     tester,
   ) async {
@@ -2002,193 +1061,73 @@ void main() {
   });
 
   testWidgets(
-    'Agent Hub deletes draft attachments before a synthetic form request',
+    'Agent Hub removes locally while cleanup waits and resumes after reopening',
     (tester) async {
-      final client = _ControllableAgentStreamClient();
-      addTearDown(client.dispose);
-      final mediaRepository = _FakeAgentImageMediaRepository();
-      final formEvent = AgentStreamEvent(const {
-        'type': 'artifact.created',
-        'artifact_id': 'attachment-cleanup-form',
-        'payload': {
-          'artifact_type': 'form',
-          'form': {
-            'id': 'lactation_support_intake',
-            'title': '信息采集',
-            'fields': [
-              {
-                'id': 'feeding_context',
-                'label': '泌乳目标',
-                'type': 'text',
-                'required': true,
-                'default_value': '建立规律记录',
-              },
-            ],
-          },
-        },
-      });
-
+      final gate = Completer<void>();
+      final media = _FakeAgentImageMediaRepository(
+        deleteFailure: StateError('unavailable'),
+        deleteGate: gate,
+      );
+      final store = _MemoryAgentHubInteractionStateStore();
       await tester.pumpWidget(
         _host(
           AgentHubPage(
-            runner: AgentStreamRunner(client),
-            state: AgentStreamRunState(
-              phase: AgentStreamRunPhase.finished,
-              textContent: '请补充信息。',
-              events: [formEvent],
-            ),
-            mediaRepository: mediaRepository,
+            interactionStateStore: store,
+            mediaRepository: media,
             pickImage: (_) async => const AgentStreamImageInput(
               dataUrl:
                   'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/p9sAAAAASUVORK5CYII=',
               mimeType: 'image/png',
-              name: 'discard-before-form.png',
+              name: 'draft.png',
             ),
           ),
         ),
       );
-
+      await tester.pumpAndSettle();
+      final input = find.byKey(const ValueKey('agent-composer-input'));
+      await tester.enterText(input, 'Keep my draft');
       await tester.tap(find.byKey(const ValueKey('agent-attachment-button')));
       await tester.pumpAndSettle();
       await tester.tap(
         find.byKey(const ValueKey('agent-attachment-photo-button')),
       );
       await tester.pumpAndSettle();
-      await tester.tap(
-        find.byKey(
-          const ValueKey('agent-artifact-form-entry-attachment-cleanup-form'),
-        ),
-      );
+      await tester.tap(find.byKey(const ValueKey('agent-remove-image-button')));
       await tester.pumpAndSettle();
-      await tester.tap(
-        find.byKey(
-          const ValueKey('agent-artifact-form-submit-attachment-cleanup-form'),
-        ),
-      );
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 50));
-
-      expect(mediaRepository.deletedFileIds, [
-        '0ea4b76d-2bc4-4ab8-91b7-3b24df53c518',
-      ]);
-      expect(client.requests, hasLength(1));
-      expect(client.requests.single.images, isEmpty);
-      expect(client.requests.single.files, isEmpty);
       expect(
         find.byKey(const ValueKey('agent-image-attachment-chip')),
         findsNothing,
       );
-    },
-  );
+      expect(tester.widget<TextField>(input).controller!.text, 'Keep my draft');
+      expect(tester.widget<TextField>(input).enabled, isNot(false));
+      expect(store.snapshot!.attachedImages, isEmpty);
+      expect(store.snapshot!.pendingAttachmentCleanupIds, media.deletedFileIds);
+      gate.complete();
+      await tester.pumpAndSettle();
+      expect(find.byType(SnackBar), findsNothing);
+      await tester.pumpWidget(const SizedBox());
+      await tester.pumpAndSettle();
+      expect(store.snapshot!.pendingAttachmentCleanupIds, hasLength(1));
+      expect(store.snapshot!.hasConversationHistory, isFalse);
 
-  testWidgets('Agent Hub deletes draft attachments before a new session', (
-    tester,
-  ) async {
-    final mediaRepository = _FakeAgentImageMediaRepository();
-    await tester.pumpWidget(
-      _host(
-        AgentHubPage(
-          mediaRepository: mediaRepository,
-          pickImage: (_) async => const AgentStreamImageInput(
-            dataUrl:
-                'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/p9sAAAAASUVORK5CYII=',
-            mimeType: 'image/png',
-            name: 'discard-before-new-session.png',
-          ),
-        ),
-      ),
-    );
-
-    await tester.tap(find.byKey(const ValueKey('agent-attachment-button')));
-    await tester.pumpAndSettle();
-    await tester.tap(
-      find.byKey(const ValueKey('agent-attachment-photo-button')),
-    );
-    await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const ValueKey('agent-new-session-button')));
-    await tester.pumpAndSettle();
-
-    expect(mediaRepository.deletedFileIds, [
-      '0ea4b76d-2bc4-4ab8-91b7-3b24df53c518',
-    ]);
-    expect(
-      find.byKey(const ValueKey('agent-image-attachment-chip')),
-      findsNothing,
-    );
-  });
-
-  testWidgets(
-    'Agent Hub never retains a draft reference after deletion succeeds',
-    (tester) async {
-      final mediaRepository = _FakeAgentImageMediaRepository();
+      media.deleteFailure = null;
+      media.deleteGate = null;
       await tester.pumpWidget(
         _host(
-          AgentHubPage(
-            mediaRepository: mediaRepository,
-            pickImage: (_) async => const AgentStreamImageInput(
-              dataUrl:
-                  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/p9sAAAAASUVORK5CYII=',
-              mimeType: 'image/png',
-              name: 'deleted-before-session-failure.png',
-            ),
-          ),
+          AgentHubPage(interactionStateStore: store, mediaRepository: media),
         ),
       );
-
-      await tester.tap(find.byKey(const ValueKey('agent-attachment-button')));
       await tester.pumpAndSettle();
-      await tester.tap(
-        find.byKey(const ValueKey('agent-attachment-photo-button')),
-      );
-      await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const ValueKey('agent-new-session-button')));
-      await tester.pumpAndSettle();
-
-      expect(mediaRepository.deletedFileIds, [
-        '0ea4b76d-2bc4-4ab8-91b7-3b24df53c518',
-      ]);
+      expect(media.deletedFileIds, hasLength(2));
+      expect(media.deleteKeys.toSet(), hasLength(1));
+      expect(store.snapshot?.pendingAttachmentCleanupIds ?? [], isEmpty);
       expect(
         find.byKey(const ValueKey('agent-image-attachment-chip')),
         findsNothing,
       );
+      await tester.pumpWidget(const SizedBox());
     },
   );
-
-  testWidgets('Agent Hub preserves a draft when attachment deletion fails', (
-    tester,
-  ) async {
-    final mediaRepository = _FakeAgentImageMediaRepository(
-      deleteFailure: StateError('delete unavailable'),
-    );
-    await tester.pumpWidget(
-      _host(
-        AgentHubPage(
-          mediaRepository: mediaRepository,
-          pickImage: (_) async => const AgentStreamImageInput(
-            dataUrl:
-                'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/p9sAAAAASUVORK5CYII=',
-            mimeType: 'image/png',
-            name: 'preserve-on-delete-failure.png',
-          ),
-        ),
-      ),
-    );
-
-    await tester.tap(find.byKey(const ValueKey('agent-attachment-button')));
-    await tester.pumpAndSettle();
-    await tester.tap(
-      find.byKey(const ValueKey('agent-attachment-photo-button')),
-    );
-    await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const ValueKey('agent-new-session-button')));
-    await tester.pumpAndSettle();
-
-    expect(
-      find.byKey(const ValueKey('agent-image-attachment-chip')),
-      findsOneWidget,
-    );
-    expect(find.text('附件清理失败，已保留草稿，请重试。'), findsOneWidget);
-  });
 
   testWidgets('Agent Hub keeps camera and gallery image sources distinct', (
     tester,
@@ -2698,993 +1637,6 @@ void main() {
     },
   );
 
-  testWidgets('Agent Hub starts auto voice playback after finished reply', (
-    tester,
-  ) async {
-    final coordinator = AgentVoicePlaybackCoordinator();
-    final player = _PageFakeVoicePlaybackPlayer();
-    final client = _FixtureAgentStreamClient(
-      parseAgentJsonl(
-        readMigrationFixture('agent_events/text_stream_basic.jsonl'),
-      ),
-    );
-
-    await tester.pumpWidget(
-      _host(
-        AgentHubPage(
-          runner: AgentStreamRunner(client),
-          voicePlaybackCoordinator: coordinator,
-          voicePlaybackPlayer: player,
-        ),
-        tickersEnabled: true,
-      ),
-    );
-
-    await tester.enterText(
-      find.byKey(const ValueKey('agent-composer-input')),
-      'Read this aloud',
-    );
-    await tester.pump();
-    await tester.tap(find.byKey(const ValueKey('agent-send-button')));
-    await _pumpUntil(
-      tester,
-      () => coordinator.activeSource == AgentVoicePlaybackSource.autoReply,
-    );
-    await _pumpFrames(tester, 3);
-
-    expect(coordinator.activeSource, AgentVoicePlaybackSource.autoReply);
-    expect(coordinator.activeId, 'msg-reply-text-001');
-    expect(find.text('正在播放语音'), findsNothing);
-    expect(find.byKey(const ValueKey('agent-voice-status')), findsNothing);
-    expect(
-      find.byKey(const ValueKey('agent-assistant-avatar-speaking')),
-      findsOneWidget,
-    );
-    expect(
-      find.byKey(const ValueKey('agent-assistant-avatar-speaking-media')),
-      findsOneWidget,
-    );
-    expect(
-      videoPlayerPlatform.createdAssets,
-      contains(MomCozyAssets.agentSpeakingAvatar),
-    );
-    expect(
-      MomCozyAssets.agentSpeakingAvatar,
-      isNot(MomCozyAssets.agentAwakenAvatar),
-    );
-    expect(
-      find.byKey(const ValueKey('agent-assistant-avatar-thinking')),
-      findsNothing,
-    );
-  });
-
-  testWidgets('Agent Hub appends generated reply chunks to realtime voice', (
-    tester,
-  ) async {
-    final coordinator = AgentVoicePlaybackCoordinator();
-    final player = _PageFakeVoicePlaybackPlayer();
-    final client = _FixtureAgentStreamClient(
-      parseAgentJsonl(
-        readMigrationFixture('agent_events/text_stream_basic.jsonl'),
-      ),
-    );
-
-    await tester.pumpWidget(
-      _host(
-        AgentHubPage(
-          runner: AgentStreamRunner(client),
-          voicePlaybackCoordinator: coordinator,
-          voicePlaybackPlayer: player,
-        ),
-      ),
-    );
-
-    await tester.enterText(
-      find.byKey(const ValueKey('agent-composer-input')),
-      'Read this aloud',
-    );
-    await tester.pump();
-    await tester.tap(find.byKey(const ValueKey('agent-send-button')));
-    await tester.pumpAndSettle();
-
-    expect(player.realtimeSessions, hasLength(1));
-    final session = player.realtimeSessions.single;
-    expect(session.appendedTexts, [
-      'I can help',
-      " you review today's pumping pattern.",
-    ]);
-    expect(session.finishCount, 1);
-    expect(coordinator.activeSource, AgentVoicePlaybackSource.autoReply);
-
-    session.complete();
-    await tester.pump();
-    await tester.pump();
-
-    expect(coordinator.activeSource, isNull);
-    expect(
-      find.byKey(const ValueKey('agent-assistant-avatar-speaking')),
-      findsNothing,
-    );
-    expect(
-      find.byKey(const ValueKey('agent-assistant-avatar-speaking-media')),
-      findsNothing,
-    );
-    expect(
-      find.byKey(const ValueKey('agent-assistant-avatar-static')),
-      findsWidgets,
-    );
-  });
-
-  testWidgets('Agent Hub starts voice as soon as reply text is generated', (
-    tester,
-  ) async {
-    final coordinator = AgentVoicePlaybackCoordinator();
-    final player = _PageFakeVoicePlaybackPlayer();
-    final client = _ControllableAgentStreamClient();
-    addTearDown(client.dispose);
-
-    await tester.pumpWidget(
-      _host(
-        AgentHubPage(
-          runner: AgentStreamRunner(client),
-          voicePlaybackCoordinator: coordinator,
-          voicePlaybackPlayer: player,
-        ),
-      ),
-    );
-
-    await tester.enterText(
-      find.byKey(const ValueKey('agent-composer-input')),
-      'Read this aloud after completion',
-    );
-    await tester.pump();
-    await tester.tap(find.byKey(const ValueKey('agent-send-button')));
-    await tester.pump();
-
-    client.emit(
-      0,
-      AgentStreamEvent({
-        'event_id': 'evt-voice-order-delta',
-        'type': 'message.delta',
-        'thread_id': 'thread-voice-order',
-        'run_id': 'run-voice-order',
-        'message_id': 'msg-voice-order',
-        'sequence': 1,
-        'payload': {'text': 'Draft answer'},
-      }),
-    );
-    await tester.pump();
-    await tester.pump();
-
-    expect(player.realtimeSessions, hasLength(1));
-    expect(player.realtimeSessions.single.appendedTexts, ['Draft answer']);
-    expect(coordinator.activeSource, AgentVoicePlaybackSource.autoReply);
-    expect(find.text('Draft answer', findRichText: true), findsOneWidget);
-
-    client.emit(
-      0,
-      AgentStreamEvent({
-        'event_id': 'evt-voice-order-completed',
-        'type': 'message.completed',
-        'thread_id': 'thread-voice-order',
-        'run_id': 'run-voice-order',
-        'message_id': 'msg-voice-order',
-        'sequence': 2,
-        'payload': {'text': 'Draft answer ready.'},
-      }),
-    );
-    await tester.pump();
-    await tester.pump();
-
-    expect(player.realtimeSessions, hasLength(1));
-    expect(player.realtimeSessions.single.appendedTexts, [
-      'Draft answer',
-      ' ready.',
-    ]);
-    expect(player.realtimeSessions.single.finishCount, 1);
-    expect(coordinator.activeSource, AgentVoicePlaybackSource.autoReply);
-    expect(
-      find.text('Draft answer ready.', findRichText: true),
-      findsOneWidget,
-    );
-
-    client.emit(
-      0,
-      AgentStreamEvent({
-        'event_id': 'evt-voice-order-run-completed',
-        'type': 'run.completed',
-        'thread_id': 'thread-voice-order',
-        'run_id': 'run-voice-order',
-        'message_id': 'msg-voice-order',
-        'sequence': 3,
-        'payload': {'status': 'completed'},
-      }),
-    );
-    await tester.pump();
-    await tester.pump();
-
-    expect(player.realtimeSessions.single.appendedTexts, [
-      'Draft answer',
-      ' ready.',
-    ]);
-    expect(player.realtimeSessions.single.finishCount, 1);
-    expect(coordinator.activeSource, AgentVoicePlaybackSource.autoReply);
-    expect(coordinator.activeId, 'msg-voice-order');
-  });
-
-  testWidgets('Agent Hub forwards media voice metadata to realtime playback', (
-    tester,
-  ) async {
-    final client = _ControllableAgentStreamClient();
-    final player = _PageFakeVoicePlaybackPlayer();
-    addTearDown(client.dispose);
-
-    await tester.pumpWidget(
-      _host(
-        AgentHubPage(
-          runner: AgentStreamRunner(client),
-          voicePlaybackCoordinator: AgentVoicePlaybackCoordinator(),
-          voicePlaybackPlayer: player,
-        ),
-      ),
-    );
-    await tester.enterText(
-      find.byKey(const ValueKey('agent-composer-input')),
-      '怎么安装阀门',
-    );
-    await tester.pump();
-    await tester.tap(find.byKey(const ValueKey('agent-send-button')));
-    await tester.pump();
-
-    client.emit(
-      0,
-      AgentStreamEvent(const {
-        'event_id': 'evt-media-voice-tool',
-        'type': 'tool.completed',
-        'thread_id': 'thread-media-voice',
-        'run_id': 'run-media-voice',
-        'tool_call_id': 'tool-media-voice',
-        'sequence': 1,
-        'payload': {
-          'output_summary': {
-            'media_voice': [
-              {
-                'media_id': '/v1/assets/asset-image?kind=image',
-                'voice_policy': 'announce',
-                'spoken_label': '我放了一张阀门安装方向图。',
-              },
-            ],
-          },
-        },
-      }),
-    );
-    client.emit(
-      0,
-      AgentStreamEvent(const {
-        'event_id': 'evt-media-voice-text',
-        'type': 'message.delta',
-        'thread_id': 'thread-media-voice',
-        'run_id': 'run-media-voice',
-        'message_id': 'message-media-voice',
-        'sequence': 2,
-        'payload': {'text': '请看 ![阀门安装方向](/v1/assets/asset-image?kind=image)。'},
-      }),
-    );
-    await tester.pump();
-    await tester.pump();
-
-    expect(player.realtimeSessions, hasLength(1));
-    final resolver = player.realtimeSessions.single.mediaNarrationResolver;
-    expect(resolver, isNotNull);
-    expect(
-      resolver!(url: '/v1/assets/asset-image?kind=image', alt: '阀门安装方向'),
-      '我放了一张阀门安装方向图。',
-    );
-  });
-
-  testWidgets(
-    'Agent Hub appends standalone media narration after a textless reply',
-    (tester) async {
-      final client = _ControllableAgentStreamClient();
-      final player = _PageFakeVoicePlaybackPlayer();
-      addTearDown(client.dispose);
-
-      await tester.pumpWidget(
-        _host(
-          AgentHubPage(
-            runner: AgentStreamRunner(client),
-            voicePlaybackCoordinator: AgentVoicePlaybackCoordinator(),
-            voicePlaybackPlayer: player,
-          ),
-        ),
-      );
-      await tester.enterText(
-        find.byKey(const ValueKey('agent-composer-input')),
-        '给我看安装示意图',
-      );
-      await tester.pump();
-      await tester.tap(find.byKey(const ValueKey('agent-send-button')));
-      await tester.pump();
-
-      client.emit(
-        0,
-        AgentStreamEvent(const {
-          'event_id': 'evt-standalone-media-voice',
-          'type': 'tool.completed',
-          'thread_id': 'thread-standalone-media-voice',
-          'run_id': 'run-standalone-media-voice',
-          'tool_call_id': 'tool-standalone-media-voice',
-          'sequence': 1,
-          'payload': {
-            'output_summary': {
-              'media_voice': [
-                {
-                  'media_id': '/v1/assets/instructional-image',
-                  'voice_policy': 'announce',
-                  'spoken_label': '我放了一张安装方向图，你可以对照检查。',
-                },
-                {
-                  'media_id': '/v1/assets/decorative-image',
-                  'voice_policy': 'silent',
-                  'spoken_label': '这句不应该播报。',
-                },
-              ],
-            },
-          },
-        }),
-      );
-      await tester.pump();
-
-      expect(player.realtimeSessions, isEmpty);
-
-      client.emit(
-        0,
-        AgentStreamEvent(const {
-          'event_id': 'evt-standalone-media-message-completed',
-          'type': 'message.completed',
-          'thread_id': 'thread-standalone-media-voice',
-          'run_id': 'run-standalone-media-voice',
-          'message_id': 'message-standalone-media-voice',
-          'sequence': 2,
-          'payload': {'role': 'assistant', 'text': ''},
-        }),
-      );
-      client.emit(
-        0,
-        AgentStreamEvent(const {
-          'event_id': 'evt-standalone-media-voice-completed',
-          'type': 'run.completed',
-          'thread_id': 'thread-standalone-media-voice',
-          'run_id': 'run-standalone-media-voice',
-          'sequence': 3,
-        }),
-      );
-      await tester.pump();
-      await tester.pump();
-
-      expect(player.realtimeSessions, hasLength(1));
-      expect(player.realtimeSessions.single.appendedTexts, [
-        '我放了一张安装方向图，你可以对照检查。',
-      ]);
-      expect(player.realtimeSessions.single.finishCount, 1);
-    },
-  );
-
-  testWidgets(
-    'Agent Hub does not replay media narration already resolved from a URL',
-    (tester) async {
-      final client = _ControllableAgentStreamClient();
-      final player = _PageFakeVoicePlaybackPlayer();
-      addTearDown(client.dispose);
-
-      await tester.pumpWidget(
-        _host(
-          AgentHubPage(
-            runner: AgentStreamRunner(client),
-            voicePlaybackCoordinator: AgentVoicePlaybackCoordinator(),
-            voicePlaybackPlayer: player,
-          ),
-        ),
-      );
-      await tester.enterText(
-        find.byKey(const ValueKey('agent-composer-input')),
-        '怎么安装阀门',
-      );
-      await tester.pump();
-      await tester.tap(find.byKey(const ValueKey('agent-send-button')));
-      await tester.pump();
-
-      client.emit(
-        0,
-        AgentStreamEvent(const {
-          'event_id': 'evt-deduped-media-voice-tool',
-          'type': 'tool.completed',
-          'thread_id': 'thread-deduped-media-voice',
-          'run_id': 'run-deduped-media-voice',
-          'tool_call_id': 'tool-deduped-media-voice',
-          'sequence': 1,
-          'payload': {
-            'output_summary': {
-              'media_voice': [
-                {
-                  'media_id': '/v1/assets/valve-image',
-                  'voice_policy': 'announce',
-                  'spoken_label': '我放了一张阀门安装方向图。',
-                },
-              ],
-            },
-          },
-        }),
-      );
-      client.emit(
-        0,
-        AgentStreamEvent(const {
-          'event_id': 'evt-deduped-media-voice-delta',
-          'type': 'message.delta',
-          'thread_id': 'thread-deduped-media-voice',
-          'run_id': 'run-deduped-media-voice',
-          'message_id': 'message-deduped-media-voice',
-          'sequence': 2,
-          'payload': {'text': '请看 /v1/assets/valve-image'},
-        }),
-      );
-      await tester.pump();
-      await tester.pump();
-
-      final session = player.realtimeSessions.single;
-      final resolver = session.mediaNarrationResolver!;
-
-      client.emit(
-        0,
-        AgentStreamEvent(const {
-          'event_id': 'evt-deduped-media-voice-completed',
-          'type': 'message.completed',
-          'thread_id': 'thread-deduped-media-voice',
-          'run_id': 'run-deduped-media-voice',
-          'message_id': 'message-deduped-media-voice',
-          'sequence': 3,
-          'payload': {'text': '请看 /v1/assets/valve-image'},
-        }),
-      );
-      await tester.pump();
-      await tester.pump();
-
-      expect(session.appendedTexts, ['请看 /v1/assets/valve-image']);
-      expect(session.flushCount, 1);
-      expect(
-        RegExp('我放了一张阀门安装方向图。').allMatches(session.filteredTexts.join(' ')),
-        hasLength(1),
-      );
-
-      final filter = AgentVoiceTextStreamFilter(
-        mediaNarrationResolver: resolver,
-      );
-      final firstFiltered = filter.push('请看 [阀门安装方向](/v1/assets/valve-image)。');
-      final repeatedFiltered = filter.push(
-        '再看 [阀门安装方向](/v1/assets/valve-image)。',
-      );
-      expect(firstFiltered, contains('我放了一张阀门安装方向图。'));
-      expect(repeatedFiltered, isNot(contains('阀门安装方向')));
-      expect(
-        resolver(url: '/v1/assets/valve-image', alt: '阀门安装方向'),
-        '我放了一张阀门安装方向图。',
-      );
-      expect(session.finishCount, 1);
-    },
-  );
-
-  testWidgets(
-    'Agent Hub speaks safe pure artifact copy without artifact actions',
-    (tester) async {
-      final client = _ControllableAgentStreamClient();
-      final player = _PageFakeVoicePlaybackPlayer();
-      addTearDown(client.dispose);
-
-      await tester.pumpWidget(
-        _host(
-          AgentHubPage(
-            runner: AgentStreamRunner(client),
-            voicePlaybackCoordinator: AgentVoicePlaybackCoordinator(),
-            voicePlaybackPlayer: player,
-          ),
-        ),
-      );
-      await tester.enterText(
-        find.byKey(const ValueKey('agent-composer-input')),
-        '帮我整理泌乳支持信息',
-      );
-      await tester.pump();
-      await tester.tap(find.byKey(const ValueKey('agent-send-button')));
-      await tester.pump();
-
-      client.emit(
-        0,
-        AgentStreamEvent(const {
-          'event_id': 'evt-artifact-voice',
-          'type': 'artifact.created',
-          'thread_id': 'thread-artifact-voice',
-          'run_id': 'run-artifact-voice',
-          'artifact_id': 'artifact-voice',
-          'sequence': 1,
-          'payload': {
-            'artifact_type': 'rich_text',
-            'rich_text': {
-              'title': '泌乳支持清单',
-              'content': '我已经帮你整理好了。',
-              'button': [
-                {'label': '打开泌乳计划', 'action': 'navigate', 'value': '/schedule'},
-              ],
-            },
-          },
-        }),
-      );
-      await tester.pump();
-
-      expect(player.realtimeSessions, isEmpty);
-
-      client.emit(
-        0,
-        AgentStreamEvent(const {
-          'event_id': 'evt-artifact-voice-message-completed',
-          'type': 'message.completed',
-          'thread_id': 'thread-artifact-voice',
-          'run_id': 'run-artifact-voice',
-          'sequence': 2,
-          'payload': {'text': ''},
-        }),
-      );
-      await tester.pump();
-      await tester.pump();
-
-      expect(player.realtimeSessions, hasLength(1));
-      expect(player.realtimeSessions.single.appendedTexts, [
-        '泌乳支持清单 我已经帮你整理好了。',
-      ]);
-      expect(
-        player.realtimeSessions.single.appendedTexts.single,
-        isNot(contains('打开泌乳计划')),
-      );
-      expect(
-        player.realtimeSessions.single.appendedTexts.single,
-        isNot(contains('/schedule')),
-      );
-      expect(player.realtimeSessions.single.finishCount, 1);
-
-      player.realtimeSessions.single.complete();
-      await tester.pump();
-      await tester.pump();
-
-      client.emit(
-        0,
-        AgentStreamEvent(const {
-          'event_id': 'evt-artifact-voice-run-completed',
-          'type': 'run.completed',
-          'thread_id': 'thread-artifact-voice',
-          'run_id': 'run-artifact-voice',
-          'message_id': 'message-artifact-voice',
-          'sequence': 3,
-        }),
-      );
-      await tester.pump();
-      await tester.pump();
-
-      expect(player.realtimeSessions, hasLength(1));
-      expect(player.realtimeSessions.single.appendedTexts, [
-        '泌乳支持清单 我已经帮你整理好了。',
-      ]);
-    },
-  );
-
-  testWidgets(
-    'Agent Hub does not repeat artifact copy when reply text is present',
-    (tester) async {
-      final player = _PageFakeVoicePlaybackPlayer();
-      final client = _FixtureAgentStreamClient([
-        AgentStreamEvent(const {
-          'event_id': 'evt-artifact-with-text',
-          'type': 'artifact.created',
-          'thread_id': 'thread-artifact-with-text',
-          'run_id': 'run-artifact-with-text',
-          'artifact_id': 'artifact-with-text',
-          'sequence': 1,
-          'payload': {
-            'artifact_type': 'rich_text',
-            'rich_text': {'title': '泌乳支持清单', 'content': '我已经帮你整理好了。'},
-          },
-        }),
-        AgentStreamEvent(const {
-          'event_id': 'evt-artifact-with-text-delta',
-          'type': 'message.delta',
-          'thread_id': 'thread-artifact-with-text',
-          'run_id': 'run-artifact-with-text',
-          'message_id': 'message-artifact-with-text',
-          'sequence': 2,
-          'payload': {'text': '我已经根据你的情况整理好了。'},
-        }),
-        AgentStreamEvent(const {
-          'event_id': 'evt-artifact-with-text-completed',
-          'type': 'message.completed',
-          'thread_id': 'thread-artifact-with-text',
-          'run_id': 'run-artifact-with-text',
-          'message_id': 'message-artifact-with-text',
-          'sequence': 3,
-          'payload': {'text': '我已经根据你的情况整理好了。'},
-        }),
-      ]);
-
-      await tester.pumpWidget(
-        _host(
-          AgentHubPage(
-            runner: AgentStreamRunner(client),
-            voicePlaybackCoordinator: AgentVoicePlaybackCoordinator(),
-            voicePlaybackPlayer: player,
-          ),
-        ),
-      );
-      await tester.enterText(
-        find.byKey(const ValueKey('agent-composer-input')),
-        '帮我整理泌乳支持信息',
-      );
-      await tester.pump();
-      await tester.tap(find.byKey(const ValueKey('agent-send-button')));
-      await tester.pumpAndSettle();
-
-      expect(player.realtimeSessions, hasLength(1));
-      expect(player.realtimeSessions.single.appendedTexts, ['我已经根据你的情况整理好了。']);
-      expect(player.realtimeSessions.single.finishCount, 1);
-    },
-  );
-
-  testWidgets(
-    'Agent Hub never replaces or replays spoken text on completed mismatch',
-    (tester) async {
-      final coordinator = AgentVoicePlaybackCoordinator();
-      final player = _PageFakeVoicePlaybackPlayer();
-      final client = _ControllableAgentStreamClient();
-      addTearDown(client.dispose);
-
-      await tester.pumpWidget(
-        _host(
-          AgentHubPage(
-            runner: AgentStreamRunner(client),
-            voicePlaybackCoordinator: coordinator,
-            voicePlaybackPlayer: player,
-          ),
-        ),
-      );
-
-      await tester.enterText(
-        find.byKey(const ValueKey('agent-composer-input')),
-        'Keep the streamed reply',
-      );
-      await tester.pump();
-      await tester.tap(find.byKey(const ValueKey('agent-send-button')));
-      await tester.pump();
-
-      client.emit(
-        0,
-        AgentStreamEvent(const {
-          'event_id': 'evt-voice-mismatch-delta',
-          'type': 'message.delta',
-          'thread_id': 'thread-voice-mismatch',
-          'run_id': 'run-voice-mismatch',
-          'message_id': 'msg-voice-mismatch',
-          'payload': {'text': 'Keep this reply.'},
-        }),
-      );
-      await tester.pump();
-      await tester.pump();
-
-      client.emit(
-        0,
-        AgentStreamEvent(const {
-          'event_id': 'evt-voice-mismatch-completed',
-          'type': 'message.completed',
-          'thread_id': 'thread-voice-mismatch',
-          'run_id': 'run-voice-mismatch',
-          'message_id': 'msg-voice-mismatch',
-          'payload': {'role': 'assistant', 'text': 'Replacement reply.'},
-        }),
-      );
-      await tester.pump();
-      await tester.pump();
-
-      expect(player.realtimeSessions, hasLength(1));
-      expect(player.realtimeSessions.single.appendedTexts, [
-        'Keep this reply.',
-      ]);
-      expect(player.realtimeSessions.single.finishCount, 1);
-      expect(find.text('Keep this reply.', findRichText: true), findsOneWidget);
-      expect(find.text('Replacement reply.', findRichText: true), findsNothing);
-    },
-  );
-
-  testWidgets(
-    'Agent Hub keeps auto voice stable when message id arrives late',
-    (tester) async {
-      final coordinator = AgentVoicePlaybackCoordinator();
-      final player = _PageFakeVoicePlaybackPlayer();
-      final client = _ControllableAgentStreamClient();
-      addTearDown(client.dispose);
-
-      await tester.pumpWidget(
-        _host(
-          AgentHubPage(
-            runner: AgentStreamRunner(client),
-            voicePlaybackCoordinator: coordinator,
-            voicePlaybackPlayer: player,
-          ),
-        ),
-      );
-
-      await tester.enterText(
-        find.byKey(const ValueKey('agent-composer-input')),
-        'Read this aloud while streaming',
-      );
-      await tester.pump();
-      await tester.tap(find.byKey(const ValueKey('agent-send-button')));
-      await tester.pump();
-
-      client.emit(
-        0,
-        AgentStreamEvent({
-          'event_id': 'evt-voice-late-id-delta',
-          'type': 'message.delta',
-          'thread_id': 'thread-voice-late-id',
-          'run_id': 'run-voice-late-id',
-          'sequence': 1,
-          'payload': {'text': 'Draft answer'},
-        }),
-      );
-      await tester.pump();
-      await tester.pump();
-
-      expect(player.realtimeSessions, hasLength(1));
-      expect(player.realtimeSessions.single.appendedTexts, ['Draft answer']);
-      expect(player.stopCount, 1);
-      expect(coordinator.activeSource, AgentVoicePlaybackSource.autoReply);
-      expect(coordinator.activeId, 'run-voice-late-id');
-
-      client.emit(
-        0,
-        AgentStreamEvent({
-          'event_id': 'evt-voice-late-id-completed',
-          'type': 'message.completed',
-          'thread_id': 'thread-voice-late-id',
-          'run_id': 'run-voice-late-id',
-          'message_id': 'msg-voice-late-id',
-          'sequence': 2,
-          'payload': {'text': 'Draft answer ready.'},
-        }),
-      );
-      await tester.pump();
-      await tester.pump();
-
-      expect(player.realtimeSessions, hasLength(1));
-      expect(player.realtimeSessions.single.appendedTexts, [
-        'Draft answer',
-        ' ready.',
-      ]);
-      expect(player.realtimeSessions.single.finishCount, 1);
-      expect(player.stopCount, 1);
-      expect(coordinator.activeId, 'run-voice-late-id');
-      expect(
-        find.byKey(const ValueKey('agent-assistant-avatar-speaking')),
-        findsOneWidget,
-      );
-
-      expect(player.realtimeSessions, hasLength(1));
-      expect(player.stopCount, 1);
-      expect(coordinator.activeId, 'run-voice-late-id');
-    },
-  );
-
-  testWidgets('Agent Hub cancels active auto voice when voice is disabled', (
-    tester,
-  ) async {
-    final coordinator = AgentVoicePlaybackCoordinator();
-    var playbackCancelled = false;
-    final client = _FixtureAgentStreamClient(
-      parseAgentJsonl(
-        readMigrationFixture('agent_events/text_stream_basic.jsonl'),
-      ),
-    );
-
-    await tester.pumpWidget(
-      _host(
-        AgentHubPage(
-          runner: AgentStreamRunner(client),
-          voicePlaybackCoordinator: coordinator,
-        ),
-      ),
-    );
-
-    await tester.enterText(
-      find.byKey(const ValueKey('agent-composer-input')),
-      'Read this aloud',
-    );
-    await tester.pump();
-    await tester.tap(find.byKey(const ValueKey('agent-send-button')));
-    await tester.pumpAndSettle();
-
-    coordinator.cancel();
-    coordinator.request(
-      id: 'msg-reply-text-001',
-      source: AgentVoicePlaybackSource.autoReply,
-      cancel: () => playbackCancelled = true,
-    );
-    await tester.pump();
-
-    await tester.tap(find.byKey(const ValueKey('agent-auto-voice-button')));
-    await tester.pump();
-
-    expect(playbackCancelled, isTrue);
-    expect(coordinator.activeId, isNull);
-    expect(find.text('正在播放语音'), findsNothing);
-    expect(
-      find.byKey(const ValueKey('agent-assistant-avatar-speaking')),
-      findsNothing,
-    );
-  });
-
-  testWidgets('Agent Hub keeps notification voice ahead of auto reply', (
-    tester,
-  ) async {
-    final coordinator = AgentVoicePlaybackCoordinator();
-    var notificationCancelled = false;
-    coordinator.request(
-      id: 'notification-1',
-      source: AgentVoicePlaybackSource.notification,
-      cancel: () => notificationCancelled = true,
-    );
-    final client = _FixtureAgentStreamClient(
-      parseAgentJsonl(
-        readMigrationFixture('agent_events/text_stream_basic.jsonl'),
-      ),
-    );
-
-    await tester.pumpWidget(
-      _host(
-        AgentHubPage(
-          runner: AgentStreamRunner(client),
-          voicePlaybackCoordinator: coordinator,
-        ),
-      ),
-    );
-
-    await tester.enterText(
-      find.byKey(const ValueKey('agent-composer-input')),
-      'Do not interrupt notification',
-    );
-    await tester.pump();
-    await tester.tap(find.byKey(const ValueKey('agent-send-button')));
-    await tester.pumpAndSettle();
-
-    expect(notificationCancelled, isFalse);
-    expect(coordinator.activeSource, AgentVoicePlaybackSource.notification);
-    expect(coordinator.activeId, 'notification-1');
-    expect(find.text('正在播放语音'), findsNothing);
-  });
-
-  testWidgets(
-    'Agent Hub clears speaking avatar when notification interrupts auto voice',
-    (tester) async {
-      final coordinator = AgentVoicePlaybackCoordinator();
-      final player = _PageFakeVoicePlaybackPlayer();
-      final client = _ControllableAgentStreamClient();
-      addTearDown(client.dispose);
-
-      await tester.pumpWidget(
-        _host(
-          AgentHubPage(
-            runner: AgentStreamRunner(client),
-            voicePlaybackCoordinator: coordinator,
-            voicePlaybackPlayer: player,
-          ),
-        ),
-      );
-
-      await tester.enterText(
-        find.byKey(const ValueKey('agent-composer-input')),
-        'Start auto voice',
-      );
-      await tester.pump();
-      await tester.tap(find.byKey(const ValueKey('agent-send-button')));
-      await tester.pump();
-
-      client.emit(
-        0,
-        AgentStreamEvent({
-          'event_id': 'evt-notification-interrupt-delta',
-          'type': 'message.delta',
-          'thread_id': 'thread-notification-interrupt',
-          'run_id': 'run-notification-interrupt',
-          'message_id': 'msg-notification-interrupt',
-          'sequence': 1,
-          'payload': {'text': 'Draft answer'},
-        }),
-      );
-      await tester.pump();
-      await tester.pump();
-
-      expect(coordinator.activeSource, AgentVoicePlaybackSource.autoReply);
-      expect(
-        find.byKey(const ValueKey('agent-assistant-avatar-speaking')),
-        findsOneWidget,
-      );
-
-      coordinator.request(
-        id: 'notification-1',
-        source: AgentVoicePlaybackSource.notification,
-      );
-      await tester.pump();
-      await tester.pump();
-
-      expect(coordinator.activeSource, AgentVoicePlaybackSource.notification);
-      expect(player.realtimeSessions.single.cancelCount, 1);
-      expect(
-        find.byKey(const ValueKey('agent-assistant-avatar-speaking')),
-        findsNothing,
-      );
-    },
-  );
-
-  testWidgets(
-    'Agent Hub retries auto voice after notification voice becomes idle',
-    (tester) async {
-      final coordinator = AgentVoicePlaybackCoordinator();
-      final player = _PageFakeVoicePlaybackPlayer();
-      final notification = coordinator.request(
-        id: 'notification-1',
-        source: AgentVoicePlaybackSource.notification,
-      );
-      final client = _FixtureAgentStreamClient(
-        parseAgentJsonl(
-          readMigrationFixture('agent_events/text_stream_basic.jsonl'),
-        ),
-      );
-
-      await tester.pumpWidget(
-        _host(
-          AgentHubPage(
-            runner: AgentStreamRunner(client),
-            voicePlaybackCoordinator: coordinator,
-            voicePlaybackPlayer: player,
-          ),
-        ),
-      );
-
-      await tester.enterText(
-        find.byKey(const ValueKey('agent-composer-input')),
-        'Replay after notification',
-      );
-      await tester.pump();
-      await tester.tap(find.byKey(const ValueKey('agent-send-button')));
-      await tester.pumpAndSettle();
-
-      expect(coordinator.activeSource, AgentVoicePlaybackSource.notification);
-      expect(coordinator.activeId, 'notification-1');
-      expect(find.text('正在播放语音'), findsNothing);
-
-      notification.handle?.finish();
-      await tester.pump();
-      await tester.pump();
-
-      expect(coordinator.activeSource, AgentVoicePlaybackSource.autoReply);
-      expect(coordinator.activeId, 'msg-reply-text-001');
-      expect(player.realtimeSessions, hasLength(1));
-      expect(player.realtimeSessions.single.appendedTexts, [
-        "I can help you review today's pumping pattern.",
-      ]);
-      expect(player.realtimeSessions.single.finishCount, 1);
-      expect(find.text('正在播放语音'), findsNothing);
-      expect(
-        find.byKey(const ValueKey('agent-assistant-avatar-speaking')),
-        findsOneWidget,
-      );
-    },
-  );
-
   testWidgets('Agent Hub can locally stop an active run', (tester) async {
     await tester.pumpWidget(
       _host(
@@ -4175,7 +2127,7 @@ void main() {
   );
 
   testWidgets(
-    'Agent Hub keeps queued text when the run starts awaiting confirmation',
+    'phase one sends the queued follow-up after unsupported confirmation',
     (tester) async {
       final client = _ControllableAgentStreamClient();
       addTearDown(client.dispose);
@@ -4218,90 +2170,72 @@ void main() {
       );
       await _pumpFrames(tester, 4);
 
-      expect(client.requests, hasLength(1));
-      expect(
-        tester.widget<TextField>(composer).controller?.text,
-        'Keep this draft',
-      );
-      expect(tester.widget<TextField>(composer).enabled, isFalse);
+      expect(client.requests, hasLength(2));
+      expect(client.requests.last.message, 'Keep this draft');
+      expect(tester.widget<TextField>(composer).enabled, isTrue);
+      expect(find.byKey(const ValueKey('agent-action-panel')), findsNothing);
       expect(tester.takeException(), isNull);
     },
   );
 
   testWidgets(
-    'Agent Hub releases visible running UI after completed assistant message',
+    'Agent Hub smooths live deltas while preserving complete run text',
     (tester) async {
       final client = _ControllableAgentStreamClient();
       addTearDown(client.dispose);
-
       await tester.pumpWidget(
-        _host(AgentHubPage(runner: AgentStreamRunner(client))),
+        _host(
+          AgentHubPage(runner: AgentStreamRunner(client)),
+          tickersEnabled: true,
+        ),
       );
-
       await tester.enterText(
         find.byKey(const ValueKey('agent-composer-input')),
-        'First turn',
+        'typing test',
       );
       await tester.pump();
       await tester.tap(find.byKey(const ValueKey('agent-send-button')));
       await tester.pump();
-
-      expect(find.byKey(const ValueKey('agent-stop-button')), findsOneWidget);
-      expect(
-        find.byKey(const ValueKey('agent-response-light-rail')),
-        findsOneWidget,
+      const answer = '你好，今天想从哪件事情开始聊起呢？';
+      client.emit(
+        0,
+        AgentStreamEvent(const {
+          'type': 'message.delta',
+          'run_id': 'typing-run',
+          'message_id': 'typing-message',
+          'payload': {'text': answer},
+        }),
       );
+      await tester.pump();
+      expect(find.text(answer), findsNothing);
+      expect(find.text('你'), findsOneWidget);
       expect(
-        find.byKey(const ValueKey('agent-assistant-avatar-thinking')),
-        findsOneWidget,
+        tester
+            .widget<AgentRunTranscript>(find.byType(AgentRunTranscript))
+            .state
+            .textContent,
+        answer,
       );
-
+      await tester.pump(const Duration(milliseconds: 72));
+      final shown = tester
+          .widget<AgentRunTranscript>(find.byType(AgentRunTranscript))
+          .visibleText!;
+      expect(shown.length, greaterThan(1));
+      expect(answer, startsWith(shown));
       client.emit(
         0,
         AgentStreamEvent(const {
           'type': 'message.completed',
-          'thread_id': 'thread-visible-complete',
-          'run_id': 'run-visible-complete',
-          'message_id': 'msg-visible-complete',
-          'payload': {
-            'role': 'assistant',
-            'text': 'Final answer',
-            'quick_replies': [
-              {'text': '继续聊这个'},
-              {'text': '给我更多细节'},
-              {'text': '换个方向'},
-            ],
-          },
+          'run_id': 'typing-run',
+          'message_id': 'typing-message',
+          'payload': {'role': 'assistant', 'content': answer},
         }),
       );
       await tester.pump();
-
-      expect(find.text('Final answer'), findsOneWidget);
-      expect(find.byKey(const ValueKey('agent-stop-button')), findsNothing);
-      expect(find.byKey(const ValueKey('agent-send-button')), findsOneWidget);
-      expect(
-        find.byKey(const ValueKey('agent-response-light-rail')),
-        findsNothing,
-      );
-      expect(
-        find.byKey(const ValueKey('agent-assistant-avatar-thinking')),
-        findsNothing,
-      );
-      expect(
-        find.byKey(const ValueKey('agent-assistant-avatar-static')),
-        findsWidgets,
-      );
-      expect(find.byKey(const ValueKey('agent-quick-replies')), findsNothing);
-      expect(find.text('猜你想说'), findsNothing);
-      expect(find.text('继续聊这个'), findsNothing);
-      expect(
-        tester
-            .widget<IconButton>(
-              find.byKey(const ValueKey('agent-new-session-button')),
-            )
-            .onPressed,
-        isNotNull,
-      );
+      await tester.pump(const Duration(milliseconds: 200));
+      expect(find.text(answer), findsOneWidget);
+      await tester.pumpWidget(const SizedBox());
+      expect(tester.takeException(), isNull);
     },
   );
 
@@ -4601,7 +2535,7 @@ void main() {
 
     expect(find.byKey(const ValueKey('agent-work-panel')), findsNothing);
     expect(find.text('处理进度'), findsNothing);
-    expect(find.text('已生成设备状态说明'), findsWidgets);
+    expect(find.text('已生成设备状态说明'), findsNothing);
     expect(
       find.text('I checked the device status and prepared the next step.'),
       findsOneWidget,
@@ -4650,201 +2584,75 @@ void main() {
     expect(find.text('正在读取泵奶记录'), findsNothing);
   });
 
-  testWidgets('Agent Hub renders and confirms production action cards', (
-    tester,
-  ) async {
-    const actionId = '11111111-1111-1111-1111-111111111111';
-    final connector = _RecordingActionConnector(
-      response: AgentStreamControlHttpResponse(
-        statusCode: 200,
-        body: jsonEncode({
-          'id': actionId,
-          'run_id': 'run-action',
-          'status': 'queued',
-          'events': [
-            {
-              'type': 'action.queued',
-              'thread_id': 'thread-action',
-              'run_id': 'run-action',
-              'action_id': actionId,
-              'payload': {'status': 'queued'},
-            },
-            {
-              'type': 'run.completed',
-              'thread_id': 'thread-action',
-              'run_id': 'run-action',
-            },
-          ],
-        }),
-      ),
-    );
-    final actionClient = AgentStreamActionClient(
-      endpoint: AgentStreamEndpoint(
-        uri: Uri.parse('http://127.0.0.1:8769/v1/agent/actions'),
-        token: 'secret-token',
-      ),
-      connector: connector,
-    );
-
-    await tester.pumpWidget(
-      _host(
-        AgentHubPage(
-          state: AgentStreamRunState(
-            phase: AgentStreamRunPhase.waitingForConfirmation,
-            textContent: '请确认是否创建支持工单。',
-            events: [
-              AgentStreamEvent(const {
-                'type': 'action.confirmation_required',
-                'thread_id': 'thread-action',
-                'run_id': 'run-action',
-                'action_id': actionId,
-                'payload': {
-                  'action_type': 'support_ticket_create',
-                  'summary': '将当前问题提交给人工支持团队',
-                  'preview_payload': {'title': '创建支持工单'},
-                },
-              }),
-              AgentStreamEvent(const {
-                'type': 'run.waiting_for_confirmation',
-                'thread_id': 'thread-action',
-                'run_id': 'run-action',
-                'payload': {'pending_action_id': actionId},
-              }),
-            ],
-          ),
-          runner: AgentStreamRunner(_FixtureAgentStreamClient(const [])),
-          actionClient: actionClient,
-          pickImage: (_) async => const AgentStreamImageInput(
-            dataUrl: 'data:image/png;base64,fixture',
-            mimeType: 'image/png',
-            name: 'blocked-during-confirmation.png',
-          ),
-        ),
-      ),
-    );
-
-    expect(find.text('待确认'), findsWidgets);
-    expect(find.text('等待确认后继续'), findsOneWidget);
-    expect(find.byKey(const ValueKey('agent-action-panel')), findsOneWidget);
-    expect(find.byKey(ValueKey('agent-action-card-$actionId')), findsOneWidget);
-    expect(find.text('创建支持工单'), findsOneWidget);
-    expect(find.text('将当前问题提交给人工支持团队'), findsOneWidget);
-    expect(
-      tester
-          .widget<TextField>(find.byKey(const ValueKey('agent-composer-input')))
-          .enabled,
-      isFalse,
-    );
-    expect(
-      tester
-          .widget<IconButton>(
-            find.byKey(const ValueKey('agent-attachment-button')),
-          )
-          .onPressed,
-      isNull,
-    );
-    expect(find.byKey(const ValueKey('agent-voice-button')), findsNothing);
-    expect(
-      tester
-          .widget<IconButton>(find.byKey(const ValueKey('agent-send-button')))
-          .onPressed,
-      isNull,
-    );
-
-    await tester.tap(find.byKey(ValueKey('agent-action-confirm-$actionId')));
-    await connector.called.future;
-    await tester.pumpAndSettle();
-
-    expect(connector.uri!.path, '/v1/agent/actions/$actionId/confirm');
-    expect(
-      connector.uri!.queryParameters,
-      isNot(containsPair('token', anything)),
-    );
-    expect(
-      connector.headers,
-      containsPair('Authorization', 'Bearer secret-token'),
-    );
-    expect(
-      connector.headers,
-      containsPair('Idempotency-Key', 'agent-action-$actionId'),
-    );
-    expect(jsonDecode(connector.body!) as Map<String, Object?>, isEmpty);
-    expect(find.text('等待确认后继续'), findsNothing);
-    expect(find.text('已提交'), findsOneWidget);
-    expect(
-      find.byKey(ValueKey('agent-action-confirm-$actionId')),
-      findsNothing,
-    );
-  });
-
-  testWidgets('Agent Hub renders only user-visible action cards', (
-    tester,
-  ) async {
-    await tester.pumpWidget(
-      _host(
-        AgentHubPage(
-          state: AgentStreamRunState(
-            phase: AgentStreamRunPhase.finished,
-            textContent: '动作处理完成。',
-            events: [
-              AgentStreamEvent(const {
-                'type': 'action.applied',
-                'action_id': 'action-direct-hidden',
-                'payload': {
+  testWidgets(
+    'phase one ignores legacy action cards regardless of visibility',
+    (tester) async {
+      await tester.pumpWidget(
+        _host(
+          AgentHubPage(
+            state: AgentStreamRunState(
+              phase: AgentStreamRunPhase.finished,
+              textContent: '动作处理完成。',
+              events: [
+                AgentStreamEvent(const {
+                  'type': 'action.applied',
                   'action_id': 'action-direct-hidden',
-                  'action_status': 'applied',
-                  'title': '直接执行动作',
-                  'user_visible': false,
-                  'requires_confirmation': false,
-                },
-              }),
-              AgentStreamEvent(const {
-                'type': 'action.applied',
-                'action_id': 'action-implicit-applied',
-                'payload': {
+                  'payload': {
+                    'action_id': 'action-direct-hidden',
+                    'action_status': 'applied',
+                    'title': '直接执行动作',
+                    'user_visible': false,
+                    'requires_confirmation': false,
+                  },
+                }),
+                AgentStreamEvent(const {
+                  'type': 'action.applied',
                   'action_id': 'action-implicit-applied',
-                  'action_status': 'applied',
-                  'title': '普通已应用动作',
-                },
-              }),
-              AgentStreamEvent(const {
-                'type': 'action.confirmation_required',
-                'action_id': 'action-visible-confirmation',
-                'payload': {
+                  'payload': {
+                    'action_id': 'action-implicit-applied',
+                    'action_status': 'applied',
+                    'title': '普通已应用动作',
+                  },
+                }),
+                AgentStreamEvent(const {
+                  'type': 'action.confirmation_required',
                   'action_id': 'action-visible-confirmation',
-                  'action_status': 'confirmation_required',
-                  'title': '高风险确认动作',
-                  'user_visible': true,
-                  'requires_confirmation': true,
-                },
-              }),
-            ],
+                  'payload': {
+                    'action_id': 'action-visible-confirmation',
+                    'action_status': 'confirmation_required',
+                    'title': '高风险确认动作',
+                    'user_visible': true,
+                    'requires_confirmation': true,
+                  },
+                }),
+              ],
+            ),
           ),
         ),
-      ),
-    );
+      );
 
-    expect(find.byKey(const ValueKey('agent-action-panel')), findsOneWidget);
-    expect(
-      find.byKey(
-        const ValueKey('agent-action-card-action-visible-confirmation'),
-      ),
-      findsOneWidget,
-    );
-    expect(
-      find.byKey(const ValueKey('agent-action-card-action-direct-hidden')),
-      findsNothing,
-    );
-    expect(
-      find.byKey(const ValueKey('agent-action-card-action-implicit-applied')),
-      findsNothing,
-    );
-    expect(find.text('高风险确认动作'), findsOneWidget);
-    expect(find.text('直接执行动作'), findsNothing);
-    expect(find.text('普通已应用动作'), findsNothing);
-  });
+      expect(find.byKey(const ValueKey('agent-action-panel')), findsNothing);
+      expect(
+        find.byKey(
+          const ValueKey('agent-action-card-action-visible-confirmation'),
+        ),
+        findsNothing,
+      );
+      expect(
+        find.byKey(const ValueKey('agent-action-card-action-direct-hidden')),
+        findsNothing,
+      );
+      expect(
+        find.byKey(const ValueKey('agent-action-card-action-implicit-applied')),
+        findsNothing,
+      );
+      expect(find.text('高风险确认动作'), findsNothing);
+      expect(find.text('直接执行动作'), findsNothing);
+      expect(find.text('普通已应用动作'), findsNothing);
+    },
+  );
 
-  testWidgets('Agent Hub restores waiting action state from durable snapshot', (
+  testWidgets('phase one restores legacy waiting state without locking input', (
     tester,
   ) async {
     const actionId = '22222222-2222-2222-2222-222222222222';
@@ -4885,13 +2693,30 @@ void main() {
       ),
     );
 
-    await tester.pumpWidget(_host(AgentHubPage(interactionStateStore: store)));
+    final client = _FixtureAgentStreamClient(const []);
+    await tester.pumpWidget(
+      _host(
+        AgentHubPage(
+          interactionStateStore: store,
+          runner: AgentStreamRunner(client),
+        ),
+      ),
+    );
     await tester.pumpAndSettle();
 
     expect(find.text('请确认是否提交给人工支持。'), findsOneWidget);
-    expect(find.text('等待确认后继续'), findsOneWidget);
-    expect(find.byKey(ValueKey('agent-action-card-$actionId')), findsOneWidget);
-    expect(find.text('提交人工支持'), findsOneWidget);
+    expect(find.text('等待确认后继续'), findsNothing);
+    expect(find.text('当前版本暂不支持此操作，请继续提问。'), findsWidgets);
+    expect(
+      tester
+          .widget<TextField>(find.byKey(const ValueKey('agent-composer-input')))
+          .enabled,
+      isTrue,
+    );
+    expect(find.byKey(ValueKey('agent-action-card-$actionId')), findsNothing);
+    expect(find.text('提交人工支持'), findsNothing);
+    expect(find.byKey(const ValueKey('agent-retry-button')), findsNothing);
+    expect(client.requests, isEmpty);
   });
 
   testWidgets('Agent Hub replay does not revive an applied-only action card', (
@@ -4925,45 +2750,6 @@ void main() {
     expect(find.byKey(const ValueKey('agent-action-panel')), findsNothing);
     expect(find.text('不应恢复的动作卡'), findsNothing);
     expect(find.text('已应用'), findsNothing);
-  });
-
-  testWidgets('Agent Hub restores historical artifacts from durable snapshot', (
-    tester,
-  ) async {
-    final artifactEvent = _productionArtifactEvent(
-      id: 'restored-history-note',
-      type: 'rich_text',
-      payload: {'title': '历史说明', 'content': '这张说明卡片来自上一次会话。'},
-    );
-    final historicalRunState =
-        const AgentStreamRunState(phase: AgentStreamRunPhase.streaming)
-            .applyEvent(artifactEvent)
-            .copyWith(
-              phase: AgentStreamRunPhase.finished,
-              textContent: '这是上一次的计划。',
-            );
-    final store = _MemoryAgentHubInteractionStateStore(
-      AgentHubInteractionSnapshot(
-        historyMessages: [
-          AgentHubHistorySnapshot(
-            role: 'assistant',
-            content: '这是上一次的计划。',
-            runState: historicalRunState,
-          ),
-        ],
-      ),
-    );
-
-    await tester.pumpWidget(_host(AgentHubPage(interactionStateStore: store)));
-    await tester.pumpAndSettle();
-
-    expect(find.text('这是上一次的计划。'), findsOneWidget);
-    expect(
-      find.byKey(const ValueKey('agent-artifact-card-restored-history-note')),
-      findsOneWidget,
-    );
-    expect(find.text('历史说明'), findsOneWidget);
-    expect(find.text('这张说明卡片来自上一次会话。'), findsOneWidget);
   });
 
   testWidgets('Agent Hub does not archive an unpublished failed artifact', (
@@ -5016,688 +2802,6 @@ void main() {
     );
   });
 
-  testWidgets('Agent Hub persists citations when archiving a reply', (
-    tester,
-  ) async {
-    final store = _MemoryAgentHubInteractionStateStore();
-    final client = _FixtureAgentStreamClient([
-      AgentStreamEvent({
-        'type': 'message.completed',
-        'role': 'assistant',
-        'message_id': 'assistant-next',
-        'payload': {'text': '新的回复'},
-      }),
-      AgentStreamEvent({'type': 'run.completed', 'run_id': 'run-next'}),
-    ]);
-    final citationEvent = AgentStreamEvent({
-      'type': 'CUSTOM',
-      'name': 'momcozy.web_search.citations',
-      'message_id': 'assistant-history-citation',
-      'value': {
-        'citations': [
-          {
-            'url': 'https://www.who.int/health-topics/breastfeeding',
-            'title': 'WHO',
-          },
-        ],
-      },
-    });
-
-    await tester.pumpWidget(
-      _host(
-        AgentHubPage(
-          runner: AgentStreamRunner(client),
-          interactionStateStore: store,
-          state: AgentStreamRunState(
-            phase: AgentStreamRunPhase.finished,
-            messageId: 'assistant-history-citation',
-            textContent: '这是带专业来源的回复。',
-            events: [citationEvent],
-          ),
-        ),
-      ),
-    );
-
-    await tester.enterText(
-      find.byKey(const ValueKey('agent-composer-input')),
-      '继续',
-    );
-    await tester.pump();
-    await tester.tap(find.byKey(const ValueKey('agent-send-button')));
-    await tester.pumpAndSettle();
-    await tester.pump(const Duration(milliseconds: 300));
-
-    final history = store.snapshot?.historyMessages ?? const [];
-    expect(history, hasLength(2));
-    final archivedAssistant = history.first;
-    expect(archivedAssistant.role, 'assistant');
-    expect(
-      archivedAssistant.runState?.events.any(
-        (event) => event.raw['name'] == 'momcozy.web_search.citations',
-      ),
-      isTrue,
-    );
-  });
-
-  testWidgets('Agent Hub restores submitted historical forms as read-only', (
-    tester,
-  ) async {
-    final formEvent = AgentStreamEvent({
-      'event_id': 'restored-form-event',
-      'type': 'artifact.created',
-      'artifact_id': 'restored-form',
-      'payload': {
-        'artifact_type': 'form',
-        'form': {
-          'id': 'lactation_support_intake',
-          'title': '历史信息采集',
-          'submit_label': '确认',
-          'fields': [
-            {
-              'id': 'feeding_context',
-              'label': '泌乳目标',
-              'type': 'text',
-              'required': true,
-            },
-          ],
-        },
-      },
-    });
-    final historicalRunState =
-        const AgentStreamRunState(phase: AgentStreamRunPhase.streaming)
-            .applyEvent(formEvent)
-            .copyWith(
-              phase: AgentStreamRunPhase.finished,
-              textContent: '请确认信息。',
-            );
-    final store = _MemoryAgentHubInteractionStateStore(
-      AgentHubInteractionSnapshot(
-        historyMessages: [
-          AgentHubHistorySnapshot(
-            role: 'assistant',
-            content: '请确认信息。',
-            runState: historicalRunState,
-          ),
-        ],
-        formSubmissions: {
-          'restored-form': AgentArtifactFormSubmission.submitted(
-            values: const {'feeding_context': '38 周'},
-          ),
-        },
-      ),
-    );
-
-    await tester.pumpWidget(
-      _host(AgentHubPage(interactionStateStore: store), tickersEnabled: true),
-    );
-    await tester.pumpAndSettle();
-
-    final entry = find.byKey(
-      const ValueKey('agent-artifact-form-entry-restored-form'),
-    );
-    expect(entry, findsOneWidget);
-    expect(find.text('已提交，可点击查看'), findsOneWidget);
-    expect(
-      find.byKey(const ValueKey('agent-artifact-form-dialog-restored-form')),
-      findsNothing,
-    );
-
-    await tester.tap(entry);
-    await tester.pumpAndSettle();
-    expect(find.text('38 周'), findsOneWidget);
-    expect(
-      find.byKey(const ValueKey('agent-artifact-form-submit-restored-form')),
-      findsNothing,
-    );
-    final input = tester.widget<TextField>(
-      find.descendant(
-        of: find.byKey(const ValueKey('agent-artifact-form-restored-form')),
-        matching: find.byType(TextField),
-      ),
-    );
-    expect(input.readOnly, isTrue);
-  });
-
-  testWidgets(
-    'Agent Hub waits for final text then loads and auto-opens a new form once',
-    (tester) async {
-      final client = _ControllableAgentStreamClient();
-      addTearDown(client.dispose);
-
-      await tester.pumpWidget(
-        _host(
-          AgentHubPage(runner: AgentStreamRunner(client)),
-          tickersEnabled: true,
-        ),
-      );
-      await tester.enterText(
-        find.byKey(const ValueKey('agent-composer-input')),
-        '帮我整理泌乳支持信息',
-      );
-      await tester.pump();
-      await tester.tap(find.byKey(const ValueKey('agent-send-button')));
-      await tester.pump();
-      expect(client.requests, hasLength(1));
-
-      client.emit(
-        0,
-        AgentStreamEvent({
-          'event_id': 'form-dialog-artifact',
-          'type': 'artifact.created',
-          'thread_id': 'thread-form-dialog',
-          'run_id': 'run-form-dialog',
-          'artifact_id': 'form-dialog-intake',
-          'sequence': 1,
-          'payload': {
-            'artifact_type': 'form',
-            'form': {
-              'id': 'lactation_support_intake',
-              'title': '泌乳支持信息采集',
-              'fields': [
-                {
-                  'id': 'feeding_context',
-                  'label': '泌乳目标',
-                  'type': 'text',
-                  'required': true,
-                  'default_value': '32 周',
-                },
-              ],
-            },
-          },
-        }),
-      );
-      await _pumpFrames(tester, 2);
-      expect(
-        find.byKey(
-          const ValueKey('agent-artifact-form-entry-form-dialog-intake'),
-        ),
-        findsNothing,
-      );
-
-      client.emit(
-        0,
-        AgentStreamEvent(const {
-          'event_id': 'form-dialog-delta',
-          'type': 'message.delta',
-          'thread_id': 'thread-form-dialog',
-          'run_id': 'run-form-dialog',
-          'message_id': 'message-form-dialog',
-          'sequence': 2,
-          'payload': {'text': '我先说明一下，再请你补充信息。'},
-        }),
-      );
-      await _pumpFrames(tester, 2);
-      expect(find.text('我先说明一下，再请你补充信息。'), findsOneWidget);
-      expect(
-        find.byKey(
-          const ValueKey('agent-artifact-form-entry-form-dialog-intake'),
-        ),
-        findsNothing,
-      );
-      expect(
-        find.byKey(const ValueKey('agent-artifact-form-form-dialog-intake')),
-        findsNothing,
-      );
-
-      client.emit(
-        0,
-        AgentStreamEvent(const {
-          'event_id': 'form-dialog-completed',
-          'type': 'message.completed',
-          'thread_id': 'thread-form-dialog',
-          'run_id': 'run-form-dialog',
-          'message_id': 'message-form-dialog',
-          'sequence': 3,
-          'payload': {'role': 'assistant', 'content': '我先说明一下，再请你补充信息。'},
-        }),
-      );
-      await _pumpFrames(tester, 2);
-
-      expect(
-        find.byKey(
-          const ValueKey('agent-artifact-form-entry-form-dialog-intake'),
-        ),
-        findsOneWidget,
-      );
-      expect(
-        find.byKey(
-          const ValueKey(
-            'agent-artifact-form-entry-loading-form-dialog-intake',
-          ),
-        ),
-        findsOneWidget,
-      );
-      expect(
-        find.byKey(
-          const ValueKey('agent-artifact-form-dialog-form-dialog-intake'),
-        ),
-        findsNothing,
-      );
-
-      await tester.pump(const Duration(milliseconds: 999));
-      expect(
-        find.byKey(
-          const ValueKey('agent-artifact-form-dialog-form-dialog-intake'),
-        ),
-        findsNothing,
-      );
-      await tester.pump(const Duration(milliseconds: 1));
-      await tester.pump();
-      expect(
-        find.byKey(
-          const ValueKey('agent-artifact-form-dialog-form-dialog-intake'),
-        ),
-        findsOneWidget,
-      );
-
-      await tester.tap(
-        find.byKey(
-          const ValueKey('agent-artifact-form-cancel-form-dialog-intake'),
-        ),
-      );
-      await tester.pumpAndSettle();
-      expect(
-        find.byKey(
-          const ValueKey('agent-artifact-form-dialog-form-dialog-intake'),
-        ),
-        findsNothing,
-      );
-      await tester.pump(const Duration(seconds: 2));
-      expect(
-        find.byKey(
-          const ValueKey('agent-artifact-form-dialog-form-dialog-intake'),
-        ),
-        findsNothing,
-      );
-    },
-  );
-
-  testWidgets('cancelled form dialog keeps its draft for manual reopen', (
-    tester,
-  ) async {
-    var submitCount = 0;
-    const card = AgentArtifactCardView(
-      id: 'draft-form',
-      title: '泌乳支持信息采集',
-      description: '用于整理更适合你的泌乳支持计划。',
-      formId: 'lactation_support_intake',
-      presentationKind: AgentArtifactPresentationKind.form,
-      formFields: [
-        AgentArtifactFormFieldView(
-          id: 'support_goal',
-          label: '当前泌乳目标',
-          type: 'text',
-          required: true,
-          defaultValue: '建立规律记录',
-        ),
-      ],
-    );
-
-    await tester.pumpWidget(
-      _host(
-        AgentArtifactPanel(
-          cards: const [card],
-          onFormSubmit: (_) async {
-            submitCount += 1;
-            return true;
-          },
-        ),
-      ),
-    );
-
-    final entry = find.byKey(
-      const ValueKey('agent-artifact-form-entry-draft-form'),
-    );
-    expect(entry, findsOneWidget);
-    expect(
-      find.byKey(const ValueKey('agent-artifact-form-draft-form')),
-      findsNothing,
-    );
-
-    await tester.tap(entry);
-    await tester.pumpAndSettle();
-    final input = find.byKey(
-      const ValueKey('agent-artifact-form-input-draft-form-support_goal--1'),
-    );
-    expect(input, findsOneWidget);
-    await tester.enterText(input, '每天记录 4 次');
-    await tester.pump();
-    await tester.tap(
-      find.byKey(const ValueKey('agent-artifact-form-cancel-draft-form')),
-    );
-    await tester.pumpAndSettle();
-
-    expect(submitCount, 0);
-    expect(
-      find.byKey(const ValueKey('agent-artifact-form-dialog-draft-form')),
-      findsNothing,
-    );
-
-    await tester.tap(entry);
-    await tester.pumpAndSettle();
-    final reopenedInput = tester.widget<TextFormField>(
-      find.byKey(
-        const ValueKey('agent-artifact-form-input-draft-form-support_goal--1'),
-      ),
-    );
-    expect(
-      reopenedInput.controller?.text ?? reopenedInput.initialValue,
-      '每天记录 4 次',
-    );
-
-    await tester.enterText(input, '');
-    await tester.pump();
-    await tester.tap(
-      find.byKey(const ValueKey('agent-artifact-form-cancel-draft-form')),
-    );
-    await tester.pumpAndSettle();
-    await tester.tap(entry);
-    await tester.pumpAndSettle();
-    final clearedInput = tester.widget<TextFormField>(
-      find.byKey(
-        const ValueKey('agent-artifact-form-input-draft-form-support_goal--1'),
-      ),
-    );
-    expect(clearedInput.controller?.text ?? clearedInput.initialValue, isEmpty);
-  });
-
-  testWidgets(
-    'artifact form dialog blocks barrier and back dismissal while submitting',
-    (tester) async {
-      final attempts = <Completer<bool>>[];
-      const card = AgentArtifactCardView(
-        id: 'pending-form',
-        title: '信息采集',
-        presentationKind: AgentArtifactPresentationKind.form,
-        formId: 'lactation_support_intake',
-        formFields: [
-          AgentArtifactFormFieldView(
-            id: 'feeding_context',
-            label: '泌乳目标',
-            type: 'text',
-            required: true,
-            defaultValue: '建立规律记录',
-          ),
-        ],
-      );
-
-      await tester.pumpWidget(
-        _host(
-          AgentArtifactPanel(
-            cards: const [card],
-            onFormSubmit: (_) {
-              final attempt = Completer<bool>();
-              attempts.add(attempt);
-              return attempt.future;
-            },
-          ),
-        ),
-      );
-      await tester.tap(
-        find.byKey(const ValueKey('agent-artifact-form-entry-pending-form')),
-      );
-      await tester.pumpAndSettle();
-
-      final dialog = find.byKey(
-        const ValueKey('agent-artifact-form-dialog-pending-form'),
-      );
-      final submit = find.byKey(
-        const ValueKey('agent-artifact-form-submit-pending-form'),
-      );
-      await tester.tap(submit);
-      await tester.pump();
-      expect(attempts, hasLength(1));
-
-      await tester.tapAt(const Offset(2, 2));
-      await tester.pump();
-      expect(dialog, findsOneWidget);
-
-      await tester.binding.handlePopRoute();
-      await tester.pump();
-      expect(dialog, findsOneWidget);
-
-      attempts.single.complete(false);
-      await tester.pumpAndSettle();
-      expect(find.text('提交失败，请重试'), findsOneWidget);
-
-      await tester.tap(submit);
-      await tester.pump();
-      expect(attempts, hasLength(2));
-      attempts.last.complete(true);
-      await tester.pumpAndSettle();
-
-      expect(dialog, findsNothing);
-      expect(find.text('已提交，可点击查看'), findsOneWidget);
-    },
-  );
-
-  testWidgets('artifact form dialog scrolls validation feedback into view', (
-    tester,
-  ) async {
-    final card = AgentArtifactCardView(
-      id: 'long-required-form',
-      title: '恢复支持信息采集',
-      presentationKind: AgentArtifactPresentationKind.form,
-      formId: 'lactation_support_intake',
-      formFields: [
-        for (var index = 0; index < 12; index++)
-          AgentArtifactFormFieldView(
-            id: 'required_$index',
-            label: '基本信息｜必填字段 ${index + 1}',
-            type: 'text',
-            required: true,
-          ),
-      ],
-    );
-
-    await tester.pumpWidget(
-      _host(AgentArtifactPanel(cards: [card], onFormSubmit: (_) async => true)),
-    );
-    await tester.tap(
-      find.byKey(
-        const ValueKey('agent-artifact-form-entry-long-required-form'),
-      ),
-    );
-    await tester.pumpAndSettle();
-
-    final scrollView = find.byKey(
-      const ValueKey('agent-artifact-form-scroll-long-required-form'),
-    );
-    final scrollController = tester
-        .widget<SingleChildScrollView>(scrollView)
-        .controller!;
-    final position = scrollController.position;
-    expect(position.pixels, 0);
-    expect(position.maxScrollExtent, greaterThan(0));
-
-    await tester.tap(
-      find.byKey(
-        const ValueKey('agent-artifact-form-submit-long-required-form'),
-      ),
-    );
-    await tester.pumpAndSettle();
-
-    final error = find.byKey(
-      const ValueKey('agent-artifact-form-error-long-required-form'),
-    );
-    expect(error, findsOneWidget);
-    expect(scrollController.position.pixels, greaterThan(0));
-    final scrollRect = tester.getRect(scrollView);
-    final errorRect = tester.getRect(error);
-    expect(errorRect.top, greaterThanOrEqualTo(scrollRect.top));
-    expect(errorRect.bottom, lessThanOrEqualTo(scrollRect.bottom));
-  });
-
-  testWidgets(
-    'artifact form dialog stacks long actions on narrow large-text screens',
-    (tester) async {
-      tester.view.physicalSize = const Size(320, 640);
-      tester.view.devicePixelRatio = 1;
-      addTearDown(tester.view.resetPhysicalSize);
-      addTearDown(tester.view.resetDevicePixelRatio);
-      const card = AgentArtifactCardView(
-        id: 'responsive-form',
-        title: '恢复支持信息采集',
-        presentationKind: AgentArtifactPresentationKind.form,
-        formId: 'recovery_support_intake',
-        formSubmitLabel: '生成支持方案',
-        formFields: [
-          AgentArtifactFormFieldView(
-            id: 'support_context',
-            label: '主要支持场景',
-            type: 'text',
-            defaultValue: '居家恢复',
-          ),
-        ],
-      );
-
-      await tester.pumpWidget(
-        _host(
-          MediaQuery(
-            data: const MediaQueryData(
-              size: Size(320, 640),
-              textScaler: TextScaler.linear(1.6),
-            ),
-            child: AgentArtifactPanel(
-              cards: const [card],
-              onFormSubmit: (_) async => true,
-            ),
-          ),
-        ),
-      );
-      await tester.tap(
-        find.byKey(const ValueKey('agent-artifact-form-entry-responsive-form')),
-      );
-      await tester.pumpAndSettle();
-
-      expect(tester.takeException(), isNull);
-      final dialogRect = tester.getRect(
-        find.byKey(
-          const ValueKey('agent-artifact-form-dialog-responsive-form'),
-        ),
-      );
-      final cancelRect = tester.getRect(
-        find.byKey(
-          const ValueKey('agent-artifact-form-cancel-responsive-form'),
-        ),
-      );
-      final submitRect = tester.getRect(
-        find.byKey(
-          const ValueKey('agent-artifact-form-submit-responsive-form'),
-        ),
-      );
-      expect(submitRect.top, greaterThan(cancelRect.bottom));
-      expect(cancelRect.left, greaterThanOrEqualTo(dialogRect.left));
-      expect(submitRect.right, lessThanOrEqualTo(dialogRect.right));
-      expect(find.text('生成支持方案'), findsOneWidget);
-    },
-  );
-
-  testWidgets(
-    'Agent Hub resumes stream after action confirmation and keeps backend terminal status',
-    (tester) async {
-      const actionId = '33333333-3333-3333-3333-333333333333';
-      final connector = _RecordingActionConnector();
-      final streamClient = _FixtureAgentStreamClient([
-        AgentStreamEvent(const {
-          'event_id': 'evt-action-applied',
-          'type': 'action.applied',
-          'thread_id': 'thread-action',
-          'run_id': 'run-action',
-          'action_id': actionId,
-          'sequence': 3,
-          'payload': {
-            'status': 'applied',
-            'summary': '已提交给人工支持团队',
-            'preview_payload': {'title': '创建支持工单'},
-          },
-        }),
-        AgentStreamEvent(const {
-          'event_id': 'evt-action-final',
-          'type': 'message.delta',
-          'thread_id': 'thread-action',
-          'run_id': 'run-action',
-          'message_id': 'msg-action-final',
-          'sequence': 4,
-          'payload': {'text': '\n\n工单已经创建。'},
-        }),
-        AgentStreamEvent(const {
-          'event_id': 'evt-action-completed',
-          'type': 'message.completed',
-          'thread_id': 'thread-action',
-          'run_id': 'run-action',
-          'message_id': 'msg-action-final',
-          'sequence': 5,
-          'payload': {'role': 'assistant', 'text': '请确认是否创建支持工单。\n\n工单已经创建。'},
-        }),
-        AgentStreamEvent(const {
-          'event_id': 'evt-action-run-completed',
-          'type': 'run.completed',
-          'thread_id': 'thread-action',
-          'run_id': 'run-action',
-          'message_id': 'msg-action-final',
-          'sequence': 6,
-        }),
-      ]);
-      final actionClient = AgentStreamActionClient(
-        endpoint: AgentStreamEndpoint(
-          uri: Uri.parse('http://127.0.0.1:8769/v1/agent/actions'),
-          token: 'secret-token',
-        ),
-        connector: connector,
-      );
-
-      await tester.pumpWidget(
-        _host(
-          AgentHubPage(
-            state: AgentStreamRunState(
-              phase: AgentStreamRunPhase.waitingForConfirmation,
-              threadId: 'thread-action',
-              runId: 'run-action',
-              lastSequence: 2,
-              textContent: '请确认是否创建支持工单。',
-              events: [
-                AgentStreamEvent(const {
-                  'event_id': 'evt-action-required',
-                  'type': 'action.confirmation_required',
-                  'thread_id': 'thread-action',
-                  'run_id': 'run-action',
-                  'action_id': actionId,
-                  'sequence': 1,
-                  'payload': {
-                    'summary': '将当前问题提交给人工支持团队',
-                    'preview_payload': {'title': '创建支持工单'},
-                  },
-                }),
-                AgentStreamEvent(const {
-                  'event_id': 'evt-action-wait',
-                  'type': 'run.waiting_for_confirmation',
-                  'thread_id': 'thread-action',
-                  'run_id': 'run-action',
-                  'sequence': 2,
-                }),
-              ],
-            ),
-            runner: AgentStreamRunner(streamClient),
-            actionClient: actionClient,
-          ),
-        ),
-      );
-
-      await tester.tap(find.byKey(ValueKey('agent-action-confirm-$actionId')));
-      await connector.called.future;
-      await tester.pumpAndSettle();
-
-      expect(streamClient.requests.single.runId, 'run-action');
-      expect(streamClient.requests.single.threadId, 'thread-action');
-      expect(streamClient.requests.single.afterSequence, 2);
-      expect(find.textContaining('请确认是否创建支持工单。'), findsOneWidget);
-      expect(find.textContaining('工单已经创建。'), findsOneWidget);
-      expect(find.text('已应用'), findsOneWidget);
-      expect(find.text('已提交'), findsNothing);
-    },
-  );
-
   testWidgets('Agent Hub renders safe tool failure progress', (tester) async {
     await tester.pumpWidget(
       _host(
@@ -5737,796 +2841,6 @@ void main() {
     expect(find.textContaining('growth_record_query'), findsNothing);
     expect(find.textContaining('database timeout'), findsNothing);
     expect(find.textContaining('baby-secret'), findsNothing);
-  });
-
-  testWidgets('Agent Hub renders safe artifact cards from stream events', (
-    tester,
-  ) async {
-    final artifactEvent = AgentStreamEvent(
-      readFixtureMap('agent_events/rich_text_artifact.json'),
-    );
-
-    await tester.pumpWidget(
-      _host(
-        AgentHubPage(
-          state: AgentStreamRunState(
-            phase: AgentStreamRunPhase.finished,
-            textContent: 'I prepared a draft plan.',
-            events: [artifactEvent],
-          ),
-        ),
-      ),
-    );
-
-    expect(find.byKey(const ValueKey('agent-artifact-panel')), findsOneWidget);
-    expect(
-      find.byKey(const ValueKey('agent-artifact-card-care-note-001')),
-      findsOneWidget,
-    );
-    expect(find.text('Care note'), findsOneWidget);
-    expect(find.text('Ready'), findsOneWidget);
-    expect(
-      find.text('A concise note generated from a safe artifact payload.'),
-      findsOneWidget,
-    );
-    expect(find.text('Review the device status'), findsOneWidget);
-    expect(find.text('Open the next step when ready'), findsOneWidget);
-    expect(find.text('打开结果卡片'), findsOneWidget);
-    expect(find.textContaining('{"'), findsNothing);
-
-    await tester.tap(
-      find.byKey(const ValueKey('agent-artifact-action-care-note-001-0')),
-    );
-    await tester.pump();
-  });
-
-  testWidgets('Agent Hub renders cards from indexed reducer events', (
-    tester,
-  ) async {
-    final artifactEvent = AgentStreamEvent(
-      readFixtureMap('agent_events/rich_text_artifact.json'),
-    );
-    final actionEvent = AgentStreamEvent(const {
-      'type': 'action.confirmation_required',
-      'action_id': 'action-indexed-001',
-      'payload': {
-        'action_id': 'action-indexed-001',
-        'action_status': 'confirmation_required',
-        'preview_payload': {'title': '确认索引动作'},
-      },
-    });
-
-    await tester.pumpWidget(
-      _host(
-        AgentHubPage(
-          state: AgentStreamRunState(
-            phase: AgentStreamRunPhase.finished,
-            textContent: 'I prepared indexed cards.',
-            artifactEvents: {'care-note-001': artifactEvent},
-            actionEvents: {'action-indexed-001': actionEvent},
-          ),
-        ),
-      ),
-    );
-
-    expect(find.byKey(const ValueKey('agent-artifact-panel')), findsOneWidget);
-    expect(
-      find.byKey(const ValueKey('agent-artifact-card-care-note-001')),
-      findsOneWidget,
-    );
-    expect(find.byKey(const ValueKey('agent-action-panel')), findsOneWidget);
-    expect(find.text('确认索引动作'), findsOneWidget);
-  });
-
-  testWidgets(
-    'Agent Hub submits a support ticket without a second confirmation',
-    (tester) async {
-      final client = _ControllableAgentStreamClient();
-      addTearDown(client.dispose);
-      final submissions = <SupportTicketSubmitRequest>[];
-      final ticketEvent = AgentStreamEvent({
-        'type': 'artifact.created',
-        'payload': {
-          'artifact_id': 'support-ticket-1',
-          'artifact_type': 'support_ticket_draft',
-          'schema_version': '1.0',
-          'status': 'created',
-          'artifact': {
-            'id': 'support-ticket-1',
-            'artifact_type': 'support_ticket_draft',
-            'schema_version': '1.0',
-            'status': 'created',
-            'payload': {
-              'tool_name': 'support.ticket.propose',
-              'submit_label': '确认并提交',
-              'ticket': {
-                'issue_type': 'malfunction',
-                'issue_summary': '吸奶器无法启动',
-                'product_model': 'Air1',
-                'order_number': 'MC123',
-                'purchase_channel': '官网',
-                'urgency': 'normal',
-              },
-            },
-          },
-        },
-      });
-
-      await tester.pumpWidget(
-        _host(
-          AgentHubPage(
-            runner: AgentStreamRunner(client),
-            supportTicketSubmitter: (request) async {
-              submissions.add(request);
-              return const SupportTicketSubmitResult(
-                ticketNumber: 'MC-123',
-                status: 'open',
-              );
-            },
-            state: AgentStreamRunState(
-              phase: AgentStreamRunPhase.finished,
-              threadId: 'thread-support-ticket',
-              textContent: '请确认售后信息。',
-              events: [ticketEvent],
-            ),
-          ),
-        ),
-      );
-
-      expect(find.text('售后工单'), findsOneWidget);
-      await tester.tap(
-        find.byKey(
-          const ValueKey('agent-artifact-form-entry-support-ticket-1'),
-        ),
-      );
-      await tester.pumpAndSettle();
-      expect(find.text('问题类型'), findsOneWidget);
-      expect(find.text('问题描述'), findsOneWidget);
-      expect(find.text('产品型号'), findsOneWidget);
-      expect(find.text('订单号'), findsOneWidget);
-      expect(find.text('购买渠道'), findsOneWidget);
-      expect(find.text('紧急程度'), findsOneWidget);
-
-      final submit = find.byKey(
-        const ValueKey('agent-artifact-form-submit-support-ticket-1'),
-      );
-      await tester.ensureVisible(submit);
-      await tester.pumpAndSettle();
-      await tester.tap(submit);
-      await tester.pumpAndSettle();
-
-      expect(client.requests, isEmpty);
-      expect(submissions, hasLength(1));
-      expect(submissions.single.artifactId, 'support-ticket-1');
-      expect(submissions.single.threadId, 'thread-support-ticket');
-      expect(submissions.single.values['issue_summary'], '吸奶器无法启动');
-      expect(
-        submissions.single.idempotencyKey,
-        startsWith('agent-form-submit-'),
-      );
-      expect(find.text('已提交售后工单'), findsOneWidget);
-      expect(find.text('已提交，可点击查看'), findsOneWidget);
-      expect(find.text('信息已确认'), findsNothing);
-      expect(find.textContaining('人工客服团队会在 24 小时内主动联系你'), findsOneWidget);
-    },
-  );
-
-  testWidgets(
-    'Agent Hub keeps the support form retryable when submission fails',
-    (tester) async {
-      final client = _ControllableAgentStreamClient();
-      addTearDown(client.dispose);
-      final ticketEvent = AgentStreamEvent({
-        'type': 'artifact.created',
-        'artifact_id': 'support-ticket-failure',
-        'artifact_type': 'support_ticket_draft',
-        'submit_label': '确认并提交',
-        'ticket': {
-          'issue_type': 'malfunction',
-          'issue_summary': '吸奶器无法启动',
-          'product_model': 'Air1',
-          'urgency': 'normal',
-        },
-      });
-
-      await tester.pumpWidget(
-        _host(
-          AgentHubPage(
-            runner: AgentStreamRunner(client),
-            supportTicketSubmitter: (_) async => throw StateError('offline'),
-            state: AgentStreamRunState(
-              phase: AgentStreamRunPhase.finished,
-              textContent: '请确认售后信息。',
-              events: [ticketEvent],
-            ),
-          ),
-        ),
-      );
-
-      await tester.tap(
-        find.byKey(
-          const ValueKey('agent-artifact-form-entry-support-ticket-failure'),
-        ),
-      );
-      await tester.pumpAndSettle();
-      final submit = find.byKey(
-        const ValueKey('agent-artifact-form-submit-support-ticket-failure'),
-      );
-      await tester.ensureVisible(submit);
-      await tester.pumpAndSettle();
-      await tester.tap(submit);
-      await tester.pumpAndSettle();
-
-      expect(client.requests, isEmpty);
-      expect(find.text('提交失败，请重试'), findsOneWidget);
-      expect(find.text('确认并提交'), findsOneWidget);
-      expect(find.text('已提交售后工单'), findsNothing);
-    },
-  );
-
-  testWidgets(
-    'Agent Hub aligns grouped artifact form defaults other input and submit lock',
-    (tester) async {
-      final actions = <AgentArtifactActionView>[];
-      final card = AgentArtifactCardView(
-        id: 'form-alignment',
-        title: '信息采集',
-        formId: 'lactation_support_intake',
-        formFields: [
-          const AgentArtifactFormFieldView(
-            id: 'feeding_context',
-            label: '基本信息｜泌乳目标',
-            type: 'text',
-            required: true,
-            defaultValue: '建立规律记录',
-            helpText: '请填写当前最关注的泌乳目标。',
-          ),
-          const AgentArtifactFormFieldView(
-            id: 'support_preferences',
-            label: '偏好信息｜支持方式',
-            type: 'checkbox_group',
-            required: true,
-            options: ['图文指导', '提醒', '其他'],
-            allowOtherInput: true,
-            otherPlaceholder: '请写明需要补充的信息',
-            defaultValue: ['其他'],
-          ),
-        ],
-      );
-
-      await tester.pumpWidget(
-        _host(
-          SingleChildScrollView(
-            child: AgentArtifactPanel(cards: [card], onAction: actions.add),
-          ),
-        ),
-      );
-
-      await tester.tap(
-        find.byKey(const ValueKey('agent-artifact-form-entry-form-alignment')),
-      );
-      await tester.pumpAndSettle();
-      expect(find.text('基本信息'), findsOneWidget);
-      expect(find.text('偏好信息'), findsOneWidget);
-      expect(find.text('泌乳目标'), findsOneWidget);
-      expect(find.text('支持方式'), findsOneWidget);
-      expect(find.text('基本信息｜泌乳目标'), findsNothing);
-      expect(find.text('建立规律记录'), findsOneWidget);
-      expect(find.text('请填写当前最关注的泌乳目标。'), findsOneWidget);
-      expect(find.text('结果卡片'), findsNothing);
-      final otherFinder = find.byKey(
-        const ValueKey(
-          'agent-artifact-form-other-form-alignment-support_preferences',
-        ),
-      );
-      expect(otherFinder, findsOneWidget);
-
-      final submitFinder = find.byKey(
-        const ValueKey('agent-artifact-form-submit-form-alignment'),
-      );
-      await tester.ensureVisible(submitFinder);
-      await tester.pump();
-      await tester.tap(submitFinder);
-      await tester.pump();
-
-      expect(actions, isEmpty);
-      expect(find.text('请填写：支持方式的其它内容'), findsOneWidget);
-
-      await tester.enterText(otherFinder, '希望每天提醒');
-      await tester.pump();
-      await tester.ensureVisible(submitFinder);
-      await tester.pump();
-      await tester.tap(submitFinder);
-      await tester.pump();
-
-      expect(actions, hasLength(1));
-      expect(actions.single.value, contains('"feeding_context":"建立规律记录"'));
-      expect(
-        actions.single.value,
-        contains('"support_preferences":["其它：希望每天提醒"]'),
-      );
-      expect(find.text('已提交，可点击查看'), findsOneWidget);
-    },
-  );
-
-  testWidgets(
-    'Agent artifact form stays editable when submission is rejected',
-    (tester) async {
-      var attempts = 0;
-      const card = AgentArtifactCardView(
-        id: 'retryable-form',
-        title: '信息采集',
-        formId: 'lactation_support_intake',
-        presentationKind: AgentArtifactPresentationKind.form,
-        formFields: [
-          AgentArtifactFormFieldView(
-            id: 'feeding_context',
-            label: '基本信息｜泌乳目标',
-            type: 'text',
-            required: true,
-            defaultValue: '建立规律记录',
-          ),
-        ],
-      );
-
-      await tester.pumpWidget(
-        _host(
-          SizedBox(
-            width: 360,
-            child: AgentArtifactPanel(
-              cards: const [card],
-              onFormSubmit: (_) async {
-                attempts += 1;
-                return attempts > 1;
-              },
-            ),
-          ),
-        ),
-      );
-
-      await tester.tap(
-        find.byKey(const ValueKey('agent-artifact-form-entry-retryable-form')),
-      );
-      await tester.pumpAndSettle();
-      final submitFinder = find.byKey(
-        const ValueKey('agent-artifact-form-submit-retryable-form'),
-      );
-      expect(tester.getSize(submitFinder).height, greaterThanOrEqualTo(44));
-
-      await tester.tap(submitFinder);
-      await tester.pumpAndSettle();
-
-      expect(attempts, 1);
-      expect(find.text('提交失败，请重试'), findsOneWidget);
-      expect(find.text('已提交'), findsNothing);
-
-      await tester.tap(submitFinder);
-      await tester.pumpAndSettle();
-
-      expect(attempts, 2);
-      expect(find.text('已提交，可点击查看'), findsOneWidget);
-    },
-  );
-
-  testWidgets('Agent Hub restores form editing when run creation fails', (
-    tester,
-  ) async {
-    final client = _FailingAgentStreamClient(StateError('run rejected'));
-    final formEvent = AgentStreamEvent({
-      'type': 'artifact.created',
-      'artifact_id': 'retryable-run-form',
-      'payload': {
-        'artifact_type': 'form',
-        'form': {
-          'id': 'lactation_support_intake',
-          'title': '信息采集',
-          'fields': [
-            {
-              'id': 'feeding_context',
-              'label': '泌乳目标',
-              'type': 'text',
-              'required': true,
-              'default': '建立规律记录',
-            },
-          ],
-        },
-      },
-    });
-
-    await tester.pumpWidget(
-      _host(
-        AgentHubPage(
-          runner: AgentStreamRunner(client),
-          state: AgentStreamRunState(
-            phase: AgentStreamRunPhase.finished,
-            textContent: '请确认信息。',
-            events: [formEvent],
-          ),
-        ),
-      ),
-    );
-
-    await tester.tap(
-      find.byKey(
-        const ValueKey('agent-artifact-form-entry-retryable-run-form'),
-      ),
-    );
-    await tester.pumpAndSettle();
-    final submitFinder = find.byKey(
-      const ValueKey('agent-artifact-form-submit-retryable-run-form'),
-    );
-    await tester.enterText(
-      find.descendant(
-        of: find.byKey(
-          const ValueKey('agent-artifact-form-retryable-run-form'),
-        ),
-        matching: find.byType(TextFormField),
-      ),
-      '38 周',
-    );
-    await tester.ensureVisible(submitFinder);
-    await tester.tap(submitFinder);
-    await tester.pumpAndSettle();
-
-    expect(client.requests, hasLength(1));
-    expect(find.text('已提交'), findsNothing);
-    expect(tester.widget<FilledButton>(submitFinder).onPressed, isNotNull);
-  });
-
-  testWidgets('Agent Hub treats legacy checkbox_group fields as multi-select', (
-    tester,
-  ) async {
-    final client = _ControllableAgentStreamClient();
-    addTearDown(client.dispose);
-    final formEvent = AgentStreamEvent({
-      'type': 'artifact.created',
-      'thread_id': 'thread-checkbox-group',
-      'run_id': 'run-checkbox-group',
-      'artifact_id': 'packing-form',
-      'payload': {
-        'artifact_type': 'form',
-        'form': {
-          'id': 'packing_intake',
-          'title': '泌乳用品偏好',
-          'fields': [
-            {
-              'id': 'packing_items',
-              'label': '想加入的物品',
-              'type': 'checkbox_group',
-              'required': true,
-              'options': ['储奶袋', '乳垫', '清洁刷'],
-            },
-          ],
-        },
-      },
-    });
-
-    await tester.pumpWidget(
-      _host(
-        AgentHubPage(
-          runner: AgentStreamRunner(client),
-          state: AgentStreamRunState(
-            phase: AgentStreamRunPhase.finished,
-            textContent: '请选择需要的泌乳用品。',
-            events: [formEvent],
-          ),
-        ),
-      ),
-    );
-
-    await tester.tap(
-      find.byKey(const ValueKey('agent-artifact-form-entry-packing-form')),
-    );
-    await tester.pumpAndSettle();
-    expect(find.text('储奶袋'), findsOneWidget);
-    expect(find.text('乳垫'), findsOneWidget);
-    expect(find.byType(ChoiceChip), findsNothing);
-    expect(find.byType(Checkbox), findsNWidgets(3));
-
-    await tester.tap(find.text('储奶袋'));
-    await tester.pump();
-    await tester.tap(find.text('乳垫'));
-    await tester.pump();
-    await tester.tap(
-      find.byKey(const ValueKey('agent-artifact-form-submit-packing-form')),
-    );
-    await tester.pump();
-
-    expect(client.requests, hasLength(1));
-    final submission =
-        client.requests.single.metadata['form_submission']!
-            as Map<String, Object?>;
-    expect(submission['values'], {
-      'packing_items': ['储奶袋', '乳垫'],
-    });
-  });
-
-  testWidgets('Agent Hub renders rich text card rows and button actions', (
-    tester,
-  ) async {
-    final actions = <AgentArtifactActionView>[];
-    final artifactEvent = AgentStreamEvent({
-      'type': 'artifact.created',
-      'thread_id': 'thread-resource',
-      'run_id': 'run-resource',
-      'message_id': 'msg-resource',
-      'artifact_id': 'resource-card',
-      'payload': {
-        'artifact_type': 'rich_text',
-        'rich_text': {
-          'title': '资源',
-          'content': '可以打开这些资料。',
-          'button': [
-            {
-              'text': '打开文档',
-              'type': 'doc',
-              'value': '/v1/assets/asset-doc?kind=pdf',
-            },
-            {
-              'text': '查看图片',
-              'type': 'media',
-              'value': '/v1/assets/asset-image?kind=image',
-            },
-          ],
-          'card': [
-            {
-              'title': '参考',
-              'content': [
-                {'title': '指南', 'content': '泵奶姿势'},
-              ],
-            },
-          ],
-        },
-      },
-    });
-
-    await tester.pumpWidget(
-      _host(
-        AgentHubPage(
-          state: AgentStreamRunState(
-            phase: AgentStreamRunPhase.finished,
-            textContent: '这些资源可以参考。',
-            events: [artifactEvent],
-          ),
-          onArtifactAction: actions.add,
-        ),
-      ),
-    );
-
-    expect(find.byKey(const ValueKey('agent-artifact-panel')), findsOneWidget);
-    expect(
-      find.byKey(const ValueKey('agent-artifact-card-resource-card')),
-      findsOneWidget,
-    );
-    expect(find.text('资源'), findsOneWidget);
-    expect(find.text('可以打开这些资料。'), findsOneWidget);
-    expect(find.text('参考'), findsOneWidget);
-    expect(find.text('指南: 泵奶姿势'), findsOneWidget);
-    expect(find.text('打开文档'), findsOneWidget);
-    expect(find.text('查看图片'), findsOneWidget);
-
-    await tester.tap(
-      find.byKey(const ValueKey('agent-artifact-action-resource-card-0')),
-    );
-    await tester.pump();
-
-    expect(actions.single.kind, 'doc');
-    expect(actions.single.value, '/v1/assets/asset-doc?kind=pdf');
-    expect(actions.single.routePath, '/media-viewer');
-    expect(actions.single.routeExtra, {
-      'kind': 'pdf',
-      'url': '/v1/assets/asset-doc?kind=pdf',
-      'title': '打开文档',
-    });
-
-    await tester.tap(
-      find.byKey(const ValueKey('agent-artifact-action-resource-card-1')),
-    );
-    await tester.pump();
-
-    expect(actions.last.kind, 'media');
-    expect(actions.last.value, '/v1/assets/asset-image?kind=image');
-    expect(actions.last.routePath, '/media-viewer');
-    expect(actions.last.routeExtra, {
-      'kind': 'image',
-      'url': '/v1/assets/asset-image?kind=image',
-      'title': '查看图片',
-    });
-  });
-
-  testWidgets('Agent Hub renders citation and reference links safely', (
-    tester,
-  ) async {
-    final actions = <AgentArtifactActionView>[];
-    final artifactEvent = AgentStreamEvent({
-      'type': 'artifact.created',
-      'thread_id': 'thread-citation',
-      'run_id': 'run-citation',
-      'message_id': 'msg-citation',
-      'artifact_id': 'citation-card',
-      'payload': {
-        'artifact_type': 'rich_text',
-        'rich_text': {
-          'title': '参考资料',
-          'content': '这些资料可以作为进一步阅读。',
-          'citations': [
-            {
-              'index': 1,
-              'title': 'CDC Breastfeeding',
-              'url': 'https://www.cdc.gov/breastfeeding/mastitis',
-            },
-            {'displayText': 'ABM Protocol', 'href': '/guides/abm.pdf'},
-            {'title': '危险来源', 'url': 'javascript:alert(1)'},
-          ],
-        },
-      },
-    });
-
-    await tester.pumpWidget(
-      _host(
-        AgentHubPage(
-          state: AgentStreamRunState(
-            phase: AgentStreamRunPhase.finished,
-            textContent: '我找到两条参考资料。',
-            events: [artifactEvent],
-          ),
-          onArtifactAction: actions.add,
-        ),
-      ),
-    );
-
-    expect(find.text('[1] CDC Breastfeeding'), findsOneWidget);
-    expect(find.text('ABM Protocol'), findsOneWidget);
-    expect(find.textContaining('https://www.cdc.gov'), findsNothing);
-    expect(find.textContaining('/guides/abm.pdf'), findsNothing);
-    expect(find.text('危险来源'), findsNothing);
-
-    await tester.tap(
-      find.byKey(const ValueKey('agent-artifact-action-citation-card-0')),
-    );
-    await tester.pump();
-
-    expect(actions.single.kind, 'citation');
-    expect(actions.single.value, 'https://www.cdc.gov/breastfeeding/mastitis');
-    expect(actions.single.routePath, isNull);
-    expect(
-      actions.single.externalUri,
-      Uri.parse('https://www.cdc.gov/breastfeeding/mastitis'),
-    );
-  });
-
-  testWidgets('Agent Hub renders web search citations consistently', (
-    tester,
-  ) async {
-    final actions = <AgentArtifactActionView>[];
-    final citationEvent = AgentStreamEvent({
-      'type': 'CUSTOM',
-      'name': 'momcozy.web_search.citations',
-      'message_id': 'assistant-citations',
-      'value': {
-        'citations': [
-          {
-            'url': 'https://www.cdc.gov/breastfeeding',
-            'title': 'CDC Breastfeeding',
-            'displayText': 'CDC 健康指南：cdc.gov/breastfeeding',
-          },
-          {
-            'url': 'https://www.who.int/health-topics/breastfeeding',
-            'title': 'WHO',
-          },
-        ],
-      },
-    });
-
-    await tester.pumpWidget(
-      _host(
-        AgentHubPage(
-          state: AgentStreamRunState(
-            phase: AgentStreamRunPhase.finished,
-            messageId: 'assistant-citations',
-            textContent:
-                '参考 [CDC](https://www.cdc.gov/breastfeeding)。\ncite turn1search5',
-            events: [citationEvent],
-          ),
-          onArtifactAction: actions.add,
-        ),
-      ),
-    );
-
-    expect(find.text('专业信息源'), findsOneWidget);
-    expect(find.text('CDC', findRichText: true), findsNothing);
-    expect(find.textContaining('turn1search5'), findsNothing);
-    expect(find.text('[1]', findRichText: true), findsWidgets);
-    expect(find.text('CDC 健康指南：cdc.gov/breastfeeding'), findsOneWidget);
-    expect(find.text('WHO 健康指南：who.int/health-topics/...'), findsOneWidget);
-
-    await tester.tap(find.byKey(const ValueKey('agent-citation-link-1')));
-    await tester.pump();
-
-    expect(actions, hasLength(1));
-    expect(actions.single.kind, 'citation');
-    expect(
-      actions.single.externalUri,
-      Uri.parse('https://www.cdc.gov/breastfeeding'),
-    );
-  });
-
-  testWidgets('Agent Hub dispatches safe markdown links only', (tester) async {
-    final actions = <AgentArtifactActionView>[];
-    const markdown = '''
-[查看护理资料](https://example.com/care)
-
-[打开 Me](/me?day=today)
-
-[危险链接](javascript:alert(1))
-''';
-
-    await tester.pumpWidget(
-      _host(
-        AgentHubPage(
-          state: const AgentStreamRunState(
-            phase: AgentStreamRunPhase.finished,
-            textContent: markdown,
-          ),
-          onArtifactAction: actions.add,
-        ),
-      ),
-    );
-
-    await tester.tap(find.text('查看护理资料', findRichText: true));
-    await tester.pump();
-    expect(actions.single.externalUri, Uri.parse('https://example.com/care'));
-    expect(actions.single.routePath, isNull);
-
-    await tester.tap(find.text('打开 Me', findRichText: true));
-    await tester.pump();
-    expect(actions.last.routePath, '/me');
-    expect(actions.last.value, '/me?day=today');
-    expect(actions.last.externalUri, isNull);
-
-    await tester.tap(find.text('危险链接', findRichText: true));
-    await tester.pump();
-    expect(actions, hasLength(2));
-  });
-
-  testWidgets('Agent Hub wraps long citations on narrow mobile', (
-    tester,
-  ) async {
-    tester.view.physicalSize = const Size(320, 640);
-    tester.view.devicePixelRatio = 1;
-    addTearDown(tester.view.resetPhysicalSize);
-    addTearDown(tester.view.resetDevicePixelRatio);
-    final citationEvent = AgentStreamEvent({
-      'type': 'CUSTOM',
-      'name': 'momcozy.web_search.citations',
-      'value': {
-        'citations': [
-          {
-            'url':
-                'https://www.ncbi.nlm.nih.gov/books/NBK501922/long-reference-path',
-            'title': 'NCBI',
-            'displayText':
-                '这是一条需要在窄屏上自然换行的专业医学资料：ncbi.nlm.nih.gov/books/NBK501922/long-reference-path',
-          },
-        ],
-      },
-    });
-
-    await tester.pumpWidget(
-      _host(
-        AgentHubPage(
-          state: AgentStreamRunState(
-            phase: AgentStreamRunPhase.finished,
-            textContent: '我整理好了参考来源。',
-            events: [citationEvent],
-          ),
-          onArtifactAction: (_) {},
-        ),
-      ),
-    );
-
-    expect(find.byKey(const ValueKey('agent-citation-list')), findsOneWidget);
-    expect(tester.takeException(), isNull);
   });
 
   testWidgets('Agent Hub wraps long content on compact mobile viewport', (
@@ -6582,7 +2896,7 @@ void main() {
 
     expect(tester.takeException(), isNull);
     expect(find.textContaining('今天的泵奶记录很多'), findsWidgets);
-    expect(find.text('长内容建议'), findsOneWidget);
+    expect(find.text('长内容建议'), findsNothing);
 
     await tester.drag(
       find.byKey(const ValueKey('agent-hub-page')),
@@ -6748,159 +3062,6 @@ milk_total: 120ml
     expect(find.text('正在整理', findRichText: true), findsOneWidget);
     expect(find.textContaining('重点', findRichText: true), findsOneWidget);
   });
-
-  testWidgets(
-    'Agent Hub renders product asset media links and opens viewer actions',
-    (tester) async {
-      final actions = <AgentArtifactActionView>[];
-      const imageUrl = '/v1/assets/asset-image?kind=image';
-      const pdfUrl = '/v1/assets/asset-pdf?kind=pdf';
-      const videoUrl = '/v1/assets/asset-video?kind=video';
-      const markdown =
-          '''
-先看 ![查看图片]($imageUrl)
-
-[打开 PDF]($pdfUrl)
-
-[打开视频]($videoUrl)
-
-''';
-
-      await tester.pumpWidget(
-        _host(
-          AgentHubPage(
-            state: const AgentStreamRunState(
-              phase: AgentStreamRunPhase.finished,
-              textContent: markdown,
-            ),
-            onArtifactAction: actions.add,
-          ),
-        ),
-      );
-
-      final imageFinder = find.byKey(
-        ValueKey('agent-markdown-image-$imageUrl'),
-      );
-      expect(imageFinder, findsOneWidget);
-      expect(find.text(imageUrl), findsNothing);
-
-      await tester.tap(imageFinder);
-      await tester.pump();
-
-      expect(actions.single.routePath, '/media-viewer');
-      expect(actions.single.routeExtra, {
-        'kind': 'image',
-        'url': imageUrl,
-        'title': '查看图片',
-      });
-
-      await tester.tap(find.text('打开 PDF', findRichText: true));
-      await tester.pump();
-
-      expect(actions.last.routePath, '/media-viewer');
-      expect(actions.last.routeExtra, {
-        'kind': 'pdf',
-        'url': pdfUrl,
-        'title': '打开 PDF',
-      });
-
-      await tester.tap(find.text('打开视频', findRichText: true));
-      await tester.pump();
-
-      expect(actions.last.routePath, '/media-viewer');
-      expect(actions.last.routeExtra, {
-        'kind': 'video',
-        'url': videoUrl,
-        'title': '打开视频',
-      });
-
-      expect(actions, hasLength(3));
-    },
-  );
-
-  testWidgets(
-    'Agent Hub degrades retired skill assets without network or viewer actions',
-    (tester) async {
-      final actions = <AgentArtifactActionView>[];
-      const legacyImage =
-          '/skill-assets/device-guidance/air1/images/legacy-guide.png';
-      const legacyPdf = '/skill-assets/device-guidance/air1/legacy-guide.pdf';
-      const unstableExternalImage = 'https://cdn.example.test/legacy-guide.png';
-      const markdown =
-          '''
-![Air1 对照图]($legacyImage)
-
-![外部临时图]($unstableExternalImage)
-
-[打开旧版说明书]($legacyPdf)
-''';
-
-      await tester.pumpWidget(
-        _host(
-          AgentHubPage(
-            state: AgentStreamRunState(
-              phase: AgentStreamRunPhase.finished,
-              textContent: markdown,
-              events: [
-                AgentStreamEvent({
-                  'type': 'artifact.created',
-                  'artifact_id': 'retired-media',
-                  'payload': {
-                    'artifact_type': 'rich_text',
-                    'rich_text': {
-                      'title': '旧版资料',
-                      'button': [
-                        {'text': '打开旧版资料卡', 'type': 'doc', 'value': legacyPdf},
-                      ],
-                    },
-                  },
-                }),
-              ],
-            ),
-            onArtifactAction: actions.add,
-          ),
-        ),
-      );
-
-      final imageFinder = find.byKey(
-        const ValueKey('agent-markdown-image-$legacyImage'),
-      );
-      expect(imageFinder, findsOneWidget);
-      expect(
-        find.descendant(of: imageFinder, matching: find.byType(Image)),
-        findsNothing,
-      );
-      expect(
-        find.descendant(
-          of: imageFinder,
-          matching: find.byType(ProductAssetImage),
-        ),
-        findsNothing,
-      );
-      final externalImageFinder = find.byKey(
-        const ValueKey('agent-markdown-image-$unstableExternalImage'),
-      );
-      expect(externalImageFinder, findsOneWidget);
-      expect(
-        find.descendant(of: externalImageFinder, matching: find.byType(Image)),
-        findsNothing,
-      );
-      expect(find.text('图片暂不可用'), findsNWidgets(2));
-
-      await tester.tap(imageFinder);
-      await tester.pump();
-      await tester.tap(externalImageFinder);
-      await tester.pump();
-      await tester.tap(find.text('打开旧版说明书', findRichText: true));
-      await tester.pump();
-      await tester.tap(
-        find.byKey(const ValueKey('agent-artifact-action-retired-media-0')),
-      );
-      await tester.pump();
-
-      expect(actions, isEmpty);
-    },
-  );
 
   testWidgets('Agent Hub status line uses progress events before final text', (
     tester,
@@ -7222,6 +3383,60 @@ milk_total: 120ml
     expect(thinkingPadding.padding, EdgeInsets.zero);
     expect(statusTextLeft, closeTo(thinkingTextLeft, 0.1));
   });
+
+  testWidgets(
+    'status stays inside avatar height and leaves no gap when hidden',
+    (tester) async {
+      for (final width in [320.0, 393.0]) {
+        tester.view.physicalSize = Size(width, 844);
+        tester.view.devicePixelRatio = 1;
+        await tester.pumpWidget(
+          _host(
+            const AgentHubPage(
+              state: AgentStreamRunState(
+                phase: AgentStreamRunPhase.streaming,
+                textContent: '正在整理今天的记录。',
+              ),
+            ),
+          ),
+        );
+        await tester.pump();
+        final avatar = tester.getRect(
+          find.byKey(const ValueKey('agent-assistant-avatar')),
+        );
+        final title = tester.getRect(find.text('正在组织答案～'));
+        expect(title.top, greaterThanOrEqualTo(avatar.top));
+        expect(title.bottom, lessThanOrEqualTo(avatar.bottom));
+        expect(title.center.dy, closeTo(avatar.center.dy, 0.1));
+        await tester.pumpWidget(
+          _host(
+            const AgentHubPage(
+              state: AgentStreamRunState(
+                phase: AgentStreamRunPhase.finished,
+                textContent: '今天的记录整理好了。',
+              ),
+            ),
+          ),
+        );
+        await tester.pump();
+        expect(
+          find.byKey(const ValueKey('agent-run-status-line')),
+          findsNothing,
+        );
+        final bubble = tester.getRect(
+          find.byKey(const ValueKey('agent-assistant-bubble')),
+        );
+        final finishedAvatar = tester.getRect(
+          find.byKey(const ValueKey('agent-assistant-avatar')),
+        );
+        expect(bubble.top, closeTo(finishedAvatar.top, 0.1));
+        expect(tester.takeException(), isNull);
+        await tester.pumpWidget(const SizedBox());
+      }
+      tester.view.resetPhysicalSize();
+      tester.view.resetDevicePixelRatio();
+    },
+  );
 
   testWidgets('Agent thinking note stays event-driven until cleared', (
     tester,
@@ -7631,28 +3846,6 @@ milk_total: 120ml
   });
 }
 
-AgentStreamEvent _productionArtifactEvent({
-  required String id,
-  required String type,
-  required Map<String, Object?> payload,
-}) {
-  return AgentStreamEvent({
-    'type': 'artifact.created',
-    'artifact_id': id,
-    'payload': {
-      'artifact_id': id,
-      'artifact_type': type,
-      'schema_version': 'v1',
-      'artifact': {
-        'id': id,
-        'artifact_type': type,
-        'schema_version': 'v1',
-        'payload': payload,
-      },
-    },
-  });
-}
-
 Widget _host(Widget child, {bool tickersEnabled = false}) {
   return TickerMode(
     enabled: tickersEnabled,
@@ -7759,15 +3952,13 @@ AgentConversationHistory _conversationHistory(AgentStreamRunState state) {
 }
 
 class _SequencedConversationRepository implements AgentConversationRepository {
+  @override
+  Future<AgentConversationHistory?> loadLatestConversation() async => null;
+
   _SequencedConversationRepository(this.histories);
 
   final List<AgentConversationHistory> histories;
   int loadCalls = 0;
-
-  @override
-  Future<List<AgentConversationSummary>> listConversations({
-    int limit = 50,
-  }) async => const [];
 
   @override
   Future<AgentConversationHistory> loadConversation(
@@ -7843,22 +4034,6 @@ class _DeferredAgentHubInteractionStateStore
   Future<void> clear() async {
     clearCount += 1;
   }
-}
-
-class _ThrowingAgentHubInteractionStateStore
-    implements AgentHubInteractionStateStore {
-  @override
-  Future<AgentHubInteractionSnapshot?> read() {
-    return Future<AgentHubInteractionSnapshot?>.error(
-      StateError('restore unavailable'),
-    );
-  }
-
-  @override
-  Future<void> write(AgentHubInteractionSnapshot snapshot) async {}
-
-  @override
-  Future<void> clear() async {}
 }
 
 class _NeverEndingAgentStreamClient implements AgentStreamClient {
@@ -8052,136 +4227,6 @@ class _DeferredCancelConnector implements AgentStreamControlHttpConnector {
   }
 }
 
-class _RecordingActionConnector implements AgentStreamControlHttpConnector {
-  _RecordingActionConnector({
-    this.response = const AgentStreamControlHttpResponse(
-      statusCode: 200,
-      body: '{}',
-    ),
-  });
-
-  final AgentStreamControlHttpResponse response;
-  final called = Completer<void>();
-  Uri? uri;
-  Map<String, String>? headers;
-  String? body;
-
-  @override
-  Future<AgentStreamControlHttpResponse> post(
-    Uri uri, {
-    required Map<String, String> headers,
-    required String body,
-    Duration? timeout,
-  }) async {
-    this.uri = uri;
-    this.headers = headers;
-    this.body = body;
-    if (!called.isCompleted) called.complete();
-    return response;
-  }
-}
-
-class _PageFakeVoicePlaybackPlayer implements AgentVoicePlaybackPlayer {
-  final playedTexts = <String>[];
-  final realtimeSessions = <_PageFakeVoiceRealtimePlaybackSession>[];
-  var stopCount = 0;
-  Completer<void>? _active;
-
-  @override
-  Future<void> playText(String text) {
-    playedTexts.add(text);
-    _active = Completer<void>();
-    return _active!.future;
-  }
-
-  @override
-  AgentVoiceRealtimePlaybackSession startRealtimeSession({
-    AgentVoiceMediaNarrationResolver? mediaNarrationResolver,
-  }) {
-    final session = _PageFakeVoiceRealtimePlaybackSession(
-      mediaNarrationResolver: mediaNarrationResolver,
-    );
-    realtimeSessions.add(session);
-    return session;
-  }
-
-  @override
-  Future<void> stop() async {
-    stopCount += 1;
-    complete();
-    for (final session in realtimeSessions.where(
-      (session) => !session.isDone,
-    )) {
-      await session.cancel();
-    }
-  }
-
-  void complete() {
-    final active = _active;
-    if (active != null && !active.isCompleted) {
-      active.complete();
-    }
-  }
-}
-
-class _PageFakeVoiceRealtimePlaybackSession
-    implements AgentVoiceRealtimePlaybackSession {
-  _PageFakeVoiceRealtimePlaybackSession({this.mediaNarrationResolver})
-    : _textFilter = AgentVoiceTextStreamFilter(
-        mediaNarrationResolver: mediaNarrationResolver,
-      );
-
-  final AgentVoiceMediaNarrationResolver? mediaNarrationResolver;
-  final AgentVoiceTextStreamFilter _textFilter;
-  final appendedTexts = <String>[];
-  final filteredTexts = <String>[];
-  var flushCount = 0;
-  var finishCount = 0;
-  var cancelCount = 0;
-  final Completer<void> _done = Completer<void>();
-
-  bool get isDone => _done.isCompleted;
-
-  @override
-  Future<void> get done => _done.future;
-
-  @override
-  void append(String delta) {
-    appendedTexts.add(delta);
-    _recordFiltered(_textFilter.push(delta));
-  }
-
-  @override
-  void flush() {
-    flushCount += 1;
-    _recordFiltered(_textFilter.flush());
-  }
-
-  @override
-  void finish() {
-    finishCount += 1;
-    _recordFiltered(_textFilter.flush());
-  }
-
-  @override
-  Future<void> cancel() async {
-    cancelCount += 1;
-    complete();
-  }
-
-  void complete() {
-    if (!_done.isCompleted) _done.complete();
-  }
-
-  void fail(Object error) {
-    if (!_done.isCompleted) _done.completeError(error);
-  }
-
-  void _recordFiltered(String text) {
-    if (text.isNotEmpty) filteredTexts.add(text);
-  }
-}
-
 class _FakeVideoPlayerPlatform extends VideoPlayerPlatform {
   var _nextPlayerId = 1;
   final createdAssets = <String>[];
@@ -8295,11 +4340,13 @@ class _FakeVideoPlayerPlatform extends VideoPlayerPlatform {
 }
 
 class _FakeAgentImageMediaRepository implements MediaRepository {
-  _FakeAgentImageMediaRepository({this.deleteFailure});
+  _FakeAgentImageMediaRepository({this.deleteFailure, this.deleteGate});
 
-  final Object? deleteFailure;
+  Object? deleteFailure;
+  Completer<void>? deleteGate;
   final uploadedFiles = <ApiUploadFile>[];
   final deletedFileIds = <String>[];
+  final deleteKeys = <String?>[];
 
   @override
   Future<UploadedMediaFile> uploadFile({
@@ -8322,6 +4369,8 @@ class _FakeAgentImageMediaRepository implements MediaRepository {
     String? idempotencyKey,
   }) async {
     deletedFileIds.add(fileId);
+    deleteKeys.add(idempotencyKey);
+    await deleteGate?.future;
     final failure = deleteFailure;
     if (failure != null) throw failure;
   }

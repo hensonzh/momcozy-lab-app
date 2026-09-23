@@ -1,0 +1,212 @@
+[
+  {
+    "state": "feeding",
+    "node": "622-1333",
+    "reference": "figma-622-1333.png",
+    "actual": "feeding.png",
+    "reference_crop": "0,0,393,596",
+    "actual_crop": "0,214,393,810",
+    "result": "compared",
+    "mean_absolute_channel_difference": 2.424934963653648
+  },
+  {
+    "state": "mental",
+    "node": "622-2740",
+    "reference": "figma-622-2740.png",
+    "actual": "mental.png",
+    "reference_crop": "0,0,393,424",
+    "actual_crop": "0,386,393,810",
+    "result": "compared",
+    "mean_absolute_channel_difference": 2.8771124393873926
+  },
+  {
+    "state": "growth",
+    "node": "622-3544",
+    "reference": "figma-622-3544.png",
+    "actual": "growth.png",
+    "reference_crop": "0,0,393,536",
+    "actual_crop": "0,274,393,810",
+    "result": "compared",
+    "mean_absolute_channel_difference": 2.275988062233363
+  },
+  {
+    "state": "stool",
+    "node": "622-3343",
+    "reference": "figma-622-3343.png",
+    "actual": "stool.png",
+    "reference_crop": "0,0,393,752",
+    "actual_crop": "0,58,393,810",
+    "result": "compared",
+    "mean_absolute_channel_difference": 2.4522009726959375
+  },
+  {
+    "state": "knowledge",
+    "node": "622-3946",
+    "reference": "figma-622-3946.png",
+    "actual": "knowledge.png",
+    "reference_crop": "0,0,393,489",
+    "actual_crop": "0,321,393,810",
+    "result": "compared",
+    "mean_absolute_channel_difference": 2.337333118253832
+  },
+  {
+    "state": "profile",
+    "node": "317-1120",
+    "reference": "figma-317-1120.png",
+    "actual": "profile.png",
+    "reference_crop": "0,0,393,810",
+    "actual_crop": "0,0,393,810",
+    "result": "compared",
+    "mean_absolute_channel_difference": 1.4973978785118167
+  },
+  {
+    "state": "profile-new",
+    "node": "317-1086",
+    "reference": "figma-317-1086.png",
+    "actual": "profile-new.png",
+    "reference_crop": "0,0,393,810",
+    "actual_crop": "0,0,393,810",
+    "result": "compared",
+    "mean_absolute_channel_difference": 1.6542455941947036
+  },
+  {
+    "state": "profile-edited",
+    "node": "317-1237",
+    "reference": "figma-317-1237.png",
+    "actual": "profile-edited.png",
+    "reference_crop": "0,0,393,810",
+    "actual_crop": "0,0,393,810",
+    "result": "compared",
+    "mean_absolute_channel_difference": 1.695610425240055
+  },
+  {
+    "state": "profile-saving",
+    "node": "317-1394",
+    "reference": "figma-317-1394.png",
+    "actual": "profile-saving.png",
+    "reference_crop": "0,0,393,810",
+    "actual_crop": "0,0,393,810",
+    "result": "compared",
+    "mean_absolute_channel_difference": 1.3105697441858029
+  },
+  {
+    "state": "profile-saved",
+    "node": "317-1275",
+    "reference": "figma-317-1275.png",
+    "actual": "profile-saved.png",
+    "reference_crop": "0,0,393,810",
+    "actual_crop": "0,0,393,810",
+    "result": "compared",
+    "mean_absolute_channel_difference": 2.179311825254715
+  },
+  {
+    "state": "profile-again",
+    "node": "317-1316",
+    "reference": "figma-317-1316.png",
+    "actual": "profile-again.png",
+    "reference_crop": "0,0,393,810",
+    "actual_crop": "0,0,393,810",
+    "result": "compared",
+    "mean_absolute_channel_difference": 2.3495931894574813
+  },
+  {
+    "state": "profile-long",
+    "node": "317-1470",
+    "reference": "figma-317-1470.png",
+    "actual": "profile-long.png",
+    "reference_crop": "0,0,393,810",
+    "actual_crop": "0,0,393,810",
+    "result": "compared",
+    "mean_absolute_channel_difference": 2.507752960763987
+  },
+  {
+    "state": "nursing",
+    "node": "330-1355",
+    "reference": "figma-330-1355.png",
+    "actual": "nursing.png",
+    "reference_crop": "0,0,393,602",
+    "actual_crop": "0,208,393,810",
+    "result": "compared",
+    "mean_absolute_channel_difference": 2.3002981297850815
+  },
+  {
+    "state": "incomplete",
+    "node": "330-1671",
+    "reference": "figma-330-1671.png",
+    "actual": "incomplete.png",
+    "reference_crop": "0,0,393,402",
+    "actual_crop": "0,408,393,810",
+    "result": "compared",
+    "mean_absolute_channel_difference": 2.303592301427553
+  },
+  {
+    "state": "saving",
+    "node": "330-1701",
+    "reference": "figma-330-1701.png",
+    "actual": "saving.png",
+    "reference_crop": "0,0,393,596",
+    "actual_crop": "0,214,393,810",
+    "result": "compared",
+    "mean_absolute_channel_difference": 1.9299884443078252
+  },
+  {
+    "state": "error",
+    "node": "330-1769",
+    "reference": "figma-330-1769.png",
+    "actual": "error.png",
+    "reference_crop": "0,0,393,658",
+    "actual_crop": "0,152,393,810",
+    "result": "compared",
+    "mean_absolute_channel_difference": 2.4275466561482477
+  },
+  {
+    "state": "selected",
+    "node": "330-1430",
+    "reference": "figma-330-1430.png",
+    "actual": "selected.png",
+    "reference_crop": "0,0,393,424",
+    "actual_crop": "0,386,393,810",
+    "result": "compared",
+    "mean_absolute_channel_difference": 2.8566241778289885
+  },
+  {
+    "state": "cross-tab",
+    "node": "693-4",
+    "reference": "figma-693-4.png",
+    "actual": "cross-tab.png",
+    "reference_crop": "0,0,393,424",
+    "actual_crop": "0,386,393,810",
+    "result": "compared",
+    "mean_absolute_channel_difference": 2.887690639653048
+  },
+  {
+    "state": "wet",
+    "node": "330-1454",
+    "reference": "figma-330-1454.png",
+    "actual": "wet.png",
+    "reference_crop": "0,0,393,366",
+    "actual_crop": "0,444,393,810",
+    "result": "compared",
+    "mean_absolute_channel_difference": 2.0960154247602625
+  },
+  {
+    "state": "switcher",
+    "node": "621-198",
+    "reference": "figma-621-198.png",
+    "actual": "switcher.png",
+    "reference_crop": "0,0,393,384",
+    "actual_crop": "0,426,393,810",
+    "result": "compared",
+    "mean_absolute_channel_difference": 2.5253724024597113
+  },
+  {
+    "state": "home",
+    "node": "326-1087",
+    "reference": "figma-326-1087.png",
+    "actual": "home.png",
+    "reference_crop": "0,0,390,1216",
+    "actual_crop": "0,0,390,1216",
+    "result": "compared",
+    "mean_absolute_channel_difference": 3.1563385627530365
+  }
+]

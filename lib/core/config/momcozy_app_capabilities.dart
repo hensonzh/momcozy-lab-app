@@ -3,7 +3,6 @@ class MomCozyAppCapabilities {
   const MomCozyAppCapabilities({
     this.onboardingGateEnabled = false,
     this.releaseResetEnabled = false,
-    this.agentConversationHistoryEnabled = false,
     this.extendedProductApiEnabled = false,
   });
 
@@ -16,10 +15,6 @@ class MomCozyAppCapabilities {
         'MOMCOZY_ENABLE_RELEASE_RESET',
         defaultValue: false,
       ),
-      agentConversationHistoryEnabled = const bool.fromEnvironment(
-        'MOMCOZY_ENABLE_AGENT_HISTORY',
-        defaultValue: false,
-      ),
       extendedProductApiEnabled = const bool.fromEnvironment(
         'MOMCOZY_ENABLE_EXTENDED_PRODUCT_API',
         defaultValue: false,
@@ -27,7 +22,6 @@ class MomCozyAppCapabilities {
 
   final bool onboardingGateEnabled;
   final bool releaseResetEnabled;
-  final bool agentConversationHistoryEnabled;
   final bool extendedProductApiEnabled;
 
   /// Resetting onboarding/session state is meaningful only when onboarding is

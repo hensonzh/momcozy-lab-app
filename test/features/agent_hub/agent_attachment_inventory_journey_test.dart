@@ -19,7 +19,6 @@ import 'package:momcozy_flutter_app/native/p0_platform_interfaces.dart';
 import 'package:momcozy_flutter_app/shared/design_system/momcozy_design_system.dart';
 import '../../support/mom_inventory_transport.dart';
 import '../../support/agent_attachment_inventory_transport.dart';
-import '../../support/fake_agent_voice.dart';
 import '../../support/momcozy_test_fonts.dart';
 
 void main() {
@@ -80,7 +79,7 @@ void main() {
           baseUri: Uri.parse('https://inventory.invalid/'),
           connector: transport,
         ),
-        agentVoicePlaybackPlayer: ImmediateAgentVoicePlaybackPlayer(),
+
         session: session,
         supportsSessionAutoRefresh: false,
         now: () => inventoryMomNow,
@@ -93,7 +92,7 @@ void main() {
       initialLocation: '/more',
       runtimeController: runtime,
       sessionStore: store,
-      agentHubBuilder: (context, uri, extra, voice) {
+      agentHubBuilder: (context, uri, extra) {
         final api = MomCozyRuntimeScope.of(context);
         return AgentHubPage(
           key: const ValueKey('inventory-agent-page'),
@@ -116,16 +115,13 @@ void main() {
               api.agentHubProfileRepository.fetchGreetingProfile,
           requestBuilder: (message) =>
               buildSessionAgentHubRequest(message, session: api.currentSession),
-          voicePlaybackCoordinator: voice,
-          voicePlaybackPlayer: api.agentVoicePlaybackPlayer,
+
           mediaRepository: api.mediaRepository,
           pickImage: transport.pickImage,
           pickDocument: transport.pickDocument,
           loadImageThumbnail: api.mediaContentRepository.loadImageThumbnail,
           loadImageContent: api.mediaContentRepository.loadImage,
           onApplicationEvent: api.handleAgentApplicationEvent,
-          onArtifactAction: (action) =>
-              dispatchAgentArtifactAction(context, action),
         );
       },
     );
@@ -358,27 +354,20 @@ void main() {
       await capture(
         tester,
         'image-remove-pending',
-        'Remove image → deletion pending and input locked',
+        'Remove image → preview removed immediately, cleanup runs in background',
       );
       deleteGate.complete();
       transport.deleteGate = null;
       await frame(tester);
-      expect(find.text('附件清理失败，已保留草稿，请重试。'), findsOneWidget);
+      expect(find.text('附件清理失败，已保留草稿，请重试。'), findsNothing);
       expect(
         find.byKey(const ValueKey('agent-image-attachment-0')),
-        findsOneWidget,
+        findsNothing,
       );
-      await capture(
-        tester,
-        'image-remove-failed',
-        'Deletion fails → image and draft retained with snackbar',
-      );
-      await dismissNotice(tester, 'image-remove-notice-dismissed');
+      expect(tester.widget<TextField>(input).enabled, isNot(false));
       transport.deleteStatus = 200;
-      await tap(
-        tester,
-        find.byKey(const ValueKey('agent-remove-image-button')),
-      );
+      await tester.pump(const Duration(seconds: 30));
+      await frame(tester);
       expect(transport.deleteRequests.length, 2);
       expect(transport.deleteKeys.toSet().length, 1);
       expect(
@@ -392,7 +381,7 @@ void main() {
       await capture(
         tester,
         'image-removed',
-        'Remove again → same idempotency key, image deleted, text draft preserved',
+        'Background retry → same idempotency key, text draft preserved',
       );
     });
 
@@ -618,48 +607,6 @@ void main() {
       );
     },
   );
-
-  testWidgets('inventory attachment new session cleanup retry', (tester) async {
-    await mount(tester);
-    await choose(tester, 'file');
-    await tester.enterText(input, 'Keep until cleanup succeeds');
-    transport.deleteStatus = 503;
-    await tap(tester, find.byTooltip('新建会话'));
-    expect(
-      find.byKey(const ValueKey('agent-file-attachment-0')),
-      findsOneWidget,
-    );
-    expect(
-      tester.widget<TextField>(input).controller!.text,
-      'Keep until cleanup succeeds',
-    );
-    await capture(
-      tester,
-      'new-cleanup-failed',
-      'New conversation → server cleanup failure retains PDF and draft',
-    );
-    await dismissNotice(tester, 'new-cleanup-notice-dismissed');
-    final gate = Completer<void>();
-    transport.deleteGate = gate;
-    transport.deleteStatus = 200;
-    await tap(tester, find.byTooltip('新建会话'));
-    await capture(
-      tester,
-      'new-cleanup-pending',
-      'Retry new conversation → deletion pending and controls disabled',
-    );
-    gate.complete();
-    transport.deleteGate = null;
-    await frame(tester);
-    expect(find.byKey(const ValueKey('agent-file-attachment-0')), findsNothing);
-    expect(tester.widget<TextField>(input).controller!.text, isEmpty);
-    expect(transport.deleteKeys.toSet().length, 1);
-    await capture(
-      tester,
-      'new-cleanup-completed',
-      'Cleanup succeeds → new conversation, no abandoned file or text draft',
-    );
-  });
 
   testWidgets('inventory attachment image upload failure and preview retry', (
     tester,

@@ -54,9 +54,9 @@ const babyKnowledgeArticles = <BabyKnowledgeTopic, KnowledgeArticle>{
   ),
   BabyKnowledgeTopic.diaper: KnowledgeArticle(
     title: "尿布里的连续变化，比单次印象更有信息",
-    summary: "尿湿次数、便便时间、颜色和性状分开记录，之后回看或与医生沟通时会更清楚。",
+    summary: "今日湿尿布数、今日便便次数、颜色和性状分开记录，与医生沟通时会更清楚。",
     points: [
-      "按次记录实际看到的尿湿或便便，不确定颜色或性状时不需要猜。",
+      "填写当天湿尿布和便便的总数，不确定颜色或性状时不需要猜。",
       "便便频率本来就可能有较大差异，连续变化通常比某一次更值得回看。",
       "若明确看到红色、灰白色，或已过最初胎便阶段仍是黑色，应尽快联系儿科医生确认。",
     ],

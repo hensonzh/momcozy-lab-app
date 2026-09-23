@@ -1,0 +1,990 @@
+{
+  "fileKey": "ePIoJkiMiXiug9ibpcgRbl",
+  "capturedOn": "2026-09-20",
+  "frames": [
+    {
+      "id": "327:2470",
+      "name": "Baby home / no-profile / 1x",
+      "parent": "A1 · 无宝宝资料",
+      "width": 390,
+      "height": 844,
+      "children": [
+        {
+          "id": "327:2471",
+          "name": "Scrollable page",
+          "x": 0,
+          "y": 0,
+          "width": 390,
+          "height": 247
+        },
+        {
+          "id": "691:2",
+          "name": "固定底部导航 / Baby",
+          "x": 0,
+          "y": 762,
+          "width": 390,
+          "height": 82
+        }
+      ]
+    },
+    {
+      "id": "327:1378",
+      "name": "Baby home / loading / 1x",
+      "parent": "A2 · 记录载入中",
+      "width": 390,
+      "height": 1153,
+      "children": [
+        {
+          "id": "327:1379",
+          "name": "Scrollable page",
+          "x": 0,
+          "y": 0,
+          "width": 390,
+          "height": 1071
+        },
+        {
+          "id": "691:40",
+          "name": "固定底部导航 / Baby",
+          "x": 0,
+          "y": 1071,
+          "width": 390,
+          "height": 82
+        }
+      ]
+    },
+    {
+      "id": "327:1086",
+      "name": "Baby home / empty / 1x",
+      "parent": "A3 · 首次空记录",
+      "width": 390,
+      "height": 1294,
+      "children": [
+        {
+          "id": "327:1087",
+          "name": "Scrollable page",
+          "x": 0,
+          "y": 0,
+          "width": 390,
+          "height": 1212
+        },
+        {
+          "id": "691:78",
+          "name": "固定底部导航 / Baby",
+          "x": 0,
+          "y": 1212,
+          "width": 390,
+          "height": 82
+        }
+      ]
+    },
+    {
+      "id": "326:1086",
+      "name": "Baby home / recorded / 1x",
+      "parent": "A4 · 已记录 / 日常首页",
+      "width": 390,
+      "height": 1298,
+      "children": [
+        {
+          "id": "326:1087",
+          "name": "Scrollable page",
+          "x": 0,
+          "y": 0,
+          "width": 390,
+          "height": 1216
+        },
+        {
+          "id": "691:116",
+          "name": "固定底部导航 / Baby",
+          "x": 0,
+          "y": 1216,
+          "width": 390,
+          "height": 82
+        }
+      ]
+    },
+    {
+      "id": "327:1912",
+      "name": "Baby home / missing / 1x",
+      "parent": "A5 · 资料缺失分支",
+      "width": 390,
+      "height": 1178,
+      "children": [
+        {
+          "id": "327:1913",
+          "name": "Scrollable page",
+          "x": 0,
+          "y": 0,
+          "width": 390,
+          "height": 1096
+        },
+        {
+          "id": "691:154",
+          "name": "固定底部导航 / Baby",
+          "x": 0,
+          "y": 1096,
+          "width": 390,
+          "height": 82
+        }
+      ]
+    },
+    {
+      "id": "327:2958",
+      "name": "Baby home / long-name / 1x",
+      "parent": "A6 · 长昵称边界",
+      "width": 390,
+      "height": 1294,
+      "children": [
+        {
+          "id": "327:2959",
+          "name": "Scrollable page",
+          "x": 0,
+          "y": 0,
+          "width": 390,
+          "height": 1212
+        },
+        {
+          "id": "691:192",
+          "name": "固定底部导航 / Baby",
+          "x": 0,
+          "y": 1212,
+          "width": 390,
+          "height": 82
+        }
+      ]
+    },
+    {
+      "id": "327:1632",
+      "name": "Baby home / error / 1x",
+      "parent": "A7 · 载入失败",
+      "width": 390,
+      "height": 1398,
+      "children": [
+        {
+          "id": "327:1633",
+          "name": "Scrollable page",
+          "x": 0,
+          "y": 0,
+          "width": 390,
+          "height": 1316
+        },
+        {
+          "id": "691:230",
+          "name": "固定底部导航 / Baby",
+          "x": 0,
+          "y": 1316,
+          "width": 390,
+          "height": 82
+        }
+      ]
+    },
+    {
+      "id": "327:2560",
+      "name": "Baby home / switcher / 1x",
+      "parent": "B1 · 切换宝宝",
+      "width": 393,
+      "height": 844,
+      "children": [
+        {
+          "id": "621:2",
+          "name": "页面背景 / 当前宝宝首页",
+          "x": 0,
+          "y": 0,
+          "width": 393,
+          "height": 844
+        },
+        {
+          "id": "621:197",
+          "name": "模态遮罩",
+          "x": 0,
+          "y": 0,
+          "width": 393,
+          "height": 844
+        },
+        {
+          "id": "680:5",
+          "name": "点击弹窗外关闭 / 遮罩触区",
+          "x": 0,
+          "y": 0,
+          "width": 393,
+          "height": 426
+        },
+        {
+          "id": "621:198",
+          "name": "完整底部弹层 / 固定标题与操作",
+          "x": 0,
+          "y": 426,
+          "width": 393,
+          "height": 418
+        }
+      ]
+    },
+    {
+      "id": "317:1086",
+      "name": "Baby profile / new / 1x",
+      "parent": "B2 · 添加宝宝 / 未填完整",
+      "width": 393,
+      "height": 844,
+      "children": [
+        {
+          "id": "317:1087",
+          "name": "BabyProfileEditor",
+          "x": 0,
+          "y": 24,
+          "width": 393,
+          "height": 786
+        },
+        {
+          "id": "622:1087",
+          "name": "底部安全区",
+          "x": 0,
+          "y": 810,
+          "width": 393,
+          "height": 34
+        }
+      ]
+    },
+    {
+      "id": "317:1120",
+      "name": "Baby profile / unchanged / 1x",
+      "parent": "B3 · 已有资料 / 未修改",
+      "width": 393,
+      "height": 844,
+      "children": [
+        {
+          "id": "317:1121",
+          "name": "BabyProfileEditor",
+          "x": 0,
+          "y": 24,
+          "width": 393,
+          "height": 786
+        },
+        {
+          "id": "622:2",
+          "name": "底部安全区",
+          "x": 0,
+          "y": 810,
+          "width": 393,
+          "height": 34
+        }
+      ]
+    },
+    {
+      "id": "317:1237",
+      "name": "Baby profile / edited / 1x",
+      "parent": "B4 · 已修改 / 可保存",
+      "width": 393,
+      "height": 844,
+      "children": [
+        {
+          "id": "317:1238",
+          "name": "BabyProfileEditor",
+          "x": 0,
+          "y": 24,
+          "width": 393,
+          "height": 786
+        },
+        {
+          "id": "622:1095",
+          "name": "底部安全区",
+          "x": 0,
+          "y": 810,
+          "width": 393,
+          "height": 34
+        }
+      ]
+    },
+    {
+      "id": "317:1394",
+      "name": "Baby profile / saving-snapshot / 1x",
+      "parent": "B5 · 保存中 / 表单锁定",
+      "width": 393,
+      "height": 844,
+      "children": [
+        {
+          "id": "317:1395",
+          "name": "BabyProfileEditor",
+          "x": 0,
+          "y": 24,
+          "width": 393,
+          "height": 786
+        },
+        {
+          "id": "622:1093",
+          "name": "底部安全区",
+          "x": 0,
+          "y": 810,
+          "width": 393,
+          "height": 34
+        }
+      ]
+    },
+    {
+      "id": "317:1275",
+      "name": "Baby profile / saved / 1x",
+      "parent": "B6 · 已保存",
+      "width": 393,
+      "height": 844,
+      "children": [
+        {
+          "id": "317:1276",
+          "name": "BabyProfileEditor",
+          "x": 0,
+          "y": 24,
+          "width": 393,
+          "height": 786
+        },
+        {
+          "id": "622:1099",
+          "name": "底部安全区",
+          "x": 0,
+          "y": 810,
+          "width": 393,
+          "height": 34
+        }
+      ]
+    },
+    {
+      "id": "317:1316",
+      "name": "Baby profile / new-unsaved-edits / 1x",
+      "parent": "B7 · 保存后再次修改",
+      "width": 393,
+      "height": 844,
+      "children": [
+        {
+          "id": "317:1317",
+          "name": "BabyProfileEditor",
+          "x": 0,
+          "y": 24,
+          "width": 393,
+          "height": 786
+        },
+        {
+          "id": "622:1101",
+          "name": "底部安全区",
+          "x": 0,
+          "y": 810,
+          "width": 393,
+          "height": 34
+        }
+      ]
+    },
+    {
+      "id": "317:1470",
+      "name": "Baby profile / long-name / 1x",
+      "parent": "B8 · 长昵称边界",
+      "width": 393,
+      "height": 844,
+      "children": [
+        {
+          "id": "317:1471",
+          "name": "BabyProfileEditor",
+          "x": 0,
+          "y": 24,
+          "width": 393,
+          "height": 786
+        },
+        {
+          "id": "622:1105",
+          "name": "底部安全区",
+          "x": 0,
+          "y": 810,
+          "width": 393,
+          "height": 34
+        }
+      ]
+    },
+    {
+      "id": "329:1199",
+      "name": "Baby editor / feeding / 1x",
+      "parent": "C1 · 瓶喂填写",
+      "width": 393,
+      "height": 844,
+      "children": [
+        {
+          "id": "622:1137",
+          "name": "页面背景 / 当前宝宝首页",
+          "x": 0,
+          "y": 0,
+          "width": 393,
+          "height": 844
+        },
+        {
+          "id": "622:1332",
+          "name": "模态遮罩",
+          "x": 0,
+          "y": 0,
+          "width": 393,
+          "height": 844
+        },
+        {
+          "id": "680:8",
+          "name": "点击弹窗外关闭 / 遮罩触区",
+          "x": 0,
+          "y": 0,
+          "width": 393,
+          "height": 214
+        },
+        {
+          "id": "622:1333",
+          "name": "完整底部弹层 / 固定标题与操作",
+          "x": 0,
+          "y": 214,
+          "width": 393,
+          "height": 630
+        }
+      ]
+    },
+    {
+      "id": "330:1355",
+      "name": "Baby editor / nursing / 1x",
+      "parent": "C2 · 亲喂填写",
+      "width": 393,
+      "height": 844,
+      "children": [
+        {
+          "id": "622:1338",
+          "name": "页面背景 / 当前宝宝首页",
+          "x": 0,
+          "y": 0,
+          "width": 393,
+          "height": 844
+        },
+        {
+          "id": "622:1533",
+          "name": "模态遮罩",
+          "x": 0,
+          "y": 0,
+          "width": 393,
+          "height": 844
+        },
+        {
+          "id": "680:11",
+          "name": "点击弹窗外关闭 / 遮罩触区",
+          "x": 0,
+          "y": 0,
+          "width": 393,
+          "height": 208
+        },
+        {
+          "id": "622:1534",
+          "name": "完整底部弹层 / 固定标题与操作",
+          "x": 0,
+          "y": 208,
+          "width": 393,
+          "height": 636
+        }
+      ]
+    },
+    {
+      "id": "330:1671",
+      "name": "Baby editor / feeding-required-incomplete / 1x",
+      "parent": "C3 · 必填未完整 / 保存禁用",
+      "width": 393,
+      "height": 844,
+      "children": [
+        {
+          "id": "622:1740",
+          "name": "页面背景 / 当前宝宝首页",
+          "x": 0,
+          "y": 0,
+          "width": 393,
+          "height": 844
+        },
+        {
+          "id": "622:1935",
+          "name": "模态遮罩",
+          "x": 0,
+          "y": 0,
+          "width": 393,
+          "height": 844
+        },
+        {
+          "id": "680:17",
+          "name": "点击弹窗外关闭 / 遮罩触区",
+          "x": 0,
+          "y": 0,
+          "width": 393,
+          "height": 408
+        },
+        {
+          "id": "622:1936",
+          "name": "完整底部弹层 / 固定标题与操作",
+          "x": 0,
+          "y": 408,
+          "width": 393,
+          "height": 436
+        }
+      ]
+    },
+    {
+      "id": "330:1701",
+      "name": "Baby editor / saving / 1x",
+      "parent": "C4 · 正在保存",
+      "width": 393,
+      "height": 844,
+      "children": [
+        {
+          "id": "622:1941",
+          "name": "页面背景 / 当前宝宝首页",
+          "x": 0,
+          "y": 0,
+          "width": 393,
+          "height": 844
+        },
+        {
+          "id": "622:2136",
+          "name": "模态遮罩",
+          "x": 0,
+          "y": 0,
+          "width": 393,
+          "height": 844
+        },
+        {
+          "id": "680:20",
+          "name": "点击弹窗外关闭 / 遮罩触区",
+          "x": 0,
+          "y": 0,
+          "width": 393,
+          "height": 214
+        },
+        {
+          "id": "622:2137",
+          "name": "完整底部弹层 / 固定标题与操作",
+          "x": 0,
+          "y": 214,
+          "width": 393,
+          "height": 630
+        }
+      ]
+    },
+    {
+      "id": "330:1769",
+      "name": "Baby editor / error / 1x",
+      "parent": "C5 · 保存失败",
+      "width": 393,
+      "height": 844,
+      "children": [
+        {
+          "id": "622:2142",
+          "name": "页面背景 / 当前宝宝首页",
+          "x": 0,
+          "y": 0,
+          "width": 393,
+          "height": 844
+        },
+        {
+          "id": "622:2337",
+          "name": "模态遮罩",
+          "x": 0,
+          "y": 0,
+          "width": 393,
+          "height": 844
+        },
+        {
+          "id": "680:1103",
+          "name": "点击弹窗外关闭 / 遮罩触区",
+          "x": 0,
+          "y": 0,
+          "width": 393,
+          "height": 152
+        },
+        {
+          "id": "622:2338",
+          "name": "完整底部弹层 / 固定标题与操作",
+          "x": 0,
+          "y": 152,
+          "width": 393,
+          "height": 692
+        }
+      ]
+    },
+    {
+      "id": "330:1396",
+      "name": "Baby editor / post-feeding-state / empty",
+      "parent": "D1a · 精神状态 / 未选择",
+      "width": 393,
+      "height": 844,
+      "children": [
+        {
+          "id": "622:2544",
+          "name": "页面背景 / 当前宝宝首页",
+          "x": 0,
+          "y": 0,
+          "width": 393,
+          "height": 844
+        },
+        {
+          "id": "622:2739",
+          "name": "模态遮罩",
+          "x": 0,
+          "y": 0,
+          "width": 393,
+          "height": 844
+        },
+        {
+          "id": "680:1106",
+          "name": "点击弹窗外关闭 / 遮罩触区",
+          "x": 0,
+          "y": 0,
+          "width": 393,
+          "height": 386
+        },
+        {
+          "id": "622:2740",
+          "name": "完整底部弹层 / 固定标题与操作",
+          "x": 0,
+          "y": 386,
+          "width": 393,
+          "height": 458
+        }
+      ]
+    },
+    {
+      "id": "330:1430",
+      "name": "Baby editor / post-feeding-state / selected",
+      "parent": "D1b · 精神状态 / 已选择",
+      "width": 393,
+      "height": 844,
+      "children": [
+        {
+          "id": "622:2745",
+          "name": "页面背景 / 当前宝宝首页",
+          "x": 0,
+          "y": 0,
+          "width": 393,
+          "height": 844
+        },
+        {
+          "id": "622:2940",
+          "name": "模态遮罩",
+          "x": 0,
+          "y": 0,
+          "width": 393,
+          "height": 844
+        },
+        {
+          "id": "680:1109",
+          "name": "点击弹窗外关闭 / 遮罩触区",
+          "x": 0,
+          "y": 0,
+          "width": 393,
+          "height": 386
+        },
+        {
+          "id": "622:2941",
+          "name": "完整底部弹层 / 固定标题与操作",
+          "x": 0,
+          "y": 386,
+          "width": 393,
+          "height": 458
+        }
+      ]
+    },
+    {
+      "id": "693:4",
+      "name": "Baby daily status / cross-tab draft / save enabled",
+      "parent": "D1c · 当前页签为空 / 其他项目已填写",
+      "width": 393,
+      "height": 844,
+      "children": [
+        {
+          "id": "693:5",
+          "name": "页面背景 / 当前宝宝首页",
+          "x": 0,
+          "y": 0,
+          "width": 393,
+          "height": 844
+        },
+        {
+          "id": "693:189",
+          "name": "模态遮罩",
+          "x": 0,
+          "y": 0,
+          "width": 393,
+          "height": 844
+        },
+        {
+          "id": "693:190",
+          "name": "点击弹窗外关闭 / 遮罩触区",
+          "x": 0,
+          "y": 0,
+          "width": 393,
+          "height": 386
+        },
+        {
+          "id": "693:191",
+          "name": "完整底部弹层 / 固定标题与操作",
+          "x": 0,
+          "y": 386,
+          "width": 393,
+          "height": 458
+        }
+      ]
+    },
+    {
+      "id": "327:2170",
+      "name": "Baby home / recent-post-feeding-state / 1x",
+      "parent": "D1d · 首页最近精神状态",
+      "width": 393,
+      "height": 844,
+      "children": [
+        {
+          "id": "623:2688",
+          "name": "首页内容视口 / 可滚动",
+          "x": 0,
+          "y": 0,
+          "width": 393,
+          "height": 742
+        },
+        {
+          "id": "623:2689",
+          "name": "固定底部导航 / Baby",
+          "x": 0,
+          "y": 762,
+          "width": 393,
+          "height": 82
+        }
+      ]
+    },
+    {
+      "id": "330:1454",
+      "name": "Baby editor / wet / 1x",
+      "parent": "D2a · 记录尿湿",
+      "width": 393,
+      "height": 844,
+      "children": [
+        {
+          "id": "622:2946",
+          "name": "页面背景 / 当前宝宝首页",
+          "x": 0,
+          "y": 0,
+          "width": 393,
+          "height": 844
+        },
+        {
+          "id": "622:3141",
+          "name": "模态遮罩",
+          "x": 0,
+          "y": 0,
+          "width": 393,
+          "height": 844
+        },
+        {
+          "id": "680:1112",
+          "name": "点击弹窗外关闭 / 遮罩触区",
+          "x": 0,
+          "y": 0,
+          "width": 393,
+          "height": 444
+        },
+        {
+          "id": "622:3142",
+          "name": "完整底部弹层 / 固定标题与操作",
+          "x": 0,
+          "y": 444,
+          "width": 393,
+          "height": 400
+        }
+      ]
+    },
+    {
+      "id": "330:1488",
+      "name": "Baby editor / stool / 1x",
+      "parent": "D2b · 记录便便",
+      "width": 393,
+      "height": 844,
+      "children": [
+        {
+          "id": "622:3147",
+          "name": "页面背景 / 当前宝宝首页",
+          "x": 0,
+          "y": 0,
+          "width": 393,
+          "height": 844
+        },
+        {
+          "id": "622:3342",
+          "name": "模态遮罩",
+          "x": 0,
+          "y": 0,
+          "width": 393,
+          "height": 844
+        },
+        {
+          "id": "680:1115",
+          "name": "点击弹窗外关闭 / 遮罩触区",
+          "x": 0,
+          "y": 0,
+          "width": 393,
+          "height": 58
+        },
+        {
+          "id": "622:3343",
+          "name": "完整底部弹层 / 固定标题与操作",
+          "x": 0,
+          "y": 58,
+          "width": 393,
+          "height": 786
+        }
+      ]
+    },
+    {
+      "id": "330:1563",
+      "name": "Baby editor / growth / 1x",
+      "parent": "E1a · 多项测量填写",
+      "width": 393,
+      "height": 844,
+      "children": [
+        {
+          "id": "622:3348",
+          "name": "页面背景 / 当前宝宝首页",
+          "x": 0,
+          "y": 0,
+          "width": 393,
+          "height": 844
+        },
+        {
+          "id": "622:3543",
+          "name": "模态遮罩",
+          "x": 0,
+          "y": 0,
+          "width": 393,
+          "height": 844
+        },
+        {
+          "id": "680:1118",
+          "name": "点击弹窗外关闭 / 遮罩触区",
+          "x": 0,
+          "y": 0,
+          "width": 393,
+          "height": 274
+        },
+        {
+          "id": "622:3544",
+          "name": "完整底部弹层 / 固定标题与操作",
+          "x": 0,
+          "y": 274,
+          "width": 393,
+          "height": 570
+        }
+      ]
+    },
+    {
+      "id": "327:2632",
+      "name": "Baby home / saved / 1x",
+      "parent": "E1b · 保存后 / 完整页面",
+      "width": 393,
+      "height": 844,
+      "children": [
+        {
+          "id": "623:1688",
+          "name": "完整首页 / 生长保存结果",
+          "x": 0,
+          "y": 0,
+          "width": 393,
+          "height": 844
+        }
+      ]
+    },
+    {
+      "id": "623:2426",
+      "name": "Baby home / growth selection / 体重 / full page",
+      "parent": "E2a · 体重趋势 / 整页",
+      "width": 393,
+      "height": 844,
+      "children": [
+        {
+          "id": "623:2427",
+          "name": "首页内容视口 / 可滚动",
+          "x": 0,
+          "y": 0,
+          "width": 393,
+          "height": 742
+        },
+        {
+          "id": "623:2583",
+          "name": "固定底部导航 / Baby",
+          "x": 0,
+          "y": 762,
+          "width": 393,
+          "height": 82
+        }
+      ]
+    },
+    {
+      "id": "327:3250",
+      "name": "Baby home / growth selection / 身长",
+      "parent": "E2a · 身长趋势 / 局部",
+      "width": 393,
+      "height": 844,
+      "children": [
+        {
+          "id": "623:1298",
+          "name": "完整首页 / 生长区域滚动位置",
+          "x": 0,
+          "y": 0,
+          "width": 393,
+          "height": 844
+        }
+      ]
+    },
+    {
+      "id": "327:3282",
+      "name": "Baby home / growth selection / 头围",
+      "parent": "E2b · 头围趋势 / 局部",
+      "width": 393,
+      "height": 844,
+      "children": [
+        {
+          "id": "623:1493",
+          "name": "完整首页 / 生长区域滚动位置",
+          "x": 0,
+          "y": 0,
+          "width": 393,
+          "height": 844
+        }
+      ]
+    },
+    {
+      "id": "327:2592",
+      "name": "Baby home / knowledge / 1x",
+      "parent": "G1 · 知识阅读弹层",
+      "width": 393,
+      "height": 844,
+      "children": [
+        {
+          "id": "622:3750",
+          "name": "页面背景 / 当前宝宝首页",
+          "x": 0,
+          "y": 0,
+          "width": 393,
+          "height": 844
+        },
+        {
+          "id": "622:3945",
+          "name": "模态遮罩",
+          "x": 0,
+          "y": 0,
+          "width": 393,
+          "height": 844
+        },
+        {
+          "id": "680:1121",
+          "name": "点击弹窗外关闭 / 遮罩触区",
+          "x": 0,
+          "y": 0,
+          "width": 393,
+          "height": 321
+        },
+        {
+          "id": "622:3946",
+          "name": "完整底部弹层 / 固定标题与操作",
+          "x": 0,
+          "y": 321,
+          "width": 393,
+          "height": 523
+        }
+      ]
+    }
+  ]
+}

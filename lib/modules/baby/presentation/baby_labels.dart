@@ -43,10 +43,17 @@ String babyDuration(Duration duration) {
 
 const babyRecordLabels = {
   BabyRecordKind.feeding: '喂养',
+  BabyRecordKind.dailyStatus: '今日状态',
   BabyRecordKind.sleep: '睡眠',
   BabyRecordKind.diaper: '尿便',
   BabyRecordKind.growth: '生长',
   BabyRecordKind.development: '发育观察',
+};
+const babyMentalLabels = {
+  BabyMentalState.content: '平静满足',
+  BabyMentalState.active: '活跃',
+  BabyMentalState.crying: '烦躁哭闹',
+  BabyMentalState.drowsy: '困倦',
 };
 const babyFeedingLabels = {
   BabyFeedingMethod.breastfeeding: '亲喂',
@@ -70,7 +77,7 @@ const stoolColorLabels = {
   StoolColor.brown: '棕色',
   StoolColor.black: '黑色',
   StoolColor.red: '红色',
-  StoolColor.pale: '灰白 / 很浅',
+  StoolColor.pale: '灰白／很浅',
   StoolColor.unsure: '不确定',
 };
 const stoolConsistencyLabels = {
@@ -93,6 +100,11 @@ String babyNumber(double value) => value == value.roundToDouble()
     : value.toString();
 
 String babyRecordFacts(BabyRecord record) => switch (record) {
+  BabyDailyStatusRecord() => [
+    if (record.mentalState != null) babyMentalLabels[record.mentalState]!,
+    if (record.wetCount != null) '今日湿尿布 ${record.wetCount} 片',
+    if (record.stoolCount != null) '今日便便 ${record.stoolCount} 次',
+  ].join(' · '),
   BabyFeedingRecord(
     :final method,
     :final side,

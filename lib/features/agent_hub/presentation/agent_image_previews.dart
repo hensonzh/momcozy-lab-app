@@ -1,4 +1,3 @@
-import 'package:momcozy_flutter_app/shared/design_system/mom_home_tokens.dart';
 import 'dart:convert';
 import 'agent_attachment_tile.dart';
 import 'package:momcozy_flutter_app/features/media/presentation/media_viewer_header.dart';
@@ -27,50 +26,29 @@ class AgentSentImages extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+      crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         for (var index = 0; index < images.length; index++) ...[
           Material(
-            color: MomHomeTokens.surface,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-              side: const BorderSide(color: MomHomeTokens.border),
-            ),
-            clipBehavior: Clip.antiAlias,
+            color: Colors.transparent,
             child: InkWell(
               key: ValueKey('agent-sent-image-$index'),
+              borderRadius: BorderRadius.circular(14),
               onTap: () => _showSentImage(
                 context,
                 images[index],
                 loadImageContent: loadImageContent,
               ),
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(minHeight: 44),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 12,
-                  ),
-                  child: Row(
-                    children: [
-                      SizedBox.square(
-                        dimension: 32,
-                        child: _AgentDataUrlImage(
-                          image: images[index],
-                          loadImageContent: loadImageThumbnail,
-                          fit: BoxFit.cover,
-                          cacheWidth: 80,
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: AgentAttachmentMetadata(
-                          name: images[index].name,
-                          size: images[index].size,
-                          sent: true,
-                        ),
-                      ),
-                    ],
+              child: SizedBox(
+                width: 112,
+                height: 240,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(14),
+                  child: _AgentDataUrlImage(
+                    image: images[index],
+                    loadImageContent: loadImageThumbnail,
+                    fit: BoxFit.contain,
+                    cacheWidth: 336,
                   ),
                 ),
               ),

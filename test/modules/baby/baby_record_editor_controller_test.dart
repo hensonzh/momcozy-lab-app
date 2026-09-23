@@ -2,7 +2,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:momcozy_flutter_app/domain/baby/baby_record.dart';
 import 'package:momcozy_flutter_app/domain/shared/local_date.dart';
 import 'package:momcozy_flutter_app/modules/baby/application/baby_record_editor_controller.dart';
-import 'package:momcozy_flutter_app/modules/baby/application/baby_records_controller.dart';
 import 'package:momcozy_flutter_app/shared/zoned_time.dart';
 import 'baby_test_repositories.dart';
 
@@ -51,7 +50,7 @@ void main() {
     },
   );
   test(
-    'uncertain growth batch keeps the same measurements and key until confirmed',
+    'failed growth batch retries the unchanged measurements with the same key',
     () async {
       final repo = BabyTestRecords()..failSave = true;
       final c = editor(repo, BabyRecordKind.growth);
@@ -62,7 +61,6 @@ void main() {
       expect(await c.save(), isNull);
       expect(c.uncertain, isTrue);
       expect(repo.values, hasLength(2));
-      c.setGrowthValue(GrowthMetric.length, '60');
       expect(c.growthValues[GrowthMetric.length], '54');
       final result = await c.save();
       expect(result, hasLength(2));
@@ -73,7 +71,7 @@ void main() {
     },
   );
   test(
-    'waking an existing sleep retries its original end time and version',
+    'legacy sleep editing after a failed response submits the revised end time',
     () async {
       var now = babyTestNow;
       final sleep = BabySleepRecord(
@@ -98,7 +96,7 @@ void main() {
       c.setSleepEnd(now);
       final result = (await c.save())!.single as BabySleepRecord;
       expect(result.id, 'sleep');
-      expect(result.endedAt, babyTestNow);
+      expect(result.endedAt, now);
       expect(repo.values, hasLength(1));
       expect(repo.submissions.last.single.version, 4);
     },
@@ -116,44 +114,6 @@ void main() {
     expect(result.timezone, 'Asia/Shanghai');
     expect(result.status, DevelopmentStatus.unsure);
   });
-  test(
-    'delete and undo recover uncertain responses using the exact receipt versions',
-    () async {
-      final record = BabyFeedingRecord(
-        id: 'feeding',
-        babyId: babyTestProfile.id,
-        version: 7,
-        occurredAt: babyTestNow,
-        method: BabyFeedingMethod.formula,
-      );
-      final repo = BabyTestRecords()
-        ..values = [record]
-        ..failDelete = true
-        ..failRestore = true;
-      final c = BabyRecordsController(
-        repository: repo,
-        baby: babyTestProfile,
-        timezone: 'UTC',
-        now: () => babyTestNow,
-      );
-      addTearDown(c.dispose);
-      await c.load();
-      expect(await c.delete(record), isFalse);
-      expect(c.uncertainMutation, isTrue);
-      await c.select(kind: BabyRecordKind.growth);
-      expect(c.kind, BabyRecordKind.feeding);
-      await c.retryMutation();
-      expect(c.records.value, isEmpty);
-      expect(c.deletion!.version, 8);
-      expect(repo.deleteVersions, [7, 7]);
-      expect(await c.undo(), isFalse);
-      expect(c.uncertainMutation, isTrue);
-      await c.retryMutation();
-      expect(c.records.value, hasLength(1));
-      expect(c.deletion, isNull);
-      expect(repo.restoreVersions, [8, 8]);
-    },
-  );
   test(
     'local clock rejects the DST gap and distinguishes both repeated times',
     () {

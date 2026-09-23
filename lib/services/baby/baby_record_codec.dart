@@ -4,10 +4,17 @@ import '../shared/json_value.dart';
 
 const babyRecordKindWire = EnumWire({
   BabyRecordKind.feeding: 'feeding',
+  BabyRecordKind.dailyStatus: 'daily_status',
   BabyRecordKind.sleep: 'sleep',
   BabyRecordKind.diaper: 'diaper',
   BabyRecordKind.growth: 'growth',
   BabyRecordKind.development: 'development',
+});
+const babyMentalStateWire = EnumWire({
+  BabyMentalState.content: 'content',
+  BabyMentalState.active: 'active',
+  BabyMentalState.crying: 'crying',
+  BabyMentalState.drowsy: 'drowsy',
 });
 const babyFeedingMethodWire = EnumWire({
   BabyFeedingMethod.breastfeeding: 'breastfeeding',
@@ -79,19 +86,43 @@ BabyRecord readBabyRecord(Map<String, Object?> json) {
       'volume_ml',
       'duration_minutes',
     },
+    BabyRecordKind.dailyStatus => {
+      'mental_state',
+      'wet_count',
+      'stool_count',
+      'color',
+      'consistency',
+    },
     BabyRecordKind.sleep => {'ended_at'},
     BabyRecordKind.diaper => {'diaper_kind', 'color', 'consistency', 'signs'},
-    BabyRecordKind.growth => {'metric', 'value', 'unit'},
+    BabyRecordKind.growth => {'metric', 'value', 'unit', 'measurement_source'},
     BabyRecordKind.development => {'item_id', 'status', 'label'},
   };
   final dated =
-      kind == BabyRecordKind.growth || kind == BabyRecordKind.development;
+      kind == BabyRecordKind.growth ||
+      kind == BabyRecordKind.development ||
+      kind == BabyRecordKind.dailyStatus;
   requireOnlyKeys(data, {
     'kind',
     ...allowed,
     if (dated) ...{'recorded_on', 'timezone'} else ...{'occurred_at', 'note'},
   });
   final record = switch (kind) {
+    BabyRecordKind.dailyStatus => BabyDailyStatusRecord(
+      id: id,
+      babyId: babyId,
+      version: version,
+      recordedOn: LocalDate.parse(jsonString(data['recorded_on'])),
+      timezone: jsonString(data['timezone']),
+      savedAt: jsonInstant(json['created_at']),
+      mentalState: babyMentalStateWire.read(data['mental_state']),
+      wetCount: data['wet_count'] == null ? null : jsonInt(data['wet_count']),
+      stoolCount: data['stool_count'] == null
+          ? null
+          : jsonInt(data['stool_count']),
+      color: stoolColorWire.read(data['color']),
+      consistency: stoolConsistencyWire.read(data['consistency']),
+    ),
     BabyRecordKind.feeding => BabyFeedingRecord(
       id: id,
       babyId: babyId,
@@ -127,6 +158,10 @@ BabyRecord readBabyRecord(Map<String, Object?> json) {
       note: jsonString(data['note']),
     ),
     BabyRecordKind.growth => BabyGrowthRecord(
+      measurementSource: data['measurement_source'] as String?,
+      savedAt: json['updated_at'] == null
+          ? null
+          : jsonInstant(json['updated_at']),
       id: id,
       babyId: babyId,
       version: version,
@@ -165,6 +200,13 @@ Map<String, Object?> writeBabyObservation(BabyRecord record) => {
     'timezone': record.timezone,
   },
   ...switch (record) {
+    BabyDailyStatusRecord() => {
+      'mental_state': babyMentalStateWire.write(record.mentalState),
+      'wet_count': record.wetCount,
+      'stool_count': record.stoolCount,
+      'color': stoolColorWire.write(record.color),
+      'consistency': stoolConsistencyWire.write(record.consistency),
+    },
     BabyFeedingRecord() => {
       'method': babyFeedingMethodWire.write(record.method),
       'side': feedingSideWire.write(record.side),
@@ -182,6 +224,8 @@ Map<String, Object?> writeBabyObservation(BabyRecord record) => {
     },
     BabyGrowthRecord() => {
       'metric': growthMetricWire.write(record.metric),
+      if (record.measurementSource != null)
+        'measurement_source': record.measurementSource,
       'value': record.value,
     },
     BabyDevelopmentRecord() => {

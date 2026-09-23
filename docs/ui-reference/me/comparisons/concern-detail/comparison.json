@@ -1,0 +1,13 @@
+{
+  "reference": "/Users/lute/project/momcozy-lab/design-assets/me-app-sync-20260920/reference/concern-detail.png",
+  "actual": "/Users/lute/project/momcozy-lab/design-assets/me-app-sync-20260920/actual/concern-detail.png",
+  "reference_crop": null,
+  "actual_crop": null,
+  "actual_dpr": 1,
+  "size": [
+    393,
+    844
+  ],
+  "mean_absolute_channel_difference": 2.6839206251582794,
+  "note": "Diagnostic only. Not a fidelity score or acceptance threshold."
+}

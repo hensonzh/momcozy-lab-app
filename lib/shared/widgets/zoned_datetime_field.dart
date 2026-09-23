@@ -19,6 +19,11 @@ class ZonedDateTimeField extends StatelessWidget {
     this.clearable = false,
     this.warm = false,
     this.useMomStyle = false,
+    this.valueStyle,
+    this.showLabel = true,
+    this.bottomSpacing = 20,
+    this.fieldStyle,
+    this.trailing,
   });
   final String label, timezone;
   final DateTime? value;
@@ -26,6 +31,11 @@ class ZonedDateTimeField extends StatelessWidget {
   final ValueChanged<DateTime?> onChanged;
   final bool enabled, clearable;
   final bool warm, useMomStyle;
+  final TextStyle? valueStyle;
+  final bool showLabel;
+  final double bottomSpacing;
+  final ButtonStyle? fieldStyle;
+  final Widget? trailing;
 
   Future<void> _pick(BuildContext context) async {
     final current = inTimezone(now(), timezone);
@@ -108,40 +118,45 @@ class ZonedDateTimeField extends StatelessWidget {
     crossAxisAlignment: CrossAxisAlignment.stretch,
     children: [
       if (warm || useMomStyle) ...[
-        Text(
-          label,
-          style: useMomStyle
-              ? MomHomeTokens.text(14, weight: FontWeight.w700)
-              : const TextStyle(
-                  fontSize: 14,
-                  height: 1.6,
-                  fontWeight: FontWeight.w600,
-                  color: MomCozyColors.diaryInk,
-                ),
-        ),
-        const SizedBox(height: 10),
+        if (showLabel)
+          Text(
+            label,
+            style: useMomStyle
+                ? MomHomeTokens.text(14, weight: FontWeight.w700)
+                : const TextStyle(
+                    fontSize: 14,
+                    height: 1.6,
+                    fontWeight: FontWeight.w600,
+                    color: MomCozyColors.warmEditorInk,
+                  ),
+          ),
+        if (showLabel) const SizedBox(height: 10),
         OutlinedButton(
           onPressed: enabled ? () => _pick(context) : null,
-          style: OutlinedButton.styleFrom(
-            minimumSize: const Size.fromHeight(48),
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-            backgroundColor: useMomStyle
-                ? MomHomeTokens.surface
-                : MomCozyColors.warmFormField,
-            foregroundColor: useMomStyle
-                ? MomHomeTokens.ink
-                : MomCozyColors.diaryInk,
-            side: BorderSide(
-              color: useMomStyle
-                  ? MomHomeTokens.border
-                  : MomCozyColors.warmFormBorder,
+          style: (fieldStyle ?? const ButtonStyle()).merge(
+            OutlinedButton.styleFrom(
+              minimumSize: const Size.fromHeight(48),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+              backgroundColor: useMomStyle
+                  ? MomHomeTokens.surface
+                  : MomCozyColors.warmFormField,
+              foregroundColor: useMomStyle
+                  ? MomHomeTokens.ink
+                  : MomCozyColors.warmEditorInk,
+              side: BorderSide(
+                color: useMomStyle
+                    ? MomHomeTokens.border
+                    : MomCozyColors.warmFormBorder,
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(useMomStyle ? 16 : 12),
+              ),
+              textStyle:
+                  valueStyle ??
+                  Theme.of(
+                    context,
+                  ).textTheme.bodyMedium?.copyWith(fontSize: 14),
             ),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(useMomStyle ? 16 : 12),
-            ),
-            textStyle: Theme.of(
-              context,
-            ).textTheme.bodyMedium?.copyWith(fontSize: 14),
           ),
           child: Row(
             children: [
@@ -153,11 +168,11 @@ class ZonedDateTimeField extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 8),
-              const Icon(Icons.schedule_outlined, size: 18),
+              trailing ?? const Icon(Icons.schedule_outlined, size: 18),
             ],
           ),
         ),
-        const SizedBox(height: 20),
+        SizedBox(height: bottomSpacing),
       ] else
         ListTile(
           contentPadding: EdgeInsets.zero,

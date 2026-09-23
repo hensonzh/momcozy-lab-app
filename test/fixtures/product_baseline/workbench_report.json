@@ -27,13 +27,6 @@
             "truncated": false
           },
           {
-            "id": "mother_diary:361b4976-6f79-4af8-9fa4-f010e47d5415:1",
-            "kind": "mother_diary",
-            "recorded_at": "2026-09-10T15:55:00Z",
-            "content": "妈妈日记（用户自述） · 2026-09-10\n【休息】\n总休息时长：4–5 小时\n醒后恢复感：尚可应对\n【身体】\n精力：尚可应对\n【心情】\n心情：平稳",
-            "truncated": false
-          },
-          {
             "id": "lactation:cf162553-7591-4f46-8d04-7b84045e1148:1",
             "kind": "lactation",
             "recorded_at": "2026-09-10T15:25:00Z",
